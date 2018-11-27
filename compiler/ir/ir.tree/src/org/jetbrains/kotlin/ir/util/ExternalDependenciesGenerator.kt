@@ -49,7 +49,7 @@ class ExternalDependenciesGenerator(
                 stubGenerator.generateEnumEntryStub(it.descriptor)
             }
             ArrayList(symbolTable.unboundFields).forEach {
-                stubGenerator.generatePropertyStub(it.descriptor, bindingContext)
+                stubGenerator.generateFieldStub(it.descriptor, bindingContext)
             }
             ArrayList(symbolTable.unboundSimpleFunctions).forEach {
                 stubGenerator.generateFunctionStub(it.descriptor)

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -83,25 +82,14 @@ class DeclarationStubGenerator(
     internal fun generatePropertyStub(
         descriptor: PropertyDescriptor,
         bindingContext: BindingContext? = null
-    ): IrProperty =
-        IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irProperty ->
-            if (descriptor.hasBackingField(bindingContext)) {
-                irProperty.backingField = generateFieldStub(descriptor)
-            }
+    ): IrProperty = symbolTable.referenceProperty(descriptor) {
+        IrLazyProperty(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor,
+            this, typeTranslator, bindingContext
+        )
+    }
 
-            irProperty.getter = descriptor.getter?.let { generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
-                correspondingProperty = irProperty
-            }
-            irProperty.setter = descriptor.setter?.let { generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
-                correspondingProperty = irProperty
-            }
-            // Do we ever generate stubs for file-level properties?
-            (descriptor.containingDeclaration as? ClassDescriptor)?.let {
-                irProperty.parent = generateClassStub(it)
-            }
-        }
-
-    private fun generateFieldStub(descriptor: PropertyDescriptor): IrField {
+    fun generateFieldStub(descriptor: PropertyDescriptor, bindingContext: BindingContext? = null): IrField {
         val referenced = symbolTable.referenceField(descriptor)
         if (referenced.isBound) {
             return referenced.owner
@@ -119,6 +107,7 @@ class DeclarationStubGenerator(
             descriptor.original,
             descriptor.type.toIrType()
         ).apply {
+            correspondingProperty = generatePropertyStub(descriptor, bindingContext)
             initializer = descriptor.compileTimeInitializer?.let {
                 IrExpressionBodyImpl(
                     constantValueGenerator.generateConstantValueAsExpression(

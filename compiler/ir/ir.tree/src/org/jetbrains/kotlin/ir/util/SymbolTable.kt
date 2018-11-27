@@ -39,6 +39,7 @@ interface ReferenceSymbolTable {
 
     fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol
     fun referenceField(descriptor: PropertyDescriptor): IrFieldSymbol
+    fun referenceProperty(descriptor: PropertyDescriptor, generate: () -> IrProperty): IrProperty
 
     fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol
     fun referenceDeclaredFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol
@@ -295,6 +296,10 @@ open class SymbolTable : ReferenceSymbolTable {
         fieldSymbolTable.referenced(descriptor) { IrFieldSymbolImpl(descriptor) }
 
     val unboundFields: Set<IrFieldSymbol> get() = fieldSymbolTable.unboundSymbols
+
+    val propertyTable = HashMap<PropertyDescriptor, IrProperty>()
+    override fun referenceProperty(descriptor: PropertyDescriptor, generate: () -> IrProperty): IrProperty =
+        propertyTable.getOrPut(descriptor, generate)
 
     fun declareSimpleFunction(
         startOffset: Int,
