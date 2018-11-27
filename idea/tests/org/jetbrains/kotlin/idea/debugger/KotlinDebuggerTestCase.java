@@ -41,11 +41,15 @@ import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xdebugger.XDebugSession;
+import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -89,6 +93,9 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     protected static final String KOTLIN_LIBRARY_NAME = "KotlinLibrary";
     private static final String CUSTOM_LIBRARY_NAME = "CustomLibrary";
 
+    @Nullable
+    private String oldJvmTarget = null;
+
     @Override
     protected OutputChecker initOutputChecker() {
         return new KotlinOutputChecker(
@@ -128,6 +135,12 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(true);
         }
         super.setUp();
+
+        Kotlin2JvmCompilerArgumentsHolder.Companion.getInstance(myProject).update(s -> {
+            oldJvmTarget = s.getJvmTarget();
+            s.setJvmTarget("1.8");
+            return Unit.INSTANCE;
+        });
     }
 
     private static void deleteLocalCacheDirectory(boolean assertDeleteSuccess) {
@@ -215,6 +228,11 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void tearDown() throws Exception {
+        Kotlin2JvmCompilerArgumentsHolder.Companion.getInstance(myProject).update(s -> {
+            s.setJvmTarget(oldJvmTarget);
+            return Unit.INSTANCE;
+        });
+
         if (DexLikeBytecodePatchKt.needDexPatch(getTestName(true))) {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(false);
         }
@@ -233,7 +251,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     protected void setUpModule() {
         super.setUpModule();
 
-        IdeaTestUtil.setModuleLanguageLevel(myModule, LanguageLevel.JDK_1_6);
+        IdeaTestUtil.setModuleLanguageLevel(myModule, LanguageLevel.JDK_1_8);
 
         String outputDirPath = getAppOutputPath();
         File outDir = new File(outputDirPath);
@@ -249,7 +267,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
                 String sourcesDir = modulePath + File.separator + "src";
 
-                MockLibraryUtil.compileKotlin(sourcesDir, outDir, CUSTOM_LIBRARY_JAR.getPath());
+                MockLibraryUtil.compileKotlin(sourcesDir, outDir, CollectionsKt.listOf("-jvm-target", "1.8"), CUSTOM_LIBRARY_JAR.getPath());
 
                 List<String> options =
                         Arrays.asList("-d", outputDirPath, "-classpath",
