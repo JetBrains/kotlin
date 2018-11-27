@@ -155,10 +155,10 @@ val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.i
 
 fun IrValueParameter.copyTo(
     irFunction: IrFunction,
+    origin: IrDeclarationOrigin = this.origin,
     index: Int = this.index,
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
-    origin: IrDeclarationOrigin = this.origin,
     name: Name = this.name,
     type: IrType = this.type.remapTypeParameters(this.parent as IrTypeParametersContainer, irFunction),
     varargElementType: IrType? = this.varargElementType
