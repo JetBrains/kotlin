@@ -23,6 +23,7 @@ object ConversionsRunner {
 
     private fun createRootConversion(context: ConversionContext) =
         batchPipe {
+            //Java --> Kotlin conversions
             +JavaModifiersConversion()
             +InternalClassConversion(context)
             +ModalityConversion(context)
@@ -49,14 +50,16 @@ object ConversionsRunner {
             +MainFunctionConversion(context)
             +LiteralConversion()
             +AssertStatementConversion(context)
-            +InnerClassConversion()
-            +StaticsToCompanionExtractConversion()
-            +ClassToObjectPromotionConversion(context)
             +PolyadicExpressionConversion()
             +SwitchStatementConversion(context)
             +InstanceOfConversion()
             +ForConversion(context)
             +ForInConversion()
+
+            //Kotlin --> Kotlin conversions
+            +InnerClassConversion()
+            +StaticsToCompanionExtractConversion()
+            +ClassToObjectPromotionConversion(context)
             +LabeledStatementConversion()
             +SortClassMembersConversion()
         }

@@ -15,15 +15,14 @@ import org.jetbrains.kotlin.util.collectionUtils.concatInOrder
 //TODO temporary
 class MainFunctionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKKtFunction) return recurse(element)
+        if (element !is JKMethod) return recurse(element)
         if (element.isMainFunctionDeclaration()) {
             element.parameters.single().apply {
-                val oldType = type.type as JKClassType
-                val oldTypeParameter = oldType.parameters.single() as JKClassType
+                val oldType = type.type as JKJavaArrayType
+                val oldTypeParameter = oldType.type as JKClassType
                 val newType =
-                    JKClassTypeImpl(
-                        oldType.classReference,
-                        listOf(oldTypeParameter.updateNullability(Nullability.NotNull)),
+                    JKJavaArrayTypeImpl(
+                        oldTypeParameter.updateNullability(Nullability.NotNull),
                         Nullability.NotNull
                     )
                 type = JKTypeElementImpl(newType)
@@ -37,11 +36,9 @@ class MainFunctionConversion(private val context: ConversionContext) : Recursive
         return recurse(element)
     }
 
-    fun JKKtFunction.isMainFunctionDeclaration(): Boolean {
-        val type = parameters.singleOrNull()?.type?.type as? JKClassType ?: return false
-        val typeArgument = type.parameters.singleOrNull() as? JKClassType ?: return false
-        return name.value == "main" &&
-                type.classReference.name == "Array" &&
-                typeArgument.classReference.name == "String"
+    private fun JKMethod.isMainFunctionDeclaration(): Boolean {
+        val type = parameters.singleOrNull()?.type?.type as? JKJavaArrayType ?: return false
+        val typeArgument = type.type as? JKClassType ?: return false
+        return name.value == "main" && typeArgument.classReference.name == "String"
     }
 }
