@@ -399,6 +399,14 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) callableDescriptor;
             if (functionDescriptor.isSuspend()) {
                 createAndRecordSuspendFunctionView(closure, functionDescriptor, false);
+                boolean isRecursive = false;
+                for (FunctionDescriptor descriptor: functionsStack) {
+                    if (descriptor == target) {
+                        isRecursive = true;
+                        break;
+                    }
+                }
+                bindingTrace.record(RECURSIVE_SUSPEND_CALLABLE_REFERENCE, classDescriptor, isRecursive);
             }
         }
 
