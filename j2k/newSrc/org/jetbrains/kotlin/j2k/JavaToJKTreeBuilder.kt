@@ -454,7 +454,16 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                         JKIfElseStatementImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK(), elseBranch.toJK())
 
                 is PsiForStatement -> JKJavaForLoopStatementImpl(
-                    initialization.toJK(), with(expressionTreeMapper) { condition.toJK() }, update.toJK(), body.toJK()
+                    initialization.toJK(),
+                    with(expressionTreeMapper) { condition.toJK() },
+                    when (update) {
+                        is PsiExpressionListStatement ->
+                            (update as PsiExpressionListStatement).expressionList.expressions.map {
+                                JKExpressionStatementImpl(with(expressionTreeMapper) { it.toJK() })
+                            }
+                        else -> listOf(update.toJK())
+                    },
+                    body.toJK()
                 )
                 is PsiForeachStatement ->
                     JKForInStatementImpl(
@@ -465,7 +474,6 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiBlockStatement -> JKBlockStatementImpl(codeBlock.toJK())
                 is PsiWhileStatement -> JKWhileStatementImpl(with(expressionTreeMapper) { condition.toJK() }, body.toJK())
                 is PsiDoWhileStatement -> JKDoWhileStatementImpl(body.toJK(), with(expressionTreeMapper) { condition.toJK() })
-
 
                 is PsiSwitchStatement -> {
                     val cases = mutableListOf<JKJavaSwitchCase>()
