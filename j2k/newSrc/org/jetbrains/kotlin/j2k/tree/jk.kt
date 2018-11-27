@@ -296,6 +296,10 @@ interface JKBlockStatement : JKStatement, JKBranchElement {
     var block: JKBlock
 }
 
+interface JKBlockStatementWithoutBrackets : JKStatement, JKBranchElement {
+    var block: JKBlock
+}
+
 interface JKThisExpression : JKExpression {
     var qualifierLabel: JKLabel
 }

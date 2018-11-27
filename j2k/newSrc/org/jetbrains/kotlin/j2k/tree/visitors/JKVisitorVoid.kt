@@ -97,6 +97,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitLoopStatement(loopStatement: JKLoopStatement, data: Nothing?) = visitLoopStatement(loopStatement)
     fun visitBlockStatement(blockStatement: JKBlockStatement) = visitStatement(blockStatement, null)
     override fun visitBlockStatement(blockStatement: JKBlockStatement, data: Nothing?) = visitBlockStatement(blockStatement)
+    fun visitBlockStatementWithoutBrackets(blockStatementWithoutBrackets: JKBlockStatementWithoutBrackets) = visitStatement(blockStatementWithoutBrackets, null)
+    override fun visitBlockStatementWithoutBrackets(blockStatementWithoutBrackets: JKBlockStatementWithoutBrackets, data: Nothing?) = visitBlockStatementWithoutBrackets(blockStatementWithoutBrackets)
     fun visitThisExpression(thisExpression: JKThisExpression) = visitExpression(thisExpression, null)
     override fun visitThisExpression(thisExpression: JKThisExpression, data: Nothing?) = visitThisExpression(thisExpression)
     fun visitSuperExpression(superExpression: JKSuperExpression) = visitExpression(superExpression, null)

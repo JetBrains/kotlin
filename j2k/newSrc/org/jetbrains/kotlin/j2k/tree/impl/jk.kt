@@ -300,6 +300,12 @@ class JKBlockStatementImpl(block: JKBlock) : JKBlockStatement, JKBranchElementBa
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlockStatement(this, data)
 }
 
+class JKBlockStatementWithoutBracketsImpl(block: JKBlock) : JKBlockStatementWithoutBrackets, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var block by child(block)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlockStatementWithoutBrackets(this, data)
+}
+
 class JKThisExpressionImpl(qualifierLabel: JKLabel) : JKThisExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var qualifierLabel: JKLabel by child(qualifierLabel)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitThisExpression(this, data)

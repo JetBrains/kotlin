@@ -50,6 +50,7 @@ interface JKVisitor<out R, in D> {
     fun visitStubExpression(stubExpression: JKStubExpression, data: D): R = visitExpression(stubExpression, data)
     fun visitLoopStatement(loopStatement: JKLoopStatement, data: D): R = visitStatement(loopStatement, data)
     fun visitBlockStatement(blockStatement: JKBlockStatement, data: D): R = visitStatement(blockStatement, data)
+    fun visitBlockStatementWithoutBrackets(blockStatementWithoutBrackets: JKBlockStatementWithoutBrackets, data: D): R = visitStatement(blockStatementWithoutBrackets, data)
     fun visitThisExpression(thisExpression: JKThisExpression, data: D): R = visitExpression(thisExpression, data)
     fun visitSuperExpression(superExpression: JKSuperExpression, data: D): R = visitExpression(superExpression, data)
     fun visitWhileStatement(whileStatement: JKWhileStatement, data: D): R = visitLoopStatement(whileStatement, data)

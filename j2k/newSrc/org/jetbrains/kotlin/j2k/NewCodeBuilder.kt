@@ -619,6 +619,10 @@ class NewCodeBuilder {
             }
         }
 
+        override fun visitBlockStatementWithoutBrackets(blockStatementWithoutBrackets: JKBlockStatementWithoutBrackets) {
+            blockStatementWithoutBrackets.block.accept(this)
+        }
+
         override fun visitExpressionStatement(expressionStatement: JKExpressionStatement) {
             printer.printIndent()
             expressionStatement.expression.accept(this)
