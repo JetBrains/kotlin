@@ -50,13 +50,14 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                 if (element !is JKContinueStatement) return recurse(element)
                 val elementPsi = element.psi<PsiContinueStatement>()!!
                 if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
-                val statements = loopStatement.updaters + element
-                return recurse(JKBlockStatementImpl(JKBlockImpl(statements)))
+                val statements = loopStatement.updaters.map { it.copyTreeAndDetach() } + element.copyTreeAndDetach()
+                return if (element.parent is JKBlock)
+                    JKBlockStatementWithoutBracketsImpl(JKBlockImpl(statements))
+                else JKBlockStatementImpl(JKBlockImpl(statements))
             }
-
         }
 
-        val body = loopStatement::body.detached()
+        val body = continueStatementConverter.applyToElement(loopStatement::body.detached())
 
         if (body is JKBlockStatement) {
             val initializer = loopStatement.initializer
@@ -72,14 +73,14 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             val statements =
                 if (hasNameConflict) {
 
-                    listOf(continueStatementConverter.applyToElement(body) as JKStatement) + loopStatement::updaters.detached()
+                    listOf(body) + loopStatement::updaters.detached()
                 } else {
                     body.block::statements.detached() + loopStatement::updaters.detached()
                 }
             return JKBlockStatementImpl(JKBlockImpl(statements))
         } else {
             val statements =
-                listOf(continueStatementConverter.applyToElement(body) as JKStatement) + loopStatement::updaters.detached()
+                listOf(body as JKStatement) + loopStatement::updaters.detached()
             return JKBlockStatementImpl(JKBlockImpl(statements))
         }
     }
