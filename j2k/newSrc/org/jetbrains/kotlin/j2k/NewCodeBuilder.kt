@@ -115,7 +115,8 @@ class NewCodeBuilder {
         }
 
         override fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression) {
-            printer.printWithNoIndent(classAccessExpression.identifier.fqName)
+            //TODO handle class Access in seperate conversion?
+            printer.printWithNoIndent(classAccessExpression.identifier.fqName!!.substringAfter("java.lang."))
         }
 
         override fun visitFile(file: JKFile) {
