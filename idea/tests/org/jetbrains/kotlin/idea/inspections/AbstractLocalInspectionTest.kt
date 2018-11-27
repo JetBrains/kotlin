@@ -153,7 +153,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                 Pass.UPDATE_ALL,
                 Pass.UPDATE_FOLDING,
                 Pass.WOLF
-            ), false
+            ), (file as? KtFile)?.isScript() == true
         ).filter { it.description != null && caretOffset in it.startOffset..it.endOffset }
 
         Assert.assertTrue(
