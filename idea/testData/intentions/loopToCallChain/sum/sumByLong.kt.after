@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'sumByLong{}'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<String>): Long {
+    val <caret>s = list.sumByLong { it.length.toLong() }
+    return s
+}

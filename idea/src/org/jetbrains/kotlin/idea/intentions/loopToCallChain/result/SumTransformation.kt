@@ -114,7 +114,7 @@ abstract class SumTransformationBase(
 
             val sumByFunctionName = when (sumType) {
                 SupportedType.INT -> "sumBy"
-
+                SupportedType.LONG -> "sumByLong"
                 SupportedType.DOUBLE -> "sumByDouble"
 
                 else -> {

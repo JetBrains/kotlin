@@ -212,6 +212,24 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    val f_sumByLong = fn("sumByLong(selector: (T) -> Long)") {
+        includeDefault()
+        include(CharSequences)
+    } builder {
+        inline()
+        doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
+        returns("Long")
+        body {
+            """
+            var sum: Long = 0L
+            for (element in this) {
+                sum += selector(element)
+            }
+            return sum
+            """
+        }
+    }
+
     val f_sumByDouble = fn("sumByDouble(selector: (T) -> Double)") {
         includeDefault()
         include(CharSequences)

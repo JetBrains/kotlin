@@ -296,6 +296,7 @@ private val terminations = listOf(
     "singleOrNull",
     "sum",
     "sumBy",
+    "sumByLong",
     "sumByDouble",
     "toCollection",
     "toHashSet",
