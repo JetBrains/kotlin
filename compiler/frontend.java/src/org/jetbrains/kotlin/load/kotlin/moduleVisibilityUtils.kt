@@ -87,5 +87,5 @@ fun getSourceElement(descriptor: DeclarationDescriptor): SourceElement =
                 descriptor.toSourceElement
         }
 
-private val DeclarationDescriptor.toSourceElement: SourceElement
+val DeclarationDescriptor.toSourceElement: SourceElement
     get() = if (this is DeclarationDescriptorWithSource) source else SourceElement.NO_SOURCE
