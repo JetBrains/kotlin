@@ -124,7 +124,11 @@ sourceSets {
             "idea-live-templates/src",
             "idea-repl/src"
         )
-        resources.srcDirs("idea-repl/src").apply { include("META-INF/**") }
+        resources.srcDirs(
+            "idea-completion/resources",
+            "idea-live-templates/resources",
+            "idea-repl/resources"
+        )
     }
     "test" {
         projectDefault()
