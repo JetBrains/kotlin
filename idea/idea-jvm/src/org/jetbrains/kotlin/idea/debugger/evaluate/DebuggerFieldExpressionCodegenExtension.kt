@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -33,7 +34,7 @@ class DebuggerFieldExpressionCodegenExtension : ExpressionCodegenExtension {
             val containingClass = propertyDescriptor.containingDeclaration as? JavaClassDescriptor
             if (containingClass != null) {
                 val correspondingGetter = JavaSyntheticPropertiesScope(LockBasedStorageManager.NO_LOCKS, LookupTracker.DO_NOTHING)
-                    .getSyntheticExtensionProperties(listOf(containingClass.defaultType))
+                    .getSyntheticExtensionProperties(listOf(containingClass.defaultType), NoLookupLocation.FROM_BACKEND)
                     .firstOrNull { it.name == propertyDescriptor.name }
 
                 if (correspondingGetter != null) {
