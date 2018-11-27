@@ -286,8 +286,8 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
 val IrFunction.explicitParameters: List<IrValueParameter>
     get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters)
 
-val IrClass.defaultType: IrType
-    get() = this.thisReceiver!!.type
+val IrClass.defaultType: IrSimpleType
+    get() = this.thisReceiver!!.type as IrSimpleType
 
 val IrSimpleFunction.isReal: Boolean get() = descriptor.kind.isReal
 
