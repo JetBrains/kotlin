@@ -25,9 +25,7 @@ sourceSets {
     "test" {}
 }
 
-val jar = runtimeJar {
-    from(fileTree("$projectDir/src")) { include("META-INF/**") }
-}
+val jar = runtimeJar {}
 
 dist(targetName = the<BasePluginConvention>().archivesBaseName + ".jar")
 

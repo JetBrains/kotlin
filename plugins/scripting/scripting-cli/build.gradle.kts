@@ -43,9 +43,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     }
 }
 
-val jar = runtimeJar {
-    from(fileTree("$projectDir/src")) { include("META-INF/**") }
-}
+val jar = runtimeJar {}
 sourcesJar()
 javadocJar()
 
