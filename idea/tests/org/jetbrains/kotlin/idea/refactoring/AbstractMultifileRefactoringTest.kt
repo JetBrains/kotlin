@@ -34,9 +34,6 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
-import org.jetbrains.kotlin.idea.jsonUtils.getString
-import org.jetbrains.kotlin.idea.refactoring.move.MoveAction
-import org.jetbrains.kotlin.idea.refactoring.move.runMoveRefactoring
 import org.jetbrains.kotlin.idea.refactoring.rename.loadTestConfiguration
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
@@ -95,7 +92,7 @@ abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureT
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         FileDocumentManager.getInstance().saveAllDocuments()
-        PlatformTestUtil.assertDirectoriesEqual(afterVFile, beforeVFile)
+        PlatformTestUtil.assertDirectoriesEqual(afterVFile, beforeVFile, { file -> !KotlinTestUtils.isMultiExtensionName(file.name) })
     }
 }
 
@@ -133,14 +130,12 @@ fun runRefactoringTest(
     catch(e: BaseRefactoringProcessor.ConflictsInTestsException) {
         KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.distinct().sorted().joinToString("\n"))
 
-        BaseRefactoringProcessor.ConflictsInTestsException.setTestIgnore(true)
-
-        // Run refactoring again with ConflictsInTestsException suppressed
-        action.runRefactoring(rootDir, mainPsiFile, elementsAtCaret, config)
+        BaseRefactoringProcessor.ConflictsInTestsException.withIgnoredConflicts<Throwable> {
+            // Run refactoring again with ConflictsInTestsException suppressed
+            action.runRefactoring(rootDir, mainPsiFile, elementsAtCaret, config)
+        }
     }
     finally {
-        BaseRefactoringProcessor.ConflictsInTestsException.setTestIgnore(false)
-
         EditorFactory.getInstance()!!.releaseEditor(editor)
     }
 }

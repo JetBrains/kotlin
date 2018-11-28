@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1118
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1290
 data class A(val number: Int)
 
 external fun foo(first: A, second: A): Boolean

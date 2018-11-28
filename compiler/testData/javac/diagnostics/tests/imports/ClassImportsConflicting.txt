@@ -5,7 +5,7 @@ package a {
     public abstract class a {
         public constructor a()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open fun getO(): O!
+        public open fun getO(): b.O!
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
@@ -32,12 +32,12 @@ package c {
 }
 
 package d {
-    public fun test(): O!
+    public fun test(): b.O!
 
     public final class A : a.a {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun getO(): O!
+        public open override /*1*/ /*fake_override*/ fun getO(): b.O!
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

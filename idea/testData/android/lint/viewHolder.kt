@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintViewHolderInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintViewHolderInspection
 
 @file:Suppress("NAME_SHADOWING", "unused", "UNUSED_VALUE", "VARIABLE_WITH_REDUNDANT_INITIALIZER", "UNUSED_VARIABLE")
 
@@ -27,7 +27,7 @@ abstract class ViewHolderTest : BaseAdapter() {
         override fun getView(position: Int, convertView: View, parent: ViewGroup): View {
             var convertView = convertView
             // Should use View Holder pattern here
-            convertView = mInflater.<warning descr="Unconditional layout inflation from view adapter: Should use View Holder pattern (use recycled view passed into this method as the second parameter) for smoother scrolling">inflate(R.layout.your_layout, null)</warning>
+            convertView = <warning descr="Unconditional layout inflation from view adapter: Should use View Holder pattern (use recycled view passed into this method as the second parameter) for smoother scrolling">mInflater.inflate(R.layout.your_layout, null)</warning>
 
             val text: TextView = convertView.findViewById(R.id.text)
             text.text = "Position " + position

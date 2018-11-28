@@ -20,20 +20,17 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.cli.common.repl.replNormalizeLineBreaks
+import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.utils.repl.ReplEscapeType
+import org.jetbrains.kotlin.utils.repl.ReplEscapeType.*
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import javax.xml.parsers.DocumentBuilderFactory
-import org.jetbrains.kotlin.utils.repl.ReplEscapeType.*
-
-val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
-val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
 
 data class SeverityDetails(val severity: Severity, val description: String, val range: TextRange)
 
@@ -73,13 +70,13 @@ class ReplOutputHandler(
             factory.newDocumentBuilder().parse(strToSource(text))
         }
         catch (e: Exception) {
-            logError(ReplOutputHandler::class.java, "Couldn't parse REPL output: $text")
+            logError(ReplOutputHandler::class.java, "Couldn't parse REPL output: $text", e)
             return
         }
 
         val root = output.firstChild as Element
         val outputType = ReplEscapeType.valueOfOrNull(root.getAttribute("type"))
-        val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS)
+        val content = root.textContent.replUnescapeLineBreaks().replNormalizeLineBreaks()
 
         when (outputType) {
             INITIAL_PROMPT  -> buildWarningIfNeededBeforeInit(content)

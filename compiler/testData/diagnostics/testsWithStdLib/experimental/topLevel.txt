@@ -1,24 +1,16 @@
-// -- Module: <api> --
 package
 
 package api {
     @api.ExperimentalAPI public val property: kotlin.String = ""
     @api.ExperimentalAPI public fun function(): kotlin.String
 
-    @kotlin.Experimental(changesMayBreak = {Impact.COMPILATION}, level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS, AnnotationTarget.VALUE_PARAMETER}) public final annotation class ExperimentalAPI : kotlin.Annotation {
+    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS, AnnotationTarget.VALUE_PARAMETER}) public final annotation class ExperimentalAPI : kotlin.Annotation {
         public constructor ExperimentalAPI()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
     @api.ExperimentalAPI public typealias Typealias = kotlin.String
-}
-
-
-// -- Module: <usage1> --
-package
-
-package api {
 }
 
 package usage1 {
@@ -33,13 +25,6 @@ package usage1 {
     }
 }
 
-
-// -- Module: <usage2> --
-package
-
-package api {
-}
-
 package usage2 {
     public fun useAll(): kotlin.Unit
 
@@ -50,13 +35,6 @@ package usage2 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         public final fun useAll(): kotlin.Unit
     }
-}
-
-
-// -- Module: <usage3> --
-package
-
-package api {
 }
 
 package usage3 {

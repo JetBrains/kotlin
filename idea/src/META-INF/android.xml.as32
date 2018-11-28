@@ -1,0 +1,122 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="android-lint.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <gotoDeclarationHandler implementation="org.jetbrains.kotlin.android.navigation.KotlinAndroidGotoDeclarationHandler"/>
+
+        <moduleService serviceInterface="org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager"
+                       serviceImplementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidLayoutXmlFileManager"/>
+        <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor"/>
+        <errorHandler implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidExtensionsReportSubmitter"/>
+        <gotoDeclarationHandler implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidGotoDeclarationHandler"/>
+
+        <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.IllegalIdentifierInspection"
+                         displayName="Illegal Android Identifier"
+                         groupName="Kotlin Android"
+                         enabledByDefault="true"
+                         level="ERROR"/>
+
+        <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.TypeParameterFindViewByIdInspection"
+                         displayName="Cast can be converted to findViewById with type parameter"
+                         groupName="Kotlin Android"
+                         enabledByDefault="true"
+                         cleanupTool="true"
+                         level="WEAK WARNING"
+                         language="kotlin" />
+
+        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.android.KotlinAndroidLineMarkerProvider"/>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.KotlinAndroidAddStringResource</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinGradleAndroidModuleModelProjectDataService"/>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.AddActivityToManifest</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.AddServiceToManifest</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.AddBroadcastReceiverToManifest</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.ImplementParcelableAction</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.RemoveParcelableAction</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.RedoParcelableAction</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <codeInsight.unresolvedReferenceQuickFixProvider
+            implementation="org.jetbrains.kotlin.android.inspection.KotlinAndroidResourceQuickFixProvider"/>
+
+        <lang.foldingBuilder language="kotlin" implementationClass="org.jetbrains.kotlin.android.folding.ResourceFoldingBuilder" />
+
+        <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.android.AndroidResourceReferenceAnnotator" />
+
+        <referencesSearch implementation="org.jetbrains.kotlin.AndroidExtensionsReferenceSearchExecutor"/>
+
+        <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleLibraryDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleMPPModuleDataService"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+        <projectResolve implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidExtensionsProjectResolverExtension"/>
+        <projectResolve implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidMPPGradleProjectResolver"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidExtensionsExpressionCodegenExtension"/>
+        <storageComponentContainerContributor implementation="org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor"/>
+        <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidOnDestroyClassBuilderInterceptorExtension"/>
+        <packageFragmentProviderExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidPackageFragmentProviderExtension"/>
+        <simpleNameReferenceExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidSimpleNameReferenceExtension"/>
+        <kotlinIndicesHelperExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidIndicesHelperExtension"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidExtensionsGradleImportHandler"/>
+
+        <quickFixContributor implementation="org.jetbrains.kotlin.android.quickfix.AndroidQuickFixRegistrar"/>
+        <projectConfigurator implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleModuleConfigurator"/>
+        <gradleModelFacade implementation="org.jetbrains.kotlin.android.configure.AndroidGradleModelFacade"/>
+        <completionInformationProvider implementation="org.jetbrains.kotlin.AndroidExtensionsCompletionInformationProvider" />
+
+        <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.parcel.IDEParcelableCodegenExtension"/>
+        <syntheticResolveExtension implementation="org.jetbrains.kotlin.android.parcel.IDEParcelableResolveExtension"/>
+        <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension"/>
+        <quickFixContributor implementation="org.jetbrains.kotlin.android.parcel.quickfixes.ParcelableQuickFixContributor"/>
+
+        <androidDexer implementation="org.jetbrains.kotlin.android.debugger.AndroidDexerImpl"/>
+
+        <highlighterExtension implementation="org.jetbrains.kotlin.android.AndroidHighlighterExtension"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.android.tools.idea">
+        <npw.template.convertJavaToKotlinProvider implementation="org.jetbrains.kotlin.android.ConvertJavaToKotlinProviderImpl"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.android">
+        <androidLintQuickFixProvider implementation="org.jetbrains.kotlin.android.quickfix.KotlinAndroidQuickFixProvider" />
+    </extensions>
+
+    <extensions defaultExtensionNs="com.android.gradle.sync">
+        <postSyncModuleSetupStep implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidModuleSetupStep"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin.android.model">
+        <androidModuleInfoProvider implementation="org.jetbrains.kotlin.android.model.impl.AndroidModuleInfoProviderImpl"/>
+    </extensions>
+</idea-plugin>

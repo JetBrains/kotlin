@@ -18,28 +18,34 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPrimaryConstructorOfInlineClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
-object ExpectedActualDeclarationChecker : DeclarationChecker {
+class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnotationArgumentExtractor> = emptyList()) : DeclarationChecker {
+    interface ActualAnnotationArgumentExtractor {
+        fun extractActualValue(argument: PsiElement, expectedType: KotlinType): ConstantValue<*>?
+    }
+
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
 
@@ -49,7 +55,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         if (descriptor.isExpect) {
             checkExpectedDeclarationHasActual(declaration, descriptor, context.trace, descriptor.module, context.expectActualTracker)
         } else {
-            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
+            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
             checkActualDeclarationHasExpected(declaration, descriptor, context.trace, checkActual)
         }
     }
@@ -65,6 +71,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
 
         val compatibility = ExpectedActualResolver.findActualForExpected(descriptor, platformModule) ?: return
+
+        if (compatibility.allStrongIncompatibilities() && isOptionalAnnotationClass(descriptor)) return
 
         val shouldReportError =
             compatibility.allStrongIncompatibilities() ||
@@ -104,9 +112,6 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             .safeAs<PsiSourceFile>()
             ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
 
-    private fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
-        this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
-
     private fun checkActualDeclarationHasExpected(
         reportOn: KtNamedDeclaration, descriptor: MemberDescriptor, trace: BindingTrace, checkActual: Boolean
     ) {
@@ -114,17 +119,20 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         // However, in compiler context platform & common modules are joined into one module,
         // so there is yet no "common module" in this situation.
         // So yet we are using own module in compiler context and common module in IDE context.
-        val commonOrOwnModule = descriptor.module.expectedByModule ?: descriptor.module
-        val compatibility = ExpectedActualResolver.findExpectedForActual(descriptor, commonOrOwnModule) ?: return
+        val commonOrOwnModules = descriptor.module.expectedByModules.ifEmpty { listOf(descriptor.module) }
+        val compatibility = commonOrOwnModules
+            .mapNotNull { ExpectedActualResolver.findExpectedForActual(descriptor, it) }
+            .ifEmpty { return }
+            .fold(LinkedHashMap<Compatibility, List<MemberDescriptor>>()) { resultMap, partialMap ->
+                resultMap.apply { putAll(partialMap) }
+            }
 
         val hasActualModifier = descriptor.isActual && reportOn.hasActualModifier()
         if (!hasActualModifier) {
             if (compatibility.allStrongIncompatibilities()) return
 
             if (Compatible in compatibility) {
-                // we suppress error, because annotation classes can only have one constructor and it's a 100% boilerplate
-                // to require every annotation constructor with additional parameters with default values be marked with the `actual` modifier
-                if (checkActual && !descriptor.isAnnotationConstructor()) {
+                if (checkActual && requireActualModifier(descriptor)) {
                     trace.report(Errors.ACTUAL_MISSING.on(reportOn))
                 }
 
@@ -189,6 +197,20 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         }
     }
 
+    // we don't require `actual` modifier on
+    //  - annotation constructors, because annotation classes can only have one constructor
+    //  - inline class primary constructors, because inline class must have primary constructor
+    //  - value parameter inside primary constructor of inline class, because inline class must have one value parameter
+    private fun requireActualModifier(descriptor: MemberDescriptor): Boolean {
+        return !descriptor.isAnnotationConstructor() &&
+                !descriptor.isPrimaryConstructorOfInlineClass() &&
+                !isUnderlyingPropertyOfInlineClass(descriptor)
+    }
+
+    private fun isUnderlyingPropertyOfInlineClass(descriptor: MemberDescriptor): Boolean {
+        return descriptor is PropertyDescriptor && descriptor.isUnderlyingPropertyOfInlineClass()
+    }
+
     // This should ideally be handled by CallableMemberDescriptor.Kind, but default constructors have kind DECLARATION and non-empty source.
     // Their source is the containing KtClass instance though, as opposed to explicit constructors, whose source is KtConstructor
     private fun MemberDescriptor.isExplicitActualDeclaration(): Boolean =
@@ -211,15 +233,58 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 val actualParameter = DescriptorToSourceUtils.descriptorToDeclaration(actualParameterDescriptor)
 
                 val expectedValue = trace.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expectedParameter.defaultValue)
-                // TODO: support arguments coming from Java via typealias, see PsiAnnotationMethod.getDefaultValue()
-                val actualValue = (actualParameter as? KtParameter)?.let { parameter ->
-                    trace.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, parameter.defaultValue)
-                }
+                    ?.toConstantValue(expectedParameterDescriptor.type)
+
+                val actualValue = getActualAnnotationParameterValue(actualParameter, trace.bindingContext, expectedParameterDescriptor.type)
                 if (expectedValue != actualValue) {
                     val target = (actualParameter as? KtParameter)?.defaultValue ?: (reportOn as? KtTypeAlias)?.nameIdentifier ?: reportOn
                     trace.report(Errors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE.on(target, actualParameterDescriptor))
                 }
             }
         }
+    }
+
+    private fun getActualAnnotationParameterValue(
+        actualParameter: PsiElement?, bindingContext: BindingContext, expectedType: KotlinType
+    ): ConstantValue<*>? {
+        if (actualParameter is KtParameter) {
+            return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, actualParameter.defaultValue)?.toConstantValue(expectedType)
+        }
+
+        if (actualParameter != null) {
+            for (extractor in argumentExtractors) {
+                extractor.extractActualValue(actualParameter, expectedType)?.let { return it }
+            }
+        }
+
+        return null
+    }
+
+    companion object {
+        val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
+
+        @JvmStatic
+        fun isOptionalAnnotationClass(descriptor: DeclarationDescriptor): Boolean =
+            descriptor is ClassDescriptor &&
+                    descriptor.kind == ClassKind.ANNOTATION_CLASS &&
+                    descriptor.isExpect &&
+                    descriptor.annotations.hasAnnotation(OPTIONAL_EXPECTATION_FQ_NAME)
+
+        // TODO: move to some other place which is accessible both from backend-common and js.serializer
+        @JvmStatic
+        fun shouldGenerateExpectClass(descriptor: ClassDescriptor): Boolean {
+            assert(descriptor.isExpect) { "Not an expected class: $descriptor" }
+
+            if (isOptionalAnnotationClass(descriptor)) {
+                with(ExpectedActualResolver) {
+                    return descriptor.findCompatibleActualForExpected(descriptor.module).isEmpty()
+                }
+            }
+
+            return false
+        }
+
+        fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
+            this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
     }
 }

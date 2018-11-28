@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -33,7 +33,7 @@ enum class RttiOperation {
 }
 
 class RttiExpressionInformation(
-    val subject: KtExpression,
+    val subject: KtElement,
     val sourceType: KotlinType?,
     val targetType: KotlinType?,
     val operation: RttiOperation

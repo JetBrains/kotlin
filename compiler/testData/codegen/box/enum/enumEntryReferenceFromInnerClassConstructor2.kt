@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 interface IFoo {
     fun foo(): String
 }

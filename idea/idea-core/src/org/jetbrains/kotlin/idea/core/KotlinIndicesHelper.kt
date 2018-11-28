@@ -26,10 +26,10 @@ import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaFieldDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -44,10 +44,12 @@ import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DeprecationResolver
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticStaticFunctions
@@ -183,7 +185,7 @@ class KotlinIndicesHelper(
         val typeConstructor = type.constructor
 
         val index = KotlinTypeAliasByExpansionShortNameIndex.INSTANCE
-        val out = mutableSetOf<TypeAliasDescriptor>()
+        val out = LinkedHashMap<FqName, TypeAliasDescriptor>()
 
         fun searchRecursively(typeName: String) {
             ProgressManager.checkCanceled()
@@ -191,14 +193,13 @@ class KotlinIndicesHelper(
                     .map { it.resolveToDescriptorIfAny() as? TypeAliasDescriptor }
                     .filterNotNull()
                     .filter { it.expandedType.constructor == typeConstructor }
-                    .filter { it !in out }
-                    .onEach { out.add(it) }
+                    .filter { out.putIfAbsent(it.fqNameSafe, it) == null }
                     .map { it.name.asString() }
                     .forEach(::searchRecursively)
         }
 
         searchRecursively(originalTypeName)
-        return out
+        return out.values.toSet()
     }
 
     private fun MutableCollection<String>.addTypeNames(type: KotlinType) {
@@ -441,7 +442,7 @@ class KotlinIndicesHelper(
                 if (!method.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (filterOutPrivate && method.hasModifierProperty(PsiModifier.PRIVATE)) continue
                 if (method.containingClass?.parent !is PsiFile) continue // only top-level classes
-                val descriptor = method.getJavaMethodDescriptor(resolutionFacade) ?: continue
+                val descriptor = method.getJavaMemberDescriptor(resolutionFacade) ?: continue
                 val container = descriptor.containingDeclaration as? ClassDescriptor ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                     processor(descriptor)
@@ -464,7 +465,7 @@ class KotlinIndicesHelper(
             for (field in shortNamesCache.getFieldsByName(name, scopeWithoutKotlin).filterNot { it is KtLightElement<*, *> }) {
                 if (!field.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (filterOutPrivate && field.hasModifierProperty(PsiModifier.PRIVATE)) continue
-                val descriptor = field.getJavaFieldDescriptor() ?: continue
+                val descriptor = field.getJavaMemberDescriptor() ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                     processor(descriptor)
                 }

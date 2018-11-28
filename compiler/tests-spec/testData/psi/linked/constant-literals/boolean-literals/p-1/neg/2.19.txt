@@ -1,0 +1,65 @@
+KtFile: 2.19.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('org')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('jetbrains')
+        PsiElement(DOT)('.')
+        PsiErrorElement:Qualified name must be a '.'-separated identifier list
+          PsiElement(true)('true')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+    PsiWhiteSpace('\n\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(false)('false')
+    PsiWhiteSpace('\n\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(true)('true')
+        PsiElement(DOT)('.')
+        PsiElement(MUL)('*')
+    PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace('\n\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(false)('false')
+        PsiElement(DOT)('.')
+        PsiElement(MUL)('*')
+        PsiElement(IDENTIFIER)('import')
+        PsiWhiteSpace(' ')
+        PsiElement(true)('true')
+    PsiWhiteSpace('\n\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('org')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('jetbrains')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('kotlin')
+      PsiWhiteSpace(' ')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting identifier
+          PsiElement(false)('false')

@@ -1,0 +1,38 @@
+@kotlin.Metadata
+public final class Z1 {
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z1
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class Z2 {
+    private final field z: int
+    private synthetic method <init>(p0: int): void
+    public final static method bar-E2ud15U(p0: int, p1: int): void
+    public final static method bar-cYvoCnY(p0: int, p1: int): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z2
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final static method foo-E2ud15U(p0: int, p1: int): void
+    public final static method foo-cYvoCnY(p0: int, p1: int): void
+    public final method getZ(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public final static method qux-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

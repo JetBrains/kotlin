@@ -17,62 +17,41 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.types.upperIfFlexible
-import java.util.*
 
-fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement, symbolTable: SymbolTable) {
-    element.transformChildren(InsertImplicitCasts(builtIns, symbolTable), null)
+fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
+    element.transformChildren(InsertImplicitCasts(context.builtIns, context.irBuiltIns, context.typeTranslator), null)
 }
 
-class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) : IrElementTransformerVoid() {
-    private val typeParameterScopes = ArrayDeque<Map<TypeParameterDescriptor, IrTypeParameterSymbol>>()
+open class InsertImplicitCasts(
+    private val builtIns: KotlinBuiltIns,
+    private val irBuiltIns: IrBuiltIns,
+    private val typeTranslator: TypeTranslator
+) : IrElementTransformerVoid() {
 
-    private inline fun <T> runInTypeParameterScope(typeParametersContainer: IrTypeParametersContainer, fn: () -> T): T {
-        enterTypeParameterScope(typeParametersContainer)
-        val result = fn()
-        leaveTypeParameterScope()
-        return result
-    }
-
-    private fun enterTypeParameterScope(typeParametersContainer: IrTypeParametersContainer) {
-        typeParameterScopes.addFirst(
-            typeParametersContainer.typeParameters.associate {
-                it.descriptor to it.symbol
-            }
-        )
-    }
-
-    private fun leaveTypeParameterScope() {
-        typeParameterScopes.removeFirst()
-    }
-
-    private fun resolveScopedTypeParameter(classifier: ClassifierDescriptor): IrTypeParameterSymbol? {
-        if (classifier !is TypeParameterDescriptor) return null
-        for (scope in typeParameterScopes) {
-            val local = scope[classifier]
-            if (local != null) return local
-        }
-        return null
-    }
+    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression =
         expression.transformPostfix {
@@ -145,12 +124,17 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
         }
 
     override fun visitFunction(declaration: IrFunction): IrStatement =
-        runInTypeParameterScope(declaration) {
+        typeTranslator.buildWithScope(declaration) {
             declaration.transformPostfix {
                 valueParameters.forEach {
                     it.defaultValue?.coerceInnerExpression(it.descriptor.type)
                 }
             }
+        }
+
+    override fun visitClass(declaration: IrClass): IrStatement =
+        typeTranslator.buildWithScope(declaration) {
+            super.visitClass(declaration)
         }
 
     override fun visitWhen(expression: IrWhen): IrExpression =
@@ -199,13 +183,16 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
         expression = expression.cast(expectedType)
     }
 
+    private fun IrExpression.cast(irType: IrType): IrExpression =
+        cast(irType.originalKotlinType)
+
     private fun IrExpression.cast(expectedType: KotlinType?): IrExpression {
         if (expectedType == null) return this
         if (expectedType.isError) return this
 
         val notNullableExpectedType = expectedType.makeNotNullable()
 
-        val valueType = this.type
+        val valueType = this.type.originalKotlinType!!
 
         return when {
             KotlinBuiltIns.isUnit(expectedType) ->
@@ -216,7 +203,7 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
                 implicitCast(nonNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
             }
 
-            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType) ->
+            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType.makeNullable()) ->
                 this
 
             KotlinBuiltIns.isInt(valueType) && notNullableExpectedType.isBuiltInIntegerType() ->
@@ -236,33 +223,49 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
         targetType: KotlinType,
         typeOperator: IrTypeOperator
     ): IrExpression {
-        val typeDescriptor = targetType.constructor.declarationDescriptor
-                ?: throw AssertionError("No declaration for target type: $targetType")
-
+        val irType = targetType.toIrType()
         return IrTypeOperatorCallImpl(
-            startOffset, endOffset,
-            targetType, typeOperator, targetType, this,
-            resolveScopedTypeParameter(typeDescriptor) ?: symbolTable.referenceClassifier(typeDescriptor)
+            startOffset,
+            endOffset,
+            irType,
+            typeOperator,
+            irType, irType.classifierOrFail,
+            this
         )
     }
 
-    private fun IrExpression.coerceToUnit(): IrExpression {
-        val valueType = this.type
+    protected open fun IrExpression.coerceToUnit(): IrExpression {
+        val valueType = getKotlinType(this)
+        return coerceToUnitIfNeeded(valueType)
+    }
 
-        return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, builtIns.unitType))
+    protected fun getKotlinType(irExpression: IrExpression) =
+        irExpression.type.originalKotlinType!!
+
+    protected fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType): IrExpression {
+        return if (isUnitSubtype(valueType))
             this
         else
             IrTypeOperatorCallImpl(
-                startOffset, endOffset, builtIns.unitType,
-                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, builtIns.unitType, this,
-                symbolTable.referenceClass(builtIns.unit)
+                startOffset, endOffset,
+                irBuiltIns.unitType,
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+                irBuiltIns.unitType, irBuiltIns.unitType.classifierOrFail,
+                this
             )
     }
+
+    protected fun isUnitSubtype(valueType: KotlinType) =
+        KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, builtIns.unitType)
 
     private fun KotlinType.isBuiltInIntegerType(): Boolean =
         KotlinBuiltIns.isByte(this) ||
                 KotlinBuiltIns.isShort(this) ||
                 KotlinBuiltIns.isInt(this) ||
-                KotlinBuiltIns.isLong(this)
+                KotlinBuiltIns.isLong(this) ||
+                KotlinBuiltIns.isUByte(this) ||
+                KotlinBuiltIns.isUShort(this) ||
+                KotlinBuiltIns.isUInt(this) ||
+                KotlinBuiltIns.isULong(this)
 }
 

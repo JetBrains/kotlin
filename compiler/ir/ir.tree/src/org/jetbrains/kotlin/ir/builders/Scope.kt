@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -42,7 +45,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     private var lastTemporaryIndex: Int = 0
     private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
 
-    fun createDescriptorForTemporaryVariable(
+    private fun createDescriptorForTemporaryVariable(
         type: KotlinType,
         nameHint: String? = null,
         isMutable: Boolean = false
@@ -58,13 +61,21 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         irExpression: IrExpression,
         nameHint: String? = null,
         isMutable: Boolean = false,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-    ): IrVariable =
-        IrVariableImpl(
+        type: KotlinType? = null,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        irType: IrType? = null
+    ): IrVariable {
+        val originalKotlinType = type ?: (irExpression.type.originalKotlinType ?: irExpression.type.toKotlinType())
+        return IrVariableImpl(
             irExpression.startOffset, irExpression.endOffset, origin,
-            createDescriptorForTemporaryVariable(irExpression.type, nameHint, isMutable),
+            createDescriptorForTemporaryVariable(
+                originalKotlinType,
+                nameHint, isMutable
+            ),
+            irType ?: irExpression.type,
             irExpression
         )
+    }
 }
 
 @Suppress("DeprecatedCallableAddReplaceWith")

@@ -44,10 +44,7 @@ import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtQualifiedExpression;
-import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry;
+import org.jetbrains.kotlin.psi.*;
 
 public class KotlinTypedHandler extends TypedHandlerDelegate {
     private final static TokenSet CONTROL_FLOW_EXPRESSIONS = TokenSet.create(
@@ -100,6 +97,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 }
 
                 if (iterator.atEnd() || !(SUPPRESS_AUTO_INSERT_CLOSE_BRACE_AFTER.contains(iterator.getTokenType()))) {
+                    AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, null);
                     return Result.CONTINUE;
                 }
 
@@ -241,12 +239,22 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             }
         }
         else if (c == ':') {
-            if (autoIndentCase(editor, project, file, KtClassOrObject.class)) {
+            if (autoIndentCase(editor, project, file, KtClassOrObject.class) ||
+                autoIndentCase(editor, project, file, KtOperationReferenceExpression.class)) {
                 return Result.STOP;
             }
         }
         else if (c == '.') {
             if (autoIndentCase(editor, project, file, KtQualifiedExpression.class)) {
+                return Result.STOP;
+            }
+        }
+        else if (c == '|') {
+            if (autoIndentCase(editor, project, file, KtOperationReferenceExpression.class)) {
+                return Result.STOP;
+            }
+        } else if (c == '&') {
+            if (autoIndentCase(editor, project, file, KtOperationReferenceExpression.class)) {
                 return Result.STOP;
             }
         }

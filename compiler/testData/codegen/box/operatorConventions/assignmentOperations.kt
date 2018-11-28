@@ -6,7 +6,7 @@ operator fun A.plusAssign(y: Int) { x += y }
 operator fun A.minusAssign(y: Int) { x -= y }
 operator fun A.timesAssign(y: Int) { x *= y }
 operator fun A.divAssign(y: Int) { x /= y }
-operator fun A.modAssign(y: Int) { x %= y }
+operator fun A.remAssign(y: Int) { x %= y }
 
 fun box(): String {
   val original = A()

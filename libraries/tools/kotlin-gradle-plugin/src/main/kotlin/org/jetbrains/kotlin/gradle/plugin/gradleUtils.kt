@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileTree
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.compilerRunner.KotlinLogger
 import java.io.File
 
 internal fun AbstractCompile.appendClasspathDynamically(file: File) {
@@ -56,10 +56,10 @@ internal inline fun <reified T : Any> Any.addConvention(name: String, plugin: T)
 }
 
 internal inline fun <reified T : Any> Any.addExtension(name: String, extension: T) =
-        (this as ExtensionAware).extensions.add(name, extension)
+    (this as ExtensionAware).extensions.add(name, extension)
 
 internal fun Any.getConvention(name: String): Any? =
-        (this as HasConvention).convention.plugins[name]
+    (this as HasConvention).convention.plugins[name]
 
 internal fun Logger.kotlinInfo(message: String) {
     this.info("[KOTLIN] $message")
@@ -76,5 +76,12 @@ internal fun Logger.kotlinWarn(message: String) {
 internal inline fun Logger.kotlinDebug(message: () -> String) {
     if (isDebugEnabled) {
         kotlinDebug(message())
+    }
+}
+
+internal inline fun KotlinLogger.kotlinDebug(fn: () -> String) {
+    if (isDebugEnabled) {
+        val msg = fn()
+        debug("[KOTLIN] $msg")
     }
 }

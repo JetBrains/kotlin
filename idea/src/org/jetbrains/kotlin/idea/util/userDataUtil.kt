@@ -20,6 +20,12 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.util.Key
 import kotlin.reflect.KProperty
 
+class DataNodeUserDataProperty<in R : DataNode<*>, T : Any>(val key: Key<T>) {
+    operator fun getValue(thisRef: R, property: KProperty<*>) = thisRef.getUserData(key)
+
+    operator fun setValue(thisRef: R, property: KProperty<*>, value: T?) = thisRef.putUserData(key, value)
+}
+
 class CopyableDataNodeUserDataProperty<in R : DataNode<*>, T : Any>(val key: Key<T>) {
     operator fun getValue(thisRef: R, property: KProperty<*>) = thisRef.getCopyableUserData(key)
 

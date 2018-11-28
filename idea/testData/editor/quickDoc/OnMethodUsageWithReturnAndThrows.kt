@@ -14,7 +14,7 @@ fun test() {
     <caret>testMethod(1, "value")
 }
 
-//INFO: <pre><b>public</b> <b>fun</b> testMethod(a: Int, b: String): Unit <i>defined in</i> root package <i>in file</i> OnMethodUsageWithReturnAndThrows.kt</pre><p>Some documentation</p>
-//INFO: <dl><dt><b>Parameters:</b></dt><dd><code>a</code> - Some int</dd><dd><code>b</code> - String</dd></dl>
-//INFO: <dl><dt><b>Returns:</b></dt><dd>Return value</dd></dl>
-//INFO: <dl><dt><b>Throws:</b></dt><dd><code>IllegalArgumentException</code> - if the weather is bad</dd></dl>
+//INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsageWithReturnAndThrows.kt</i></font><br>public fun <b>testMethod</b>(
+//INFO:     a: Int,
+//INFO:     b: String
+//INFO: ): Unit</pre></div><div class='content'><p>Some documentation</p></div><table class='sections'><tr><td valign='top' class='section'><p>Params:</td><td valign='top'><p><code>a</code> - Some int<p><code>b</code> - String</td><tr><td valign='top' class='section'><p>Returns:</td><td valign='top'>Return value</td><tr><td valign='top' class='section'><p>Throws:</td><td valign='top'><p><code>IllegalArgumentException</code> - if the weather is bad</td></table>

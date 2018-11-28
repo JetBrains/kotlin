@@ -26,7 +26,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Any]
-      FUN[fqName=AnonymousReturnWithGenericType.f1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f1]
+      FUN[fqName=AnonymousReturnWithGenericType.f1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f1]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -37,7 +37,7 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=AnonymousReturnWithGenericType.f2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f2]
+      FUN[fqName=AnonymousReturnWithGenericType.f2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f2]
         MODIFIER_LIST[private final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

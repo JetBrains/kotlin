@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1144
+// EXPECTED_REACHABLE_NODES: 1302
 import kotlin.reflect.KProperty
 
 var lastGeneratedId = 0

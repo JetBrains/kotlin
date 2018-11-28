@@ -45,8 +45,8 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
                 c.expectedType,
                 { c.dataFlowValueFactory.createDataFlowValue(expression, expressionType, c) } ,
                 c.dataFlowInfo
-        ) { expectedMustNotBeNull, actualMayBeNull ->
-            c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(expression, expectedMustNotBeNull, actualMayBeNull))
+        ) { expectedType, actualType ->
+            c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(expression, expectedType, actualType))
         }
 
         when (expression) {
@@ -121,12 +121,15 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
                 receiverParameter.type,
                 { dataFlowValue },
                 c.dataFlowInfo
-        ) { expectedMustNotBeNull,
-            actualMayBeNull ->
-            val reportOn = (receiverArgument as? ExpressionReceiver)?.expression ?: (c.call.calleeExpression ?: c.call.callElement)
-            c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(
-                    reportOn, expectedMustNotBeNull, actualMayBeNull
-            ))
+        ) { expectedType,
+            actualType ->
+            val receiverExpression = (receiverArgument as? ExpressionReceiver)?.expression
+            if (receiverExpression != null) {
+                c.trace.report(ErrorsJvm.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(receiverExpression, actualType))
+            } else {
+                val reportOn = c.call.calleeExpression ?: c.call.callElement
+                c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(reportOn, expectedType, actualType))
+            }
         }
     }
 
@@ -135,22 +138,21 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
             expectedType: KotlinType,
             dataFlowValue: () -> DataFlowValue,
             dataFlowInfo: DataFlowInfo,
-            reportWarning: (expectedMustNotBeNull: ErrorsJvm.NullabilityInformationSource, actualMayBeNull: ErrorsJvm.NullabilityInformationSource) -> Unit
+            reportWarning: (expectedType: KotlinType, actualType: KotlinType) -> Unit
     ) {
         if (TypeUtils.noExpectedType(expectedType)) {
             return
         }
 
-        val expectedMustNotBeNull = expectedType.mustNotBeNull()
-        val actualMayBeNull = expressionType.mayBeNull()
-        if (expectedMustNotBeNull == ErrorsJvm.NullabilityInformationSource.KOTLIN && actualMayBeNull == ErrorsJvm.NullabilityInformationSource.KOTLIN) {
+        val expectedMustNotBeNull = expectedType.mustNotBeNull() ?: return
+        val actualMayBeNull = expressionType.mayBeNull() ?: return
+        if (expectedMustNotBeNull.isFromKotlin && actualMayBeNull.isFromKotlin) {
             // a type mismatch error will be reported elsewhere
             return
         }
 
-        if (expectedMustNotBeNull != null && actualMayBeNull != null &&
-            dataFlowInfo.getStableNullability(dataFlowValue()) != Nullability.NOT_NULL) {
-            reportWarning(expectedMustNotBeNull, actualMayBeNull)
+        if (dataFlowInfo.getStableNullability(dataFlowValue()) != Nullability.NOT_NULL) {
+            reportWarning(expectedMustNotBeNull.enhancedType, actualMayBeNull.enhancedType)
         }
     }
 
@@ -159,23 +161,30 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
             dataFlowValue: () -> DataFlowValue,
             c: ResolutionContext<*>,
             body: () -> T
-    ) = if (type.mustNotBeNull() == ErrorsJvm.NullabilityInformationSource.JAVA &&
+    ) = if (type.mustNotBeNull()?.isFromJava == true &&
             c.dataFlowInfo.getStableNullability(dataFlowValue()).canBeNull())
             body()
         else
             null
 
-    private fun KotlinType.mustNotBeNull(): ErrorsJvm.NullabilityInformationSource? = when {
-        !isError && !isFlexible() && !TypeUtils.acceptsNullable(this) -> ErrorsJvm.NullabilityInformationSource.KOTLIN
-        isFlexible() && !TypeUtils.acceptsNullable(asFlexibleType().upperBound) -> ErrorsJvm.NullabilityInformationSource.KOTLIN
-        this is TypeWithEnhancement && enhancement.mustNotBeNull() != null -> ErrorsJvm.NullabilityInformationSource.JAVA
+    private class EnhancedNullabilityInfo(val enhancedType: KotlinType, val isFromJava: Boolean) {
+        val isFromKotlin get() = !isFromJava
+    }
+
+    private fun KotlinType.enhancementFromKotlin() = EnhancedNullabilityInfo(this, isFromJava = false)
+    private fun TypeWithEnhancement.enhancementFromJava() = EnhancedNullabilityInfo(enhancement, isFromJava = true)
+
+    private fun KotlinType.mustNotBeNull(): EnhancedNullabilityInfo? = when {
+        !isError && !isFlexible() && !TypeUtils.acceptsNullable(this) -> enhancementFromKotlin()
+        isFlexible() && !TypeUtils.acceptsNullable(asFlexibleType().upperBound) -> enhancementFromKotlin()
+        this is TypeWithEnhancement && enhancement.mustNotBeNull() != null -> enhancementFromJava()
         else -> null
     }
 
-    private fun KotlinType.mayBeNull(): ErrorsJvm.NullabilityInformationSource? = when {
-        !isError && !isFlexible() && TypeUtils.acceptsNullable(this) -> ErrorsJvm.NullabilityInformationSource.KOTLIN
-        isFlexible() && TypeUtils.acceptsNullable(asFlexibleType().lowerBound) -> ErrorsJvm.NullabilityInformationSource.KOTLIN
-        this is TypeWithEnhancement && enhancement.mayBeNull() != null -> ErrorsJvm.NullabilityInformationSource.JAVA
+    private fun KotlinType.mayBeNull(): EnhancedNullabilityInfo? = when {
+        !isError && !isFlexible() && TypeUtils.acceptsNullable(this) -> enhancementFromKotlin()
+        isFlexible() && TypeUtils.acceptsNullable(asFlexibleType().lowerBound) -> enhancementFromKotlin()
+        this is TypeWithEnhancement && enhancement.mayBeNull() != null -> enhancementFromJava()
         else -> null
     }
 }

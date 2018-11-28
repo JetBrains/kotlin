@@ -60,14 +60,16 @@ class KotlinFunctionTypeArgumentInfoHandler : KotlinTypeArgumentInfoHandlerBase<
         val call = callElement.getCall(bindingContext) ?: return null
         val candidates = call.resolveCandidates(bindingContext, callElement.getResolutionFacade())
         return candidates
-                .map { it.resultingDescriptor }
-                .distinctBy { buildPresentation(it.typeParameters, -1).first }
+            .map { it.resultingDescriptor }
+            .distinctBy { buildPresentation(it.typeParameters, -1).first }
     }
 
     override fun getArgumentListAllowedParentClasses() = setOf(KtCallElement::class.java)
 }
 
-abstract class KotlinTypeArgumentInfoHandlerBase<TParameterOwner : DeclarationDescriptor> : ParameterInfoHandlerWithTabActionSupport<KtTypeArgumentList, TParameterOwner, KtTypeProjection> {
+abstract class KotlinTypeArgumentInfoHandlerBase<TParameterOwner : DeclarationDescriptor> :
+    ParameterInfoHandlerWithTabActionSupport<KtTypeArgumentList, TParameterOwner, KtTypeProjection> {
+
     protected abstract fun fetchTypeParameters(descriptor: TParameterOwner): List<TypeParameterDescriptor>
     protected abstract fun findParameterOwners(argumentList: KtTypeArgumentList): Collection<TParameterOwner>?
 
@@ -78,7 +80,8 @@ abstract class KotlinTypeArgumentInfoHandlerBase<TParameterOwner : DeclarationDe
 
     override fun getActualParameters(o: KtTypeArgumentList) = o.arguments.toTypedArray()
 
-    override fun getArgListStopSearchClasses() = setOf(KtNamedFunction::class.java, KtVariableDeclaration::class.java, KtClassOrObject::class.java)
+    override fun getArgListStopSearchClasses() =
+        setOf(KtNamedFunction::class.java, KtVariableDeclaration::class.java, KtClassOrObject::class.java)
 
     override fun getParameterCloseChars() = ParameterInfoUtils.DEFAULT_PARAMETER_CLOSE_CHARS
 
@@ -124,8 +127,8 @@ abstract class KotlinTypeArgumentInfoHandlerBase<TParameterOwner : DeclarationDe
 
         val offset = context.offset
         val parameterIndex = argumentList.allChildren
-                .takeWhile { it.startOffset < offset }
-                .count { it.node.elementType == KtTokens.COMMA }
+            .takeWhile { it.startOffset < offset }
+            .count { it.node.elementType == KtTokens.COMMA }
         context.setCurrentParameter(parameterIndex)
     }
 
@@ -144,16 +147,18 @@ abstract class KotlinTypeArgumentInfoHandlerBase<TParameterOwner : DeclarationDe
 
         val (text, currentParameterStart, currentParameterEnd) = buildPresentation(parameters, currentIndex)
 
-        context.setupUIComponentPresentation(text, currentParameterStart, currentParameterEnd,
-                                             false/*isDisabled*/, false/*strikeout*/, false/*isDisabledBeforeHighlight*/,
-                                             context.defaultParameterColor)
+        context.setupUIComponentPresentation(
+            text, currentParameterStart, currentParameterEnd,
+            false/*isDisabled*/, false/*strikeout*/, false/*isDisabledBeforeHighlight*/,
+            context.defaultParameterColor
+        )
 
         return true
     }
 
     protected fun buildPresentation(
-            parameters: List<TypeParameterDescriptor>,
-            currentIndex: Int
+        parameters: List<TypeParameterDescriptor>,
+        currentIndex: Int
     ): Triple<String, Int, Int> {
         var currentParameterStart = -1
         var currentParameterEnd = -1
@@ -172,7 +177,8 @@ abstract class KotlinTypeArgumentInfoHandlerBase<TParameterOwner : DeclarationDe
                 }
 
                 when (parameter.variance) {
-                    Variance.INVARIANT -> {}
+                    Variance.INVARIANT -> {
+                    }
                     Variance.IN_VARIANCE -> append("in ")
                     Variance.OUT_VARIANCE -> append("out ")
                 }
@@ -185,8 +191,7 @@ abstract class KotlinTypeArgumentInfoHandlerBase<TParameterOwner : DeclarationDe
                     if (!upperBound.isAnyOrNullableAny() || upperBound.nullability() == TypeNullability.NOT_NULL) { // skip Any? or Any!
                         append(" : ").append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(upperBound))
                     }
-                }
-                else if (upperBounds.size > 1) {
+                } else if (upperBounds.size > 1) {
                     needWhere = true
                 }
 
@@ -205,7 +210,9 @@ abstract class KotlinTypeArgumentInfoHandlerBase<TParameterOwner : DeclarationDe
                         for (upperBound in upperBounds) {
                             if (needComma) append(", ")
                             needComma = true
-                            append(parameter.name.asString()).append(" : ").append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(upperBound))
+                            append(parameter.name.asString())
+                            append(" : ")
+                            append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(upperBound))
                         }
                     }
                 }

@@ -18,33 +18,27 @@ package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.FileAttribute
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.moduleInfo
-import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
-import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
+import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_EXT
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.psi.KtFile
-import kotlin.reflect.KProperty
 
-class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent(project) {
+class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
     private val LOG = Logger.getInstance(this.javaClass)
 
     override fun projectOpened() {
-        myProject.messageBus.connect(myProject).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, ScratchFileModuleListener())
+        project.messageBus.connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, ScratchFileModuleListener())
     }
 
     private inner class ScratchFileModuleListener : FileEditorManagerListener {
@@ -52,7 +46,7 @@ class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent
             if (!file.isValid) return
             if (!ScratchFileService.isInScratchRoot(file)) return
 
-            val ktFile = PsiManager.getInstance(myProject).findFile(file) as? KtFile ?: return
+            val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
 
             // Hack before api in IDEA will be introduced
             if (file.extension == KotlinFileType.EXTENSION) {
@@ -74,44 +68,23 @@ class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent
 
             val scratchPanel = getEditorWithScratchPanel(source, file)?.second
             scratchPanel?.addModuleListener { psiFile, module ->
-                psiFile.moduleInfo = getModuleInfo(module)
-                // Drop caches for old module
-                ProjectRootManager.getInstance(myProject).incModificationCount()
-                // Force re-highlighting
-                DaemonCodeAnalyzer.getInstance(myProject).restart(psiFile)
+                psiFile.virtualFile.scriptRelatedModuleName = module.name
 
-                psiFile.virtualFile.moduleName = module.name
+                // Drop caches for old module
+                ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
+                // Force re-highlighting
+                DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
             }
 
-            val module =
-                ktFile.virtualFile.moduleName?.let { ModuleManager.getInstance(myProject).findModuleByName(it) }
+            val module = ktFile.virtualFile.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
             if (module != null) {
                 scratchPanel?.setModule(module)
             } else {
-                val firstModule = ModuleManager.getInstance(myProject).modules.firstOrNull()
+                val firstModule = ModuleManager.getInstance(project).modules.firstOrNull()
                 if (firstModule != null) {
                     scratchPanel?.setModule(firstModule)
                 }
             }
-        }
-    }
-
-    private fun getModuleInfo(it: Module?) =
-        it?.testSourceInfo() ?: it?.productionSourceInfo() ?: NotUnderContentRootModuleInfo
-}
-
-private var VirtualFile.moduleName: String? by ScratchModuleNameProperty()
-
-private val moduleNameAttribute = FileAttribute("ScratchModuleName", 1, false)
-private class ScratchModuleNameProperty {
-
-    operator fun getValue(file: VirtualFile, property: KProperty<*>): String? {
-        return moduleNameAttribute.readAttributeBytes(file)?.let { String(it) }
-    }
-
-    operator fun setValue(file: VirtualFile, property: KProperty<*>, newValue: String?) {
-        if (newValue != null) {
-            moduleNameAttribute.writeAttributeBytes(file, newValue.toByteArray())
         }
     }
 }

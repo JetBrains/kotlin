@@ -80,12 +80,14 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
         val isPropertiesFile = FileUtilRt.getExtension(path) == "properties"
 
+        val isFindFileUsages = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "## FIND_FILE_USAGES")
+
         @Suppress("UNCHECKED_CAST")
         val caretElementClass = (if (!isPropertiesFile) {
             val caretElementClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// PSI_ELEMENT: ")
             Class.forName(caretElementClassNames.single())
         }
-        else if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "## FIND_FILE_USAGES")) {
+        else if (isFindFileUsages) {
             PropertiesFile::class.java
         }
         else {
@@ -117,11 +119,16 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             }
             myFixture.configureByFile(mainFileName)
 
-            val caretElement = if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF"))
-                TargetElementUtil.findTargetElement(myFixture.editor,
-                                                    TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR)!!
-            else
-                myFixture.elementAtCaret
+            val caretElement = when {
+                InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF") -> TargetElementUtil.findTargetElement(
+                    myFixture.editor,
+                    TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR
+                )!!
+
+                isFindFileUsages -> myFixture.file
+
+                else -> myFixture.elementAtCaret
+            }
             UsefulTestCase.assertInstanceOf(caretElement, caretElementClass)
 
             val containingFile = caretElement.containingFile

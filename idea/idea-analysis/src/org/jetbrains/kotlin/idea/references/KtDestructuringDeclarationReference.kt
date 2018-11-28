@@ -39,7 +39,7 @@ class KtDestructuringDeclarationReference(element: KtDestructuringDeclarationEnt
         return resolveToDescriptors(bindingContext).all { it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED}
     }
 
-    override fun handleElementRename(newElementName: String?): PsiElement? {
+    override fun handleElementRename(newElementName: String): PsiElement? {
         if (canRename()) return expression
         throw IncorrectOperationException()
     }

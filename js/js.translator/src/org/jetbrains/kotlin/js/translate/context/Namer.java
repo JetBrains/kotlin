@@ -62,9 +62,12 @@ public final class Namer {
     public static final String LONG_FROM_NUMBER = "fromNumber";
     public static final String LONG_TO_NUMBER = "toNumber";
     public static final String LONG_FROM_INT = "fromInt";
+    public static final String UINT_FROM_INT = "toUInt";
     public static final String LONG_ZERO = "ZERO";
     public static final String LONG_ONE = "ONE";
     public static final String LONG_NEG_ONE = "NEG_ONE";
+    public static final String LONG_MAX_VALUE = "MAX_VALUE";
+    public static final String LONG_MIN_VALUE = "MIN_VALUE";
     public static final String PRIMITIVE_COMPARE_TO = "primitiveCompareTo";
     public static final String IS_CHAR = "isChar";
     public static final String IS_NUMBER = "isNumber";
@@ -160,7 +163,9 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
-        return pureFqn(CALL_FUNCTION, functionExpression);
+        JsNameRef result = pureFqn(CALL_FUNCTION, functionExpression);
+        MetadataProperties.setJsCall(result, true);
+        return result;
     }
 
     @NotNull
@@ -211,8 +216,9 @@ public final class Namer {
     // TODO: get rid of this function
     @NotNull
     private static String getStableMangledNameForDescriptor(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
-        Collection<SimpleFunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getContributedFunctions(
-                Name.identifier(functionName), NoLookupLocation.FROM_BACKEND);
+        Collection<? extends SimpleFunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getContributedFunctions(
+                Name.identifier(functionName), NoLookupLocation.FROM_BACKEND
+        );
         assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
         SuggestedName suggested = new NameSuggestion().suggest(functions.iterator().next());
         assert suggested != null : "Suggested name for class members is always non-null: " + functions.iterator().next();

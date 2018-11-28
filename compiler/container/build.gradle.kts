@@ -1,6 +1,7 @@
-
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
@@ -10,11 +11,11 @@ dependencies {
     compileOnly(project(":kotlin-stdlib"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(project(":kotlin-stdlib"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntime(intellijDep()) { includeJars("trove4j") }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntime(intellijDep()) { includeJars("trove4j", "util") }
 }
 
 sourceSets {

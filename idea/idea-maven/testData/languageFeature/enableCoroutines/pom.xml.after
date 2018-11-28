@@ -49,6 +49,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <languageVersion>1.2</languageVersion>
                     <experimentalCoroutines>enable</experimentalCoroutines>
                 </configuration>
             </plugin>

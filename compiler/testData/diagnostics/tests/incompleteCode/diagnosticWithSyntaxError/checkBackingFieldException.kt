@@ -10,7 +10,7 @@ class Square() {
   private set
 }
 
-fun main(args : Array<String>) {
+fun main() {
   val s = Square()
 
   s.size = 2.0

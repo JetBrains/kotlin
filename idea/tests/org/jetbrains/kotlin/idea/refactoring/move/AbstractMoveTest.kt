@@ -211,6 +211,7 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
                     project,
                     elementsToMove,
                     targetDir,
+                    true,
                     searchInComments = true,
                     searchInNonJavaFiles = true,
                     moveCallback = null
@@ -243,7 +244,7 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
                 KotlinMoveTargetForExistingElement(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile)
             }
 
-            val descriptor = MoveDeclarationsDescriptor(project, elementsToMove, moveTarget, MoveDeclarationsDelegate.TopLevel)
+            val descriptor = MoveDeclarationsDescriptor(project, MoveSource(elementsToMove), moveTarget, MoveDeclarationsDelegate.TopLevel)
             MoveKotlinDeclarationsProcessor(descriptor).run()
         }
     },
@@ -287,7 +288,7 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
                             createKotlinFile(fileName, targetDir, targetPackageFqName.asString())
                         }
                     }
-            val descriptor = MoveDeclarationsDescriptor(project, listOf(elementToMove), moveTarget, delegate)
+            val descriptor = MoveDeclarationsDescriptor(project, MoveSource(elementToMove), moveTarget, delegate)
             MoveKotlinDeclarationsProcessor(descriptor).run()
         }
     };

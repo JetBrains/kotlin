@@ -32,9 +32,11 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.*;
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException;
+import com.intellij.rt.execution.junit.ComparisonDetailsExtractor;
 import com.intellij.testFramework.MapDataContext;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
+import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinHierarchyViewTestBase;
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCalleeTreeStructure;
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideTreeStructure
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.KtCallableDeclaration;
 import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -233,6 +236,12 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             else {
                 fail("Unexpected error: " + e.getLocalizedMessage());
             }
+        }
+        catch (ComparisonFailure failure) {
+            String actual = ComparisonDetailsExtractor.getActual(failure);
+            String verificationFilePath =
+                    getTestDataPath() + "/" + getBasePath() + "/" + getTestName(false) + "_verification.xml";
+            KotlinTestUtils.assertEqualsToFile(new File(verificationFilePath), actual);
         }
     }
 

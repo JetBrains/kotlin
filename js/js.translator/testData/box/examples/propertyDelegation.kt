@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1129
+// EXPECTED_REACHABLE_NODES: 1299
 open class Base() {
     val plain = 239
     public val read: Int

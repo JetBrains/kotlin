@@ -1,7 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.io.File
 
-apply { plugin("base") }
+plugins {
+    base
+    id("pill-configurable")
+}
 
 val baseProtobuf by configurations.creating
 val baseProtobufSources by configurations.creating
@@ -16,7 +19,9 @@ val renamedSources = "$buildDir/renamedSrc/"
 val outputJarsPath = "$buildDir/libs"
 val artifactBaseName = "protobuf-java-relocated"
 
-val jpsLibraryPath by extra(outputJarsPath)
+pill {
+    libraryPath = File(outputJarsPath)
+}
 
 setProperty("archivesBaseName", "$artifactBaseName-$protobufVersion")
 

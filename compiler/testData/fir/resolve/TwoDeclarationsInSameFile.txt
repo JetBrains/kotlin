@@ -1,0 +1,9 @@
+FILE: TwoDeclarationsInSameFile.kt
+    public open class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    public final class B : R|p/A| {
+        public constructor(): super<R|p/A|>()
+
+    }

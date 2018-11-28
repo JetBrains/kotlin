@@ -43,12 +43,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.isTopLevelInFileOrScript
 import java.util.*
 
 class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     private fun getUniqueContainer(elements: Array<out PsiElement>): PsiElement? {
         val getContainer: (PsiElement) -> PsiElement? =
-                if (elements.any { it.parent !is KtFile }) { e ->
+                if (elements.any { !isTopLevelInFileOrScript(it) }) { e ->
                     when (e) {
                         is KtNamedDeclaration -> e.containingClassOrObject ?: e.parent
                         is KtFile -> e.parent
@@ -61,7 +62,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         return elements.mapNotNullTo(LinkedHashSet(), getContainer).singleOrNull()
     }
 
-    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal else parent is KtFile
+    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal else isTopLevelInFileOrScript(this)
 
     private fun doMoveWithCheck(
             project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?, editor: Editor?

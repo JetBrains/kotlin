@@ -1,0 +1,24 @@
+// My: to be implemented
+// DISABLE-ERRORS
+/**
+ * Dokka comment: class to be created as expect
+ */
+expect class My {
+    fun foo(param: String): Int
+    fun String.bar(y: Double): Boolean
+    /**
+     * Dokka comment: Just does nothing
+     */
+    fun baz()
+
+    /**
+     * Dokka comment: Just does nothing
+     *
+     * @flag this parameter is just ignored
+     */
+    constructor(flag: Boolean)
+
+    val isGood: Boolean
+    var status: Int
+
+}

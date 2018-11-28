@@ -39,12 +39,12 @@ class GenerateLambdaInfo(val lambdaType: KotlinType, val explicitParameters: Boo
 sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallableInsertHandler(callType) {
 
     class Normal(
-            callType: CallType<*>,
-            val inputTypeArguments: Boolean,
-            val inputValueArguments: Boolean,
-            val argumentText: String = "",
-            val lambdaInfo: GenerateLambdaInfo? = null,
-            val argumentsOnly: Boolean = false
+        callType: CallType<*>,
+        val inputTypeArguments: Boolean,
+        val inputValueArguments: Boolean,
+        val argumentText: String = "",
+        val lambdaInfo: GenerateLambdaInfo? = null,
+        val argumentsOnly: Boolean = false
     ) : KotlinFunctionInsertHandler(callType) {
         init {
             if (lambdaInfo != null) {
@@ -54,12 +54,12 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
 
         //TODO: add 'data' or special annotation when supported
         fun copy(
-                callType: CallType<*> = this.callType,
-                inputTypeArguments: Boolean = this.inputTypeArguments,
-                inputValueArguments: Boolean = this.inputValueArguments,
-                argumentText: String = this.argumentText,
-                lambdaInfo: GenerateLambdaInfo? = this.lambdaInfo,
-                argumentsOnly: Boolean = this.argumentsOnly
+            callType: CallType<*> = this.callType,
+            inputTypeArguments: Boolean = this.inputTypeArguments,
+            inputValueArguments: Boolean = this.inputValueArguments,
+            argumentText: String = this.argumentText,
+            lambdaInfo: GenerateLambdaInfo? = this.lambdaInfo,
+            argumentsOnly: Boolean = this.argumentsOnly
         ) = Normal(callType, inputTypeArguments, inputValueArguments, argumentText, lambdaInfo, argumentsOnly)
 
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -81,7 +81,7 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             addArguments(context, element)
         }
 
-        private fun addArguments(context : InsertionContext, offsetElement : PsiElement) {
+        private fun addArguments(context: InsertionContext, offsetElement: PsiElement) {
             val completionChar = context.completionChar
             if (completionChar == '(') { //TODO: more correct behavior related to braces type
                 context.setAddCompletionChar(false)
@@ -98,7 +98,8 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             val openingBracket = if (insertLambda) '{' else '('
             val closingBracket = if (insertLambda) '}' else ')'
 
-            var insertTypeArguments = inputTypeArguments && (completionChar == '\n' || completionChar == '\r' || completionChar == Lookup.REPLACE_SELECT_CHAR)
+            var insertTypeArguments =
+                inputTypeArguments && (completionChar == '\n' || completionChar == '\r' || completionChar == Lookup.REPLACE_SELECT_CHAR)
 
             if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
                 val offset1 = chars.skipSpaces(offset)
@@ -144,12 +145,10 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
                     if (isInsertSpacesInOneLineFunctionEnabled(project)) {
                         document.insertString(offset, " {  }")
                         inBracketsShift = 1
-                    }
-                    else {
+                    } else {
                         document.insertString(offset, " {}")
                     }
-                }
-                else {
+                } else {
                     document.insertString(offset, "()")
                 }
                 PsiDocumentManager.getInstance(project).commitDocument(document)
@@ -160,8 +159,15 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
 
             if (insertLambda && lambdaInfo!!.explicitParameters) {
                 val placeholderRange = TextRange(openingBracketOffset, closeBracketOffset!! + 1)
-                val explicitParameterTypes = LambdaSignatureTemplates.explicitParameterTypesRequired(context.file as KtFile, placeholderRange, lambdaInfo.lambdaType)
-                LambdaSignatureTemplates.insertTemplate(context, placeholderRange, lambdaInfo.lambdaType, explicitParameterTypes, signatureOnly = false)
+                val explicitParameterTypes =
+                    LambdaSignatureTemplates.explicitParameterTypesRequired(context.file as KtFile, placeholderRange, lambdaInfo.lambdaType)
+                LambdaSignatureTemplates.insertTemplate(
+                    context,
+                    placeholderRange,
+                    lambdaInfo.lambdaType,
+                    explicitParameterTypes,
+                    signatureOnly = false
+                )
                 return
             }
 
@@ -173,11 +179,8 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             if (!insertTypeArguments) {
                 if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == null) {
                     editor.caretModel.moveToOffset(openingBracketOffset + 1 + inBracketsShift)
-                    if (!insertLambda) {
-                        AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
-                    }
-                }
-                else {
+                    AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
+                } else {
                     editor.caretModel.moveToOffset(closeBracketOffset + 1)
                 }
             }
@@ -189,8 +192,8 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             return inputValueArguments || lambdaInfo != null
         }
 
-        private fun isInsertSpacesInOneLineFunctionEnabled(project: Project)
-                = CodeStyleSettingsManager.getSettings(project).getCustomSettings(KotlinCodeStyleSettings::class.java)!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
+        private fun isInsertSpacesInOneLineFunctionEnabled(project: Project) =
+            CodeStyleSettingsManager.getSettings(project).getCustomSettings(KotlinCodeStyleSettings::class.java)!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
     }
 
     object Infix : KotlinFunctionInsertHandler(CallType.INFIX) {
@@ -205,7 +208,7 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             context.document.insertString(tailOffset, " ")
             context.editor.caretModel.moveToOffset(tailOffset + 1)
         }
-   }
+    }
 
     class OnlyName(callType: CallType<*>) : KotlinFunctionInsertHandler(callType)
 

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.quickfix.RenameIdentifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.resolve.jvm.checkers.isValidDalvikIdentifier
 import java.io.File
 
 class IllegalIdentifierInspection : AbstractKotlinInspection() {
@@ -59,7 +60,7 @@ class IllegalIdentifierInspection : AbstractKotlinInspection() {
                 // This is already an error
                 if (unquotedName.isEmpty()) return
 
-                if (!unquotedName.all { isValidDalvikCharacter(it) } && checkAndroidFacet(element)) {
+                if (!isValidDalvikIdentifier(unquotedName) && checkAndroidFacet(element)) {
                     if (element.isInUnitTests()) {
                         return
                     }
@@ -93,19 +94,6 @@ class IllegalIdentifierInspection : AbstractKotlinInspection() {
 
             private fun checkAndroidFacet(element: PsiElement): Boolean {
                 return element.getAndroidFacetForFile() != null || ApplicationManager.getApplication().isUnitTestMode
-            }
-
-            // https://source.android.com/devices/tech/dalvik/dex-format.html#string-syntax
-            private fun isValidDalvikCharacter(c: Char) = when (c) {
-                in 'A'..'Z' -> true
-                in 'a'..'z' -> true
-                in '0'..'9' -> true
-                '$', '-', '_' -> true
-                in '\u00a1' .. '\u1fff' -> true
-                in '\u2010' .. '\u2027' -> true
-                in '\u2030' .. '\ud7ff' -> true
-                in '\ue000' .. '\uffef' -> true
-                else -> false
             }
         }
     }

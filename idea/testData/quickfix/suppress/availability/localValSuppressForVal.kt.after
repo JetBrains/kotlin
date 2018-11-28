@@ -1,6 +1,5 @@
 // "Suppress 'REDUNDANT_NULLABLE' for val a" "true"
 
 fun foo() {
-    @Suppress("REDUNDANT_NULLABLE")
-    val a: String?<caret>? = null
+    @Suppress("REDUNDANT_NULLABLE") val a: String?<caret>? = null
 }

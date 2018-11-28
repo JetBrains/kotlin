@@ -1,0 +1,20 @@
+package
+
+private fun </*0*/ S> foo(/*0*/ e: Expr<S>): kotlin.Unit
+public fun test(/*0*/ intExpression: Expr<kotlin.Int>): kotlin.Unit
+private fun </*0*/ V> times(/*0*/ e: Expr<V>, /*1*/ element: V): Expr<V>
+
+public abstract class Expr</*0*/ T> {
+    public constructor Expr</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Sum</*0*/ K> : Expr<K?> {
+    public constructor Sum</*0*/ K>(/*0*/ e: Expr<K>)
+    public final val e: Expr<K>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

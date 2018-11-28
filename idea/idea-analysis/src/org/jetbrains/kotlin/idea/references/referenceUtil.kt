@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.ide.scratch.ScratchUtil
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
@@ -70,7 +71,7 @@ val PsiReference.unwrappedTargets: Set<PsiElement>
 fun PsiReference.canBeReferenceTo(candidateTarget: PsiElement): Boolean {
     // optimization
     return element.containingFile == candidateTarget.containingFile
-           || ProjectRootsUtil.isInProjectOrLibSource(element)
+            || ProjectRootsUtil.isInProjectOrLibSource(element, includeScriptsOutsideSourceRoots = true)
 }
 
 fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
@@ -179,10 +180,13 @@ fun KtSimpleNameReference.canBePsiMethodReference(): Boolean {
 }
 
 private fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement) =
-    // call to Java constructor
-        (this is PsiMethod && isConstructor && containingClass == unwrappedCandidate) ||
+    when {
+        // call to Java constructor
+        this is PsiMethod && isConstructor && containingClass == unwrappedCandidate -> true
         // call to Kotlin constructor
-    (this is KtConstructor<*> && getContainingClassOrObject() == unwrappedCandidate)
+        this is KtConstructor<*> && getContainingClassOrObject().isEquivalentTo(unwrappedCandidate) -> true
+        else -> false
+    }
 
 fun AbstractKtReference<out KtExpression>.renameImplicitConventionalCall(newName: String?): KtExpression {
     if (newName == null) return expression

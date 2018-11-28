@@ -30,6 +30,7 @@ import com.intellij.psi.impl.light.LightJavaModule;
 import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.core.FileIndexUtilsKt;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +80,7 @@ public class ModuleHighlightUtil2 {
         else {
             Module module = index.getModuleForFile(file);
             if (module != null) {
-                boolean isTest = index.isInTestSourceContent(file);
+                boolean isTest = FileIndexUtilsKt.isInTestSourceContentKotlinAware(index, file);
                 VirtualFile modularRoot = ArraysKt.singleOrNull(ModuleRootManager.getInstance(module).getSourceRoots(isTest),
                                                                 root -> root.findChild(MODULE_INFO_FILE) != null);
                 if (modularRoot != null) {

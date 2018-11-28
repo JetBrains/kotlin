@@ -19,13 +19,17 @@ package org.jetbrains.kotlin.resolve.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.resolve.SinceKotlinAccessibility
 import org.jetbrains.kotlin.resolve.checkSinceKotlinVersionAccessibility
 
 object ApiVersionClassifierUsageChecker : ClassifierUsageChecker {
     override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
-        targetDescriptor.checkSinceKotlinVersionAccessibility(context.languageVersionSettings) { version ->
+        val accessibility = targetDescriptor.checkSinceKotlinVersionAccessibility(context.languageVersionSettings)
+        if (accessibility is SinceKotlinAccessibility.NotAccessible) {
             context.trace.report(
-                Errors.API_NOT_AVAILABLE.on(element, version.versionString, context.languageVersionSettings.apiVersion.versionString)
+                Errors.API_NOT_AVAILABLE.on(
+                    element, accessibility.version.versionString, context.languageVersionSettings.apiVersion.versionString
+                )
             )
         }
     }

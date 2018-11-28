@@ -75,13 +75,11 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         }
     }
 
-    override fun isReferenceTo(element: PsiElement?): Boolean {
-        if (element != null) {
-            if (!canBeReferenceTo(element)) return false
+    override fun isReferenceTo(element: PsiElement): Boolean {
+        if (!canBeReferenceTo(element)) return false
 
-            for (extension in Extensions.getArea(element.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
-                if (extension.isReferenceTo(this, element)) return true
-            }
+        for (extension in Extensions.getArea(element.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
+            if (extension.isReferenceTo(this, element)) return true
         }
 
         return super.isReferenceTo(element)
@@ -102,9 +100,8 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         return true
     }
 
-    override fun handleElementRename(newElementName: String?): PsiElement {
+    override fun handleElementRename(newElementName: String): PsiElement {
         if (!canRename()) throw IncorrectOperationException()
-        if (newElementName == null) return expression
 
         if (newElementName.unquote() == "") {
             val qualifiedElement = expression.getQualifiedElement()
@@ -181,16 +178,18 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
 
-        val needToShorten =
-                PsiTreeUtil.getParentOfType(expression, KtImportDirective::class.java, KtPackageDirective::class.java) == null
-        if (needToShorten) {
-            when (shorteningMode) {
-                ShorteningMode.FORCED_SHORTENING -> ShortenReferences.DEFAULT.process(newQualifiedElement)
-                else -> newQualifiedElement.addToShorteningWaitSet()
-            }
+        val needToShorten = PsiTreeUtil.getParentOfType(expression, KtImportDirective::class.java, KtPackageDirective::class.java) == null
+        if (!needToShorten) {
+            return newExpression
         }
 
-        return newExpression
+        return when (shorteningMode) {
+            ShorteningMode.FORCED_SHORTENING -> ShortenReferences.DEFAULT.process(newQualifiedElement)
+            else -> {
+                newQualifiedElement.addToShorteningWaitSet()
+                newExpression
+            }
+        }
     }
 
     /**

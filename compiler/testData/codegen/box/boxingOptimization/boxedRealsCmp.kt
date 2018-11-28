@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 
 inline fun ltx(a: Comparable<Any>, b: Any) = a < b
 inline fun lex(a: Comparable<Any>, b: Any) = a <= b

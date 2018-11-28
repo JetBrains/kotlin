@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.CallHandle;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
@@ -38,6 +39,11 @@ public class TypeIntersector {
 
     public static boolean isIntersectionEmpty(@NotNull KotlinType typeA, @NotNull KotlinType typeB) {
         return intersectTypes(new LinkedHashSet<>(Arrays.asList(typeA, typeB))) == null;
+    }
+
+    public static boolean isIncompatibleEnums(@NotNull KotlinType typeA, @NotNull KotlinType typeB) {
+        if (!TypeUtilsKt.isEnum(typeA) || !TypeUtilsKt.isEnum(typeB)) return false;
+        return !typeA.getConstructor().equals(typeB.getConstructor());
     }
 
     @Nullable
@@ -150,7 +156,10 @@ public class TypeIntersector {
      */
     @NotNull
     public static KotlinType getUpperBoundsAsType(@NotNull TypeParameterDescriptor descriptor) {
-        List<KotlinType> upperBounds = descriptor.getUpperBounds();
+        return intersectUpperBounds(descriptor, descriptor.getUpperBounds());
+    }
+
+    public static KotlinType intersectUpperBounds(@NotNull TypeParameterDescriptor descriptor, @NotNull List<KotlinType> upperBounds) {
         assert !upperBounds.isEmpty() : "Upper bound list is empty: " + descriptor;
         KotlinType upperBoundsAsType = intersectTypes(upperBounds);
         return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(descriptor).getNothingType();

@@ -20,20 +20,21 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
+import org.jetbrains.kotlin.types.KotlinType
 
-class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
-    override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>? {
-        val evaluated = field.initializerValue ?: return null
+object JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
+    override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>? =
+        field.initializerValue?.let { value -> convertLiteralValue(value, descriptor.type) }
 
-        return when (evaluated) {
-        //Note: evaluated expression may be of class that does not match field type in some cases
-        // tested for Int, left other checks just in case
+    internal fun convertLiteralValue(value: Any, expectedType: KotlinType): ConstantValue<*>? =
+        when (value) {
+            // Note: `value` expression may be of class that does not match field type in some cases
+            // tested for Int, left other checks just in case
             is Byte, is Short, is Int, is Long -> {
-                ConstantValueFactory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type)
+                ConstantValueFactory.createIntegerConstantValue((value as Number).toLong(), expectedType, false)
             }
             else -> {
-                ConstantValueFactory.createConstantValue(evaluated)
+                ConstantValueFactory.createConstantValue(value)
             }
         }
-    }
 }

@@ -90,21 +90,21 @@ fun CharSequence.indexOfSkippingSpace(c: Char, startIndex: Int): Int? {
     return null
 }
 
-fun CharSequence.skipSpaces(index: Int): Int
-        = (index..length - 1).firstOrNull { val c = this[it]; c != ' ' && c != '\t' } ?: this.length
+fun CharSequence.skipSpaces(index: Int): Int = (index..length - 1).firstOrNull { val c = this[it]; c != ' ' && c != '\t' } ?: this.length
 
-fun CharSequence.skipSpacesAndLineBreaks(index: Int): Int
-        = (index..length - 1).firstOrNull { val c = this[it]; c != ' ' && c != '\t' && c != '\n' && c != '\r' } ?: this.length
+fun CharSequence.skipSpacesAndLineBreaks(index: Int): Int =
+    (index..length - 1).firstOrNull { val c = this[it]; c != ' ' && c != '\t' && c != '\n' && c != '\r' } ?: this.length
 
 fun CharSequence.isCharAt(offset: Int, c: Char) = offset < length && this[offset] == c
 
-fun Document.isTextAt(offset: Int, text: String) = offset + text.length <= textLength && getText(TextRange(offset, offset + text.length)) == text
+fun Document.isTextAt(offset: Int, text: String) =
+    offset + text.length <= textLength && getText(TextRange(offset, offset + text.length)) == text
 
 fun createKeywordConstructLookupElement(
-        project: Project,
-        keyword: String,
-        fileTextToReformat: String,
-        trimSpacesAroundCaret: Boolean = false
+    project: Project,
+    keyword: String,
+    fileTextToReformat: String,
+    trimSpacesAroundCaret: Boolean = false
 ): LookupElement {
     val file = KtPsiFactory(project).createFile(fileTextToReformat)
     CodeStyleManager.getInstance(project).reformat(file)
@@ -133,46 +133,54 @@ fun createKeywordConstructLookupElement(
     tailAfterCaret = tailAfterCaret.unindent(indent)
 
     val tailText = (if (tailBeforeCaret.contains('\n')) tailBeforeCaret.replace("\n", "").trimEnd() else tailBeforeCaret) +
-                   "..." +
-                   (if (tailAfterCaret.contains('\n')) tailAfterCaret.replace("\n", "").trimStart() else tailAfterCaret)
+            "..." +
+            (if (tailAfterCaret.contains('\n')) tailAfterCaret.replace("\n", "").trimStart() else tailAfterCaret)
 
     return LookupElementBuilder.create(KeywordLookupObject(), keyword)
-            .bold()
-            .withTailText(tailText)
-            .withInsertHandler { insertionContext, _ ->
-                if (insertionContext.completionChar == Lookup.NORMAL_SELECT_CHAR ||
-                    insertionContext.completionChar == Lookup.REPLACE_SELECT_CHAR ||
-                    insertionContext.completionChar == Lookup.AUTO_INSERT_SELECT_CHAR) {
+        .bold()
+        .withTailText(tailText)
+        .withInsertHandler { insertionContext, _ ->
+            if (insertionContext.completionChar == Lookup.NORMAL_SELECT_CHAR ||
+                insertionContext.completionChar == Lookup.REPLACE_SELECT_CHAR ||
+                insertionContext.completionChar == Lookup.AUTO_INSERT_SELECT_CHAR
+            ) {
 
-                    val offset = insertionContext.tailOffset
-                    val newIndent = detectIndent(insertionContext.document.charsSequence, offset - keyword.length)
+                val offset = insertionContext.tailOffset
+                val newIndent = detectIndent(insertionContext.document.charsSequence, offset - keyword.length)
 
-                    val beforeCaret = tailBeforeCaret.indentLinesAfterFirst(newIndent)
-                    val afterCaret = tailAfterCaret.indentLinesAfterFirst(newIndent)
+                val beforeCaret = tailBeforeCaret.indentLinesAfterFirst(newIndent)
+                val afterCaret = tailAfterCaret.indentLinesAfterFirst(newIndent)
 
-                    val element = insertionContext.file.findElementAt(offset)
+                val element = insertionContext.file.findElementAt(offset)
 
-                    val sibling = when {
-                        element !is PsiWhiteSpace -> element
-                        element.textContains('\n') -> null
-                        else -> element.getNextSiblingIgnoringWhitespace(true)
-                    }
+                val sibling = when {
+                    element !is PsiWhiteSpace -> element
+                    element.textContains('\n') -> null
+                    else -> element.getNextSiblingIgnoringWhitespace(true)
+                }
 
-                    if (sibling != null && beforeCaret.trimStart().startsWith(insertionContext.document.getText(TextRange.from(sibling.startOffset, 1)))) {
-                        insertionContext.editor.moveCaret(sibling.startOffset + 1)
-                    }
-                    else {
-                        insertionContext.document.insertString(offset, beforeCaret + afterCaret)
-                        insertionContext.editor.moveCaret(offset + beforeCaret.length)
-                    }
+                if (sibling != null && beforeCaret.trimStart().startsWith(
+                        insertionContext.document.getText(
+                            TextRange.from(
+                                sibling.startOffset,
+                                1
+                            )
+                        )
+                    )
+                ) {
+                    insertionContext.editor.moveCaret(sibling.startOffset + 1)
+                } else {
+                    insertionContext.document.insertString(offset, beforeCaret + afterCaret)
+                    insertionContext.editor.moveCaret(offset + beforeCaret.length)
                 }
             }
+        }
 }
 
 private fun detectIndent(text: CharSequence, offset: Int): String {
     return text.substring(0, offset)
-            .substringAfterLast('\n')
-            .takeWhile(Char::isWhitespace)
+        .substringAfterLast('\n')
+        .takeWhile(Char::isWhitespace)
 }
 
 private fun String.indentLinesAfterFirst(indent: String): String {

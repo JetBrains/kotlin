@@ -35,15 +35,11 @@ public class ClassBuilderMode {
         this.generateSourceRetentionAnnotations = generateSourceRetentionAnnotations;
         this.generateMultiFileFacadePartClasses = generateMultiFileFacadePartClasses;
     }
-    
-    public static ClassBuilderMode full(boolean generateSourceRetentionAnnotations) {
-        return generateSourceRetentionAnnotations ? KAPT : FULL;
-    }
 
     /**
      * Full function bodies
      */
-    private final static ClassBuilderMode FULL = new ClassBuilderMode(
+    public final static ClassBuilderMode FULL = new ClassBuilderMode(
             /* bodies = */ true, 
             /* metadata = */ true,
             /* sourceRetention = */ false,
@@ -55,15 +51,6 @@ public class ClassBuilderMode {
     public final static ClassBuilderMode LIGHT_CLASSES = new ClassBuilderMode(
             /* bodies = */ false,
             /* metadata = */ false,
-            /* sourceRetention = */ true,
-            /* generateMultiFileFacadePartClasses = */ false);
-    
-    /**
-     * Function signatures + metadata (to support incremental compilation with kapt)
-     */
-    public final static ClassBuilderMode KAPT = new ClassBuilderMode(
-            /* bodies = */ false,
-            /* metadata = */ true,
             /* sourceRetention = */ true,
             /* generateMultiFileFacadePartClasses = */ false);
 

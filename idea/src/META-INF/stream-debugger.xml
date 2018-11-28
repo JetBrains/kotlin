@@ -1,0 +1,8 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="org.jetbrains.debugger.streams">
+        <librarySupport implementation="org.jetbrains.kotlin.idea.debugger.sequence.lib.java.JavaStandardLibrarySupportProvider"/>
+        <librarySupport implementation="org.jetbrains.kotlin.idea.debugger.sequence.lib.java.StreamExLibrarySupportProvider"/>
+        <librarySupport implementation="org.jetbrains.kotlin.idea.debugger.sequence.lib.sequence.KotlinSequenceSupportProvider"/>
+        <!--<librarySupport implementation="com.intellij.debugger.streams.kotlin.lib.KotlinCollectionSupportProvider"/>-->
+    </extensions>
+</idea-plugin>

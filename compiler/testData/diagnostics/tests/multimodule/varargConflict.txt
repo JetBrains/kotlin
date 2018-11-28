@@ -22,6 +22,3 @@ package
 package m {
     public fun main(): kotlin.Unit
 }
-
-package p {
-}

@@ -8,36 +8,28 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
-import org.jetbrains.kotlin.idea.intentions.toResolvedCall
+import org.jetbrains.kotlin.idea.intentions.isToString
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RemoveToStringInStringTemplateInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            dotQualifiedExpressionVisitor(fun(expression) {
-                if (expression.parent !is KtBlockStringTemplateEntry) return
-                if (expression.receiverExpression is KtSuperExpression) return
-                val selectorExpression = expression.selectorExpression ?: return
-                if (!expression.isToString()) return
+        dotQualifiedExpressionVisitor(fun(expression) {
+            if (expression.parent !is KtBlockStringTemplateEntry) return
+            if (expression.receiverExpression is KtSuperExpression) return
+            val selectorExpression = expression.selectorExpression ?: return
+            if (!expression.isToString()) return
 
-                holder.registerProblem(selectorExpression,
-                                       "Redundant 'toString()' call in string template",
-                                       ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                       RemoveToStringFix())
-            })
+            holder.registerProblem(
+                selectorExpression,
+                "Redundant 'toString()' call in string template",
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                RemoveToStringFix()
+            )
+        })
 }
 
-private fun KtDotQualifiedExpression.isToString(): Boolean {
-    val resolvedCall = toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
-    val callableDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return false
-    return callableDescriptor.getDeepestSuperDeclarations().any { it.fqNameUnsafe.asString() == "kotlin.Any.toString" }
-}
-
-class RemoveToStringFix: LocalQuickFix {
+class RemoveToStringFix : LocalQuickFix {
     override fun getName() = "Remove 'toString()' call"
     override fun getFamilyName() = name
 

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
+import org.jetbrains.kotlin.idea.inspections.AddScriptRuntimeQuickFix
 import org.jetbrains.kotlin.idea.inspections.AddTestLibQuickFix
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
 
@@ -35,6 +36,11 @@ class JvmQuickFixRegistrar : QuickFixContributor {
         EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeCoroutineSupportFix)
         EXPERIMENTAL_FEATURE_WARNING.registerFactory(ChangeCoroutineSupportFix)
 
+        EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeGeneralLanguageFeatureSupportFix)
+        EXPERIMENTAL_FEATURE_WARNING.registerFactory(ChangeGeneralLanguageFeatureSupportFix)
+
         NO_REFLECTION_IN_CLASS_PATH.registerFactory(AddReflectionQuickFix)
+
+        MISSING_SCRIPT_STANDARD_TEMPLATE.registerFactory(AddScriptRuntimeQuickFix)
     }
 }

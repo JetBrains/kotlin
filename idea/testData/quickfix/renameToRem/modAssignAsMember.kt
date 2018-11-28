@@ -1,4 +1,5 @@
 // "Rename to 'remAssign'" "true"
+// DISABLE-ERRORS
 
 object Rem {
     operator fun mod(x: Int) {}

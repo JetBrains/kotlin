@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import org.jetbrains.kotlin.cfg.WhenChecker
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -25,6 +27,8 @@ import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 
 object BranchedFoldingUtils {
@@ -46,14 +50,26 @@ object BranchedFoldingUtils {
     }
 
     fun getFoldableBranchedReturn(branch: KtExpression?): KtReturnExpression? =
-            (branch?.lastBlockStatementOrThis() as? KtReturnExpression)?.takeIf {
-                it.returnedExpression != null &&
-                it.returnedExpression !is KtLambdaExpression &&
-                it.getTargetLabel() == null
-            }
+        (branch?.lastBlockStatementOrThis() as? KtReturnExpression)?.takeIf {
+            it.returnedExpression != null &&
+                    it.returnedExpression !is KtLambdaExpression &&
+                    it.getTargetLabel() == null
+        }
 
-    private fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean =
-            a1.left?.text == a2.left?.text && a1.operationToken == a2.operationToken
+    private fun KtBinaryExpression.checkAssignmentsMatch(other: KtBinaryExpression, rightTypeConstructor: TypeConstructor): Boolean {
+        return left?.text == other.left?.text
+                && operationToken == other.operationToken
+                && rightTypeConstructor == other.rightTypeConstructor()
+    }
+
+    private fun KtBinaryExpression.rightTypeConstructor(): TypeConstructor? {
+        val right = this.right ?: return null
+        val context = this.analyze()
+        val diagnostics = context.diagnostics
+        fun hasTypeMismatchError(e: KtExpression) = diagnostics.forElement(e).any { it.factory == Errors.TYPE_MISMATCH }
+        if (hasTypeMismatchError(this) || hasTypeMismatchError(right)) return null
+        return right.getType(context)?.constructor
+    }
 
     internal fun getFoldableAssignmentNumber(expression: KtExpression?): Int {
         expression ?: return -1
@@ -61,18 +77,15 @@ object BranchedFoldingUtils {
         fun collectAssignmentsAndCheck(e: KtExpression?): Boolean = when (e) {
             is KtWhenExpression -> {
                 val entries = e.entries
-                !e.hasMissingCases() &&
-                entries.isNotEmpty() &&
-                entries.all { entry ->
+                !e.hasMissingCases() && entries.isNotEmpty() && entries.all { entry ->
                     val assignment = getFoldableBranchedAssignment(entry.expression)?.run { assignments.add(this) }
                     assignment != null || collectAssignmentsAndCheck(entry.expression?.lastBlockStatementOrThis())
                 }
             }
             is KtIfExpression -> {
                 val branches = e.branches
-                branches.size > 1 &&
-                (branches.lastOrNull()?.getStrictParentOfType<KtIfExpression>()?.`else` != null) &&
-                branches.all { branch ->
+                val elseBranch = branches.lastOrNull()?.getStrictParentOfType<KtIfExpression>()?.`else`
+                branches.size > 1 && elseBranch != null && branches.all { branch ->
                     val assignment = getFoldableBranchedAssignment(branch)?.run { assignments.add(this) }
                     assignment != null || collectAssignmentsAndCheck(branch?.lastBlockStatementOrThis())
                 }
@@ -92,38 +105,39 @@ object BranchedFoldingUtils {
         }
         if (!collectAssignmentsAndCheck(expression)) return -1
         val firstAssignment = assignments.firstOrNull() ?: return 0
-        if (assignments.any { !BranchedFoldingUtils.checkAssignmentsMatch(it, firstAssignment) }) {
+        val rightTypeConstructor = firstAssignment.rightTypeConstructor() ?: return -1
+        if (assignments.any { !firstAssignment.checkAssignmentsMatch(it, rightTypeConstructor) }) {
             return -1
         }
         if (expression.anyDescendantOfType<KtBinaryExpression>(
                 predicate = {
                     if (it.operationToken in KtTokens.ALL_ASSIGNMENTS)
                         if (it.getNonStrictParentOfType<KtFinallySection>() != null)
-                            BranchedFoldingUtils.checkAssignmentsMatch(it, firstAssignment)
+                            firstAssignment.checkAssignmentsMatch(it, rightTypeConstructor)
                         else
                             it !in assignments
                     else
                         false
                 }
-        )) {
+            )
+        ) {
             return -1
         }
         return assignments.size
     }
 
     private fun getFoldableReturns(branches: List<KtExpression?>): List<KtReturnExpression>? =
-            branches.fold<KtExpression?, MutableList<KtReturnExpression>?>(mutableListOf()) { prevList, branch ->
-                if (prevList == null) return@fold null
-                val foldableBranchedReturn = getFoldableBranchedReturn(branch)
-                if (foldableBranchedReturn != null) {
-                    prevList.add(foldableBranchedReturn)
-                }
-                else {
-                    val currReturns = getFoldableReturns(branch?.lastBlockStatementOrThis()) ?: return@fold null
-                    prevList += currReturns
-                }
-                prevList
+        branches.fold<KtExpression?, MutableList<KtReturnExpression>?>(mutableListOf()) { prevList, branch ->
+            if (prevList == null) return@fold null
+            val foldableBranchedReturn = getFoldableBranchedReturn(branch)
+            if (foldableBranchedReturn != null) {
+                prevList.add(foldableBranchedReturn)
+            } else {
+                val currReturns = getFoldableReturns(branch?.lastBlockStatementOrThis()) ?: return@fold null
+                prevList += currReturns
             }
+            prevList
+        }
 
     internal fun getFoldableReturns(expression: KtExpression?): List<KtReturnExpression>? = when (expression) {
         is KtWhenExpression -> {
@@ -162,13 +176,20 @@ object BranchedFoldingUtils {
     fun foldToAssignment(expression: KtExpression) {
         var lhs: KtExpression? = null
         var op: String? = null
+        val psiFactory = KtPsiFactory(expression)
         fun KtBinaryExpression.replaceWithRHS() {
             if (lhs == null || op == null) {
                 lhs = left!!.copy() as KtExpression
                 op = operationReference.text
             }
-            replace(right!!)
+            val rhs = right!!
+            if (rhs is KtLambdaExpression && this.parent !is KtBlockExpression) {
+                replace(psiFactory.createExpressionByPattern("{ $0 }", rhs))
+            } else {
+                replace(rhs)
+            }
         }
+
         fun lift(e: KtExpression?) {
             when (e) {
                 is KtWhenExpression -> e.entries.forEach { entry ->
@@ -183,36 +204,35 @@ object BranchedFoldingUtils {
             }
         }
         lift(expression)
-        expression.replace(KtPsiFactory(expression).createExpressionByPattern("$0 $1 $2", lhs!!, op!!, expression))
+        expression.replace(psiFactory.createExpressionByPattern("$0 $1 $2", lhs!!, op!!, expression))
     }
 
-    fun foldToReturn(expression: KtExpression) {
+    fun foldToReturn(expression: KtExpression): KtExpression {
         fun KtReturnExpression.replaceWithReturned() {
             replace(returnedExpression!!)
         }
+
         fun lift(e: KtExpression?) {
             when (e) {
                 is KtWhenExpression -> e.entries.forEach { entry ->
-                    getFoldableBranchedReturn(entry.expression)?.replaceWithReturned()
-                    ?: lift(entry.expression?.lastBlockStatementOrThis())
+                    val entryExpr = entry.expression
+                    getFoldableBranchedReturn(entryExpr)?.replaceWithReturned() ?: lift(entryExpr?.lastBlockStatementOrThis())
                 }
                 is KtIfExpression -> e.branches.forEach { branch ->
-                    getFoldableBranchedReturn(branch)?.replaceWithReturned() ?:
-                    lift(branch?.lastBlockStatementOrThis())
+                    getFoldableBranchedReturn(branch)?.replaceWithReturned() ?: lift(branch?.lastBlockStatementOrThis())
                 }
                 is KtTryExpression -> e.tryBlockAndCatchBodies().forEach {
-                    getFoldableBranchedReturn(it)?.replaceWithReturned() ?:
-                    lift(it?.lastBlockStatementOrThis())
+                    getFoldableBranchedReturn(it)?.replaceWithReturned() ?: lift(it?.lastBlockStatementOrThis())
                 }
             }
         }
         lift(expression)
-        expression.replace(KtPsiFactory(expression).createExpressionByPattern("return $0", expression))
+        return expression.replaced(KtPsiFactory(expression).createExpressionByPattern("return $0", expression))
     }
 
     private fun KtTryExpression.tryBlockAndCatchBodies(): List<KtExpression?> = listOf(tryBlock) + catchClauses.map { it.catchBody }
 
     private fun KtWhenExpression.hasMissingCases(): Boolean =
-            !KtPsiUtil.checkWhenExpressionHasSingleElse(this) && WhenChecker.getMissingCases(this, this.analyze()).isNotEmpty()
+        !KtPsiUtil.checkWhenExpressionHasSingleElse(this) && WhenChecker.getMissingCases(this, this.analyze()).isNotEmpty()
 
 }

@@ -1,6 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(project(":compiler:util"))
@@ -9,7 +11,7 @@ dependencies {
     compile(project(":js:js.frontend"))
     compile(project(":js:js.serializer"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("annotations", "guava", rootProject = rootProject) }
+    compileOnly(intellijDep())
 }
 
 sourceSets {

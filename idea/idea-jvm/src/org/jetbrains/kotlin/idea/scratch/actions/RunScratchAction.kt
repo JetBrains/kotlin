@@ -17,23 +17,34 @@
 package org.jetbrains.kotlin.idea.scratch.actions
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.compiler.CompilerManager
+import com.intellij.openapi.keymap.KeymapManager
+import com.intellij.openapi.keymap.KeymapUtil
+import com.intellij.openapi.project.DumbService
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
-import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
+import org.jetbrains.kotlin.idea.scratch.LOG as log
 
-class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
-    KotlinBundle.message("scratch.run.button"),
+class RunScratchAction : ScratchAction(
     KotlinBundle.message("scratch.run.button"),
     AllIcons.Actions.Execute
 ) {
+
+    init {
+        KeymapManager.getInstance().activeKeymap.getShortcuts("Kotlin.RunScratch").firstOrNull()?.let {
+            templatePresentation.text += " (${KeymapUtil.getShortcutText(it)})"
+        }
+    }
+
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
+        val editor = e.getData(CommonDataKeys.EDITOR) ?: return
+        val scratchPanel = getScratchPanel(editor) ?: return
 
         val scratchFile = scratchPanel.scratchFile
         val psiFile = scratchFile.getPsiFile() ?: return
@@ -44,8 +55,9 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
         val provider = ScratchFileLanguageProvider.get(psiFile.language) ?: return
 
         val handler = provider.getOutputHandler()
+        handler.onStart(scratchFile)
 
-        org.jetbrains.kotlin.idea.scratch.LOG.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
+        log.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
 
         val module = scratchPanel.getModule()
         if (module == null) {
@@ -54,12 +66,12 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
             return
         }
 
-        val runnable = r@ {
+        fun executeScratch() {
             val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
             if (executor == null) {
                 handler.error(scratchFile, "Couldn't run ${psiFile.name}")
                 handler.onFinish(scratchFile)
-                return@r
+                return
             }
 
             e.presentation.isEnabled = false
@@ -72,14 +84,34 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
                 }
             })
 
-            executor.execute()
+            try {
+                executor.execute()
+            } catch (ex: Throwable) {
+                handler.error(scratchFile, "Exception occurs during Run Scratch Action")
+                handler.onFinish(scratchFile)
+
+                e.presentation.isEnabled = true
+
+                log.error(ex)
+            }
         }
 
         if (isMakeBeforeRun) {
-            CompilerManager.getInstance(project)
-                .make(module) { aborted, errors, _, _ -> if (!aborted && errors == 0) runnable() }
+            CompilerManager.getInstance(project).make(module) { aborted, errors, _, _ ->
+                if (aborted || errors > 0) {
+                    handler.error(scratchFile, "There were compilation errors in module ${module.name}")
+                }
+
+                if (DumbService.isDumb(project)) {
+                    DumbService.getInstance(project).smartInvokeLater {
+                        executeScratch()
+                    }
+                } else {
+                    executeScratch()
+                }
+            }
         } else {
-            runnable()
+            executeScratch()
         }
     }
 }

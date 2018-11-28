@@ -1,4 +1,4 @@
-fun main(args: Array<String>): Unit {
+fun main(): Unit {
     js("var a =<!JSCODE_WARNING!> 08<!>;")
 
     js("""var a =<!JSCODE_WARNING!>

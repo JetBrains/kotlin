@@ -5,7 +5,7 @@ package StringBuilder
 //import kotlin.io.*
 //import java.io.*
 
-fun main(args : Array<String>) {
+fun main() {
 }
 
 val Int.bd : StringBuilder get() = StringBuilder(this.toString())

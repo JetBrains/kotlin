@@ -18,9 +18,9 @@ annotation class Ann(val x: Int)
 @Ann(A.X)
 fun main1() {}
 
-@Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>A.Y<!>)
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>A.Y<!>)
 fun main2() {}
 
 val q = A()
-@Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>q.z<!>)
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>q.z<!>)
 fun main3() {}

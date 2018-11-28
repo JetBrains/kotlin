@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1120
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1290
 package foo
 
 data class A(val value: Int)

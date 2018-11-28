@@ -514,7 +514,7 @@ public class InterceptionInstrumenter {
 
             }
         }
-        ia.invokevirtual(methodData.getDeclaringClass(), methodData.getName(), methodData.getDesc());
+        ia.invokevirtual(methodData.getDeclaringClass(), methodData.getName(), methodData.getDesc(), false);
         Type type = asmMethod.getReturnType();
         if (type.getSort() != Type.VOID) {
             if (type.getSize() == 1) {

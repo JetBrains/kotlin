@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
@@ -35,6 +36,8 @@ import java.text.StringCharacterIterator
  * So please, do not convert it to object
  */
 class BinaryClassSignatureParser {
+
+    private val canonicalNameInterner = StringInterner()
 
     fun parseTypeParametersDeclaration(signature: CharacterIterator, context: ClassifierResolutionContext): List<JavaTypeParameter> {
         if (signature.current() != '<') {
@@ -96,7 +99,9 @@ class BinaryClassSignatureParser {
             signature.next()
         }
 
-        return PlainJavaClassifierType({ context.resolveTypeParameter(id.toString()) }, emptyList())
+        val parameterName = canonicalNameInterner.intern(id.toString())
+
+        return PlainJavaClassifierType({ context.resolveTypeParameter(parameterName) }, emptyList())
     }
 
     private fun parseParameterizedClassRefSignature(
@@ -131,9 +136,10 @@ class BinaryClassSignatureParser {
         }
         signature.next()
 
+        val internalName = canonicalNameInterner.intern(canonicalName.toString().replace('.', '$'))
         return PlainJavaClassifierType(
-                { context.resolveByInternalName(canonicalName.toString()) },
-                argumentGroups.reversed().flattenTo(arrayListOf()).compact()
+            { context.resolveByInternalName(internalName) },
+            argumentGroups.reversed().flattenTo(arrayListOf()).compact()
         )
     }
 

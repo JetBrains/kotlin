@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.refactoring.SeparateFileWrapper
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
+import org.jetbrains.kotlin.idea.refactoring.ui.CreateKotlinClassDialog
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -46,12 +47,8 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
@@ -117,16 +114,19 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
         if (editor == null) return
 
         val applicableParents = SmartList<PsiElement>().also { parents ->
-            if (classInfo.kind == ClassKind.INTERFACE)
-                classInfo.applicableParents.filterTo(parents) { it != element?.containingClass() }
-            else
-                parents += classInfo.applicableParents
-
+            classInfo.applicableParents.filterNotTo(parents) {
+                it is KtClassOrObject && it.superTypeListEntries.any {
+                    when (it) {
+                        is KtDelegatedSuperTypeEntry, is KtSuperTypeEntry -> it.typeAsUserType == element
+                        is KtSuperTypeCallEntry -> it == element
+                        else -> false
+                    }
+                }
+            }
             if (classInfo.kind != ClassKind.ENUM_ENTRY) {
                 parents += SeparateFileWrapper(PsiManager.getInstance(project))
             }
         }
-
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
             val targetParent = applicableParents.firstOrNull {
@@ -185,7 +185,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
 
             val ideaClassKind = classInfo.kind.toIdeaClassKind()
             val defaultPackageFqName = file.packageFqName
-            val dialog = object : CreateClassDialog(
+            val dialog = object : CreateKotlinClassDialog(
                     file.project,
                     "Create ${ideaClassKind.description.capitalize()}",
                     className,

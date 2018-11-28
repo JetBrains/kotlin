@@ -64,6 +64,7 @@ internal class LegacyPackageDependencyResolverWrapper(
     }
 
     private fun ScriptDependenciesResolver.ReportSeverity.convertSeverity(): ScriptReport.Severity  = when(this) {
+        ScriptDependenciesResolver.ReportSeverity.FATAL -> ScriptReport.Severity.FATAL
         ScriptDependenciesResolver.ReportSeverity.ERROR -> ScriptReport.Severity.ERROR
         ScriptDependenciesResolver.ReportSeverity.WARNING -> ScriptReport.Severity.WARNING
         ScriptDependenciesResolver.ReportSeverity.INFO -> ScriptReport.Severity.INFO
@@ -107,6 +108,7 @@ internal class ApiChangeDependencyResolverWrapper(
     }
 
     private fun kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.convertSeverity(): ScriptReport.Severity = when (this) {
+        kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.FATAL -> ScriptReport.Severity.FATAL
         kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.ERROR -> ScriptReport.Severity.ERROR
         kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.WARNING -> ScriptReport.Severity.WARNING
         kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.INFO -> ScriptReport.Severity.INFO

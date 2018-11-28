@@ -65,10 +65,26 @@
   </problem>
   <problem>
     <file>headerImpl.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/headerImpl.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
+    <description>Class 'My' is never used</description>
+  </problem>
+  <problem>
+    <file>headerImpl.kt</file>
     <line>8</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/headerImpl.kt" />
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
     <description>Property ''bar'' is never used</description>
+  </problem>
+  <problem>
+    <file>interface.kt</file>
+    <line>1</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/interface.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
+    <description>Interface 'Interface' is never used</description>
   </problem>
 </problems>

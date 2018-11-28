@@ -2,5 +2,5 @@
 // WITH_RUNTIME
 // FULL_JDK
 
-fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V> =
+fun <K1, V1> Map<out K1, V1>.plus(pair: Pair<K1, V1>): Map<K1, V1> =
         if (this.isEmpty()) mapOf(pair) else LinkedHashMap(this).apply { put(pair.first, pair.second) }

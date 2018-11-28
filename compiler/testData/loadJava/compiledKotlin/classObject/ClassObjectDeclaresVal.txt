@@ -5,7 +5,7 @@ public final class ClassObjectDeclaresProperty {
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final val i: kotlin.Int = 1
+        public final val i: kotlin.Int
             public final fun <get-i>(): kotlin.Int
     }
 }

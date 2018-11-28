@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 import com.jakewharton.dex.*
@@ -23,12 +12,16 @@ import java.io.File
 open class DexMethodCount : DefaultTask() {
 
     data class Counts(
-            val total: Int,
-            val totalOwnPackages: Int?,
-            val totalOtherPackages: Int?,
-            val byPackage: Map<String, Int>,
-            val byClass: Map<String, Int>
+        val total: Int,
+        val totalOwnPackages: Int?,
+        val totalOtherPackages: Int?,
+        val byPackage: Map<String, Int>,
+        val byClass: Map<String, Int>
     )
+
+    init {
+        outputs.upToDateWhen { !shouldPrintTeamCityStatistics } // always execute when teamCityStatistics output is required
+    }
 
     @InputFile
     lateinit var jarFile: File
@@ -42,6 +35,9 @@ open class DexMethodCount : DefaultTask() {
     @Optional
     var teamCityStatistics: Boolean? = null
 
+    private val shouldPrintTeamCityStatistics = teamCityStatistics ?: project.hasProperty("teamcity")
+
+
     @Input
     @Optional
     var artifactName: String? = null
@@ -54,11 +50,15 @@ open class DexMethodCount : DefaultTask() {
         dependsOn(jar)
     }
 
+    @Internal // plain output properties are not supported, mark as internal to suppress warning from validateTaskProperties
     lateinit var counts: Counts
+
+    @get:OutputFile
+    val detailOutputFile: File get() = project.buildDir.resolve("$artifactOrArchiveName-method-count.txt")
 
     @TaskAction
     fun invoke() {
-        val methods = DexMethods.list(jarFile)
+        val methods = dexMethods(jarFile)
 
         val counts = methods.getCounts().also { this.counts = it }
 
@@ -73,16 +73,18 @@ open class DexMethodCount : DefaultTask() {
 
         val ownPackages = ownPackages?.map { it + '.' }
         val byOwnPackages = if (ownPackages != null) {
-            this.partition { method -> ownPackages.any { method.declaringType.startsWith(it) }}.let {
+            this.partition { method -> ownPackages.any { method.declaringType.startsWith(it) } }.let {
                 it.first.size to it.second.size
             }
         } else (null to null)
 
-        return Counts(total = this.size,
-                      totalOwnPackages = byOwnPackages.first,
-                      totalOtherPackages = byOwnPackages.second,
-                      byPackage = byPackage,
-                      byClass = byClass)
+        return Counts(
+            total = this.size,
+            totalOwnPackages = byOwnPackages.first,
+            totalOtherPackages = byOwnPackages.second,
+            byPackage = byPackage,
+            byClass = byClass
+        )
     }
 
     private fun printTotals(counts: Counts) {
@@ -94,7 +96,7 @@ open class DexMethodCount : DefaultTask() {
     }
 
     private fun printTCStats(counts: Counts) {
-        if (teamCityStatistics ?: project.hasProperty("teamcity")) {
+        if (shouldPrintTeamCityStatistics) {
             println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}' value='${counts.total}']")
             counts.totalOwnPackages?.let { value ->
                 println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}_OwnPackages' value='$value']")
@@ -106,8 +108,7 @@ open class DexMethodCount : DefaultTask() {
     }
 
     private fun outputDetails(counts: Counts) {
-        val detailFile = project.buildDir.resolve("$artifactOrArchiveName-method-count.txt")
-        detailFile.printWriter().use { writer ->
+        detailOutputFile.printWriter().use { writer ->
             writer.println("${counts.total.padRight()}\tTotal methods")
             ownPackages?.let { packages ->
                 writer.println("${counts.totalOwnPackages?.padRight()}\tTotal methods from packages ${packages.joinToString { "$it.*" }}")

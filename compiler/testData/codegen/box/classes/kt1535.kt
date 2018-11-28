@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // TODO: Enable when JS backend supports Java class library, since FunctionX are required for interoperation
 // IGNORE_BACKEND: JS
 class Works() : Function0<Any> {

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
@@ -28,7 +29,6 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
@@ -92,8 +93,8 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
         return result
     }
 
-    override val libraryMatcher: (Library) -> Boolean =
-        { library -> JavaRuntimeDetectionUtil.getRuntimeJar(library.getFiles(OrderRootType.CLASSES).asList()) != null }
+    override val libraryMatcher: (Library, Project) -> Boolean =
+        { library, _ -> JavaRuntimeDetectionUtil.getRuntimeJar(library.getFiles(OrderRootType.CLASSES).asList()) != null }
 
     override fun configureKotlinSettings(modules: List<Module>) {
         val project = modules.firstOrNull()?.project ?: return
@@ -109,10 +110,14 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
                 val sdkVersion = module.sdk?.version
                 if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
                     val modelsProvider = IdeModifiableModelsProviderImpl(project)
-                    val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
-                    val facetSettings = facet.configuration.settings
-                    facetSettings.initializeIfNeeded(module, null, TargetPlatformKind.Jvm(JvmTarget.JVM_1_8))
-                    (facetSettings.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget = "1.8"
+                    try {
+                        val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
+                        val facetSettings = facet.configuration.settings
+                        facetSettings.initializeIfNeeded(module, null, JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8))
+                        (facetSettings.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget = "1.8"
+                    } finally {
+                        modelsProvider.dispose()
+                    }
                 }
             }
         }
@@ -140,7 +145,7 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
     private fun hasBrokenJsRuntime(module: Module): Boolean {
         for (orderEntry in ModuleRootManager.getInstance(module).orderEntries) {
             val library = (orderEntry as? LibraryOrderEntry)?.library as? LibraryEx ?: continue
-            if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library, ignoreKind = true)) return true
+            if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library, module.project, ignoreKind = true)) return true
         }
         return false
     }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -56,16 +57,20 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     "name:$name visibility:$visibility modality:$modality " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
-                    "returnType:$returnType " +
+                    "returnType:${returnType.render()} " +
                     "flags:${renderSimpleFunctionFlags()}"
         }
 
+    private fun renderFlagsList(vararg flags: String?) =
+        flags.filterNotNull().joinToString(separator = ",")
+
     private fun IrSimpleFunction.renderSimpleFunctionFlags(): String =
-        listOfNotNull(
+        renderFlagsList(
             "tailrec".takeIf { isTailrec },
             "inline".takeIf { isInline },
+            "external".takeIf { isExternal },
             "suspend".takeIf { isSuspend }
-        ).joinToString(separator = ",")
+        )
 
     private fun IrFunction.renderTypeParameters(): String =
         typeParameters.joinToString(separator = ", ", prefix = "<", postfix = ">") { it.name.toString() }
@@ -84,51 +89,75 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
                     "returnType:${returnType.render()} " +
-                    "flags:${if (isInline) "inline" else ""}"
+                    "flags:${renderConstructorFlags()}"
         }
+
+    private fun IrConstructor.renderConstructorFlags() =
+        renderFlagsList(
+            "inline".takeIf { isInline },
+            "external".takeIf { isExternal },
+            "primary".takeIf { isPrimary }
+        )
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
         declaration.run {
             "PROPERTY ${renderOriginIfNonTrivial()}" +
-                    "name:$name type:${type.render()} visibility:$visibility modality:$modality " +
+                    "name:$name visibility:$visibility modality:$modality " +
                     "flags:${renderPropertyFlags()}"
         }
 
     private fun IrProperty.renderPropertyFlags() =
-        listOfNotNull(
+        renderFlagsList(
+            "external".takeIf { isExternal },
             "const".takeIf { isConst },
             "lateinit".takeIf { isLateinit },
             "delegated".takeIf { isDelegated },
             if (isVar) "var" else "val"
-        ).joinToString(separator = "m")
+        )
 
     override fun visitField(declaration: IrField, data: Nothing?): String =
         "FIELD ${declaration.renderOriginIfNonTrivial()}" +
-                "name:${declaration.name} type:${declaration.type.render()} visibility:${declaration.visibility}"
+                "name:${declaration.name} type:${declaration.type.render()} visibility:${declaration.visibility} " +
+                "flags:${declaration.renderFieldFlags()}"
+
+    private fun IrField.renderFieldFlags() =
+        renderFlagsList(
+            "final".takeIf { isFinal },
+            "external".takeIf { isExternal },
+            "static".takeIf { isStatic }
+        )
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
         declaration.run {
             "CLASS ${renderOriginIfNonTrivial()}" +
                     "$kind name:$name modality:$modality visibility:$visibility " +
-                    "flags:${renderClassFlags()}"
+                    "flags:${renderClassFlags()} " +
+                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}]"
         }
 
     private fun IrClass.renderClassFlags() =
-        listOfNotNull("companion".takeIf { isCompanion }, "data".takeIf { isData }).joinToString(separator = ",")
+        renderFlagsList(
+            "companion".takeIf { isCompanion },
+            "inner".takeIf { isInner },
+            "data".takeIf { isData },
+            "external".takeIf { isExternal },
+            "inline".takeIf { isInline }
+        )
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
-        "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}${declaration.descriptor.ref()} type=${declaration.descriptor.underlyingType.render()}"
+        "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}${declaration.descriptor.ref()} " +
+                "type=${declaration.descriptor.underlyingType.render()}"
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
         "VAR ${declaration.renderOriginIfNonTrivial()}" +
                 "name:${declaration.name} type:${declaration.type.render()} flags:${declaration.renderVariableFlags()}"
 
     private fun IrVariable.renderVariableFlags(): String =
-        listOfNotNull(
+        renderFlagsList(
             "const".takeIf { isConst },
             "lateinit".takeIf { isLateinit },
             if (isVar) "var" else "val"
-        ).joinToString(separator = " ")
+        )
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
         "ENUM_ENTRY ${declaration.renderOriginIfNonTrivial()}name:${declaration.name}"
@@ -140,7 +169,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         declaration.run {
             "TYPE_PARAMETER ${renderOriginIfNonTrivial()}" +
                     "name:$name index:$index variance:$variance " +
-                    "upperBounds:[${upperBounds.joinToString(separator = "; ") { it.render() }}]"
+                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}]"
         }
 
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String =
@@ -154,11 +183,11 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
     private fun IrValueParameter.renderValueParameterFlags(): String =
-        listOfNotNull(
+        renderFlagsList(
             "vararg".takeIf { varargElementType != null },
             "crossinline".takeIf { isCrossinline },
             "noinline".takeIf { isNoinline }
-        ).joinToString(separator = ",")
+        )
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
         declaration.run {
@@ -182,10 +211,17 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "? ${expression::class.java.simpleName} type=${expression.type.render()}"
 
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
-        "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value}"
+        "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
+
+    private fun Any.escapeIfRequired() =
+        when (this) {
+            is String -> "\"${StringUtil.escapeStringCharacters(this)}\""
+            is Char -> "'${StringUtil.escapeStringCharacters(this.toString())}'"
+            else -> this
+        }
 
     override fun visitVararg(expression: IrVararg, data: Nothing?): String =
-        "VARARG type=${expression.type} varargElementType=${expression.varargElementType}"
+        "VARARG type=${expression.type.render()} varargElementType=${expression.varargElementType.render()}"
 
     override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): String =
         "SPREAD_ELEMENT"
@@ -341,7 +377,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             DECLARATION_RENDERER.renderDescriptor(this.descriptor)
 
         internal fun DeclarationDescriptor.ref(): String =
-            REFERENCE_RENDERER.renderDescriptor(this)
+            REFERENCE_RENDERER.renderDescriptor(this.original)
 
         internal fun KotlinType.render(): String =
             DECLARATION_RENDERER.renderType(this)

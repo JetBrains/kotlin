@@ -41,7 +41,7 @@ object ThreadTrackerPatcherForTeamCityTesting {
 
         patched.compareAndSet(false, true)
 
-        IdeaForkJoinWorkerThreadFactory.setupForkJoinCommonPool()
+        IdeaForkJoinWorkerThreadFactory.setupForkJoinCommonPool(true)
 
         // Check setup was successful and patching isn't needed
         val commonPoolFactoryName = ForkJoinPool.commonPool().factory::class.java.name

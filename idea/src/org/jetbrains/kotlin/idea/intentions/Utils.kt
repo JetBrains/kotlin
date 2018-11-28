@@ -19,17 +19,18 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -40,7 +41,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
-import java.lang.IllegalArgumentException
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 fun KtContainerNode.description(): String? {
     when (node.elementType) {
@@ -312,3 +313,20 @@ fun KtBlockExpression.getParentLambdaLabelName(): String? {
 }
 
 internal fun KtExpression.getCallableDescriptor() = resolveToCall()?.resultingDescriptor
+
+fun KtDeclaration.isFinalizeMethod(descriptor: DeclarationDescriptor? = null): Boolean {
+    if (containingClass() == null) return false
+    val function = this as? KtNamedFunction ?: return false
+    return function.name == "finalize"
+            && function.valueParameters.isEmpty()
+            && ((descriptor ?: function.descriptor) as? FunctionDescriptor)?.returnType?.isUnit() == true
+}
+
+fun KtDotQualifiedExpression.isToString(): Boolean {
+    val callExpression = selectorExpression as? KtCallExpression ?: return false
+    val referenceExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return false
+    if (referenceExpression.getReferencedName() != "toString") return false
+    val resolvedCall = toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
+    val callableDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return false
+    return callableDescriptor.getDeepestSuperDeclarations().any { it.fqNameUnsafe.asString() == "kotlin.Any.toString" }
+}

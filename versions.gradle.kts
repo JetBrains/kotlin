@@ -1,9 +1,18 @@
+import java.util.*
+import java.io.*
 
-extra["versions.intellijSdk"] = "173.4548.28"
-extra["versions.androidBuildTools"] = "r23.0.1"
-extra["versions.idea.NodeJS"] = "172.3757.32"
-//extra["versions.androidStudioRelease"] = "3.1.0.5"
-//extra["versions.androidStudioBuild"] = "173.4506631"
+var propertiesFile = rootProject.file("versions.properties");
+if (!propertiesFile.exists()) {
+    //work-around for buildSrc
+    propertiesFile = rootProject.file("../versions.properties");
+}
+FileReader(propertiesFile).use {
+    val properties = Properties()
+    properties.load(it)
+    properties.forEach { (k, v) ->
+        extra[k.toString()] = v
+    }
+}
 
 val gradleJars = listOf(
     "gradle-api",
@@ -19,87 +28,20 @@ val androidStudioVersion = if (extra.has("versions.androidStudioRelease"))
 else
     null
 
-val platform = androidStudioVersion?.let { "AS" + it }
-        ?: extra["versions.intellijSdk"].toString().substringBefore('.')
+val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
+val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
+if (intellijVersionDelimiterIndex == -1) {
+    error("Invalid IDEA version $intellijVersion")
+}
 
-when (platform) {
-    "181" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.12"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2-2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.5"
-        extra["versions.jar.gson"] = "2.8.2"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.4"
-        }
-    }
-    "173" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.12"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.5"
-        extra["versions.jar.gson"] = "2.8.2"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.0"
-        }
-        extra["ignore.jar.lombok-ast-0.2.3"] = true
-    }
-    "172" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.6"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.2"
-        extra["versions.jar.gson"] = "2.5"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "3.5"
-        }
-    }
-    "171" -> {
-        extra["versions.jar.guava"] = "19.0"
-        extra["versions.jar.groovy-all"] = "2.4.6"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.2"
-        extra["versions.jar.gson"] = "2.5"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "3.3"
-        }
-    }
-    "AS30" -> {
-        extra["versions.jar.guava"] = "19.0"
-        extra["versions.jar.groovy-all"] = "2.4.6"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.2"
-        extra["versions.jar.gson"] = "2.5"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "3.5"
-        }
+val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
+val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
-        extra["ignore.jar.common"] = true
-    }
-    "AS31" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.12"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.5"
-        extra["versions.jar.gson"] = "2.8.2"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.0"
-        }
+rootProject.extra["versions.platform"] = platform
 
-        extra["ignore.jar.common"] = true
-        extra["ignore.jar.lombok-ast"] = true
-    }
+
+for (jar in gradleJars) {
+    extra["versions.jar.$jar"] = extra["versions.gradle-api"]
 }
 
 if (!extra.has("versions.androidStudioRelease")) {

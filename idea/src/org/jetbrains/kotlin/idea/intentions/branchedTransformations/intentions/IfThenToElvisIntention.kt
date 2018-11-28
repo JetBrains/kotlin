@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToSafeAccessInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -32,32 +33,39 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
-        IfThenToElvisIntention::class,
-        { it -> it.isUsedAsExpression(it.analyze(BodyResolveMode.PARTIAL)) }
+    IfThenToElvisIntention::class,
+    { it -> it.isUsedAsExpression(it.analyze(BodyResolveMode.PARTIAL_WITH_CFA)) }
 ) {
     override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
 
     override fun problemHighlightType(element: KtIfExpression): ProblemHighlightType =
-            if (element.shouldBeTransformed()) super.problemHighlightType(element) else ProblemHighlightType.INFORMATION
+        if (element.shouldBeTransformed()) super.problemHighlightType(element) else ProblemHighlightType.INFORMATION
 }
 
 class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
-        KtIfExpression::class.java,
-        "Replace 'if' expression with elvis expression"
+    KtIfExpression::class.java,
+    "Replace 'if' expression with elvis expression"
 ) {
 
-    private fun IfThenToSelectData.clausesReplaceableByElvis(): Boolean {
-        if (baseClause == null || negatedClause == null || negatedClause.isNullOrBlockExpression()) return false
-        if (negatedClause is KtThrowExpression && negatedClause.throwsNullPointerExceptionWithNoArguments()) return false
-
-        return receiverExpression is KtThisExpression && hasImplicitReceiver() ||
-               baseClause.evaluatesTo(receiverExpression) ||
-               baseClause.hasFirstReceiverOf(receiverExpression) && !baseClause.hasNullableType(context)
-    }
+    private fun IfThenToSelectData.clausesReplaceableByElvis(): Boolean =
+        when {
+            baseClause == null || negatedClause == null || negatedClause.isNullOrBlockExpression() ->
+                false
+            negatedClause is KtThrowExpression && negatedClause.throwsNullPointerExceptionWithNoArguments() ->
+                false
+            baseClause.evaluatesTo(receiverExpression) ->
+                true
+            baseClause.anyArgumentEvaluatesTo(receiverExpression) ->
+                true
+            hasImplicitReceiverReplaceableBySafeCall() || baseClause.hasFirstReceiverOf(receiverExpression) ->
+                !baseClause.hasNullableType(context)
+            else ->
+                false
+        }
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
         val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
-        if (!ifThenToSelectData.receiverExpression.isStable(ifThenToSelectData.context)) return false
+        if (!ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
 
         val type = element.getType(ifThenToSelectData.context) ?: return false
         if (KotlinBuiltIns.isUnit(type)) return false
@@ -78,14 +86,21 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         val factory = KtPsiFactory(element)
         val elvis = runWriteAction {
             val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
-            val newExpr = element.replaced(factory.createExpressionByPattern("$0 ?: $1",
-                                                                             replacedBaseClause,
-                                                                             ifThenToSelectData.negatedClause!!))
+            val newExpr = element.replaced(
+                factory.createExpressionByPattern(
+                    "$0 ?: $1",
+                    replacedBaseClause,
+                    ifThenToSelectData.negatedClause!!
+                )
+            )
             KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
         }
 
         if (editor != null) {
             elvis.inlineLeftSideIfApplicableWithPrompt(editor)
+            with(IfThenToSafeAccessInspection) {
+                (elvis.left as? KtSafeQualifiedExpression)?.renameLetParameter(editor)
+            }
         }
     }
 }

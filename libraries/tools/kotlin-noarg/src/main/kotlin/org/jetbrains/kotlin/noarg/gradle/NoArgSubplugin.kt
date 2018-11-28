@@ -18,15 +18,13 @@ package org.jetbrains.kotlin.noarg.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.internal.AbstractTask
-import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.internal.ConventionTask
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.noarg.gradle.model.builder.NoArgModelBuilder
+import javax.inject.Inject
 
-class NoArgGradleSubplugin : Plugin<Project> {
+class NoArgGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(NoArgGradleSubplugin::class.java) != null
 
@@ -35,39 +33,15 @@ class NoArgGradleSubplugin : Plugin<Project> {
         }
     }
 
-    fun Project.getBuildscriptArtifacts(): Set<ResolvedArtifact> =
-            buildscript.configurations.findByName("classpath")?.resolvedConfiguration?.resolvedArtifacts ?: emptySet()
-
     override fun apply(project: Project) {
-        val noArgExtension = project.extensions.create("noArg", NoArgExtension::class.java)
-
-        project.afterEvaluate {
-            val fqNamesAsString = noArgExtension.myAnnotations.joinToString(",")
-            val presetsAsString = noArgExtension.myPresets.joinToString(",")
-            project.extensions.extraProperties.set("kotlinNoArgAnnotations", fqNamesAsString)
-
-            val allBuildscriptArtifacts = project.getBuildscriptArtifacts() + project.rootProject.getBuildscriptArtifacts()
-            val noArgCompilerPluginFile = allBuildscriptArtifacts.filter {
-                val id = it.moduleVersion.id
-                id.group == NoArgKotlinGradleSubplugin.NOARG_GROUP_NAME
-                && id.name == NoArgKotlinGradleSubplugin.NOARG_ARTIFACT_NAME
-            }.firstOrNull()?.file?.absolutePath ?: ""
-
-            open class TaskForNoArg : AbstractTask()
-            project.tasks.add(project.tasks.create("noArgDataStorageTask", TaskForNoArg::class.java).apply {
-                isEnabled = false
-                description = "Supported annotations: " + fqNamesAsString +
-                              "; Presets: $presetsAsString" +
-                              "; Compiler plugin classpath: $noArgCompilerPluginFile"
-            })
-        }
+        project.extensions.create("noArg", NoArgExtension::class.java)
+        registry.register(NoArgModelBuilder())
     }
 }
 
 class NoArgKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
-        val NOARG_GROUP_NAME = "org.jetbrains.kotlin"
-        val NOARG_ARTIFACT_NAME = "kotlin-noarg"
+        const val NOARG_ARTIFACT_NAME = "kotlin-noarg"
 
         private val ANNOTATION_ARG_NAME = "annotation"
         private val PRESET_ARG_NAME = "preset"
@@ -77,12 +51,12 @@ class NoArgKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     override fun isApplicable(project: Project, task: AbstractCompile) = NoArgGradleSubplugin.isEnabled(project)
 
     override fun apply(
-            project: Project,
-            kotlinCompile: AbstractCompile,
-            javaCompile: AbstractCompile,
-            variantData: Any?,
-            androidProjectHandler: Any?,
-            javaSourceSet: SourceSet?
+        project: Project,
+        kotlinCompile: AbstractCompile,
+        javaCompile: AbstractCompile?,
+        variantData: Any?,
+        androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation<*>?
     ): List<SubpluginOption> {
         if (!NoArgGradleSubplugin.isEnabled(project)) return emptyList()
 
@@ -105,7 +79,7 @@ class NoArgKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         return options
     }
 
-    override fun getArtifactName() = "kotlin-noarg"
-    override fun getGroupName() = "org.jetbrains.kotlin"
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.noarg"
+    override fun getPluginArtifact(): SubpluginArtifact =
+        JetBrainsSubpluginArtifact(artifactId = NOARG_ARTIFACT_NAME)
 }

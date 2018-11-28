@@ -50,7 +50,7 @@ class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin
     override fun getState() = this
     override fun get() = this
 
-    override fun loadState(state: KotlinDebuggerSettings?) {
-        if (state != null) XmlSerializerUtil.copyBean<KotlinDebuggerSettings>(state, this)
+    override fun loadState(state: KotlinDebuggerSettings) {
+        XmlSerializerUtil.copyBean<KotlinDebuggerSettings>(state, this)
     }
 }

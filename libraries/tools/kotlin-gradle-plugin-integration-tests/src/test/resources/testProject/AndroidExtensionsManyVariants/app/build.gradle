@@ -32,10 +32,16 @@ android {
             versionNameSuffix "-full"
         }
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 }
 
 androidExtensions {
     experimental = true
+    features = ["views", "parcelize"]
 }
 
 dependencies {

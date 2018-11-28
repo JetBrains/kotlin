@@ -21,7 +21,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
+import com.intellij.ui.JBColor
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -77,6 +77,8 @@ class LookupElementFactory(
             val parameter = descriptor.original.valueParameters.singleOrNull() ?: return false
             return parameter.type.isFunctionType
         }
+
+        val CAST_REQUIRED_COLOR = JBColor(0x4E4040, 0x969696)
     }
 
     val insertHandlerProvider = basicFactory.insertHandlerProvider
@@ -286,7 +288,7 @@ class LookupElementFactory(
                         presentation.isItemTextBold = true
                     }
                     else {
-                        presentation.itemTextForeground = LookupCellRenderer.getGrayedForeground(false)
+                        presentation.itemTextForeground = CAST_REQUIRED_COLOR
                         // gray all tail fragments too:
                         val fragments = presentation.tailFragments
                         presentation.clearTail()

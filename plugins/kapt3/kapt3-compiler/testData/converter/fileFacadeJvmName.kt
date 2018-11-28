@@ -5,4 +5,4 @@ package a.b.c
 
 fun foo() {}
 
-val bar = 3
+const val bar = 3

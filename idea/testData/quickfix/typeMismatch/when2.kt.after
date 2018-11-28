@@ -1,0 +1,11 @@
+// "Change return type of enclosing function 'test' to 'String'" "true"
+fun test(i: Int): String {
+    return when (i) {
+        0 -> {
+            ""
+        }
+        else -> {
+            ""<caret>
+        }
+    }
+}

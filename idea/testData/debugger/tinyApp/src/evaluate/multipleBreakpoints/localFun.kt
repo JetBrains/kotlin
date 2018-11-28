@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
 
     fun myLocalFun3() {
         // EXPRESSION: myLocalFun1() + 1
-        // RESULT: Cannot find local variable: name = myLocalFun1
+        // RESULT: java.lang.AssertionError : Cannot find local variable: name = myLocalFun1
         //Breakpoint!
         myLocalFun1() + 1
     }
@@ -56,7 +56,7 @@ fun main(args: Array<String>) {
     i = 1
     fun myLocalFun7() {
         // EXPRESSION: myLocalFun6() + 1
-        // RESULT: Cannot find local variable: name = myLocalFun6
+        // RESULT: java.lang.AssertionError : Cannot find local variable: name = myLocalFun6
         //Breakpoint!
         myLocalFun6() + 1
     }

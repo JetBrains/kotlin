@@ -27,7 +27,7 @@ fun <T> generic_invoker(gen :  () -> T) : T {
 fun println(message : Int) { System.out.println(message) }
 fun println(message : Long) { System.out.println(message) }
 
-fun main(args : Array<String>) {
+fun main() {
 
     println(run { 1 })
 }

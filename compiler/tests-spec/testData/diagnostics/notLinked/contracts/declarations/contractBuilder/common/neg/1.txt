@@ -1,0 +1,11 @@
+package
+
+public inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_2(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_3(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_4(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun case_5(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_6(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_7(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_8(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_9(/*0*/ number: kotlin.Int?): kotlin.Boolean

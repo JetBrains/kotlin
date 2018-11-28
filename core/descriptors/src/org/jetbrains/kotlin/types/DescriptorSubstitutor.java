@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.types;
 
-import org.jetbrains.annotations.Mutable;
+import kotlin.annotations.jvm.Mutable;
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -40,10 +40,12 @@ public class DescriptorSubstitutor {
             @NotNull DeclarationDescriptor newContainingDeclaration,
             @NotNull @Mutable List<TypeParameterDescriptor> result
     ) {
-        return substituteTypeParameters(typeParameters, originalSubstitution, newContainingDeclaration, result, null);
+        TypeSubstitutor substitutor = substituteTypeParameters(typeParameters, originalSubstitution, newContainingDeclaration, result, null);
+        if (substitutor == null) throw new AssertionError("Substitution failed");
+        return substitutor;
     }
 
-    @NotNull
+    @Nullable
     public static TypeSubstitutor substituteTypeParameters(
             @ReadOnly @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull TypeSubstitution originalSubstitution,
@@ -80,7 +82,7 @@ public class DescriptorSubstitutor {
             TypeParameterDescriptorImpl substituted = substitutedMap.get(descriptor);
             for (KotlinType upperBound : descriptor.getUpperBounds()) {
                 KotlinType substitutedBound = substitutor.substitute(upperBound, Variance.IN_VARIANCE);
-                assert substitutedBound != null : "Upper bound failed to substitute: " + descriptor;
+                if (substitutedBound == null) return null;
 
                 if (substitutedBound != upperBound && wereChanges != null) {
                     wereChanges[0] = true;

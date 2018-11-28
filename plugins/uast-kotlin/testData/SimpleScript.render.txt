@@ -11,7 +11,9 @@ public class SimpleScript {
         @org.jetbrains.annotations.NotNull private final var b: int = 0
         @org.jetbrains.annotations.NotNull private final var a: int
         public final fun getB() : int = UastEmptyExpression
-        public final fun getAPlusB() : int = a + b
+        public final fun getAPlusB() : int {
+            return a + b
+        }
         public final fun getA() : int = UastEmptyExpression
         public fun Bar(@org.jetbrains.annotations.NotNull a: int) = UastEmptyExpression
         public static final class Baz {

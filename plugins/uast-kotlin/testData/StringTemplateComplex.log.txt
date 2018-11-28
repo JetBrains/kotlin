@@ -47,7 +47,9 @@ UFile (package = )
             UParameter (name = i)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
                 ULiteralExpression (value = 0)
-            USimpleNameReferenceExpression (identifier = i)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = i)
         UAnnotationMethod (name = foo)
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))

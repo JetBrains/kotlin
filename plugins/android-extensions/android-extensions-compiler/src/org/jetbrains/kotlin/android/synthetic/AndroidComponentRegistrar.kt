@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -54,6 +51,12 @@ object AndroidConfigurationKeys {
     val PACKAGE = CompilerConfigurationKey.create<String>("application package fq name")
     val EXPERIMENTAL = CompilerConfigurationKey.create<String>("enable experimental features")
     val DEFAULT_CACHE_IMPL = CompilerConfigurationKey.create<String>("default cache implementation")
+    val FEATURES = CompilerConfigurationKey.create<Set<AndroidExtensionsFeature>>("enabled features")
+}
+
+enum class AndroidExtensionsFeature(val featureName: String) {
+    VIEWS("views"),
+    PARCELIZE("parcelize")
 }
 
 class AndroidCommandLineProcessor : CommandLineProcessor {
@@ -68,23 +71,32 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
         val DEFAULT_CACHE_IMPL_OPTION = CliOption(
                 "defaultCacheImplementation", "hashMap/sparseArray/none", "Default cache implementation for module", required = false)
 
+        val FEATURES_OPTION = CliOption(
+                "features", AndroidExtensionsFeature.values().joinToString(" | "), "Enabled features", required = false)
+
         /* This option is just for saving Android Extensions status in Kotlin facet. It should not be supported from CLI. */
         val ENABLED_OPTION: CliOption = CliOption("enabled", "true/false", "Enable Android Extensions", required = false)
     }
 
     override val pluginId: String = ANDROID_COMPILER_PLUGIN_ID
 
-    override val pluginOptions: Collection<CliOption>
-            = listOf(VARIANT_OPTION, PACKAGE_OPTION, EXPERIMENTAL_OPTION, DEFAULT_CACHE_IMPL_OPTION, CONFIGURATION)
+    override val pluginOptions: Collection<AbstractCliOption>
+            = listOf(VARIANT_OPTION, PACKAGE_OPTION, EXPERIMENTAL_OPTION, DEFAULT_CACHE_IMPL_OPTION, CONFIGURATION, FEATURES_OPTION)
 
-    override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
+    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             VARIANT_OPTION -> configuration.appendList(AndroidConfigurationKeys.VARIANT, value)
             PACKAGE_OPTION -> configuration.put(AndroidConfigurationKeys.PACKAGE, value)
             EXPERIMENTAL_OPTION -> configuration.put(AndroidConfigurationKeys.EXPERIMENTAL, value)
             DEFAULT_CACHE_IMPL_OPTION -> configuration.put(AndroidConfigurationKeys.DEFAULT_CACHE_IMPL, value)
             CONFIGURATION -> configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
-            else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
+            FEATURES_OPTION -> {
+                val features = value.split(',').mapNotNullTo(mutableSetOf()) {
+                    name -> AndroidExtensionsFeature.values().firstOrNull { it.featureName == name }
+                }
+                configuration.put(AndroidConfigurationKeys.FEATURES, features)
+            }
+            else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }
 }
@@ -97,6 +109,37 @@ class AndroidComponentRegistrar : ComponentRegistrar {
             ClassBuilderInterceptorExtension.registerExtension(project, ParcelableClinitClassBuilderInterceptorExtension())
         }
 
+        private fun parseVariant(s: String): AndroidVariant? {
+            val parts = s.split(';')
+            if (parts.size < 2) return null
+            return AndroidVariant(parts[0], parts.drop(1))
+        }
+
+        fun registerViewExtensions(configuration: CompilerConfiguration, isExperimental: Boolean, project: MockProject) {
+            val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE) ?: return
+            val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.mapNotNull { parseVariant(it) } ?: return
+            val globalCacheImpl = parseCacheImplementationType(configuration.get(AndroidConfigurationKeys.DEFAULT_CACHE_IMPL))
+
+            if (variants.isEmpty() || applicationPackage.isEmpty()) {
+                return
+            }
+
+            val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage, variants)
+            project.registerService(AndroidLayoutXmlFileManager::class.java, layoutXmlFileManager)
+
+            ExpressionCodegenExtension.registerExtension(project,
+                    CliAndroidExtensionsExpressionCodegenExtension(isExperimental, globalCacheImpl))
+
+            StorageComponentContainerContributor.registerExtension(project,
+                    AndroidExtensionPropertiesComponentContainerContributor())
+
+            ClassBuilderInterceptorExtension.registerExtension(project,
+                    CliAndroidOnDestroyClassBuilderInterceptorExtension(globalCacheImpl))
+
+            PackageFragmentProviderExtension.registerExtension(project,
+                    CliAndroidPackageFragmentProviderExtension(isExperimental))
+        }
+
         fun parseCacheImplementationType(s: String?): CacheImplementation = when (s) {
             "sparseArray" -> CacheImplementation.SPARSE_ARRAY
             "none" -> CacheImplementation.NO_CACHE
@@ -105,30 +148,16 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     }
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE) ?: return
-        val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.mapNotNull { parseVariant(it) } ?: return
+        val features = configuration.get(AndroidConfigurationKeys.FEATURES) ?: AndroidExtensionsFeature.values().toSet()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
-        val globalCacheImpl = parseCacheImplementationType(configuration.get(AndroidConfigurationKeys.DEFAULT_CACHE_IMPL))
 
-        if (isExperimental) {
+        if (isExperimental && AndroidExtensionsFeature.PARCELIZE in features) {
             registerParcelExtensions(project)
         }
 
-        if (variants.isNotEmpty() && !applicationPackage.isNullOrBlank()) {
-            val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage!!, variants)
-            project.registerService(AndroidLayoutXmlFileManager::class.java, layoutXmlFileManager)
-
-            ExpressionCodegenExtension.registerExtension(project, CliAndroidExtensionsExpressionCodegenExtension(isExperimental, globalCacheImpl))
-            StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
-            ClassBuilderInterceptorExtension.registerExtension(project, CliAndroidOnDestroyClassBuilderInterceptorExtension(globalCacheImpl))
-            PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension(isExperimental))
+        if (AndroidExtensionsFeature.VIEWS in features) {
+            registerViewExtensions(configuration, isExperimental, project)
         }
-    }
-
-    private fun parseVariant(s: String): AndroidVariant? {
-        val parts = s.split(';')
-        if (parts.size < 2) return null
-        return AndroidVariant(parts[0], parts.drop(1))
     }
 }
 

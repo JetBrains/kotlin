@@ -1,4 +1,4 @@
 package
 
 public fun </*0*/ T> assertEquals(/*0*/ a: T, /*1*/ b: T): kotlin.Unit
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit

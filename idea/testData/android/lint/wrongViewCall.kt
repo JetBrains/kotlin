@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintWrongCallInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintWrongCallInspection
 
 import android.content.Context
 import android.graphics.Canvas

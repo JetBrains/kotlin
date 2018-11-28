@@ -20,10 +20,10 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.lang.IllegalArgumentException
-import java.util.ArrayList
+import java.util.*
 import java.util.regex.Pattern
 
-class TestGroup(private val testsRoot: String, val testDataRoot: String) {
+class TestGroup(private val testsRoot: String, val testDataRoot: String, val testRunnerMethodName: String) {
     inline fun <reified T: TestCase> testClass(
             suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
             noinline init: TestClass.() -> Unit
@@ -68,20 +68,20 @@ class TestGroup(private val testsRoot: String, val testDataRoot: String) {
                     if (singleClass) {
                         if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
                         SingleClassTestModel(rootFile, compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend,
-                                             skipIgnored)
+                                             skipIgnored, testRunnerMethodName)
                     }
                     else {
                         SimpleTestClassModel(rootFile, recursive, excludeParentDirs,
                                              compiledPattern, filenameStartsLowerCase, testMethod, className,
-                                             targetBackend, excludeDirs, skipIgnored)
+                                             targetBackend, excludeDirs, skipIgnored, testRunnerMethodName)
                     }
             )
         }
     }
 }
 
-fun testGroup(testsRoot: String, testDataRoot: String, init: TestGroup.() -> Unit) {
-    TestGroup(testsRoot, testDataRoot).init()
+fun testGroup(testsRoot: String, testDataRoot: String, testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME, init: TestGroup.() -> Unit) {
+    TestGroup(testsRoot, testDataRoot, testRunnerMethodName).init()
 }
 
 fun getDefaultSuiteTestClassName(baseTestClassName: String): String {

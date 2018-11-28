@@ -36,8 +36,7 @@ internal fun <T : Any> getOrCreateKotlinClass(jClass: Class<T>): KClassImpl<T> {
         if (kClass?.jClass == jClass) {
             return kClass
         }
-    }
-    else if (cached != null) {
+    } else if (cached != null) {
         // If the cached value is not a weak reference, it's an array of weak references
         @Suppress("UNCHECKED_CAST")
         (cached as Array<WeakReference<KClassImpl<T>>>)

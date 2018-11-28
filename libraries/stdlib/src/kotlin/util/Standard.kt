@@ -1,8 +1,13 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StandardKt")
 package kotlin
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 /**
  * An exception is thrown to indicate that a method body remains to be implemented.
@@ -123,6 +128,8 @@ public inline fun <T> T.takeUnless(predicate: (T) -> Boolean): T? {
  * Executes the given function [action] specified number of [times].
  *
  * A zero-based index of current iteration is passed as a parameter to [action].
+ *
+ * @sample samples.misc.ControlFlow.repeat
  */
 @kotlin.internal.InlineOnly
 public inline fun repeat(times: Int, action: (Int) -> Unit) {

@@ -1,0 +1,71 @@
+FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
+  CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String, y:kotlin.Int) returnType:A flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value=""
+      VALUE_PARAMETER name:y index:1 type:kotlin.Int flags:
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=42
+    PROPERTY name:x visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: String = ...' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:kotlin.String flags:
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:A flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): String'
+            GET_FIELD 'x: String' type=kotlin.String origin=null
+              receiver: GET_VAR 'this@A: A' type=A origin=null
+    PROPERTY name:y visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter y: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:A) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:A flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-y>(): Int'
+            GET_FIELD 'y: Int' type=kotlin.Int origin=null
+              receiver: GET_VAR 'this@A: A' type=A origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    annotations:
+      CALL 'constructor A(String = ..., Int = ...)' type=A origin=null
+        x: CONST String type=kotlin.String value="abc"
+        y: CONST Int type=kotlin.Int value=123
+    BLOCK_BODY
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    annotations:
+      CALL 'constructor A(String = ..., Int = ...)' type=A origin=null
+        x: CONST String type=kotlin.String value="def"
+    BLOCK_BODY
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    annotations:
+      CALL 'constructor A(String = ..., Int = ...)' type=A origin=null
+        x: CONST String type=kotlin.String value="ghi"
+    BLOCK_BODY
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    annotations:
+      CALL 'constructor A(String = ..., Int = ...)' type=A origin=null
+        y: CONST Int type=kotlin.Int value=456
+    BLOCK_BODY
+  FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    annotations:
+      CALL 'constructor A(String = ..., Int = ...)' type=A origin=null
+    BLOCK_BODY
+

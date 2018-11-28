@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 class JpsCompilerEnvironment(
-        val kotlinPaths: KotlinPaths,
-        services: Services,
-        val classesToLoadByParent: ClassCondition,
-        messageCollector: MessageCollector,
-        outputItemsCollector: OutputItemsCollectorImpl
+    val kotlinPaths: KotlinPaths,
+    services: Services,
+    val classesToLoadByParent: ClassCondition,
+    messageCollector: MessageCollector,
+    outputItemsCollector: OutputItemsCollectorImpl,
+    val progressReporter: ProgressReporter
 ) : CompilerEnvironment(services, messageCollector, outputItemsCollector) {
     override val outputItemsCollector: OutputItemsCollectorImpl
         get() = super.outputItemsCollector as OutputItemsCollectorImpl

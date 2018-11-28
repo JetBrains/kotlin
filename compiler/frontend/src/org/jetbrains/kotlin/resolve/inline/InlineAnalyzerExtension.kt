@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.resolve.inline
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReifiable
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -108,6 +108,18 @@ class InlineAnalyzerExtension(
                     } else {
                         checkDefaultValue(trace, parameter, ktParameter)
                     }
+                }
+                // Report unsupported error on inline/crossinline suspend lambdas with default values.
+                if (functionDescriptor.isSuspend &&
+                    InlineUtil.isInlineParameterExceptNullability(parameter) &&
+                    parameter.hasSuspendFunctionType
+                ) {
+                    trace.report(
+                        Errors.NOT_YET_SUPPORTED_IN_INLINE.on(
+                            ktParameter,
+                            "Suspend functional parameters with default values"
+                        )
+                    )
                 }
             }
         }

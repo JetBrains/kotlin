@@ -1,0 +1,13 @@
+package
+
+public val value_1: [ERROR : Type for _____0b0_1_1_1_0_1]
+public val value_10: [ERROR : Type for _b]
+public val value_12: [ERROR : Type for _b_]
+public val value_2: [ERROR : Type for _0B1_______1_______1_______0]
+public val value_3: [ERROR : Type for _0_0B1_0_1_1_1_0_1_1]
+public val value_4: [ERROR : Type for _0B000000000]
+public val value_5: [ERROR : Type for _0000000000b]
+public val value_6: [ERROR : Type for _0_1b]
+public val value_7: [ERROR : Type for ____________0b]
+public val value_8: [ERROR : Type for _0_b_0]
+public val value_9: [ERROR : Type for _b_0]

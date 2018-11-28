@@ -21,6 +21,7 @@ import com.intellij.util.Query
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
@@ -41,7 +42,7 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.util.*
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {
-    is PsiMethod -> PsiUtil.canBeOverriden(this)
+    is PsiMethod -> PsiUtil.canBeOverridden(this)
     is KtDeclaration -> isOverridable()
     else -> false
 }
@@ -74,7 +75,6 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
                     DirectClassInheritorsSearch.search(
                             current,
                             current.project.allScope(),
-                            /* checkInheritance = */ true,
                             /* includeAnonymous = */ true
                     )
 
@@ -97,14 +97,14 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
     override fun isApplicable(request: HierarchySearchRequest<PsiMethod>): Boolean =
             runReadAction { request.originalElement.isOverridableElement() }
 
-    override fun doSearchDirect(request: HierarchySearchRequest<PsiMethod>, consumer: Processor<PsiMethod>) {
+    override fun doSearchDirect(request: HierarchySearchRequest<PsiMethod>, consumer: ExecutorProcessor<PsiMethod>) {
         searchDirectOverriders(request.originalElement).forEach { method -> consumer.process(method) }
     }
 }
 
 object PsiMethodOverridingHierarchyTraverser: HierarchyTraverser<PsiMethod> {
     override fun nextElements(current: PsiMethod): Iterable<PsiMethod> = KotlinPsiMethodOverridersSearch.searchDirectOverriders(current)
-    override fun shouldDescend(element: PsiMethod): Boolean = PsiUtil.canBeOverriden(element)
+    override fun shouldDescend(element: PsiMethod): Boolean = PsiUtil.canBeOverridden(element)
 }
 
 fun PsiElement.toPossiblyFakeLightMethods(): List<PsiMethod> {

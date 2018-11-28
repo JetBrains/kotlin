@@ -41,7 +41,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
@@ -75,6 +77,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.AssertionError
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
@@ -161,7 +164,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     private val elementsToShorten = ArrayList<KtElement>()
 
     private fun updateCurrentModule() {
-        _currentFileModule = config.currentFile.analyzeFullyAndGetResult().moduleDescriptor
+        _currentFileModule = config.currentFile.analyzeWithAllCompilerChecks().moduleDescriptor
     }
 
     fun computeTypeCandidates(typeInfo: TypeInfo): List<TypeCandidate> =
@@ -241,6 +244,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             // gather relevant information
 
             val placement = placement
+            var nullableReceiver = false
             when (placement) {
                 is CallablePlacement.NoReceiver -> {
                     containingElement = placement.containingElement
@@ -253,14 +257,17 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
                 }
                 is CallablePlacement.WithReceiver -> {
-                    receiverClassDescriptor =
-                            placement.receiverTypeCandidate.theType.constructor.declarationDescriptor
+                    val theType = placement.receiverTypeCandidate.theType
+                    nullableReceiver = theType.isMarkedNullable
+                    receiverClassDescriptor = theType.constructor.declarationDescriptor
                     val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
                     containingElement = if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
                 }
                 else -> throw IllegalArgumentException("Placement wan't initialized")
             }
-            val receiverType = receiverClassDescriptor?.defaultType
+            val receiverType = receiverClassDescriptor?.defaultType?.let {
+                if (nullableReceiver) it.makeNullable() else it
+            }
 
             val project = config.currentFile.project
 
@@ -1006,7 +1013,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     finishTemplate(true)
                 }
 
-                override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                override fun templateFinished(template: Template, brokenOff: Boolean) {
                     finishTemplate(brokenOff)
                 }
             })

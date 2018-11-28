@@ -1,24 +1,15 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.translate.expression
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -27,6 +18,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.operation.InOperationTranslator
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.not
 import org.jetbrains.kotlin.js.translate.utils.mutator.CoercionMutator
@@ -49,11 +41,12 @@ private typealias EntryWithConstants = Pair<List<JsExpression>, KtWhenEntry>
 
 class WhenTranslator
 private constructor(private val whenExpression: KtWhenExpression, context: TranslationContext) : AbstractTranslator(context) {
+    private val subjectType: KotlinType?
     private val expressionToMatch: JsExpression?
     private val type: KotlinType?
     private val uniqueConstants = mutableSetOf<Any>()
     private val uniqueEnumNames = mutableSetOf<String>()
-    private val dataFlowValueFactory: DataFlowValueFactory = DataFlowValueFactoryImpl()
+    private val dataFlowValueFactory: DataFlowValueFactory = DataFlowValueFactoryImpl(context.languageVersionSettings)
 
     private val isExhaustive: Boolean
         get() {
@@ -63,8 +56,27 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
         }
 
     init {
-        val subject = whenExpression.subjectExpression
-        expressionToMatch = if (subject != null) context.defineTemporary(Translation.translateAsExpression(subject, context)) else null
+        val subjectVariable = whenExpression.subjectVariable
+        val subjectExpression = whenExpression.subjectExpression
+
+        when {
+            subjectVariable != null -> {
+                val variable = Translation.translateAsStatement(subjectVariable, context) as JsVars
+                context.addStatementToCurrentBlock(variable)
+
+                val descriptor = BindingUtils.getDescriptorForElement(context.bindingContext(), subjectVariable) as? CallableDescriptor
+                subjectType = descriptor?.returnType
+                expressionToMatch = variable.vars.first().name.makeRef()
+            }
+            subjectExpression != null -> {
+                subjectType = bindingContext().getType(subjectExpression)
+                expressionToMatch = context.defineTemporary(Translation.translateAsExpression(subjectExpression, context))
+            }
+            else -> {
+                subjectType = null
+                expressionToMatch = null
+            }
+        }
 
         type = bindingContext().getType(whenExpression)
     }
@@ -123,8 +135,8 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
     }
 
     private fun translateAsSwitch(fromIndex: Int): Pair<JsSwitch, Int>? {
+        val subjectType = subjectType ?: return null
         val ktSubject = whenExpression.subjectExpression ?: return null
-        val subjectType = bindingContext().getType(ktSubject) ?: return null
 
         val dataFlow = dataFlowValueFactory.createDataFlowValue(
                 ktSubject, subjectType, bindingContext(), context().declarationDescriptor ?: context().currentModule)
@@ -163,7 +175,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
                 lastEntry.statements += JsBreak().apply { source = entry }
                 members
             }
-            Pair(JsSwitch(subjectSupplier(), switchEntries).apply { source = expression }, nextIndex)
+            Pair(JsSwitch(subjectSupplier(), switchEntries).apply { source = whenExpression }, nextIndex)
         }
         else {
             null
@@ -197,11 +209,16 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
             entries: List<KtWhenEntry>,
             expectedType: KotlinType
     ): Pair<List<EntryWithConstants>, Int> {
+        val classId = WhenChecker.getClassIdForTypeIfEnum(expectedType)
         return collectConstantEntries(
-                fromIndex, entries,
-                { (it.toConstantValue(expectedType) as? EnumValue)?.enumEntryName?.identifier },
-                { uniqueEnumNames.add(it) },
-                { JsStringLiteral(it) }
+            fromIndex, entries,
+            {
+                (it.toConstantValue(expectedType) as? EnumValue)
+                    ?.takeIf { enumEntry -> enumEntry.enumClassId == classId }
+                    ?.enumEntryName?.identifier
+            },
+            { uniqueEnumNames.add(it) },
+            { JsStringLiteral(it) }
         )
     }
 
@@ -322,12 +339,11 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
     private fun translateExpressionCondition(condition: KtWhenConditionWithExpression, context: TranslationContext): JsExpression {
         val patternExpression = condition.expression ?: error("Expression pattern should have an expression.")
 
-        val expressionToMatch = expressionToMatch
         val patternTranslator = Translation.patternTranslator(context)
         return if (expressionToMatch == null) {
             patternTranslator.translateExpressionForExpressionPattern(patternExpression)
         } else {
-            patternTranslator.translateExpressionPattern(whenExpression.subjectExpression!!, expressionToMatch, patternExpression)
+            patternTranslator.translateExpressionPattern(subjectType!!, expressionToMatch, patternExpression)
         }
     }
 

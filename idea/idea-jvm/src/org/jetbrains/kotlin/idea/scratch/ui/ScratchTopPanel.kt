@@ -64,15 +64,30 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
 
         add(JSeparator(SwingConstants.VERTICAL))
 
-        isReplCheckbox = JCheckBox("Use REPL", false).customize()
+        isReplCheckbox = JCheckBox("Use REPL", false)
         add(isReplCheckbox)
+        isReplCheckbox.addItemListener {
+            scratchFile.getPsiFile()?.virtualFile?.apply {
+                scratchPanelConfig = (scratchPanelConfig ?: ScratchPanelConfig()).copy(isRepl = isReplCheckbox.isSelected)
+            }
+        }
 
         add(JSeparator(SwingConstants.VERTICAL))
 
-        isMakeBeforeRunCheckbox = JCheckBox("Make before Run", false).customize()
+        isMakeBeforeRunCheckbox = JCheckBox("Make before Run", false)
         add(isMakeBeforeRunCheckbox)
+        isMakeBeforeRunCheckbox.addItemListener {
+            scratchFile.getPsiFile()?.virtualFile?.apply {
+                scratchPanelConfig = (scratchPanelConfig ?: ScratchPanelConfig()).copy(isMakeBeforeRun = isMakeBeforeRunCheckbox.isSelected)
+            }
+        }
 
         add(JSeparator(SwingConstants.VERTICAL))
+
+        (scratchFile.getPsiFile()?.virtualFile?.scratchPanelConfig ?: ScratchPanelConfig()).let {
+            isReplCheckbox.isSelected = it.isRepl
+            isMakeBeforeRunCheckbox.isSelected = it.isMakeBeforeRun
+        }
     }
 
     fun getModule(): Module? = moduleChooser.selectedModule
@@ -99,16 +114,16 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         isReplCheckbox.isSelected = isSelected
     }
 
-    private fun JCheckBox.customize(): JCheckBox {
-        verticalTextPosition = SwingConstants.BOTTOM
-        return this
+    @TestOnly
+    fun setMakeBeforeRun(isSelected: Boolean) {
+        isMakeBeforeRunCheckbox.isSelected = isSelected
     }
 
     private fun createActionsToolbar(): JComponent {
         val toolbarGroup = DefaultActionGroup().apply {
-            add(RunScratchAction(this@ScratchTopPanel))
+            add(RunScratchAction())
             addSeparator()
-            add(ClearScratchAction(this@ScratchTopPanel))
+            add(ClearScratchAction())
         }
 
         return ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, toolbarGroup, true).component
@@ -120,3 +135,5 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         }
     }
 }
+
+data class ScratchPanelConfig(val isRepl: Boolean = false, val isMakeBeforeRun: Boolean = false)

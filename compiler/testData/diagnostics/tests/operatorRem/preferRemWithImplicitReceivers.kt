@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProhibitOperatorMod
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A {

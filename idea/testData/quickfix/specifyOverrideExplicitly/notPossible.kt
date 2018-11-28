@@ -1,5 +1,4 @@
 // "Specify override for 'foo(): Unit' explicitly" "false"
-// ACTION: Convert to secondary constructor
 // ACTION: Create test
 // ACTION: Make primary constructor internal
 // ACTION: Make primary constructor private

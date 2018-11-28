@@ -1,28 +1,17 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.translate.reference
 
-import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
@@ -37,6 +26,8 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.getReferenceToJsClass
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -45,12 +36,13 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import java.util.*
 
 class CallArgumentTranslator private constructor(
         private val resolvedCall: ResolvedCall<*>,
         private val receiver: JsExpression?,
-        context: TranslationContext
+        private val context: TranslationContext
 ) : AbstractTranslator(context) {
 
     data class ArgumentsInfo(
@@ -89,7 +81,7 @@ class CallArgumentTranslator private constructor(
         var argsBeforeVararg: List<JsExpression>? = null
         var concatArguments: MutableList<JsExpression>? = null
         val argsToJsExpr = translateUnresolvedArguments(context(), resolvedCall)
-        var varargPrimitiveType: PrimitiveType? = null
+        var varargElementType: KotlinType? = null
 
         for (parameterDescriptor in valueParameters) {
             val actualArgument = valueArgumentsByIndex[parameterDescriptor.index]
@@ -102,8 +94,7 @@ class CallArgumentTranslator private constructor(
                     hasSpreadOperator = arguments.any { it.getSpreadElement() != null }
                 }
 
-                val varargElementType = parameterDescriptor.original.varargElementType!!
-                varargPrimitiveType = KotlinBuiltIns.getPrimitiveType(varargElementType).takeUnless { varargElementType.isMarkedNullable }
+                varargElementType = parameterDescriptor.original.varargElementType!!
 
                 if (hasSpreadOperator) {
                     if (isNativeFunctionCall) {
@@ -114,10 +105,10 @@ class CallArgumentTranslator private constructor(
                                                                  null)
                     }
                     else {
-                        result.addAll(translateVarargArgument(actualArgument,
-                                                              argsToJsExpr,
-                                                              actualArgument.arguments.size > 1,
-                                                              varargPrimitiveType))
+                        translateVarargArgument(actualArgument,
+                                                argsToJsExpr,
+                                                actualArgument.arguments.size > 1,
+                                                varargElementType)?.let { result.add(it) }
                     }
                 }
                 else {
@@ -125,7 +116,7 @@ class CallArgumentTranslator private constructor(
                         result.addAll(translateResolvedArgument(actualArgument, argsToJsExpr))
                     }
                     else {
-                        result.addAll(translateVarargArgument(actualArgument, argsToJsExpr, true, varargPrimitiveType))
+                        translateVarargArgument(actualArgument, argsToJsExpr, true, varargElementType)?.let { result.add(it) }
                     }
                 }
             }
@@ -146,7 +137,7 @@ class CallArgumentTranslator private constructor(
                 concatArguments!!.add(0, toArray(null, argsBeforeVararg))
             }
 
-            result = mutableListOf(concatArgumentsIfNeeded(concatArguments!!, varargPrimitiveType, true))
+            result = mutableListOf(concatArgumentsIfNeeded(concatArguments!!, varargElementType, true))
 
             if (receiver != null) {
                 cachedReceiver = context().getOrDeclareTemporaryConstVariable(receiver)
@@ -164,12 +155,7 @@ class CallArgumentTranslator private constructor(
 
         val callableDescriptor = resolvedCall.resultingDescriptor
         if (callableDescriptor is FunctionDescriptor && callableDescriptor.isSuspend) {
-            var continuationArg: JsExpression = TranslationUtils.translateContinuationArgument(context())
-            if (callableDescriptor.original.isBuiltInSuspendCoroutineOrReturn()) {
-                val facadeName = context().getNameForDescriptor(TranslationUtils.getCoroutineProperty(context(), "facade"))
-                continuationArg = JsAstUtils.pureFqn(facadeName, continuationArg)
-            }
-            result.add(continuationArg)
+            result.add(TranslationUtils.translateContinuationArgument(context()))
         }
 
         removeLastUndefinedArguments(result)
@@ -224,44 +210,64 @@ class CallArgumentTranslator private constructor(
         return result
     }
 
+    // Cache UTypeArray descriptor lookup
+    private val typeToUTypeArray = mutableMapOf<PrimitiveType, ClassDescriptor>()
+
+    private fun JsExpression.wrapInUArray(elementType: KotlinType): JsExpression {
+        return ArrayFIF.unsignedPrimitiveToSigned(elementType)?.let { primitiveType ->
+            val kotlinMemberScope = context.currentModule.getPackage(FqNameUnsafe("kotlin").toSafe()).memberScope
+            val classDescriptor = typeToUTypeArray.computeIfAbsent(primitiveType) {
+                val className = Name.identifier("U${primitiveType.typeName}Array")
+                kotlinMemberScope.getContributedClassifier(className, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+            }
+            JsNew(ReferenceTranslator.translateAsTypeReference(classDescriptor, context), listOf(this))
+        } ?: this
+    }
+
     private fun translateVarargArgument(
-            resolvedArgument: ResolvedValueArgument,
-            translatedArgs: Map<ValueArgument, JsExpression>,
-            shouldWrapVarargInArray: Boolean,
-            varargPrimitiveType: PrimitiveType?
-    ): List<JsExpression> {
+        resolvedArgument: ResolvedValueArgument,
+        translatedArgs: Map<ValueArgument, JsExpression>,
+        shouldWrapVarargInArray: Boolean,
+        varargElementType: KotlinType
+    ): JsExpression? {
         val arguments = resolvedArgument.arguments
         if (arguments.isEmpty()) {
             return if (shouldWrapVarargInArray) {
-                return listOf(toArray(varargPrimitiveType, listOf()))
-            }
-            else {
-                listOf()
+                return toArray(varargElementType, listOf()).wrapInUArray(varargElementType)
+            } else {
+                null
             }
         }
 
         val list = translateResolvedArgument(resolvedArgument, translatedArgs)
 
         return if (shouldWrapVarargInArray) {
-            val concatArguments = prepareConcatArguments(arguments, list, varargPrimitiveType)
-            val concatExpression = concatArgumentsIfNeeded(concatArguments, varargPrimitiveType, false)
-            listOf(concatExpression)
-        }
-        else {
-            listOf(JsAstUtils.invokeMethod(list[0], "slice"))
-        }
+            val concatArguments = prepareConcatArguments(arguments, list, varargElementType)
+            val concatExpression = concatArgumentsIfNeeded(concatArguments, varargElementType, false)
+            concatExpression
+        } else {
+            val arg = ArrayFIF.unsignedPrimitiveToSigned(varargElementType)?.let {type ->
+                JsInvocation(JsNameRef("unbox", list[0]))
+            } ?: list[0]
+            JsAstUtils.invokeMethod(arg, "slice")
+        }.wrapInUArray(varargElementType)
     }
 
-    private fun toArray(varargPrimitiveType: PrimitiveType?, elements: List<JsExpression>): JsExpression {
-        return ArrayFIF.castOrCreatePrimitiveArray(context(),
-                                                   varargPrimitiveType,
-                                                   JsArrayLiteral(elements).apply { sideEffects = SideEffectKind.PURE })
+    private fun toArray(varargElementType: KotlinType?, elements: List<JsExpression>): JsExpression {
+        val argument = JsArrayLiteral(elements).apply { sideEffects = SideEffectKind.PURE }
+
+        if (varargElementType == null) return argument
+
+        return ArrayFIF.castOrCreatePrimitiveArray(
+            context(),
+            varargElementType,
+            argument)
     }
 
     private fun prepareConcatArguments(
-            arguments: List<ValueArgument>,
-            list: List<JsExpression>,
-            varargPrimitiveType: PrimitiveType?
+        arguments: List<ValueArgument>,
+        list: List<JsExpression>,
+        varargElementType: KotlinType?
     ): MutableList<JsExpression> {
         assert(arguments.isNotEmpty()) { "arguments.size should not be 0" }
         assert(arguments.size == list.size) { "arguments.size: " + arguments.size + " != list.size: " + list.size }
@@ -276,17 +282,19 @@ class CallArgumentTranslator private constructor(
 
             if (valueArgument.getSpreadElement() != null) {
                 if (lastArrayContent.size > 0) {
-                    concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
+                    concatArguments.add(toArray(varargElementType, lastArrayContent))
                     lastArrayContent = mutableListOf()
                 }
-                concatArguments.add(expressionArgument)
-            }
-            else {
+                val e = if (varargElementType != null && ArrayFIF.unsignedPrimitiveToSigned(varargElementType) != null) {
+                    JsInvocation(JsNameRef("unbox", expressionArgument))
+                } else expressionArgument
+                concatArguments.add(e)
+            } else {
                 lastArrayContent.add(expressionArgument)
             }
         }
         if (lastArrayContent.size > 0) {
-            concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
+            concatArguments.add(toArray(varargElementType, lastArrayContent))
         }
 
         return concatArguments
@@ -323,23 +331,23 @@ class CallArgumentTranslator private constructor(
         }
 
         private fun concatArgumentsIfNeeded(
-                concatArguments: List<JsExpression>,
-                varargPrimitiveType: PrimitiveType?,
-                isMixed: Boolean
+            concatArguments: List<JsExpression>,
+            varargElementType: KotlinType?,
+            isMixed: Boolean
         ): JsExpression {
             assert(concatArguments.isNotEmpty()) { "concatArguments.size should not be 0" }
 
             return if (concatArguments.size > 1) {
-                if (varargPrimitiveType != null) {
+                if (varargElementType != null && (varargElementType.isPrimitiveNumberType() || ArrayFIF.unsignedPrimitiveToSigned(varargElementType) != null)) {
                     val method = if (isMixed) "arrayConcat" else "primitiveArrayConcat"
-                    JsAstUtils.invokeKotlinFunction(method, concatArguments[0],
-                                                    *concatArguments.subList(1, concatArguments.size).toTypedArray())
-                }
-                else {
+                    JsAstUtils.invokeKotlinFunction(
+                        method, concatArguments[0],
+                        *concatArguments.subList(1, concatArguments.size).toTypedArray()
+                    )
+                } else {
                     JsInvocation(JsNameRef("concat", concatArguments[0]), concatArguments.subList(1, concatArguments.size))
                 }
-            }
-            else {
+            } else {
                 concatArguments[0]
             }
         }

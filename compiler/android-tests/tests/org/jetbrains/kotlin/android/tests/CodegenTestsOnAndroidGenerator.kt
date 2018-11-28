@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.tests
@@ -21,15 +10,13 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
+import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -60,7 +47,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     private fun prepareAndroidModule() {
-        println("Copying kotlin-runtime.jar and kotlin-reflect.jar in android module...")
+        println("Copying kotlin-stdlib.jar and kotlin-reflect.jar in android module...")
         copyKotlinRuntimeJars()
 
         println("Check 'libs' folder in tested android module...")
@@ -73,7 +60,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun copyKotlinRuntimeJars() {
         FileUtil.copy(
             ForTestCompileRuntime.runtimeJarForTests(),
-            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-runtime.jar")
+            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-stdlib.jar")
         )
         FileUtil.copy(
             ForTestCompileRuntime.reflectJarForTests(),
@@ -89,9 +76,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun generateAndSave() {
         println("Generating test files...")
         val testSourceFilePath =
-            pathManager.srcFolderInAndroidTmpFolder + "/" + testClassPackage.replace(".", "/") + "/" + testClassName + ".java"
+            pathManager.srcFolderInAndroidTmpFolder + "/androidTest/java/" + testClassPackage.replace(".", "/") + "/" + testClassName + ".java"
 
-        FileWriter(File(testSourceFilePath)).use {
+        FileWriter(File(testSourceFilePath).also { it.parentFile.mkdirs() }).use {
             val p = Printer(it)
             p.print(FileUtil.loadFile(File("license/LICENSE.txt")))
             p.println(
@@ -150,7 +137,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
             writeFiles(
                 rawFiles.map {
-                    CodegenTestFiles.create(it.first, it.second, environment.project).psiFile
+                    try {
+                        CodegenTestFiles.create(it.first, it.second, environment.project).psiFile
+                    } catch (e: Throwable) {
+                        throw RuntimeException("Error on processing ${it.first}:\n${it.second}", e)
+                    }
                 }, environment
             )
             Disposer.dispose(disposable)
@@ -208,9 +199,23 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     continue
                 }
 
-                val fullFileText = FileUtil.loadFile(file, true)
+                val fullFileText = FileUtil.loadFile(file, true).let {
+                    it.replace("COROUTINES_PACKAGE", "kotlin.coroutines")
+                }
+
+                if (fullFileText.contains("// WITH_COROUTINES")) {
+                    if (fullFileText.contains("kotlin.coroutines.experimental")) continue
+                    if (fullFileText.contains("// LANGUAGE_VERSION: 1.2")) continue
+                }
+
                 //TODO support JvmPackageName
                 if (fullFileText.contains("@file:JvmPackageName(")) continue
+                // TODO: Support jvm assertions
+                if (fullFileText.contains("// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm")) continue
+                // TODO: support JVM 8 test with D8
+                if (fullFileText.contains("// JVM_TARGET")) continue
+                // TODO: support SKIP_JDK6 on new platforms
+                if (fullFileText.contains("// SKIP_JDK6")) continue
 
                 if (hasBoxMethod(fullFileText)) {
                     val testFiles = createTestFiles(file, fullFileText)
@@ -249,7 +254,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 override fun create(fileName: String, text: String, directives: Map<String, String>): CodegenTestCase.TestFile {
                     return CodegenTestCase.TestFile(fileName, text)
                 }
-            })
+            }, false,
+            "kotlin.coroutines"
+        )
 
 
     private fun generateTestName(fileName: String): String {

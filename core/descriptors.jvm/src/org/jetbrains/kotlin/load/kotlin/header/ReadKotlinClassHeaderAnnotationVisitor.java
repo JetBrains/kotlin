@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.load.kotlin.header;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +50,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         HEADER_KINDS.put(ClassId.topLevel(new FqName("kotlin.jvm.internal.KotlinSyntheticClass")), SYNTHETIC_CLASS);
     }
 
-    private JvmMetadataVersion metadataVersion = null;
+    private int[] metadataVersionArray = null;
     private JvmBytecodeBinaryVersion bytecodeVersion = null;
     private String extraString = null;
     private int extraInt = 0;
@@ -60,15 +62,15 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     @Nullable
     public KotlinClassHeader createHeader() {
-        if (headerKind == null) {
+        if (headerKind == null || metadataVersionArray == null) {
             return null;
         }
 
+        JvmMetadataVersion metadataVersion =
+                new JvmMetadataVersion(metadataVersionArray, (extraInt & JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0);
+
         if (!metadataVersion.isCompatible()) {
             incompatibleData = data;
-        }
-
-        if (metadataVersion == null || !metadataVersion.isCompatible()) {
             data = null;
         }
         else if (shouldHaveData() && data == null) {
@@ -79,7 +81,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
         return new KotlinClassHeader(
                 headerKind,
-                metadataVersion != null ? metadataVersion : JvmMetadataVersion.INVALID_VERSION,
+                metadataVersion,
                 bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INVALID_VERSION,
                 data,
                 incompatibleData,
@@ -137,7 +139,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             }
             else if (METADATA_VERSION_FIELD_NAME.equals(string)) {
                 if (value instanceof int[]) {
-                    metadataVersion = new JvmMetadataVersion((int[]) value);
+                    metadataVersionArray = (int[]) value;
                 }
             }
             else if (BYTECODE_VERSION_FIELD_NAME.equals(string)) {
@@ -160,6 +162,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                     packageName = (String) value;
                 }
             }
+        }
+
+        @Override
+        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralValue classLiteralValue) {
         }
 
         @Override
@@ -220,7 +226,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             String string = name.asString();
             if ("version".equals(string)) {
                 if (value instanceof int[]) {
-                    metadataVersion = new JvmMetadataVersion((int[]) value);
+                    metadataVersionArray = (int[]) value;
 
                     // If there's no bytecode binary version in the class file, we assume it to be equal to the metadata version
                     if (bytecodeVersion == null) {
@@ -231,6 +237,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             else if ("multifileClassName".equals(string)) {
                 extraString = value instanceof String ? (String) value : null;
             }
+        }
+
+        @Override
+        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralValue classLiteralValue) {
         }
 
         @Override
@@ -299,6 +309,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
         @Override
         public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        }
+
+        @Override
+        public void visitClassLiteral(@NotNull ClassLiteralValue classLiteralValue) {
         }
 
         @Override

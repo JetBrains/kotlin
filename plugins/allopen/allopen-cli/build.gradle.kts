@@ -1,22 +1,22 @@
 
 description = "Kotlin AllOpen Compiler Plugin"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
-    testRuntime(intellijDep())
-
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    runtime(projectRuntimeJar(":kotlin-compiler"))
-    runtime(projectDist(":kotlin-stdlib"))
+    runtime(project(":kotlin-stdlib"))
+
+    testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
 
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 }

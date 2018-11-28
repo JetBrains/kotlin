@@ -3,58 +3,88 @@
 */
 
 [helper]
-Digit
-  : ["0".."9"];
+LongSuffix
+  : "L"
+  ;
 
 IntegerLiteral
+  : DecimalLiteral LongSuffix?
+  : HexadecimalLiteral LongSuffix?
+  : BinaryLiteral LongSuffix?
+  ;
+
+[helper]
+Digit
+  : ["0".."9"]
+  ;
+
+DecimalLiteral
   : Digit
   : Digit (Digit | "_")* Digit
   ;
 
 FloatLiteral
-  : <Java double literal>;
+  : <Java double literal>
+  ;
 
 [helper]
 HexDigit
-  : Digit | ["A".."F", "a".."f"];
-
-HexadecimalLiteral
-  : "0x" HexDigit
-  : "0x" HexDigit (HexDigit | "_")* HexDigit
+  : Digit | ["A".."F", "a".."f"]
   ;
 
+HexadecimalLiteral
+  : "0" ("x" | "X") HexDigit
+  : "0" ("x" | "X") HexDigit (HexDigit | "_")* HexDigit
+  ;
+
+[helper]
+BinaryDigit
+  : ("0" | "1")
+  ;
+
+BinaryLiteral
+  : "0" ("b" | "B") BinaryDigit
+  : "0" ("b" | "B") BinaryDigit (BinaryDigit | "_")* BinaryDigit
+
 CharacterLiteral
-  : <character as in Java>;
+  : <character as in Java>
+  ;
 
 /**
 See [Basic types](basic-types.html)
 */
 
 NoEscapeString
-  : <"""-quoted string>;
+  : <"""-quoted string>
+  ;
 
 RegularStringPart
   : <any character other than backslash, quote, $ or newline>
+  ;
 
-ShortTemplateEntryStart:
+ShortTemplateEntryStart
   : "$"
+  ;
 
-EscapeSequence:
+EscapeSequence
   : UnicodeEscapeSequence | RegularEscapeSequence
+  ;
 
-UnicodeEscapeSequence:
+UnicodeEscapeSequence
   : "\u" HexDigit{4}
+  ;
 
-RegularEscapeSequence:
+RegularEscapeSequence
   : "\" <any character other than newline>
+  ;
 
 /**
-See [String templates](basic-types.html#templates)
+See [String templates](basic-types.html#string-templates)
 */
 
 SEMI
-  : <semicolon or newline>;
-
+  : <semicolon or newline>
+  ;
 
 SimpleName
   : <java identifier>
@@ -66,7 +96,8 @@ See [Java interoperability](java-interop.html)
 */
 
 LabelName
-  : "@" SimpleName;
+  : SimpleName
+  ;
 
 /**
 See [Returns and jumps](returns.html)

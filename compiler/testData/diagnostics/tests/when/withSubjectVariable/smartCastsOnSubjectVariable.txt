@@ -1,0 +1,3 @@
+package
+
+public fun test(/*0*/ x: kotlin.Any?): kotlin.String

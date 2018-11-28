@@ -100,9 +100,14 @@ public final class ClassId {
      */
     @NotNull
     public static ClassId fromString(@NotNull String string) {
+        return fromString(string, false);
+    }
+
+    @NotNull
+    public static ClassId fromString(@NotNull String string, boolean isLocal) {
         String packageName = StringsKt.substringBeforeLast(string, '/', "").replace('/', '.');
         String className = StringsKt.substringAfterLast(string, '/', string);
-        return new ClassId(new FqName(packageName), new FqName(className), false);
+        return new ClassId(new FqName(packageName), new FqName(className), isLocal);
     }
 
     /**

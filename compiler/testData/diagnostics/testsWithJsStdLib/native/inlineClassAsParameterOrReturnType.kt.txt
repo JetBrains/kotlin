@@ -1,0 +1,69 @@
+package
+
+public external val l: SomeIC
+public external val ll: SomeIC
+public external var r: SomeIC
+public external var rr: SomeIC
+public external fun foo(): SomeIC
+public external fun foo(/*0*/ c: SomeIC): SomeIC
+public external fun foo(/*0*/ a: kotlin.Int, /*1*/ c: SomeIC): SomeIC
+public external fun foo(/*0*/ a: kotlin.Int, /*1*/ vararg args: SomeIC /*kotlin.Array<out SomeIC>*/): kotlin.Unit
+public external fun foo(/*0*/ a: kotlin.Int, /*1*/ ui: kotlin.UInt, /*2*/ vararg args: kotlin.UInt /*kotlin.UIntArray*/): kotlin.Unit
+
+public final external class CC {
+    public constructor CC(/*0*/ a: SomeIC, /*1*/ b: SomeIC, /*2*/ c: SomeIC)
+    public final val b: SomeIC
+    public final var c: SomeIC
+    public final val l: SomeIC
+    public final var r: SomeIC
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): SomeIC
+    public final fun foo(/*0*/ c: SomeIC): SomeIC
+    public final fun foo(/*0*/ a: kotlin.Int, /*1*/ c: SomeIC): SomeIC
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class N {
+        public constructor N(/*0*/ a: SomeIC, /*1*/ b: SomeIC, /*2*/ c: SomeIC)
+        public final val b: SomeIC
+        public final var c: SomeIC
+        public final val l: SomeIC
+        public final var r: SomeIC
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): SomeIC
+        public final fun foo(/*0*/ c: SomeIC): SomeIC
+        public final fun foo(/*0*/ a: kotlin.Int, /*1*/ c: SomeIC): SomeIC
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public external interface EI {
+    public abstract val l: SomeIC
+    public abstract var r: SomeIC
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): SomeIC
+    public abstract fun foo(/*0*/ c: SomeIC): SomeIC
+    public abstract fun foo(/*0*/ a: kotlin.Int, /*1*/ c: SomeIC): SomeIC
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final inline class SomeIC {
+    public constructor SomeIC(/*0*/ a: kotlin.Int)
+    public final val a: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+package kotlin {
+
+    public final inline class UInt {
+        public constructor UInt(/*0*/ i: kotlin.Int)
+        private final val i: kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+}

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.samWithReceiver
 
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -56,10 +53,10 @@ class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
     override val pluginId = PLUGIN_ID
     override val pluginOptions = listOf(ANNOTATION_OPTION)
 
-    override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
+    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
         PRESET_OPTION -> configuration.appendList(PRESET, value)
-        else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
+        else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
 

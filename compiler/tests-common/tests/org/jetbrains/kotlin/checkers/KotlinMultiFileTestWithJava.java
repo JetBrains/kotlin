@@ -1,32 +1,20 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers;
 
 import com.intellij.openapi.util.io.FileUtil;
-import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.script.StandardScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -41,6 +29,7 @@ import java.util.*;
 public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase {
     protected File javaFilesDir;
     private File kotlinSourceRoot;
+    protected String coroutinesPackage;
 
     @Override
     public void setUp() throws Exception {
@@ -50,6 +39,7 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         if (isKotlinSourceRootNeeded()) {
             kotlinSourceRoot = KotlinTestUtils.tmpDir("kotlin-src");
         }
+        coroutinesPackage = "";
     }
 
     @Override
@@ -141,6 +131,20 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
     protected void doTest(String filePath) throws Exception {
         File file = new File(filePath);
         String expectedText = KotlinTestUtils.doLoadFile(file);
+
+        if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "// SKIP_JAVAC")) return;
+
+        Map<String, ModuleAndDependencies> modules = new HashMap<>();
+        List<F> testFiles = createTestFiles(file, expectedText, modules);
+
+        doMultiFileTest(file, modules, testFiles);
+    }
+
+    protected void doTestWithCoroutinesPackageReplacement(String filePath, String coroutinesPackage) throws Exception {
+        File file = new File(filePath);
+        String expectedText = KotlinTestUtils.doLoadFile(file);
+        expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage);
+        this.coroutinesPackage = coroutinesPackage;
         Map<String, ModuleAndDependencies> modules = new HashMap<>();
         List<F> testFiles = createTestFiles(file, expectedText, modules);
 
@@ -187,7 +191,7 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
                 KotlinTestUtils.mkdirs(file.getParentFile());
                 FilesKt.writeText(file, content, Charsets.UTF_8);
             }
-        });
+        }, coroutinesPackage);
     }
 
 }

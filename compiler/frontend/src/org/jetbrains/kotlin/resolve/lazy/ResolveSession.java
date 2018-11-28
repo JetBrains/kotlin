@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.resolve.lazy;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.annotations.jvm.ReadOnly;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
@@ -69,7 +69,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> fileAnnotations;
     private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> danglingAnnotations;
 
-    private KtImportsFactory jetImportFactory;
     private AnnotationResolver annotationResolver;
     private DescriptorResolver descriptorResolver;
     private FunctionDescriptorResolver functionDescriptorResolver;
@@ -86,11 +85,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
-
-    @Inject
-    public void setJetImportFactory(KtImportsFactory jetImportFactory) {
-        this.jetImportFactory = jetImportFactory;
-    }
 
     @Inject
     public void setAnnotationResolve(AnnotationResolver annotationResolver) {
@@ -378,11 +372,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         for (LazyPackageDescriptor lazyPackage : getAllPackages()) {
             ForceResolveUtil.forceResolveAllContents(lazyPackage);
         }
-    }
-
-    @NotNull
-    public KtImportsFactory getJetImportsFactory() {
-        return jetImportFactory;
     }
 
     @Override

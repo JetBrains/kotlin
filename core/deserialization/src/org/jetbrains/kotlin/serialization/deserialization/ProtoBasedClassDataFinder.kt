@@ -17,25 +17,26 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.ClassData
-import org.jetbrains.kotlin.serialization.ClassDataWithSource
-import org.jetbrains.kotlin.serialization.ProtoBuf
 
 class ProtoBasedClassDataFinder(
-        proto: ProtoBuf.PackageFragment,
-        private val nameResolver: NameResolver,
-        private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
+    proto: ProtoBuf.PackageFragment,
+    private val nameResolver: NameResolver,
+    private val metadataVersion: BinaryVersion,
+    private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
 ) : ClassDataFinder {
     private val classIdToProto =
-            proto.class_List.associateBy { klass ->
-                nameResolver.getClassId(klass.fqName)
-            }
+        proto.class_List.associateBy { klass ->
+            nameResolver.getClassId(klass.fqName)
+        }
 
-    internal val allClassIds: Collection<ClassId> get() = classIdToProto.keys
+    val allClassIds: Collection<ClassId> get() = classIdToProto.keys
 
-    override fun findClassData(classId: ClassId): ClassDataWithSource? {
+    override fun findClassData(classId: ClassId): ClassData? {
         val classProto = classIdToProto[classId] ?: return null
-        return ClassDataWithSource(ClassData(nameResolver, classProto), classSource(classId))
+        return ClassData(nameResolver, classProto, metadataVersion, classSource(classId))
     }
 }

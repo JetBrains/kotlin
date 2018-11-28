@@ -229,15 +229,56 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
 
     @Nullable
     private static LineRange getExpressionTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
-        if (sibling instanceof KtIfExpression && !down) {
-            KtExpression elseBranch = ((KtIfExpression) sibling).getElse();
-            if (elseBranch instanceof KtBlockExpression) {
-                sibling = elseBranch;
-            }
-        }
 
         PsiElement start = sibling;
         PsiElement end = sibling;
+
+        if (!down) {
+            if (sibling instanceof KtIfExpression) {
+                KtIfExpression ifExpression = (KtIfExpression) sibling;
+                KtExpression elseExpression = ifExpression.getElse();
+                while (elseExpression instanceof KtIfExpression) {
+                    KtIfExpression elseIfExpression = (KtIfExpression) elseExpression;
+                    KtExpression next = elseIfExpression.getElse();
+                    if (next == null) {
+                        elseExpression = elseIfExpression.getThen();
+                        break;
+                    }
+                    elseExpression = next;
+                }
+                if (elseExpression instanceof KtBlockExpression) {
+                    sibling = elseExpression;
+                    start = sibling;
+                }
+
+            } else if (sibling instanceof KtWhenExpression) {
+                List<KtWhenEntry> entries = ((KtWhenExpression) sibling).getEntries();
+                if (!entries.isEmpty()) {
+                    KtWhenEntry lastEntry = null;
+                    for (KtWhenEntry entry : entries) {
+                        if (entry.getExpression() instanceof KtBlockExpression) lastEntry = entry;
+                    }
+                    if (lastEntry != null) {
+                        sibling = lastEntry;
+                        start = sibling;
+                    }
+                }
+
+            } else if (sibling instanceof KtTryExpression) {
+                KtTryExpression tryExpression = (KtTryExpression) sibling;
+                KtFinallySection finallyBlock = tryExpression.getFinallyBlock();
+                if (finallyBlock != null) {
+                    sibling = finallyBlock;
+                    start = sibling;
+                } else {
+                    List<KtCatchClause> clauses = tryExpression.getCatchClauses();
+                    if (!clauses.isEmpty()) {
+                        sibling = clauses.get(clauses.size() - 1);
+                        start = sibling;
+                    }
+                }
+            }
+        }
 
         // moving out of code block
         if (sibling.getNode().getElementType() == (down ? KtTokens.RBRACE : KtTokens.LBRACE)) {

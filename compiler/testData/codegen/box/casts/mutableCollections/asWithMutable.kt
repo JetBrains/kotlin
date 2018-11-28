@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()

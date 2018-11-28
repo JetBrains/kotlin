@@ -1,6 +1,6 @@
 //KT-2369 Variable is not marked as uninitialized in 'finally' section
 
-fun main(args: Array<String>) {
+fun main() {
     var x : Int
     try {
         throw Exception()

@@ -1,5 +1,6 @@
 package
 
+public val </*0*/ reified T> T.test9: kotlin.Any
 public fun foo(): kotlin.String
 @Ann(k = kotlin.String::class) public fun test1(): kotlin.Unit
 @Ann(k = kotlin.String::class) public fun test2(): kotlin.Unit

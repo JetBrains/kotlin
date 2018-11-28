@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+fun foo(value: Int?): Int? {
+    return if (value != null) baz(value) else null
+}
+
+fun baz(i: Int) = i + i

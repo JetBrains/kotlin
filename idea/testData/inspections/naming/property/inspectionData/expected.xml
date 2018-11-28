@@ -2,8 +2,11 @@
     <problem>
         <file>test.kt</file>
         <line>27</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <description>Property name &lt;code&gt;_Foo&lt;/code&gt; should not start with an underscore #loc</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>37</line>
+        <description>Property name &lt;code&gt;Foo&lt;/code&gt; should start with a lowercase letter #loc</description>
     </problem>
 </problems>

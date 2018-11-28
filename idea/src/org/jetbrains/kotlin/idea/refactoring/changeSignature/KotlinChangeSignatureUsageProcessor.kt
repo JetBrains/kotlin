@@ -42,10 +42,11 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.moduleInfo
+import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.javaResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.refactoring.*
@@ -195,7 +196,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                             result.add(
                                     object : UnresolvableCollisionUsageInfo(callElement, null) {
                                         override fun getDescription(): String {
-                                            val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor)
+                                            val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(callerDescriptor)
                                             return "There is already a variable '$currentName' in $signature. It will conflict with the new parameter."
                                         }
                                     }
@@ -441,12 +442,15 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
     private fun findKotlinOverrides(changeInfo: ChangeInfo, result: MutableSet<UsageInfo>) {
         val method = changeInfo.method as? PsiMethod ?: return
+        val methodDescriptor = method.getJavaMethodDescriptor() ?: return
+
+        val baseFunctionInfo = KotlinCallableDefinitionUsage<PsiElement>(method, methodDescriptor, null, null)
 
         for (overridingMethod in OverridingMethodsSearch.search(method)) {
             val unwrappedElement = overridingMethod.namedUnwrappedElement as? KtNamedFunction ?: continue
             val functionDescriptor = unwrappedElement.resolveToDescriptorIfAny() ?: continue
             result.add(DeferredJavaMethodOverrideOrSAMUsage(unwrappedElement, functionDescriptor, null))
-            findDeferredUsagesOfParameters(changeInfo, result, unwrappedElement, functionDescriptor)
+            findDeferredUsagesOfParameters(changeInfo, result, unwrappedElement, functionDescriptor, baseFunctionInfo)
         }
     }
 
@@ -473,8 +477,9 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             changeInfo: ChangeInfo,
             result: MutableSet<UsageInfo>,
             function: KtNamedFunction,
-            functionDescriptor: FunctionDescriptor) {
-        val functionInfoForParameters = KotlinCallableDefinitionUsage<PsiElement>(function, functionDescriptor, null, null)
+            functionDescriptor: FunctionDescriptor,
+            baseFunctionInfo: KotlinCallableDefinitionUsage<PsiElement>) {
+        val functionInfoForParameters = KotlinCallableDefinitionUsage<PsiElement>(function, functionDescriptor, baseFunctionInfo, null)
         val oldParameters = function.valueParameters
         val parameters = changeInfo.newParameters
         for ((paramIndex, parameterInfo) in parameters.withIndex()) {
@@ -614,7 +619,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             callerDescriptor: DeclarationDescriptor) {
         val valueParameters = caller.getValueParameters()
         val existingParameters = valueParameters.associateBy { it.name }
-        val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor)
+        val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(callerDescriptor)
         for (parameterInfo in changeInfo.getNonReceiverParameters()) {
             if (!(parameterInfo.isNewParameter)) continue
 
@@ -909,7 +914,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                 val descriptorWrapper = usages.firstIsInstanceOrNull<OriginalJavaMethodDescriptorWrapper>()
                 val methodDescriptor = (descriptorWrapper?.originalJavaMethodDescriptor) ?: return true
 
-                val javaMethodChangeInfo = changeInfo.toJetChangeInfo(methodDescriptor)
+                val resolutionFacade = (methodDescriptor.method as? PsiMethod)?.javaResolutionFacade() ?: return false
+                val javaMethodChangeInfo = changeInfo.toJetChangeInfo(methodDescriptor, resolutionFacade)
                 for (info in usages) {
                     (info as? JavaMethodKotlinUsageWithDelegate<*>)?.javaMethodChangeInfo = javaMethodChangeInfo
                 }
@@ -948,7 +954,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
                 val dummyClass = JavaPsiFacade.getElementFactory(method.project).createClass("Dummy")
                 val dummyMethod = createJavaMethod(method, dummyClass)
-                dummyMethod.containingFile.moduleInfo = baseFunction.getModuleInfo()
+                dummyMethod.containingFile.forcedModuleInfo = baseFunction.getModuleInfo()
                 try {
                     changeInfo.updateMethod(dummyMethod)
                     JavaChangeSignatureUsageProcessor().processPrimaryMethod(changeInfo)

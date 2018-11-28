@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.isAllFilesPresentTest
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import java.io.File
 
-abstract class AbstractGradleConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinWithGradleConfigurator>() {
+abstract class AbstractGradleConfigureProjectByChangingFileTest :
+    AbstractConfigureProjectByChangingFileTest<KotlinWithGradleConfigurator>() {
     fun doTestGradle(path: String) {
         val (before, after) = beforeAfterFiles()
         doTest(before, after, if ("js" in path) KotlinJsGradleModuleConfigurator() else KotlinGradleModuleConfigurator())
@@ -53,7 +54,13 @@ abstract class AbstractGradleConfigureProjectByChangingFileTest : AbstractConfig
         }
     }
 
-    override fun runConfigurator(module: Module, file: PsiFile, configurator: KotlinWithGradleConfigurator, version: String, collector: NotificationMessageCollector) {
+    override fun runConfigurator(
+        module: Module,
+        file: PsiFile,
+        configurator: KotlinWithGradleConfigurator,
+        version: String,
+        collector: NotificationMessageCollector
+    ) {
         if (file !is GroovyFile && file !is KtFile) {
             fail("file $file is not a GroovyFile or KtFile")
             return

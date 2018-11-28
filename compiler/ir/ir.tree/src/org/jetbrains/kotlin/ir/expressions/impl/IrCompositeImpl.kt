@@ -19,14 +19,26 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 
-class IrCompositeImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin? = null) :
-    IrContainerExpressionBase(startOffset, endOffset, type, origin), IrComposite {
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?, statements: List<IrStatement>) :
-            this(startOffset, endOffset, type, origin) {
+class IrCompositeImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin? = null
+) :
+    IrContainerExpressionBase(startOffset, endOffset, type, origin),
+    IrComposite {
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        origin: IrStatementOrigin?,
+        statements: List<IrStatement>
+    ) : this(startOffset, endOffset, type, origin) {
         this.statements.addAll(statements)
     }
 

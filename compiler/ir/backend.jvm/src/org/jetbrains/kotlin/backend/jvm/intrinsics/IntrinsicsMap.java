@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 class IntrinsicsMap {
@@ -74,7 +74,7 @@ class IntrinsicsMap {
         }
     }
 
-    private final Map<Key, IntrinsicMethod> intrinsicsMap = Maps.newHashMap();
+    private final Map<Key, IntrinsicMethod> intrinsicsMap = new HashMap<>();
 
 
     /**

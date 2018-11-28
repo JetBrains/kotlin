@@ -109,4 +109,4 @@ object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(CONVENTION_
 object InfixCallNoInfixModifier : ResolutionDiagnostic(CONVENTION_ERROR)
 object DeprecatedUnaryPlusAsPlus : ResolutionDiagnostic(CONVENTION_ERROR)
 
-class ResolvedUsingDeprecatedVisbility(val baseSourceScope: ResolutionScope, val lookupLocation: LookupLocation) : ResolutionDiagnostic(RESOLVED)
+class ResolvedUsingDeprecatedVisibility(val baseSourceScope: ResolutionScope, val lookupLocation: LookupLocation) : ResolutionDiagnostic(RESOLVED)

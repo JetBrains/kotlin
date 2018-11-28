@@ -4,7 +4,7 @@ package kt770_351_735
 
 
 //KT-770 Reference is not resolved to anything, but is not marked unresolved
-fun main(args : Array<String>) {
+fun main() {
     var i = 0
     when (i) {
         1 -> i--

@@ -17,17 +17,20 @@
 package org.jetbrains.kotlin.js.translate.context
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.descriptorUtils.shouldBeExported
-import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.definePackageAlias
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.inline.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 internal class DeclarationExporter(val context: StaticContext) {

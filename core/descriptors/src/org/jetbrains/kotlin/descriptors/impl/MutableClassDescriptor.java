@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
@@ -25,6 +25,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
     private TypeConstructor typeConstructor;
     private List<TypeParameterDescriptor> typeParameters;
     private final Collection<KotlinType> supertypes = new ArrayList<KotlinType>();
+    private final StorageManager storageManager;
 
     public MutableClassDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -32,9 +33,11 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
             boolean isInner,
             boolean isExternal,
             @NotNull Name name,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            @NotNull StorageManager storageManager
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source, isExternal);
+        super(storageManager, containingDeclaration, name, source, isExternal);
+        this.storageManager = storageManager;
         assert kind != ClassKind.OBJECT : "Fix isCompanionObject()";
 
         this.kind = kind;
@@ -151,7 +154,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
 
     public void createTypeConstructor() {
         assert typeConstructor == null : typeConstructor;
-        this.typeConstructor = new ClassTypeConstructorImpl(this, typeParameters, supertypes);
+        this.typeConstructor = new ClassTypeConstructorImpl(this, typeParameters, supertypes, storageManager);
         for (FunctionDescriptor functionDescriptor : getConstructors()) {
             ((ClassConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }

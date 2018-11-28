@@ -46,31 +46,36 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
         myTestFixture = null
     }
 
-    @Test fun testUpdateLanguageVersion() {
+    @Test
+    fun testUpdateLanguageVersion() {
         doTest("Set module language version to 1.1")
     }
 
-    @Test fun testUpdateApiVersion() {
+    @Test
+    fun testUpdateApiVersion() {
         doTest("Set module API version to 1.1")
     }
 
-    @Test fun testUpdateLanguageAndApiVersion() {
+    @Test
+    fun testUpdateLanguageAndApiVersion() {
         doTest("Set module language version to 1.1")
     }
 
-    @Test fun testEnableCoroutines() {
+    @Test
+    fun testEnableCoroutines() {
         doTest("Enable coroutine support in the current module")
     }
 
-    @Test fun testAddKotlinReflect() {
+    @Test
+    fun testAddKotlinReflect() {
         doTest("Add kotlin-reflect.jar to the classpath")
     }
 
     private fun doTest(intentionName: String) {
         val buildGradleVFile = createProjectSubFile("build.gradle", File(getTestDataPath(), "build.gradle").readText())
+        val sourceVFile = createProjectSubFile("src/main/kotlin/src.kt", File(getTestDataPath(), "src.kt").readText())
         importProject()
         runInEdtAndWait {
-            val sourceVFile = createProjectSubFile("src/main/kotlin/src.kt", File(getTestDataPath(), "src.kt").readText())
             codeInsightTestFixture.configureFromExistingVirtualFile(sourceVFile)
             codeInsightTestFixture.launchAction(codeInsightTestFixture.findSingleIntention(intentionName))
             FileDocumentManager.getInstance().saveAllDocuments()

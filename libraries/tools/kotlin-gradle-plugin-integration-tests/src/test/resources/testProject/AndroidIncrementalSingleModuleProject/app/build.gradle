@@ -1,8 +1,8 @@
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
         maven { url 'https://maven.google.com' }
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -20,7 +20,7 @@ android {
     buildToolsVersion "25.0.2"
 
     defaultConfig {
-        applicationId "foo"
+        applicationId "com.example"
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
@@ -39,8 +39,8 @@ android {
 
 repositories {
     mavenLocal()
-    jcenter()
     maven { url 'https://maven.google.com' }
+    jcenter()
 }
 
 dependencies {

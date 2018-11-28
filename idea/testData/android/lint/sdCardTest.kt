@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintSdCardPathInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintSdCardPathInspection
 
 import java.io.File
 import android.content.Intent

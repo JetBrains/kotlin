@@ -24,6 +24,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.util.ActionCallback
 import com.intellij.psi.PsiFile
+import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.idea.internal.showDecompiledCode
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -35,7 +36,11 @@ class DecompileKotlinToJavaAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = getBinaryKotlinFile(e) != null
+        if (PlatformUtils.isCidr()) {
+            e.presentation.isEnabledAndVisible = false
+        } else {
+            e.presentation.isEnabled = getBinaryKotlinFile(e) != null
+        }
     }
 
     private fun getBinaryKotlinFile(e: AnActionEvent): KtFile? {

@@ -1,0 +1,29 @@
+// TOOL: GradleKotlinxCoroutinesDeprecationInspection
+
+group 'Again'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0")
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+    maven { url "https://kotlin.bintray.com/kotlinx" }
+}
+
+dependencies {
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
+}
+
+compileKotlin {
+    kotlinOptions.languageVersion = "1.3"
+}

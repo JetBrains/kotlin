@@ -1,0 +1,22 @@
+package
+
+public final inline class UInt {
+    public constructor UInt(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final inline class UIntArray : kotlin.collections.Collection<UInt> {
+    public constructor UIntArray(/*0*/ storage: kotlin.IntArray)
+    public open override /*1*/ val size: kotlin.Int
+    private final val storage: kotlin.IntArray
+    public open override /*1*/ fun contains(/*0*/ element: UInt): kotlin.Boolean
+    public open override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<UInt>): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ fun iterator(): kotlin.Nothing
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

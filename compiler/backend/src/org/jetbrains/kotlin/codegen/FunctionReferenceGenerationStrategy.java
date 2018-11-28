@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -20,15 +9,18 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
@@ -60,6 +52,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     private final FunctionDescriptor referencedFunction;
     private final FunctionDescriptor functionDescriptor;
     private final Type receiverType; // non-null for bound references
+    private final KotlinType receiverKotlinType;
     private final StackValue receiverValue;
     private final boolean isInliningStrategy;
 
@@ -67,15 +60,23 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull ResolvedCall<?> resolvedCall,
-            @Nullable Type receiverType,
+            @Nullable JvmKotlinType receiverJvmKotlinType,
             @Nullable StackValue receiverValue,
             boolean isInliningStrategy
     ) {
         super(state);
         this.resolvedCall = resolvedCall;
-        this.referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
-        this.functionDescriptor = functionDescriptor;
-        this.receiverType = receiverType;
+        FunctionDescriptor referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        if (referencedFunction.isSuspend()) {
+            this.referencedFunction = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(referencedFunction, state);
+            this.functionDescriptor = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(functionDescriptor, state);
+        }
+        else {
+            this.referencedFunction = referencedFunction;
+            this.functionDescriptor = functionDescriptor;
+        }
+        this.receiverType = receiverJvmKotlinType != null ? receiverJvmKotlinType.getType() : null;
+        this.receiverKotlinType = receiverJvmKotlinType != null ? receiverJvmKotlinType.getKotlinType() : null;
         this.receiverValue = receiverValue;
         this.isInliningStrategy = isInliningStrategy;
         assert receiverType != null || receiverValue == null
@@ -94,8 +95,8 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
          */
 
         int receivers = CallableReferenceUtilKt.computeExpectedNumberOfReceivers(referencedFunction, receiverType != null);
-        KtCallExpression fakeExpression =
-                CodegenUtil.constructFakeFunctionCall(state.getProject(), functionDescriptor.getValueParameters().size() - receivers);
+        int fakeArgCount = functionDescriptor.getValueParameters().size() - receivers;
+        KtCallExpression fakeExpression = CodegenUtil.constructFakeFunctionCall(state.getProject(), fakeArgCount);
         List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
 
         ReceiverValue dispatchReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getDispatchReceiverParameter());
@@ -106,11 +107,40 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
 
             private final Map<ValueParameterDescriptor, ResolvedValueArgument> argumentMap = new LinkedHashMap<>();
             {
-                int index = 0;
-                List<ValueParameterDescriptor> parameters = referencedFunction.getValueParameters();
-                for (ValueArgument argument : fakeArguments) {
-                    argumentMap.put(parameters.get(index), new ExpressionValueArgument(argument));
-                    index++;
+                int i = 0;
+
+                for (ValueParameterDescriptor parameter : referencedFunction.getValueParameters()) {
+                    if (parameter.getVarargElementType() != null) {
+                        // Two cases are possible for a function reference with a vararg parameter of type T: either several arguments
+                        // of type T are bound to that parameter, or one argument of type Array<out T>. In the former case the argument
+                        // is bound as a VarargValueArgument, in the latter it's an ExpressionValueArgument
+
+                        if (i == fakeArgCount) {
+                            // If we've exhausted the argument list of the reference and we still have one vararg parameter left,
+                            // we should use its default value if present, or simply an empty vararg instead
+                            argumentMap.put(
+                                    parameter,
+                                    ArgumentsUtilsKt.hasDefaultValue(parameter) ? DefaultValueArgument.DEFAULT : new VarargValueArgument()
+                            );
+                            continue;
+                        }
+
+                        if (functionDescriptor.getValueParameters().get(receivers + i).getType().equals(parameter.getVarargElementType())) {
+                            argumentMap.put(parameter, new VarargValueArgument(fakeArguments.subList(i, fakeArgCount)));
+                            i = fakeArgCount;
+                            continue;
+                        }
+                    }
+
+                    if (i < fakeArgCount) {
+                        argumentMap.put(parameter, new ExpressionValueArgument(fakeArguments.get(i++)));
+                    }
+                    else {
+                        assert ArgumentsUtilsKt.hasDefaultValue(parameter) :
+                                "Parameter should be either vararg or expression or default: " + parameter +
+                                " (reference in: " + functionDescriptor.getContainingDeclaration() + ")";
+                        argumentMap.put(parameter, DefaultValueArgument.DEFAULT);
+                    }
                 }
             }
 
@@ -136,6 +166,18 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             @Override
             public Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments() {
                 return argumentMap;
+            }
+
+            @NotNull
+            @Override
+            public CallableDescriptor getCandidateDescriptor() {
+                return referencedFunction;
+            }
+
+            @NotNull
+            @Override
+            public CallableDescriptor getResultingDescriptor() {
+                return referencedFunction;
             }
         };
 
@@ -172,7 +214,12 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
 
             Type type = state.getTypeMapper().mapType(parameter);
             int localIndex = codegen.myFrameMap.getIndex(parameter);
-            codegen.tempVariables.put(fakeArgument.getArgumentExpression(), StackValue.local(localIndex, type));
+            if (localIndex > 0) {
+                codegen.tempVariables.put(fakeArgument.getArgumentExpression(), StackValue.local(localIndex, type));
+            }
+            else {
+                codegen.tempVariables.put(fakeArgument.getArgumentExpression(), StackValue.local(parameter.getIndex() + 1 + receivers, type));
+            }
         }
     }
 
@@ -196,7 +243,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         if (receiverType != null) {
             ClassDescriptor classDescriptor = (ClassDescriptor) codegen.getContext().getParentContext().getContextDescriptor();
             Type asmType = codegen.getState().getTypeMapper().mapClass(classDescriptor);
-            return CallableReferenceUtilKt.capturedBoundReferenceReceiver(asmType, receiverType, isInliningStrategy);
+            return CallableReferenceUtilKt.capturedBoundReferenceReceiver(asmType, receiverType, receiverKotlinType, isInliningStrategy);
         }
 
         // 0 is this (the callable reference class), 1 is the invoke() method's first parameter

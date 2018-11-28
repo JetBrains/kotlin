@@ -1,0 +1,7 @@
+import foo.A
+
+class B : A() {
+    override fun foo(s1: String, s2: String?): String {
+        return super.foo(s1, s2)
+    }
+}

@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
-import com.intellij.util.Processor
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -33,7 +33,7 @@ class BinaryOperatorReferenceSearcher(
         targetFunction: PsiElement,
         private val operationTokens: List<KtSingleValueToken>,
         searchScope: SearchScope,
-        consumer: Processor<PsiReference>,
+        consumer: ExecutorProcessor<PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtBinaryExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = operationTokens.map { it.value }) {

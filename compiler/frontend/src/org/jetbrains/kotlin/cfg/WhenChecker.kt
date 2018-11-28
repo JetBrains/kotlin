@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
+import org.jetbrains.kotlin.resolve.BindingContext.VARIABLE
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
@@ -264,8 +266,12 @@ object WhenChecker {
     )
 
     @JvmStatic
-    fun isWhenByEnum(expression: KtWhenExpression, context: BindingContext) =
-        getClassDescriptorOfTypeIfEnum(whenSubjectType(expression, context)) != null
+    fun getClassIdForEnumSubject(expression: KtWhenExpression, context: BindingContext) =
+        getClassIdForTypeIfEnum(whenSubjectType(expression, context))
+
+    @JvmStatic
+    fun getClassIdForTypeIfEnum(type: KotlinType?) =
+        getClassDescriptorOfTypeIfEnum(type)?.classId
 
     @JvmStatic
     fun getClassDescriptorOfTypeIfEnum(type: KotlinType?): ClassDescriptor? {
@@ -282,8 +288,25 @@ object WhenChecker {
 
 
     @JvmStatic
-    fun whenSubjectType(expression: KtWhenExpression, context: BindingContext) =
-        expression.subjectExpression?.let { context.get(SMARTCAST, it)?.defaultType ?: context.getType(it) }
+    fun whenSubjectType(expression: KtWhenExpression, context: BindingContext): KotlinType? {
+        val subjectVariable = expression.subjectVariable
+        val subjectExpression = expression.subjectExpression
+        return when {
+            subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
+            subjectExpression != null -> context.get(SMARTCAST, subjectExpression)?.defaultType ?: context.getType(subjectExpression)
+            else -> null
+        }
+    }
+
+    fun whenSubjectTypeWithoutSmartCasts(expression: KtWhenExpression, context: BindingContext): KotlinType? {
+        val subjectVariable = expression.subjectVariable
+        val subjectExpression = expression.subjectExpression
+        return when {
+            subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
+            subjectExpression != null -> context.getType(subjectExpression)
+            else -> null
+        }
+    }
 
     @JvmStatic
     fun getEnumMissingCases(

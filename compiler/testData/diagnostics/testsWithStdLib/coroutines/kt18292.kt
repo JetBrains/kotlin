@@ -1,7 +1,8 @@
 // SKIP_TXT
 // WITH_RUNTIME
+// COMMON_COROUTINES_TEST
 
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 
 interface Job : CoroutineContext.Element {}
 interface Deferred<out T> : Job {

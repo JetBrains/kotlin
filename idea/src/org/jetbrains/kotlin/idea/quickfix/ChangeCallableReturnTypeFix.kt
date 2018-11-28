@@ -55,8 +55,8 @@ abstract class ChangeCallableReturnTypeFix(
     private val changeFunctionLiteralReturnTypeFix: ChangeFunctionLiteralReturnTypeFix?
 
     private val typeContainsError = ErrorUtils.containsErrorType(type)
-    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_TYPES_WITH_SHORT_NAMES.renderType(type)
+    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES.renderType(type)
     private val isUnitType = type.isUnit()
 
     init {

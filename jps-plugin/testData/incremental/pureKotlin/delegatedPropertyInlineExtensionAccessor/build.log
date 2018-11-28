@@ -13,6 +13,7 @@ Marked as dirty by Kotlin:
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
   out/production/module/usage/UsageVal.class
   out/production/module/usage/UsageVar.class
 End of files
@@ -37,6 +38,7 @@ Marked as dirty by Kotlin:
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
   out/production/module/usage/UsageVar.class
 End of files
 Compiling files:

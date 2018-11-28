@@ -1,23 +1,20 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
 
-expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
-
+/**
+ * Provides a skeletal implementation of the [MutableMap] interface.
+ *
+ * The implementor is required to implement [entries] property, which should return mutable set of map entries, and [put] function.
+ *
+ * @param K the type of map keys. The map is invariant on its key type.
+ * @param V the type of map values. The map is invariant on its value type.
+ */
+@SinceKotlin("1.3")
+public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
     protected constructor()
 
     /**
@@ -29,4 +26,17 @@ expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
     abstract override fun put(key: K, value: V): V?
+
+    abstract override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+
+    override val keys: MutableSet<K>
+    override val size: Int
+    override val values: MutableCollection<V>
+    override fun clear()
+    override fun containsKey(key: K): Boolean
+    override fun containsValue(value: V): Boolean
+    override fun get(key: K): V?
+    override fun isEmpty(): Boolean
+    override fun putAll(from: Map<out K, V>)
+    override fun remove(key: K): V?
 }

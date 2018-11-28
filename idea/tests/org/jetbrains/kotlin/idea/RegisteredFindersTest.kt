@@ -18,33 +18,37 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.psi.NonClasspathClassFinder
 import com.intellij.psi.PsiElementFinder
+import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.junit.Assert
 
 class RegisteredFindersTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
+    override fun getProjectDescriptor(): LightProjectDescriptor = LightCodeInsightFixtureTestCase.JAVA_LATEST
 
     fun testKnownNonClasspathFinder() {
         val expectedFindersNames = setOf(
-                "GantClassFinder",
-                "GradleClassFinder",
-                "KotlinScriptDependenciesClassFinder"
+            "GantClassFinder",
+            "KotlinScriptDependenciesClassFinder"
         ).toMutableSet()
 
         val optionalFindersNames = setOf(
-                "AlternativeJreClassFinder",
-                "IdeaOpenApiClassFinder",
-                "BundledGroovyClassFinder")
+            "GradleClassFinder",
+            "AlternativeJreClassFinder",
+            "IdeaOpenApiClassFinder",
+            "BundledGroovyClassFinder"
+        )
 
         project.getExtensions<PsiElementFinder>(PsiElementFinder.EP_NAME).forEach { finder ->
             if (finder is NonClasspathClassFinder) {
                 val name = finder::class.java.simpleName
                 val isKnown = expectedFindersNames.remove(name) || optionalFindersNames.contains(name)
-                Assert.assertTrue("Unknown finder found: $finder, class name: $name, search in $expectedFindersNames.\n" +
-                                  "Consider updating ${KotlinJavaPsiFacade::class.java}",
-                                  isKnown)
+                Assert.assertTrue(
+                    "Unknown finder found: $finder, class name: $name, search in $expectedFindersNames.\n" +
+                            "Consider updating ${KotlinJavaPsiFacade::class.java}",
+                    isKnown
+                )
             }
         }
 

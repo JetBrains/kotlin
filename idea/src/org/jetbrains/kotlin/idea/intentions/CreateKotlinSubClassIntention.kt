@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.CodeInsightUtil
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateClassKind
-import com.intellij.codeInsight.intention.impl.CreateClassDialog
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
@@ -32,14 +31,13 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
+import org.jetbrains.kotlin.idea.refactoring.ui.CreateKotlinClassDialog
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.ClassHeaderBuilder
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ModifiersChecker
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
 
 private const val IMPL_SUFFIX = "Impl"
 
@@ -163,11 +161,11 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         PsiElementRenameHandler.rename(klass, project, container, editor)
     }
 
-    private fun chooseSubclassToCreate(baseClass: KtClass, baseName: String): CreateClassDialog? {
+    private fun chooseSubclassToCreate(baseClass: KtClass, baseName: String): CreateKotlinClassDialog? {
         val sourceDir = baseClass.containingFile.containingDirectory
 
         val aPackage = JavaDirectoryService.getInstance().getPackage(sourceDir)
-        val dialog = object : CreateClassDialog(
+        val dialog = object : CreateKotlinClassDialog(
                 baseClass.project, text,
                 targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
                 aPackage?.qualifiedName ?: "",

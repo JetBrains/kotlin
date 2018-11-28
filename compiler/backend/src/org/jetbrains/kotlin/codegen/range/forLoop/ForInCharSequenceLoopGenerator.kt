@@ -50,7 +50,7 @@ class ForInCharSequenceLoopGenerator(
         // (see controlStructures/forInCharSequenceMut.kt).
         // We should always store the corresponding CharSequence to a local variable to preserve the Iterator-based behavior.
         charSequenceVar = createLoopTempVariable(charSequenceType)
-        value.put(asmLoopRangeType, v)
+        value.put(asmLoopRangeType, loopRangeType, v)
         v.store(charSequenceVar, charSequenceType)
 
         if (canCacheLength) {
@@ -81,8 +81,8 @@ class ForInCharSequenceLoopGenerator(
         v.load(charSequenceVar, charSequenceType)
         v.load(indexVar, Type.INT_TYPE)
         v.invokeCharSequenceMethod("charAt", "(I)C")
-        StackValue.onStack(Type.CHAR_TYPE).put(asmElementType, codegen.v)
-        v.store(loopParameterVar, asmElementType)
+        StackValue.onStack(Type.CHAR_TYPE).put(loopParameterType, loopParameterKotlinType, codegen.v)
+        v.store(loopParameterVar, loopParameterType)
     }
 
     override fun checkPostConditionAndIncrement(loopExit: Label) {

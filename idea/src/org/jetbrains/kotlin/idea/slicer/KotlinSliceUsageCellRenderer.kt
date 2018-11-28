@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 
 // Based on com.intellij.slicer.SliceUsageCellRenderer
 object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
-    private val descriptorRenderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+    private val descriptorRenderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
         withDefinedIn = true
         withoutTypeParameters = true
         parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE

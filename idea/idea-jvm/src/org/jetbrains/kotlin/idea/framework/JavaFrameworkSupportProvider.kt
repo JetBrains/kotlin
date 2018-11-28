@@ -18,9 +18,11 @@ import com.intellij.openapi.roots.ui.configuration.FacetsProvider
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import javax.swing.JComponent
 
-internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
+class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
     override fun getFrameworkType(): FrameworkTypeEx = JavaFrameworkType.instance
 
     override fun createConfigurable(model: FrameworkSupportModel): FrameworkSupportInModuleConfigurable {
@@ -43,14 +45,19 @@ internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider()
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
                         JSLibraryStdDescription.SUITABLE_LIBRARY_KINDS,
-                        JSFrameworkType.instance)
+                        "Kotlin/\u200BJS")
 
-                description!!.finishLibConfiguration(module, rootModel)
+                description!!.finishLibConfiguration(module, rootModel, false)
+
+                val isNewProject = model.project == null
+                if (isNewProject) {
+                    ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
+                }
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {
                 if (selected) {
-                    val providerId = JSFrameworkType.instance.id
+                    val providerId = "kotlin-js-framework-id"
                     if (model.isFrameworkSelected(providerId)) {
                         model.setFrameworkComponentEnabled(providerId, false)
                     }

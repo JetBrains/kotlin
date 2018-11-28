@@ -16,78 +16,21 @@
 
 package org.jetbrains.kotlin.kapt3.stubs
 
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.kapt3.KaptContext
+import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
+import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
+import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
+import org.jetbrains.kotlin.kapt3.base.stubs.LineInfoMap
+import org.jetbrains.kotlin.kapt3.base.stubs.getJavacSignature
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.*
 
-data class KotlinPosition(val path: String, val isRelativePath: Boolean, val pos: Int)
-
-private typealias LineInfoMap = MutableMap<String, KotlinPosition>
-
-class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
-    companion object {
-        const val KAPT_METADATA_EXTENSION = ".kapt_metadata"
-        private const val METADATA_VERSION = 1
-
-        fun parseFileInfo(file: JCTree.JCCompilationUnit): FileInfo {
-            val sourceUri = file.sourcefile
-                ?.toUri()
-                ?.takeIf { it.isAbsolute && !it.isOpaque && it.path != null && it.scheme?.toLowerCase() == "file" } ?: return FileInfo.EMPTY
-
-            val sourceFile = File(sourceUri).takeIf { it.exists() } ?: return FileInfo.EMPTY
-            val kaptMetadataFile = File(sourceFile.parentFile, sourceFile.nameWithoutExtension + KAPT_METADATA_EXTENSION)
-
-            if (!kaptMetadataFile.isFile) {
-                return FileInfo.EMPTY
-            }
-
-            return deserialize(kaptMetadataFile.readBytes())
-        }
-
-        private fun deserialize(data: ByteArray): FileInfo {
-            val lineInfo: LineInfoMap = mutableMapOf()
-            val signatureInfo = mutableMapOf<String, String>()
-
-            val ois = ObjectInputStream(ByteArrayInputStream(data))
-
-            val version = ois.readInt()
-            if (version != METADATA_VERSION) {
-                return FileInfo.EMPTY
-            }
-
-            val lineInfoCount = ois.readInt()
-            repeat(lineInfoCount) {
-                val fqName = ois.readUTF()
-                val path = ois.readUTF()
-                val isRelative = ois.readBoolean()
-                val pos = ois.readInt()
-
-                lineInfo[fqName] = KotlinPosition(path, isRelative, pos)
-            }
-
-            val signatureCount = ois.readInt()
-            repeat(signatureCount) {
-                val javacSignature = ois.readUTF()
-                val methodDesc = ois.readUTF()
-
-                signatureInfo[javacSignature] = methodDesc
-            }
-
-            return FileInfo(lineInfo, signatureInfo)
-        }
-
-        private fun getJavacSignature(decl: JCTree.JCMethodDecl): String {
-            val name = decl.name.toString()
-            val params = decl.parameters.joinToString { it.getType().toString() }
-            return "$name($params)"
-        }
-    }
-
+class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGeneration) {
     private val lineInfo: LineInfoMap = mutableMapOf()
     private val signatureInfo = mutableMapOf<String, String>()
 
@@ -105,8 +48,8 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
         register(field, clazz.name + "#" + field.name)
     }
 
-    fun registerSignature(decl: JCTree.JCMethodDecl, method: MethodNode) {
-        signatureInfo[getJavacSignature(decl)] = method.name + method.desc
+    fun registerSignature(declaration: JCTree.JCMethodDecl, method: MethodNode) {
+        signatureInfo[declaration.getJavacSignature()] = method.name + method.desc
     }
 
     private fun register(asmNode: Any, fqName: String) {
@@ -115,6 +58,11 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
     }
 
     private fun register(fqName: String, psiElement: PsiElement) {
+        val containingVirtualFile = psiElement.containingFile.virtualFile
+        if (containingVirtualFile == null || FileDocumentManager.getInstance().getDocument(containingVirtualFile) == null) {
+            return
+        }
+
         val textRange = psiElement.textRange ?: return
 
         val (path, isRelative) = getFilePathRelativePreferred(psiElement.containingFile)
@@ -142,7 +90,7 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
         val os = ByteArrayOutputStream()
         val oos = ObjectOutputStream(os)
 
-        oos.writeInt(METADATA_VERSION)
+        oos.writeInt(KaptStubLineInformation.METADATA_VERSION)
 
         oos.writeInt(lineInfo.size)
         for ((fqName, kotlinPosition) in lineInfo) {
@@ -160,14 +108,5 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
 
         oos.flush()
         return os.toByteArray()
-    }
-
-    class FileInfo(private val lineInfo: LineInfoMap, private val signatureInfo: Map<String, String>) {
-        companion object {
-            val EMPTY = FileInfo(mutableMapOf(), emptyMap())
-        }
-
-        fun getPositionFor(fqName: String) = lineInfo[fqName]
-        fun getMethodDescriptor(decl: JCTree.JCMethodDecl) = signatureInfo[getJavacSignature(decl)]
     }
 }

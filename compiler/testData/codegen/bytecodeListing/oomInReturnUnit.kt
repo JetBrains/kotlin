@@ -1,8 +1,9 @@
 // WITH_RUNTIME
+// COMMON_COROUTINES_TEST
 // WITH_COROUTINES
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 suspend fun some() {}
 

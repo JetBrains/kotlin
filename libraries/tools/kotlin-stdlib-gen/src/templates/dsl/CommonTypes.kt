@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package templates
@@ -25,6 +14,7 @@ enum class Family {
     InvariantArraysOfObjects,
     ArraysOfObjects,
     ArraysOfPrimitives,
+    ArraysOfUnsigned,
     Sequences,
     CharSequences,
     Strings,
@@ -32,7 +22,8 @@ enum class Family {
     RangesOfPrimitives,
     ProgressionsOfPrimitives,
     Generic,
-    Primitives;
+    Primitives,
+    Unsigned;
 
     val isPrimitiveSpecialization: Boolean by lazy { this in primitiveSpecializations }
 
@@ -55,18 +46,28 @@ enum class PrimitiveType {
     Float,
     Double,
     Boolean,
-    Char;
+    Char,
+    // unsigned
+    UByte,
+    UShort,
+    UInt,
+    ULong;
 
     val capacity by lazy { descendingByDomainCapacity.indexOf(this).let { if (it < 0) it else descendingByDomainCapacity.size - it } }
 
     companion object {
-        val defaultPrimitives = PrimitiveType.values().toSet()
+        val unsignedPrimitives = setOf(UInt, ULong, UByte, UShort)
+        val defaultPrimitives = PrimitiveType.values().toSet() - unsignedPrimitives
         val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
         val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
+        val rangePrimitives = setOf(Int, Long, Char, UInt, ULong)
 
         val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
+        val descendingByDomainCapacityUnsigned = listOf(ULong, UInt, UShort, UByte)
 
-        fun maxByCapacity(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType = descendingByDomainCapacity.first { it == fromType || it == toType }
+        fun maxByCapacity(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType =
+            (if (fromType in unsignedPrimitives) descendingByDomainCapacityUnsigned else descendingByDomainCapacity)
+                .first { it == fromType || it == toType }
     }
 }
 
@@ -75,6 +76,7 @@ fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
 enum class Inline {
     No,
     Yes,
+    YesSuppressWarning,  // with suppressed warning about nothing to inline
     Only;
 
     fun isInline() = this != No

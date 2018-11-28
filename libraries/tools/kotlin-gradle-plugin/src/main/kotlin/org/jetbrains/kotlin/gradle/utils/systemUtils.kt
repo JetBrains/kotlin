@@ -20,4 +20,4 @@ import java.util.*
 
 // Based on com.intellij.openapi.util.SystemInfoRt from Intellij platform
 internal val isWindows: Boolean =
-        System.getProperty("os.name")?.toLowerCase(Locale.US)?.startsWith("windows") ?: false
+    System.getProperty("os.name")?.toLowerCase(Locale.US)?.startsWith("windows") ?: false

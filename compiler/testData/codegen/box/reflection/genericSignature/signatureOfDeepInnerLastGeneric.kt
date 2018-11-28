@@ -1,5 +1,6 @@
+// SKIP_JDK6
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
-// IGNORE_BACKEND: JS, NATIVE
 
 abstract class Outer {
 
@@ -16,8 +17,9 @@ abstract class Outer {
 
 fun box(): String {
     kotlin.test.assertEquals(
-            "Outer\$FirstInner\$SecondInner\$ThirdInnner.Outer\$FirstInner\$SecondInner\$ThirdInnner\$FourthInner<B>",
-            Outer.FirstInner.SecondInner.ThirdInnner::class.java.declaredMethods.single().genericReturnType.toString())
+        "Outer\$FirstInner\$SecondInner\$ThirdInnner\$FourthInner<B>",
+        Outer.FirstInner.SecondInner.ThirdInnner::class.java.declaredMethods.single().genericReturnType.toString()
+    )
 
     return "OK"
 }

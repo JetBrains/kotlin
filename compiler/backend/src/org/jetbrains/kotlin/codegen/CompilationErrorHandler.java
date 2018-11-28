@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import org.jetbrains.kotlin.util.ExceptionUtilKt;
+
 public interface CompilationErrorHandler {
     CompilationErrorHandler THROW_EXCEPTION = (exception, fileUrl) -> {
-        if (exception instanceof RuntimeException) {
-            throw (RuntimeException) exception;
-        }
-        throw new IllegalStateException(exception);
+        throw new IllegalStateException(
+                ExceptionUtilKt.getExceptionMessage("Backend", "Exception during code generation", exception, fileUrl),
+                exception
+        );
     };
 
     void reportException(Throwable exception, String fileUrl);

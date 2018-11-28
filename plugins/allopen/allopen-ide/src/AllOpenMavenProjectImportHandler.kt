@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 
 class AllOpenMavenProjectImportHandler : AbstractMavenImportHandler() {
     private companion object {
-        val ANNOTATION_PARAMETER_PREFIX = "all-open:${AllOpenCommandLineProcessor.ANNOTATION_OPTION.name}="
+        val ANNOTATION_PARAMETER_PREFIX = "all-open:${AllOpenCommandLineProcessor.ANNOTATION_OPTION.optionName}="
     }
 
     override val compilerPluginId = AllOpenCommandLineProcessor.PLUGIN_ID
@@ -49,6 +49,6 @@ class AllOpenMavenProjectImportHandler : AbstractMavenImportHandler() {
             text.substring(ANNOTATION_PARAMETER_PREFIX.length)
         })
 
-        return annotations.map { PluginOption(AllOpenCommandLineProcessor.ANNOTATION_OPTION.name, it) }
+        return annotations.map { PluginOption(AllOpenCommandLineProcessor.ANNOTATION_OPTION.optionName, it) }
     }
 }

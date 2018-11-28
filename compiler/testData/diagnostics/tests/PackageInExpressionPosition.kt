@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package foo
 
 class X {}
@@ -13,7 +12,7 @@ val xsss = foo.<!NO_COMPANION_OBJECT!>X<!>
 val xssss = <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>foo<!>
 val f = { <!NO_COMPANION_OBJECT!>System<!> }
 
-fun main(args : Array<String>) {
+fun main() {
     <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>java<!> = null
     <!NO_COMPANION_OBJECT!>System<!> = null
     <!NO_COMPANION_OBJECT!>System<!>!!
@@ -22,6 +21,6 @@ fun main(args : Array<String>) {
     <!NO_COMPANION_OBJECT!>System<!> is Int
     <!INVISIBLE_MEMBER!>System<!>()
     (<!NO_COMPANION_OBJECT!>System<!>)
-    foo@ <!NO_COMPANION_OBJECT!>System<!>
+    <!REDUNDANT_LABEL_WARNING!>foo@<!> <!NO_COMPANION_OBJECT!>System<!>
     null in <!NO_COMPANION_OBJECT!>System<!>
 }

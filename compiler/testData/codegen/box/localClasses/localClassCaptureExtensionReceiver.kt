@@ -1,14 +1,23 @@
 class Outer {
+    val foo = "Foo"
+
     fun String.id(): String {
         class Local(unused: Long) {
             fun result() = this@id
             fun outer() = this@Outer
         }
 
-        return Local(42L).result()
+        val l = Local(42L)
+        return l.result() + l.outer().foo
     }
 
     fun result(): String = "OK".id()
 }
 
-fun box() = Outer().result()
+fun box(): String {
+    val r = Outer().result()
+
+    if (r != "OKFoo") return "Fail: $r"
+
+    return "OK"
+}

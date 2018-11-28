@@ -28,7 +28,7 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class KotlinGradleIT: BaseGradleIT() {
+class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testCrossCompile() {
@@ -37,12 +37,17 @@ class KotlinGradleIT: BaseGradleIT() {
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE", ":compileDeployKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
+            assertTasksUpToDate(
+                ":compileKotlin",
+                ":compileTestKotlin",
+                ":compileDeployKotlin",
+                ":compileJava"
+            )
         }
     }
 
@@ -77,70 +82,13 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
             assertFileExists(kotlinClassesDir() + "META-INF/kotlinProject.kotlin_module")
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
             assertNotContains("Forcing System.gc")
         }
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE")
-        }
-    }
-
-    // For corresponding documentation, see https://docs.gradle.org/current/userguide/gradle_daemon.html
-    // Setting user.variant to different value implies a new daemon process will be created.
-    // In order to stop daemon process, special exit task is used ( System.exit(0) ).
-    @Test
-    fun testKotlinOnlyDaemonMemory() {
-        val project = Project("kotlinProject")
-        val VARIANT_CONSTANT = "ForTest"
-        val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
-        val MEMORY_MAX_GROWTH_LIMIT_KB = 500
-        val BUILD_COUNT = 15
-        val reportMemoryUsage = "-Dkotlin.gradle.test.report.memory.usage=true"
-        val options =  BaseGradleIT.BuildOptions(withDaemon = true)
-
-        fun exitTestDaemon() {
-            project.build(userVariantArg, reportMemoryUsage, "exit", options = options) {
-                assertFailed()
-                assertContains("The daemon has exited normally or was terminated in response to a user interrupt.")
-            }
-        }
-
-        fun buildAndGetMemoryAfterBuild(): Int {
-            var reportedMemory: Int? = null
-
-            project.build(userVariantArg, reportMemoryUsage, "clean", "build", options = options) {
-                assertSuccessful()
-                val matches = "\\[KOTLIN\\]\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)"
-                        .toRegex().find(output)
-                assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin" }
-                reportedMemory = matches!!.groupValues[1].toInt()
-            }
-
-            return reportedMemory!!
-        }
-
-        exitTestDaemon()
-
-        try {
-            val usedMemory = (1..BUILD_COUNT).map { buildAndGetMemoryAfterBuild() }
-
-            // ensure that the maximum of the used memory established after several first builds doesn't raise significantly in the subsequent builds
-            val establishedMaximum = usedMemory.take(5).max()!!
-            val totalMaximum = usedMemory.max()!!
-
-            val maxGrowth = totalMaximum - establishedMaximum
-            assertTrue(maxGrowth <= MEMORY_MAX_GROWTH_LIMIT_KB,
-                    "Maximum used memory over series of builds growth $maxGrowth (from $establishedMaximum to $totalMaximum) kb > $MEMORY_MAX_GROWTH_LIMIT_KB kb")
-
-            // testing that nothing remains locked by daemon, see KT-9440
-            project.build(userVariantArg, "clean", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
-                assertSuccessful()
-            }
-        }
-        finally {
-            exitTestDaemon()
+            assertTasksUpToDate(":compileKotlin", ":compileTestKotlin")
         }
     }
 
@@ -162,7 +110,7 @@ class KotlinGradleIT: BaseGradleIT() {
         Project("classpathTest").build("build") {
             assertSuccessful()
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
         }
     }
 
@@ -171,7 +119,7 @@ class KotlinGradleIT: BaseGradleIT() {
         Project("multiprojectClassPathTest").build("build") {
             assertSuccessful()
             assertReportExists("subproject")
-            assertContains(":subproject:compileKotlin", ":subproject:compileTestKotlin")
+            assertTasksExecuted(":subproject:compileKotlin", ":subproject:compileTestKotlin")
             checkKotlinGradleBuildServices()
         }
     }
@@ -194,31 +142,47 @@ class KotlinGradleIT: BaseGradleIT() {
         project.build("build", options = options) {
             assertSuccessful()
             assertNoWarnings()
-            val affectedSources = project.projectDir.getFilesByNames("Greeter.kt", "KotlinGreetingJoiner.kt",
-                    "TestGreeter.kt", "TestKotlinGreetingJoiner.kt")
-            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+            val affectedSources = project.projectDir.getFilesByNames(
+                "Greeter.kt", "KotlinGreetingJoiner.kt",
+                "TestGreeter.kt", "TestKotlinGreetingJoiner.kt"
+            )
+            assertCompiledKotlinSources(project.relativize(affectedSources))
+        }
+    }
+
+    @Test
+    fun testManyClassesIC() {
+        val project = Project("manyClasses")
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.setupWorkingDir()
+        val classesKt = project.projectFile("classes.kt")
+        classesKt.writeText((0..1024).joinToString("\n") { "class Class$it { fun f() = $it }" })
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertNoWarnings()
+        }
+
+        val dummyKt = project.projectFile("dummy.kt")
+        dummyKt.modify { "$it " }
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(dummyKt))
         }
     }
 
     @Test
     fun testSimpleMultiprojectIncremental() {
-        fun Project.modify(body: Project.() -> Unit): Project {
-            this.body()
-            return this
-        }
-
         val incremental = defaultBuildOptions().copy(incremental = true)
 
         Project("multiprojectWithDependency").build("assemble", options = incremental) {
             assertSuccessful()
             assertReportExists("projA")
-            assertContains(":projA:compileKotlin")
-            assertNotContains("projA:compileKotlin UP-TO-DATE")
             assertReportExists("projB")
-            assertContains(":projB:compileKotlin")
-            assertNotContains("projB:compileKotlin UP-TO-DATE")
+            assertTasksExecuted(":projA:compileKotlin", ":projB:compileKotlin")
         }
-        Project("multiprojectWithDependency").modify {
+        Project("multiprojectWithDependency").apply {
             val oldSrc = File(this.projectDir, "projA/src/main/kotlin/a.kt")
             val newSrc = File(this.projectDir, "projA/src/main/kotlin/a.kt.new")
             assertTrue { oldSrc.exists() }
@@ -227,11 +191,8 @@ class KotlinGradleIT: BaseGradleIT() {
         }.build("assemble", options = incremental) {
             assertSuccessful()
             assertReportExists("projA")
-            assertContains(":projA:compileKotlin")
-            assertNotContains("projA:compileKotlin UP-TO-DATE")
             assertReportExists("projB")
-            assertContains(":projB:compileKotlin")
-            assertNotContains("projB:compileKotlin UP-TO-DATE")
+            assertTasksExecuted(":projA:compileKotlin", ":projB:compileKotlin")
         }
     }
 
@@ -240,7 +201,8 @@ class KotlinGradleIT: BaseGradleIT() {
         Project("kotlinInJavaRoot").build("build") {
             assertSuccessful()
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin")
+            assertContains(":compileTestKotlin NO-SOURCE")
         }
     }
 
@@ -311,7 +273,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE")
+            assertTasksUpToDate(":compileKotlin")
         }
     }
 
@@ -462,7 +424,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build", "install") {
             assertSuccessful()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
             val pomLines = File(project.projectDir, "build/poms/pom-default.xml").readLines()
             val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
             val versionLine = pomLines[stdlibVersionLineNumber]
@@ -511,7 +473,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         fun updateBuildGradle(langVersion: String, apiVersion: String) {
             buildGradle.writeText(
-                    """
+                """
                 $buildGradleContentCopy
 
                 compileKotlin {
@@ -520,7 +482,8 @@ class KotlinGradleIT: BaseGradleIT() {
                         apiVersion = '$apiVersion'
                     }
                 }
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
 
         assert(buildGradleContentCopy.indexOf("languageVersion") < 0) { "build.gradle should not contain 'languageVersion'" }
@@ -605,17 +568,20 @@ class KotlinGradleIT: BaseGradleIT() {
 
             // Check that the Java source in a non-full-depth package structure was located correctly:
             checkBytecodeContains(
-                    File(project.projectDir, kotlinClassesDir() + "my/pack/name/app/MyApp.class"),
-                    "my/pack/name/util/JUtil.util")
+                File(project.projectDir, kotlinClassesDir() + "my/pack/name/app/MyApp.class"),
+                "my/pack/name/util/JUtil.util"
+            )
         }
     }
 
     @Test
     fun testDisableSeparateClassesDirs() {
 
-        fun CompiledProject.check(copyClassesToJavaOutput: Boolean?,
-                                  expectBuildCacheWarning: Boolean,
-                                  expectGradleLowVersionWarning: Boolean) {
+        fun CompiledProject.check(
+            copyClassesToJavaOutput: Boolean?,
+            expectBuildCacheWarning: Boolean,
+            expectGradleLowVersionWarning: Boolean
+        ) {
 
             val separateDirPath = kotlinClassesDir() + "demo/KotlinGreetingJoiner.class"
             val singleDirPath = javaClassesDir() + "demo/KotlinGreetingJoiner.class"
@@ -645,20 +611,26 @@ class KotlinGradleIT: BaseGradleIT() {
 
         Project("simpleProject", GradleVersionRequired.Exact("4.0")).apply {
             build("build") {
-                check(copyClassesToJavaOutput = false,
-                        expectBuildCacheWarning = false,
-                        expectGradleLowVersionWarning = false)
+                check(
+                    copyClassesToJavaOutput = false,
+                    expectBuildCacheWarning = false,
+                    expectGradleLowVersionWarning = false
+                )
             }
             File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
             build("clean", "build") {
-                check(copyClassesToJavaOutput = true,
-                        expectBuildCacheWarning = false,
-                        expectGradleLowVersionWarning = false)
+                check(
+                    copyClassesToJavaOutput = true,
+                    expectBuildCacheWarning = false,
+                    expectGradleLowVersionWarning = false
+                )
             }
             build("clean", "build", options = defaultBuildOptions().copy(withBuildCache = true)) {
-                check(copyClassesToJavaOutput = true,
-                        expectBuildCacheWarning = true,
-                        expectGradleLowVersionWarning = false)
+                check(
+                    copyClassesToJavaOutput = true,
+                    expectBuildCacheWarning = true,
+                    expectGradleLowVersionWarning = false
+                )
             }
             projectDir.deleteRecursively()
         }
@@ -667,9 +639,11 @@ class KotlinGradleIT: BaseGradleIT() {
             setupWorkingDir()
             File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
             build("build") {
-                check(copyClassesToJavaOutput = null,
-                        expectBuildCacheWarning = false,
-                        expectGradleLowVersionWarning = true)
+                check(
+                    copyClassesToJavaOutput = null,
+                    expectBuildCacheWarning = false,
+                    expectGradleLowVersionWarning = true
+                )
             }
         }
     }
@@ -678,7 +652,8 @@ class KotlinGradleIT: BaseGradleIT() {
     fun testSrcDirTaskDependency() {
         Project("simpleProject", GradleVersionRequired.AtLeast("4.1")).apply {
             setupWorkingDir()
-            File(projectDir, "build.gradle").appendText("""${'\n'}
+            File(projectDir, "build.gradle").appendText(
+                """${'\n'}
                 task generateSources {
                     outputs.dir('generated')
                     doLast {
@@ -692,10 +667,13 @@ class KotlinGradleIT: BaseGradleIT() {
                     }
                 }
                 sourceSets.main.java.srcDir(tasks.generateSources)
-                """.trimIndent())
-            File(projectDir, "src/main/kotlin/helloWorld.kt").appendText("""${'\n'}
+                """.trimIndent()
+            )
+            File(projectDir, "src/main/kotlin/helloWorld.kt").appendText(
+                """${'\n'}
                 fun usageOfGeneratedSource() = test.TestClass()
-                """.trimIndent())
+                """.trimIndent()
+            )
 
             build("build") {
                 assertSuccessful()
@@ -712,7 +690,8 @@ class KotlinGradleIT: BaseGradleIT() {
             File(projectDir, additionalSrcDir).mkdirs()
             File(projectDir, "$additionalSrcDir/additionalSource.kt").writeText("fun hello() = 123")
 
-            File(projectDir, "build.gradle").appendText("""${'\n'}
+            File(projectDir, "build.gradle").appendText(
+                """${'\n'}
                 task sourcesJar(type: Jar) {
                     from sourceSets.main.allSource
                     classifier 'source'
@@ -720,12 +699,192 @@ class KotlinGradleIT: BaseGradleIT() {
                 }
 
                 sourceSets.main.kotlin.srcDir('$additionalSrcDir') // test that additional srcDir is included
-                """.trimIndent())
+                """.trimIndent()
+            )
 
             build("sourcesJar") {
                 assertSuccessful()
                 val sourcesJar = ZipFile(File(projectDir, "build/libs/simpleProject-source.jar"))
                 assertNotNull(sourcesJar.getEntry("additionalSource.kt"))
+            }
+        }
+    }
+
+    @Test
+    fun testNoUnnamedInputsOutputs() {
+        // Use a new Gradle version to enable the usage of the input/output builders, which are new API:
+        val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.4")
+
+        val projects = listOf(
+            Project("simpleProject", gradleVersionRequirement),
+            Project("kotlin2JsProject", gradleVersionRequirement),
+            Project("multiplatformProject", gradleVersionRequirement),
+            Project("simple", gradleVersionRequirement, "kapt2")
+        )
+
+        projects.forEach {
+            it.apply {
+                // Enable caching to make sure Gradle reports the task inputs/outputs during key construction:
+                val options = defaultBuildOptions().copy(withBuildCache = true)
+                build("assemble", options = options) {
+                    // Check that all inputs/outputs added at runtime have proper names
+                    // (the unnamed ones are listed as $1, $2 etc.):
+                    assertNotContains("Appending inputPropertyHash for '\\$\\d+'".toRegex())
+                    assertNotContains("Appending outputPropertyName to build cache key: \\$\\d+".toRegex())
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testModuleNameFiltering() = with(Project("typeAlias")) { // Use a Project with a top-level typealias
+        setupWorkingDir()
+
+        gradleBuildScript().appendText("\n" + """archivesBaseName = 'a/really\\tricky\n\rmodule\tname'""")
+        build("classes") {
+            assertSuccessful()
+
+            val metaInfDir = File(projectDir, kotlinClassesDir() + "META-INF")
+            assertNotNull(metaInfDir.listFiles().singleOrNull { it.name.endsWith(".kotlin_module") })
+        }
+    }
+
+    @Test
+    fun testJavaIcCompatibility() {
+        val project = Project("kotlinJavaProject")
+        project.setupWorkingDir()
+
+        val buildScript = File(project.projectDir, "build.gradle")
+
+        buildScript.modify { "$it\n" + "compileJava.options.incremental = true" }
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        // Then modify a Java source and check that compileJava is incremental:
+        File(project.projectDir, "src/main/java/demo/HelloWorld.java").modify { "$it\n" + "class NewClass { }" }
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Incremental compilation")
+            assertNotContains("not incremental")
+        }
+
+        // Then modify a Kotlin source and check that Gradle sees that Java is not up-to-date:
+        File(project.projectDir, "src/main/kotlin/helloWorld.kt").modify {
+            it.trim('\r', '\n').trimEnd('}') + "\nval z: Int = 0 }"
+        }
+        project.build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+            assertNotContains("not incremental")
+            assertNotContains("None of the classes needs to be compiled!")
+        }
+    }
+
+    @Test
+    fun testApplyPluginFromBuildSrc() {
+        val project = Project("kotlinProjectWithBuildSrc")
+        project.setupWorkingDir()
+        File(project.projectDir, "buildSrc/build.gradle").modify { it.replace("\$kotlin_version", KOTLIN_VERSION) }
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testInternalTest() {
+        Project("internalTest").build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
+        }
+    }
+
+    @Test
+    fun testJavaLibraryCompatibility() {
+        val project = Project("javaLibraryProject")
+
+        val compileKotlinTasks = listOf(":libA:compileKotlin", ":libB:compileKotlin", ":app:compileKotlin")
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("Could not register Kotlin output")
+            assertTasksExecuted(compileKotlinTasks)
+        }
+
+        // Modify a library source and its usage and re-build the project:
+        for (path in listOf("libA/src/main/kotlin/HelloA.kt", "libB/src/main/kotlin/HelloB.kt", "app/src/main/kotlin/App.kt")) {
+            File(project.projectDir, path).modify { original ->
+                original.replace("helloA", "helloA1")
+                    .replace("helloB", "helloB1")
+                    .apply { assert(!equals(original)) }
+            }
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("Could not register Kotlin output")
+            assertTasksExecuted(compileKotlinTasks)
+        }
+    }
+
+    @Test
+    fun testKotlinSourceInJavaSourceSet() = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+
+        val srcDirPrefix = "srcDir: "
+
+        gradleBuildScript().appendText(
+            "\n" + """
+            subprojects { project ->
+                project.afterEvaluate {
+                    project.sourceSets.each { sourceSet ->
+                        sourceSet.allJava.srcDirs.each { srcDir ->
+                            println "$srcDirPrefix" + srcDir.canonicalPath
+                        }
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+        val srcDirRegex = "$srcDirPrefix(.*)".toRegex()
+
+        build("help") {
+            assertSuccessful()
+            val reportedSrcDirs = srcDirRegex.findAll(output).map { it.groupValues[1] }.toSet()
+
+            val expectedKotlinDirs = listOf("lib", "libJvm", "libJs").flatMap { module ->
+                listOf("main", "test").map { sourceSet ->
+                    projectDir.resolve("$module/src/$sourceSet/kotlin").absolutePath
+                }
+            }
+
+            expectedKotlinDirs.forEach { assertTrue(it in reportedSrcDirs, "$it should be included into the Java source sets") }
+        }
+    }
+
+    @Test
+    fun testNoTaskConfigurationForcing() {
+        val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.9")
+        val projects = listOf(
+            Project("simpleProject", gradleVersionRequirement),
+            Project("kotlin2JsNoOutputFileProject", gradleVersionRequirement),
+            Project("sample-app", gradleVersionRequirement, "new-mpp-lib-and-app")
+        )
+
+        projects.forEach {
+            it.apply {
+                setupWorkingDir()
+
+                val taskConfigureFlag = "Configured the task!"
+
+                gradleBuildScript().appendText("\n" + """
+                    tasks.register("myTask") { println '$taskConfigureFlag' }
+                """.trimIndent())
+
+                build("help") {
+                    assertSuccessful()
+                    assertNotContains(taskConfigureFlag)
+                }
             }
         }
     }

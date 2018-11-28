@@ -7,5 +7,5 @@ PsiJetFileStubImpl[package=]
     CLASS_BODY
       PROPERTY[fqName=Test.test, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=test]
       CLASS_INITIALIZER
-      FUN[fqName=Test.more, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=more]
+      FUN[fqName=Test.more, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=more]
         VALUE_PARAMETER_LIST

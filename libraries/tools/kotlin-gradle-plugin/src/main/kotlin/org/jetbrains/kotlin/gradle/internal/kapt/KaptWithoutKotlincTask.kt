@@ -1,0 +1,183 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle.internal
+
+import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.TaskAction
+import org.gradle.workers.IsolationMode
+import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
+import org.jetbrains.kotlin.gradle.tasks.clearLocalStateDirectories
+import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
+import org.jetbrains.kotlin.gradle.tasks.findToolsJar
+import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
+import java.io.Serializable
+import java.net.URLClassLoader
+import javax.inject.Inject
+
+open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KaptTask() {
+    @get:InputFiles
+    @get:Classpath
+    @Suppress("unused")
+    val kaptJars: Collection<File>
+        get() = project.configurations.getByName(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).resolve()
+
+    @get:Input
+    var isVerbose: Boolean = false
+
+    @get:Input
+    var mapDiagnosticLocations: Boolean = false
+
+    @get:Input
+    lateinit var annotationProcessorFqNames: List<String>
+
+    @get:Input
+    lateinit var processorOptions: Map<String, String>
+
+    @get:Input
+    lateinit var javacOptions: Map<String, String>
+
+    @TaskAction
+    fun compile() {
+        logger.info("Running kapt annotation processing using the Gradle Worker API")
+
+        clearLocalStateDirectories()
+
+        val compileClasspath = classpath.files.toMutableList()
+        if (project.plugins.none { it is KotlinAndroidPluginWrapper }) {
+            compileClasspath.addAll(0, PathUtil.getJdkClassesRootsFromCurrentJre())
+        }
+
+        val kaptFlagsForWorker = mutableSetOf<String>().apply {
+            if (isVerbose) add("VERBOSE")
+            if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
+        }
+
+        val optionsForWorker = KaptOptionsForWorker(
+            project.projectDir,
+            compileClasspath,
+            javaSourceRoots.toList(),
+
+            destinationDir,
+            classesDir,
+            stubsDir,
+
+            kaptClasspath.files.toList(),
+            annotationProcessorFqNames,
+
+            processorOptions,
+            javacOptions,
+
+            kaptFlagsForWorker
+        )
+
+        val kaptClasspath = kaptJars + findKotlinStdlibClasspath(project)
+
+        workerExecutor.submit(KaptExecution::class.java) { config ->
+            config.isolationMode = IsolationMode.PROCESS
+            config.params(optionsForWorker, findToolsJar(), kaptClasspath)
+            logger.info("Kapt worker classpath: ${config.classpath}")
+        }
+
+        workerExecutor.await()
+    }
+}
+
+private class KaptExecution @Inject constructor(
+    val optionsForWorker: KaptOptionsForWorker,
+    val toolsJar: File?,
+    val kaptClasspath: List<File>
+) : Runnable {
+    private companion object {
+        private const val JAVAC_CONTEXT_CLASS = "com.sun.tools.javac.util.Context"
+
+        private fun kaptClass(classLoader: ClassLoader) = Class.forName("org.jetbrains.kotlin.kapt3.base.Kapt", true, classLoader)
+    }
+
+    override fun run(): Unit = with(optionsForWorker) {
+        val kaptClasspathUrls = kaptClasspath.map { it.toURI().toURL() }.toTypedArray()
+        val rootClassLoader = findRootClassLoader()
+
+        val classLoaderWithToolsJar = if (toolsJar != null && !javacIsAlreadyHere()) {
+            URLClassLoader(arrayOf(toolsJar.toURI().toURL()), rootClassLoader)
+        } else {
+            rootClassLoader
+        }
+
+        val kaptClassLoader = URLClassLoader(kaptClasspathUrls, classLoaderWithToolsJar)
+        val kaptMethod = kaptClass(kaptClassLoader).declaredMethods.single { it.name == "kapt" }
+        kaptMethod.invoke(null, createKaptOptions(kaptClassLoader))
+    }
+
+    private fun javacIsAlreadyHere(): Boolean {
+        return try {
+            Class.forName(JAVAC_CONTEXT_CLASS, false, KaptExecution::class.java.classLoader) != null
+        } catch (e: Throwable) {
+            false
+        }
+    }
+
+    private fun createKaptOptions(classLoader: ClassLoader) = with (optionsForWorker) {
+        val flags = kaptClass(classLoader).declaredMethods.single { it.name == "kaptFlags" }.invoke(null, flags)
+
+        val mode = Class.forName("org.jetbrains.kotlin.base.kapt3.AptMode", true, classLoader)
+            .enumConstants.single { (it as Enum<*>).name == "APT_ONLY" }
+
+        val detectMemoryLeaksMode = Class.forName("org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode", true, classLoader)
+            .enumConstants.single { (it as Enum<*>).name == "NONE" }
+
+        Class.forName("org.jetbrains.kotlin.base.kapt3.KaptOptions", true, classLoader).constructors.single().newInstance(
+            projectBaseDir,
+            compileClasspath,
+            javaSourceRoots,
+
+            sourcesOutputDir,
+            classesOutputDir,
+            stubsOutputDir,
+            stubsOutputDir, // sic!
+
+            processingClasspath,
+            processors,
+
+            processingOptions,
+            javacOptions,
+
+            flags,
+            mode,
+            detectMemoryLeaksMode
+        )
+    }
+
+    private fun findRootClassLoader(): ClassLoader {
+        tailrec fun parentOrSelf(classLoader: ClassLoader): ClassLoader {
+            val parent = classLoader.parent ?: return classLoader
+            return parentOrSelf(parent)
+        }
+        return parentOrSelf(KaptExecution::class.java.classLoader)
+    }
+}
+
+private data class KaptOptionsForWorker(
+    val projectBaseDir: File,
+    val compileClasspath: List<File>,
+    val javaSourceRoots: List<File>,
+
+    val sourcesOutputDir: File,
+    val classesOutputDir: File,
+    val stubsOutputDir: File,
+
+    val processingClasspath: List<File>,
+    val processors: List<String>,
+
+    val processingOptions: Map<String, String>,
+    val javacOptions: Map<String, String>,
+
+    val flags: Set<String>
+) : Serializable

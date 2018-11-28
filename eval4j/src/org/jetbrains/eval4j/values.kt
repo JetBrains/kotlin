@@ -28,7 +28,7 @@ interface Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
 }
 
 object NOT_A_VALUE: Value {
-    override val asmType = Type.getType("<invalid>")
+    override val asmType = Type.getObjectType("<invalid>")
     override val valid = false
     override fun getSize(): Int = 1
 
@@ -118,15 +118,15 @@ fun Value.obj(expectedType: Type = asmType): Any? {
     }
 }
 
-fun <T: Any> T?.checkNull(): T {
+fun <T : Any> T?.checkNull(): T {
     if (this == null) {
-        throwEvalException(NullPointerException())
+        throwInterpretingException(NullPointerException())
     }
     return this
 }
 
-fun throwEvalException(e: Throwable): Nothing {
-    throw ThrownFromEvalException(e)
+fun throwInterpretingException(e: Throwable): Nothing {
+    throw Eval4JInterpretingException(e)
 }
 
 fun throwBrokenCodeException(e: Throwable): Nothing {

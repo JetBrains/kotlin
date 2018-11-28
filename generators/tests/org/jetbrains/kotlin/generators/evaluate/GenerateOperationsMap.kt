@@ -38,6 +38,8 @@ fun generate(): String {
     val sb = StringBuilder()
     val p = Printer(sb)
     p.println(File("license/LICENSE.txt").readText())
+    p.println("@file:Suppress(\"DEPRECATION_ERROR\")")
+    p.println()
     p.println("package org.jetbrains.kotlin.resolve.constants.evaluate")
     p.println()
     p.println("import java.math.BigInteger")

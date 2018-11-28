@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.javac
 
+import com.intellij.openapi.Disposable
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
@@ -26,15 +27,18 @@ import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Name
 import com.sun.tools.javac.util.Names
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.kapt3.KaptContext
+import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
-class KaptTreeMaker(context: Context, private val kaptContext: KaptContext<*>) : TreeMaker(context) {
+class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration) : TreeMaker(context), Disposable {
+    private var kaptContext = DisposableReference(kaptContext)
+
     val nameTable: Name.Table = Names.instance(context).table
 
+    @Suppress("FunctionName")
     fun Type(type: Type): JCTree.JCExpression {
         convertBuiltinType(type)?.let { return it }
         if (type.sort == ARRAY) {
@@ -43,14 +47,17 @@ class KaptTreeMaker(context: Context, private val kaptContext: KaptContext<*>) :
         return FqName(type.internalName)
     }
 
+    @Suppress("FunctionName")
     fun FqName(internalOrFqName: String): JCTree.JCExpression {
         val path = getQualifiedName(internalOrFqName).convertSpecialFqName().split('.')
         assert(path.isNotEmpty())
         return FqName(path)
     }
 
+    @Suppress("FunctionName")
     fun FqName(fqName: FqName) = FqName(fqName.pathSegments().map { it.asString() })
 
+    @Suppress("FunctionName")
     private fun FqName(path: List<String>): JCTree.JCExpression {
         if (path.size == 1) return SimpleName(path.single())
 
@@ -69,6 +76,8 @@ class KaptTreeMaker(context: Context, private val kaptContext: KaptContext<*>) :
         val nameWithDots = internalName.replace('/', '.')
         // This is a top-level class
         if ('$' !in nameWithDots) return nameWithDots
+
+        val kaptContext = this.kaptContext.get()
 
         // Maybe it's in our sources?
         val classFromSources = kaptContext.compiledClasses.firstOrNull { it.name == internalName }
@@ -157,13 +166,27 @@ class KaptTreeMaker(context: Context, private val kaptContext: KaptContext<*>) :
         return TypeIdent(typeTag)
     }
 
+    @Suppress("FunctionName")
     fun SimpleName(name: String): JCTree.JCExpression = Ident(name(name))
 
     fun name(name: String): Name = nameTable.fromString(name)
 
+    override fun dispose() {
+        kaptContext.dispose()
+    }
+
     companion object {
-        internal fun preRegister(context: Context, kaptContext: KaptContext<*>) {
+        internal fun preRegister(context: Context, kaptContext: KaptContextForStubGeneration) {
             context.put(treeMakerKey, Context.Factory<TreeMaker> { KaptTreeMaker(it, kaptContext) })
         }
+    }
+}
+
+private class DisposableReference<T : Any>(obj: T) : Disposable {
+    private var obj: T? = obj
+    fun get() = obj!!
+
+    override fun dispose() {
+        obj = null
     }
 }

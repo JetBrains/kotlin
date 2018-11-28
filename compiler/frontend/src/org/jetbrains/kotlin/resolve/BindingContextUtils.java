@@ -198,10 +198,14 @@ public class BindingContextUtils {
         return expression instanceof KtReferenceExpression;
     }
 
-    public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
+    public static boolean isCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
         if (!(descriptor instanceof VariableDescriptor) || descriptor instanceof PropertyDescriptor) return false;
         VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
-        return bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null && variableDescriptor.isVar();
+        return bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null;
+    }
+
+    public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
+        return isCapturedInClosure(bindingContext, descriptor) && ((VariableDescriptor) descriptor).isVar();
     }
 
     @NotNull
@@ -229,6 +233,7 @@ public class BindingContextUtils {
         return bindingContext.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructorDescriptor);
     }
 
+    @SuppressWarnings("unchecked")
     static void addOwnDataTo(
             @NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics,
             @NotNull MutableSlicedMap map, MutableDiagnosticsWithSuppression diagnostics

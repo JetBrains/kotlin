@@ -1,5 +1,5 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // WITH_REFLECT
 // FILE: J.java
@@ -19,14 +19,17 @@ public class J {
 // FILE: K.kt
 
 import kotlin.test.assertEquals
+import kotlin.reflect.KAnnotatedElement
 
 annotation class Anno(val value: String)
 
 fun box(): String {
-    assertEquals("[@Anno(value=J)]", J::class.annotations.toString())
-    assertEquals("[@Anno(value=foo)]", J::foo.annotations.toString())
-    assertEquals("[@Anno(value=bar)]", J::bar.annotations.toString())
-    assertEquals("[@Anno(value=constructor)]", ::J.annotations.toString())
+    assertEquals("J", getSingleAnnoAnnotation(J::class).value)
+    assertEquals("foo", getSingleAnnoAnnotation(J::foo).value)
+    assertEquals("bar", getSingleAnnoAnnotation(J::bar).value)
+    assertEquals("constructor", getSingleAnnoAnnotation(::J).value)
 
     return "OK"
 }
+
+fun getSingleAnnoAnnotation(annotated: KAnnotatedElement): Anno = annotated.annotations.single() as Anno

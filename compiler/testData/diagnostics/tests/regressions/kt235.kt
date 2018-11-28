@@ -2,7 +2,7 @@
 
 package kt235
 
-fun main(args: Array<String>) {
+fun main() {
     val array = MyArray()
     val <!UNUSED_VARIABLE!>f<!>: () -> String = {
         <!EXPECTED_TYPE_MISMATCH!>array[2] = 23<!> //error: Type mismatch: inferred type is Int (!!!) but String was expected

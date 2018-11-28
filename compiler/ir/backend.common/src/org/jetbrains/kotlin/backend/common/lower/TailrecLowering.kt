@@ -18,14 +18,12 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.getArgumentsWithSymbols
+import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -55,7 +53,7 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
     irFunction.body = builder.irBlockBody {
         // Define variables containing current values of parameters:
         val parameterToVariable = parameters.associate {
-            it to irTemporaryVar(irGet(it), nameHint = it.suggestVariableName()).symbol
+            it to irTemporaryVar(irGet(it), nameHint = it.symbol.suggestVariableName(), parent = irFunction)
         }
         // (these variables are to be updated on any tail call).
 
@@ -63,15 +61,17 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
             val loop = this
             condition = irTrue()
 
-            body = irBlock(startOffset, endOffset, resultType = context.builtIns.unitType) {
+            body = irBlock(startOffset, endOffset, resultType = context.irBuiltIns.unitType) {
                 // Read variables containing current values of parameters:
                 val parameterToNew = parameters.associate {
                     val variable = parameterToVariable[it]!!
-                    it to irTemporary(irGet(variable), nameHint = it.suggestVariableName()).symbol
+                    it to irTemporary(irGet(variable), nameHint = it.symbol.suggestVariableName()).also { it.parent = irFunction }
                 }
 
-                val transformer = BodyTransformer(builder, irFunction, loop,
-                        parameterToNew, parameterToVariable, tailRecursionCalls)
+                val transformer = BodyTransformer(
+                    builder, irFunction, loop,
+                    parameterToNew, parameterToVariable, tailRecursionCalls
+                )
 
                 oldBody.statements.forEach {
                     +it.transform(transformer, null)
@@ -84,19 +84,19 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
 }
 
 private class BodyTransformer(
-        val builder: IrBuilderWithScope,
-        val irFunction: IrFunction,
-        val loop: IrLoop,
-        val parameterToNew: Map<IrValueParameterSymbol, IrValueSymbol>,
-        val parameterToVariable: Map<IrValueParameterSymbol, IrVariableSymbol>,
-        val tailRecursionCalls: Set<IrCall>
+    val builder: IrBuilderWithScope,
+    val irFunction: IrFunction,
+    val loop: IrLoop,
+    val parameterToNew: Map<IrValueParameter, IrValueDeclaration>,
+    val parameterToVariable: Map<IrValueParameter, IrVariable>,
+    val tailRecursionCalls: Set<IrCall>
 ) : IrElementTransformerVoid() {
 
     val parameters = irFunction.explicitParameters
 
     override fun visitGetValue(expression: IrGetValue): IrExpression {
         expression.transformChildrenVoid(this)
-        val value = parameterToNew[expression.symbol] ?: return expression
+        val value = parameterToNew[expression.symbol.owner] ?: return expression
         return builder.at(expression).irGet(value)
     }
 
@@ -111,7 +111,7 @@ private class BodyTransformer(
 
     private fun IrBuilderWithScope.genTailCall(expression: IrCall) = this.irBlock(expression) {
         // Get all specified arguments:
-        val parameterToArgument = expression.getArgumentsWithSymbols().map { (parameter, argument) ->
+        val parameterToArgument = expression.getArgumentsWithIr().map { (parameter, argument) ->
             parameter to argument
         }
 
@@ -120,7 +120,7 @@ private class BodyTransformer(
             at(argument)
             // Note that argument can use values of parameters, so it is important that
             // references to parameters are mapped using `parameterToNew`, not `parameterToVariable`.
-            +irSetVar(parameterToVariable[parameter]!!, argument)
+            +irSetVar(parameterToVariable[parameter]!!.symbol, argument)
         }
 
         val specifiedParameters = parameterToArgument.map { (parameter, _) -> parameter }.toSet()
@@ -128,26 +128,25 @@ private class BodyTransformer(
         // For each unspecified argument set the corresponding variable to default:
         parameters.filter { it !in specifiedParameters }.forEach { parameter ->
 
-            val originalDefaultValue = parameter.owner.defaultValue?.expression ?:
-                    throw Error("no argument specified for $parameter")
+            val originalDefaultValue = parameter.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
 
             // Copy default value, mapping parameters to variables containing freshly computed arguments:
             val defaultValue = originalDefaultValue
-                    .deepCopyWithVariables()
-                    .transform(object : IrElementTransformerVoid() {
+                .deepCopyWithVariables()
+                .transform(object : IrElementTransformerVoid() {
 
-                        override fun visitGetValue(expression: IrGetValue): IrExpression {
-                            expression.transformChildrenVoid(this)
+                    override fun visitGetValue(expression: IrGetValue): IrExpression {
+                        expression.transformChildrenVoid(this)
 
-                            val variableSymbol = parameterToVariable[expression.symbol] ?: return expression
-                            return IrGetValueImpl(
-                                    expression.startOffset, expression.endOffset,
-                                    variableSymbol, expression.origin
-                            )
-                        }
-                    }, data = null)
+                        val variable = parameterToVariable[expression.symbol.owner] ?: return expression
+                        return IrGetValueImpl(
+                            expression.startOffset, expression.endOffset, variable.type,
+                            variable.symbol, expression.origin
+                        )
+                    }
+                }, data = null)
 
-            +irSetVar(parameterToVariable[parameter]!!, defaultValue)
+            +irSetVar(parameterToVariable[parameter]!!.symbol, defaultValue)
         }
 
         // Jump to the entry:
@@ -155,9 +154,10 @@ private class BodyTransformer(
     }
 }
 
-private fun IrValueParameterSymbol.suggestVariableName(): String = if (descriptor.name.isSpecial) {
-    val oldNameStr = descriptor.name.asString()
-    "$" + oldNameStr.substring(1, oldNameStr.length - 1)
-} else {
-    descriptor.name.identifier
-}
+private fun IrValueParameterSymbol.suggestVariableName(): String =
+    if (owner.name.isSpecial) {
+        val oldNameStr = owner.name.asString()
+        "$" + oldNameStr.substring(1, oldNameStr.length - 1)
+    } else {
+        owner.name.identifier
+    }

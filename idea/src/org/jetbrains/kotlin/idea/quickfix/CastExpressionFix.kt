@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class CastExpressionFix(element: KtExpression, type: KotlinType) : KotlinQuickFixAction<KtExpression>(element) {
-    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
-    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_TYPES_WITH_SHORT_NAMES.renderType(type)
+    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES.renderType(type)
     private val upOrDownCast: Boolean = run {
         val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element)
         expressionType != null && (type.isSubtypeOf(expressionType) || expressionType.isSubtypeOf(type))

@@ -34,7 +34,7 @@ public final class MyType<T extends java.lang.Object> {
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_PARAMETER_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE"})
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE"})
 @kotlin.Metadata()
 public final class NonExistentClassTypesConversionKt {
 }

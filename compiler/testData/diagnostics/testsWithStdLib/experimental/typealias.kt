@@ -1,4 +1,4 @@
-// !API_VERSION: 1.3
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // FILE: api.kt
 
 package api

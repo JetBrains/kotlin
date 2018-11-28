@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.js;
+package org.jetbrains.kotlin.metadata.js;
 
-import "core/deserialization/src/descriptors.proto";
+import "core/metadata/src/metadata.proto";
 
 option java_outer_classname = "JsProtoBuf";
 option optimize_for = LITE_RUNTIME;
@@ -71,6 +71,8 @@ extend Function {
 
 extend Property {
   repeated Annotation property_annotation = 130;
+  repeated Annotation property_getter_annotation = 132;
+  repeated Annotation property_setter_annotation = 133;
   optional Annotation.Argument.Value compile_time_value = 131;
   optional int32 property_containing_file_id = 135;
 }

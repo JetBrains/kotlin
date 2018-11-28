@@ -48,6 +48,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <languageVersion>1.2</languageVersion>
+                </configuration>
             </plugin>
         </plugins>
     </build>

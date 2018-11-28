@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections.gradle
 
+import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
@@ -24,10 +25,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.configuration.allModules
 import org.jetbrains.kotlin.idea.configuration.getWholeModuleGroup
+import org.jetbrains.kotlin.idea.configuration.parseExternalLibraryName
 import org.jetbrains.kotlin.idea.inspections.ReplaceStringInDocumentFix
-import org.jetbrains.kotlin.idea.versions.LibInfo
+import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.versions.DEPRECATED_LIBRARIES_INFORMATION
 import org.jetbrains.kotlin.idea.versions.DeprecatedLibInfo
+import org.jetbrains.kotlin.idea.versions.LibInfo
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
@@ -35,9 +38,9 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlo
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
 
-private val LibInfo.gradleMarker get() = "$groupId:$name:"
+private val LibInfo.gradleMarker get() = "$groupId:$name"
 
-class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
+class DeprecatedGradleDependencyInspection : GradleBaseInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(): BaseInspectionVisitor = DependencyFinder()
 
     private open class DependencyFinder : KotlinGradleInspectionVisitor() {
@@ -47,7 +50,8 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
             val dependenciesCall = closure.getStrictParentOfType<GrMethodCall>() ?: return
             if (dependenciesCall.invokedExpression.text != "dependencies") return
 
-            val dependencyEntries = GradleHeuristicHelper.findStatementWithPrefix(closure, "compile")
+            val dependencyEntries = GradleHeuristicHelper.findStatementWithPrefixes(
+                closure, PRODUCTION_DEPENDENCY_STATEMENTS)
             for (dependencyStatement in dependencyEntries) {
                 visitDependencyEntry(dependencyStatement)
             }
@@ -59,20 +63,29 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
                 val libMarker = outdatedInfo.old.gradleMarker
 
                 if (dependencyText.contains(libMarker)) {
-                    // Should be generified for any library, not exactly Kotlin stdlib
-                   val libVersion =
-                            DifferentStdlibGradleVersionInspection.getResolvedKotlinStdlibVersion(
-                                    dependencyStatement.containingFile, listOf(outdatedInfo.old.name)) ?:
-                            libraryVersionFromOrderEntry(dependencyStatement.containingFile, outdatedInfo.old.name)
+                    val afterMarkerChar = dependencyText.substringAfter(libMarker).getOrNull(0)
+                    if (!(afterMarkerChar == '\'' || afterMarkerChar == '"' || afterMarkerChar == ':')) {
+                        continue
+                    }
+
+                    val libVersion =
+                        DifferentStdlibGradleVersionInspection.getResolvedLibVersion(
+                            dependencyStatement.containingFile, outdatedInfo.old.groupId, listOf(outdatedInfo.old.name)
+                        ) ?: libraryVersionFromOrderEntry(dependencyStatement.containingFile, outdatedInfo.old.name)
 
 
-                    if (libVersion != null && VersionComparatorUtil.COMPARATOR.compare(libVersion, outdatedInfo.outdatedAfterVersion) >= 0) {
+                    if (libVersion != null && VersionComparatorUtil.COMPARATOR.compare(
+                            libVersion,
+                            outdatedInfo.outdatedAfterVersion
+                        ) >= 0
+                    ) {
                         val reportOnElement = reportOnElement(dependencyStatement, outdatedInfo)
 
                         registerError(
-                                reportOnElement, outdatedInfo.message,
-                                arrayOf(ReplaceStringInDocumentFix(reportOnElement, outdatedInfo.old.name, outdatedInfo.new.name)),
-                                ProblemHighlightType.LIKE_DEPRECATED)
+                            reportOnElement, outdatedInfo.message,
+                            arrayOf(ReplaceStringInDocumentFix(reportOnElement, outdatedInfo.old.name, outdatedInfo.new.name)),
+                            ProblemHighlightType.LIKE_DEPRECATED
+                        )
 
                         break
                     }
@@ -87,7 +100,10 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
             return classpathEntry.findElementAt(indexOf) ?: classpathEntry
         }
 
-        private fun libraryVersionFromOrderEntry(file: PsiFile, libraryId: String): String? {
+    }
+
+    companion object {
+        fun libraryVersionFromOrderEntry(file: PsiFile, libraryId: String): String? {
             val module = ProjectRootManager.getInstance(file.project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
             val libMarker = ":$libraryId:"
 
@@ -95,7 +111,7 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
                 var libVersion: String? = null
                 ModuleRootManager.getInstance(moduleInGroup).orderEntries().forEachLibrary { library ->
                     if (library.name?.contains(libMarker) == true) {
-                        libVersion = library.name?.substringAfterLast(":")
+                        libVersion = parseExternalLibraryName(library)?.version
                     }
 
                     // Continue if nothing is found

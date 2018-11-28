@@ -1,18 +1,17 @@
-// !API_VERSION: 1.3
-// MODULE: api
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION)
 annotation class E1
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION)
 annotation class E2
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION)
 annotation class E3
 
@@ -25,7 +24,6 @@ fun e2() {}
 @E3
 fun e3() {}
 
-// MODULE: usage(api)
 // FILE: usage.kt
 
 package usage

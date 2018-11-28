@@ -153,8 +153,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             }
 
             is IntersectionTypeConstructor -> if (type.isMarkedNullable) {
-                val newSuperTypes = constructor.supertypes.map { it.makeNullable() }
-                val newConstructor = IntersectionTypeConstructor(newSuperTypes)
+                val newConstructor = constructor.transformComponents(transform = { it.makeNullable() }) ?: constructor
                 return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(type.annotations, newConstructor, listOf(), false, newConstructor.createScopeForKotlinType())
             }
         }
@@ -185,6 +184,8 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
 
             return StrictEqualityTypeChecker.strictEqualTypes(subType.makeNullableAsSpecified(false), superType.makeNullableAsSpecified(false))
         }
+
+        if (subType is StubType || superType is StubType) return true
 
         if (superType is NewCapturedType && superType.lowerType != null) {
             when (getLowerCapturedTypePolicy(subType, superType)) {

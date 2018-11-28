@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.ScrollType
@@ -35,12 +36,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.uiDesigner.core.GridConstraints
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withTimeout
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.completion.CompletionBenchmarkSink
@@ -55,13 +52,13 @@ import javax.swing.JFileChooser
 import javax.swing.JPanel
 
 abstract class AbstractCompletionBenchmarkAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent?) {
-        val project = e?.project ?: return
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = e.project ?: return
 
         val benchmarkSink = CompletionBenchmarkSink.enableAndGet()
         val scenario = createBenchmarkScenario(project, benchmarkSink) ?: return
 
-        launch(EDT) {
+        GlobalScope.launch(EDT) {
             scenario.doBenchmark()
             CompletionBenchmarkSink.disable()
         }
@@ -113,7 +110,7 @@ abstract class AbstractCompletionBenchmarkAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabledAndVisible = KotlinInternalMode.enabled
+        e.presentation.isEnabledAndVisible = ApplicationManager.getApplication().isInternal
     }
 }
 

@@ -1,0 +1,37 @@
+FILE fqName:<root> fileName:/typeAliasesWithAnnotations.kt
+  CLASS ANNOTATION_CLASS name:TestAnn modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
+    annotations:
+      CALL 'constructor Target(vararg AnnotationTarget)' type=kotlin.annotation.Target origin=null
+        allowedTargets: VARARG type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget
+          GET_ENUM 'TYPEALIAS' type=kotlin.annotation.AnnotationTarget
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnn flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
+    PROPERTY name:x visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnn) returnType:kotlin.String flags:
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:TestAnn flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): String'
+            GET_FIELD 'x: String' type=kotlin.String origin=null
+              receiver: GET_VAR 'this@TestAnn: TestAnn' type=TestAnn origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  TYPEALIAS typealias TestTypeAlias = String type=kotlin.String
+    annotations:
+      CALL 'constructor TestAnn(String)' type=TestAnn origin=null
+        x: CONST String type=kotlin.String value="TestTypeAlias"

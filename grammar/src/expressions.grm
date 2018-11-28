@@ -8,7 +8,7 @@
 | Precedence | Title | Symbols |
 |------------|-------|---------|
 | Highest    | Postfix | `++`, `--`, `.`, `?.`, `?` |
-| | Prefix | `-`, `+`, `++`, `--`, `!`, [`labelDefinition`](#IDENTIFIER)`@` |
+| | Prefix | `-`, `+`, `++`, `--`, `!`, [`labelDefinition`](#labelDefinition) |
 | | Type RHS | `:`, `as`, `as?` |
 | | Multiplicative | `*`, `/`, `%` |
 | | Additive | `+`, `-` |
@@ -17,7 +17,7 @@
 | | Elvis | `?:` |
 | | Named checks | `in`, `!in`, `is`, `!is` |
 | | Comparison | `<`, `>`, `<=`, `>=` |
-| | Equality | `==`, `\!==` |
+| | Equality | `==`, `!==` |
 | | Conjunction | `&&` |
 | | Disjunction | `||` |
 | Lowest | Assignment | `=`, `+=`, `-=`, `*=`, `/=`, `%=` |
@@ -137,7 +137,6 @@ literalConstant
   : stringTemplate
   : NoEscapeString
   : IntegerLiteral
-  : HexadecimalLiteral
   : CharacterLiteral
   : FloatLiteral
   : "null"
@@ -230,6 +229,7 @@ callSuffix
 
 annotatedLambda
   : ("@" unescapedAnnotation)* labelDefinition? functionLiteral
+  ;
 
 memberAccessOperation
   : "." : "?." : "?"
@@ -240,7 +240,7 @@ typeArguments
   ;
 
 valueArguments
-  : "(" (SimpleName "=")? "*"? expression{","} ")"
+  : "(" ((SimpleName "=")? "*"? expression){","} ")"
   ;
 
 jump
@@ -278,5 +278,5 @@ objectLiteral
   ;
 
 collectionLiteral
-  : "[" element{","}? "]"
+  : "[" expression{","}? "]"
   ;

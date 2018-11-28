@@ -1,0 +1,8 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <expressionCodegenExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIDECodegenExtension"/>
+        <syntheticResolveExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIDEResolveExtension"/>
+        <jsSyntheticTranslateExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIDEJsExtension"/>
+        <irGenerationExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIDEIrExtension"/>
+    </extensions>
+</idea-plugin>

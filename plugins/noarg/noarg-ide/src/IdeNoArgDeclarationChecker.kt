@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentMap
 
 class IdeNoArgDeclarationChecker(val project: Project) : AbstractNoArgDeclarationChecker() {
     private companion object {
-        val ANNOTATION_OPTION_PREFIX = "plugin:$PLUGIN_ID:${ANNOTATION_OPTION.name}="
+        val ANNOTATION_OPTION_PREFIX = "plugin:$PLUGIN_ID:${ANNOTATION_OPTION.optionName}="
     }
 
     private val cache: CachedValue<ConcurrentMap<Module, List<String>>> = cachedValue(project) {

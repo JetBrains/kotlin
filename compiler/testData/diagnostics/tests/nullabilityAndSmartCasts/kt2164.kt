@@ -4,7 +4,7 @@ package kt2164
 
 fun foo(x: Int): Int = x + 1
 
-fun main(args : Array<String>) {
+fun main() {
     val x: Int? = null
 
     foo(<!TYPE_MISMATCH!>x<!>)

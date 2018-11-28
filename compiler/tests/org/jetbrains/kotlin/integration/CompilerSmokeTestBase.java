@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.integration;
 
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.StringsKt;
 
@@ -27,8 +28,13 @@ import java.util.Collection;
 import java.util.Collections;
 
 public abstract class CompilerSmokeTestBase extends KotlinIntegrationTestBase {
+    @NotNull
+    protected String getTestDataDir() {
+        return KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true);
+    }
+
     protected int run(String logName, String... args) throws Exception {
-        return runJava(KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true), logName, args);
+        return runJava(getTestDataDir(), logName, args);
     }
 
     protected int runCompiler(String logName, String... arguments) throws Exception {
@@ -36,9 +42,7 @@ public abstract class CompilerSmokeTestBase extends KotlinIntegrationTestBase {
 
         javaArgs.add("-cp");
         javaArgs.add(StringsKt.join(Arrays.asList(
-                getCompilerLib().getAbsolutePath() + File.separator + "kotlin-compiler.jar",
-                new File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar").getAbsolutePath(),
-                new File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar").getAbsolutePath()
+                getCompilerLib().getAbsolutePath() + File.separator + "kotlin-compiler.jar"
         ), File.pathSeparator));
         javaArgs.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler");
 

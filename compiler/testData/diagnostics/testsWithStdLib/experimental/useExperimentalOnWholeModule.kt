@@ -1,11 +1,10 @@
-// !API_VERSION: 1.3
-// !USE_EXPERIMENTAL: api.ExperimentalAPI
+// !USE_EXPERIMENTAL: kotlin.Experimental api.ExperimentalAPI
 // MODULE: api
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.ERROR)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI

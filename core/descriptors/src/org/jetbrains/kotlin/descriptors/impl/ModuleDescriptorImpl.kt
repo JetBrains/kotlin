@@ -30,12 +30,13 @@ import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalArgumentException
 
 class ModuleDescriptorImpl @JvmOverloads constructor(
-        moduleName: Name,
-        private val storageManager: StorageManager,
-        override val builtIns: KotlinBuiltIns,
-        // May be null in compiler context, should be not-null in IDE context
-        multiTargetPlatform: MultiTargetPlatform? = null,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
+    moduleName: Name,
+    private val storageManager: StorageManager,
+    override val builtIns: KotlinBuiltIns,
+    // May be null in compiler context, should be not-null in IDE context
+    multiTargetPlatform: MultiTargetPlatform? = null,
+    capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
+    override val stableName: Name? = null
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     init {
         if (!moduleName.isSpecial) {
@@ -56,18 +57,19 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         }
     }
 
-    private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> {
-        fqName: FqName -> LazyPackageViewDescriptorImpl(this, fqName, storageManager)
+    private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> { fqName: FqName ->
+        LazyPackageViewDescriptorImpl(this, fqName, storageManager)
     }
 
     @Deprecated("This method is not going to be supported. Please do not use it")
-    val testOnly_AllDependentModules: List<ModuleDescriptorImpl> get() = this.dependencies!!.allDependencies
+    val testOnly_AllDependentModules: List<ModuleDescriptorImpl>
+        get() = this.dependencies!!.allDependencies
 
     override val allDependencyModules: List<ModuleDescriptor>
         get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
 
-    override val expectedByModule: ModuleDescriptor?
-        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.expectedByDependency
+    override val expectedByModules: List<ModuleDescriptor>
+        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.expectedByDependencies
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         assertValid()
@@ -83,8 +85,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         val moduleDependencies = dependencies.sure { "Dependencies of module $id were not set before querying module content" }
         val dependenciesDescriptors = moduleDependencies.allDependencies
         assert(this in dependenciesDescriptors) { "Module $id is not contained in his own dependencies, this is probably a misconfiguration" }
-        dependenciesDescriptors.forEach {
-            dependency ->
+        dependenciesDescriptors.forEach { dependency ->
             assert(dependency.isInitialized) {
                 "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried"
             }
@@ -111,11 +112,11 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     }
 
     fun setDependencies(descriptors: List<ModuleDescriptorImpl>, friends: Set<ModuleDescriptorImpl>) {
-        setDependencies(ModuleDependenciesImpl(descriptors, friends, null))
+        setDependencies(ModuleDependenciesImpl(descriptors, friends, emptyList()))
     }
 
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
-        return this == targetModule || targetModule in dependencies!!.modulesWhoseInternalsAreVisible || expectedByModule == targetModule
+        return this == targetModule || targetModule in dependencies!!.modulesWhoseInternalsAreVisible || targetModule in expectedByModules
     }
 
     private val id: String
@@ -135,14 +136,6 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
             return packageFragmentProviderForWholeModuleWithDependencies
         }
 
-    val packageFragmentProviderForContent: PackageFragmentProvider
-        get() {
-            assertValid()
-            return packageFragmentProviderForModuleContent.sure {
-                "Module $id was not initialized by the time packageFragmentProviderForContent was requested"
-            }
-        }
-
     @Suppress("UNCHECKED_CAST")
     override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
 }
@@ -150,11 +143,11 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 interface ModuleDependencies {
     val allDependencies: List<ModuleDescriptorImpl>
     val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
-    val expectedByDependency: ModuleDescriptorImpl?
+    val expectedByDependencies: List<ModuleDescriptorImpl>
 }
 
 class ModuleDependenciesImpl(
     override val allDependencies: List<ModuleDescriptorImpl>,
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>,
-    override val expectedByDependency: ModuleDescriptorImpl?
+    override val expectedByDependencies: List<ModuleDescriptorImpl>
 ) : ModuleDependencies

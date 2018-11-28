@@ -17,21 +17,21 @@
 package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.util.text.StringUtil
-import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
+import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.GenerationUtils
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
-import org.jetbrains.kotlin.kapt3.AptMode.STUBS_AND_APT
-import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
-import org.jetbrains.kotlin.kapt3.prettyPrint
-import org.jetbrains.kotlin.kapt3.KaptContext
+import org.jetbrains.kotlin.kapt3.*
+import org.jetbrains.kotlin.kapt3.base.KaptContext
+import org.jetbrains.kotlin.kapt3.base.LoadedProcessors
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
-import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -58,32 +58,31 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
     private var _processors: List<Processor>? = null
     private val processors get() = _processors!!
 
-    private var _options: Map<String, String>? = null
-    private val options get() = _options!!
+    private var mutableOptions: Map<String, String>? = null
 
     override fun tearDown() {
         _processors = null
-        _options = null
+        mutableOptions = null
         super.tearDown()
     }
 
     protected open fun test(
-            name: String,
-            vararg supportedAnnotations: String,
-            options: Map<String, String> = emptyMap(),
-            process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
+        name: String,
+        vararg supportedAnnotations: String,
+        options: Map<String, String> = emptyMap(),
+        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
     ) = testAP(true, name, options, process, *supportedAnnotations)
 
-    protected fun testAP(
-            shouldRun: Boolean,
-            name: String,
-            options: Map<String, String>,
-            process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit,
-            vararg supportedAnnotations: String
+    private fun testAP(
+        shouldRun: Boolean,
+        name: String,
+        options: Map<String, String>,
+        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit,
+        vararg supportedAnnotations: String
     ) {
-        this._options = options
+        this.mutableOptions = options
 
-        val ktFileName = File(TEST_DATA_DIR, name + ".kt")
+        val ktFileName = File(TEST_DATA_DIR, "$name.kt")
         var started = false
         val processor = object : Processor {
             lateinit var processingEnv: ProcessingEnvironment
@@ -103,10 +102,10 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             }
 
             override fun getCompletions(
-                    element: Element?,
-                    annotation: AnnotationMirror?,
-                    member: ExecutableElement?,
-                    userText: String?
+                element: Element?,
+                annotation: AnnotationMirror?,
+                member: ExecutableElement?,
+                userText: String?
             ): Iterable<Completion>? {
                 return emptyList()
             }
@@ -127,69 +126,70 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         val javaSources = javaFilesDir?.let { arrayOf(it) } ?: emptyArray()
 
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".it.txt")
-        val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
-        val stubsDir = Files.createTempDirectory("kaptStubs").toFile()
-        val incrementalDataDir = Files.createTempDirectory("kaptIncrementalData").toFile()
 
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
+        val project = myEnvironment.project
 
-        val kapt3Extension = Kapt3ExtensionForTests(processors, javaSources.toList(), sourceOutputDir, this.options,
-                                                    stubsOutputDir = stubsDir, incrementalDataOutputDir = incrementalDataDir)
+        val options = KaptOptions.Builder().apply {
+            projectBaseDir = project.basePath?.let(::File)
+            compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
+            javaSourceRoots.addAll(javaSources)
 
-        AnalysisHandlerExtension.registerExtension(myEnvironment.project, kapt3Extension)
+            sourcesOutputDir = Files.createTempDirectory("kaptRunner").toFile()
+            classesOutputDir = sourcesOutputDir
+            stubsOutputDir = Files.createTempDirectory("kaptStubs").toFile()
+            incrementalDataOutputDir = Files.createTempDirectory("kaptIncrementalData").toFile()
+
+            mutableOptions?.let { processingOptions.putAll(it) }
+            detectMemoryLeaks = DetectMemoryLeaksMode.NONE
+        }.build()
+
+        val kapt3Extension = Kapt3ExtensionForTests(options, processors)
+        AnalysisHandlerExtension.registerExtension(project, kapt3Extension)
 
         try {
             loadMultiFiles(files)
 
-            GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, Kapt3BuilderFactory()).factory
+            val classBuilderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
+            GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, classBuilderFactory).factory
 
             val actualRaw = kapt3Extension.savedStubs ?: error("Stubs were not saved")
-            val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))
-                    .trimTrailingWhitespacesAndAddNewlineAtEOF()
-                    .let { AbstractClassFileToSourceStubConverterTest.removeMetadataAnnotationContents(it) }
+            val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
+                .trimTrailingWhitespacesAndAddNewlineAtEOF()
+                .let { AbstractClassFileToSourceStubConverterTest.removeMetadataAnnotationContents(it) }
 
             KotlinTestUtils.assertEqualsToFile(txtFile, actual)
         } finally {
-            sourceOutputDir.deleteRecursively()
-            incrementalDataDir.deleteRecursively()
+            options.sourcesOutputDir.deleteRecursively()
+            options.incrementalDataOutputDir?.deleteRecursively()
         }
     }
 
-    protected class Kapt3ExtensionForTests(
-            private val processors: List<Processor>,
-            javaSourceRoots: List<File>,
-            outputDir: File,
-            options: Map<String, String>,
-            stubsOutputDir: File,
-            incrementalDataOutputDir: File
-    ) : AbstractKapt3Extension(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
-                               emptyList(), javaSourceRoots, outputDir, outputDir,
-                               stubsOutputDir, incrementalDataOutputDir, options, emptyMap(), "", STUBS_AND_APT, System.currentTimeMillis(),
-                               KaptLogger(true), correctErrorTypes = true, mapDiagnosticLocations = true,
-                               compilerConfiguration = CompilerConfiguration.EMPTY
+    protected class Kapt3ExtensionForTests(options: KaptOptions, private val processors: List<Processor>) : AbstractKapt3Extension(
+        options, MessageCollectorBackedKaptLogger(options), compilerConfiguration = CompilerConfiguration.EMPTY
     ) {
         internal var savedStubs: String? = null
         internal var savedBindings: Map<String, KaptJavaFileObject>? = null
 
-        override fun loadProcessors() = processors
+        override fun loadProcessors() = LoadedProcessors(processors, Kapt3ExtensionForTests::class.java.classLoader)
 
-        override fun saveStubs(kaptContext: KaptContext<*>, stubs: List<KaptStub>) {
+        override fun saveStubs(kaptContext: KaptContext, stubs: List<KaptStub>) {
             if (this.savedStubs != null) {
                 error("Stubs are already saved")
             }
 
             this.savedStubs = stubs
-                    .map { it.file.prettyPrint(kaptContext.context) }
-                    .sorted()
-                    .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR)
+                .map { it.file.prettyPrint(kaptContext.context) }
+                .sorted()
+                .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR)
 
             super.saveStubs(kaptContext, stubs)
         }
 
         override fun saveIncrementalData(
-                kaptContext: KaptContext<GenerationState>,
-                messageCollector: MessageCollector,
-                converter: ClassFileToSourceStubConverter
+            kaptContext: KaptContextForStubGeneration,
+            messageCollector: MessageCollector,
+            converter: ClassFileToSourceStubConverter
         ) {
             if (this.savedBindings != null) {
                 error("Bindings are already saved")

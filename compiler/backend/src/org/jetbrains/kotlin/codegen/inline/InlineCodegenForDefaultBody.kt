@@ -19,19 +19,19 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class InlineCodegenForDefaultBody(
-        function: FunctionDescriptor,
-        codegen: ExpressionCodegen,
-        val state: GenerationState,
-        private val sourceCompilerForInline: SourceCompilerForInline
+    function: FunctionDescriptor,
+    codegen: ExpressionCodegen,
+    val state: GenerationState,
+    private val sourceCompilerForInline: SourceCompilerForInline
 ) : CallGenerator {
 
     private val sourceMapper: SourceMapper = codegen.parentCodegen.orCreateSourceMapper
 
     private val functionDescriptor =
-            if (InlineUtil.isArrayConstructorWithLambda(function))
-                FictitiousArrayConstructor.create(function as ConstructorDescriptor)
-            else
-                function.original
+        if (InlineUtil.isArrayConstructorWithLambda(function))
+            FictitiousArrayConstructor.create(function as ConstructorDescriptor)
+        else
+            function.original
 
 
     init {
@@ -45,7 +45,7 @@ class InlineCodegenForDefaultBody(
 
     init {
         assert(InlineUtil.isInline(function)) {
-            "InlineCodegen can inline only inline functions and array constructors: " + function
+            "InlineCodegen can inline only inline functions and array constructors: $function"
         }
         sourceCompilerForInline.initializeInlineFunctionContext(functionDescriptor)
         jvmSignature = state.typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompilerForInline.contextKind)
@@ -55,18 +55,21 @@ class InlineCodegenForDefaultBody(
     }
 
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
-        val nodeAndSmap = InlineCodegen.createInlineMethodNode(functionDescriptor, jvmSignature, callDefault, null, state, sourceCompilerForInline)
+        val nodeAndSmap =
+            InlineCodegen.createInlineMethodNode(functionDescriptor, jvmSignature, callDefault, null, state, sourceCompilerForInline)
         val childSourceMapper = InlineCodegen.createNestedSourceMapper(nodeAndSmap, sourceMapper)
 
         val node = nodeAndSmap.node
         val transformedMethod = MethodNode(
-                node.access,
-                node.name,
-                node.desc,
-                node.signature,
-                node.exceptions.toTypedArray())
+            node.access,
+            node.name,
+            node.desc,
+            node.signature,
+            node.exceptions.toTypedArray()
+        )
 
-        val argsSize = (Type.getArgumentsAndReturnSizes(jvmSignature.asmMethod.descriptor) ushr  2) - if (callableMethod.isStaticCall()) 1 else 0
+        val argsSize =
+            (Type.getArgumentsAndReturnSizes(jvmSignature.asmMethod.descriptor) ushr 2) - if (callableMethod.isStaticCall()) 1 else 0
         node.accept(object : InlineAdapter(transformedMethod, 0, childSourceMapper) {
             override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {
                 val startLabel = if (index < argsSize) methodStartLabel else start
@@ -77,7 +80,12 @@ class InlineCodegenForDefaultBody(
         transformedMethod.accept(MethodBodyVisitor(codegen.visitor))
     }
 
-    override fun genValueAndPut(valueParameterDescriptor: ValueParameterDescriptor, argumentExpression: KtExpression, parameterType: Type, parameterIndex: Int) {
+    override fun genValueAndPut(
+        valueParameterDescriptor: ValueParameterDescriptor?,
+        argumentExpression: KtExpression,
+        parameterType: JvmKotlinType,
+        parameterIndex: Int
+    ) {
         throw UnsupportedOperationException("Shouldn't be called")
     }
 

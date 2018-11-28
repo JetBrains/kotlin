@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.actions.internal
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -61,7 +63,7 @@ class FindImplicitNothingAction : AnAction() {
     }
 
     private fun find(files: Collection<KtFile>, project: Project) {
-        val progressIndicator = ProgressManager.getInstance().progressIndicator
+        val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable
         val found = ArrayList<KtCallExpression>()
         for ((i, file) in files.withIndex()) {
             progressIndicator?.text = "Scanning files: $i of ${files.size} file. ${found.size} occurences found"
@@ -133,7 +135,7 @@ class FindImplicitNothingAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        if (!KotlinInternalMode.enabled) {
+        if (!ApplicationManager.getApplication().isInternal) {
             e.presentation.isVisible = false
             e.presentation.isEnabled = false
         }

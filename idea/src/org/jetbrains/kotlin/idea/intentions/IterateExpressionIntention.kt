@@ -21,6 +21,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.*
@@ -41,7 +42,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
         val range = element.textRange
         if (caretOffset != range.startOffset && caretOffset != range.endOffset) return false
         val data = data(element) ?: return false
-        text = "Iterate over '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(data.collectionType)}'"
+        text = "Iterate over '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(data.collectionType)}'"
         return true
     }
 
@@ -51,6 +52,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
         val resolutionFacade = expression.getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)
         val type = bindingContext.getType(expression) ?: return null
+        if (KotlinBuiltIns.isNothing(type)) return null
         val scope = expression.getResolutionScope(bindingContext, resolutionFacade)
         val detector = resolutionFacade.ideService<IterableTypesDetection>().createDetector(scope)
         val elementType = detector.elementType(type)?.type ?: return null
@@ -79,7 +81,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                     listOf(KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e"))
                 }
 
-                val paramPattern = (names.singleOrNull()?.first()
+                val paramPattern = (names.asSequence().singleOrNull()?.first()
                                     ?: psiFactory.createDestructuringParameter(names.indices.joinToString(prefix = "(", postfix = ")") { "p$it" }))
                 var forExpression = psiFactory.createExpressionByPattern("for($0 in $1) {\nx\n}", paramPattern, element) as KtForExpression
                 forExpression = element.replaced(forExpression)

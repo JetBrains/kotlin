@@ -173,7 +173,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             // step 2: analyze collected elements with resolve and decide which can be shortened now and which need descriptors to be imported before shortening
             val allElementsToAnalyze = visitors.flatMap { it.getElementsToAnalyze().map { it.element } }
-            val bindingContext = file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL)
+            val bindingContext = file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL_WITH_CFA)
             processors.forEach { it.analyzeCollectedElements(bindingContext) }
 
             // step 3: shorten elements that can be shortened right now
@@ -430,7 +430,12 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
         override val collectElementsVisitor = object : MyVisitor(elementFilter) {
             override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                if (expression.receiverExpression is KtThisExpression && !options.removeThis) return
+                if (expression.receiverExpression is KtThisExpression && !options.removeThis) {
+                    val filterResult = elementFilter(expression)
+                    if (filterResult == FilterResult.SKIP) return
+                    expression.selectorExpression?.acceptChildren(this)
+                    return
+                }
                 super.visitDotQualifiedExpression(expression)
             }
         }
@@ -439,8 +444,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             element: KtDotQualifiedExpression,
             bindingContext: BindingContext
         ): AnalyzeQualifiedElementResult {
-            val receiver = element.receiverExpression
-            if (receiver !is KtThisExpression && bindingContext[BindingContext.QUALIFIER, receiver] == null) return AnalyzeQualifiedElementResult.Skip
+            if (!canBePossibleToDropReceiver(element, bindingContext)) return AnalyzeQualifiedElementResult.Skip
 
             if (PsiTreeUtil.getParentOfType(
                     element,
@@ -498,6 +502,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
 
 
+            val receiver = element.receiverExpression
             if (receiver is KtThisExpression) {
                 if (!targetsMatch) return AnalyzeQualifiedElementResult.Skip
                 val originalCall = selector.getResolvedCall(bindingContext) ?: return AnalyzeQualifiedElementResult.Skip
@@ -528,6 +533,30 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
                 else ->
                     AnalyzeQualifiedElementResult.ImportDescriptors(targets)
+            }
+        }
+
+        private fun canBePossibleToDropReceiver(element: KtDotQualifiedExpression, bindingContext: BindingContext): Boolean {
+            val receiver = element.receiverExpression
+            val nameRef = when (receiver) {
+                is KtThisExpression -> return true
+                is KtNameReferenceExpression -> receiver
+                is KtDotQualifiedExpression -> receiver.selectorExpression as? KtNameReferenceExpression ?: return false
+                else -> return false
+            }
+            val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]
+            when (targetDescriptor) {
+                is ClassDescriptor -> {
+                    if (targetDescriptor.kind != ClassKind.OBJECT) return true
+                    // for object receiver we should additionally check that it's dispatch receiver (that is the member is inside the object) or not a receiver at all
+                    val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
+                    val receiverKind = resolvedCall.explicitReceiverKind
+                    return receiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER || receiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+                }
+
+                is PackageViewDescriptor -> return true
+
+                else -> return false
             }
         }
 

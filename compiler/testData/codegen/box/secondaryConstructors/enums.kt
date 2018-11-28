@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 enum class A1(val prop1: String) {
     X("asd"),
     Y() {

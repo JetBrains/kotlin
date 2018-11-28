@@ -23,6 +23,7 @@ import com.intellij.debugger.impl.DebuggerUtilsEx;
 import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
 import com.intellij.debugger.settings.DebuggerSettings;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.ui.classFilter.ClassFilter;
 import com.intellij.ui.classFilter.DebuggerClassFilterProvider;
@@ -44,6 +45,7 @@ import java.util.List;
 
 
 public class DebuggerSteppingHelper {
+    private static Logger LOG = Logger.getInstance(DebuggerSteppingHelper.class);
 
     public static DebugProcessImpl.ResumeCommand createStepOverCommand(
             final SuspendContextImpl suspendContext,
@@ -78,7 +80,8 @@ public class DebuggerSteppingHelper {
 
                     debugProcess.createStepOutCommand(suspendContext).contextAction();
                 }
-                catch (EvaluateException ignored) {
+                catch (EvaluateException e) {
+                    LOG.error(e);
                 }
             }
         };

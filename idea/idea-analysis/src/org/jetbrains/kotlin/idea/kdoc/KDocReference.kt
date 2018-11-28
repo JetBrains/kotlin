@@ -26,18 +26,23 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
+class KDocReference(element: KDocName) : KtMultiReference<KDocName>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val declaration = element.getContainingDoc().getOwner() ?: return arrayListOf()
-        val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return arrayListOf()
+        val resolutionFacade = element.getResolutionFacade()
+        val correctContext = resolutionFacade.analyze(declaration, BodyResolveMode.PARTIAL)
+        val declarationDescriptor = correctContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return arrayListOf()
 
         val kdocLink = element.getStrictParentOfType<KDocLink>()!!
-        return resolveKDocLink(context,
-                               element.getResolutionFacade(),
-                               declarationDescriptor,
-                               kdocLink.getTagIfSubject(),
-                               element.getQualifiedName())
+        return resolveKDocLink(
+            correctContext,
+            resolutionFacade,
+            declarationDescriptor,
+            kdocLink.getTagIfSubject(),
+            element.getQualifiedName()
+        )
     }
 
     override fun getRangeInElement(): TextRange = element.getNameTextRange()
@@ -46,9 +51,9 @@ class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
 
     override fun resolve(): PsiElement? = multiResolve(false).firstOrNull()?.element
 
-    override fun handleElementRename(newElementName: String?): PsiElement? {
+    override fun handleElementRename(newElementName: String): PsiElement? {
         val textRange = element.getNameTextRange()
-        val newText = textRange.replace(element.text, newElementName!!)
+        val newText = textRange.replace(element.text, newElementName)
         val newLink = KDocElementFactory(element.project).createNameFromText(newText)
         return element.replace(newLink)
     }

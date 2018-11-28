@@ -20,21 +20,23 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrGetObjectValueImpl(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType,
+    type: IrType,
     symbol: IrClassSymbol
-) : IrGetObjectValue,
-    IrTerminalDeclarationReferenceBase<IrClassSymbol, ClassDescriptor>(startOffset, endOffset, type, symbol, symbol.descriptor) {
+) :
+    IrTerminalDeclarationReferenceBase<IrClassSymbol, ClassDescriptor>(startOffset, endOffset, type, symbol, symbol.descriptor),
+    IrGetObjectValue {
+
     @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: IrType,
         descriptor: ClassDescriptor
     ) : this(startOffset, endOffset, type, IrClassSymbolImpl(descriptor))
 

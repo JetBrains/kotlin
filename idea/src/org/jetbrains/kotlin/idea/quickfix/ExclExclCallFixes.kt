@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors.UNSAFE_CALL
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -114,7 +115,7 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
             return (psiElement.prevSibling as? KtExpression).expressionForCall()
         }
         return when (psiElement) {
-            is KtArrayAccessExpression -> psiElement.arrayExpression.expressionForCall()
+            is KtArrayAccessExpression -> psiElement.expressionForCall()
             is KtOperationReferenceExpression -> {
                 val parent = psiElement.parent
                 when (parent) {
@@ -152,7 +153,13 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction = AddExclExclCallFix(diagnostic.psiElement)
+        override fun createAction(diagnostic: Diagnostic): IntentionAction {
+            val psiElement = diagnostic.psiElement
+            if (diagnostic.factory == UNSAFE_CALL && psiElement is KtArrayAccessExpression) {
+                psiElement.arrayExpression?.let { return AddExclExclCallFix(it) }
+            }
+            return AddExclExclCallFix(psiElement)
+        }
     }
 }
 

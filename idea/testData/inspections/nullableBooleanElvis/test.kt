@@ -10,6 +10,6 @@ fun foo() {
     if (a ?: false || !(b ?: true)) {
 
     }
-    val x = a ?: false
-    val y = !(b ?: true)
+    val x = a ?: false    // INFORMATION -- not reported in batch
+    val y = !(b ?: true)  // INFORMATION -- not reported in batch
 }

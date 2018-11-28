@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1404
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1545
 package foo
 
 object EmptyObject {}

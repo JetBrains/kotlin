@@ -29,11 +29,9 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
-import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.util.AdapterProcessor
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Function
-import org.jetbrains.kotlin.asJava.getAccessorLightMethods
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
@@ -47,8 +45,8 @@ fun getOverriddenPropertyTooltip(property: KtNamedDeclaration): String? {
     val overriddenInClassesProcessor = PsiElementProcessor.CollectElementsWithLimit<PsiClass>(5)
 
     val consumer = AdapterProcessor<PsiMethod, PsiClass>(
-            CommonProcessors.UniqueProcessor<PsiClass>(PsiElementProcessorAdapter(overriddenInClassesProcessor)),
-            Function { method: PsiMethod? -> method?.containingClass }
+        CommonProcessors.UniqueProcessor<PsiClass>(PsiElementProcessorAdapter(overriddenInClassesProcessor)),
+        Function { method: PsiMethod? -> method?.containingClass }
     )
 
     for (method in property.toPossiblyFakeLightMethods()) {
@@ -90,28 +88,33 @@ fun buildNavigateToPropertyOverriddenDeclarationsPopup(e: MouseEvent?, element: 
     val elementProcessor = CommonProcessors.CollectUniquesProcessor<PsiElement>()
     val ktPsiMethodProcessor = Runnable {
         KotlinDefinitionsSearcher.processPropertyImplementationsMethods(
-                psiPropertyMethods,
-                GlobalSearchScope.allScope(project),
-                elementProcessor)
+            psiPropertyMethods,
+            GlobalSearchScope.allScope(project),
+            elementProcessor
+        )
     }
 
     if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
             /* runnable */ ktPsiMethodProcessor,
-            MarkerType.SEARCHING_FOR_OVERRIDING_METHODS,
+                           MarkerType.SEARCHING_FOR_OVERRIDING_METHODS,
             /* can be canceled */ true,
-            project,
-            e?.component as JComponent?)) {
+                           project,
+                           e?.component as JComponent?
+        )
+    ) {
         return null
     }
 
     val renderer = DefaultPsiElementCellRenderer()
     val navigatingOverrides = elementProcessor.results
-            .sortedWith(renderer.comparator)
-            .filterIsInstance<NavigatablePsiElement>()
+        .sortedWith(renderer.comparator)
+        .filterIsInstance<NavigatablePsiElement>()
 
-    return NavigationPopupDescriptor(navigatingOverrides,
-                                     KotlinBundle.message("navigation.title.overriding.property", propertyOrParameter.name),
-                                     KotlinBundle.message("navigation.findUsages.title.overriding.property", propertyOrParameter.name), renderer)
+    return NavigationPopupDescriptor(
+        navigatingOverrides,
+        KotlinBundle.message("navigation.title.overriding.property", propertyOrParameter.name),
+        KotlinBundle.message("navigation.findUsages.title.overriding.property", propertyOrParameter.name), renderer
+    )
 }
 
 

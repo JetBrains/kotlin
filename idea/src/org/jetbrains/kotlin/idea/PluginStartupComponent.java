@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.utils.PathUtil;
 import java.io.File;
 import java.io.IOException;
 
+import static org.jetbrains.kotlin.idea.TestResourceBundleKt.registerAdditionalResourceBundleInTests;
+
 public class PluginStartupComponent implements ApplicationComponent {
     private static final Logger LOG = Logger.getInstance(PluginStartupComponent.class);
 
@@ -52,6 +54,10 @@ public class PluginStartupComponent implements ApplicationComponent {
 
     @Override
     public void initComponent() {
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            registerAdditionalResourceBundleInTests();
+        }
+
         registerPathVariable();
 
         try {
@@ -73,6 +79,8 @@ public class PluginStartupComponent implements ApplicationComponent {
         });
 
         ServiceManager.getService(IndexPatternSearch.class).registerExecutor(new KotlinTodoSearcher());
+
+        KotlinPluginCompatibilityVerifier.checkCompatibility();
 
         //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also ConfigureKotlinInTempDirTest)
         //KotlinSdkType.Companion.setUpIfNeeded();

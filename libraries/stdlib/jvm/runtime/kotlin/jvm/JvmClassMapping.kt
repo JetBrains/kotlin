@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 @file:JvmName("JvmClassMappingKt")
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "UNCHECKED_CAST")
@@ -94,12 +83,12 @@ public val <T : Any> Class<T>.kotlin: KClass<T>
 /**
  * Returns the runtime Java class of this object.
  */
-public inline val <T: Any> T.javaClass : Class<T>
+public inline val <T : Any> T.javaClass: Class<T>
     @Suppress("UsePropertyAccessSyntax")
     get() = (this as java.lang.Object).getClass() as Class<T>
 
 @Deprecated("Use 'java' property to get Java class corresponding to this Kotlin class or cast this instance to Any if you really want to get the runtime Java class of this implementation of KClass.", ReplaceWith("(this as Any).javaClass"), level = DeprecationLevel.ERROR)
-public inline val <T: Any> KClass<T>.javaClass: Class<KClass<T>>
+public inline val <T : Any> KClass<T>.javaClass: Class<KClass<T>>
     @JvmName("getRuntimeClassOfKClassInstance")
     @Suppress("UsePropertyAccessSyntax")
     get() = (this as java.lang.Object).getClass() as Class<KClass<T>>
@@ -109,7 +98,7 @@ public inline val <T: Any> KClass<T>.javaClass: Class<KClass<T>>
  */
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 public fun <reified T : Any> Array<*>.isArrayOf(): Boolean =
-        T::class.java.isAssignableFrom(this::class.java.componentType)
+    T::class.java.isAssignableFrom(this::class.java.componentType)
 
 /**
  * Returns a [KClass] instance corresponding to the annotation type of this annotation.

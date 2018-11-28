@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl.reader
 
-import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
-import org.jetbrains.kotlin.cli.jvm.repl.writer.END_LINE
+import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -27,8 +26,8 @@ import java.io.InputStream
 import javax.xml.parsers.DocumentBuilderFactory
 
 class ReplSystemInWrapper(
-        private val stdin: InputStream,
-        private val replWriter: ReplWriter
+    private val stdin: InputStream,
+    private val replWriter: ReplWriter
 ) : InputStream() {
     private var isXmlIncomplete = true
     private var isLastByteProcessed = false
@@ -40,7 +39,8 @@ class ReplSystemInWrapper(
     private val isAtBufferEnd: Boolean
         get() = curBytePos == inputByteArray.size
 
-    @Volatile var isReplScriptExecuting = false
+    @Volatile
+    var isReplScriptExecuting = false
 
     override fun read(): Int {
         if (isLastByteProcessed) {
@@ -78,12 +78,10 @@ class ReplSystemInWrapper(
         val xmlInput = byteBuilder.toString()
         val unescapedXml = parseXml(xmlInput)
 
-        val resultLine = if (isReplScriptExecuting)
-            unescapeLineBreaks(unescapedXml)
+        return if (isReplScriptExecuting)
+            unescapedXml.replUnescapeLineBreaks()
         else
             unescapedXml
-
-        return "$resultLine$END_LINE"
     }
 
     private fun resetBufferIfNeeded() {

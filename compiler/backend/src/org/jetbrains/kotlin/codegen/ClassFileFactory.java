@@ -27,23 +27,25 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.AnalysisFlag;
+import org.jetbrains.kotlin.config.AnalysisFlags;
+import org.jetbrains.kotlin.config.JvmAnalysisFlags;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DescriptorUtilKt;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
-import org.jetbrains.kotlin.load.kotlin.PackageParts;
+import org.jetbrains.kotlin.load.kotlin.ModuleMappingUtilKt;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMappingKt;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.StringTableImpl;
-import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;
@@ -59,7 +61,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
     private boolean isDone = false;
 
-    private final Set<File> packagePartSourceFiles = new HashSet<>();
+    private final Set<File> sourceFiles = new HashSet<>();
     private final Map<String, PackageParts> partsGroupedByPackage = new LinkedHashMap<>();
 
     public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory) {
@@ -112,18 +114,21 @@ public class ClassFileFactory implements OutputFileCollection {
             part.addTo(builder);
         }
 
-        List<String> experimental = state.getLanguageVersionSettings().getFlag(AnalysisFlag.getExperimental());
+        List<String> experimental = state.getLanguageVersionSettings().getFlag(AnalysisFlags.getExperimental());
         if (!experimental.isEmpty()) {
             writeExperimentalMarkers(state.getModule(), builder, experimental);
         }
 
         JvmModuleProtoBuf.Module moduleProto = builder.build();
-        if (moduleProto.getSerializedSize() == 0) return;
 
-        generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
+        generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
-                return ClassFileUtilsKt.serializeToByteArray(moduleProto);
+                int flags = 0;
+                if (state.getLanguageVersionSettings().getFlag(JvmAnalysisFlags.getStrictMetadataVersionSemantics())) {
+                    flags |= ModuleMapping.STRICT_METADATA_VERSION_SEMANTICS_FLAG;
+                }
+                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getMetadataVersion(), flags);
             }
 
             @Override
@@ -151,7 +156,7 @@ public class ClassFileFactory implements OutputFileCollection {
                 ProtoBuf.Annotation.Builder annotation = ProtoBuf.Annotation.newBuilder();
                 ClassId classId = DescriptorUtilsKt.getClassId(descriptor);
                 if (classId != null) {
-                    annotation.setId(stringTable.getClassIdIndex(classId));
+                    annotation.setId(stringTable.getQualifiedClassNameIndex(classId.asString(), false));
                     builder.addAnnotation(annotation);
                 }
             }
@@ -182,9 +187,16 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     @TestOnly
     public String createText() {
+        return createText(null);
+    }
+
+    @NotNull
+    @TestOnly
+    public String createText(@Nullable String ignorePrefixPath) {
         StringBuilder answer = new StringBuilder();
 
         for (OutputFile file : asList()) {
+            if (ignorePrefixPath != null && file.getRelativePath().startsWith(ignorePrefixPath)) continue;
             File relativePath = new File(file.getRelativePath());
             answer.append("@").append(relativePath).append('\n');
             switch (FilesKt.getExtension(relativePath)) {
@@ -192,8 +204,11 @@ public class ClassFileFactory implements OutputFileCollection {
                     answer.append(file.asText());
                     break;
                 case "kotlin_module": {
-                    ModuleMapping mapping = ModuleMapping.Companion.create(
-                            file.asByteArray(), relativePath.getPath(), CompilerDeserializationConfiguration.Default.INSTANCE
+                    ModuleMapping mapping = ModuleMappingUtilKt.loadModuleMapping(
+                            ModuleMapping.Companion, file.asByteArray(), relativePath.getPath(),
+                            CompilerDeserializationConfiguration.Default.INSTANCE, version -> {
+                                throw new IllegalStateException("Version of the generated module cannot be incompatible: " + version);
+                            }
                     );
                     for (Map.Entry<String, PackageParts> entry : mapping.getPackageFqName2Parts().entrySet()) {
                         FqName packageFqName = new FqName(entry.getKey());
@@ -223,14 +238,14 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
-        registerPackagePartSourceFiles(files);
+        registerSourceFiles(files);
         return state.getCodegenFactory().createPackageCodegen(state, files, fqName, buildNewPackagePartRegistry(fqName));
     }
 
     @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
-        registerPackagePartSourceFiles(files);
+        registerSourceFiles(files);
         return state.getCodegenFactory().createMultifileClassCodegen(state, files, facadeFqName, buildNewPackagePartRegistry(facadeFqName.parent()));
     }
 
@@ -242,8 +257,8 @@ public class ClassFileFactory implements OutputFileCollection {
         };
     }
 
-    private void registerPackagePartSourceFiles(Collection<KtFile> files) {
-        packagePartSourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(files)));
+    private void registerSourceFiles(Collection<KtFile> files) {
+        sourceFiles.addAll(toIoFilesIgnoringNonPhysical(files));
     }
 
     @NotNull

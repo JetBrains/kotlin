@@ -66,7 +66,7 @@ abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixture
         val expression = element.getStrictParentOfType<KtExpression>()!!
         val info = expression.analyze().getDataFlowInfoAfter(expression)
 
-        val allValues = (info.completeTypeInfo.keySet() + info.completeNullabilityInfo.keys).toSet()
+        val allValues = (info.completeTypeInfo.keySet() + info.completeNullabilityInfo.keySet()).toSet()
         val actual = allValues.mapNotNull { it.render() }.sorted().joinToString("\n")
 
         KotlinTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(fileName) + ".txt"), actual)

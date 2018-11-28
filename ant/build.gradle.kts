@@ -1,12 +1,14 @@
 
 description = "Kotlin Ant Tools"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 dependencies {
     compile(commonDep("org.apache.ant", "ant"))
     compile(project(":kotlin-preloader"))
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
 }
 
 sourceSets {

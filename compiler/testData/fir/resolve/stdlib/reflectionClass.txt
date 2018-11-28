@@ -1,0 +1,5 @@
+FILE: reflectionClass.kt
+    public final property javaClass(val): R|java/lang/Class<kotlin/String>| = STUB
+        public get(): R|java/lang/Class<kotlin/String>|
+    public final property kotlinClass(val): R|kotlin/reflect/KClass<kotlin/String>| = STUB
+        public get(): R|kotlin/reflect/KClass<kotlin/String>|

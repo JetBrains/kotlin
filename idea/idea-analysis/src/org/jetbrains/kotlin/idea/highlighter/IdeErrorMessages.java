@@ -34,6 +34,7 @@ import static org.jetbrains.kotlin.idea.highlighter.HtmlTabledDescriptorRenderer
 import static org.jetbrains.kotlin.idea.highlighter.IdeRenderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.ACCIDENTAL_OVERRIDE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.CONFLICTING_JVM_DECLARATIONS;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS;
 
 
 /**
@@ -61,6 +62,9 @@ public class IdeErrorMessages {
 
     static {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
+                HTML_RENDER_TYPE, HTML_RENDER_TYPE);
+
+        MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
                 HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS,
@@ -155,7 +159,7 @@ public class IdeErrorMessages {
         MAP.put(CONFLICTING_JVM_DECLARATIONS, "<html>Platform declaration clash: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ACCIDENTAL_OVERRIDE, "<html>Accidental override: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
 
-        URL errorIconUrl = AllIcons.class.getResource("/general/error.png");
+        URL errorIconUrl = AllIcons.class.getResource(ErrorIconUtil.getErrorIconUrl());
         MAP.put(EXCEPTION_FROM_ANALYZER, "<html>Internal Error occurred while analyzing this expression <br/>" +
                                          "<table cellspacing=\"0\" cellpadding=\"0\">" +
                                          "<tr>" +

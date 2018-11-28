@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 @file:kotlin.jvm.JvmName("ComparisonsKt")
 @file:kotlin.jvm.JvmMultifileClass
@@ -31,7 +20,7 @@ public fun <T> compareValuesBy(a: T, b: T, vararg selectors: (T) -> Comparable<*
     return compareValuesByImpl(a, b, selectors)
 }
 
-private fun <T> compareValuesByImpl(a: T, b: T, selectors: Array<out (T)->Comparable<*>?>): Int {
+private fun <T> compareValuesByImpl(a: T, b: T, selectors: Array<out (T) -> Comparable<*>?>): Int {
     for (fn in selectors) {
         val v1 = fn(a)
         val v2 = fn(b)
@@ -103,7 +92,6 @@ public fun <T> compareBy(vararg selectors: (T) -> Comparable<*>?): Comparator<T>
 }
 
 
-
 /**
  * Creates a comparator using the function to transform value to a [Comparable] instance for comparison.
  *
@@ -111,7 +99,7 @@ public fun <T> compareBy(vararg selectors: (T) -> Comparable<*>?): Comparator<T>
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> compareBy(crossinline selector: (T) -> Comparable<*>?): Comparator<T> =
-        Comparator { a, b -> compareValuesBy(a, b, selector) }
+    Comparator { a, b -> compareValuesBy(a, b, selector) }
 
 /**
  * Creates a comparator using the [selector] function to transform values being compared and then applying
@@ -121,7 +109,7 @@ public inline fun <T> compareBy(crossinline selector: (T) -> Comparable<*>?): Co
  */
 @kotlin.internal.InlineOnly
 public inline fun <T, K> compareBy(comparator: Comparator<in K>, crossinline selector: (T) -> K): Comparator<T> =
-        Comparator { a, b -> compareValuesBy(a, b, comparator, selector) }
+    Comparator { a, b -> compareValuesBy(a, b, comparator, selector) }
 
 /**
  * Creates a descending comparator using the function to transform value to a [Comparable] instance for comparison.
@@ -130,7 +118,7 @@ public inline fun <T, K> compareBy(comparator: Comparator<in K>, crossinline sel
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> compareByDescending(crossinline selector: (T) -> Comparable<*>?): Comparator<T> =
-        Comparator { a, b -> compareValuesBy(b, a, selector) }
+    Comparator { a, b -> compareValuesBy(b, a, selector) }
 
 /**
  * Creates a descending comparator using the [selector] function to transform values being compared and then applying
@@ -142,7 +130,7 @@ public inline fun <T> compareByDescending(crossinline selector: (T) -> Comparabl
  */
 @kotlin.internal.InlineOnly
 public inline fun <T, K> compareByDescending(comparator: Comparator<in K>, crossinline selector: (T) -> K): Comparator<T> =
-        Comparator { a, b -> compareValuesBy(b, a, comparator, selector) }
+    Comparator { a, b -> compareValuesBy(b, a, comparator, selector) }
 
 /**
  * Creates a comparator comparing values after the primary comparator defined them equal. It uses
@@ -152,10 +140,10 @@ public inline fun <T, K> compareByDescending(comparator: Comparator<in K>, cross
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Comparator<T>.thenBy(crossinline selector: (T) -> Comparable<*>?): Comparator<T> =
-        Comparator { a, b ->
-            val previousCompare = this@thenBy.compare(a, b)
-            if (previousCompare != 0) previousCompare else compareValuesBy(a, b, selector)
-        }
+    Comparator { a, b ->
+        val previousCompare = this@thenBy.compare(a, b)
+        if (previousCompare != 0) previousCompare else compareValuesBy(a, b, selector)
+    }
 
 /**
  * Creates a comparator comparing values after the primary comparator defined them equal. It uses
@@ -165,10 +153,10 @@ public inline fun <T> Comparator<T>.thenBy(crossinline selector: (T) -> Comparab
  */
 @kotlin.internal.InlineOnly
 public inline fun <T, K> Comparator<T>.thenBy(comparator: Comparator<in K>, crossinline selector: (T) -> K): Comparator<T> =
-        Comparator { a, b ->
-            val previousCompare = this@thenBy.compare(a, b)
-            if (previousCompare != 0) previousCompare else compareValuesBy(a, b, comparator, selector)
-        }
+    Comparator { a, b ->
+        val previousCompare = this@thenBy.compare(a, b)
+        if (previousCompare != 0) previousCompare else compareValuesBy(a, b, comparator, selector)
+    }
 
 /**
  * Creates a descending comparator using the primary comparator and
@@ -178,10 +166,10 @@ public inline fun <T, K> Comparator<T>.thenBy(comparator: Comparator<in K>, cros
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Comparator<T>.thenByDescending(crossinline selector: (T) -> Comparable<*>?): Comparator<T> =
-        Comparator { a, b ->
-            val previousCompare = this@thenByDescending.compare(a, b)
-            if (previousCompare != 0) previousCompare else compareValuesBy(b, a, selector)
-        }
+    Comparator { a, b ->
+        val previousCompare = this@thenByDescending.compare(a, b)
+        if (previousCompare != 0) previousCompare else compareValuesBy(b, a, selector)
+    }
 
 /**
  * Creates a descending comparator comparing values after the primary comparator defined them equal. It uses
@@ -191,10 +179,10 @@ public inline fun <T> Comparator<T>.thenByDescending(crossinline selector: (T) -
  */
 @kotlin.internal.InlineOnly
 public inline fun <T, K> Comparator<T>.thenByDescending(comparator: Comparator<in K>, crossinline selector: (T) -> K): Comparator<T> =
-        Comparator { a, b ->
-            val previousCompare = this@thenByDescending.compare(a, b)
-            if (previousCompare != 0) previousCompare else compareValuesBy(b, a, comparator, selector)
-        }
+    Comparator { a, b ->
+        val previousCompare = this@thenByDescending.compare(a, b)
+        if (previousCompare != 0) previousCompare else compareValuesBy(b, a, comparator, selector)
+    }
 
 
 /**
@@ -204,10 +192,10 @@ public inline fun <T, K> Comparator<T>.thenByDescending(comparator: Comparator<i
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Comparator<T>.thenComparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T> =
-        Comparator { a, b ->
-            val previousCompare = this@thenComparator.compare(a, b)
-            if (previousCompare != 0) previousCompare else comparison(a, b)
-        }
+    Comparator { a, b ->
+        val previousCompare = this@thenComparator.compare(a, b)
+        if (previousCompare != 0) previousCompare else comparison(a, b)
+    }
 
 /**
  * Combines this comparator and the given [comparator] such that the latter is applied only
@@ -216,10 +204,10 @@ public inline fun <T> Comparator<T>.thenComparator(crossinline comparison: (a: T
  * @sample samples.comparisons.Comparisons.then
  */
 public infix fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparator<T> =
-        Comparator { a, b ->
-            val previousCompare = this@then.compare(a, b)
-            if (previousCompare != 0) previousCompare else comparator.compare(a, b)
-        }
+    Comparator { a, b ->
+        val previousCompare = this@then.compare(a, b)
+        if (previousCompare != 0) previousCompare else comparator.compare(a, b)
+    }
 
 /**
  * Combines this comparator and the given [comparator] such that the latter is applied only
@@ -228,10 +216,10 @@ public infix fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparato
  * @sample samples.comparisons.Comparisons.thenDescending
  */
 public infix fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>): Comparator<T> =
-        Comparator<T> { a, b ->
-            val previousCompare = this@thenDescending.compare(a, b)
-            if (previousCompare != 0) previousCompare else comparator.compare(b, a)
-        }
+    Comparator<T> { a, b ->
+        val previousCompare = this@thenDescending.compare(a, b)
+        if (previousCompare != 0) previousCompare else comparator.compare(b, a)
+    }
 
 // Not so useful without type inference for receiver of expression
 /**
@@ -240,15 +228,15 @@ public infix fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>):
  *
  * @sample samples.comparisons.Comparisons.nullsFirstLastWithComparator
  */
-public fun <T: Any> nullsFirst(comparator: Comparator<in T>): Comparator<T?> =
-        Comparator { a, b ->
-            when {
-                a === b ->   0
-                a == null -> -1
-                b == null -> 1
-                else -> comparator.compare(a, b)
-            }
+public fun <T : Any> nullsFirst(comparator: Comparator<in T>): Comparator<T?> =
+    Comparator { a, b ->
+        when {
+            a === b -> 0
+            a == null -> -1
+            b == null -> 1
+            else -> comparator.compare(a, b)
         }
+    }
 
 /**
  * Provides a comparator of nullable [Comparable] values
@@ -257,7 +245,7 @@ public fun <T: Any> nullsFirst(comparator: Comparator<in T>): Comparator<T?> =
  * @sample samples.comparisons.Comparisons.nullsFirstLastComparator
  */
 @kotlin.internal.InlineOnly
-public inline fun <T: Comparable<T>> nullsFirst(): Comparator<T?> = nullsFirst(naturalOrder())
+public inline fun <T : Comparable<T>> nullsFirst(): Comparator<T?> = nullsFirst(naturalOrder())
 
 /**
  * Extends the given [comparator] of non-nullable values to a comparator of nullable values
@@ -265,15 +253,15 @@ public inline fun <T: Comparable<T>> nullsFirst(): Comparator<T?> = nullsFirst(n
  *
  * @sample samples.comparisons.Comparisons.nullsFirstLastWithComparator
  */
-public fun <T: Any> nullsLast(comparator: Comparator<in T>): Comparator<T?> =
-        Comparator { a, b ->
-            when {
-                a === b ->   0
-                a == null -> 1
-                b == null -> -1
-                else -> comparator.compare(a, b)
-            }
+public fun <T : Any> nullsLast(comparator: Comparator<in T>): Comparator<T?> =
+    Comparator { a, b ->
+        when {
+            a === b -> 0
+            a == null -> 1
+            b == null -> -1
+            else -> comparator.compare(a, b)
         }
+    }
 
 /**
  * Provides a comparator of nullable [Comparable] values
@@ -282,21 +270,21 @@ public fun <T: Any> nullsLast(comparator: Comparator<in T>): Comparator<T?> =
  * @sample samples.comparisons.Comparisons.nullsFirstLastComparator
  */
 @kotlin.internal.InlineOnly
-public inline fun <T: Comparable<T>> nullsLast(): Comparator<T?> = nullsLast(naturalOrder())
+public inline fun <T : Comparable<T>> nullsLast(): Comparator<T?> = nullsLast(naturalOrder())
 
 /**
  * Returns a comparator that compares [Comparable] objects in natural order.
  *
  * @sample samples.comparisons.Comparisons.naturalOrderComparator
  */
-public fun <T: Comparable<T>> naturalOrder(): Comparator<T> = @Suppress("UNCHECKED_CAST") (NaturalOrderComparator as Comparator<T>)
+public fun <T : Comparable<T>> naturalOrder(): Comparator<T> = @Suppress("UNCHECKED_CAST") (NaturalOrderComparator as Comparator<T>)
 
 /**
  * Returns a comparator that compares [Comparable] objects in reversed natural order.
  *
  * @sample samples.comparisons.Comparisons.nullsFirstLastWithComparator
  */
-public fun <T: Comparable<T>> reverseOrder(): Comparator<T> = @Suppress("UNCHECKED_CAST") (ReverseOrderComparator as Comparator<T>)
+public fun <T : Comparable<T>> reverseOrder(): Comparator<T> = @Suppress("UNCHECKED_CAST") (ReverseOrderComparator as Comparator<T>)
 
 /**
  *  Returns a comparator that imposes the reverse ordering of this comparator.
@@ -311,7 +299,7 @@ public fun <T> Comparator<T>.reversed(): Comparator<T> = when (this) {
 }
 
 
-private class ReversedComparator<T>(public val comparator: Comparator<T>): Comparator<T> {
+private class ReversedComparator<T>(public val comparator: Comparator<T>) : Comparator<T> {
     override fun compare(a: T, b: T): Int = comparator.compare(b, a)
     @Suppress("VIRTUAL_MEMBER_HIDDEN")
     fun reversed(): Comparator<T> = comparator
@@ -323,7 +311,7 @@ private object NaturalOrderComparator : Comparator<Comparable<Any>> {
     fun reversed(): Comparator<Comparable<Any>> = ReverseOrderComparator
 }
 
-private object ReverseOrderComparator: Comparator<Comparable<Any>> {
+private object ReverseOrderComparator : Comparator<Comparable<Any>> {
     override fun compare(a: Comparable<Any>, b: Comparable<Any>): Int = b.compareTo(a)
     @Suppress("VIRTUAL_MEMBER_HIDDEN")
     fun reversed(): Comparator<Comparable<Any>> = NaturalOrderComparator

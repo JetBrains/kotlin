@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 
 private fun createVariableReferenceExpression(variable: UVariable, containingElement: UElement?) =
-        object : USimpleNameReferenceExpression, JvmDeclarationUElement {
+    object : USimpleNameReferenceExpression, JvmDeclarationUElementPlaceholder {
             override val psi: PsiElement? = null
             override fun resolve(): PsiElement? = variable
             override val uastParent: UElement? = containingElement
@@ -26,7 +27,7 @@ private fun createVariableReferenceExpression(variable: UVariable, containingEle
         }
 
 private fun createNullLiteralExpression(containingElement: UElement?) =
-        object : ULiteralExpression, JvmDeclarationUElement {
+    object : ULiteralExpression, JvmDeclarationUElementPlaceholder {
             override val psi: PsiElement? = null
             override val uastParent: UElement? = containingElement
             override val value: Any? = null
@@ -36,13 +37,13 @@ private fun createNullLiteralExpression(containingElement: UElement?) =
         }
 
 private fun createNotEqWithNullExpression(variable: UVariable, containingElement: UElement?) =
-        object : UBinaryExpression, JvmDeclarationUElement {
+    object : UBinaryExpression, JvmDeclarationUElementPlaceholder {
             override val psi: PsiElement? = null
             override val uastParent: UElement? = containingElement
             override val leftOperand: UExpression by lz { createVariableReferenceExpression(variable, this) }
             override val rightOperand: UExpression by lz { createNullLiteralExpression(this) }
             override val operator: UastBinaryOperator = UastBinaryOperator.NOT_EQUALS
-            override val operatorIdentifier: UIdentifier? = UIdentifier(null, this)
+            override val operatorIdentifier: UIdentifier? = KotlinUIdentifier(null, this)
             override fun resolveOperator(): PsiMethod? = null
             override val annotations: List<UAnnotation> = emptyList()
             override val javaPsi: PsiElement? = null
@@ -59,7 +60,7 @@ private fun createElvisExpressions(
     val tempVariable = KotlinULocalVariable(UastKotlinPsiVariable.create(left, declaration, psiParent), left, declaration)
     declaration.declarations = listOf(tempVariable)
 
-    val ifExpression = object : UIfExpression, JvmDeclarationUElement {
+    val ifExpression = object : UIfExpression, JvmDeclarationUElementPlaceholder {
         override val psi: PsiElement? = null
         override val uastParent: UElement? = containingElement
         override val javaPsi: PsiElement? = null
@@ -69,8 +70,8 @@ private fun createElvisExpressions(
         override val elseExpression: UExpression? by lz { KotlinConverter.convertExpression(right, this ) }
         override val isTernary: Boolean = false
         override val annotations: List<UAnnotation> = emptyList()
-        override val ifIdentifier: UIdentifier = UIdentifier(null, this)
-        override val elseIdentifier: UIdentifier? = UIdentifier(null, this)
+        override val ifIdentifier: UIdentifier = KotlinUIdentifier(null, this)
+        override val elseIdentifier: UIdentifier? = KotlinUIdentifier(null, this)
     }
 
     return listOf(declaration, ifExpression)

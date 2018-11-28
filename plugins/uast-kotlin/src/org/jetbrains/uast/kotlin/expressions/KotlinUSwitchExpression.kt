@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
 
 class KotlinUSwitchExpression(
@@ -45,7 +46,7 @@ class KotlinUSwitchExpression(
     }
 
     override val switchIdentifier: UIdentifier
-        get() = UIdentifier(null, this)
+        get() = KotlinUIdentifier(null, this)
 }
 
 class KotlinUSwitchEntry(
@@ -69,7 +70,7 @@ class KotlinUSwitchEntry(
                 is KtBlockExpression -> exprPsi.statements.map { KotlinConverter.convertOrEmpty(it, this) }
                 else -> listOf(KotlinConverter.convertOrEmpty(exprPsi, this))
             }
-            expressions = userExpressions + object : UBreakExpression, JvmDeclarationUElement {
+            expressions = userExpressions + object : UBreakExpression, JvmDeclarationUElementPlaceholder {
                 override val javaPsi: PsiElement? = null
                 override val sourcePsi: PsiElement? = null
                 override val psi: PsiElement?

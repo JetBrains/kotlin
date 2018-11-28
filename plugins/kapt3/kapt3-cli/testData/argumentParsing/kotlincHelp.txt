@@ -1,0 +1,7 @@
+# before
+-help-kotlinc
+
+# after
+-P
+plugin:org.jetbrains.kotlin.kapt3:aptMode=compile
+-help-kotlinc

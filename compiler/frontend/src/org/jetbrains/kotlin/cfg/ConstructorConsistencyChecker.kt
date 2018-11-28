@@ -113,58 +113,59 @@ class ConstructorConsistencyChecker private constructor(
             .filterIsInstance<PropertyDescriptor>()
             .filter { trace.get(BindingContext.BACKING_FIELD_REQUIRED, it) == true }
         pseudocode.traverse(
-            TraversalOrder.FORWARD, variablesData.variableInitializers, { instruction, enterData, _ ->
+            TraversalOrder.FORWARD, variablesData.variableInitializers
+        ) { instruction, enterData, _ ->
 
-                fun firstUninitializedNotNullProperty() = propertyDescriptors.firstOrNull {
-                    !it.type.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(it.type) &&
-                            !it.isLateInit && !(enterData.getOrNull(it)?.definitelyInitialized() ?: false)
-                }
+            fun firstUninitializedNotNullProperty() = propertyDescriptors.firstOrNull {
+                !it.type.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(it.type) &&
+                        !it.isLateInit && !(enterData.getOrNull(it)?.definitelyInitialized() ?: false)
+            }
 
-                fun handleLeakingThis(expression: KtExpression) {
-                    if (!finalClass) {
+            fun handleLeakingThis(expression: KtExpression) {
+                if (!finalClass) {
+                    trace.record(
+                        BindingContext.LEAKING_THIS, target(expression),
+                        LeakingThisDescriptor.NonFinalClass(classDescriptor, classOrObject)
+                    )
+                } else {
+                    val uninitializedProperty = firstUninitializedNotNullProperty()
+                    if (uninitializedProperty != null) {
                         trace.record(
                             BindingContext.LEAKING_THIS, target(expression),
-                            LeakingThisDescriptor.NonFinalClass(classDescriptor, classOrObject)
+                            LeakingThisDescriptor.PropertyIsNull(uninitializedProperty, classOrObject)
                         )
-                    } else {
-                        val uninitializedProperty = firstUninitializedNotNullProperty()
-                        if (uninitializedProperty != null) {
-                            trace.record(
-                                BindingContext.LEAKING_THIS, target(expression),
-                                LeakingThisDescriptor.PropertyIsNull(uninitializedProperty, classOrObject)
-                            )
-                        }
                     }
                 }
+            }
 
-                if (instruction.owner != pseudocode) {
-                    return@traverse
-                }
+            if (instruction.owner != pseudocode) {
+                return@traverse
+            }
 
-                if (instruction is KtElementInstruction) {
-                    val element = instruction.element
-                    when (instruction) {
-                        is ReadValueInstruction ->
-                            if (element is KtThisExpression) {
-                                if (!safeThisUsage(element)) {
+            if (instruction is KtElementInstruction) {
+                val element = instruction.element
+                when (instruction) {
+                    is ReadValueInstruction ->
+                        if (element is KtThisExpression) {
+                            if (!safeThisUsage(element)) {
+                                handleLeakingThis(element)
+                            }
+                        }
+                    is MagicInstruction ->
+                        if (instruction.kind == MagicKind.IMPLICIT_RECEIVER) {
+                            if (element is KtCallExpression) {
+                                if (!safeCallUsage(element)) {
+                                    handleLeakingThis(element)
+                                }
+                            } else if (element is KtReferenceExpression) {
+                                if (!safeReferenceUsage(element)) {
                                     handleLeakingThis(element)
                                 }
                             }
-                        is MagicInstruction ->
-                            if (instruction.kind == MagicKind.IMPLICIT_RECEIVER) {
-                                if (element is KtCallExpression) {
-                                    if (!safeCallUsage(element)) {
-                                        handleLeakingThis(element)
-                                    }
-                                } else if (element is KtReferenceExpression) {
-                                    if (!safeReferenceUsage(element)) {
-                                        handleLeakingThis(element)
-                                    }
-                                }
-                            }
-                    }
+                        }
                 }
-            })
+            }
+        }
     }
 
     companion object {

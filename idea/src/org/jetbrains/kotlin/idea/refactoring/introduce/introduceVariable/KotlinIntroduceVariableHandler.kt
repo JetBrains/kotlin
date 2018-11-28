@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -67,7 +66,10 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.TypeCheckerContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
@@ -81,6 +83,20 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
     private val COMMON_PARENT_KEY = Key.create<Boolean>("COMMON_PARENT_KEY")
 
     private var KtExpression.isOccurrence: Boolean by NotNullablePsiCopyableUserDataProperty(Key.create("OCCURRENCE"), false)
+
+    private class TypeCheckerImpl(private val project: Project) : KotlinTypeChecker by KotlinTypeChecker.DEFAULT {
+        private inner class ContextImpl : TypeCheckerContext(false) {
+            override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
+                return compareDescriptors(project, a.declarationDescriptor, b.declarationDescriptor)
+            }
+        }
+
+        override fun equalTypes(a: KotlinType, b: KotlinType): Boolean {
+            return with(NewKotlinTypeChecker) {
+                ContextImpl().equalTypes(a.unwrap(), b.unwrap())
+            }
+        }
+    }
 
     private class IntroduceVariableContext(
             private val expression: KtExpression,
@@ -108,7 +124,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         private fun replaceExpression(expressionToReplace: KtExpression, addToReferences: Boolean): KtExpression {
             val isActualExpression = expression == expressionToReplace
 
-            val replacement = psiFactory.createExpression(nameSuggestions.single().first())
+            val replacement = psiFactory.createExpression(nameSuggestions.asSequence().single().first())
             val substringInfo = expressionToReplace.extractableSubstringInfo
             var result = when {
                 expressionToReplace.isLambdaOutsideParentheses() -> {
@@ -151,7 +167,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             else {
                 buildString {
                     append("$varOvVal ")
-                    append(nameSuggestions.single().first())
+                    append(nameSuggestions.asSequence().single().first())
                     if (noTypeInference) {
                         val typeToRender = expressionType ?: resolutionFacade.moduleDescriptor.builtIns.anyType
                         append(": ").append(IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToRender))
@@ -296,8 +312,8 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
 
             val newDeclaration = ConvertToBlockBodyIntention.convert(commonContainer)
 
-            val newCommonContainer = (newDeclaration.bodyExpression as KtBlockExpression?)
-                    .sure { "New body is not found: " + newDeclaration }
+            val newCommonContainer = newDeclaration.bodyBlockExpression
+                .sure { "New body is not found: " + newDeclaration }
 
             val newExpression = newCommonContainer.findExpressionByCopyableDataAndClearIt(EXPRESSION_KEY)
             val newCommonParent = newCommonContainer.findElementByCopyableDataAndClearIt(COMMON_PARENT_KEY)
@@ -434,7 +450,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                             FinishMarkAction.finish(project, editor, startMarkAction)
                         }
 
-                        override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                        override fun templateFinished(template: Template, brokenOff: Boolean) {
                             if (!brokenOff) {
                                 postProcess(declaration)
                             }
@@ -495,8 +511,8 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         val typeNoExpectedType = substringInfo?.type
                                  ?: physicalExpression.computeTypeInfoInContext(scope, physicalExpression, bindingTrace, dataFlowInfo).type
         val noTypeInference = expressionType != null
-                              && typeNoExpectedType != null
-                              && !KotlinTypeChecker.DEFAULT.equalTypes(expressionType, typeNoExpectedType)
+                && typeNoExpectedType != null
+                && !TypeCheckerImpl(project).equalTypes(expressionType, typeNoExpectedType)
 
         if (expressionType == null && bindingContext.get(BindingContext.QUALIFIER, physicalExpression) != null) {
             return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.package.expression"))

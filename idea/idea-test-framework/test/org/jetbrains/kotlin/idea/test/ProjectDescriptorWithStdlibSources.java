@@ -22,6 +22,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VfsUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 import java.io.File;
 
@@ -36,9 +37,7 @@ public class ProjectDescriptorWithStdlibSources extends KotlinWithJdkAndRuntimeL
         Library library = model.getModuleLibraryTable().getLibraryByName(Companion.getLIBRARY_NAME());
         assert library != null;
         Library.ModifiableModel modifiableModel = library.getModifiableModel();
-        modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("libraries/stdlib/src")), OrderRootType.SOURCES);
-        modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("core/builtins/src")), OrderRootType.SOURCES);
-        modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("core/builtins/native")), OrderRootType.SOURCES);
+        modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(ForTestCompileRuntime.runtimeSourcesJarForTests()), OrderRootType.SOURCES);
         modifiableModel.commit();
     }
 }

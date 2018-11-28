@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.android.facet.AndroidFacet
+import com.intellij.openapi.util.ClearableLazyValue
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider
 import org.jetbrains.kotlin.android.synthetic.idea.androidExtensionsIsEnabled
 import org.jetbrains.kotlin.android.synthetic.idea.androidExtensionsIsExperimental
+import org.jetbrains.kotlin.android.synthetic.idea.findAndroidModuleInfo
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidPackageFragmentProviderExtension
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 
 class IDEAndroidPackageFragmentProviderExtension(val project: Project) : AndroidPackageFragmentProviderExtension() {
     override fun isExperimental(moduleInfo: ModuleInfo?): Boolean {
@@ -34,14 +34,9 @@ class IDEAndroidPackageFragmentProviderExtension(val project: Project) : Android
     }
 
     override fun getLayoutXmlFileManager(project: Project, moduleInfo: ModuleInfo?): AndroidLayoutXmlFileManager? {
-        val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return null
-        val module = moduleSourceInfo.module
-        if (!isAndroidExtensionsEnabled(module) && !isTestMode(module)) return null
+        val module = moduleInfo?.findAndroidModuleInfo()?.module ?: return null
+        if (!isAndroidExtensionsEnabled(module)) return null
         return ModuleServiceManager.getService(module, AndroidLayoutXmlFileManager::class.java)
-    }
-
-    private fun isTestMode(module: Module): Boolean {
-        return ApplicationManager.getApplication().isUnitTestMode && AndroidFacet.getInstance(module) != null
     }
 
     private fun isAndroidExtensionsEnabled(module: Module): Boolean {
@@ -51,7 +46,11 @@ class IDEAndroidPackageFragmentProviderExtension(val project: Project) : Android
     }
 
     private fun isLegacyIdeaAndroidModule(module: Module): Boolean {
-        val facet = AndroidFacet.getInstance(module)
-        return facet != null && !facet.requiresAndroidModel()
+        val infoProvider = AndroidModuleInfoProvider.getInstance(module) ?: return false
+        return infoProvider.isAndroidModule() && !infoProvider.isGradleModule()
+    }
+
+    override fun <T> createLazyValue(value: () -> T): () -> T {
+        return { ClearableLazyValue.create<T> { value() }.value }
     }
 }

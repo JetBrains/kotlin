@@ -1,0 +1,176 @@
+KtFile: 1.3.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0')
+    PsiComment(BLOCK_COMMENT)('/* comment */')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('.000001')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('9999')
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      KDOC_SECTION
+        PsiElement(KDOC_TEXT)(' some doc ')
+      PsiElement(KDOC_END)('*/')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('.1')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('4')
+    PsiComment(BLOCK_COMMENT)('/**/')
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      KDOC_SECTION
+        PsiElement(KDOC_TEXT)(' some doc ')
+      PsiElement(KDOC_END)('*/')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('.1')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0')
+    PsiComment(BLOCK_COMMENT)('/*\n    ...\n*/')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('.000001')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('9999')
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_TEXT)('some doc')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('.1')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('9999')
+    PsiComment(EOL_COMMENT)('// comment')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(FLOAT_CONSTANT)('.1')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('9999')
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    KDOC_SECTION
+      <empty list>
+    PsiElement(KDOC_END)('*/')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(FLOAT_CONSTANT)('.1')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1000')
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      KDOC_SECTION
+        <empty list>
+      PsiElement(KDOC_END)('*/')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('000.0')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1000')
+    PsiComment(BLOCK_COMMENT)('/*.*/')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('000.0')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('4')
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      KDOC_SECTION
+        PsiElement(KDOC_TEXT)(' some/**/ doc ')
+      PsiElement(KDOC_END)('*/')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('.1')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('4')
+    PsiComment(BLOCK_COMMENT)('/* some/***/ doc */')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('.19999')

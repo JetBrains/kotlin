@@ -23,6 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
@@ -114,7 +115,7 @@ sealed class LightClassDataProviderForFileFacade constructor(
             facadeFqName: FqName,
             private val searchScope: GlobalSearchScope
     ) : LightClassDataProviderForFileFacade(project, facadeFqName) {
-        override fun findFiles() = LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
+        override fun findFiles() = KotlinAsJavaSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
     }
 
     // create delegate by single file

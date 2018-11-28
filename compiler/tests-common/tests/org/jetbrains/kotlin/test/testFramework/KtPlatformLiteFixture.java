@@ -70,11 +70,11 @@ public abstract class KtPlatformLiteFixture extends KtUsefulTestCase {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T registerComponentInstance(MutablePicoContainer container, Class<T> key, T implementation) {
         Object old = container.getComponentInstance(key);
         container.unregisterComponent(key);
         container.registerComponentInstance(key, implementation);
-        //noinspection unchecked
         return (T)old;
     }
 }

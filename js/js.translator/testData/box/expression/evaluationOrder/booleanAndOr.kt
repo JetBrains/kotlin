@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1135
+// EXPECTED_REACHABLE_NODES: 1291
 var log = ""
 
 fun foo(a: Boolean, b: () -> Boolean): Boolean = a or b()

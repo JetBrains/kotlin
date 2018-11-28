@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) 2013, Rainer Schuster
+Copyright (c) 2013, 2015 Rainer Schuster
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -571,7 +571,7 @@ INTEGER_WEBIDL
 ;
 
 FLOAT_WEBIDL
-	: '-'?(([0-9]+'.'[0-9]*|[0-9]*'.'[0-9]+)([Ee][\+\-]?[0-9]+)?|[0-9]+[Ee][\+\-]?[0-9]+)
+    : '-'?(([0-9]+'.'[0-9]*|[0-9]*'.'[0-9]+)([Ee][+\-]?[0-9]+)?|[0-9]+[Ee][+\-]?[0-9]+)
 ;
 
 IDENTIFIER_WEBIDL
@@ -579,7 +579,7 @@ IDENTIFIER_WEBIDL
 ;
 
 STRING_WEBIDL
-	: '"'~['"']*'"'
+	: '"' ~["]* '"'
 ;
 
 WHITESPACE_WEBIDL

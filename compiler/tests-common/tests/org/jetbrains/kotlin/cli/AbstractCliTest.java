@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.test.CompilerTestUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -45,8 +45,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt.ARGFILE_ARGUMENT;
+
 public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
+
+    private static final String BUILD_FILE_ARGUMENT_PREFIX = "-Xbuild-file=";
 
     public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLITool<?> compiler, @NotNull List<String> args) {
         StringBuilder output = new StringBuilder();
@@ -76,6 +80,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(testDataAbsoluteDir, TESTDATA_DIR)
                 .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR)
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
+                .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getParentFile().getAbsolutePath(), "$DIST_DIR$")
                 .replace("expected version is " + JvmMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
@@ -143,6 +148,26 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             }
         }
 
+        List<String> notContainsTextList = InTextDirectivesUtils.findLinesWithPrefixesRemoved(content, "// NOT_CONTAINS: ");
+        for (String notContainsSpec : notContainsTextList) {
+            String[] parts = notContainsSpec.split(",", 2);
+            String fileName = parts[0].trim();
+            String contentToSearch = parts[1].trim();
+            File file = checkedPathToFile(fileName, argsFilePath);
+            if (!file.exists()) {
+                diagnostics.add("File does not exist: " + fileName);
+            }
+            else if (file.isDirectory()) {
+                diagnostics.add("File is a directory: " + fileName);
+            }
+            else {
+                String text = FilesKt.readText(file, Charsets.UTF_8);
+                if (text.contains(contentToSearch)) {
+                    diagnostics.add("File " + fileName + " contains string: " + contentToSearch);
+                }
+            }
+        }
+
         if (!diagnostics.isEmpty()) {
             diagnostics.add(0, diagnostics.size() + " problem(s) found:");
             Assert.fail(StringsKt.join(diagnostics, "\n"));
@@ -160,28 +185,69 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private static List<String> readArgs(@NotNull String argsFilePath, @NotNull String tempDir) {
-        List<String> lines = FilesKt.readLines(new File(argsFilePath), Charsets.UTF_8);
+    private static List<String> readArgs(@NotNull String testArgsFilePath, @NotNull String tempDir) {
+        File testArgsFile = new File(testArgsFilePath);
+        List<String> lines = FilesKt.readLines(testArgsFile, Charsets.UTF_8);
+        return CollectionsKt.mapNotNull(lines, arg -> readArg(arg, testArgsFile.getParentFile().getAbsolutePath(), tempDir));
+    }
 
-        return CollectionsKt.mapNotNull(lines, arg -> {
-            if (arg.isEmpty()) {
-                return null;
-            }
+    private static String readArg(String arg, @NotNull String testDataDir, @NotNull String tempDir) {
+        if (arg.isEmpty()) {
+            return null;
+        }
 
-            // Do not replace ':' after '\' (used in compiler plugin tests)
-            String argsWithColonsReplaced = arg
-                    .replace("\\:", "$COLON$")
-                    .replace(":", File.pathSeparator)
-                    .replace("$COLON$", ":");
+        String argWithColonsReplaced = arg
+                .replace("\\:", "$COLON$")
+                .replace(":", File.pathSeparator)
+                .replace("$COLON$", ":");
 
-            return argsWithColonsReplaced
-                    .replace("$TEMP_DIR$", tempDir)
-                    .replace(TESTDATA_DIR, new File(argsFilePath).getParent())
-                    .replace(
-                            "$FOREIGN_ANNOTATIONS_DIR$",
-                            new File(AbstractForeignAnnotationsTestKt.getFOREIGN_ANNOTATIONS_SOURCES_PATH()).getPath()
-                    );
-        });
+        String argWithTestPathsReplaced = replaceTestPaths(argWithColonsReplaced, testDataDir, tempDir);
+
+        if (arg.startsWith(BUILD_FILE_ARGUMENT_PREFIX)) {
+            return replacePathsInBuildXml(argWithTestPathsReplaced, testDataDir, tempDir);
+        }
+
+        if (arg.startsWith(ARGFILE_ARGUMENT)) {
+            return createTempFileWithPathsReplaced(argWithTestPathsReplaced, ARGFILE_ARGUMENT, "", testDataDir, tempDir);
+        }
+
+        return argWithTestPathsReplaced;
+    }
+
+    @NotNull
+    public static String replacePathsInBuildXml(@NotNull String argument, @NotNull String testDataDir, @NotNull String tempDir) {
+        return createTempFileWithPathsReplaced(argument, BUILD_FILE_ARGUMENT_PREFIX, ".xml", testDataDir, tempDir);
+    }
+
+    // Create new temporary file with all test paths replaced and return the new argument value with the new file path
+    @NotNull
+    private static String createTempFileWithPathsReplaced(
+            @NotNull String argument,
+            @NotNull String argumentPrefix,
+            @NotNull String tempFileSuffix,
+            @NotNull String testDataDir,
+            @NotNull String tempDir
+    ) {
+        String filePath = kotlin.text.StringsKt.substringAfter(argument, argumentPrefix, argument);
+        File file = new File(filePath);
+        if (!file.exists()) return argument;
+
+        File result = FilesKt.createTempFile(file.getAbsolutePath(), tempFileSuffix, new File(tempDir));
+        String oldContent = FilesKt.readText(file, Charsets.UTF_8);
+        String newContent = replaceTestPaths(oldContent, testDataDir, tempDir);
+        FilesKt.writeText(result, newContent, Charsets.UTF_8);
+
+        return argumentPrefix + result.getAbsolutePath();
+    }
+
+    private static String replaceTestPaths(@NotNull String str, @NotNull String testDataDir, @NotNull String tempDir) {
+        return str
+                .replace("$TEMP_DIR$", tempDir)
+                .replace(TESTDATA_DIR, testDataDir)
+                .replace(
+                        "$FOREIGN_ANNOTATIONS_DIR$",
+                        new File(AbstractForeignAnnotationsTestKt.getFOREIGN_ANNOTATIONS_SOURCES_PATH()).getPath()
+                );
     }
 
     protected void doJvmTest(@NotNull String fileName) {

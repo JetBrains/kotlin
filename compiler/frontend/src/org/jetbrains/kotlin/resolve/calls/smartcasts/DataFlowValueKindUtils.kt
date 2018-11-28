@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
@@ -16,32 +17,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.expressions.AssignedVariablesSearcher
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
-
-/**
- * Determines whether a variable with a given descriptor is stable or not at the given usage place.
- *
- *
- * Stable means that the variable value cannot change. The simple (non-property) variable is considered stable if it's immutable (val).
- *
- *
- * If the variable is a property, it's considered stable if it's immutable (val) AND it's final (not open) AND
- * the default getter is in use (otherwise nobody can guarantee that a getter is consistent) AND
- * (it's private OR internal OR used at the same module where it's defined).
- * The last check corresponds to a risk of changing property definition in another module, e.g. from "val" to "var".
-
- * @param variableDescriptor    descriptor of a considered variable
- * *
- * @param usageModule a module with a considered usage place, or null if it's not known (not recommended)
- * *
- * @return true if variable is stable, false otherwise
- */
-fun isStableValue(
-    variableDescriptor: VariableDescriptor,
-    usageModule: ModuleDescriptor?
-): Boolean {
-    if (variableDescriptor.isVar) return false
-    return variableDescriptor !is PropertyDescriptor || variableDescriptor.propertyKind(usageModule) === DataFlowValue.Kind.STABLE_VALUE
-}
 
 internal fun PropertyDescriptor.propertyKind(usageModule: ModuleDescriptor?): DataFlowValue.Kind {
     if (isVar) return DataFlowValue.Kind.MUTABLE_PROPERTY
@@ -59,11 +34,22 @@ internal fun PropertyDescriptor.propertyKind(usageModule: ModuleDescriptor?): Da
 internal fun VariableDescriptor.variableKind(
     usageModule: ModuleDescriptor?,
     bindingContext: BindingContext,
-    accessElement: KtElement
+    accessElement: KtElement,
+    languageVersionSettings: LanguageVersionSettings
 ): DataFlowValue.Kind {
     if (this is PropertyDescriptor) {
         return propertyKind(usageModule)
     }
+
+    if (this is LocalVariableDescriptor && this.isDelegated) {
+        // Local delegated property: normally unstable, but can be treated as stable in legacy mode
+        return if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnLocalDelegatedProperty))
+            DataFlowValue.Kind.PROPERTY_WITH_GETTER
+        else
+            DataFlowValue.Kind.LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY
+
+    }
+
     if (this !is LocalVariableDescriptor && this !is ParameterDescriptor) return DataFlowValue.Kind.OTHER
     if (!isVar) return DataFlowValue.Kind.STABLE_VALUE
     if (this is SyntheticFieldDescriptor) return DataFlowValue.Kind.MUTABLE_PROPERTY
@@ -100,7 +86,7 @@ internal fun VariableDescriptor.variableKind(
 }
 
 
-private fun hasNoWritersInClosures(
+fun hasNoWritersInClosures(
     variableContainingDeclaration: DeclarationDescriptor,
     writers: Set<AssignedVariablesSearcher.Writer>,
     bindingContext: BindingContext

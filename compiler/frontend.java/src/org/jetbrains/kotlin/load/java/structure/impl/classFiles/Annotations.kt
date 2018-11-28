@@ -25,16 +25,32 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import java.lang.reflect.Array
 
-internal class AnnotationsCollectorMethodVisitor(
+internal class AnnotationsAndParameterCollectorMethodVisitor(
         private val member: BinaryJavaMethodBase,
         private val context: ClassifierResolutionContext,
         private val signatureParser: BinaryClassSignatureParser,
         private val parametersToSkipNumber: Int
 ) : MethodVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
+    private var parameterIndex = 0
+
     override fun visitAnnotationDefault(): AnnotationVisitor? {
         member.safeAs<BinaryJavaMethod>()?.hasAnnotationParameterDefaultValue = true
         // We don't store default value in Java model
         return null
+    }
+
+    override fun visitParameter(name: String?, access: Int) {
+        if (name != null) {
+            val index = parameterIndex - parametersToSkipNumber
+            if (index >= 0) {
+                val parameter = member.valueParameters.getOrNull(index) ?: error(
+                    "No parameter with index $parameterIndex-$parametersToSkipNumber (name=$name access=$access) " +
+                            "in method ${member.containingClass.fqName}.${member.name}"
+                )
+                parameter.updateName(Name.identifier(name))
+            }
+        }
+        parameterIndex++
     }
 
     override fun visitAnnotation(desc: String, visible: Boolean) =
@@ -44,7 +60,7 @@ internal class AnnotationsCollectorMethodVisitor(
             )
 
     override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? {
-        val index = parameter - parametersToSkipNumber
+        val index = if (Opcodes.API_VERSION <= Opcodes.ASM6) parameter - parametersToSkipNumber else parameter
         if (index < 0) return null
 
         val annotations =
@@ -152,7 +168,8 @@ class BinaryJavaAnnotationVisitor(
     }
 
     override fun visitEnum(name: String?, desc: String, value: String) {
-        addArgument(PlainJavaEnumValueAnnotationArgument(name, context.mapDescToClassId(desc), value))
+        val enumClassId = context.mapInternalNameToClassId(Type.getType(desc).internalName)
+        addArgument(PlainJavaEnumValueAnnotationArgument(name, enumClassId, value))
     }
 
     override fun visit(name: String?, value: Any?) {

@@ -2,7 +2,7 @@
 
 package kt843
 
-fun main(args : Array<String>) {
+fun main() {
     // Integer type
     val<!SYNTAX!><!> // this word is grey, which looks strange
 }

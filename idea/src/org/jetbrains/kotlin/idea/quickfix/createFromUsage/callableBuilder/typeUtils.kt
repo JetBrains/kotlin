@@ -20,6 +20,7 @@ import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 internal operator fun KotlinType.contains(inner: KotlinType): Boolean {
@@ -92,7 +94,7 @@ private fun KotlinType.renderSingle(typeParameterNameMap: Map<TypeParameterDescr
             .mapKeys { it.key.typeConstructor }
 
     val typeToRender = TypeSubstitutor.create(substitution).substitute(this, Variance.INVARIANT)!!
-    val renderer = if (fq) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES
+    val renderer = if (fq) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS
     return renderer.renderType(typeToRender)
 }
 
@@ -162,12 +164,7 @@ fun KtExpression.guessTypes(
         // if we know the actual type of the expression
         val theType1 = context.getType(this)
         if (theType1 != null && isAcceptable(theType1)) {
-            val dataFlowInfo = context.getDataFlowInfoAfter(this)
-            val dataFlowValueFactory = this.getResolutionFacade().frontendService<DataFlowValueFactory>()
-            val dataFlowValue = dataFlowValueFactory.createDataFlowValue(this, theType1, context, module)
-
-            val possibleTypes = dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings)
-            return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
+            return getDataFlowAwareTypes(this, context, theType1).toTypedArray()
         }
     }
 
@@ -336,10 +333,25 @@ private fun TypePredicate.getRepresentativeTypes(): Set<KotlinType> {
         is AllSubtypes -> Collections.singleton(upperBound)
         is ForAllTypes -> {
             if (typeSets.isEmpty()) AllTypes.getRepresentativeTypes()
-            else typeSets.map { it.getRepresentativeTypes() }.reduce { a, b -> a.intersect(b) }
+            else typeSets.asSequence().map { it.getRepresentativeTypes() }.reduce { a, b -> a.intersect(b) }
         }
         is ForSomeType -> typeSets.flatMapTo(LinkedHashSet<KotlinType>()) { it.getRepresentativeTypes() }
         is AllTypes -> emptySet()
         else -> throw AssertionError("Invalid type predicate: ${this}")
     }
+}
+
+fun getDataFlowAwareTypes(
+    expression: KtExpression,
+    bindingContext: BindingContext = expression.analyze(),
+    originalType: KotlinType? = bindingContext.getType(expression)
+): Collection<KotlinType> {
+    if (originalType == null) return emptyList()
+    val dataFlowInfo = bindingContext.getDataFlowInfoAfter(expression)
+    val dataFlowValueFactory = expression.getResolutionFacade().frontendService<DataFlowValueFactory>()
+    val expressionType = bindingContext.getType(expression) ?: return listOf(originalType)
+    val dataFlowValue = dataFlowValueFactory.createDataFlowValue(
+        expression, expressionType, bindingContext, expression.getResolutionFacade().moduleDescriptor
+    )
+    return dataFlowInfo.getCollectedTypes(dataFlowValue, expression.languageVersionSettings).ifEmpty { listOf(originalType) }
 }

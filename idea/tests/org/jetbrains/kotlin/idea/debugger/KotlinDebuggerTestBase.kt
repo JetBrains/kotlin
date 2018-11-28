@@ -59,12 +59,12 @@ import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinLineBreakpointType
 import org.jetbrains.kotlin.idea.debugger.stepping.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
-import java.lang.AssertionError
 import javax.swing.SwingUtilities
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
@@ -112,6 +112,8 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         debuggerSettings.SKIP_CLASSLOADERS = fileText.getValueForSetting("SKIP_CLASSLOADERS", oldSettings!!.SKIP_CLASSLOADERS)
         debuggerSettings.TRACING_FILTERS_ENABLED = fileText.getValueForSetting("TRACING_FILTERS_ENABLED", oldSettings!!.TRACING_FILTERS_ENABLED)
         debuggerSettings.SKIP_GETTERS = fileText.getValueForSetting("SKIP_GETTERS", oldSettings!!.SKIP_GETTERS)
+
+        DebuggerUtils.forceRanking = InTextDirectivesUtils.isDirectiveDefined(fileText, "FORCE_RANKING")
     }
 
     private fun String.getValueForSetting(name: String, defaultValue: Boolean): Boolean {
@@ -136,6 +138,8 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         debuggerSettings.SKIP_CLASSLOADERS = oldSettings!!.SKIP_CLASSLOADERS
         debuggerSettings.TRACING_FILTERS_ENABLED = oldSettings!!.TRACING_FILTERS_ENABLED
         debuggerSettings.SKIP_GETTERS = oldSettings!!.SKIP_GETTERS
+
+        DebuggerUtils.forceRanking = false
     }
 
     protected val dp: DebugProcessImpl
@@ -246,7 +250,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                         KotlinLambdaMethodFilter(
                                 stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline, stepTarget.isSuspend)
                     is KotlinMethodSmartStepTarget ->
-                        KotlinBasicStepMethodFilter(stepTarget.descriptor, stepTarget.getCallingExpressionLines()!!)
+                        KotlinBasicStepMethodFilter(
+                            stepTarget.declaration?.createSmartPointer(),
+                            stepTarget.isInvoke,
+                            stepTarget.targetMethodName,
+                            stepTarget.getCallingExpressionLines()!!)
                     is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.method, stepTarget.getCallingExpressionLines())
                     else -> null
                 }

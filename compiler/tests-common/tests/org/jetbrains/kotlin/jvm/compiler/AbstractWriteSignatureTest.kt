@@ -5,67 +5,33 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import com.google.common.io.Closeables
-import com.google.common.io.Files
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.GenerationUtils
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.junit.Assert
 import java.io.File
-import java.io.FileInputStream
-import java.nio.charset.Charset
 import java.util.*
 import java.util.regex.MatchResult
 
-abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
-    private var environment: KotlinCoreEnvironment? = null
+abstract class AbstractWriteSignatureTest : CodegenTestCase() {
 
-    override fun setUp() {
-        super.setUp()
-        environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                myTestRootDisposable, ConfigurationKind.ALL, jdkKind
-        )
-    }
 
-    protected open val jdkKind: TestJdkKind
-        get() = TestJdkKind.MOCK_JDK
-
-    override fun tearDown() {
-        environment = null
-        super.tearDown()
-    }
-
-    protected fun doTest(ktFileName: String) {
-        val ktFile = File(ktFileName)
-        val text = FileUtil.loadFile(ktFile, true)
-
-        setupLanguageVersionSettingsForCompilerTests(text, environment!!)
-
-        val psiFile = KotlinTestUtils.createFile(ktFile.name, text, environment!!.project)
-
-        val fileFactory = GenerationUtils.compileFileTo(psiFile, environment!!, tmpdir)
-
-        Disposer.dispose(myTestRootDisposable)
-
-        val expectations = parseExpectations(ktFile)
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
+        compile(files, javaFilesDir)
         try {
-            expectations.check()
-        }
-        catch (e: Throwable) {
-            println(fileFactory.createText())
+            parseExpectations(wholeFile).check()
+        } catch (e: Throwable) {
+            println(classFileFactory.createText())
             throw e
         }
     }
 
-    private class SignatureExpectation(val header: String, val name: String, val expectedJvmSignature: String?, expectedGenericSignature: String) {
+    private class SignatureExpectation(
+        val header: String,
+        val name: String,
+        val expectedJvmSignature: String?,
+        expectedGenericSignature: String
+    ) {
         private val expectedFormattedSignature = formatSignature(header, expectedJvmSignature, expectedGenericSignature)
         private val jvmDescriptorToFormattedSignature = mutableMapOf<String, String>()
 
@@ -80,28 +46,28 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         fun check() {
             val formattedActualSignature =
-                    if (expectedJvmSignature == null) {
-                        Assert.assertTrue(
-                                "Expected single declaration, but ${jvmDescriptorToFormattedSignature.keys} found",
-                                jvmDescriptorToFormattedSignature.size == 1)
+                if (expectedJvmSignature == null) {
+                    Assert.assertTrue(
+                        "Expected single declaration, but ${jvmDescriptorToFormattedSignature.keys} found",
+                        jvmDescriptorToFormattedSignature.size == 1
+                    )
 
-                        jvmDescriptorToFormattedSignature.values.single()
+                    jvmDescriptorToFormattedSignature.values.single()
+                } else {
+                    jvmDescriptorToFormattedSignature[expectedJvmSignature].sure {
+                        "Expected $expectedJvmSignature but only ${jvmDescriptorToFormattedSignature.keys} found for $name"
                     }
-                    else {
-                        jvmDescriptorToFormattedSignature[expectedJvmSignature].sure {
-                            "Expected $expectedJvmSignature but only ${jvmDescriptorToFormattedSignature.keys} found for $name"
-                        }
-                    }
+                }
 
             Assert.assertEquals(expectedFormattedSignature, formattedActualSignature)
         }
     }
 
-    private inner class PackageExpectationsSuite() {
+    private inner class PackageExpectationsSuite {
         private val classSuitesByClassName = LinkedHashMap<String, ClassExpectationsSuite>()
 
         fun getOrCreateClassSuite(className: String): ClassExpectationsSuite =
-                classSuitesByClassName.getOrPut(className) { ClassExpectationsSuite(className) }
+            classSuitesByClassName.getOrPut(className) { ClassExpectationsSuite(className) }
 
         fun check() {
             Assert.assertTrue(classSuitesByClassName.isNotEmpty())
@@ -117,29 +83,27 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         fun check() {
             val checker = Checker()
-            val classFileName = "$tmpdir/${className.replace('.', '/')}.class"
-            val classFile = File(classFileName)
+            val relativeClassFileName = "${className.replace('.', '/')}.class"
 
-            processClassFile(checker, classFile)
+            val outputFile = classFileFactory.currentOutput.single { it.relativePath == relativeClassFileName }
+            processClassFile(checker, outputFile.asByteArray())
 
             if (className.endsWith("Package")) {
                 // This class is a package facade. We should also check package parts.
-                processPackageParts(checker, classFile)
+                processPackageParts(checker, relativeClassFileName)
             }
 
             checkCollectedSignatures()
         }
 
-        private fun processPackageParts(checker: Checker, classFile: File) {
+        private fun processPackageParts(checker: Checker, relativeClassFileName: String) {
             // Look for package parts in the same directory.
             // Package part file names for package SomePackage look like SomePackage$<hash>.class.
-            val classDir = classFile.parentFile
-            val classLastName = classFile.name
-            val packageFacadePrefix = classLastName.replace(".class", "\$")
-            classDir.listFiles { _, lastName ->
-                lastName.startsWith(packageFacadePrefix) && lastName.endsWith(".class")
+            val partPrefix = relativeClassFileName.replace(".class", "\$")
+            classFileFactory.currentOutput.filter {
+                it.relativePath.startsWith(partPrefix) && it.relativePath.endsWith(".class")
             }.forEach { packageFacadeFile ->
-                processClassFile(checker, packageFacadeFile)
+                processClassFile(checker, packageFacadeFile.asByteArray())
             }
         }
 
@@ -147,24 +111,33 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             (classExpectations + methodExpectations + fieldExpectations).forEach(SignatureExpectation::check)
         }
 
-        private fun processClassFile(checker: Checker, classFile: File) {
-            val classInputStream = FileInputStream(classFile)
-            try {
-                ClassReader(classInputStream).accept(checker,
-                                                     ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
-            }
-            finally {
-                Closeables.closeQuietly(classInputStream)
-            }
+        private fun processClassFile(checker: Checker, classData: ByteArray) {
+            ClassReader(classData).accept(
+                checker,
+                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+            )
         }
 
         private inner class Checker : ClassVisitor(Opcodes.ASM5) {
-            override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
+            override fun visit(
+                version: Int,
+                access: Int,
+                name: String,
+                signature: String?,
+                superName: String?,
+                interfaces: Array<out String>?
+            ) {
                 classExpectations.forEach { it.accept(name, name, signature ?: "null") }
                 super.visit(version, access, name, signature, superName, interfaces)
             }
 
-            override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+            override fun visitMethod(
+                access: Int,
+                name: String,
+                desc: String,
+                signature: String?,
+                exceptions: Array<out String>?
+            ): MethodVisitor? {
                 methodExpectations.forEach { it.accept(name, desc, signature ?: "null") }
                 return super.visitMethod(access, name, desc, signature, exceptions)
             }
@@ -191,7 +164,7 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
     private fun parseExpectations(ktFile: File): PackageExpectationsSuite {
         val expectations = PackageExpectationsSuite()
 
-        val lines = Files.readLines(ktFile, Charset.forName("utf-8"))
+        val lines = ktFile.readLines()
         var lineNo = 0
         while (lineNo < lines.size) {
             val line = lines[lineNo]
@@ -203,12 +176,12 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
                 val memberName = expectationMatch.group(4)
 
                 if (kind == "class" && memberName != null) {
-                    throw AssertionError("$ktFile:${lineNo+1}: use $className\$$memberName to denote inner class")
+                    throw AssertionError("$ktFile:${lineNo + 1}: use $className\$$memberName to denote inner class")
                 }
 
                 val jvmSignatureMatch = jvmSignatureRegex.matchExact(lines[lineNo + 1])
                 val genericSignatureMatch = genericSignatureRegex.matchExact(lines[lineNo + 1])
-                                            ?: genericSignatureRegex.matchExact(lines[lineNo + 2])
+                    ?: genericSignatureRegex.matchExact(lines[lineNo + 2])
 
                 if (genericSignatureMatch != null) {
                     val jvmSignature = jvmSignatureMatch?.group(1)
@@ -220,17 +193,15 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
                         "class" -> classSuite.addClassExpectation(className, jvmSignature, genericSignature)
                         "field" -> classSuite.addFieldExpectation(className, memberName, jvmSignature, genericSignature)
                         "method" -> classSuite.addMethodExpectation(className, memberName, jvmSignature, genericSignature)
-                        else -> throw AssertionError("$ktFile:${lineNo+1}: unsupported expectation kind: $kind")
+                        else -> throw AssertionError("$ktFile:${lineNo + 1}: unsupported expectation kind: $kind")
                     }
 
                     // Expectation, skip the following 'jvm signature' and 'generic signature' lines
                     lineNo += 3
+                } else {
+                    throw AssertionError("$ktFile:${lineNo + 1}: '$kind' should be followed by 'jvm signature' and 'generic signature'")
                 }
-                else {
-                    throw AssertionError("$ktFile:${lineNo+1}: '$kind' should be followed by 'jvm signature' and 'generic signature'")
-                }
-            }
-            else {
+            } else {
                 ++lineNo
             }
         }
@@ -240,11 +211,11 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
     companion object {
         fun formatSignature(header: String, jvmSignature: String?, genericSignature: String): String {
-            return listOf(
-                    header,
-                    jvmSignature?.let { "jvm signature: $it" },
-                    "generic signature: $genericSignature"
-            ).filterNotNull().joinToString("\n") { "// $it" }
+            return listOfNotNull(
+                header,
+                jvmSignature?.let { "jvm signature: $it" },
+                "generic signature: $genericSignature"
+            ).joinToString("\n") { "// $it" }
         }
 
         val expectationRegex = Regex("^// (class|method|field): *([^:]+)(::(.+))? *(//.*)?")
@@ -253,11 +224,10 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         fun Regex.matchExact(input: String): MatchResult? {
             val matcher = this.toPattern().matcher(input)
-            if (matcher.matches()) {
-                return matcher.toMatchResult()
-            }
-            else {
-                return null
+            return if (matcher.matches()) {
+                matcher.toMatchResult()
+            } else {
+                null
             }
         }
     }

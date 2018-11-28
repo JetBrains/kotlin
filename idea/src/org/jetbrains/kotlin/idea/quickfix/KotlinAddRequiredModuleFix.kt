@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class KotlinAddRequiredModuleFix(module: PsiJavaModule, private val requiredName: String) : LocalQuickFixAndIntentionActionOnPsiElement(module) {
     @Suppress("InvalidBundleOrProperty")
-    override fun getFamilyName(): String = QuickFixBundle.message("module.info.add.requires.family.name")
+    override fun getFamilyName(): String = "Add 'requires' directive to module-info.java"
     @Suppress("InvalidBundleOrProperty")
     override fun getText(): String = QuickFixBundle.message("module.info.add.requires.name", requiredName)
 

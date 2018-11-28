@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+class FooException : Exception()
+
+@Throws(FooException::class)
+fun test() {
+    throw FooException()
+}

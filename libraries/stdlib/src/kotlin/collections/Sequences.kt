@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SequencesKt")
 
@@ -23,14 +28,6 @@ public inline fun <T> Sequence(crossinline iterator: () -> Iterator<T>): Sequenc
 public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constrainOnce()
 
 /**
- * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.
- * @sample samples.collections.Sequences.Building.sequenceFromEnumeration
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun<T> java.util.Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
-
-/**
  * Creates a sequence that returns the specified values.
  *
  * @sample samples.collections.Sequences.Building.sequenceOfValues
@@ -46,6 +43,31 @@ private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
     override fun iterator(): Iterator<Nothing> = EmptyIterator
     override fun drop(n: Int) = EmptySequence
     override fun take(n: Int) = EmptySequence
+}
+
+/**
+ * Returns this sequence if it's not `null` and the empty sequence otherwise.
+ * @sample samples.collections.Sequences.Usage.sequenceOrEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>?.orEmpty(): Sequence<T> = this ?: emptySequence()
+
+
+/**
+ * Returns a sequence that iterates through the elements either of this sequence
+ * or, if this sequence turns out to be empty, of the sequence returned by [defaultValue] function.
+ *
+ * @sample samples.collections.Sequences.Usage.sequenceIfEmpty
+ */
+@SinceKotlin("1.3")
+public fun <T> Sequence<T>.ifEmpty(defaultValue: () -> Sequence<T>): Sequence<T> = sequence {
+    val iterator = this@ifEmpty.iterator()
+    if (iterator.hasNext()) {
+        yieldAll(iterator)
+    } else {
+        yieldAll(defaultValue())
+    }
 }
 
 /**
@@ -92,12 +114,13 @@ public fun <T, R> Sequence<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
  * the specified [predicate].
  *
  * @param sendWhen If `true`, values for which the predicate returns `true` are returned. Otherwise,
-* values for which the predicate returns `false` are returned
+ * values for which the predicate returns `false` are returned
  */
-internal class FilteringSequence<T>(private val sequence: Sequence<T>,
-                                  private val sendWhen: Boolean = true,
-                                  private val predicate: (T) -> Boolean
-                                 ) : Sequence<T> {
+internal class FilteringSequence<T>(
+    private val sequence: Sequence<T>,
+    private val sendWhen: Boolean = true,
+    private val predicate: (T) -> Boolean
+) : Sequence<T> {
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = sequence.iterator()
@@ -170,7 +193,7 @@ constructor(private val sequence: Sequence<T>, private val transformer: (Int, T)
         val iterator = sequence.iterator()
         var index = 0
         override fun next(): R {
-            return transformer(index++, iterator.next())
+            return transformer(checkIndexOverflow(index++), iterator.next())
         }
 
         override fun hasNext(): Boolean {
@@ -189,7 +212,7 @@ constructor(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
         val iterator = sequence.iterator()
         var index = 0
         override fun next(): IndexedValue<T> {
-            return IndexedValue(index++, iterator.next())
+            return IndexedValue(checkIndexOverflow(index++), iterator.next())
         }
 
         override fun hasNext(): Boolean {
@@ -204,10 +227,11 @@ constructor(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
  * values as soon as one of the underlying sequences stops returning values.
  */
 internal class MergingSequence<T1, T2, V>
-                                       constructor(private val sequence1: Sequence<T1>,
-                                        private val sequence2: Sequence<T2>,
-                                        private val transform: (T1, T2) -> V
-                                       ) : Sequence<V> {
+constructor(
+    private val sequence1: Sequence<T1>,
+    private val sequence2: Sequence<T2>,
+    private val transform: (T1, T2) -> V
+) : Sequence<V> {
     override fun iterator(): Iterator<V> = object : Iterator<V> {
         val iterator1 = sequence1.iterator()
         val iterator2 = sequence2.iterator()
@@ -222,11 +246,11 @@ internal class MergingSequence<T1, T2, V>
 }
 
 internal class FlatteningSequence<T, R, E>
-    constructor(
-        private val sequence: Sequence<T>,
-        private val transformer: (T) -> R,
-        private val iterator: (R) -> Iterator<E>
-    ) : Sequence<E> {
+constructor(
+    private val sequence: Sequence<T>,
+    private val transformer: (T) -> R,
+    private val iterator: (R) -> Iterator<E>
+) : Sequence<E> {
     override fun iterator(): Iterator<E> = object : Iterator<E> {
         val iterator = sequence.iterator()
         var itemIterator: Iterator<E>? = null
@@ -274,16 +298,16 @@ internal interface DropTakeSequence<T> : Sequence<T> {
  * A sequence that skips [startIndex] values from the underlying [sequence]
  * and stops returning values right before [endIndex], i.e. stops at `endIndex - 1`
  */
-internal class SubSequence<T> (
-        private val sequence: Sequence<T>,
-        private val startIndex: Int,
-        private val endIndex: Int
-): Sequence<T>, DropTakeSequence<T> {
+internal class SubSequence<T>(
+    private val sequence: Sequence<T>,
+    private val startIndex: Int,
+    private val endIndex: Int
+) : Sequence<T>, DropTakeSequence<T> {
 
     init {
         require(startIndex >= 0) { "startIndex should be non-negative, but is $startIndex" }
         require(endIndex >= 0) { "endIndex should be non-negative, but is $endIndex" }
-        require(endIndex >= startIndex) { "endIndex should be not less than startIndex, but was $endIndex < $startIndex"}
+        require(endIndex >= startIndex) { "endIndex should be not less than startIndex, but was $endIndex < $startIndex" }
     }
 
     private val count: Int get() = endIndex - startIndex
@@ -298,7 +322,7 @@ internal class SubSequence<T> (
 
         // Shouldn't be called from constructor to avoid premature iteration
         private fun drop() {
-            while(position < startIndex && iterator.hasNext()) {
+            while (position < startIndex && iterator.hasNext()) {
                 iterator.next()
                 position++
             }
@@ -323,13 +347,13 @@ internal class SubSequence<T> (
  * A sequence that returns at most [count] values from the underlying [sequence], and stops returning values
  * as soon as that count is reached.
  */
-internal class TakeSequence<T> (
+internal class TakeSequence<T>(
     private val sequence: Sequence<T>,
     private val count: Int
 ) : Sequence<T>, DropTakeSequence<T> {
 
     init {
-        require (count >= 0) { "count must be non-negative, but was $count." }
+        require(count >= 0) { "count must be non-negative, but was $count." }
     }
 
     override fun drop(n: Int): Sequence<T> = if (n >= count) emptySequence() else SubSequence(sequence, n, count)
@@ -357,9 +381,10 @@ internal class TakeSequence<T> (
  * `true`, and stops returning values once the function returns `false` for the next element.
  */
 internal class TakeWhileSequence<T>
-                                 constructor(private val sequence: Sequence<T>,
-                                  private val predicate: (T) -> Boolean
-                                 ) : Sequence<T> {
+constructor(
+    private val sequence: Sequence<T>,
+    private val predicate: (T) -> Boolean
+) : Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = sequence.iterator()
         var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue
@@ -403,16 +428,16 @@ internal class TakeWhileSequence<T>
  * A sequence that skips the specified number of values from the underlying [sequence] and returns
  * all values after that.
  */
-internal class DropSequence<T> (
-        private val sequence: Sequence<T>,
-        private val count: Int
+internal class DropSequence<T>(
+    private val sequence: Sequence<T>,
+    private val count: Int
 ) : Sequence<T>, DropTakeSequence<T> {
     init {
-        require (count >= 0) { "count must be non-negative, but was $count." }
+        require(count >= 0) { "count must be non-negative, but was $count." }
     }
 
-    override fun drop(n: Int): Sequence<T> = DropSequence(sequence, count + n)
-    override fun take(n: Int): Sequence<T> = SubSequence(sequence, count, count + n)
+    override fun drop(n: Int): Sequence<T> = (count + n).let { n1 -> if (n1 < 0) DropSequence(this, n) else DropSequence(sequence, n1) }
+    override fun take(n: Int): Sequence<T> = (count + n).let { n1 -> if (n1 < 0) TakeSequence(this, n) else SubSequence(sequence, count, n1) }
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = sequence.iterator()
@@ -443,9 +468,10 @@ internal class DropSequence<T> (
  * all values after that.
  */
 internal class DropWhileSequence<T>
-                                 constructor(private val sequence: Sequence<T>,
-                                  private val predicate: (T) -> Boolean
-                                 ) : Sequence<T> {
+constructor(
+    private val sequence: Sequence<T>,
+    private val predicate: (T) -> Boolean
+) : Sequence<T> {
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = sequence.iterator()
@@ -486,11 +512,11 @@ internal class DropWhileSequence<T>
     }
 }
 
-internal class DistinctSequence<T, K>(private val source : Sequence<T>, private val keySelector : (T) -> K) : Sequence<T> {
+internal class DistinctSequence<T, K>(private val source: Sequence<T>, private val keySelector: (T) -> K) : Sequence<T> {
     override fun iterator(): Iterator<T> = DistinctIterator(source.iterator(), keySelector)
 }
 
-private class DistinctIterator<T, K>(private val source : Iterator<T>, private val keySelector : (T) -> K) : AbstractIterator<T>() {
+private class DistinctIterator<T, K>(private val source: Iterator<T>, private val keySelector: (T) -> K) : AbstractIterator<T>() {
     private val observed = HashSet<K>()
 
     override fun computeNext() {
@@ -509,7 +535,7 @@ private class DistinctIterator<T, K>(private val source : Iterator<T>, private v
 }
 
 
-private class GeneratorSequence<T: Any>(private val getInitialValue: () -> T?, private val getNextValue: (T) -> T?): Sequence<T> {
+private class GeneratorSequence<T : Any>(private val getInitialValue: () -> T?, private val getNextValue: (T) -> T?) : Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         var nextItem: T? = null
         var nextState: Int = -2 // -2 for initial unknown, -1 for next unknown, 0 for done, 1 for continue
@@ -553,17 +579,6 @@ public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
     return if (this is ConstrainedOnceSequence<T>) this else ConstrainedOnceSequence(this)
 }
 
-@kotlin.jvm.JvmVersion
-private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
-    private val sequenceRef = java.util.concurrent.atomic.AtomicReference(sequence)
-
-    override fun iterator(): Iterator<T> {
-        val sequence = sequenceRef.getAndSet(null) ?: throw IllegalStateException("This sequence can be consumed only once.")
-        return sequence.iterator()
-    }
-}
-
-
 
 /**
  * Returns a sequence which invokes the function to calculate the next value on each iteration until the function returns `null`.
@@ -571,7 +586,7 @@ private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
  * The returned sequence is constrained to be iterated only once.
  *
  * @see constrainOnce
- * @see kotlin.coroutines.experimental.buildSequence
+ * @see kotlin.sequences.sequence
  *
  * @sample samples.collections.Sequences.Building.generateSequence
  */
@@ -588,7 +603,7 @@ public fun <T : Any> generateSequence(nextFunction: () -> T?): Sequence<T> {
  *
  * The sequence can be iterated multiple times, each time starting with [seed].
  *
- * @see kotlin.coroutines.experimental.buildSequence
+ * @see kotlin.sequences.sequence
  *
  * @sample samples.collections.Sequences.Building.generateSequenceWithSeed
  */
@@ -608,10 +623,10 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
  *
  * The sequence can be iterated multiple times.
  *
- * @see kotlin.coroutines.experimental.buildSequence
+ * @see kotlin.sequences.sequence
  *
  * @sample samples.collections.Sequences.Building.generateSequenceWithLazySeed
  */
-public fun <T: Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
-        GeneratorSequence(seedFunction, nextFunction)
+public fun <T : Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
+    GeneratorSequence(seedFunction, nextFunction)
 

@@ -23,8 +23,8 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestCase
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
@@ -52,7 +52,7 @@ fun PlatformTestCase.projectLibrary(
     }
 }
 
-val File.jarRoot get() = StandardFileSystems.getJarRootForLocalFile(LocalFileSystem.getInstance().findFileByIoFile(this)!!)!!
+val File.jarRoot get() = JarFileSystem.getInstance().getRootByLocal(LocalFileSystem.getInstance().findFileByIoFile(this)!!)!!
 
 fun Module.addDependency(
         library: Library,

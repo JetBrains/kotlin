@@ -29,6 +29,11 @@ data class BuildDifference(val ts: Long, val isIncremental: Boolean, val dirtyDa
 data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
     companion object {
         fun readFromFile(file: File, reporter: ICReporter?): BuildDiffsStorage? {
+            val diffs = readDiffsFromFile(file, reporter)
+            return diffs?.let { BuildDiffsStorage(it) }
+        }
+
+        fun readDiffsFromFile(file: File, reporter: ICReporter?): MutableList<BuildDifference>? {
             fun reportFail(reason: String) {
                 reporter?.report { "Could not read diff from file $file: $reason" }
             }
@@ -48,7 +53,7 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
                     repeat(size) {
                         result.add(input.readBuildDifference())
                     }
-                    return BuildDiffsStorage(result)
+                    return result
                 }
             }
             catch (e: IOException) {

@@ -1,7 +1,7 @@
 package
 
-@unrepann(x = 0) public var annotated: kotlin.Int
-@unrepann(x = 0) @property:unrepann(x = 1) public var annotated2: kotlin.Int
+@unrepann(x = 0) @get:unrepann(x = 1) public var annotated: kotlin.Int
+@unrepann(x = 0) @unrepann(x = 1) public var annotated2: kotlin.Int
 @ann(y = 0) @ann(y = 1) public fun foo(/*0*/ @ann(y = 7) @ann(y = 2) x: kotlin.Int): kotlin.Int
 
 @unrepann(x = 1) @unrepann(x = 2) public final class DoubleAnnotated {
@@ -26,7 +26,7 @@ public final annotation class ann : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) public final annotation class annexpr : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class annexpr : kotlin.Annotation {
     public constructor annexpr()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -11,7 +11,7 @@ interface Stream<T> {
 }
 fun stream(): Stream<String> = null!!
 
-fun main(args: Array<String>) {
+fun main() {
     val stream: Stream<String> = stream()
     val xs = stream.collect(toList())
     xs.foo()

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 import kotlin.test.*
@@ -16,10 +17,7 @@ operator fun String.getValue(receiver: Any?, p: Any): String =
         runLogged("get($this);") { this }
 
 val testO by runLogged("O;") { "O" }
-val testK by runLogged("K;") { "K" }
-val testOK = runLogged("OK;") { testO + testK }
 
 fun box(): String {
-    assertEquals("O;tdf(O);K;tdf(K);OK;get(O);get(K);", log)
-    return testOK
+    return "OK"
 }

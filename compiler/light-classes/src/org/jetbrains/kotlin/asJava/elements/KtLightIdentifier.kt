@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 open class KtLightIdentifier(
-        private val lightOwner: PsiNameIdentifierOwner,
-        private val ktDeclaration: KtNamedDeclaration?
+    private val lightOwner: PsiElement,
+    private val ktDeclaration: KtNamedDeclaration?
 ) : LightIdentifier(lightOwner.manager, ktDeclaration?.name ?: ""), PsiCompiledElement {
     val origin: PsiElement?
         get() = when (ktDeclaration) {

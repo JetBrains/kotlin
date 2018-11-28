@@ -152,7 +152,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     @Nullable
     private static VariableDescriptor getVariableByName(@NotNull LexicalScope scope, @NotNull Name name) {
         while (true) {
-            Collection<VariableDescriptor> variables = scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND);
+            Collection<? extends VariableDescriptor> variables = scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND);
             if (!variables.isEmpty()) {
                 return variables.size() == 1 ? variables.iterator().next() : null;
             }

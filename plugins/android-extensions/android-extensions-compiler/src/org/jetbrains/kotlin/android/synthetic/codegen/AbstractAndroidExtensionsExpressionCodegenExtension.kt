@@ -92,7 +92,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         return StackValue.functionCall(Type.VOID_TYPE, null) {
             val bytecodeClassName = c.typeMapper.mapType(container).internalName
 
-            actualReceiver.put(c.typeMapper.mapType(container), it)
+            actualReceiver.put(c.typeMapper.mapType(container), container.defaultType, it)
             it.invokevirtual(bytecodeClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
         }
     }
@@ -252,11 +252,11 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
 
         val containerType = containerOptions.containerType
         when (containerType) {
-            AndroidContainerType.ACTIVITY, AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.VIEW, AndroidContainerType.DIALOG -> {
+            AndroidContainerType.ACTIVITY, AndroidContainerType.ANDROIDX_SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.VIEW, AndroidContainerType.DIALOG -> {
                 loadId()
                 iv.invokevirtual(containerType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
             }
-            AndroidContainerType.FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT, LAYOUT_CONTAINER -> {
+            AndroidContainerType.FRAGMENT, AndroidContainerType.ANDROIDX_SUPPORT_FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT, LAYOUT_CONTAINER -> {
                 if (containerType == LAYOUT_CONTAINER) {
                     iv.invokeinterface(containerType.internalClassName, "getContainerView", "()Landroid/view/View;")
                 } else {

@@ -16,7 +16,7 @@ PsiJetFileStubImpl[package=]
     CLASS_BODY
       ENUM_ENTRY[fqName=E.E1, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
       ENUM_ENTRY[fqName=E.E2, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
-  FUN[fqName=types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=types]
+  FUN[fqName=types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=types]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=param]
         TYPE_REFERENCE
@@ -33,6 +33,11 @@ PsiJetFileStubImpl[package=]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=b]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=E]
+                      REFERENCE_EXPRESSION[referencedName=E1]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=DoubleRange]
     TYPE_REFERENCE
@@ -49,5 +54,10 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=b]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=E]
+                  REFERENCE_EXPRESSION[referencedName=E2]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Unit]

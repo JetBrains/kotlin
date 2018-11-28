@@ -43,26 +43,28 @@ class ReplCompilerStageHistory(private val state: GenericReplCompilerState) : Ba
     }
 
     private fun checkConsistent(removedCompiledLines: Iterable<ILineId>, removedAnalyzedLines: List<ReplCodeLine>) {
-        removedCompiledLines.zip(removedAnalyzedLines).forEach {
-            if (it.first != LineId(it.second)) {
-                throw IllegalStateException("History mismatch when resetting lines: ${it.first.no} != ${it.second}")
+        removedCompiledLines.zip(removedAnalyzedLines).forEach { (removedCompiledLine, removedAnalyzedLine) ->
+            if (removedCompiledLine != LineId(removedAnalyzedLine)) {
+                throw IllegalStateException("History mismatch when resetting lines: ${removedCompiledLine.no} != $removedAnalyzedLine")
             }
         }
     }
 }
 
-abstract class GenericReplCheckerState: IReplStageState<ScriptDescriptor> {
+abstract class GenericReplCheckerState : IReplStageState<ScriptDescriptor> {
 
     // "line" - is the unit of evaluation here, could in fact consists of several character lines
     class LineState(
-            val codeLine: ReplCodeLine,
-            val psiFile: KtFile,
-            val errorHolder: DiagnosticMessageHolder)
+        val codeLine: ReplCodeLine,
+        val psiFile: KtFile,
+        val errorHolder: DiagnosticMessageHolder
+    )
 
     var lastLineState: LineState? = null // for transferring state to the compiler in most typical case
 }
 
-class GenericReplCompilerState(environment: KotlinCoreEnvironment, override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : IReplStageState<ScriptDescriptor>, GenericReplCheckerState() {
+class GenericReplCompilerState(environment: KotlinCoreEnvironment, override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()) :
+    IReplStageState<ScriptDescriptor>, GenericReplCheckerState() {
 
     override val history = ReplCompilerStageHistory(this)
 

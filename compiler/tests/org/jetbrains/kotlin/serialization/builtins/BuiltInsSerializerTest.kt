@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import org.jetbrains.kotlin.builtins.BuiltInsLoaderImpl
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInsLoaderImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -103,5 +103,17 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
 
     fun testVarArgs() {
         doTest("annotationArguments/varargs.kt")
+    }
+
+    fun testSourceRetainedAnnotation() {
+        doTest("sourceRetainedAnnotation.kt")
+    }
+
+    fun testBinaryRetainedAnnotation() {
+        doTest("binaryRetainedAnnotation.kt")
+    }
+
+    fun testPropertyAccessorAnnotations() {
+        doTest("propertyAccessorAnnotations.kt")
     }
 }

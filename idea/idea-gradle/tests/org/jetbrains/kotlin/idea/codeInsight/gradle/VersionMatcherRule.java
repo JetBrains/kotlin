@@ -29,24 +29,24 @@ import org.junit.runner.Description;
 // copy of org.jetbrains.plugins.gradle.tooling.VersionMatcherRule
 public class VersionMatcherRule extends TestWatcher {
 
-  @Nullable
-  private CustomMatcher myMatcher;
+    @Nullable
+    private CustomMatcher myMatcher;
 
-  @NotNull
-  public Matcher getMatcher() {
-    return myMatcher != null ? myMatcher : CoreMatchers.anything();
-  }
+    @NotNull
+    public Matcher getMatcher() {
+        return myMatcher != null ? myMatcher : CoreMatchers.anything();
+    }
 
-  @Override
-  protected void starting(Description d) {
-    final TargetVersions targetVersions = d.getAnnotation(TargetVersions.class);
-    if (targetVersions == null) return;
+    @Override
+    protected void starting(Description d) {
+        final TargetVersions targetVersions = d.getAnnotation(TargetVersions.class);
+        if (targetVersions == null) return;
 
-    myMatcher = new CustomMatcher<String>("Gradle version '" + targetVersions.value() + "'") {
-      @Override
-      public boolean matches(Object item) {
-        return item instanceof String && new VersionMatcher(GradleVersion.version(item.toString())).isVersionMatch(targetVersions);
-      }
-    };
-  }
+        myMatcher = new CustomMatcher<String>("Gradle version '" + targetVersions.value() + "'") {
+            @Override
+            public boolean matches(Object item) {
+                return item instanceof String && new VersionMatcher(GradleVersion.version(item.toString())).isVersionMatch(targetVersions);
+            }
+        };
+    }
 }

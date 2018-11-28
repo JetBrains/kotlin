@@ -50,7 +50,7 @@ fun main(a: A) {
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field?.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.length
     a.field = null
 
     a.nonNullField<!UNNECESSARY_SAFE_CALL!>?.<!>length

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1221
+// EXPECTED_REACHABLE_NODES: 1402
 package foo
 
 val a1 = Array<Int>(3, { i: Int -> i })

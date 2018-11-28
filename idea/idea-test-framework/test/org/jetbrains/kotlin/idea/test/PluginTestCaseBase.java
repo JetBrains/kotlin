@@ -103,10 +103,9 @@ public class PluginTestCaseBase {
             case MOCK_JDK:
                 return mockJdk();
             case FULL_JDK_9:
-                File jre9 = KotlinTestUtils.getJdk9HomeIfPossible();
-                assert jre9 != null : "JDK_19 environment variable is not set";
-                VfsRootAccess.allowRootAccess(jre9.getPath());
-                return getSdk(jre9.getPath(), "Full JDK 9");
+                String jre9 = KotlinTestUtils.getJdk9Home().getPath();
+                VfsRootAccess.allowRootAccess(jre9);
+                return getSdk(jre9, "Full JDK 9");
             case FULL_JDK:
                 return fullJdk();
             default:

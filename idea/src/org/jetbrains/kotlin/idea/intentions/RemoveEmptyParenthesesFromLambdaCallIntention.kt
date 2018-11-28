@@ -22,22 +22,31 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentList
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 
 class RemoveEmptyParenthesesFromLambdaCallInspection : IntentionBasedInspection<KtValueArgumentList>(
-        RemoveEmptyParenthesesFromLambdaCallIntention::class), CleanupLocalInspectionTool {
+    RemoveEmptyParenthesesFromLambdaCallIntention::class
+), CleanupLocalInspectionTool {
     override fun problemHighlightType(element: KtValueArgumentList): ProblemHighlightType =
-            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+        ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
 class RemoveEmptyParenthesesFromLambdaCallIntention : SelfTargetingRangeIntention<KtValueArgumentList>(
-        KtValueArgumentList::class.java, "Remove unnecessary parentheses from function call with lambda") {
+    KtValueArgumentList::class.java, "Remove unnecessary parentheses from function call with lambda"
+) {
 
     override fun applicabilityRange(element: KtValueArgumentList): TextRange? {
         if (element.arguments.isNotEmpty()) return null
         val parent = element.parent as? KtCallExpression ?: return null
-        return if (parent.lambdaArguments.count() == 1) element.range else null
+        val singleLambdaArgument = parent.lambdaArguments.singleOrNull() ?: return null
+        if (element.getLineNumber(start = false) != singleLambdaArgument.getLineNumber(start = true)) return null
+        val prev = element.getPrevSiblingIgnoringWhitespaceAndComments()
+        if (prev is KtCallExpression || (prev as? KtQualifiedExpression)?.callExpression != null) return null
+        return element.range
     }
 
     override fun applyTo(element: KtValueArgumentList, editor: Editor?) {

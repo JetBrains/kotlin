@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.state
@@ -21,6 +10,8 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.SignatureCollectingClassBuilderFactory
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
@@ -37,6 +28,7 @@ import java.util.*
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
         JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL,
+        JvmDeclarationOriginKind.DEFAULT_IMPL_DELEGATION_TO_SUPERINTERFACE_DEFAULT_IMPL,
         JvmDeclarationOriginKind.DELEGATION,
         JvmDeclarationOriginKind.BRIDGE
 )
@@ -53,16 +45,19 @@ private val PREDEFINED_SIGNATURES = listOf(
 }
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(
-        builderFactory: ClassBuilderFactory,
-        bindingContext: BindingContext,
-        private val diagnostics: DiagnosticSink,
-        moduleName: String,
-        shouldGenerate: (JvmDeclarationOrigin) -> Boolean
+    builderFactory: ClassBuilderFactory,
+    bindingContext: BindingContext,
+    private val diagnostics: DiagnosticSink,
+    moduleName: String,
+    languageVersionSettings: LanguageVersionSettings,
+    shouldGenerate: (JvmDeclarationOrigin) -> Boolean,
+    isIrBackend: Boolean
 ) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
 
     // Avoid errors when some classes are not loaded for some reason
     private val typeMapper = KotlinTypeMapper(
-            bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, moduleName, false, false
+        bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, moduleName, JvmTarget.DEFAULT,
+        languageVersionSettings, isIrBackend
     )
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 

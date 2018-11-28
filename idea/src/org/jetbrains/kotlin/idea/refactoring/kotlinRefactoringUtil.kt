@@ -13,6 +13,7 @@ import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.command.CommandAdapter
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.command.CommandProcessor
@@ -25,6 +26,7 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.util.Pass
@@ -59,13 +61,14 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
-import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
@@ -73,6 +76,8 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -258,7 +263,7 @@ fun <T, E : PsiElement> getPsiElementPopup(
         }
     }
 
-    return with(PopupChooserBuilder(list)) {
+    return with(PopupChooserBuilder<E>(list)) {
         title?.let { setTitle(it) }
         renderer.installSpeedSearch(this, true)
         setItemChoosenCallback {
@@ -268,7 +273,7 @@ fun <T, E : PsiElement> getPsiElementPopup(
             }
         }
         addListener(object : JBPopupAdapter() {
-            override fun onClosed(event: LightweightWindowEvent?) {
+            override fun onClosed(event: LightweightWindowEvent) {
                 highlighter?.dropHighlight()
             }
         })
@@ -311,7 +316,7 @@ class SelectionAwareScopeHighlighter(val editor: Editor) {
 }
 
 fun PsiFile.getLineStartOffset(line: Int): Int? {
-    val doc = PsiDocumentManager.getInstance(project).getDocument(this)
+    val doc = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
     if (doc != null && line >= 0 && line < doc.lineCount) {
         val startOffset = doc.getLineStartOffset(line)
         val element = findElementAt(startOffset) ?: return startOffset
@@ -326,11 +331,13 @@ fun PsiFile.getLineStartOffset(line: Int): Int? {
 }
 
 fun PsiFile.getLineEndOffset(line: Int): Int? {
-    return PsiDocumentManager.getInstance(project).getDocument(this)?.getLineEndOffset(line)
+    val document = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
+    return document?.getLineEndOffset(line)
 }
 
 fun PsiElement.getLineNumber(start: Boolean = true): Int {
-    return PsiDocumentManager.getInstance(project).getDocument(this.containingFile)?.getLineNumber(if (start) this.startOffset else this.endOffset) ?: 0
+    val document = containingFile.viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(containingFile)
+    return document?.getLineNumber(if (start) this.startOffset else this.endOffset) ?: 0
 }
 
 fun PsiElement.getLineCount(): Int {
@@ -453,7 +460,7 @@ fun PsiElement.canRefactor(): Boolean {
         this is KtElement ||
         this is PsiMember && language == JavaLanguage.INSTANCE ||
         this is PsiDirectory ->
-            ProjectRootsUtil.isInProjectSource(this)
+            ProjectRootsUtil.isInProjectSource(this, includeScriptsOutsideSourceRoots = true)
         else ->
             false
     }
@@ -649,38 +656,60 @@ fun PsiMember.j2k(): KtNamedDeclaration? {
     return KtPsiFactory(project).createDeclaration(text)
 }
 
-fun (() -> Any).runRefactoringWithPostprocessing(
-        project: Project,
-        targetRefactoringId: String,
-        finishAction: () -> Unit
+internal fun broadcastRefactoringExit(project: Project, refactoringId: String) {
+    project.messageBus.syncPublisher(KotlinRefactoringEventListener.EVENT_TOPIC).onRefactoringExit(refactoringId)
+}
+
+// IMPORTANT: Target refactoring must support KotlinRefactoringEventListener
+internal abstract class CompositeRefactoringRunner(
+    val project: Project,
+    val refactoringId: String
 ) {
-    val connection = project.messageBus.connect()
-    connection.subscribe(RefactoringEventListener.REFACTORING_EVENT_TOPIC,
-                         object : RefactoringEventListener {
-                             override fun undoRefactoring(refactoringId: String) {
+    protected abstract fun runRefactoring()
 
-                             }
+    protected open fun onRefactoringDone() {}
+    protected open fun onExit() {}
 
-                             override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {
+    fun run() {
+        val connection = project.messageBus.connect()
+        connection.subscribe(
+                RefactoringEventListener.REFACTORING_EVENT_TOPIC,
+                object : RefactoringEventListener {
+                    override fun undoRefactoring(refactoringId: String) {
 
-                             }
+                    }
 
-                             override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {
+                    override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {
 
-                             }
+                    }
 
-                             override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) {
-                                 if (refactoringId == targetRefactoringId) {
-                                     try {
-                                         finishAction()
-                                     }
-                                     finally {
-                                         connection.disconnect()
-                                     }
-                                 }
-                             }
-                         })
-    this()
+                    override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {
+
+                    }
+
+                    override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) {
+                        if (refactoringId == this@CompositeRefactoringRunner.refactoringId) {
+                            onRefactoringDone()
+                        }
+                    }
+                }
+        )
+        connection.subscribe(
+                KotlinRefactoringEventListener.EVENT_TOPIC,
+                object : KotlinRefactoringEventListener {
+                    override fun onRefactoringExit(refactoringId: String) {
+                        if (refactoringId == this@CompositeRefactoringRunner.refactoringId) {
+                            try {
+                                onExit()
+                            } finally {
+                                connection.disconnect()
+                            }
+                        }
+                    }
+                }
+        )
+        runRefactoring()
+    }
 }
 
 @Throws(ConfigurationException::class) fun KtElement?.validateElement(errorMessage: String) {
@@ -697,7 +726,7 @@ fun (() -> Any).runRefactoringWithPostprocessing(
 fun invokeOnceOnCommandFinish(action: () -> Unit) {
     val commandProcessor = CommandProcessor.getInstance()
     val listener = object : CommandAdapter() {
-        override fun beforeCommandFinished(event: CommandEvent?) {
+        override fun beforeCommandFinished(event: CommandEvent) {
             action()
             commandProcessor.removeCommandListener(this)
         }
@@ -987,4 +1016,8 @@ internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
 internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {
     val descriptor = unsafeResolveToDescriptor()
     return descriptor.liftToExpected() ?: descriptor
+}
+
+fun DialogWrapper.showWithTransaction() {
+    TransactionGuard.submitTransaction(disposable, Runnable { show() })
 }

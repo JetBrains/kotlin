@@ -21,4 +21,4 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Unresolved reference: test
-An annotation parameter must be a compile-time constant
+An annotation argument must be a compile-time constant

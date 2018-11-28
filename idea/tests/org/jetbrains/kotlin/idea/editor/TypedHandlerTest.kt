@@ -74,6 +74,48 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
             """val x = "$dollar{}]" """
     )
 
+    fun testAutoCloseRawStringInEnd() = doCharTypeTest(
+            '"',
+            """val x = ""<caret>""",
+            """val x = ""${'"'}<caret>""${'"'}"""
+    )
+
+    fun testNoAutoCloseRawStringInEnd() = doCharTypeTest(
+            '"',
+            """val x = ""${'"'}<caret>""",
+            """val x = ""${'"'}""""
+    )
+
+    fun testAutoCloseRawStringInMiddle() = doCharTypeTest(
+            '"',
+            """
+            val x = ""<caret>
+            val y = 12
+            """.trimIndent(),
+            """
+            val x = ""${'"'}<caret>""${'"'}
+            val y = 12
+            """.trimIndent()
+    )
+
+    fun testNoAutoCloseBetweenMultiQuotes() = doCharTypeTest(
+            '"',
+            """val x = ""${'"'}<caret>${'"'}""/**/""",
+            """val x = ""${'"'}${'"'}<caret>""/**/"""
+    )
+
+    fun testNoAutoCloseBetweenMultiQuotes1() = doCharTypeTest(
+            '"',
+            """val x = ""${'"'}"<caret>"${'"'}/**/""",
+            """val x = ""${'"'}""<caret>${'"'}/**/"""
+    )
+
+    fun testNoAutoCloseAfterEscape() = doCharTypeTest(
+        '"',
+        """val x = "\""<caret>""",
+        """val x = "\""${'"'}<caret>""""
+    )
+
     fun testAutoCloseBraceInFunctionDeclaration() = doCharTypeTest(
             '{',
             "fun foo() <caret>",
@@ -542,6 +584,62 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
                 """)
     }
 
+    fun testContinueWithElvis() {
+        doCharTypeTest(
+            ':',
+            """
+                |fun test(): Any? = null
+                |fun some() {
+                |    test()
+                |    ?<caret>
+                |}
+            """,
+            """
+                |fun test(): Any? = null
+                |fun some() {
+                |    test()
+                |            ?:<caret>
+                |}
+            """
+        )
+    }
+
+    fun testContinueWithOr() {
+        doCharTypeTest(
+            '|',
+            """
+                |fun some() {
+                |    if (true
+                |    |<caret>)
+                |}
+            """,
+            """
+                |fun some() {
+                |    if (true
+                |            ||<caret>)
+                |}
+            """
+        )
+    }
+
+    fun testContinueWithAnd() {
+        doCharTypeTest(
+            '&',
+            """
+                |fun some() {
+                |    val test = true
+                |    &<caret>
+                |}
+            """,
+            """
+                |fun some() {
+                |    val test = true
+                |            &&<caret>
+                |}
+            """
+        )
+    }
+
     fun testSpaceAroundRange() {
         doCharTypeTest(
                 '.',
@@ -671,6 +769,28 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
                 enableSmartEnterWithTabs()
         )
     }
+
+    fun testAutoIndentInWhenClause() {
+        doCharTypeTest(
+            '\n',
+            """
+            |fun test() {
+            |    when (2) {
+            |        is Int -><caret>
+            |    }
+            |}
+            """,
+            """
+            |fun test() {
+            |    when (2) {
+            |        is Int ->
+            |            <caret>
+            |    }
+            |}
+            """
+        )
+    }
+
 
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")

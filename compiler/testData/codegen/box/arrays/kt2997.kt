@@ -53,6 +53,9 @@ fun foo(a: Any): Int {
 }
 
 fun box(): String {
+    // Only run this test if primitive array `is` checks work (KT-17137)
+    if ((intArrayOf() as Any) is Array<*>) return "OK"
+
     val iA = IntArray(1)
     if (foo(iA) != 1) return "fail int[]"
     val sA = ShortArray(1)

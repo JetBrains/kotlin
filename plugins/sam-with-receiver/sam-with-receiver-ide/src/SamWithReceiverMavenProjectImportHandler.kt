@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.samWithReceiver.ide
 
 import org.jetbrains.kotlin.annotation.plugin.ide.AbstractMavenImportHandler
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedCompilerPluginSetup
 import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedCompilerPluginSetup.PluginOption
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor
 import org.jetbrains.kotlin.utils.PathUtil
 
 class SamWithReceiverMavenProjectImportHandler : AbstractMavenImportHandler() {
     private companion object {
-        val ANNOTATION_PARAMETER_PREFIX = "sam-with-receiver:${SamWithReceiverCommandLineProcessor.ANNOTATION_OPTION.name}="
+        val ANNOTATION_PARAMETER_PREFIX = "sam-with-receiver:${SamWithReceiverCommandLineProcessor.ANNOTATION_OPTION.optionName}="
     }
 
     override val compilerPluginId = SamWithReceiverCommandLineProcessor.PLUGIN_ID
@@ -50,6 +49,6 @@ class SamWithReceiverMavenProjectImportHandler : AbstractMavenImportHandler() {
             text.substring(ANNOTATION_PARAMETER_PREFIX.length)
         })
 
-        return annotations.map { PluginOption(SamWithReceiverCommandLineProcessor.ANNOTATION_OPTION.name, it) }
+        return annotations.map { PluginOption(SamWithReceiverCommandLineProcessor.ANNOTATION_OPTION.optionName, it) }
     }
 }

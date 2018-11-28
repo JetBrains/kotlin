@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.idea.maven
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.idea.maven.plugins.api.MavenFixedValueReferenceProvider
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValues
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 
 class MavenLanguageVersionsCompletionProvider : MavenFixedValueReferenceProvider(
-    LanguageVersion.values().filter { it.isStable || KotlinInternalMode.enabled }.map { it.versionString }.toTypedArray()
+    LanguageVersion.values().filter { it.isStable || ApplicationManager.getApplication().isInternal }.map { it.versionString }.toTypedArray()
 )
 
 class MavenApiVersionsCompletionProvider : MavenFixedValueReferenceProvider(
-    LanguageVersion.values().filter { it.isStable || KotlinInternalMode.enabled }.map { it.versionString }.toTypedArray()
+    LanguageVersion.values().filter { it.isStable || ApplicationManager.getApplication().isInternal }.map { it.versionString }.toTypedArray()
 )
 
 class MavenJvmTargetsCompletionProvider : MavenFixedValueReferenceProvider(
