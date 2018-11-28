@@ -17,43 +17,47 @@ import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-object SmartCastImpossibleInIfThenFactory : KotlinSingleIntentionActionFactory() {
+object SmartCastImpossibleInIfThenFactory : KotlinIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
+        val element = diagnostic.psiElement as? KtNameReferenceExpression ?: return emptyList()
+        val ifExpression =
+            element.getStrictParentOfType<KtContainerNodeForControlStructureBody>()?.parent as? KtIfExpression ?: return emptyList()
 
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val element = diagnostic.psiElement as? KtNameReferenceExpression ?: return null
-        val ifExpression = element.getStrictParentOfType<KtContainerNodeForControlStructureBody>()?.parent as? KtIfExpression ?: return null
-        return when {
-            IfThenToSafeAccessInspection.canReplaceWithSafeAccess(ifExpression, needStableElement = false) ->
-                IfThenToSafeAccessFix(ifExpression, IfThenToSafeAccessInspection.createFixText(ifExpression))
-            IfThenToElvisIntention.canReplaceWithElvis(ifExpression, needStableElement = false) ->
-                IfThenToElvisFix(ifExpression)
-            else ->
-                null
-        }
+        val ifThenToSafeAccess = IfThenToSafeAccessInspection(stableElementNeeded = false)
+        val ifThenToElvis = IfThenToElvisIntention(stableElementNeeded = false)
+
+        return listOf(
+            createQuickFix(
+                ifExpression,
+                { ifThenToSafeAccess.fixText(it) },
+                { ifThenToSafeAccess.isApplicable(it) },
+                { ifExpr, project, editor -> ifThenToSafeAccess.applyTo(ifExpr.ifKeyword, project, editor) }
+            ),
+            createQuickFix(
+                ifExpression,
+                { ifThenToElvis.text },
+                { ifThenToElvis.isApplicableTo(it) },
+                { ifExpr, _, editor -> ifThenToElvis.applyTo(ifExpr, editor) }
+            )
+        )
     }
 
-    class IfThenToSafeAccessFix(
+    private fun createQuickFix(
         ifExpression: KtIfExpression,
-        private val fixText: String
-    ) : KotlinQuickFixAction<KtIfExpression>(ifExpression) {
-        override fun getText() = fixText
+        fixText: (KtIfExpression) -> String,
+        isApplicable: (KtIfExpression) -> Boolean,
+        applyTo: (KtIfExpression, project: Project, editor: Editor?) -> Unit
+    ): KotlinQuickFixAction<KtIfExpression> {
+        return object : KotlinQuickFixAction<KtIfExpression>(ifExpression) {
+            override fun getText() = fixText(ifExpression)
 
-        override fun getFamilyName() = text
+            override fun getFamilyName() = text
 
-        override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            val ifExpression = element ?: return
-            IfThenToSafeAccessInspection.replaceWithSafeAccess(ifExpression, editor)
-        }
-    }
+            override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = element?.let { isApplicable(it) } ?: false
 
-    class IfThenToElvisFix(ifExpression: KtIfExpression) : KotlinQuickFixAction<KtIfExpression>(ifExpression) {
-        override fun getText() = IfThenToElvisIntention.fixText
-
-        override fun getFamilyName() = text
-
-        override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            val ifExpression = element ?: return
-            IfThenToElvisIntention.replaceWithElvis(ifExpression, editor)
+            override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+                element?.also { applyTo(it, project, editor) }
+            }
         }
     }
 }

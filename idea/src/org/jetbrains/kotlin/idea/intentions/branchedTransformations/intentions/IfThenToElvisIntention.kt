@@ -42,76 +42,66 @@ class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
         if (element.shouldBeTransformed()) super.problemHighlightType(element) else ProblemHighlightType.INFORMATION
 }
 
-class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
+class IfThenToElvisIntention (private val stableElementNeeded: Boolean) : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
     KtIfExpression::class.java,
-    IfThenToElvisIntention.fixText
+    "Replace 'if' expression with elvis expression"
 ) {
 
+    constructor() : this(stableElementNeeded = true)
+
+    private fun IfThenToSelectData.clausesReplaceableByElvis(): Boolean =
+        when {
+            baseClause == null || negatedClause == null || negatedClause.isNullOrBlockExpression() ->
+                false
+            negatedClause is KtThrowExpression && negatedClause.throwsNullPointerExceptionWithNoArguments() ->
+                false
+            baseClause.evaluatesTo(receiverExpression) ->
+                true
+            baseClause.anyArgumentEvaluatesTo(receiverExpression) ->
+                true
+            hasImplicitReceiverReplaceableBySafeCall() || baseClause.hasFirstReceiverOf(receiverExpression) ->
+                !baseClause.hasNullableType(context)
+            else ->
+                false
+        }
+
     override fun isApplicableTo(element: KtIfExpression): Boolean {
-        return canReplaceWithElvis(element)
+        val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
+        if (stableElementNeeded && !ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
+
+        val type = element.getType(ifThenToSelectData.context) ?: return false
+        if (KotlinBuiltIns.isUnit(type)) return false
+
+        return ifThenToSelectData.clausesReplaceableByElvis()
+    }
+
+    private fun KtExpression.isNullOrBlockExpression(): Boolean {
+        val innerExpression = this.unwrapBlockOrParenthesis()
+        return innerExpression is KtBlockExpression || innerExpression.node.elementType == KtNodeTypes.NULL
     }
 
     override fun startInWriteAction() = false
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        replaceWithElvis(element, editor)
-    }
+        val ifThenToSelectData = element.buildSelectTransformationData() ?: return
 
-    companion object {
-        internal const val fixText = "Replace 'if' expression with elvis expression"
-
-        internal fun canReplaceWithElvis(element: KtIfExpression, needStableElement: Boolean = true): Boolean {
-            val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
-            if (needStableElement && !ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
-
-            val type = element.getType(ifThenToSelectData.context) ?: return false
-            if (KotlinBuiltIns.isUnit(type)) return false
-
-            return ifThenToSelectData.clausesReplaceableByElvis()
-        }
-
-        private fun IfThenToSelectData.clausesReplaceableByElvis(): Boolean =
-            when {
-                baseClause == null || negatedClause == null || negatedClause.isNullOrBlockExpression() ->
-                    false
-                negatedClause is KtThrowExpression && negatedClause.throwsNullPointerExceptionWithNoArguments() ->
-                    false
-                baseClause.evaluatesTo(receiverExpression) ->
-                    true
-                baseClause.anyArgumentEvaluatesTo(receiverExpression) ->
-                    true
-                hasImplicitReceiverReplaceableBySafeCall() || baseClause.hasFirstReceiverOf(receiverExpression) ->
-                    !baseClause.hasNullableType(context)
-                else ->
-                    false
-            }
-
-        private fun KtExpression.isNullOrBlockExpression(): Boolean {
-            val innerExpression = this.unwrapBlockOrParenthesis()
-            return innerExpression is KtBlockExpression || innerExpression.node.elementType == KtNodeTypes.NULL
-        }
-
-        internal fun replaceWithElvis(element: KtIfExpression, editor: Editor?) {
-            val ifThenToSelectData = element.buildSelectTransformationData() ?: return
-
-            val factory = KtPsiFactory(element)
-            val elvis = runWriteAction {
-                val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
-                val newExpr = element.replaced(
-                    factory.createExpressionByPattern(
-                        "$0 ?: $1",
-                        replacedBaseClause,
-                        ifThenToSelectData.negatedClause!!
-                    )
+        val factory = KtPsiFactory(element)
+        val elvis = runWriteAction {
+            val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
+            val newExpr = element.replaced(
+                factory.createExpressionByPattern(
+                    "$0 ?: $1",
+                    replacedBaseClause,
+                    ifThenToSelectData.negatedClause!!
                 )
-                KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
-            }
+            )
+            KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
+        }
 
-            if (editor != null) {
-                elvis.inlineLeftSideIfApplicableWithPrompt(editor)
-                with(IfThenToSafeAccessInspection) {
-                    (elvis.left as? KtSafeQualifiedExpression)?.renameLetParameter(editor)
-                }
+        if (editor != null) {
+            elvis.inlineLeftSideIfApplicableWithPrompt(editor)
+            with(IfThenToSafeAccessInspection) {
+                (elvis.left as? KtSafeQualifiedExpression)?.renameLetParameter(editor)
             }
         }
     }
