@@ -51,7 +51,7 @@ interface GetScriptingClass {
 // helper method
 fun ScriptingHostConfiguration.getScriptingClass(type: KotlinType, contextClass: KClass<*>): KClass<*> {
     val getClass = get(ScriptingHostConfiguration.getScriptingClass)
-        ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment: unable to load scripting class $type")
+        ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting host configuration: unable to load scripting class $type")
     return getClass(type, contextClass, this)
 }
 
