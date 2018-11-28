@@ -29,10 +29,11 @@ class PrintlnConversion(private val context: ConversionContext) : RecursiveAppli
         val fieldReference = receiver.selector as? JKFieldAccessExpression ?: return element
         if (fieldReference.identifier.name != "out") return element
         val selector = element.selector as? JKMethodCallExpression ?: return element
-        if (selector.identifier.name != "println") return element
+        val functionName = selector.identifier.name
+        if (functionName != "println" && functionName != "print") return element
 
         val contextElement = element.parentOfType<JKClass>() ?: return element
-        val targetElements = multiResolveFqName(ClassId.fromString("kotlin/io/println"), contextElement.psi!!)
+        val targetElements = multiResolveFqName(ClassId.fromString("kotlin/io/$functionName"), contextElement.psi!!)
         if (targetElements.isEmpty()) return element
         selector.invalidate()
 
