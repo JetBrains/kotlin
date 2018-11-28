@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.idea.inspections.collections.AbstractCallChainChecker
 import org.jetbrains.kotlin.idea.inspections.collections.SimplifyCallChainFix
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
@@ -18,21 +19,21 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
         qualifiedExpressionVisitor(fun(expression) {
             var defaultContext: Boolean? = null
             var defaultStart: Boolean? = null
-            var defaultParent: Boolean? = null
+            // Temporary forbid cases with explicit scope
+            if (expression.receiverExpression is KtQualifiedExpression) return
+
             val conversion = findQualifiedConversion(expression, conversionGroups) check@{ _, firstResolvedCall, _, _ ->
                 for ((parameterDescriptor, valueArgument) in firstResolvedCall.valueArguments) {
                     val default = valueArgument is DefaultValueArgument
                     when (parameterDescriptor.name.asString()) {
                         "context" -> defaultContext = default
                         "start" -> defaultStart = default
-                        "parent" -> defaultParent = default
                     }
                 }
                 true
             } ?: return
             defaultContext ?: return
             defaultStart ?: return
-            if (defaultParent != true) return
             if (defaultContext!! && !defaultStart!!) return
 
             var replacement = conversion.replacement
@@ -71,7 +72,7 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
             )
         )
 
-        private const val defaultAsyncArgument = "$COROUTINE_PACKAGE.DefaultDispatcher"
+        private const val defaultAsyncArgument = "$COROUTINE_PACKAGE.Dispatchers.Default"
 
         private const val defaultAsyncArgumentExperimental = "$COROUTINE_EXPERIMENTAL_PACKAGE.DefaultDispatcher"
     }
