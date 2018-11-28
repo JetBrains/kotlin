@@ -102,6 +102,9 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
 
     fun testOnFileMoveWithNonDefaultWorkingDir() {
         configureByFile("move/script.kts")
+
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(myFile.virtualFile, project)
+
         val script = KotlinScriptFqnIndex.instance.get("foo.Script", project, project.allScope()).single()
         val runConfiguration = createConfigurationFromElement(script, save = true) as KotlinStandaloneScriptRunConfiguration
 
