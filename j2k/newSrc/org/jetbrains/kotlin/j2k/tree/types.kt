@@ -154,3 +154,6 @@ fun JKType.updateNullability(newNullability: Nullability): JKType =
         is JKJavaPrimitiveType -> this
         else -> TODO(this::class.toString())
     }
+
+fun JKJavaMethod.returnTypeNullability(context: ConversionContext): Nullability =
+    context.typeFlavorCalculator.methodNullability(psi()!!)

@@ -93,6 +93,7 @@ class JKParameterImpl(
 }
 
 class JKBlockImpl(statements: List<JKStatement> = emptyList()) : JKBlock, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    constructor(vararg statements: JKStatement) : this(statements.toList())
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlock(this, data)
 
     override var statements by children(statements)

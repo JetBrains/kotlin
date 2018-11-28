@@ -37,10 +37,13 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         if (loopStatement.initializer is JKEmptyStatement) return whileStatement
         //TODO check for error conflict
 
-        return JKKtConvertedFromForLoopSyntheticWhileStatementImpl(
-            loopStatement::initializer.detached(),
-            JKWhileStatementImpl(condition, whileBody)
-        )
+        val convertedFromForLoopSyntheticWhileStatement =
+            JKKtConvertedFromForLoopSyntheticWhileStatementImpl(
+                loopStatement::initializer.detached(),
+                whileStatement
+            )
+        return if (loopStatement.parent!! is JKBlock) convertedFromForLoopSyntheticWhileStatement
+        else blockStatement(convertedFromForLoopSyntheticWhileStatement)
     }
 
     private fun createWhileBody(loopStatement: JKJavaForLoopStatement): JKStatement {

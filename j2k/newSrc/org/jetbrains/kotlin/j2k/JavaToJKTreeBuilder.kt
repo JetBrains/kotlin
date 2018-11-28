@@ -431,7 +431,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 with(expressionTreeMapper) { typeElement.toJK() },
                 JKNameIdentifierImpl(this.name ?: TODO()),
                 with(expressionTreeMapper) { initializer.toJK() },
-                Mutability.UNKNOWN
+                if (hasModifierProperty(PsiModifier.FINAL)) Mutability.IMMUTABLE else Mutability.UNKNOWN
             ).also { i ->
                 symbolProvider.provideUniverseSymbol(this, i)
                 i.psi = this

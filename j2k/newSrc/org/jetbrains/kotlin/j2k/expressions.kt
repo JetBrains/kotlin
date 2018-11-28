@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.conversions.multiResolveFqName
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
@@ -14,12 +15,12 @@ import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider): JKClassType {
+fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Nullable): JKClassType {
     val symbol =
         symbolProvider.provideDirectSymbol(
             resolveFqName(ClassId.fromString(name), symbolProvider.symbolsByPsi.keys.first())!!
         ) as JKClassSymbol
-    return JKClassTypeImpl(symbol, emptyList())
+    return JKClassTypeImpl(symbol, emptyList(), nullability)
 }
 
 private fun JKType.classSymbol(symbolProvider: JKSymbolProvider) =
