@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.throwAnnotation
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
 
 class JavaMethodToKotlinFunctionConversion(private val context: ConversionContext) : TransformerBasedConversion() {
     override fun visitTreeElement(element: JKTreeElement) {
@@ -34,7 +35,9 @@ class JavaMethodToKotlinFunctionConversion(private val context: ConversionContex
                 declaration.invalidate()
 
                 JKKtFunctionImpl(
-                    declaration.returnType,
+                    JKTypeElementImpl(
+                        declaration.returnType.type.updateNullability(declaration.returnTypeNullability(context))
+                    ),
                     declaration.name,
                     declaration.parameters,
                     declaration.block,
