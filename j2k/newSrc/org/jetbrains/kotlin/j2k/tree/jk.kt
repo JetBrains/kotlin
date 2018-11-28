@@ -40,7 +40,13 @@ interface PsiOwner {
 
 interface JKDeclaration : JKTreeElement
 
+interface JKImportStatement : JKTreeElement {
+    val name: JKNameIdentifier
+}
+
 interface JKFile : JKTreeElement, JKBranchElement {
+    var packageDeclaration: JKPackageDeclaration
+    var importList: List<JKImportStatement>
     var declarationList: List<JKDeclaration>
 }
 

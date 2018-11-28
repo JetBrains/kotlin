@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.j2k.tree.*
 interface JKVisitor<out R, in D> {
     fun visitTreeElement(treeElement: JKTreeElement, data: D): R 
     fun visitDeclaration(declaration: JKDeclaration, data: D): R = visitTreeElement(declaration, data)
+    fun visitImportStatement(importStatement: JKImportStatement, data: D): R = visitTreeElement(importStatement, data)
     fun visitFile(file: JKFile, data: D): R = visitTreeElement(file, data)
     fun visitClass(klass: JKClass, data: D): R = visitDeclaration(klass, data)
     fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo, data: D): R = visitTreeElement(inheritanceInfo, data)

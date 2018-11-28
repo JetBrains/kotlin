@@ -119,25 +119,30 @@ class NewCodeBuilder {
         }
 
         override fun visitFile(file: JKFile) {
-            file.declarationList.find { it is JKPackageDeclaration }?.accept(this)
-            val collectImportsVisitor = CollectImportsVisitor()
-            file.accept(collectImportsVisitor)
-            collectImportsVisitor.collectedFqNames.forEach {
-                printer.printlnWithNoIndent("import ", it.asString())
+            if (file.packageDeclaration.packageName.value.isNotEmpty()) {
+                file.packageDeclaration.accept(this)
             }
-            file.declarationList.forEach {
-                if (it !is JKPackageDeclaration) it.accept(this)
-            }
+            file.importList.forEach { it.accept(this) }
+            file.declarationList.forEach { it.accept(this) }
         }
+
+        private fun String.escapedAsQualifiedName(): String =
+            split('.')
+                .map { it.escaped() }
+                .joinToString(".") { it }
 
         override fun visitPackageDeclaration(packageDeclaration: JKPackageDeclaration) {
             printer.printWithNoIndent("package ")
             val packageNameEscaped =
-                packageDeclaration.packageName.value
-                    .split('.')
-                    .map { it.escaped() }
-                    .joinToString(".") { it }
+                packageDeclaration.packageName.value.escapedAsQualifiedName()
             printer.printlnWithNoIndent(packageNameEscaped)
+        }
+
+        override fun visitImportStatement(importStatement: JKImportStatement) {
+            printer.printWithNoIndent("import ")
+            val importNameEscaped =
+                importStatement.name.value.escapedAsQualifiedName()
+            printer.printlnWithNoIndent(importNameEscaped)
         }
 
         override fun visitBreakStatement(breakStatement: JKBreakStatement) {
@@ -782,35 +787,6 @@ class NewCodeBuilder {
         ROUND("(", ")"), SQUARE("[", "]"), CURVED("{", "}"), CURVED_MULTILINE("{\n", "}\n"), INLINE_COMMENT("/*", "*/"), ANGLE("<", ">")
     }
 
-    private class CollectImportsVisitor : JKVisitorVoid {
-        val collectedFqNames: MutableList<FqName> = mutableListOf()
-        override fun visitTreeElement(treeElement: JKTreeElement) {
-            treeElement.acceptChildren(this)
-        }
-
-        override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
-            collectedFqNames.add(FqName(javaNewExpression.classSymbol.fqName!!))
-            javaNewExpression.acceptChildren(this)
-        }
-
-//        override fun visitTypeElement(typeElement: JKTypeElement, data: Nothing?) {
-//            val classType = typeElement.type as? JKClassType ?: return
-//            collectedFqNames.add(FqName(classType.classReference.fqName!!))
-//        }
-
-        override fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) {
-            val type = classLiteralExpression.classType.type
-            if (type is JKClassType) {
-                val fqName = type.classReference.fqName!!
-                val isDefaultImport = fqName.split('.').let {
-                    it.size == 2 && it.first() == "kotlin"
-                }
-                if (!isDefaultImport) {
-                    collectedFqNames.add(FqName(fqName))
-                }
-            }
-        }
-    }
 
     fun printCodeOut(root: JKTreeElement): String {
         Visitor().also { root.accept(it) }

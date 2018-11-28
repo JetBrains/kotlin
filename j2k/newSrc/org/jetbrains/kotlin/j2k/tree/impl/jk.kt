@@ -31,10 +31,18 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-class JKFileImpl : JKFile, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+
+class JKFileImpl(
+    packageDeclaration: JKPackageDeclaration,
+    importList: List<JKImportStatement>,
+    declarationList: List<JKDeclaration>
+) : JKFile, JKBranchElementBase(),
+    PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
 
-    override var declarationList by children<JKDeclaration>()
+    override var packageDeclaration: JKPackageDeclaration by child(packageDeclaration)
+    override var importList: List<JKImportStatement> by children(importList)
+    override var declarationList by children(declarationList)
 }
 
 class JKClassImpl(
@@ -506,4 +514,10 @@ class JKClassLiteralExpressionImpl(
     override val classType: JKTypeElement by child(classType)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassLiteralExpression(this, data)
+}
+
+class JKImportStatementImpl(name: JKNameIdentifier) : JKImportStatement, JKBranchElementBase() {
+    override val name: JKNameIdentifier by child(name)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitImportStatement(this, data)
 }

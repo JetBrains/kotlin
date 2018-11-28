@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
 import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
@@ -34,6 +33,24 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
     private val expressionTreeMapper = ExpressionTreeMapper()
 
     private val declarationMapper = DeclarationMapper(expressionTreeMapper)
+
+    private fun PsiJavaFile.toJK(): JKFile =
+        JKFileImpl(
+            packageStatement?.toJK() ?: JKPackageDeclarationImpl(JKNameIdentifierImpl("")),
+            importList?.importStatements?.map { it.toJK() }.orEmpty(),
+            with(declarationMapper) { classes.map { it.toJK() } }
+        )
+
+   private fun PsiPackageStatement.toJK(): JKPackageDeclaration =
+        JKPackageDeclarationImpl(JKNameIdentifierImpl(packageName))
+
+    private fun PsiImportStatement.toJK() =
+        JKImportStatementImpl(
+            JKNameIdentifierImpl(
+                text.substringAfter("import").substringBeforeLast(";").trim()
+            )
+        )
+
 
     private inner class ExpressionTreeMapper {
         fun PsiExpression?.toJK(): JKExpression {
@@ -251,9 +268,6 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             JKTypeParameterImpl(JKNameIdentifierImpl(name!!),
                                 extendsListTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.NotNull)) })
 
-        fun PsiPackageStatement.toJK(): JKPackageDeclaration =
-            JKPackageDeclarationImpl(JKNameIdentifierImpl(packageName))
-
         fun PsiClass.toJK(): JKClass {
             val classKind: JKClass.ClassKind = when {
                 isAnnotationType -> JKClass.ClassKind.ANNOTATION
@@ -285,7 +299,13 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         fun PsiClass.createClassBody() =
             JKClassBodyImpl(
                 children.mapNotNull {
-                    ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration
+                    when (it) {
+                        is PsiEnumConstant -> it.toJK()
+                        is PsiClass -> it.toJK()
+                        is PsiMethod -> it.toJK()
+                        is PsiField -> it.toJK()
+                        else -> null
+                    }
                 }
             )
 
@@ -512,42 +532,11 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }.last()
 
 
-       private inner class ElementVisitor : JavaElementVisitor() {
-
-        var resultElement: JKTreeElement? = null
-
-        override fun visitClass(aClass: PsiClass) {
-            resultElement = with(declarationMapper) { aClass.toJK() }
+    fun buildTree(psi: PsiElement): JKTreeElement? =
+        when (psi) {
+            is PsiJavaFile -> psi.toJK()
+            else -> error("Cannot convert non-java file")
         }
 
-        override fun visitPackageStatement(statement: PsiPackageStatement) {
-            resultElement = with(declarationMapper) { statement.toJK() }
-        }
-        override fun visitField(field: PsiField) {
-            resultElement = with(declarationMapper) { field.toJK() }
-        }
-
-        override fun visitEnumConstant(enumConstant: PsiEnumConstant) {
-            resultElement = with(declarationMapper) { enumConstant.toJK() }
-        }
-
-        override fun visitMethod(method: PsiMethod) {
-            resultElement = with(declarationMapper) { method.toJK() }
-        }
-
-        override fun visitFile(file: PsiFile) {
-            resultElement = JKFileImpl().apply {
-                declarationList += file.children.mapNotNull { ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration }
-            }
-        }
-    }
-
-
-    fun buildTree(psi: PsiElement): JKTreeElement? {
-        assert(psi.language.`is`(JavaLanguage.INSTANCE)) { "Unable to build JK Tree using Java Visitor for language ${psi.language}" }
-        val elementVisitor = ElementVisitor()
-        psi.accept(elementVisitor)
-        return elementVisitor.resultElement
-    }
 }
 
