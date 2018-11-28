@@ -324,7 +324,8 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
             ClassReader(mainClassBytecode).accept(object : ClassVisitor(ASM5) {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-                    if (name == GENERATED_FUNCTION_NAME) {
+                    // Maybe just take the single method from the class, as it is done in 'evaluateWithCompilation'
+                    if (name == GENERATED_FUNCTION_NAME || name.startsWith(GENERATED_FUNCTION_NAME + "-")) {
                         val argumentTypes = Type.getArgumentTypes(desc)
                         val args = context.getArgumentsForEval4j(compiledData.parameters, argumentTypes)
 
