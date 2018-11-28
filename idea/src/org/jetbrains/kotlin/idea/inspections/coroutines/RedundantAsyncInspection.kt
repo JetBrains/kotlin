@@ -7,20 +7,23 @@ package org.jetbrains.kotlin.idea.inspections.coroutines
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.collections.AbstractCallChainChecker
 import org.jetbrains.kotlin.idea.inspections.collections.SimplifyCallChainFix
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RedundantAsyncInspection : AbstractCallChainChecker() {
 
     private fun generateConversion(expression: KtQualifiedExpression): Conversion? {
         var defaultContext: Boolean? = null
         var defaultStart: Boolean? = null
-        // Temporary forbid cases with explicit scope
-        if (expression.receiverExpression is KtQualifiedExpression) return null
 
         var conversion = findQualifiedConversion(expression, conversionGroups) check@{ _, firstResolvedCall, _, _ ->
             for ((parameterDescriptor, valueArgument) in firstResolvedCall.valueArguments) {
@@ -35,6 +38,17 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
         defaultContext ?: return null
         defaultStart ?: return null
         if (defaultContext!! && !defaultStart!!) return null
+
+        val receiverExpression = expression.receiverExpression
+        val scopeExpression = (receiverExpression as? KtQualifiedExpression)?.receiverExpression
+        if (scopeExpression != null) {
+            val context = scopeExpression.analyze(BodyResolveMode.PARTIAL)
+            val scopeDescriptor = (scopeExpression as? KtNameReferenceExpression)?.let { context[BindingContext.REFERENCE_TARGET, it] }
+            if (scopeDescriptor?.fqNameSafe?.toString() != globalScope) {
+                // Temporary forbid cases with explicit non-global scope
+                return null
+            }
+        }
 
         if (defaultContext!! && defaultStart!!) {
             conversion = conversion.withArgumentList(
@@ -58,7 +72,7 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
                 "Redundant 'async' call may be reduced to '$fullReplacement'",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
-                SimplifyCallChainFix(fullReplacement)
+                SimplifyCallChainFix(fullReplacement, removeReceiverOfFirstCall = true)
             )
             holder.registerProblem(descriptor)
         })
@@ -78,6 +92,8 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
                 "$COROUTINE_EXPERIMENTAL_PACKAGE.withContext"
             )
         )
+
+        private const val globalScope = "kotlinx.coroutines.GlobalScope"
 
         private const val defaultAsyncArgument = "$COROUTINE_PACKAGE.Dispatchers.Default"
 
