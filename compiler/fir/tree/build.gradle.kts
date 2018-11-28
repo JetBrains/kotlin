@@ -39,7 +39,7 @@ val generateVisitors by tasks.creating(NoDebugJavaExec::class) {
     }
 
     inputs.files(allSourceFiles)
-    outputs.files(output)
+    outputs.dirs(output)
 
     classpath = generatorClasspath
     args(generationRoot, output)
