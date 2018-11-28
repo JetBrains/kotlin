@@ -42,10 +42,12 @@ class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
         if (element.shouldBeTransformed()) super.problemHighlightType(element) else ProblemHighlightType.INFORMATION
 }
 
-class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
+class IfThenToElvisIntention (private val stableElementNeeded: Boolean) : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
     KtIfExpression::class.java,
     "Replace 'if' expression with elvis expression"
 ) {
+
+    constructor() : this(stableElementNeeded = true)
 
     private fun IfThenToSelectData.clausesReplaceableByElvis(): Boolean =
         when {
@@ -65,7 +67,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
         val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
-        if (!ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
+        if (stableElementNeeded && !ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
 
         val type = element.getType(ifThenToSelectData.context) ?: return false
         if (KotlinBuiltIns.isUnit(type)) return false

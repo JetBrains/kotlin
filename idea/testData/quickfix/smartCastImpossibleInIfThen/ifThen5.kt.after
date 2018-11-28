@@ -1,0 +1,11 @@
+// "Replace 'if' expression with safe access expression" "true"
+// WITH_RUNTIME
+class Test {
+    var x: Any? = null
+
+    fun test() {
+        (x as? String)?.let { foo(it) }
+    }
+
+    fun foo(s: String) = 1
+}
