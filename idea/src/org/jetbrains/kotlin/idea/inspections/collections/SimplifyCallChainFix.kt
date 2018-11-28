@@ -25,13 +25,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
 class SimplifyCallChainFix(
-    private val newCallText: String,
+    private val conversion: AbstractCallChainChecker.Conversion,
     private val removeReceiverOfFirstCall: Boolean = false,
     private val modifyArguments: KtPsiFactory.(KtCallExpression) -> Unit = {}
 ) : LocalQuickFix {
-    private val shortenedText = newCallText.split("(").joinToString(separator = "(") {
-        it.substringAfterLast(".")
-    }
+    private val shortenedText = conversion.replacement.substringAfterLast(".")
 
     override fun getName() = "Merge call chain to '$shortenedText'"
 
@@ -67,16 +65,21 @@ class SimplifyCallChainFix(
             secondCallArgumentList.takeIf { it?.arguments?.isNotEmpty() == true },
             firstCallArgumentList.takeIf { it?.arguments?.isNotEmpty() == true }
         ).let {
-            if (it.isEmpty()) ""
-            else it.joinToString(
-                separator = ", ",
-                prefix = "(",
-                postfix = ")"
-            ) { callArgumentList ->
-                callArgumentList.getTextInsideParentheses()
+            val additionalArgument = conversion.additionalArgument
+            when {
+                it.isNotEmpty() -> it.joinToString(
+                    separator = ", ",
+                    prefix = "(",
+                    postfix = ")"
+                ) { callArgumentList ->
+                    callArgumentList.getTextInsideParentheses()
+                }
+                additionalArgument != null -> "($additionalArgument)"
+                else -> ""
             }
         }
 
+        val newCallText = conversion.replacement
         val newQualifiedExpression = if (lambdaExpression != null) factory.createExpressionByPattern(
             "$0$1$2 $3 $4",
             receiverExpressionOrEmptyString,

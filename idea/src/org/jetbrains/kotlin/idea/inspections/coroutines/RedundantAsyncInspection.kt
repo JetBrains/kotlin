@@ -51,11 +51,11 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
         }
 
         if (defaultContext!! && defaultStart!!) {
-            conversion = conversion.withArgumentList(
+            conversion = conversion.withArgument(
                 if (conversion === conversions[0]) {
-                    "($DEFAULT_ASYNC_ARGUMENT)"
+                    DEFAULT_ASYNC_ARGUMENT
                 } else {
-                    "($DEFAULT_ASYNC_ARGUMENT_EXPERIMENTAL)"
+                    DEFAULT_ASYNC_ARGUMENT_EXPERIMENTAL
                 }
             )
         }
@@ -65,14 +65,13 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         qualifiedExpressionVisitor(fun(expression) {
             val conversion = generateConversion(expression) ?: return
-            val fullReplacement = conversion.fullReplacement
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 expression.firstCalleeExpression()!!.textRange.shiftRight(-expression.startOffset),
-                "Redundant 'async' call may be reduced to '$fullReplacement'",
+                "Redundant 'async' call may be reduced to '${conversion.replacement}'",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
-                SimplifyCallChainFix(fullReplacement, removeReceiverOfFirstCall = true)
+                SimplifyCallChainFix(conversion, removeReceiverOfFirstCall = true)
             )
             holder.registerProblem(descriptor)
         })
