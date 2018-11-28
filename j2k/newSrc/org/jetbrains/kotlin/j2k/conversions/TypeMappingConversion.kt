@@ -55,13 +55,12 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
     private fun mapType(type: JKType, element: JKTreeElement): JKType = when (type) {
         is JKJavaPrimitiveType -> mapPrimitiveType(type)
         is JKClassType -> mapClassType(type, element)
-        is JKJavaVoidType -> JKClassTypeImpl(
-            context.symbolProvider.provideByFqName(
-                ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()),
-                element.parentOfType<JKClass>()!!.psi!!
-            ),
-            nullability = Nullability.NotNull
-        )
+        is JKJavaVoidType ->
+            kotlinTypeByName(
+                KotlinBuiltIns.FQ_NAMES.unit.toSafe().asString(),
+                context.symbolProvider,
+                Nullability.NotNull
+            )
         is JKJavaArrayType -> JKClassTypeImpl(
             context.symbolProvider.provideByFqName(arrayFqName(type.type)),
             if (type.type is JKJavaPrimitiveType) emptyList() else listOf(mapType(type.type, element)),
