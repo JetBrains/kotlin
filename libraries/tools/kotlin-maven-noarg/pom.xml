@@ -7,10 +7,8 @@
     <properties>
         <maven.version>3.0.5</maven.version>
         <noarg.src>${basedir}/../../../plugins/noarg/noarg-cli/src</noarg.src>
+        <noarg.resources>${basedir}/../../../plugins/noarg/noarg-cli/resources</noarg.resources>
         <noarg.maven.plugin.src>${basedir}/src/main/kotlin</noarg.maven.plugin.src>
-        <noarg.maven.plugin.resources>${basedir}/src/main/resources</noarg.maven.plugin.resources>
-        <noarg.target-src>${basedir}/target/src/main/kotlin</noarg.target-src>
-        <noarg.target-resources>${basedir}/target/resource</noarg.target-resources>
     </properties>
 
     <parent>
@@ -40,48 +38,28 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>${noarg.target-src}</sourceDirectory>
         <resources>
-            <resource>
-                <directory>${noarg.target-resources}</directory>
-            </resource>
+            <resource><directory>${noarg.resources}</directory></resource>
         </resources>
 
         <plugins>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.0</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-sources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
+                        <phase>generate-sources</phase>
+                        <goals><goal>add-source</goal></goals>
                         <configuration>
-                            <outputDirectory>${noarg.target-src}</outputDirectory>
-                            <resources>
-                                <resource><directory>${noarg.src}</directory></resource>
-                                <resource><directory>${noarg.maven.plugin.src}</directory></resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${noarg.target-resources}/META-INF</outputDirectory>
-                            <resources>
-                                <resource><directory>${noarg.src}/META-INF</directory></resource>
-                                <resource><directory>${noarg.maven.plugin.resources}/META-INF</directory></resource>
-                            </resources>
+                            <sources>
+                                <source>${noarg.maven.plugin.src}</source>
+                                <source>${noarg.src}</source>
+                            </sources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -92,11 +70,6 @@
                         <id>compile</id>
                         <phase>compile</phase>
                         <goals> <goal>compile</goal> </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>${noarg.target-src}</sourceDir>
-                            </sourceDirs>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
