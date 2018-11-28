@@ -114,6 +114,14 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                 }
                 break
             }
+            val parentFile = mainFile.parentFile
+            if (parentFile != null) {
+                for (file in parentFile.walkTopDown().maxDepth(1)) {
+                    if (file.name.endsWith(".lib.kt")) {
+                        extraFileNames += file.name
+                    }
+                }
+            }
 
             myFixture.configureByFiles(*(listOf(mainFile.name) + extraFileNames).toTypedArray()).first()
 
