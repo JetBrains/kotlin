@@ -41,4 +41,7 @@ suspend fun <T> withContext(
 
 suspend fun <R> coroutineScope(block: suspend CoroutineScope.() -> R): R = GlobalScope.block()
 
+operator fun CoroutineContext.plus(other: CoroutineContext): CoroutineContext {
+    TODO()
+}
 
