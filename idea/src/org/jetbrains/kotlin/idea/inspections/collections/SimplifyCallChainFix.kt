@@ -21,11 +21,14 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
-class SimplifyCallChainFix(private val newCallText: String, private val removeReceiverOfFirstCall: Boolean = false) : LocalQuickFix {
+class SimplifyCallChainFix(
+    private val newCallText: String,
+    private val removeReceiverOfFirstCall: Boolean = false,
+    private val modifyArguments: KtPsiFactory.(KtCallExpression) -> Unit = {}
+) : LocalQuickFix {
     private val shortenedText = newCallText.split("(").joinToString(separator = "(") {
         it.substringAfterLast(".")
     }
@@ -48,17 +51,10 @@ class SimplifyCallChainFix(private val newCallText: String, private val removeRe
             if (!removeReceiverOfFirstCall && firstExpression is KtQualifiedExpression) firstExpression.receiverExpression else ""
 
         val firstCallExpression = AbstractCallChainChecker.getCallExpression(firstExpression) ?: return
-        val secondCallExpression = qualifiedExpression.selectorExpression as? KtCallExpression ?: return
-
-        val lastArgumentName = if (newCallText.startsWith("joinTo")) Name.identifier("transform") else null
-        if (lastArgumentName != null) {
-            val lastArgument = firstCallExpression.valueArgumentList?.arguments?.singleOrNull()
-            val argumentExpression = lastArgument?.getArgumentExpression()
-            if (argumentExpression != null) {
-                lastArgument.replace(factory.createArgument(argumentExpression, lastArgumentName))
-            }
-        }
+        factory.modifyArguments(firstCallExpression)
         val firstCallArgumentList = firstCallExpression.valueArgumentList
+
+        val secondCallExpression = qualifiedExpression.selectorExpression as? KtCallExpression ?: return
         val secondCallArgumentList = secondCallExpression.valueArgumentList
 
         fun KtValueArgumentList.getTextInsideParentheses(): String {
