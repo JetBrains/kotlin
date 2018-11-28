@@ -1,8 +1,10 @@
 // WITH_RUNTIME
-// FIX: Merge call chain to 'withContext(DefaultDispatcher)'
+// FIX: Merge call chain to 'withContext(Default)'
 
 package kotlinx.coroutines
 
 suspend fun test() {
-    <caret>async { 42 }.await()
+    coroutineScope {
+        <caret>async { 42 }.await()
+    }
 }

@@ -4,5 +4,7 @@
 package kotlinx.coroutines
 
 suspend fun test(ctx: CoroutineContext) {
-    <caret>async(ctx) { 42 }.await()
+    coroutineScope {
+        <caret>async(ctx) { 42 }.await()
+    }
 }
