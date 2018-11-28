@@ -419,6 +419,29 @@ fun getSomething() = 10
         val project = Project("AndroidExtensionsSpecificFeatures")
         val options = defaultBuildOptions().copy(incremental = false)
 
+        if (this is KotlinAndroid30GradleIT) {
+            project.setupWorkingDir()
+            project.gradleBuildScript("app").modify {
+                """
+                def projectEvaluated = false
+
+                configurations.all { configuration ->
+                    incoming.beforeResolve {
+                        if (!projectEvaluated) {
+                            throw new RuntimeException("${'$'}configuration resolved during project configuration phase.")
+                        }
+                    }
+                }
+
+                $it
+
+                afterEvaluate {
+                    projectEvaluated = true
+                }
+                """.trimIndent()
+            }
+        }
+
         project.build("assemble", options = options) {
             assertFailed()
             assertContains("Unresolved reference: textView")

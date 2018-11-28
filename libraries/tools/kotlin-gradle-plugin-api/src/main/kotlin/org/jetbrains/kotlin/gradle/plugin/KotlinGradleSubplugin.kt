@@ -21,20 +21,34 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import java.io.File
 
-open class SubpluginOption(val key: String, val value: String)
+open class SubpluginOption(val key: String, private val lazyValue: Lazy<String>) {
+    constructor(key: String, value: String) : this(key, lazyOf(value))
+
+    val value: String get() = lazyValue.value
+}
 
 class FilesSubpluginOption(
+    key: String,
+    val files: Iterable<File>,
+    val kind: FilesOptionKind = FilesOptionKind.INTERNAL,
+    lazyValue: Lazy<String> = lazy { files.joinToString(File.pathSeparator) { it.canonicalPath } }
+) : SubpluginOption(key, lazyValue) {
+
+    constructor(
         key: String,
-        val files: List<File>,
-        val kind: FilesOptionKind = FilesOptionKind.INTERNAL,
-        value: String = files.joinToString(File.pathSeparator) { it.canonicalPath })
-    : SubpluginOption(key, value)
+        files: List<File>,
+        kind: FilesOptionKind = FilesOptionKind.INTERNAL,
+        value: String? = null
+    ) : this(key, files, kind, lazy { value ?: files.joinToString(File.pathSeparator) { it.canonicalPath } })
+}
 
 class CompositeSubpluginOption(
-        key: String,
-        value: String,
-        val originalOptions: List<SubpluginOption>)
-    : SubpluginOption(key, value)
+    key: String,
+    lazyValue: Lazy<String>,
+    val originalOptions: List<SubpluginOption>
+) : SubpluginOption(key, lazyValue) {
+    constructor(key: String, value: String, originalOptions: List<SubpluginOption>) : this(key, lazyOf(value), originalOptions)
+}
 
 /** Defines how the files option should be handled with regard to Gradle model */
 enum class FilesOptionKind {
