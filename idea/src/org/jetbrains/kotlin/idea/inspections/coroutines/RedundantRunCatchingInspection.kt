@@ -24,7 +24,7 @@ class RedundantRunCatchingInspection : AbstractCallChainChecker() {
                 "Redundant 'runCatching' call may be reduced to '$replacement'",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
-                SimplifyCallChainFix(replacement)
+                SimplifyCallChainFix(conversion)
             )
             holder.registerProblem(descriptor)
         })

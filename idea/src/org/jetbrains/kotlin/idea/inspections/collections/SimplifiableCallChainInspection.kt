@@ -45,7 +45,7 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                 "Call chain on collection type may be simplified",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
-                SimplifyCallChainFix(replacement) { callExpression ->
+                SimplifyCallChainFix(conversion) { callExpression ->
                     val lastArgumentName = if (replacement.startsWith("joinTo")) Name.identifier("transform") else null
                     if (lastArgumentName != null) {
                         val lastArgument = callExpression.valueArgumentList?.arguments?.singleOrNull()
