@@ -1,9 +1,5 @@
 package kotlin
 
-class Result<T>(val value: T?) {
-    fun getOrThrow(): T = value ?: throw AssertionError("")
-}
-
 fun test(arg: Boolean) {
     val x = foo@<caret>{
         if (!arg) {
