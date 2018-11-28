@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.idea.inspections.collections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -40,14 +38,23 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                 true
             } ?: return
 
-
+            val replacement = conversion.replacement
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 expression.firstCalleeExpression()!!.textRange.shiftRight(-expression.startOffset),
                 "Call chain on collection type may be simplified",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
-                SimplifyCallChainFix(conversion.replacement)
+                SimplifyCallChainFix(replacement) { callExpression ->
+                    val lastArgumentName = if (replacement.startsWith("joinTo")) Name.identifier("transform") else null
+                    if (lastArgumentName != null) {
+                        val lastArgument = callExpression.valueArgumentList?.arguments?.singleOrNull()
+                        val argumentExpression = lastArgument?.getArgumentExpression()
+                        if (argumentExpression != null) {
+                            lastArgument.replace(createArgument(argumentExpression, lastArgumentName))
+                        }
+                    }
+                }
             )
             holder.registerProblem(descriptor)
         })
