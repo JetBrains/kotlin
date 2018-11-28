@@ -262,7 +262,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val apOptions = getAPOptions()
 
-        pluginOptions += CompositeSubpluginOption("apoptions", encodeList(apOptions.associate { it.key to it.value }), apOptions)
+        pluginOptions += CompositeSubpluginOption("apoptions", lazy { encodeList(apOptions.associate { it.key to it.value }) }, apOptions)
 
         pluginOptions += SubpluginOption("javacArguments", encodeList(kaptExtension.getJavacOptions()))
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.io.File
+import java.util.concurrent.Callable
 
 @Suppress("unused")
 class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools)
@@ -101,15 +102,16 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
     override fun addJavaSourceDirectoryToVariantModel(variantData: BaseVariant, javaSourceDirectory: File) =
             variantData.addJavaSourceFoldersToModel(javaSourceDirectory)
 
-    override fun getResDirectories(variantData: BaseVariant): List<File> {
+    override fun getResDirectories(variantData: BaseVariant): FileCollection {
         val getAllResourcesMethod =
             variantData::class.java.methods.firstOrNull { it.name == "getAllRawAndroidResources" }
         if (getAllResourcesMethod != null) {
             val allResources = getAllResourcesMethod.invoke(variantData) as FileCollection
-            return allResources.files.toList()
+            return allResources
         }
 
-        return variantData.mergeResources?.computeResourceSetList0() ?: emptyList()
+        val project = variantData.mergeResources.project
+        return project.files(Callable { variantData.mergeResources?.computeResourceSetList0() ?: emptyList() })
     }
 
     override fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {

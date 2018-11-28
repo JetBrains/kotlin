@@ -14,6 +14,7 @@ import com.android.build.gradle.internal.variant.TestVariantData
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.checkedReflection
 import java.io.File
+import java.util.concurrent.Callable
 
 internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools) :
     AbstractAndroidProjectHandler<BaseVariantData<out BaseVariantOutputData>>(kotlinConfigurationTools) {
@@ -110,8 +112,11 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
     override fun getTestedVariantData(variantData: BaseVariantData<*>): BaseVariantData<*>? =
         ((variantData as? TestVariantData)?.testedVariantData as? BaseVariantData<*>)
 
-    override fun getResDirectories(variantData: BaseVariantData<out BaseVariantOutputData>): List<File> {
-        return variantData.mergeResourcesTask?.rawInputFolders?.toList() ?: emptyList()
+    override fun getResDirectories(variantData: BaseVariantData<out BaseVariantOutputData>): FileCollection {
+        val project = variantData.mergeResourcesTask.project
+        return project.files(
+            Callable { variantData.mergeResourcesTask?.rawInputFolders?.toList().orEmpty() }
+        )
     }
 
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>

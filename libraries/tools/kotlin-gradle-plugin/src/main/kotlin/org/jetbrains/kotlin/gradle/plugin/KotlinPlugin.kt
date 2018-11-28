@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
@@ -630,7 +629,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
     abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
     abstract fun getTestedVariantData(variantData: V): V?
-    abstract fun getResDirectories(variantData: V): List<File>
+    abstract fun getResDirectories(variantData: V): FileCollection
 
     protected abstract fun getSourceProviders(variantData: V): Iterable<SourceProvider>
     protected abstract fun getAllJavaSources(variantData: V): Iterable<File>
@@ -875,7 +874,7 @@ internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subplugi
                 is InternalSubpluginOption -> Unit
 
                 is CompositeSubpluginOption -> {
-                    val subpluginIdWithWrapperKey = "$subpluginId.${optionKey}$indexSuffix"
+                    val subpluginIdWithWrapperKey = "$subpluginId.$optionKey$indexSuffix"
                     registerSubpluginOptionsAsInputs(subpluginIdWithWrapperKey, option.originalOptions)
                 }
 
@@ -884,7 +883,7 @@ internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subplugi
                 }.run { /* exhaustive when */ }
 
                 else -> {
-                    inputsCompatible.propertyCompatible("$subpluginId." + option.key + indexSuffix, option.value)
+                    inputsCompatible.propertyCompatible("$subpluginId." + option.key + indexSuffix, Callable { option.value })
                 }
             }
         }

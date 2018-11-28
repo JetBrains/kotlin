@@ -25,6 +25,8 @@ import com.android.build.gradle.internal.variant.TestVariantData
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.multiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
+import java.util.concurrent.Callable
 import javax.inject.Inject
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -133,16 +136,17 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         pluginOptions += SubpluginOption("package", applicationPackage)
 
         fun addVariant(sourceSet: AndroidSourceSet) {
-            val optionValue = sourceSet.name + ';' +
-                    sourceSet.res.srcDirs.joinToString(";") { it.absolutePath }
+            val optionValue = lazy {
+                sourceSet.name + ';' + sourceSet.res.srcDirs.joinToString(";") { it.absolutePath }
+            }
             pluginOptions += CompositeSubpluginOption(
                 "variant", optionValue, listOf(
                     SubpluginOption("sourceSetName", sourceSet.name),
                     //use the INTERNAL option kind since the resources are tracked as sources (see below)
-                    FilesSubpluginOption("resDirs", sourceSet.res.srcDirs.toList())
+                    FilesSubpluginOption("resDirs", project.files(Callable { sourceSet.res.srcDirs }))
                 )
             )
-            kotlinCompile.source(project.files(getLayoutDirectories(sourceSet.res.srcDirs)))
+            kotlinCompile.inputs.files(getLayoutDirectories(project, sourceSet.res.srcDirs)).withPathSensitivity(PathSensitivity.RELATIVE)
         }
 
         addVariant(mainSourceSet)
@@ -157,12 +161,14 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         return wrapPluginOptions(pluginOptions, "configuration")
     }
 
-    private fun getLayoutDirectories(resDirectories: Collection<File>): List<File> {
+    private fun getLayoutDirectories(project: Project, resDirectories: Iterable<File>): FileCollection {
         fun isLayoutDirectory(file: File) = file.name == "layout" || file.name.startsWith("layout-")
 
-        return resDirectories.flatMap { resDir ->
-            (resDir.listFiles(::isLayoutDirectory)).orEmpty().asList()
-        }
+        return project.files(Callable {
+            resDirectories.flatMap { resDir ->
+                (resDir.listFiles(::isLayoutDirectory)).orEmpty().asList()
+            }
+        })
     }
 
     private fun applyExperimental(
@@ -189,11 +195,13 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))
 
-        fun addVariant(name: String, resDirectories: List<File>) {
-            val optionValue = buildString {
-                append(name)
-                append(';')
-                resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
+        fun addVariant(name: String, resDirectories: FileCollection) {
+            val optionValue = lazy {
+                buildString {
+                    append(name)
+                    append(';')
+                    resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
+                }
             }
             pluginOptions += CompositeSubpluginOption(
                 "variant", optionValue, listOf(
@@ -203,27 +211,27 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 )
             )
 
-            kotlinCompile.source(project.files(getLayoutDirectories(resDirectories)))
+            kotlinCompile.inputs.files(getLayoutDirectories(project, resDirectories)).withPathSensitivity(PathSensitivity.RELATIVE)
         }
 
         fun addSourceSetAsVariant(name: String) {
             val sourceSet = androidExtension.sourceSets.findByName(name) ?: return
             val srcDirs = sourceSet.res.srcDirs.toList()
             if (srcDirs.isNotEmpty()) {
-                addVariant(sourceSet.name, srcDirs)
+                addVariant(sourceSet.name, project.files(srcDirs))
             }
         }
 
-        val resDirectoriesForAllVariants = mutableListOf<List<File>>()
+        val resDirectoriesForAllVariants = mutableListOf<FileCollection>()
 
         androidProjectHandler.forEachVariant(project) { variant ->
             if (androidProjectHandler.getTestedVariantData(variant) != null) return@forEachVariant
             resDirectoriesForAllVariants += androidProjectHandler.getResDirectories(variant)
         }
 
-        val commonResDirectories = getCommonResDirectories(resDirectoriesForAllVariants)
+        val commonResDirectories = getCommonResDirectories(project, resDirectoriesForAllVariants)
 
-        addVariant("main", commonResDirectories.toList())
+        addVariant("main", commonResDirectories)
 
         getVariantComponentNames(variantData)?.let { (variantName, flavorName, buildTypeName) ->
             addSourceSetAsVariant(buildTypeName)
@@ -255,15 +263,11 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private data class VariantComponentNames(val variantName: String, val flavorName: String, val buildTypeName: String)
 
-    private fun getCommonResDirectories(resDirectories: List<List<File>>): Set<File> {
-        var common = resDirectories.firstOrNull()?.toSet() ?: return emptySet()
-
-        for (resDirs in resDirectories.drop(1)) {
-            common = common.intersect(resDirs)
-        }
-
-        return common
-    }
+    private fun getCommonResDirectories(project: Project, resDirectories: List<FileCollection>): FileCollection =
+        if (resDirectories.isEmpty())
+            project.files()
+        else
+            resDirectories.reduce { acc, other -> acc.filter { other.contains(it) } }
 
     private fun getApplicationPackage(project: Project, mainSourceSet: AndroidSourceSet): String {
         val manifestFile = mainSourceSet.manifest.srcFile
