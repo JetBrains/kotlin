@@ -2075,6 +2075,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/explicitScope.kt");
             }
 
+            @TestMetadata("explicitScopeNamed.kt")
+            public void testExplicitScopeNamed() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/explicitScopeNamed.kt");
+            }
+
+            @TestMetadata("explicitScopeNoContext.kt")
+            public void testExplicitScopeNoContext() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/explicitScopeNoContext.kt");
+            }
+
             @TestMetadata("globalScope.kt")
             public void testGlobalScope() throws Exception {
                 runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/globalScope.kt");
