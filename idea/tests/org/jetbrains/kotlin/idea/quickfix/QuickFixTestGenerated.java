@@ -10311,6 +10311,79 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/smartCastImpossibleInIfThen")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SmartCastImpossibleInIfThen extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSmartCastImpossibleInIfThen() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/smartCastImpossibleInIfThen"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("ifThen.kt")
+        public void testIfThen() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThen.kt");
+        }
+
+        @TestMetadata("ifThen2.kt")
+        public void testIfThen2() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThen2.kt");
+        }
+
+        @TestMetadata("ifThen3.kt")
+        public void testIfThen3() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThen3.kt");
+        }
+
+        @TestMetadata("ifThen4.kt")
+        public void testIfThen4() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThen4.kt");
+        }
+
+        @TestMetadata("ifThen5.kt")
+        public void testIfThen5() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThen5.kt");
+        }
+
+        @TestMetadata("ifThenElse.kt")
+        public void testIfThenElse() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThenElse.kt");
+        }
+
+        @TestMetadata("ifThenElse2.kt")
+        public void testIfThenElse2() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThenElse2.kt");
+        }
+
+        @TestMetadata("ifThenElse3.kt")
+        public void testIfThenElse3() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThenElse3.kt");
+        }
+
+        @TestMetadata("ifThenElse4.kt")
+        public void testIfThenElse4() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThenElse4.kt");
+        }
+
+        @TestMetadata("ifThenElse5.kt")
+        public void testIfThenElse5() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThenElse5.kt");
+        }
+
+        @TestMetadata("ifThenElseMultiStatement.kt")
+        public void testIfThenElseMultiStatement() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThenElseMultiStatement.kt");
+        }
+
+        @TestMetadata("ifThenMultiStatement.kt")
+        public void testIfThenMultiStatement() throws Exception {
+            runTest("idea/testData/quickfix/smartCastImpossibleInIfThen/ifThenMultiStatement.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/specifyOverrideExplicitly")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

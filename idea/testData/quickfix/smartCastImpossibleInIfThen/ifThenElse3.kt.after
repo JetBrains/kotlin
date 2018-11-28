@@ -1,0 +1,13 @@
+// "Replace 'if' expression with elvis expression" "true"
+// WITH_RUNTIME
+class Test {
+    var x: String? = ""
+
+    fun test() {
+        val i = x?.let { foo(it) } ?: bar()
+    }
+
+    fun foo(s: String) = 1
+
+    fun bar() = 0
+}

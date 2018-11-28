@@ -32,11 +32,15 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
-class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
+class IfThenToSafeAccessInspection(
+    private val stableElementNeeded: Boolean
+) : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
+
+    constructor() : this(stableElementNeeded = true)
 
     override fun isApplicable(element: KtIfExpression): Boolean {
         val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
-        if (!ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
+        if (stableElementNeeded && !ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
 
         return ifThenToSelectData.clausesReplaceableBySafeCall()
     }
