@@ -6,7 +6,9 @@ interface Deferred<T> {
 
 interface CoroutineContext
 
-object DefaultDispatcher : CoroutineContext
+object Dispatchers {
+    object Default : CoroutineContext
+}
 
 enum class CoroutineStart {
     DEFAULT,
@@ -15,30 +17,28 @@ enum class CoroutineStart {
     UNDISPATCHED
 }
 
-interface Job
-
-fun <T> async(
-    context: CoroutineContext = DefaultDispatcher,
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    parent: Job? = null,
-    f: suspend () -> T
-): Deferred<T> {
-    TODO()
+interface CoroutineScope {
+    val coroutineContext: CoroutineContext get() = Dispatchers.Default
 }
 
-fun <T> runBlocking(
-    context: CoroutineContext = DefaultDispatcher,
-    f: suspend () -> T
-) {
+object GlobalScope : CoroutineScope
+
+fun <T> CoroutineScope.async(
+    context: CoroutineContext = Dispatchers.Default,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> T
+): Deferred<T> {
     TODO()
 }
 
 suspend fun <T> withContext(
     context: CoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
-    f: suspend () -> T
+    block: suspend CoroutineScope.() -> T
 ) {
     TODO()
 }
+
+suspend fun <R> coroutineScope(block: suspend CoroutineScope.() -> R): R = GlobalScope.block()
 
 
