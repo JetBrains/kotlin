@@ -63,7 +63,7 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
         constructor(first: KtExpression, second: KtExpression) : this(first.text, second.text)
     }
 
-    data class Conversion(val firstFqName: String, val secondFqName: String, val replacement: String) {
+    data class Conversion(val firstFqName: String, val secondFqName: String, val replacement: String, val argumentList: String? = null) {
         private fun String.convertToShort() = takeLastWhile { it != '.' }
 
         val id: ConversionId get() = ConversionId(firstName, secondName)
@@ -71,6 +71,10 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
         val firstName = firstFqName.convertToShort()
 
         val secondName = secondFqName.convertToShort()
+
+        fun withArgumentList(argumentList: String) = Conversion(firstFqName, secondFqName, replacement, argumentList)
+
+        val fullReplacement: String get() = replacement + (argumentList ?: "")
     }
 
     companion object {
