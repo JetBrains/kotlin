@@ -99,19 +99,27 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
         }
 
-        var i = 1
-        val extraFileNames = mutableListOf<String>()
-        extraFileLoop@ while (true) {
-            for (extension in EXTENSIONS) {
-                val extraFile = File(mainFile.parent, FileUtil.getNameWithoutExtension(mainFile) + "." + i + extension)
-                if (extraFile.exists()) {
-                    extraFileNames += extraFile.name
-                    i++
-                    continue@extraFileLoop
+            var i = 1
+            val extraFileNames = mutableListOf<String>()
+            extraFileLoop@ while (true) {
+                for (extension in EXTENSIONS) {
+                    val extraFile = File(mainFile.parent, FileUtil.getNameWithoutExtension(mainFile) + "." + i + extension)
+                    if (extraFile.exists()) {
+                        extraFileNames += extraFile.name
+                        i++
+                        continue@extraFileLoop
+                    }
+                }
+                break
+            }
+            val parentFile = mainFile.parentFile
+            if (parentFile != null) {
+                for (file in parentFile.walkTopDown().maxDepth(1)) {
+                    if (file.name.endsWith(".lib.kt")) {
+                        extraFileNames += file.name
+                    }
                 }
             }
-            break
-        }
 
         myFixture.configureByFiles(*(listOf(mainFile.name) + extraFileNames).toTypedArray()).first()
 
