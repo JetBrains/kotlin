@@ -95,7 +95,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
     override fun hasTransformedResource(): Boolean =
             data.isNotEmpty()
 
-    override fun modifyOutputStream(os: ZipOutputStream) {
+    override fun modifyOutputStream(os: ZipOutputStream, preserveFileTimestamps: Boolean) {
         for ((path, bytes) in data) {
             os.putNextEntry(ZipEntry(path))
             os.write(bytes)
