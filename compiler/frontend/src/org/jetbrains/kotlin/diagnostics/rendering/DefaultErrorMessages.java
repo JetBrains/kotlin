@@ -731,7 +731,7 @@ public class DefaultErrorMessages {
             return nameExpression.getReferencedName();
         }, RENDER_TYPE, RENDER_TYPE);
 
-        MAP.put(INCOMPATIBLE_ENUM_COMPARISON, "Comparison of incompatible enums ''{1}'' and ''{2}'' is always unsuccessful", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(INCOMPATIBLE_ENUM_COMPARISON, "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful", RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(SENSELESS_COMPARISON, "Condition ''{0}'' is always ''{1}''", ELEMENT_TEXT, TO_STRING);
         MAP.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null");
