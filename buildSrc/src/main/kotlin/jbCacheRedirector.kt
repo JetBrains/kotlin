@@ -24,6 +24,7 @@ val mirroredUrls = listOf(
     "https://jetbrains.bintray.com/markdown",
     "https://jetbrains.bintray.com/teamcity-rest-client",
     "https://jetbrains.bintray.com/test-discovery",
+    "https://jetbrains.bintray.com/jediterm",
     "https://jitpack.io",
     "https://maven.exasol.com/artifactory/exasol-releases",
     "https://plugins.gradle.org/m2",
@@ -35,7 +36,12 @@ val mirroredUrls = listOf(
     "https://services.gradle.org",
     "https://www.jetbrains.com/intellij-repository",
     "https://www.myget.org/F/intellij-go-snapshots/maven",
-    "https://www.myget.org/F/rd-snapshots/maven"
+    "https://www.myget.org/F/rd-snapshots/maven",
+    "https://www.myget.org/F/rd-model-snapshots/maven",
+    "https://www.python.org/ftp",
+    "https://dl.google.com/dl/android/studio/ide-zips",
+    "https://dl.bintray.com/kotlin/ktor",
+    "https://cdn.azul.com/zulu/bin"
 )
 
 fun URI.toCacheRedirectorUri() = URI("https://cache-redirector.jetbrains.com/$host/$path")
