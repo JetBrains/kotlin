@@ -44,19 +44,22 @@ class BridgeDependenciesResolver(
 
             val defaultImports = scriptCompilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
 
-            val refineFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler
-                ?: return DependenciesResolver.ResolveResult.Success(
-                    ScriptDependencies(
-                        classpath = oldClasspath,
-                        sources = scriptCompilationConfiguration[ScriptCompilationConfiguration.ide.dependenciesSources].toClassPathOrEmpty(),
-                        imports = defaultImports
-                    ),
-                    diagnostics
-                )
-
-            val refineResults = refineFn(
-                ScriptConfigurationRefinementContext(scriptContents.toScriptSource(), scriptCompilationConfiguration, processedScriptData)
+            fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): ScriptDependencies = ScriptDependencies(
+                classpath = classpath,
+                sources = this[ScriptCompilationConfiguration.ide.dependenciesSources].toClassPathOrEmpty(),
+                imports = defaultImports
             )
+
+            val refineResults = scriptCompilationConfiguration.refineWith(
+                scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler,
+                scriptContents, processedScriptData
+            ).onSuccess {
+                it.refineWith(
+                    scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationBeforeCompiling]?.handler,
+                    scriptContents, processedScriptData
+                )
+            }
+
             val refinedConfiguration = when (refineResults) {
                 is ResultWithDiagnostics.Failure ->
                     return DependenciesResolver.ResolveResult.Failure(refineResults.reports.mapScriptReportsToDiagnostics())
@@ -98,3 +101,20 @@ internal fun ScriptContents.toScriptSource(): SourceCode = when {
 }
 
 internal fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
+
+internal fun List<SourceCode>?.toFilesOrEmpty() = this?.map {
+    val externalSource = it as? ExternalSourceCode
+    externalSource?.externalLocation?.toFile()
+        ?: throw RuntimeException("Unsupported source in requireSources parameter - only local files are supported now (${externalSource?.externalLocation})")
+} ?: emptyList()
+
+fun ScriptCompilationConfiguration.refineWith(
+    handler: RefineScriptCompilationConfigurationHandler?, scriptContents: ScriptContents, processedScriptData: ScriptCollectedData
+): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+
+    if (handler == null) return this.asSuccess()
+
+    return handler(
+        ScriptConfigurationRefinementContext(scriptContents.toScriptSource(), this, processedScriptData)
+    )
+}
