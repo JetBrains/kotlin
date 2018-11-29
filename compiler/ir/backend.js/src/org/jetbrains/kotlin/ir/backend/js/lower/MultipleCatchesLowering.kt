@@ -125,7 +125,7 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
             private fun buildImplicitCast(value: IrExpression, toType: IrType, toTypeSymbol: IrClassifierSymbol) =
                 JsIrBuilder.buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType, toTypeSymbol)
 
-            private fun mergeTypes(types: List<IrType>) = types.commonSupertype().also {
+            private fun mergeTypes(types: List<IrType>) = types.commonSupertype(context.symbolTable).also {
                 assert(it.isSubtypeOf(context.irBuiltIns.throwableType) || it is IrDynamicType)
             }
 
