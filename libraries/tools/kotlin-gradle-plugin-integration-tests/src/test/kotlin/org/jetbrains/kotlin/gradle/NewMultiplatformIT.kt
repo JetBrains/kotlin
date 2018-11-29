@@ -189,6 +189,18 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testMavenPublishAppliedBeforeMultiplatformPlugin() =
+        with(Project("sample-lib", GradleVersionRequired.AtLeast("5.0"), "new-mpp-lib-and-app")) {
+            setupWorkingDir()
+
+            gradleBuildScript().modify { "apply plugin: 'maven-publish'\n$it" }
+
+            build {
+                assertSuccessful()
+            }
+        }
+
+    @Test
     fun testResourceProcessing() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         val targetsWithResources = listOf("jvm6", "nodeJs", "wasm32", nativeHostTargetName)
         val processResourcesTasks =
