@@ -1,23 +1,8 @@
 import org.gradle.api.JavaVersion.VERSION_1_7
 
-val kotlin_version: String by extra
-buildscript {
-    var kotlin_version: String by extra
-    kotlin_version = "$VERSION$"
-    repositories {
-        maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
-        mavenCentral()
-    }
-    dependencies {
-        classpath(kotlinModule("gradle-plugin", kotlin_version))
-    }
-}
-
 plugins {
     application
-}
-apply {
-    plugin("kotlin")
+    kotlin("jvm") version "$VERSION$"
 }
 
 application {
@@ -31,7 +16,7 @@ repositories {
 
 dependencies {
     testCompile("junit:junit:4.12")
-    compile(kotlinModule("stdlib", kotlin_version))
+    compile(kotlin("stdlib"))
 }
 
 // VERSION: $VERSION$

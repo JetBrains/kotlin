@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 
 interface GradleBuildScriptManipulator<out Psi : PsiFile> {
@@ -64,8 +65,29 @@ interface GradleBuildScriptManipulator<out Psi : PsiFile> {
     fun addResolutionStrategy(pluginId: String)
 }
 
+fun fetchGradleVersion(psiFile: PsiFile): GradleVersion {
+    return gradleVersionFromFile(psiFile) ?: GradleVersion.current()
+}
+
+private fun gradleVersionFromFile(psiFile: PsiFile): GradleVersion? {
+    return null
+}
+
 val MIN_GRADLE_VERSION_FOR_NEW_PLUGIN_SYNTAX = GradleVersion.version("4.4")
 
 // Kept for compatibility reasons (pre-181.3 IDEAs)
-fun GradleBuildScriptManipulator<*>.useNewSyntax(kotlinPluginName: String) = false
 val BuildScriptDataBuilder.gradleVersion get() = GradleVersion.version("0.0")
+
+fun GradleBuildScriptManipulator<*>.useNewSyntax(kotlinPluginName: String): Boolean {
+    if (!preferNewSyntax) return false
+
+    val gradleVersion = fetchGradleVersion(scriptFile)
+    if (gradleVersion < MIN_GRADLE_VERSION_FOR_NEW_PLUGIN_SYNTAX) return false
+
+    if (isConfiguredWithOldSyntax(kotlinPluginName)) return false
+
+    val fileText = runReadAction { scriptFile.text }
+    val hasOldApply = fileText.contains("apply plugin:")
+
+    return !hasOldApply
+}
