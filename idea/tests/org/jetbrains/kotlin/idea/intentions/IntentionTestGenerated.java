@@ -8729,6 +8729,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/foldInitializerAndIfToElvis/ifStatementPriority.kt");
         }
 
+        @TestMetadata("IsSameType.kt")
+        public void testIsSameType() throws Exception {
+            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/IsSameType.kt");
+        }
+
+        @TestMetadata("IsSideTypeFake.kt")
+        public void testIsSideTypeFake() throws Exception {
+            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/IsSideTypeFake.kt");
+        }
+
+        @TestMetadata("IsSubType.kt")
+        public void testIsSubType() throws Exception {
+            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/IsSubType.kt");
+        }
+
+        @TestMetadata("IsSuperTypeFake.kt")
+        public void testIsSuperTypeFake() throws Exception {
+            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/IsSuperTypeFake.kt");
+        }
+
         @TestMetadata("MultiStatementBlock.kt")
         public void testMultiStatementBlock() throws Exception {
             runTest("idea/testData/intentions/foldInitializerAndIfToElvis/MultiStatementBlock.kt");
@@ -8747,21 +8767,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("NotIsNullableType.kt")
         public void testNotIsNullableType() throws Exception {
             runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIsNullableType.kt");
-        }
-
-        @TestMetadata("NotIsSameType.kt")
-        public void testNotIsSameType() throws Exception {
-            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIsSameType.kt");
-        }
-
-        @TestMetadata("NotIsSubType.kt")
-        public void testNotIsSubType() throws Exception {
-            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIsSubType.kt");
-        }
-
-        @TestMetadata("NotIsSuperType.kt")
-        public void testNotIsSuperType() throws Exception {
-            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIsSuperType.kt");
         }
 
         @TestMetadata("OtherVar1.kt")
