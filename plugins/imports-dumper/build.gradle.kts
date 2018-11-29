@@ -6,7 +6,7 @@ plugins {
     id("jps-compatible")
 }
 
-repositories.withRedirector(project) {
+repositories {
     maven("https://dl.bintray.com/kotlin/kotlinx")
 }
 

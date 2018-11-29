@@ -9,7 +9,7 @@ plugins {
     id("jps-compatible")
 }
 
-repositories.withRedirector(project) {
+repositories {
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
 }
 

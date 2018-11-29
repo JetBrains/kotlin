@@ -10,7 +10,7 @@ pluginManagement {
     }
 
     if (cacheRedirectorEnabled == 'true') {
-        println("cache-redirector is enabled for pluginManagement")
+        logger.info("Redirecting repositories for settings.gradle pluginManagement")
         JbCacheRedirectorKt.redirect(repositories)
     }
 }

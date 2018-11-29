@@ -313,7 +313,7 @@ allprojects {
 
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
-    repositories.withRedirector(project) {
+    repositories {
         intellijSdkRepo(project)
         androidDxJarRepo(project)
         mirrorRepo?.let(::maven)
@@ -785,5 +785,14 @@ tasks.create("findShadowJarsInClasspath").doLast {
     for (project in rootProject.allprojects) {
         project.checkConfig("compileClasspath")
         project.checkConfig("testCompileClasspath")
+    }
+}
+
+allprojects {
+    afterEvaluate {
+        if (cacheRedirectorEnabled()) {
+            logger.info("Redirecting repositories for $displayName")
+            repositories.redirect()
+        }
     }
 }
