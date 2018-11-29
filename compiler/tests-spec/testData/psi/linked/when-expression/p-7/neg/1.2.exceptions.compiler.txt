@@ -1,0 +1,1 @@
+junit.framework.AssertionFailedError: Incomplete operation in parsed OK test, method getExpression in KtWhenConditionWithExpression returns null. Element text:

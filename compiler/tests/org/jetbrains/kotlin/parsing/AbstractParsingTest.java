@@ -28,6 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
@@ -108,20 +109,24 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
         String fileContent = loadFile(filePath);
 
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath));
-        myFile = createFile(filePath, fileType, contentFilter != null ? contentFilter.invoke(fileContent) : fileContent);
 
-        myFile.acceptChildren(new KtVisitorVoid() {
-            @Override
-            public void visitKtElement(@NotNull KtElement element) {
-                element.acceptChildren(this);
-                try {
-                    checkPsiGetters(element);
+        try {
+            myFile = createFile(filePath, fileType, contentFilter != null ? contentFilter.invoke(fileContent) : fileContent);
+            myFile.acceptChildren(new KtVisitorVoid() {
+                @Override
+                public void visitKtElement(@NotNull KtElement element) {
+                    element.acceptChildren(this);
+                    try {
+                        checkPsiGetters(element);
+                    }
+                    catch (Throwable throwable) {
+                        throw new TestsCompilerError(throwable);
+                    }
                 }
-                catch (Throwable throwable) {
-                    throw new RuntimeException(throwable);
-                }
-            }
-        });
+            });
+        } catch (Throwable throwable) {
+            throw new TestsCompilerError(throwable);
+        }
 
         doCheckResult(myFullDataPath, filePath.replaceAll("\\.kts?", ".txt"), toParseTreeText(myFile, false, false).trim());
     }

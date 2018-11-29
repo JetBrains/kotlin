@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -57,11 +58,19 @@ object JvmResolveUtil {
         trace: BindingTrace = CliBindingTrace()
     ): AnalysisResult {
         for (file in files) {
-            AnalyzingUtils.checkForSyntacticErrors(file)
+            try {
+                AnalyzingUtils.checkForSyntacticErrors(file)
+            } catch (e: Exception) {
+                throw TestsCompiletimeError(e)
+            }
         }
 
         return analyze(project, files, configuration, packagePartProvider, trace).apply {
-            AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+            try {
+                AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+            } catch (e: Exception) {
+                throw TestsCompiletimeError(e)
+            }
         }
     }
 

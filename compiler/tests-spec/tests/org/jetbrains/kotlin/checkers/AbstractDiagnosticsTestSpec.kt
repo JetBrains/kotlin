@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.TestExceptionsComparator
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
@@ -12,12 +13,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.spec.models.AbstractSpecTest
 import org.jetbrains.kotlin.spec.SpecTestLinkedType
 import org.jetbrains.kotlin.spec.parsers.CommonParser
-import org.jetbrains.kotlin.spec.parsers.CommonPatterns.ls
 import org.jetbrains.kotlin.spec.validators.*
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.junit.Assert
 import java.io.File
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
@@ -84,32 +84,30 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
 
         enableDescriptorsGenerationIfNeeded(testFilePath)
 
-        CommonParser.parseSpecTest(testFilePath, files.associate { Pair(it.ktFile!!.name, it.clearText) }).apply {
+        CommonParser.parseSpecTest(testFilePath, files.associate { Pair(it.fileName, it.clearText) }).apply {
             specTest = first
             testLinkedType = second
         }
 
         println(specTest)
 
-        try {
-            super.analyzeAndCheck(testDataFile, files)
-        } catch (e: KotlinExceptionWithAttachments) {
-            val matches = exceptionPattern.matcher(e.message)
-
-            if (!matches.find())
-                Assert.fail(SpecTestValidationFailedReason.UNKNOWN_FRONTEND_EXCEPTION.description)
+        val checkUnexpectedBehaviour: (Matcher?) -> Pair<Boolean, Set<Int>?> = l@{ matches ->
+            if (specTest.unexpectedBehavior) return@l Pair(true, null)
+            if (matches == null) return@l Pair(false, null)
 
             val lineNumber = matches.group("lineNumber").toInt()
             val symbolNumber = matches.group("symbolNumber").toInt()
             val filename = matches.group("filename")
             val fileContent = files.find { it.ktFile?.name == filename }!!.clearText
-            val exceptionPosition =
-                fileContent.lines().subList(0, lineNumber).joinToString("\n").length + symbolNumber
+            val exceptionPosition = fileContent.lines().subList(0, lineNumber).joinToString("\n").length + symbolNumber
             val testCases = specTest.cases.byRanges[filename]
-            val isExpectedException = testCases!!.floorEntry(exceptionPosition).value.all { it.value.unexpectedBehavior }
+            val testCasesWithSamePosition = testCases!!.floorEntry(exceptionPosition).value
 
-            if (!isExpectedException)
-                Assert.fail()
+            return@l Pair(testCasesWithSamePosition.all { it.value.unexpectedBehavior }, testCasesWithSamePosition.keys.toSet())
+        }
+
+        TestExceptionsComparator(testDataFile).runAndCompareWithExpected(checkUnexpectedBehaviour) {
+            super.analyzeAndCheck(testDataFile, files)
         }
     }
 

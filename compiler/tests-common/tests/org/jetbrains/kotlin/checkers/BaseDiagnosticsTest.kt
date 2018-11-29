@@ -121,7 +121,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
     inner class TestFile(
             val module: TestModule?,
-            fileName: String,
+            val fileName: String,
             textWithMarkers: String,
             val directives: Map<String, String>
     ) {

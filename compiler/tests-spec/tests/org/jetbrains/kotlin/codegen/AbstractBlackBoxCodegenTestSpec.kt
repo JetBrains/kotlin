@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.TestExceptionsComparator
 import org.jetbrains.kotlin.spec.parsers.CommonParser
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns.packagePattern
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import java.io.File
+import java.io.*
 
 abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
     companion object {
@@ -55,6 +56,8 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
 
         includeHelpers(wholeFile, files)
 
-        super.doMultiFileTest(wholeFile, files, javaFilesDir)
+        TestExceptionsComparator(wholeFile).runAndCompareWithExpected {
+            super.doMultiFileTest(wholeFile, files, javaFilesDir)
+        }
     }
 }
