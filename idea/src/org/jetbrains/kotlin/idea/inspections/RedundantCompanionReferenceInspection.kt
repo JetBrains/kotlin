@@ -47,25 +47,15 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             when (selectorDescriptor) {
                 is PropertyDescriptor -> {
                     val name = selectorDescriptor.name
-                    if (containingClassDescriptor.findMemberVariable(name.asString()) != null) return
+                    if (containingClassDescriptor.findMemberVariable(name) != null) return
                     val variable = expression.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
                     if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return
                 }
                 is FunctionDescriptor -> {
                     val name = selectorDescriptor.name
-                    val functions = containingClassDescriptor.collectMemberFunction(name.asString()) + listOfNotNull(
-                        expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)?.takeIf {
-                            it.isLocalOrExtension(containingClassDescriptor)
-                        }
-                    )
-                    if (functions.any {
-                            val functionParams = it.valueParameters
-                            val calleeParams = (selectorExpression as? KtCallExpression)?.calleeExpression?.getCallableDescriptor()
-                                ?.valueParameters.orEmpty()
-                            functionParams.size == calleeParams.size && functionParams.zip(calleeParams).all { param ->
-                                param.first.type == param.second.type
-                            }
-                        }) return
+                    if (containingClassDescriptor.findMemberFunction(name) != null) return
+                    val function = expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)
+                    if (function != null && function.isLocalOrExtension(containingClassDescriptor)) return
                 }
             }
 
@@ -85,30 +75,27 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     }
 }
 
-private fun ClassDescriptor.findMemberVariable(name: String): PropertyDescriptor? {
-    val variable = unsubstitutedMemberScope.getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_IDE).firstOrNull()
-    if (variable != null) return variable
+private fun <D : MemberDescriptor> ClassDescriptor.findMemberByName(name: Name, find: ClassDescriptor.(Name) -> D?): D? {
+    val member = find(name)
+    if (member != null) return member
 
-    val variableInSuperClass = getSuperClassNotAny()?.findMemberVariable(name)
-    if (variableInSuperClass != null) return variableInSuperClass
+    val memberInSuperClass = getSuperClassNotAny()?.findMemberByName(name, find)
+    if (memberInSuperClass != null) return memberInSuperClass
 
     getSuperInterfaces().forEach {
-        val variableInInterface = it.findMemberVariable(name)
-        if (variableInInterface != null) return variableInInterface
+        val memberInInterface = it.findMemberByName(name, find)
+        if (memberInInterface != null) return memberInInterface
     }
 
     return null
 }
 
-private fun ClassDescriptor.collectMemberFunction(name: String): MutableList<FunctionDescriptor> {
-    val functions = mutableListOf<FunctionDescriptor>()
-    fun collect(descriptor: ClassDescriptor) {
-        functions.addAll(descriptor.unsubstitutedMemberScope.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_IDE))
-        descriptor.getSuperClassNotAny()?.let { collect(it) }
-        descriptor.getSuperInterfaces().forEach { collect(it) }
-    }
-    collect(this)
-    return functions
+private fun ClassDescriptor.findMemberVariable(name: Name): PropertyDescriptor? = findMemberByName(name) {
+    unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_IDE).firstOrNull()
+}
+
+private fun ClassDescriptor.findMemberFunction(name: Name): FunctionDescriptor? = findMemberByName(name) {
+    unsubstitutedMemberScope.getContributedFunctions(it, NoLookupLocation.FROM_IDE).firstOrNull()
 }
 
 private fun CallableDescriptor.isLocalOrExtension(extensionClassDescriptor: ClassDescriptor): Boolean {
