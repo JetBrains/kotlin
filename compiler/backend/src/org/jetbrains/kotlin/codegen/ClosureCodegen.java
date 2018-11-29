@@ -245,7 +245,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         DescriptorSerializer serializer =
                 DescriptorSerializer.createForLambda(new JvmSerializerExtension(v.getSerializationBindings(), state));
 
-        ProtoBuf.Function functionProto = serializer.functionProto(freeLambdaDescriptor).build();
+        ProtoBuf.Function.Builder builder = serializer.functionProto(freeLambdaDescriptor);
+        if (builder == null) return;
+        ProtoBuf.Function functionProto = builder.build();
 
         WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0, av -> {
             writeAnnotationData(av, serializer, functionProto);

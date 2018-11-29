@@ -22,6 +22,8 @@ abstract class SerializerExtension {
 
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false
+    open fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean = true
+    open fun shouldSerializeProperty(descriptor: PropertyDescriptor): Boolean = true
 
     interface ClassMembersProducer {
         fun getCallableMembers(classDescriptor: ClassDescriptor): Collection<CallableMemberDescriptor>

@@ -108,8 +108,8 @@ class DescriptorSerializer private constructor(
             if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
 
             when (descriptor) {
-                is PropertyDescriptor -> builder.addProperty(propertyProto(descriptor))
-                is FunctionDescriptor -> builder.addFunction(functionProto(descriptor))
+                is PropertyDescriptor -> propertyProto(descriptor)?.let { builder.addProperty(it) }
+                is FunctionDescriptor -> functionProto(descriptor)?.let { builder.addFunction(it) }
             }
         }
 
@@ -178,7 +178,9 @@ class DescriptorSerializer private constructor(
         return false
     }
 
-    fun propertyProto(descriptor: PropertyDescriptor): ProtoBuf.Property.Builder {
+    fun propertyProto(descriptor: PropertyDescriptor): ProtoBuf.Property.Builder? {
+        if (!extension.shouldSerializeProperty(descriptor)) return null
+
         val builder = ProtoBuf.Property.newBuilder()
 
         val local = createChildSerializer(descriptor)
@@ -281,7 +283,9 @@ class DescriptorSerializer private constructor(
             else
                 descriptor.visibility
 
-    fun functionProto(descriptor: FunctionDescriptor): ProtoBuf.Function.Builder {
+    fun functionProto(descriptor: FunctionDescriptor): ProtoBuf.Function.Builder? {
+        if (!extension.shouldSerializeFunction(descriptor)) return null
+
         val builder = ProtoBuf.Function.newBuilder()
 
         val local = createChildSerializer(descriptor)
@@ -638,8 +642,8 @@ class DescriptorSerializer private constructor(
 
         for (declaration in sort(members)) {
             when (declaration) {
-                is PropertyDescriptor -> builder.addProperty(propertyProto(declaration))
-                is FunctionDescriptor -> builder.addFunction(functionProto(declaration))
+                is PropertyDescriptor -> propertyProto(declaration)?.let { builder.addProperty(it) }
+                is FunctionDescriptor -> functionProto(declaration)?.let { builder.addFunction(it) }
                 is TypeAliasDescriptor -> builder.addTypeAlias(typeAliasProto(declaration))
             }
         }

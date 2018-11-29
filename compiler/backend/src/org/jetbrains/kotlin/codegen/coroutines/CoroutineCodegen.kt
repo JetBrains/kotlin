@@ -652,7 +652,8 @@ class CoroutineCodegenForNamedFunction private constructor(
     override fun generateKotlinMetadataAnnotation() {
         writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { av ->
             val serializer = DescriptorSerializer.createForLambda(JvmSerializerExtension(v.serializationBindings, state))
-            val functionProto = serializer.functionProto(createFreeFakeLambdaDescriptor(suspendFunctionJvmView)).build()
+            val functionProto =
+                serializer.functionProto(createFreeFakeLambdaDescriptor(suspendFunctionJvmView))?.build() ?: return@writeKotlinMetadata
             AsmUtil.writeAnnotationData(av, serializer, functionProto)
         }
     }
