@@ -91,7 +91,7 @@ class JvmLower(val context: JvmBackendContext) {
         var state = irFile
         // TODO run lowering passes as callbacks in bottom-up visitor
        
-	context.rootPhaseManager(irFile).apply {
+	    context.rootPhaseManager(irFile).apply {
             for (jvmPhase in jvmPhases) {
                 state = phase(jvmPhase, context, state)
             }
