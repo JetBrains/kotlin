@@ -19,6 +19,7 @@ dependencies {
     compile(projectTests(":j2k"))
     compile(projectTests(":idea:idea-android"))
     compile(projectTests(":jps-plugin"))
+    compile(projectTests(":plugins:jvm-abi-gen"))
     compile(projectTests(":plugins:android-extensions-compiler"))
     compile(projectTests(":plugins:android-extensions-ide"))
     compile(projectTests(":plugins:android-extensions-jps"))

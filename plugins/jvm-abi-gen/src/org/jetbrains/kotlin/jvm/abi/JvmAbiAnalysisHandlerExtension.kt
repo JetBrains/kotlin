@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.jvm.abi.asm.AbiClassBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -64,10 +65,10 @@ class JvmAbiAnalysisHandlerExtension(
 
     private object AbiBinaries : ClassBuilderFactory {
         override fun getClassBuilderMode(): ClassBuilderMode =
-            ClassBuilderMode.FULL
+            ClassBuilderMode.ABI
 
         override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder =
-            AbstractClassBuilder.Concrete(ClassWriter(0))
+            AbiClassBuilder(ClassWriter(0))
 
         override fun asText(builder: ClassBuilder): String =
             throw UnsupportedOperationException("AbiBinaries generator asked for text")
