@@ -57,7 +57,7 @@ private operator fun String.times(count: Int): String {
     return builder.toString()
 }
 
-private val cKeywords = setOf(
+internal val cKeywords = setOf(
         // Actual C keywords.
         "auto", "break", "case",
         "char", "const", "continue",

@@ -240,3 +240,5 @@ fun IC3?.getValueOrNull3() = this?.value
 
 fun isFrozen(obj: Any): Boolean = obj.isFrozen
 fun kotlinLambda(block: (Any) -> Any): Any = block
+
+fun multiply(int: Int, long: Long) = int * long

@@ -271,6 +271,8 @@ func testFunctions() throws {
 
     try assertEquals(actual: ValuesKt.argsFun(i: 10, l: 20, d: 3.5, s: "res") as! String,
             expected: "res10203.5")
+
+    try assertEquals(actual: ValuesKt.multiply(int: 3, long: 2), expected: 6)
 }
 
 func testFuncType() throws {

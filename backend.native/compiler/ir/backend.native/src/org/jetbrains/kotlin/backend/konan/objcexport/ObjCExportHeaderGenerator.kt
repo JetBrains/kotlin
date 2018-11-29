@@ -652,7 +652,7 @@ abstract class ObjCExportHeaderGenerator(
         fun collectParameters(baseMethodBridge: MethodBridge, method: FunctionDescriptor): List<ObjCParameter> {
             fun unifyName(initialName: String, usedNames: Set<String>): String {
                 var unique = initialName
-                while (unique in usedNames) {
+                while (unique in usedNames || unique in cKeywords) {
                     unique += "_"
                 }
                 return unique
