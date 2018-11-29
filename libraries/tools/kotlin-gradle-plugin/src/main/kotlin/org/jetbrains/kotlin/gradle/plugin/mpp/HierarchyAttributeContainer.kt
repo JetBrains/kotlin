@@ -30,7 +30,7 @@ class HierarchyAttributeContainer(val parent: AttributeContainer?) : AttributeCo
     override fun <T : Any?> getAttribute(key: Attribute<T>?): T? =
         attributesMap.get(key as Attribute<*>) as T? ?: parent?.getAttribute(key)
 
-    override fun isEmpty(): Boolean = attributesMap.isEmpty() && parent?.isEmpty ?: false
+    override fun isEmpty(): Boolean = attributesMap.isEmpty() && (parent?.isEmpty ?: true)
 
     override fun keySet(): Set<Attribute<*>> = attributesMap.keys + parent?.keySet().orEmpty()
 
