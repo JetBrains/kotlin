@@ -17,6 +17,8 @@ open class KotlinGradlePluginStatisticsTrigger(groupIdSufix: String) : KotlinSta
 
 class KotlinVersionTrigger : KotlinGradlePluginStatisticsTrigger("kotlin_version")
 
+class KotlinTargetTrigger : KotlinGradlePluginStatisticsTrigger("target")
+
 class KotlinProjectLibraryUsageTrigger : KotlinGradlePluginStatisticsTrigger("library")
 
 open class KotlinIdeActionTrigger(groupIdSufix: String? = null) : KotlinIdeStatisticsTrigger("action" + (if (groupIdSufix != null) ".$groupIdSufix" else ""))
