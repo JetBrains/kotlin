@@ -1761,6 +1761,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("defaultParam.kt")
+        public void testDefaultParam() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/localFunInLambda/defaultParam.kt");
+        }
+
         @TestMetadata("lambdaInLambdaCapturesAnotherFun.kt")
         public void testLambdaInLambdaCapturesAnotherFun() throws Exception {
             runTest("compiler/testData/codegen/boxInline/localFunInLambda/lambdaInLambdaCapturesAnotherFun.kt");
