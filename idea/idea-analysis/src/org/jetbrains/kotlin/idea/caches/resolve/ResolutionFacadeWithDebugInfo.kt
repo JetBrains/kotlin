@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -29,7 +30,11 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 private class ResolutionFacadeWithDebugInfo(
     private val delegate: ResolutionFacade,
     private val creationPlace: CreationPlace
-) : ResolutionFacade {
+) : ResolutionFacade, ResolutionFacadeModuleDescriptorProvider {
+    override fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
+        return delegate.findModuleDescriptor(ideaModuleInfo)
+    }
+
     override val project: Project
         get() = delegate.project
 
