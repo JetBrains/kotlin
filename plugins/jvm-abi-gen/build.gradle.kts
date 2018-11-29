@@ -1,0 +1,39 @@
+
+description = "ABI generation for Kotlin/JVM"
+
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
+
+dependencies {
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:backend"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend.java"))
+    compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":kotlin-build-common"))
+
+    runtimeOnly(project(":kotlin-compiler"))
+
+    testCompile(commonDep("junit:junit"))
+    testCompile(projectTests(":compiler:incremental-compilation-impl"))
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" { projectDefault() }
+}
+
+projectTest {
+    workingDir = rootDir
+    dependsOn(":dist")
+}
+
+sourcesJar()
+javadocJar()
+dist()
+publish()
+
+testsJar()
