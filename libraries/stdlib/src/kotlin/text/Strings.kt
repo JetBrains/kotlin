@@ -772,6 +772,7 @@ public fun CharSequence.endsWith(suffix: CharSequence, ignoreCase: Boolean = fal
  * If this and [other] have no common prefix, returns the empty string.
 
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
+ * @sample samples.text.Strings.commonPrefixWith
  */
 public fun CharSequence.commonPrefixWith(other: CharSequence, ignoreCase: Boolean = false): String {
     val shortestLength = minOf(this.length, other.length)
@@ -792,6 +793,7 @@ public fun CharSequence.commonPrefixWith(other: CharSequence, ignoreCase: Boolea
  * If this and [other] have no common suffix, returns the empty string.
 
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
+ * @sample samples.text.Strings.commonSuffixWith
  */
 public fun CharSequence.commonSuffixWith(other: CharSequence, ignoreCase: Boolean = false): String {
     val thisLength = this.length
