@@ -480,6 +480,7 @@ tasks {
                   ":compiler:container:test",
                   ":compiler:tests-java8:test",
                   ":compiler:tests-spec:remoteRunTests")
+        dependsOn(":plugins:jvm-abi-gen:test")
     }
 
     create("jsCompilerTest") {
