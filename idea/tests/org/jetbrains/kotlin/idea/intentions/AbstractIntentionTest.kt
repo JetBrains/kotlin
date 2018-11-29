@@ -33,9 +33,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.PlatformTestUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -106,6 +104,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
         val pathToFiles = mapOf(*(sourceFilePaths zip psiFiles).toTypedArray())
 
         val fileText = FileUtil.loadFile(mainFile, true)
+        val configured = configureCompilerOptions(fileText, project, module)
 
         ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
 
@@ -124,9 +123,11 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
             if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
                 DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
             }
-        }
-        finally {
+        } finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
+            if (configured) {
+                rollbackCompilerOptions(project, module)
+            }
         }
     }
 

@@ -5910,6 +5910,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertNullablePropertyToLateinit/local.kt");
         }
 
+        @TestMetadata("localLegacy.kt")
+        public void testLocalLegacy() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/localLegacy.kt");
+        }
+
         @TestMetadata("nonNullInitializer.kt")
         public void testNonNullInitializer() throws Exception {
             runTest("idea/testData/intentions/convertNullablePropertyToLateinit/nonNullInitializer.kt");
@@ -5938,6 +5943,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("topLevel.kt")
         public void testTopLevel() throws Exception {
             runTest("idea/testData/intentions/convertNullablePropertyToLateinit/topLevel.kt");
+        }
+
+        @TestMetadata("topLevelLegacy.kt")
+        public void testTopLevelLegacy() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/topLevelLegacy.kt");
         }
 
         @TestMetadata("unsignedInt.kt")
