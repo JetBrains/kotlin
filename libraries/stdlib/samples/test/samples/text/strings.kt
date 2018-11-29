@@ -176,4 +176,19 @@ class Strings {
         val sameString = nonBlank.ifBlank { "def" }
         assertTrue(nonBlank === sameString)
     }
+
+    @Sample
+    fun commonPrefixWith() {
+        assertPrints("Hot_Coffee".commonPrefixWith("Hot_cocoa"), "Hot_")
+        assertPrints("Hot_Coffee".commonPrefixWith("Hot_cocoa", true), "Hot_Co")
+        assertPrints("Hot_Coffee".commonPrefixWith("Iced_Coffee"), "")
+    }
+
+    @Sample
+    fun commonSuffixWith() {
+        assertPrints("Hot_Tea".commonSuffixWith("iced_tea"), "ea")
+        assertPrints("Hot_Tea".commonSuffixWith("iced_tea", true), "_Tea")
+        assertPrints("Hot_Tea".commonSuffixWith("Hot_Coffee"), "")
+    }
+
 }
