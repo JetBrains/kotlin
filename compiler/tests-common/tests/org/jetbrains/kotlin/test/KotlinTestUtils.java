@@ -322,7 +322,12 @@ public class KotlinTestUtils {
 
     @NotNull
     public static KotlinCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
-        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
+        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK, Collections.emptyList());
+    }
+
+    @NotNull
+    public static KotlinCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind, @NotNull List<File> classpath) {
+        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK, classpath);
     }
 
     @NotNull
@@ -331,14 +336,26 @@ public class KotlinTestUtils {
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind
     ) {
+        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, jdkKind, Collections.emptyList());
+    }
+
+    @NotNull
+    public static KotlinCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+            @NotNull Disposable disposable,
+            @NotNull ConfigurationKind configurationKind,
+            @NotNull TestJdkKind jdkKind,
+            @NotNull List<File> classpath
+    ) {
+        List<File> fullClasspath = new ArrayList<>(classpath);
+        fullClasspath.add(getAnnotationsJar());
         return KotlinCoreEnvironment.createForTests(
-                disposable, newConfiguration(configurationKind, jdkKind, getAnnotationsJar()), EnvironmentConfigFiles.JVM_CONFIG_FILES
+                disposable, newConfiguration(configurationKind, jdkKind, fullClasspath, Collections.emptyList()), EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
     }
 
     @NotNull
     public static KotlinCoreEnvironment createEnvironmentWithFullJdkAndIdeaAnnotations(Disposable disposable) {
-        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
+        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK, Collections.emptyList());
     }
 
     @NotNull
