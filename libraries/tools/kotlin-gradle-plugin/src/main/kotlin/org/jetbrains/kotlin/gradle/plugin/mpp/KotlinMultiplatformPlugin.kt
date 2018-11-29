@@ -80,14 +80,15 @@ class KotlinMultiplatformPlugin(
         configureSourceSets(project)
 
         setUpConfigurationAttributes(project)
-        configurePublishingWithMavenPublish(project)
-        configureSourceJars(project)
 
         // set up metadata publishing
         targetsFromPreset.fromPreset(
             KotlinMetadataTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion),
             METADATA_TARGET_NAME
         )
+        configureSourceJars(project)
+
+        configurePublishingWithMavenPublish(project)
 
         // propagate compiler plugin options to the source set language settings
         setupCompilerPluginOptions(project)
