@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.TestsRuntimeError;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.*;
@@ -38,8 +39,10 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         @Nullable File javaFilesDir
     ) throws Exception {
         boolean isIgnored = IGNORE_EXPECTED_FAILURES && InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
+
+        compile(files, javaFilesDir, !isIgnored);
+
         try {
-            compile(files, javaFilesDir, !isIgnored);
             blackBox(!isIgnored);
         }
         catch (Throwable t) {
@@ -52,7 +55,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 }
             }
 
-            throw t;
+            throw new TestsRuntimeError(t);
         }
 
         doBytecodeListingTest(wholeFile);
