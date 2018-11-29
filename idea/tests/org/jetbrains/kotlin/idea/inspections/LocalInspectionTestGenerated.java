@@ -69,19 +69,9 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/booleanLiteral.kt");
         }
 
-        @TestMetadata("booleanLiteral2.kt")
-        public void testBooleanLiteral2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/booleanLiteral2.kt");
-        }
-
         @TestMetadata("booleanLiteral3.kt")
         public void testBooleanLiteral3() throws Exception {
             runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/booleanLiteral3.kt");
-        }
-
-        @TestMetadata("booleanLiteral4.kt")
-        public void testBooleanLiteral4() throws Exception {
-            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/booleanLiteral4.kt");
         }
 
         @TestMetadata("hasError.kt")
