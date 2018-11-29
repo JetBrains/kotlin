@@ -114,6 +114,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         runTest("idea/testData/diagnosticMessage/illegalSuspendCall.kt");
     }
 
+    @TestMetadata("incompatibleEnums.kt")
+    public void testIncompatibleEnums() throws Exception {
+        runTest("idea/testData/diagnosticMessage/incompatibleEnums.kt");
+    }
+
     @TestMetadata("invisibleMember.kt")
     public void testInvisibleMember() throws Exception {
         runTest("idea/testData/diagnosticMessage/invisibleMember.kt");
