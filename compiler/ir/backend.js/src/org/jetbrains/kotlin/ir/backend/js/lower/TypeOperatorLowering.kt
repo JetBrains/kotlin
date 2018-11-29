@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -68,12 +65,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildren(object : IrElementTransformer<IrDeclarationParent> {
-            override fun visitFunction(declaration: IrFunction, data: IrDeclarationParent) =
-                super.visitFunction(declaration, declaration)
-
-            override fun visitClass(declaration: IrClass, data: IrDeclarationParent): IrStatement {
-                return super.visitClass(declaration, declaration)
-            }
+            override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent) =
+                super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 
             override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclarationParent): IrExpression {
                 super.visitTypeOperator(expression, data)
