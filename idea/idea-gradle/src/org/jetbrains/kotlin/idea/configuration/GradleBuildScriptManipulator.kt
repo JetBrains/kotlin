@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 
@@ -66,15 +67,28 @@ interface GradleBuildScriptManipulator<out Psi : PsiFile> {
     fun addResolutionStrategy(pluginId: String)
 }
 
+fun fetchGradleVersion(psiFile: PsiFile): GradleVersion {
+    return gradleVersionFromFile(psiFile) ?: GradleVersion.current()
+}
+
+private fun gradleVersionFromFile(psiFile: PsiFile): GradleVersion? {
+    val module = psiFile.module ?: return null
+    val path = ExternalSystemApiUtil.getExternalProjectPath(module) ?: return null
+    return GradleSettings.getInstance(module.project).getLinkedProjectSettings(path)?.resolveGradleVersion()
+}
+
 val MIN_GRADLE_VERSION_FOR_NEW_PLUGIN_SYNTAX = GradleVersion.version("4.4")
 
 fun GradleBuildScriptManipulator<*>.useNewSyntax(kotlinPluginName: String): Boolean {
     if (!preferNewSyntax) return false
 
-    val module = scriptFile.module ?: return false
-    val path = ExternalSystemApiUtil.getExternalProjectPath(module) ?: return false
-    val gradleVersion = GradleSettings.getInstance(module.project).getLinkedProjectSettings(path)?.resolveGradleVersion() ?: return false
+    val gradleVersion = fetchGradleVersion(scriptFile)
     if (gradleVersion < MIN_GRADLE_VERSION_FOR_NEW_PLUGIN_SYNTAX) return false
 
-    return !isConfiguredWithOldSyntax(kotlinPluginName)
+    if (isConfiguredWithOldSyntax(kotlinPluginName)) return false
+
+    val fileText = runReadAction { scriptFile.text }
+    val hasOldApply = fileText.contains("apply plugin:")
+
+    return !hasOldApply
 }
