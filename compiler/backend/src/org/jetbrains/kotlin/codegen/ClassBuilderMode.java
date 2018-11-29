@@ -40,7 +40,16 @@ public class ClassBuilderMode {
      * Full function bodies
      */
     public final static ClassBuilderMode FULL = new ClassBuilderMode(
-            /* bodies = */ true, 
+            /* bodies = */ true,
+            /* metadata = */ true,
+            /* sourceRetention = */ false,
+            /* generateMultiFileFacadePartClasses = */ true);
+
+    /**
+     * ABI for compilation (non-private signatures + inline function bodies)
+     */
+    public final static ClassBuilderMode ABI = new ClassBuilderMode(
+            /* bodies = */ true,
             /* metadata = */ true,
             /* sourceRetention = */ false,
             /* generateMultiFileFacadePartClasses = */ true);
