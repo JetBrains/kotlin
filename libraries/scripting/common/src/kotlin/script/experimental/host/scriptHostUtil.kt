@@ -48,6 +48,13 @@ open class FileScriptSource(val file: File) : ExternalSourceCode {
 }
 
 /**
+ * The implementation of the SourceCode for a script location pointed by the URL
+ */
+open class UrlScriptSource(override val externalLocation: URL) : ExternalSourceCode {
+    override val text: String by lazy { externalLocation.readText() }
+}
+
+/**
  * Converts the file into the SourceCode
  */
 fun File.toScriptSource(): SourceCode = FileScriptSource(this)
