@@ -685,7 +685,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         }
 
         if (TypeIntersector.isIncompatibleEnums(type, subjectType)) {
-            context.trace.report(INCOMPATIBLE_ENUM_COMPARISON.on(reportErrorOn, type, subjectType))
+            context.trace.report(INCOMPATIBLE_ENUM_COMPARISON.on(reportErrorOn, subjectType, type))
         }
 
         // check if the pattern is essentially a 'null' expression
