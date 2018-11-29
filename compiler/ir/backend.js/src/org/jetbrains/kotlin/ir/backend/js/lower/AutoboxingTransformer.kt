@@ -37,12 +37,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
                 if (this.symbol.owner.let { it is IrSimpleFunction && it.isSuspend }) {
                     irBuiltIns.anyNType
                 } else {
-                    try {
-                        this.symbol.owner.returnType
-                    } catch (e: kotlin.UninitializedPropertyAccessException) {
-                        // TODO: Fix lateinit return types
-                        this.type
-                    }
+                    this.symbol.owner.returnType
                 }
             }
             is IrGetField -> this.symbol.owner.type

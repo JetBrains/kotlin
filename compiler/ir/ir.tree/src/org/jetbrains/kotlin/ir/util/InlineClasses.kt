@@ -48,10 +48,6 @@ fun IrType.isInlined(): Boolean = this.getInlinedClass() != null
 private tailrec fun erase(type: IrType): IrClass? {
     val classifier = type.classifierOrFail
 
-    // TODO: Fix unbound symbols
-    if (!classifier.isBound)
-        return null
-
     return when (classifier) {
         is IrClassSymbol -> classifier.owner
         is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())

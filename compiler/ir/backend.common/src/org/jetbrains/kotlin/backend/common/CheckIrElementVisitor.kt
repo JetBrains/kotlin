@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
@@ -41,6 +39,7 @@ class CheckIrElementVisitor(
 ) : IrElementVisitorVoid {
 
     val set = mutableSetOf<IrElement>()
+    val checkedTypes = mutableSetOf<IrType>()
 
     override fun visitElement(element: IrElement) {
         if (config.ensureAllNodesAreDifferent) {
@@ -290,4 +289,23 @@ class CheckIrElementVisitor(
         expression.setter?.ensureBound(expression)
     }
 
+    override fun visitExpression(expression: IrExpression) {
+        checkType(expression.type, expression)
+        super.visitExpression(expression)
+    }
+
+    private fun checkType(type: IrType, element: IrElement) {
+        if (type in checkedTypes)
+            return
+
+        when (type) {
+            is IrSimpleType -> {
+                if (!type.classifier.isBound) {
+                    reportError(element, "Type: ${type.render()} has unbound classifier")
+                }
+            }
+        }
+
+        checkedTypes.add(type)
+    }
 }
