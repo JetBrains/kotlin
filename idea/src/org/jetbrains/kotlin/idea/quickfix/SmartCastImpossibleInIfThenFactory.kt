@@ -23,21 +23,18 @@ object SmartCastImpossibleInIfThenFactory : KotlinIntentionActionsFactory() {
         val ifExpression =
             element.getStrictParentOfType<KtContainerNodeForControlStructureBody>()?.parent as? KtIfExpression ?: return emptyList()
 
-        val ifThenToSafeAccess = IfThenToSafeAccessInspection(stableElementNeeded = false)
-        val ifThenToElvis = IfThenToElvisIntention(stableElementNeeded = false)
-
         return listOf(
             createQuickFix(
                 ifExpression,
-                { ifThenToSafeAccess.fixText(it) },
-                { ifThenToSafeAccess.isApplicable(it) },
-                { ifExpr, project, editor -> ifThenToSafeAccess.applyTo(ifExpr.ifKeyword, project, editor) }
+                { IfThenToSafeAccessInspection.fixTextFor(it) },
+                { IfThenToSafeAccessInspection.isApplicableTo(it, expressionShouldBeStable = false) },
+                { ifExpr, _, editor -> IfThenToSafeAccessInspection.convert(ifExpr, editor) }
             ),
             createQuickFix(
                 ifExpression,
-                { ifThenToElvis.text },
-                { ifThenToElvis.isApplicableTo(it) },
-                { ifExpr, _, editor -> ifThenToElvis.applyTo(ifExpr, editor) }
+                { IfThenToElvisIntention.intentionText },
+                { IfThenToElvisIntention.isApplicableTo(it, expressionShouldBeStable = false) },
+                { ifExpr, _, editor -> IfThenToElvisIntention.convert(ifExpr, editor) }
             )
         )
     }
@@ -49,7 +46,9 @@ object SmartCastImpossibleInIfThenFactory : KotlinIntentionActionsFactory() {
         applyTo: (KtIfExpression, project: Project, editor: Editor?) -> Unit
     ): KotlinQuickFixAction<KtIfExpression> {
         return object : KotlinQuickFixAction<KtIfExpression>(ifExpression) {
-            override fun getText() = fixText(ifExpression)
+            private val text = fixText(ifExpression)
+
+            override fun getText() = text
 
             override fun getFamilyName() = text
 
