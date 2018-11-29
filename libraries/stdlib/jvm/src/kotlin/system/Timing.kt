@@ -9,7 +9,7 @@ package kotlin.system
 /**
  * Executes the given [block] and returns elapsed time in milliseconds.
  */
-public inline fun measureTimeMillis(block: () -> Unit): Long = measureNanoTime(block) / 1000000L
+public inline fun measureTimeMillis(block: () -> Unit): Long = measureNanoTime(block) / 1_000_000L
 
 /**
  * Executes the given [block] and returns elapsed time in nanoseconds.
