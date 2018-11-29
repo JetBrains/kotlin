@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 internal class ModuleResolutionFacadeImpl(
     private val projectFacade: ProjectResolutionFacade,
     private val moduleInfo: IdeaModuleInfo
-) : ResolutionFacade {
+) : ResolutionFacade, ResolutionFacadeModuleDescriptorProvider {
     override val project: Project
         get() = projectFacade.project
 
@@ -47,7 +47,7 @@ internal class ModuleResolutionFacadeImpl(
     override val moduleDescriptor: ModuleDescriptor
         get() = findModuleDescriptor(moduleInfo)
 
-    fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo) = projectFacade.findModuleDescriptor(ideaModuleInfo)
+    override fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo) = projectFacade.findModuleDescriptor(ideaModuleInfo)
 
     override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
         return analyze(listOf(element), bodyResolveMode)
@@ -96,6 +96,11 @@ internal class ModuleResolutionFacadeImpl(
     }
 }
 
-fun ResolutionFacade.findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor? {
-    return (this as? ModuleResolutionFacadeImpl)?.findModuleDescriptor(ideaModuleInfo)
+fun ResolutionFacade.findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
+    return (this as ResolutionFacadeModuleDescriptorProvider).findModuleDescriptor(ideaModuleInfo)
+}
+
+
+interface ResolutionFacadeModuleDescriptorProvider {
+    fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor
 }
