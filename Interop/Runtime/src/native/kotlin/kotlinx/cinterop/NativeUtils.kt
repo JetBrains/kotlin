@@ -60,3 +60,8 @@ fun cValuesOf(vararg elements: UInt): CValues<UIntVar> =
 
 fun cValuesOf(vararg elements: ULong): CValues<ULongVar> =
         createValues(elements.size) { index -> this.value = elements[index] }
+
+fun UByteArray.toCValues() = cValuesOf(*this)
+fun UShortArray.toCValues() = cValuesOf(*this)
+fun UIntArray.toCValues() = cValuesOf(*this)
+fun ULongArray.toCValues() = cValuesOf(*this)
