@@ -23,7 +23,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -147,11 +149,7 @@ class FoldInitializerAndIfToElvisIntention :
 
             if (typeReference != null) {
                 val checkedType = ifExpression.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
-                val variableTypeReference = prevStatement.typeReference
-                val variableType = if (variableTypeReference != null)
-                    prevStatement.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, variableTypeReference]
-                else
-                    SpecifyTypeExplicitlyIntention.getTypeForDeclaration(prevStatement)
+                val variableType = (prevStatement.resolveToDescriptorIfAny() as? VariableDescriptor)?.type
                 if (checkedType != null && variableType != null && !checkedType.isSubtypeOf(variableType)) return null
             }
 
