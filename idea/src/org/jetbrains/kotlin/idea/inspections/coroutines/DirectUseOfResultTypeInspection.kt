@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 
-class ResultIsResultInspection : AbstractKotlinInspection() {
+class DirectUseOfResultTypeInspection : AbstractKotlinInspection() {
 
     private fun MemberScope.hasCorrespondingNonCatchingFunction(
         nameWithoutCatching: String,
