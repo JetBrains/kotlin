@@ -144,9 +144,9 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/coroutines/asyncResultUnused/inspectionData/inspections.test");
         }
 
-        @TestMetadata("coroutines/resultIsSuccessOrFailure/inspectionData/inspections.test")
-        public void testCoroutines_resultIsSuccessOrFailure_inspectionData_Inspections_test() throws Exception {
-            runTest("idea/testData/inspections/coroutines/resultIsSuccessOrFailure/inspectionData/inspections.test");
+        @TestMetadata("coroutines/directUseOfResultType/inspectionData/inspections.test")
+        public void testCoroutines_directUseOfResultType_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/coroutines/directUseOfResultType/inspectionData/inspections.test");
         }
 
         @TestMetadata("dataClassPrivateConstructor/inspectionData/inspections.test")

@@ -3028,8 +3028,8 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.ResultIsResultInspection"
-                     displayName="Function returning Result"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.DirectUseOfResultTypeInspection"
+                     displayName="Function returning Result directly"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="false"
