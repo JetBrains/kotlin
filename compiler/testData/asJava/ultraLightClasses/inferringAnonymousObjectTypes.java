@@ -29,20 +29,18 @@ public final class ArrayOfAnonymous /* ArrayOfAnonymous*/ {
 }
 
 final class C /* C*/ {
-  @null()
-  private final int y;
-
   @org.jetbrains.annotations.NotNull()
   private final kotlin.jvm.functions.Function0<java.lang.Object> initChild;
 
-  @null()
-  public  C(@null() int);
+  private final int y;
 
   @null()
-  public final int getY();
+  public  C(int);
 
   @org.jetbrains.annotations.NotNull()
   public final kotlin.jvm.functions.Function0<java.lang.Object> getInitChild();
+
+  public final int getY();
 
 }
 
