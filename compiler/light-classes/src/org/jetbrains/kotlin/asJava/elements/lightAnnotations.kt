@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
-import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -260,7 +259,6 @@ class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierList
 
         if (annotatedElement is KtParameter) {
             if (annotatedElement.containingClassOrObject?.isAnnotation() == true) return null
-            if (isNullableInJvmOverloads(annotatedElement)) return Nullable::class.java.name
         }
 
         // don't annotate property setters
@@ -287,13 +285,6 @@ class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierList
             TypeNullability.NULLABLE -> Nullable::class.java.name
             TypeNullability.FLEXIBLE -> null
         }
-    }
-
-    private fun isNullableInJvmOverloads(annotatedElement: KtParameter): Boolean {
-        if (annotatedElement.ownerFunction?.let { it.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, it]?.findJvmOverloadsAnnotation() } == null) return false
-        val lightParameterList = (member as? PsiParameter)?.parent as? PsiParameterList ?: return false
-        val lastParameter = (lightParameterList.parameters.lastOrNull() as? KtLightElement<*, *>)?.kotlinOrigin
-        return lastParameter == annotatedElement
     }
 
     internal fun KtTypeReference.getType(): KotlinType? = analyze()[BindingContext.TYPE, this]

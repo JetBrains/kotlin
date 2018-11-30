@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.jvm.diagnostics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
@@ -31,13 +32,15 @@ enum class JvmDeclarationOriginKind {
     COLLECTION_STUB,
     AUGMENTED_BUILTIN_API,
     ERASED_INLINE_CLASS,
-    UNBOX_METHOD_OF_INLINE_CLASS
+    UNBOX_METHOD_OF_INLINE_CLASS,
+    JVM_OVERLOADS
 }
 
 class JvmDeclarationOrigin(
     val originKind: JvmDeclarationOriginKind,
     val element: PsiElement?,
-    val descriptor: DeclarationDescriptor?
+    val descriptor: DeclarationDescriptor?,
+    val parametersForJvmOverload: List<KtParameter?>? = null
 ) {
     companion object {
         @JvmField

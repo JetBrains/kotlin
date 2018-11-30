@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.asJava.builder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
@@ -41,7 +42,7 @@ fun JvmDeclarationOrigin.toLightMemberOrigin(): LightElementOrigin {
     val originalElement = element
     return when (originalElement) {
         is KtAnnotationEntry -> DefaultLightElementOrigin(originalElement)
-        is KtDeclaration -> LightMemberOriginForDeclaration(originalElement, originKind)
+        is KtDeclaration -> LightMemberOriginForDeclaration(originalElement, originKind, parametersForJvmOverload)
         else -> LightElementOrigin.None
     }
 }
@@ -49,19 +50,24 @@ fun JvmDeclarationOrigin.toLightMemberOrigin(): LightElementOrigin {
 interface LightMemberOrigin : LightElementOrigin {
     override val originalElement: KtDeclaration?
     override val originKind: JvmDeclarationOriginKind
+    val parametersForJvmOverloads: List<KtParameter?>? get() = null
 
     fun isEquivalentTo(other: LightMemberOrigin?): Boolean
     fun copy(): LightMemberOrigin
 }
 
-data class LightMemberOriginForDeclaration(override val originalElement: KtDeclaration, override val originKind: JvmDeclarationOriginKind) : LightMemberOrigin {
+data class LightMemberOriginForDeclaration(
+    override val originalElement: KtDeclaration,
+    override val originKind: JvmDeclarationOriginKind,
+    override val parametersForJvmOverloads: List<KtParameter?>? = null
+) : LightMemberOrigin {
     override fun isEquivalentTo(other: LightMemberOrigin?): Boolean {
         if (other !is LightMemberOriginForDeclaration) return false
         return originalElement.isEquivalentTo(other.originalElement)
     }
 
     override fun copy(): LightMemberOrigin {
-        return LightMemberOriginForDeclaration(originalElement.copy() as KtDeclaration, originKind)
+        return LightMemberOriginForDeclaration(originalElement.copy() as KtDeclaration, originKind, parametersForJvmOverloads)
     }
 }
 
