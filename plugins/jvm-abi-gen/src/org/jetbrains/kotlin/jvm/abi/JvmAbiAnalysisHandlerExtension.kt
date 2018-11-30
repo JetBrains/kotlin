@@ -91,7 +91,7 @@ class JvmAbiAnalysisHandlerExtension(
 
         for (file in classFiles) {
             val reader = ClassReader(file.readBytes())
-            val writer = ClassWriter(reader, 0)
+            val writer = ClassWriter(0)
             val visitor = FilterInnerClassesVisitor(removedClasses, Opcodes.ASM6, writer)
             reader.accept(visitor, 0)
             file.writeBytes(writer.toByteArray())
