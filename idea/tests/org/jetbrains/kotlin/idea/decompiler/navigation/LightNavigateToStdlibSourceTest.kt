@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.test.JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.ProjectDescriptorKind
+import org.jetbrains.kotlin.idea.test.*
 
 class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() {
     @ProjectDescriptorKind(JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES)
@@ -26,6 +24,35 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
             "fun some() { <caret>mapOf(1 to 2) }",
             "MapsJVM.kt"
         )
+    }
+
+    @ProjectDescriptorKind(KOTLIN_JVM_WITH_STDLIB_SOURCES)
+    fun testRefToPrintlnWithJVM() {
+        doTest(
+            "fun foo() { <caret>println() }",
+            "Console.kt")
+    }
+
+    @ProjectDescriptorKind(KOTLIN_JAVASCRIPT)
+    fun testRefToPrintlnWithJS() {
+        doTest(
+            "fun foo() { <caret>println() }",
+            "console.kt"
+        )
+    }
+
+    @ProjectDescriptorKind(KOTLIN_JVM_WITH_STDLIB_SOURCES_WITH_ADDITIONAL_JS)
+    fun testRefToPrintlnWithJVMAndJS() {
+        doTest(
+            "fun foo() { <caret>println() }",
+            "Console.kt")
+    }
+
+    @ProjectDescriptorKind(KOTLIN_JAVASCRIPT_WITH_ADDITIONAL_JVM_WITH_STDLIB)
+    fun testRefToPrintlnWithJSAndJVM() {
+        doTest(
+            "fun foo() { <caret>println() }",
+            "console.kt")
     }
 
     override fun getProjectDescriptor() = getProjectDescriptorFromAnnotation()

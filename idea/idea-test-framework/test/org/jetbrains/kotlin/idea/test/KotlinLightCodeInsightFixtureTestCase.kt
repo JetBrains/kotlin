@@ -112,6 +112,27 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
         return when (platformId) {
             JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES -> KotlinJdkAndMultiplatformStdlibDescriptor.JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES
+
+            KOTLIN_JVM_WITH_STDLIB_SOURCES -> ProjectDescriptorWithStdlibSources.INSTANCE
+
+            KOTLIN_JAVASCRIPT -> KotlinStdJSProjectDescriptor
+
+            KOTLIN_JVM_WITH_STDLIB_SOURCES_WITH_ADDITIONAL_JS -> {
+                KotlinMultiModuleProjectDescriptor(
+                    KOTLIN_JVM_WITH_STDLIB_SOURCES_WITH_ADDITIONAL_JS,
+                    mainModuleDescriptor = ProjectDescriptorWithStdlibSources.INSTANCE,
+                    additionalModuleDescriptor = KotlinStdJSProjectDescriptor
+                )
+            }
+
+            KOTLIN_JAVASCRIPT_WITH_ADDITIONAL_JVM_WITH_STDLIB -> {
+                KotlinMultiModuleProjectDescriptor(
+                    KOTLIN_JAVASCRIPT_WITH_ADDITIONAL_JVM_WITH_STDLIB,
+                    mainModuleDescriptor = KotlinStdJSProjectDescriptor,
+                    additionalModuleDescriptor = ProjectDescriptorWithStdlibSources.INSTANCE
+                )
+            }
+
             else -> throw IllegalStateException("Unknown value for project descriptor kind")
         }
     }
