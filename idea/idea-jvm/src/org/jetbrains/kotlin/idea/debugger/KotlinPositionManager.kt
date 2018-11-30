@@ -237,7 +237,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         for (literal in literalsOrFunctions) {
             if (InlineUtil.isInlinedArgument(literal, typeMapper.bindingContext, true)) {
-                if (isInsideInlineArgument(literal, location, myDebugProcess as DebugProcessImpl)) {
+                if (isInsideInlineArgument(literal, location, myDebugProcess as DebugProcessImpl, typeMapper.bindingContext)) {
                     return literal
                 }
                 continue

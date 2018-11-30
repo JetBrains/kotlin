@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElement
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmTypes
@@ -123,7 +124,12 @@ fun numberOfInlinedFunctions(visibleVariables: List<LocalVariable>): Int {
     return visibleVariables.count { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 }
 
-fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debugProcess: DebugProcessImpl): Boolean {
+fun isInsideInlineArgument(
+    inlineArgument: KtFunction,
+    location: Location,
+    debugProcess: DebugProcessImpl,
+    bindingContext: BindingContext = KotlinDebuggerCaches.getOrCreateTypeMapper(inlineArgument).bindingContext
+): Boolean {
     val visibleVariables = location.visibleVariables(debugProcess)
     val markerLocalVariables = visibleVariables.filter { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) }
 
@@ -132,10 +138,19 @@ fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debug
     val functionName = runReadAction { functionNameByArgument(inlineArgument, context) }
 
     return markerLocalVariables
-            .map { it.name() }
-            .any { variableName ->
-                lambdaOrdinalByLocalVariable(variableName) == lambdaOrdinal && functionNameByLocalVariable(variableName) == functionName
+        .map { it.name().drop(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT.length) }
+        .any { variableName ->
+            if (variableName.startsWith("-")) {
+                val lambdaClassName = asmTypeForAnonymousClass(bindingContext, inlineArgument)
+                    .internalName.substringAfterLast("/")
+
+                variableName == "-$functionName-$lambdaClassName"
+            } else {
+                // For Kotlin up to 1.3.10
+                lambdaOrdinalByLocalVariable(variableName) == lambdaOrdinal
+                        && functionNameByLocalVariable(variableName) == functionName
             }
+        }
 }
 
 fun <T : Any> DebugProcessImpl.invokeInManagerThread(f: (DebuggerContextImpl) -> T?): T? {
