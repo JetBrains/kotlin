@@ -13,6 +13,9 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
+import org.jetbrains.kotlin.asJava.classes.isPrivateOrParameterInPrivateMethod
+import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
+import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
@@ -58,9 +61,13 @@ object UltraLightChecker {
     private fun PsiAnnotation.renderAnnotation() =
         "@" + qualifiedName + "(" + parameterList.attributes.joinToString { it.name + "=" + (it.value?.text ?: "?") } + ")"
 
-    private fun PsiModifierListOwner.renderModifiers(): String {
+    private fun PsiModifierListOwner.renderModifiers(typeIfApplicable: PsiType? = null): String {
         val buffer = StringBuilder()
         for (annotation in annotations) {
+            if (annotation is KtLightNullabilityAnnotation<*> && skipRenderingNullability(typeIfApplicable)) {
+                continue
+            }
+
             buffer.append(annotation.renderAnnotation())
             buffer.append(if (this is PsiParameter) " " else "\n")
         }
@@ -68,6 +75,18 @@ object UltraLightChecker {
             buffer.append(modifier).append(" ")
         }
         return buffer.toString()
+    }
+
+    private fun PsiModifierListOwner.skipRenderingNullability(typeIfApplicable: PsiType?) =
+        isPrimitiveOrNonExisting(typeIfApplicable) || isPrivateOrParameterInPrivateMethod()
+
+    private val NON_EXISTENT_QUALIFIED_CLASS_NAME = NON_EXISTENT_CLASS_NAME.replace("/", ".")
+
+    private fun isPrimitiveOrNonExisting(typeIfApplicable: PsiType?): Boolean {
+        if (typeIfApplicable is PsiPrimitiveType) return true
+        if (typeIfApplicable?.getCanonicalText(false) == NON_EXISTENT_QUALIFIED_CLASS_NAME) return true
+
+        return typeIfApplicable is PsiPrimitiveType
     }
 
     private fun PsiType.renderType() = getCanonicalText(true)
@@ -78,7 +97,7 @@ object UltraLightChecker {
     }
 
     private fun PsiVariable.renderVar(): String {
-        var result = this.renderModifiers() + type.renderType() + " " + name
+        var result = this.renderModifiers(type) + type.renderType() + " " + name
         if (this is PsiParameter && this.isVarArgs) {
             result += " /* vararg */"
         }
@@ -97,12 +116,12 @@ object UltraLightChecker {
         } + "> "
 
     private fun PsiMethod.renderMethod() =
-        renderModifiers() +
+        renderModifiers(returnType) +
                 (if (isVarArgs) "/* vararg */ " else "") +
                 renderTypeParams() +
                 (returnType?.renderType() ?: "") + " " +
                 name +
-                "(" + parameterList.parameters.joinToString { it.renderModifiers() + it.type.renderType() } + ")" +
+                "(" + parameterList.parameters.joinToString { it.renderModifiers(it.type) + it.type.renderType() } + ")" +
                 (this as? PsiAnnotationMethod)?.defaultValue?.let { " default " + it.text }.orEmpty() +
                 throwsList.referencedTypes.let { thrownTypes ->
                     if (thrownTypes.isEmpty()) ""
