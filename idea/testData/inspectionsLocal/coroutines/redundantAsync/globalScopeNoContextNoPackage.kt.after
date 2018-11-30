@@ -1,8 +1,6 @@
 // WITH_RUNTIME
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
 suspend fun test() {

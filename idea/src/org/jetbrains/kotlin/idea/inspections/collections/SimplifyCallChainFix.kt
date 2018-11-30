@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections.collections
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 class SimplifyCallChainFix(
     private val conversion: AbstractCallChainChecker.Conversion,
     private val removeReceiverOfFirstCall: Boolean = false,
+    private val runOptimizeImports: Boolean = false,
     private val modifyArguments: KtPsiFactory.(KtCallExpression) -> Unit = {}
 ) : LocalQuickFix {
     private val shortenedText = conversion.replacement.substringAfterLast(".")
@@ -96,8 +98,13 @@ class SimplifyCallChainFix(
             argumentsText
         )
 
+        val project = qualifiedExpression.project
+        val file = qualifiedExpression.containingKtFile
         val result = qualifiedExpression.replaced(newQualifiedExpression)
         ShortenReferences.DEFAULT.process(result)
+        if (runOptimizeImports) {
+            OptimizeImportsProcessor(project, file).run()
+        }
     }
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
