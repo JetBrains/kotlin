@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -715,26 +716,23 @@ public class FunctionCodegen {
         }
 
         if (context instanceof InlineLambdaContext && thisType != null && lambdaFakeIndex != -1) {
-            String name = thisType.getClassName();
-            int indexOfLambdaOrdinal = name.lastIndexOf("$");
-            if (indexOfLambdaOrdinal > 0) {
-                int lambdaOrdinal = Integer.parseInt(name.substring(indexOfLambdaOrdinal + 1));
+            String internalName = thisType.getInternalName();
+            String lambdaLocalName = StringsKt.substringAfterLast(internalName, '/', internalName);
 
-                KtPureElement functionArgument = parentCodegen.element;
-                String functionName = "unknown";
-                if (functionArgument instanceof KtFunction) {
-                    ValueParameterDescriptor inlineArgumentDescriptor =
-                            InlineUtil.getInlineArgumentDescriptor((KtFunction) functionArgument, parentCodegen.bindingContext);
-                    if (inlineArgumentDescriptor != null) {
-                        functionName = inlineArgumentDescriptor.getContainingDeclaration().getName().asString();
-                    }
+            KtPureElement functionArgument = parentCodegen.element;
+            String functionName = "unknown";
+            if (functionArgument instanceof KtFunction) {
+                ValueParameterDescriptor inlineArgumentDescriptor =
+                        InlineUtil.getInlineArgumentDescriptor((KtFunction) functionArgument, parentCodegen.bindingContext);
+                if (inlineArgumentDescriptor != null) {
+                    functionName = inlineArgumentDescriptor.getContainingDeclaration().getName().asString();
                 }
-                mv.visitLocalVariable(
-                        JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT + lambdaOrdinal +  "$" + functionName,
-                        Type.INT_TYPE.getDescriptor(), null,
-                        methodBegin, methodEnd,
-                        lambdaFakeIndex);
             }
+            mv.visitLocalVariable(
+                    JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT + "-" + functionName + "-" + lambdaLocalName,
+                    Type.INT_TYPE.getDescriptor(), null,
+                    methodBegin, methodEnd,
+                    lambdaFakeIndex);
         }
     }
 
