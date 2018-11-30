@@ -15,6 +15,7 @@ import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassData
+import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -384,7 +385,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             if (numberOfDefaultParametersToAdd >= 0)
                 numberOfDefaultParametersToAdd
             else
-                // Just to avoid computing the actual number of default parameters, we use an upper bound
+            // Just to avoid computing the actual number of default parameters, we use an upper bound
                 ktFunction.valueParameters.size
 
         for (parameter in ktFunction.valueParameters) {
@@ -596,4 +597,10 @@ interface UltraLightSupport {
     val moduleName: String
     fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>?
     fun isTooComplexForUltraLightGeneration(element: KtClassOrObject): Boolean
+}
+
+interface KtUltraLightElementWithNullabilityAnnotation<out T : KtDeclaration, out D : PsiModifierListOwner> : KtLightDeclaration<T, D>,
+    PsiModifierListOwner {
+    val kotlinTypeForNullabilityAnnotation: KotlinType?
+    val psiTypeForNullabilityAnnotation: PsiType?
 }

@@ -234,7 +234,7 @@ class KtLightEmptyAnnotationParameterList(parent: PsiElement) : KtLightElementBa
     override fun getAttributes(): Array<PsiNameValuePair> = emptyArray()
 }
 
-class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierListOwner>, parent: PsiElement) :
+open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwner>>(val member: D, parent: PsiElement) :
     KtLightAbstractAnnotation(parent, {
     // searching for last because nullability annotations are generated after backend generates source annotations
         getClsNullabilityAnnotation(member) ?: KtLightNonExistentAnnotation(member)

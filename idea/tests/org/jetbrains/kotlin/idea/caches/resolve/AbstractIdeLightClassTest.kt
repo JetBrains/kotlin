@@ -272,7 +272,7 @@ object LightClassLazinessChecker {
             }
             clsAnnotations.zip(lightAnnotations).forEach {
                 (clsAnnotation, lightAnnotation) ->
-                if (lightAnnotation !is KtLightNullabilityAnnotation)
+                if (lightAnnotation !is KtLightNullabilityAnnotation<*>)
                     assertNotNull(
                         lightAnnotation!!.nameReferenceElement,
                         "nameReferenceElement should be not null for $lightAnnotation of ${lightAnnotation.javaClass}"

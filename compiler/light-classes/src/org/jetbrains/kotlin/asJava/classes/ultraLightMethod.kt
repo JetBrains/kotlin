@@ -13,10 +13,10 @@ import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -33,7 +33,19 @@ internal class KtUltraLightMethod(
     originalElement: KtDeclaration,
     private val support: UltraLightSupport,
     containingClass: KtUltraLightClass
-) : KtLightMethodImpl({ delegate }, LightMemberOriginForDeclaration(originalElement, JvmDeclarationOriginKind.OTHER), containingClass) {
+) : KtLightMethodImpl(
+    { delegate },
+    LightMemberOriginForDeclaration(
+        originalElement, JvmDeclarationOriginKind.OTHER
+    ),
+    containingClass
+), KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiMethod> {
+
+    override val kotlinTypeForNullabilityAnnotation: KotlinType?
+        get() = kotlinOrigin?.getKotlinType()
+
+    override val psiTypeForNullabilityAnnotation: PsiType?
+        get() = returnType
 
     // These two overrides are necessary because ones from KtLightMethodImpl suppose that clsDelegate.returnTypeElement is valid
     // While here we only set return type for LightMethodBuilder (see org.jetbrains.kotlin.asJava.classes.KtUltraLightClass.asJavaMethod)
@@ -80,8 +92,7 @@ internal class KtUltraLightParameter(
     PsiType.NULL,
     method,
     method.language
-),
-    KtLightDeclaration<KtDeclaration, PsiParameter> {
+), KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiParameter> {
 
     override val clsDelegate: PsiParameter
         get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
@@ -103,6 +114,21 @@ internal class KtUltraLightParameter(
             else -> kotlinOrigin.getKotlinType()
         }
     }
+
+    override val kotlinTypeForNullabilityAnnotation: KotlinType?
+        get() {
+            val type = kotlinType
+            return if (isVarArgs && type != null && KotlinBuiltIns.isArray(type)) {
+                type.arguments[0].type
+            } else {
+                type
+            }
+        }
+
+    override val psiTypeForNullabilityAnnotation: PsiType?
+        get() = type
+
+
     private val _type: PsiType by lazyPub {
         val kotlinType = kotlinType ?: return@lazyPub PsiType.NULL
         val containingDescriptor = containingFunction.resolve() as? CallableDescriptor ?: return@lazyPub PsiType.NULL

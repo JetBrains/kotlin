@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -37,7 +34,8 @@ internal open class KtUltraLightField(
     private val containingClass: KtUltraLightClass,
     private val support: UltraLightSupport,
     modifiers: Set<String>
-) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField {
+) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField,
+    KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiField> {
     private val modList = object : KtLightSimpleModifierList(this, modifiers) {
         override fun hasModifierProperty(name: String): Boolean = when (name) {
             PsiModifier.VOLATILE -> hasFieldAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
@@ -83,6 +81,13 @@ internal open class KtUltraLightField(
             }
         }
     }
+
+    override val kotlinTypeForNullabilityAnnotation: KotlinType?
+        // We don't generate nullability annotations for non-backing fields in backend
+        get() = kotlinType?.takeUnless { declaration is KtEnumEntry || declaration is KtObjectDeclaration }
+
+    override val psiTypeForNullabilityAnnotation: PsiType?
+        get() = type
 
     private val _type: PsiType by lazyPub {
         fun nonExistent() = JavaPsiFacade.getElementFactory(project).createTypeFromText("error.NonExistentClass", declaration)
