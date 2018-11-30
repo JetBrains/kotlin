@@ -39,3 +39,5 @@ abstract class AbstractIrInlineDefaultValuesTests : BorrowedIrInlineTest("defaul
 abstract class AbstractIrInlineSuspendTests : BorrowedIrInlineTest("suspend/")
 
 abstract class AbstractIrJsInlineContractsTests : BorrowedIrInlineTest("contracts/")
+
+abstract class AbstractIrJsWebWorkersTests : BasicIrBoxTest(TEST_DATA_DIR_PATH + "webworkers/", "webworkers/", supportWebWorkers = true)

@@ -42,6 +42,10 @@ fun main(args: Array<String>) {
         testClass<AbstractJsLineNumberTest> {
             model("lineNumbers/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractIrJsWebWorkersTests> {
+            model("webworkers/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR)
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData", testRunnerMethodName = "runTest0") {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.ir.backend.js
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
+import org.jetbrains.kotlin.ir.backend.js.webWorkers.moveWorkersToSeparateFiles
+import org.jetbrains.kotlin.ir.backend.js.webWorkers.prepareFilePrefixForWorkers
+import org.jetbrains.kotlin.ir.backend.js.webWorkers.prepareFileSuffixForWorkers
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -36,7 +40,8 @@ fun compile(
     allDependencies: List<KotlinLibrary>,
     friendDependencies: List<KotlinLibrary>,
     mainArguments: List<String>?,
-    exportedDeclarations: Set<FqName> = emptySet()
+    exportedDeclarations: Set<FqName> = emptySet(),
+    supportWebWorkers: Boolean = false
 ): String {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, files, configuration, allDependencies, friendDependencies)
@@ -45,7 +50,14 @@ fun compile(
 
     val mainFunction = JsMainFunctionDetector.getMainFunctionOrNull(moduleFragment)
 
-    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)
+    val context = JsIrBackendContext(
+        moduleDescriptor,
+        irBuiltIns,
+        symbolTable,
+        moduleFragment,
+        if (supportWebWorkers) exportedDeclarations + FqName("kotlin.js.worker.terminateWorkers") else exportedDeclarations,
+        configuration
+    )
 
     // Load declarations referenced during `context` initialization
     dependencyModules.forEach {
@@ -71,9 +83,16 @@ fun compile(
     ).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
 
+    val workerFilesWithIndices = moduleFragment.files.flatMap { moveWorkersToSeparateFiles(it, context) }
+    moduleFragment.files += workerFilesWithIndices.map { it.irFile }
+
     jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
-    val jsProgram =
-        moduleFragment.accept(IrModuleToJsTransformer(context, mainFunction, mainArguments), null)
-    return jsProgram.toString()
+    val jsProgram = moduleFragment.accept(IrModuleToJsTransformer(context, mainFunction, mainArguments, workerFilesWithIndices), null)
+    return if (supportWebWorkers && workerFilesWithIndices.isNotEmpty())
+        prepareFilePrefixForWorkers() + jsProgram.toString() + prepareFileSuffixForWorkers(
+            context.configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+            workerFilesWithIndices
+        )
+    else jsProgram.toString()
 }
