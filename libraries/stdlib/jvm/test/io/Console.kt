@@ -64,6 +64,16 @@ class ConsoleTest {
         testReadLine("first${linuxLineSeparator}second", listOf("first", "second"), charset = Charsets.UTF_32)
     }
 
+    @Test
+    fun readSurrogatePairs() {
+        val c = "\uD83D\uDC4D" // thumb-up emoji
+        testReadLine("$c$linuxLineSeparator", listOf(c))
+        testReadLine("e $c$linuxLineSeparator", listOf("e $c"))
+        testReadLine("$c$windowsLineSeparator", listOf(c))
+        testReadLine("e $c$c", listOf("e $c$c"))
+        testReadLine("e $c$linuxLineSeparator$c", listOf("e $c", c))
+    }
+
     private fun testReadLine(text: String, expected: List<String>, charset: Charset = Charsets.UTF_8) {
         val actual = readLines(text, charset)
         assertEquals(expected, actual)
