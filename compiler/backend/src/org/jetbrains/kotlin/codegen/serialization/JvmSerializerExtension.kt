@@ -55,6 +55,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != Visibilities.PRIVATE
     }
 
+    override fun shouldSerializeTypeAlias(descriptor: TypeAliasDescriptor): Boolean {
+        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != Visibilities.PRIVATE
+    }
+
     override fun serializeClass(
             descriptor: ClassDescriptor,
             proto: ProtoBuf.Class.Builder,
