@@ -44,6 +44,16 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");
     }
 
+    @TestMetadata("localClass")
+    public void testLocalClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/localClass/");
+    }
+
+    @TestMetadata("privateClass")
+    public void testPrivateClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/privateClass/");
+    }
+
     @TestMetadata("topLevelPrivateMembers")
     public void testTopLevelPrivateMembers() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/topLevelPrivateMembers/");
