@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.jvm.abi.asm
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.FieldVisitor
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.*
 
 internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuilder() {
     override fun getVisitor(): ClassVisitor = cv
@@ -26,7 +24,13 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
     ): MethodVisitor {
         if (isPrivate(access)) return EMPTY_METHOD_VISITOR
 
-        return super.newMethod(origin, access, name, desc, signature, exceptions)
+        val mv = super.newMethod(origin, access, name, desc, signature, exceptions)
+        val descriptor = origin.descriptor
+        if (descriptor is FunctionDescriptor && descriptor.isInline) return mv
+
+        // getArgumentsAndReturnSizes returns `(argSize << 2) | retSize`, where argSize includes `this`
+        val maxLocals = (Type.getArgumentsAndReturnSizes(desc) shr 2) - 1
+        return ReplaceWithEmptyMethodVisitor(maxLocals, mv, Opcodes.ASM6)
     }
 
     override fun newField(
