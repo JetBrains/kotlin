@@ -22,9 +22,7 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightParameter
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -77,8 +75,12 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
         if ((modifierListOwner is KtLightMember<*> && modifierListOwner !is KtLightFieldImpl.KtLightEnumConstant)
             || modifierListOwner is LightParameter
         ) {
-            return annotationsForEntries +
-                    listOf(KtLightNullabilityAnnotation(modifierListOwner as KtLightElement<*, PsiModifierListOwner>, this))
+            val nullabilityAnnotation = when (modifierListOwner) {
+                is KtUltraLightElementWithNullabilityAnnotation<*, *> -> KtUltraLightNullabilityAnnotation(modifierListOwner, this)
+                else -> KtLightNullabilityAnnotation(modifierListOwner as KtLightElement<*, PsiModifierListOwner>, this)
+            }
+
+            return annotationsForEntries + listOf(nullabilityAnnotation)
         }
         return annotationsForEntries
     }
