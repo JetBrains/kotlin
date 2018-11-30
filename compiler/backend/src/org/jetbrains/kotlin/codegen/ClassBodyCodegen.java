@@ -231,7 +231,9 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     private void generateDelegationToDefaultImpl(@NotNull FunctionDescriptor interfaceFun, @NotNull FunctionDescriptor inheritedFun) {
 
         functionCodegen.generateMethod(
-                new JvmDeclarationOrigin(CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, descriptorToDeclaration(interfaceFun), interfaceFun),
+                new JvmDeclarationOrigin(
+                        CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, descriptorToDeclaration(interfaceFun), interfaceFun, null
+                ),
                 inheritedFun,
                 new FunctionGenerationStrategy.CodegenBased(state) {
                     @Override

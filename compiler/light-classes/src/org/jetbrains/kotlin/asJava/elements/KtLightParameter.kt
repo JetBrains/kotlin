@@ -41,7 +41,7 @@ class KtLightParameter(
             if (jetIndex < 0) return null
 
             if (declaration is KtFunction) {
-                val paramList = declaration.valueParameters
+                val paramList = method.lightMemberOrigin?.parametersForJvmOverloads ?: declaration.valueParameters
                 return if (jetIndex < paramList.size) paramList[jetIndex] else null
             }
 
