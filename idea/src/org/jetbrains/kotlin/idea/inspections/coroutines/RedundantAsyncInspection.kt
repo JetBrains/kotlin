@@ -73,7 +73,7 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
                 "Redundant 'async' call may be reduced to '${conversion.replacement}'",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
-                SimplifyCallChainFix(conversion, removeReceiverOfFirstCall = true) { callExpression ->
+                SimplifyCallChainFix(conversion, removeReceiverOfFirstCall = true, runOptimizeImports = true) { callExpression ->
                     if (contextArgument != null) {
                         val call = callExpression.resolveToCall()
                         if (call != null) {
