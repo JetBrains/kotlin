@@ -36,6 +36,11 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
             runTest("idea/testData/debugger/selectExpression/annotation.kt");
         }
 
+        @TestMetadata("arrayExpression.kt")
+        public void testArrayExpression() throws Exception {
+            runTest("idea/testData/debugger/selectExpression/arrayExpression.kt");
+        }
+
         @TestMetadata("binaryExpression.kt")
         public void testBinaryExpression() throws Exception {
             runTest("idea/testData/debugger/selectExpression/binaryExpression.kt");
