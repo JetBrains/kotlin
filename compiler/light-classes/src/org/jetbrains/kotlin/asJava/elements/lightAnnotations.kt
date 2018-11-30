@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightParameter
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -290,10 +289,6 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
     internal fun KtTypeReference.getType(): KotlinType? = analyze()[BindingContext.TYPE, this]
 
     private fun getTargetType(annotatedElement: PsiElement): KotlinType? {
-        if (member is KtUltraLightParameter) {
-            return member.getTypeForNullability()
-        }
-
         if (annotatedElement is KtTypeReference) {
             annotatedElement.getType()?.let { return it }
         }
