@@ -116,7 +116,7 @@ class DescriptorSerializer private constructor(
         val nestedClassifiers = sort(DescriptorUtils.getAllDescriptors(classDescriptor.unsubstitutedInnerClassesScope))
         for (descriptor in nestedClassifiers) {
             if (descriptor is TypeAliasDescriptor) {
-                builder.addTypeAlias(typeAliasProto(descriptor))
+                typeAliasProto(descriptor)?.let { builder.addTypeAlias(it) }
             }
             else {
                 val name = getSimpleNameIndex(descriptor.name)
@@ -406,7 +406,9 @@ class DescriptorSerializer private constructor(
         )
     }
 
-    private fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder {
+    private fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder? {
+        if (!extension.shouldSerializeTypeAlias(descriptor)) return null
+
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 
@@ -644,7 +646,7 @@ class DescriptorSerializer private constructor(
             when (declaration) {
                 is PropertyDescriptor -> propertyProto(declaration)?.let { builder.addProperty(it) }
                 is FunctionDescriptor -> functionProto(declaration)?.let { builder.addFunction(it) }
-                is TypeAliasDescriptor -> builder.addTypeAlias(typeAliasProto(declaration))
+                is TypeAliasDescriptor -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
             }
         }
 
