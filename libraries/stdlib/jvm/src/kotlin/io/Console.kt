@@ -156,7 +156,7 @@ internal fun readLine(inputStream: InputStream, decoder: CharsetDecoder): String
     require(decoder.maxCharsPerByte() <= 1) { "Encodings with multiple chars per byte are not supported" }
 
     val byteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
-    val charBuffer = CharBuffer.allocate(LINE_SEPARATOR_MAX_LENGTH)
+    val charBuffer = CharBuffer.allocate(LINE_SEPARATOR_MAX_LENGTH * 2) // twice for surrogate pairs
     val stringBuilder = StringBuilder()
 
     var read = inputStream.read()
@@ -164,11 +164,11 @@ internal fun readLine(inputStream: InputStream, decoder: CharsetDecoder): String
     do {
         byteBuffer.put(read.toByte())
         if (decoder.tryDecode(byteBuffer, charBuffer, false)) {
-            if (charBuffer.containsLineSeparator()) {
+            if (charBuffer.endsWithLineSeparator()) {
                 break
             }
-            if (!charBuffer.hasRemaining()) {
-                stringBuilder.append(charBuffer.dequeue())
+            if (charBuffer.remaining() < 2) {
+                charBuffer.offloadPrefixTo(stringBuilder)
             }
         }
         read = inputStream.read()
@@ -180,15 +180,16 @@ internal fun readLine(inputStream: InputStream, decoder: CharsetDecoder): String
     }
 
     with(charBuffer) {
-        val length = position()
-        val first = get(0)
-        val second = get(1)
-        when (length) {
-            2 -> {
-                if (!(first == '\r' && second == '\n')) stringBuilder.append(first)
-                if (second != '\n') stringBuilder.append(second)
+        var length = position()
+        if (length > 0 && get(length - 1) == '\n') {
+            length--
+            if (length > 0 && get(length - 1) == '\r') {
+                length--
             }
-            1 -> if (first != '\n') stringBuilder.append(first)
+        }
+        flip()
+        repeat(length) {
+            stringBuilder.append(get())
         }
     }
 
@@ -206,8 +207,9 @@ private fun CharsetDecoder.tryDecode(byteBuffer: ByteBuffer, charBuffer: CharBuf
     }
 }
 
-private fun CharBuffer.containsLineSeparator(): Boolean {
-    return get(1) == '\n' || get(0) == '\n'
+private fun CharBuffer.endsWithLineSeparator(): Boolean {
+    val p = position()
+    return p > 0 && get(p - 1) == '\n'
 }
 
 private fun Buffer.flipBack() {
@@ -215,7 +217,11 @@ private fun Buffer.flipBack() {
     limit(capacity())
 }
 
-private fun CharBuffer.dequeue(): Char {
+/** Extracts everything except the last char into [builder]. */
+private fun CharBuffer.offloadPrefixTo(builder: StringBuilder) {
     flip()
-    return get().also { compact() }
+    repeat(limit() - 1) {
+        builder.append(get())
+    }
+    compact()
 }
