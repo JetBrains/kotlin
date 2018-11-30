@@ -192,11 +192,6 @@ interface IrBuilderExtension {
 
 
     val SerializableProperty.irField: IrField get() = compilerContext.externalSymbols.referenceField(this.descriptor).owner
-//        get () {
-//            val symb = compilerContext.localSymbolTable.referenceField(this.descriptor)
-//            return if (symb.isBound) symb.owner
-//            else compilerContext.localSymbolTable.declareField()
-//        }
 
     /*
      The rest of the file is mainly copied from FunctionGenerator.
@@ -252,10 +247,10 @@ interface IrBuilderExtension {
         fieldSymbol: IrFieldSymbol,
         ownerSymbol: IrValueSymbol
     ): IrSimpleFunction {
-        return compilerContext.localSymbolTable.declareSimpleFunctionWithOverrides(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            SERIALIZABLE_PLUGIN_ORIGIN, descriptor
-        ).buildWithScope { irAccessor ->
+        // Declaration can also be called from user code. Since we lookup descriptor getter in externalSymbols
+        // (see generateSave/generateLoad), seems it is correct approach to declare getter lazily there.
+        val declaration = compilerContext.externalSymbols.referenceSimpleFunction(descriptor).owner
+        return declaration.buildWithScope { irAccessor ->
             irAccessor.createParameterDeclarations((ownerSymbol as IrValueParameterSymbol).owner) // todo: neat this
             irAccessor.returnType = irAccessor.descriptor.returnType!!.toIrType()
             irAccessor.body = when (descriptor) {
@@ -264,7 +259,6 @@ interface IrBuilderExtension {
                 else -> throw AssertionError("Should be getter or setter: $descriptor")
             }
         }
-
     }
 
     private fun generateDefaultGetterBody(

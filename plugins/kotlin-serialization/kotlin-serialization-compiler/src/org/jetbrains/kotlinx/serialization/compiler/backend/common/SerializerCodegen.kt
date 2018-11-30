@@ -65,7 +65,8 @@ abstract class SerializerCodegen(
 
     protected val generatedSerialDescPropertyDescriptor = getPropertyToGenerate(
         serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
-                                                                       serializerDescriptor::checkSerializableClassPropertyResult)
+        serializerDescriptor::checkSerializableClassPropertyResult
+    )
     protected val anySerialDescProperty = getProperty(
         serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
         serializerDescriptor::checkSerializableClassPropertyResult
