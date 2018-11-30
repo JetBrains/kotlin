@@ -39,7 +39,7 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
         } ?: return null
         defaultContext ?: return null
         defaultStart ?: return null
-        if (defaultContext!! && !defaultStart!!) return null
+        if (!defaultStart!!) return null
 
         val receiverExpression = expression.receiverExpression
         val scopeExpression = (receiverExpression as? KtQualifiedExpression)?.receiverExpression
