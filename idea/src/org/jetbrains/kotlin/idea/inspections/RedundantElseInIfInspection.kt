@@ -9,16 +9,12 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiFile
-import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.formatter.adjustLineIndent
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.psi.*
@@ -78,16 +74,6 @@ private class RemoveRedundantElseFix : LocalQuickFix {
             ifExpression.endOffset,
             (added.getNextSiblingIgnoringWhitespace() ?: added.parent).endOffset
         )
-    }
-
-    fun PsiFile.adjustLineIndent(startOffset: Int, endOffset: Int) {
-        val virtualFile = this.virtualFile ?: return
-        val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return
-        val documentManager = PsiDocumentManager.getInstance(project)
-        val psiFile = documentManager.getPsiFile(document) ?: return
-        documentManager.commitDocument(document)
-        documentManager.doPostponedOperationsAndUnblockDocument(document)
-        CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, TextRange(startOffset, endOffset))
     }
 }
 
