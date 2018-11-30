@@ -24,6 +24,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
@@ -81,18 +82,19 @@ class SimplifyCallChainFix(
             "$receiverExpressionOrEmptyString$operationSign$newCallText($argumentsText)"
         )
 
+        val project = qualifiedExpression.project
+        val file = qualifiedExpression.containingKtFile
+        val result = qualifiedExpression.replaced(newQualifiedOrCallExpression)
         if (lambdaExpression != null) {
-            val callExpression = when (newQualifiedOrCallExpression) {
-                is KtQualifiedExpression -> newQualifiedOrCallExpression.callExpression
-                is KtCallExpression -> newQualifiedOrCallExpression
+            val callExpression = when (result) {
+                is KtQualifiedExpression -> result.callExpression
+                is KtCallExpression -> result
                 else -> null
             }
             callExpression?.moveFunctionLiteralOutsideParentheses()
         }
 
-        val project = qualifiedExpression.project
-        val file = qualifiedExpression.containingKtFile
-        val result = qualifiedExpression.replaced(newQualifiedOrCallExpression)
+        result.containingKtFile.commitAndUnblockDocument()
         val reformatted = CodeStyleManager.getInstance(project).reformat(result)
         ShortenReferences.DEFAULT.process(reformatted as KtElement)
         if (runOptimizeImports) {
