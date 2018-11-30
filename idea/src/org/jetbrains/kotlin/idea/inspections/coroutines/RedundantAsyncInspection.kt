@@ -44,7 +44,7 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
         if (scopeExpression != null) {
             val context = scopeExpression.analyze(BodyResolveMode.PARTIAL)
             val scopeDescriptor = (scopeExpression as? KtNameReferenceExpression)?.let { context[BindingContext.REFERENCE_TARGET, it] }
-            if (scopeDescriptor?.fqNameSafe?.toString() != globalScope) {
+            if (scopeDescriptor?.fqNameSafe?.toString() != GLOBAL_SCOPE) {
                 // Temporary forbid cases with explicit non-global scope
                 return null
             }
@@ -53,9 +53,9 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
         if (defaultContext!! && defaultStart!!) {
             conversion = conversion.withArgumentList(
                 if (conversion === conversions[0]) {
-                    "($defaultAsyncArgument)"
+                    "($DEFAULT_ASYNC_ARGUMENT)"
                 } else {
-                    "($defaultAsyncArgumentExperimental)"
+                    "($DEFAULT_ASYNC_ARGUMENT_EXPERIMENTAL)"
                 }
             )
         }
@@ -93,11 +93,11 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
             )
         )
 
-        private const val globalScope = "kotlinx.coroutines.GlobalScope"
+        private const val GLOBAL_SCOPE = "kotlinx.coroutines.GlobalScope"
 
-        private const val defaultAsyncArgument = "$COROUTINE_PACKAGE.Dispatchers.Default"
+        private const val DEFAULT_ASYNC_ARGUMENT = "$COROUTINE_PACKAGE.Dispatchers.Default"
 
-        private const val defaultAsyncArgumentExperimental = "$COROUTINE_EXPERIMENTAL_PACKAGE.DefaultDispatcher"
+        private const val DEFAULT_ASYNC_ARGUMENT_EXPERIMENTAL = "$COROUTINE_EXPERIMENTAL_PACKAGE.DefaultDispatcher"
     }
 }
 
