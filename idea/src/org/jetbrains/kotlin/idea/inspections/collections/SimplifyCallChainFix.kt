@@ -20,8 +20,11 @@ import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
@@ -47,8 +50,8 @@ class SimplifyCallChainFix(
             else -> ""
         }
 
-        val receiverExpressionOrEmptyString: Any =
-            if (!removeReceiverOfFirstCall && firstExpression is KtQualifiedExpression) firstExpression.receiverExpression else ""
+        val receiverExpressionOrEmptyString =
+            if (!removeReceiverOfFirstCall && firstExpression is KtQualifiedExpression) firstExpression.receiverExpression.text else ""
 
         val firstCallExpression = AbstractCallChainChecker.getCallExpression(firstExpression) ?: return
         factory.modifyArguments(firstCallExpression)
@@ -63,45 +66,35 @@ class SimplifyCallChainFix(
         }
 
         val lambdaExpression = firstCallExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()
+        val additionalArgument = conversion.additionalArgument
+        val secondCallHasArguments = secondCallArgumentList?.arguments?.isNotEmpty() == true
+        val firstCallHasArguments = firstCallArgumentList?.arguments?.isNotEmpty() == true
         val argumentsText = listOfNotNull(
-            secondCallArgumentList.takeIf { it?.arguments?.isNotEmpty() == true },
-            firstCallArgumentList.takeIf { it?.arguments?.isNotEmpty() == true }
-        ).let {
-            val additionalArgument = conversion.additionalArgument
-            when {
-                it.isNotEmpty() -> it.joinToString(
-                    separator = ", ",
-                    prefix = "(",
-                    postfix = ")"
-                ) { callArgumentList ->
-                    callArgumentList.getTextInsideParentheses()
-                }
-                additionalArgument != null -> "($additionalArgument)"
-                else -> ""
-            }
-        }
+            secondCallArgumentList.takeIf { secondCallHasArguments }?.getTextInsideParentheses(),
+            firstCallArgumentList.takeIf { firstCallHasArguments }?.getTextInsideParentheses(),
+            additionalArgument.takeIf { !firstCallHasArguments && !secondCallHasArguments },
+            lambdaExpression?.text
+        ).joinToString(separator = ",")
 
         val newCallText = conversion.replacement
-        val newQualifiedExpression = if (lambdaExpression != null) factory.createExpressionByPattern(
-            "$0$1$2 $3 $4",
-            receiverExpressionOrEmptyString,
-            operationSign,
-            newCallText,
-            argumentsText,
-            lambdaExpression.text
+        val newQualifiedOrCallExpression = factory.createExpression(
+            "$receiverExpressionOrEmptyString$operationSign$newCallText($argumentsText)"
         )
-        else factory.createExpressionByPattern(
-            "$0$1$2 $3",
-            receiverExpressionOrEmptyString,
-            operationSign,
-            newCallText,
-            argumentsText
-        )
+
+        if (lambdaExpression != null) {
+            val callExpression = when (newQualifiedOrCallExpression) {
+                is KtQualifiedExpression -> newQualifiedOrCallExpression.callExpression
+                is KtCallExpression -> newQualifiedOrCallExpression
+                else -> null
+            }
+            callExpression?.moveFunctionLiteralOutsideParentheses()
+        }
 
         val project = qualifiedExpression.project
         val file = qualifiedExpression.containingKtFile
-        val result = qualifiedExpression.replaced(newQualifiedExpression)
-        ShortenReferences.DEFAULT.process(result)
+        val result = qualifiedExpression.replaced(newQualifiedOrCallExpression)
+        val reformatted = CodeStyleManager.getInstance(project).reformat(result)
+        ShortenReferences.DEFAULT.process(reformatted as KtElement)
         if (runOptimizeImports) {
             OptimizeImportsProcessor(project, file).run()
         }
