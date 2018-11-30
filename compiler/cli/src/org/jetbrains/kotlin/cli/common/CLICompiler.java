@@ -163,11 +163,21 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         setupLanguageVersionSettings(configuration, arguments);
 
         configuration.put(CommonConfigurationKeys.LIST_PHASES, arguments.getListPhases());
-        configuration.put(CommonConfigurationKeys.DISABLED_PHASES, SetsKt.setOf(arguments.getDisablePhases()));
-        configuration.put(CommonConfigurationKeys.VERBOSE_PHASES, SetsKt.setOf(arguments.getVerbosePhases()));
-        configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, SetsKt.setOf(arguments.getPhasesToDumpBefore()));
-        configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER, SetsKt.setOf(arguments.getPhasesToDumpAfter()));
-        configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, SetsKt.setOf(arguments.getPhasesToDump()));
+        if (arguments.getDisablePhases() != null) {
+            configuration.put(CommonConfigurationKeys.DISABLED_PHASES, SetsKt.setOf(arguments.getDisablePhases()));
+        }
+        if (arguments.getVerbosePhases() != null) {
+            configuration.put(CommonConfigurationKeys.VERBOSE_PHASES, SetsKt.setOf(arguments.getVerbosePhases()));
+        }
+        if (arguments.getPhasesToDumpBefore() != null) {
+            configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, SetsKt.setOf(arguments.getPhasesToDumpBefore()));
+        }
+        if (arguments.getPhasesToDumpAfter() != null) {
+            configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER, SetsKt.setOf(arguments.getPhasesToDumpAfter()));
+        }
+        if (arguments.getPhasesToDump() != null) {
+            configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, SetsKt.setOf(arguments.getPhasesToDump()));
+        }
         configuration.put(CommonConfigurationKeys.PROFILE_PHASES, arguments.getProfilePhases());
     }
 
