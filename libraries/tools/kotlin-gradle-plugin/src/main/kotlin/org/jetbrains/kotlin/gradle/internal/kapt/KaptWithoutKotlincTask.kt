@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.Serializable
+import java.net.URL
 import java.net.URLClassLoader
+import java.util.WeakHashMap
 import javax.inject.Inject
 
 open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KaptTask() {
@@ -99,6 +101,7 @@ private class KaptExecution @Inject constructor(
         private const val JAVAC_CONTEXT_CLASS = "com.sun.tools.javac.util.Context"
 
         private fun kaptClass(classLoader: ClassLoader) = Class.forName("org.jetbrains.kotlin.kapt3.base.Kapt", true, classLoader)
+        private val classLoaderCache = WeakHashMap<Pair<String, ClassLoader>, URLClassLoader>()
     }
 
     override fun run(): Unit = with(optionsForWorker) {
@@ -106,12 +109,12 @@ private class KaptExecution @Inject constructor(
         val rootClassLoader = findRootClassLoader()
 
         val classLoaderWithToolsJar = if (toolsJar != null && !javacIsAlreadyHere()) {
-            URLClassLoader(arrayOf(toolsJar.toURI().toURL()), rootClassLoader)
+            getURLClassLoaderCached(arrayOf(toolsJar.toURI().toURL()), rootClassLoader)
         } else {
             rootClassLoader
         }
 
-        val kaptClassLoader = URLClassLoader(kaptClasspathUrls, classLoaderWithToolsJar)
+        val kaptClassLoader = getURLClassLoaderCached(kaptClasspathUrls, classLoaderWithToolsJar)
         val kaptMethod = kaptClass(kaptClassLoader).declaredMethods.single { it.name == "kapt" }
         kaptMethod.invoke(null, createKaptOptions(kaptClassLoader))
     }
@@ -161,6 +164,14 @@ private class KaptExecution @Inject constructor(
             return parentOrSelf(parent)
         }
         return parentOrSelf(KaptExecution::class.java.classLoader)
+    }
+
+    private fun getURLClassLoaderCached(urls: Array<URL>, parent: ClassLoader): ClassLoader {
+        val id = Pair(urls.contentDeepToString(), parent)
+        // Synchronization isn't needed for IsolationMode.PROCESS.
+        val loader = classLoaderCache[id] ?: URLClassLoader(urls, parent)
+        classLoaderCache[id] = loader
+        return loader
     }
 }
 
