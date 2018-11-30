@@ -16,7 +16,14 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
+import org.jetbrains.kotlin.incremental.isClassFile
 import org.jetbrains.kotlin.jvm.abi.asm.AbiClassBuilder
+import org.jetbrains.kotlin.jvm.abi.asm.FilterInnerClassesVisitor
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -53,12 +60,42 @@ class JvmAbiAnalysisHandlerExtension(
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
         val outputDir = compilerConfiguration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)!!
+        val outputFiles = arrayListOf<File>()
         generationState.factory.writeAll(
             outputDir,
             fun(file: OutputFile, sources: List<File>, output: File) {
                 // todo report
+                outputFiles.add(output)
             }
         )
+
+        val classFiles = HashSet<File>()
+        val removedClasses = HashSet<String>()
+        for (file in outputFiles) {
+            if (!file.isClassFile()) continue
+
+            classFiles.add(file)
+            val localFileKotlinClass = LocalFileKotlinClass.create(file) ?: continue
+            val header = localFileKotlinClass.classHeader
+            if (header.kind == KotlinClassHeader.Kind.CLASS) {
+                val (_, classProto) = JvmProtoBufUtil.readClassDataFrom(header.data!!, header.strings!!)
+
+                val visibility = Flags.VISIBILITY.get(classProto.flags)
+                if (visibility == ProtoBuf.Visibility.PRIVATE || visibility == ProtoBuf.Visibility.LOCAL) {
+                    file.delete()
+                    classFiles.remove(file)
+                    removedClasses.add(localFileKotlinClass.className.internalName)
+                }
+            }
+        }
+
+        for (file in classFiles) {
+            val reader = ClassReader(file.readBytes())
+            val writer = ClassWriter(reader, 0)
+            val visitor = FilterInnerClassesVisitor(removedClasses, Opcodes.ASM6, writer)
+            reader.accept(visitor, 0)
+            file.writeBytes(writer.toByteArray())
+        }
 
         return null
     }
