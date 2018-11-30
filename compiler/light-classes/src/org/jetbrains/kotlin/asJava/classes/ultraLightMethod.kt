@@ -11,7 +11,6 @@ import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
@@ -21,9 +20,7 @@ import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
@@ -158,23 +155,4 @@ internal class KtUltraLightParameter(
         }
         return kotlinOrigin
     }
-
-    internal fun getTypeForNullability(): KotlinType? {
-        if (receiver != null) return kotlinType
-        if (kotlinOrigin is KtProperty) {
-            if (kotlinOrigin.setter?.hasModifier(KtTokens.PRIVATE_KEYWORD) == true) return null
-            return kotlinType
-        }
-        if (kotlinOrigin is KtParameter) {
-            val reference = kotlinOrigin.typeReference
-            if (kotlinOrigin.isVarArg && reference != null) {
-                LightClassGenerationSupport.getInstance(project).analyze(reference)[BindingContext.TYPE, reference]?.let { return it }
-            }
-            if (reference != null || kotlinOrigin.parent?.parent is KtPropertyAccessor) {
-                return kotlinType
-            }
-        }
-        return null
-    }
-
 }
