@@ -20,12 +20,12 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/decompiler/navigation/usercode")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class NavigateToLibrarySourceTestGenerated extends AbstractNavigateToLibrarySourceTest {
+public class NavigateToLibrarySourceTestWithJSGenerated extends AbstractNavigateToLibrarySourceTestWithJS {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
-    public void testAllFilesPresentInUsercode() throws Exception {
+    public void testAllFilesPresentInUsercodeWithJSModule() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 

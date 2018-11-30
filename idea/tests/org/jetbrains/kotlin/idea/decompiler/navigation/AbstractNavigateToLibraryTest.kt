@@ -28,26 +28,11 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.*
 
-abstract class AbstractNavigateToLibraryTest : KotlinCodeInsightTestCase() {
-
-    protected fun doTest(path: String): Unit = doTestEx(path)
-
-    protected fun doWithJSModuleTest(path: String): Unit = doTestEx(path) {
-        val jsModule = this.createModule("js-module")
-        jsModule.configureAs(ModuleKind.KOTLIN_JAVASCRIPT)
-    }
-
-    abstract val withSource: Boolean
+abstract class AbstractNavigateToLibraryTest : KotlinLightCodeInsightFixtureTestCase() {
     abstract val expectedFileExt: String
 
-    protected fun doTestEx(path: String, additionalConfig: (() -> Unit)? = null) {
-        module.configureAs(getProjectDescriptor())
-
-        if (additionalConfig != null) {
-            additionalConfig()
-        }
-
-        configureByFile(path)
+    protected fun doTest(path: String) {
+        myFixture.configureByFile(path)
         NavigationChecker.checkAnnotatedCode(file, File(path.replace(".kt", expectedFileExt)))
     }
 
@@ -57,24 +42,39 @@ abstract class AbstractNavigateToLibraryTest : KotlinCodeInsightTestCase() {
     }
 
     override fun getTestDataPath(): String =
-            KotlinTestUtils.getHomeDirectory() + File.separator
-
-
-    open fun getProjectDescriptor(): KotlinLightProjectDescriptor =
-        SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library",
-            withSource
-        )
+        KotlinTestUtils.getHomeDirectory() + File.separator
 }
 
 abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibraryTest() {
-    override val withSource: Boolean get() = false
     override val expectedFileExt: String get() = ".decompiled.expected"
+
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
+
+    companion object {
+        private val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", false
+        )
+    }
 }
 
 abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTest() {
-    override val withSource: Boolean get() = true
     override val expectedFileExt: String get() = ".source.expected"
+
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
+
+    protected companion object {
+        val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true
+        )
+    }
+}
+
+abstract class AbstractNavigateToLibrarySourceTestWithJS : AbstractNavigateToLibrarySourceTest() {
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinMultiModuleProjectDescriptor(
+        "AbstractNavigateToLibrarySourceTestWithJS",
+        AbstractNavigateToLibrarySourceTest.PROJECT_DESCRIPTOR,
+        KotlinStdJSProjectDescriptor
+    )
 }
 
 class NavigationChecker(val file: PsiFile, val referenceTargetChecker: (PsiElement) -> Unit) {
