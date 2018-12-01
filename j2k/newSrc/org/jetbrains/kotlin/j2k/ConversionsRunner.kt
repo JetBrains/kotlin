@@ -54,6 +54,7 @@ object ConversionsRunner {
             +InstanceOfConversion()
             +ForConversion(context)
             +ForInConversion()
+            +ArrayOperationsConversion(context)
             +TypeMappingConversion(context)
 
             //Kotlin --> Kotlin conversions
