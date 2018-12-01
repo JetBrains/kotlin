@@ -79,20 +79,26 @@ class JvmAbiAnalysisHandlerExtension(
      */
     private fun removeUnneededClasses(outputs: Iterable<AbiOutput>) {
         val removedClasses = HashSet<String>()
+
         for (output in outputs) {
             if (!output.file.isClassFile()) continue
 
             val classData = output.classData() ?: continue
             val header = classData.classHeader
-            if (header.kind == KotlinClassHeader.Kind.CLASS) {
-                val (_, classProto) = JvmProtoBufUtil.readClassDataFrom(header.data!!, header.strings!!)
-
-                val visibility = Flags.VISIBILITY.get(classProto.flags)
-                if (visibility == ProtoBuf.Visibility.PRIVATE || visibility == ProtoBuf.Visibility.LOCAL) {
-                    output.delete()
-                    val jvmClassName = JvmClassName.byClassId(classData.classId)
-                    removedClasses.add(jvmClassName.internalName)
+            val isNeededForAbi = when (header.kind) {
+                KotlinClassHeader.Kind.CLASS -> {
+                    val (_, classProto) = JvmProtoBufUtil.readClassDataFrom(header.data!!, header.strings!!)
+                    val visibility = Flags.VISIBILITY.get(classProto.flags)
+                    visibility != ProtoBuf.Visibility.PRIVATE && visibility != ProtoBuf.Visibility.LOCAL
                 }
+                KotlinClassHeader.Kind.SYNTHETIC_CLASS -> false
+                else -> true
+            }
+
+            if (!isNeededForAbi) {
+                output.delete()
+                val jvmClassName = JvmClassName.byClassId(classData.classId)
+                removedClasses.add(jvmClassName.internalName)
             }
         }
 
