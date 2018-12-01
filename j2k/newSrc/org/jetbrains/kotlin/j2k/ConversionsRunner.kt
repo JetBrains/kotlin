@@ -61,6 +61,7 @@ object ConversionsRunner {
             +StaticsToCompanionExtractConversion()
             +ClassToObjectPromotionConversion(context)
             +LabeledStatementConversion()
+            +ImportStatementConversion()
             +SortClassMembersConversion()
         }
 
