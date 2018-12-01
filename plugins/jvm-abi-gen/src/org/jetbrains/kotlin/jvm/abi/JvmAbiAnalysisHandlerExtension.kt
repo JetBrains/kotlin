@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.jvm.abi
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.common.output.OutputFile
-import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -20,13 +19,16 @@ import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.incremental.isClassFile
 import org.jetbrains.kotlin.jvm.abi.asm.AbiClassBuilder
 import org.jetbrains.kotlin.jvm.abi.asm.FilterInnerClassesVisitor
+import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.org.objectweb.asm.*
@@ -60,43 +62,40 @@ class JvmAbiAnalysisHandlerExtension(
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
         val outputDir = compilerConfiguration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)!!
-        val outputFiles = arrayListOf<File>()
-        generationState.factory.writeAll(
-            outputDir,
-            fun(file: OutputFile, sources: List<File>, output: File) {
-                // todo report
-                outputFiles.add(output)
-            }
-        )
+        val outputs = ArrayList<AbiOutput>()
 
-        val classFiles = HashSet<File>()
+        for (outputFile in generationState.factory.asList()) {
+            val file = File(outputDir, outputFile.relativePath)
+            outputs.add(AbiOutput(file, outputFile.sourceFiles, outputFile.asByteArray()))
+        }
+
         val removedClasses = HashSet<String>()
-        for (file in outputFiles) {
-            if (!file.isClassFile()) continue
+        for (output in outputs) {
+            if (!output.file.isClassFile()) continue
 
-            classFiles.add(file)
-            val localFileKotlinClass = LocalFileKotlinClass.create(file) ?: continue
-            val header = localFileKotlinClass.classHeader
+            val classData = output.classData() ?: continue
+            val header = classData.classHeader
             if (header.kind == KotlinClassHeader.Kind.CLASS) {
                 val (_, classProto) = JvmProtoBufUtil.readClassDataFrom(header.data!!, header.strings!!)
 
                 val visibility = Flags.VISIBILITY.get(classProto.flags)
                 if (visibility == ProtoBuf.Visibility.PRIVATE || visibility == ProtoBuf.Visibility.LOCAL) {
-                    file.delete()
-                    classFiles.remove(file)
-                    removedClasses.add(localFileKotlinClass.className.internalName)
+                    output.delete()
+                    val jvmClassName = JvmClassName.byClassId(classData.classId)
+                    removedClasses.add(jvmClassName.internalName)
                 }
             }
         }
 
-        for (file in classFiles) {
-            val reader = ClassReader(file.readBytes())
-            val writer = ClassWriter(0)
-            val visitor = FilterInnerClassesVisitor(removedClasses, Opcodes.ASM6, writer)
-            reader.accept(visitor, 0)
-            file.writeBytes(writer.toByteArray())
+        for (output in outputs) {
+            if (!output.file.isClassFile()) continue
+
+            output.transform { writer ->
+                FilterInnerClassesVisitor(removedClasses, Opcodes.ASM6, writer)
+            }
         }
 
+        outputs.forEach { it.flush() }
         return null
     }
 
@@ -116,5 +115,45 @@ class JvmAbiAnalysisHandlerExtension(
         }
 
         override fun close() {}
+    }
+
+    private data class ClassData(
+        val classId: ClassId,
+        val classVersion: Int,
+        val classHeader: KotlinClassHeader
+    )
+
+    private class AbiOutput(
+        val file: File,
+        // todo report
+        val sources: List<File>,
+        // null bytes means that file should not be written
+        private var bytes: ByteArray?
+    ) {
+        fun classData(): ClassData? =
+            when {
+                bytes == null -> null
+                !file.isClassFile() -> null
+                else -> FileBasedKotlinClass.create(bytes!!) { classId, classVersion, classHeader, _ ->
+                    ClassData(classId, classVersion, classHeader)
+                }
+            }
+
+        fun delete() {
+            bytes = null
+        }
+
+        fun transform(fn: (writer: ClassWriter) -> ClassVisitor) {
+            val bytes = bytes ?: return
+            val cr = ClassReader(bytes)
+            val cw = ClassWriter(0)
+            val visitor = fn(cw)
+            cr.accept(visitor, 0)
+            this.bytes = cw.toByteArray()
+        }
+
+        fun flush() {
+            bytes?.let { FileUtil.writeToFile(file, it) }
+        }
     }
 }
