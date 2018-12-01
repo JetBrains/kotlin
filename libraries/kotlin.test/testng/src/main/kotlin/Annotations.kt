@@ -11,5 +11,5 @@ package kotlin.test
 
 public actual typealias Test = org.testng.annotations.Test
 public actual typealias Ignore = org.testng.annotations.Ignore
-public actual typealias BeforeTest = org.testng.annotations.BeforeClass
-public actual typealias AfterTest = org.testng.annotations.AfterClass
+public actual typealias BeforeTest = org.testng.annotations.BeforeMethod
+public actual typealias AfterTest = org.testng.annotations.AfterMethod
