@@ -9,6 +9,7 @@ configurePublishing(project)
 
 dependencies {
     compile project(':kotlin-stdlib-common')
+    testCompile project(":kotlin-test:kotlin-test-common")
 }
 
 pill {
