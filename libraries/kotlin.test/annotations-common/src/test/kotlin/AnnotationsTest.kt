@@ -8,32 +8,48 @@ package kotlin.test.tests
 import kotlin.test.*
 
 private var value = 5
+private var tests: MutableSet<String>? = null
 
 class AnnotationsTest {
 
     @BeforeTest
     fun setup() {
         value *= 2
+        assertNull(tests)
+        tests = mutableSetOf()
     }
 
     @AfterTest
     fun teardown() {
         value /= 2
+        assertNotNull(tests).let { tests ->
+            assertNotEquals(emptySet<String>(), tests)
+        }
+        tests = null
+    }
+
+    private fun logTestRun(name: String) {
+        assertNotNull(tests).let { tests ->
+            assertEquals(emptySet<String>(), tests)
+            tests.add(name)
+        }
     }
 
     @Test
     fun testValue() {
         assertEquals(10, value)
+        logTestRun("testValue")
     }
 
     @Test
     fun testValueAgain() {
         assertEquals(10, value)
+        logTestRun("testValueAgain")
     }
 
     @Ignore
     @Test
-    fun testValueWrong() {
+    fun testValueWrongIgnored() {
         assertEquals(20, value)
     }
 
