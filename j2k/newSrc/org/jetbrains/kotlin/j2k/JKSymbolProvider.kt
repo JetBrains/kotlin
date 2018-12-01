@@ -46,7 +46,7 @@ class JKSymbolProvider {
     internal inline fun <reified T : JKSymbol> provideSymbol(reference: PsiReference): T {
         val target = reference.resolve()
         if (target != null) return provideDirectSymbol(target) as T
-        return (if (isAssignable<T, JKUnresolvedField>()) JKUnresolvedField(reference) else JKUnresolvedMethod(reference)) as T
+        return (if (isAssignable<T, JKUnresolvedField>()) JKUnresolvedField(reference, this) else JKUnresolvedMethod(reference)) as T
     }
 
     fun provideUniverseSymbol(psi: PsiElement, jk: JKDeclaration): JKSymbol = provideUniverseSymbol(psi).also {
@@ -88,7 +88,7 @@ class JKSymbolProvider {
     internal inline fun <reified T : JKSymbol> provideByFqName(classId: ClassId, context: PsiElement = symbolsByPsi.keys.first()): T {
         return resolveFqName(classId, context)?.let(::provideDirectSymbol).safeAs<T>() ?: when {
             isAssignable<T, JKUnresolvedMethod>() -> JKUnresolvedMethod(classId.asSingleFqName().asString().replace('/', '.'))
-            isAssignable<T, JKUnresolvedField>() -> JKUnresolvedField(classId.asSingleFqName().asString().replace('/', '.'))
+//            isAssignable<T, JKUnresolvedField>() -> JKUnresolvedField(classId.asSingleFqName().asString().replace('/', '.'))
             else -> JKUnresolvedClassSymbol(classId.asSingleFqName().asString().replace('/', '.'))
         } as T
     }
