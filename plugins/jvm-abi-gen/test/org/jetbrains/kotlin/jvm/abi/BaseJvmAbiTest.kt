@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
+import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.AbstractIncrementalCompilerRunnerTestBase
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import java.io.File
 
@@ -52,6 +54,7 @@ abstract class BaseJvmAbiTest : TestCase() {
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
             freeArgs = listOf(compilation.srcDir.canonicalPath)
+            classpath = kotlinJvmStdlib.canonicalPath
             pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
             pluginOptions = arrayOf(abiOption("outputDir", compilation.abiDir.canonicalPath))
             destination = compilation.destinationDir.canonicalPath
@@ -61,5 +64,9 @@ abstract class BaseJvmAbiTest : TestCase() {
             val errorLines = listOf("Could not compile $compilation", "Exit code: $exitCode", "Errors:") + messageCollector.errors
             error(errorLines.joinToString("\n"))
         }
+    }
+
+    private val kotlinJvmStdlib = File("dist/kotlinc/lib/kotlin-stdlib.jar").also {
+        UsefulTestCase.assertExists(it)
     }
 }
