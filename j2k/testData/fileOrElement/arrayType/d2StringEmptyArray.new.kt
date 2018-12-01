@@ -1,0 +1,1 @@
+val ss: Array<Array<String?>?> = Array(5) { arrayOfNulls<String>(5) }

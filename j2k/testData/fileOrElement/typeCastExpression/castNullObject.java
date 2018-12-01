@@ -1,2 +1,2 @@
-//expression
-(Object) null
+//statement
+Object o = (Object) null

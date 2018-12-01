@@ -1,1 +1,6 @@
-Foo(param1, param2)
+internal class Foo(a: Int, b: Int) {
+
+    fun foo() {
+        val f = Foo(1, 2)
+    }
+}

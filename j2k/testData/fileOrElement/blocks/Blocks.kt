@@ -1,3 +1,4 @@
+fun bar(a: Int) {}
 fun foo() {
     run {
         val a = 1

@@ -1,1 +1,2 @@
-(str.toString() + "abc").foo()
+val str = ''
+(str.toString() + "abc").length

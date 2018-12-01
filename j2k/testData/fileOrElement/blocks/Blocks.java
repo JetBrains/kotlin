@@ -1,4 +1,5 @@
 //method
+void bar(int a) {}
 void foo() {
     {
         int a = 1;

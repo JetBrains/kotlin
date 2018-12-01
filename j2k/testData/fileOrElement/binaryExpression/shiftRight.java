@@ -1,2 +1,3 @@
-//expression
-x >> 2
+//statement
+int x = 0;
+x >> 2;
