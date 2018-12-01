@@ -69,6 +69,15 @@ class JvmAbiAnalysisHandlerExtension(
             outputs.add(AbiOutput(file, outputFile.sourceFiles, outputFile.asByteArray()))
         }
 
+        removeUnneededClasses(outputs)
+        outputs.forEach { it.flush() }
+        return null
+    }
+
+    /**
+     * Removes private or local classes from outputs
+     */
+    private fun removeUnneededClasses(outputs: Iterable<AbiOutput>) {
         val removedClasses = HashSet<String>()
         for (output in outputs) {
             if (!output.file.isClassFile()) continue
@@ -94,9 +103,6 @@ class JvmAbiAnalysisHandlerExtension(
                 FilterInnerClassesVisitor(removedClasses, Opcodes.ASM6, writer)
             }
         }
-
-        outputs.forEach { it.flush() }
-        return null
     }
 
     private object AbiBinaries : ClassBuilderFactory {
