@@ -585,5 +585,8 @@ class QuickFixRegistrar : QuickFixContributor {
         DECLARATION_CANT_BE_INLINED.registerFactory(DeclarationCantBeInlinedFactory)
 
         ASSIGN_OPERATOR_AMBIGUITY.registerFactory(AssignOperatorAmbiguityFactory)
+
+        TYPE_MISMATCH.registerFactory(SurroundWithLambdaFix)
+        CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(SurroundWithLambdaFix)
     }
 }
