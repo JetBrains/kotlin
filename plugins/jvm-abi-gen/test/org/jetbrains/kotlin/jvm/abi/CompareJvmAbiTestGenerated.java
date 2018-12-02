@@ -34,6 +34,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/anonymousClass/");
     }
 
+    @TestMetadata("classFlags")
+    public void testClassFlags() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/classFlags/");
+    }
+
     @TestMetadata("classPrivateMemebers")
     public void testClassPrivateMemebers() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/classPrivateMemebers/");
@@ -42,6 +47,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     @TestMetadata("clinit")
     public void testClinit() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/clinit/");
+    }
+
+    @TestMetadata("constant")
+    public void testConstant() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/constant/");
     }
 
     @TestMetadata("functionBody")
@@ -64,6 +74,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/localClass/");
     }
 
+    @TestMetadata("parameterName")
+    public void testParameterName() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/parameterName/");
+    }
+
     @TestMetadata("privateClass")
     public void testPrivateClass() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/privateClass/");
@@ -77,6 +92,16 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     @TestMetadata("propertyReference")
     public void testPropertyReference() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/propertyReference/");
+    }
+
+    @TestMetadata("returnType")
+    public void testReturnType() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/returnType/");
+    }
+
+    @TestMetadata("superClass")
+    public void testSuperClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/superClass/");
     }
 
     @TestMetadata("topLevelPrivateMembers")
