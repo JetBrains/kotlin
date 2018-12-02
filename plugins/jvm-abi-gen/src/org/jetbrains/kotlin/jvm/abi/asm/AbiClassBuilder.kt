@@ -22,7 +22,7 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
         signature: String?,
         exceptions: Array<out String>?
     ): MethodVisitor {
-        if (isPrivate(access)) return EMPTY_METHOD_VISITOR
+        if (isPrivate(access) || isClinit(name, access)) return EMPTY_METHOD_VISITOR
 
         val mv = super.newMethod(origin, access, name, desc, signature, exceptions)
         val descriptor = origin.descriptor
@@ -62,4 +62,7 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
 
     private fun isPrivate(access: Int): Boolean =
         (access and Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE
+
+    private fun isClinit(name: String, access: Int): Boolean =
+        name == "<clinit>" && (access and Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC
 }
