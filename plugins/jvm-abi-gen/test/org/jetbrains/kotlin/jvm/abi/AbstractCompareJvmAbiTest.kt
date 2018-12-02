@@ -13,13 +13,17 @@ abstract class AbstractCompareJvmAbiTest : BaseJvmAbiTest() {
     fun doTest(path: String) {
         val testDir = File(path)
         val base = Compilation(testDir, "base").also { make(it) }
+        val sameAbiDir = testDir.resolve("sameAbi")
+        val differentAbiDir = testDir.resolve("differentAbi")
 
-        if (testDir.resolve("sameAbi").exists()) {
+        assert(sameAbiDir.exists() || differentAbiDir.exists()) { "Nothing to compare" }
+
+        if (sameAbiDir.exists()) {
             val sameAbi = Compilation(testDir, "sameAbi").also { make(it) }
             assertEqualDirectories(sameAbi.abiDir, base.abiDir, forgiveExtraFiles = false)
         }
 
-        if (testDir.resolve("differentAbi").exists()) {
+        if (differentAbiDir.exists()) {
             val differentAbi = Compilation(testDir, "differentAbi").also { make(it) }
             assertFails("$base and $differentAbi abi are equal") {
                 assertEqualDirectories(differentAbi.abiDir, base.abiDir, forgiveExtraFiles = false)
