@@ -39,6 +39,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/classPrivateMemebers/");
     }
 
+    @TestMetadata("clinit")
+    public void testClinit() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/clinit/");
+    }
+
     @TestMetadata("functionBody")
     public void testFunctionBody() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/functionBody/");
