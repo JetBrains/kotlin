@@ -11911,6 +11911,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/typeMismatch/nullArgumentForNonNullParameter.kt");
         }
 
+        @TestMetadata("paramTypeLambdaMatch.kt")
+        public void testParamTypeLambdaMatch() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/paramTypeLambdaMatch.kt");
+        }
+
+        @TestMetadata("paramTypeLambdaMatchInt.kt")
+        public void testParamTypeLambdaMatchInt() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/paramTypeLambdaMatchInt.kt");
+        }
+
+        @TestMetadata("paramTypeLambdaMatchSubclass.kt")
+        public void testParamTypeLambdaMatchSubclass() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/paramTypeLambdaMatchSubclass.kt");
+        }
+
         @TestMetadata("parameterDefaultValue.kt")
         public void testParameterDefaultValue() throws Exception {
             runTest("idea/testData/quickfix/typeMismatch/parameterDefaultValue.kt");
