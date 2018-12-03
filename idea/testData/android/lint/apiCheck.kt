@@ -50,7 +50,7 @@ class ApiCallTest: Activity() {
 
         // Class references (no call or field access)
         val error: DOMError? = null // API 8
-        val clz = <error descr="Class requires API level 8 (current min is 1): org.w3c.dom.DOMErrorHandler">DOMErrorHandler::class</error> // API 8
+        val clz = DOMErrorHandler::class // API 8
 
         // Method call
         chronometer.<error descr="Call requires API level 3 (current min is 1): android.widget.Chronometer#getOnChronometerTickListener">onChronometerTickListener</error> // API 3
@@ -58,7 +58,7 @@ class ApiCallTest: Activity() {
         // Inherited method call (from TextView
         chronometer.<error descr="Call requires API level 11 (current min is 1): android.widget.TextView#setTextIsSelectable">setTextIsSelectable</error>(true) // API 11
 
-        <error descr="Class requires API level 14 (current min is 1): android.widget.GridLayout">GridLayout::class</error>
+        GridLayout::class
 
         // Field access
         val field = <warning descr="Field requires API level 11 (current min is 1): `dalvik.bytecode.OpcodeInfo#MAXIMUM_VALUE`">OpcodeInfo.MAXIMUM_VALUE</warning> // API 11
@@ -292,7 +292,7 @@ class ApiCallTest: Activity() {
             //NO ERROR
         }
 
-        if (SDK_INT != 11 || getActionBar() == null) {
+        if (SDK_INT != 11 || <error descr="Call requires API level 11 (current min is 1): android.app.Activity#getActionBar">getActionBar</error>() == null) {
             //NO ERROR
         }
 
@@ -336,7 +336,7 @@ class ApiCallTest: Activity() {
         }
 
         // No Error
-        val actionBar = getActionBar()
+        val actionBar = <error descr="Call requires API level 11 (current min is 1): android.app.Activity#getActionBar">getActionBar</error>()
     }
 
     fun testError() {
@@ -345,7 +345,7 @@ class ApiCallTest: Activity() {
         }
 
         // No Error
-        val actionBar = getActionBar()
+        val actionBar = <error descr="Call requires API level 11 (current min is 1): android.app.Activity#getActionBar">getActionBar</error>()
     }
 
     fun testWithoutAnnotation(textView: TextView) {
@@ -431,12 +431,12 @@ class ApiCallTest: Activity() {
 
     fun testTypes() {
         <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(this)</error>
-        val c = <error descr="Class requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable">VectorDrawable::class</error>.java
+        val c = VectorDrawable::class.java
     }
 
     fun testCallWithApiAnnotation(textView: TextView) {
-        <error descr="Call requires API level 21 (current min is 1): ApiCallTest.MyVectorDravable#MyVectorDravable">MyVectorDravable</error>()
-        <error descr="Call requires API level 16 (current min is 1): ApiCallTest#testWithTargetApiAnnotation">testWithTargetApiAnnotation</error>(textView)
+        MyVectorDravable()
+        testWithTargetApiAnnotation(textView)
     }
 
     companion object : Activity() {
@@ -472,7 +472,7 @@ fun testJava8() {
     }
 
     // Error, Api 24, Java8
-    mapOf(1 to 2).<error descr="Call requires API level 24 (current min is 1): java.util.Map#forEach">forEach</error> { key, value -> key + value }
+    mapOf(1 to 2).forEach { key, value -> key + value }
 
     // Ok, Kotlin
     mapOf(1 to 2).forEach { (key, value) -> key + value }
