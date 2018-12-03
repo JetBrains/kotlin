@@ -249,7 +249,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
 
     private val pathToNonexistentRuntimeJar: String
         get() {
-            val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/kotlin-runtime.jar"
+            val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.KOTLIN_JAVA_STDLIB_JAR
             myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
             return pathToTempKotlinRuntimeJar
         }
