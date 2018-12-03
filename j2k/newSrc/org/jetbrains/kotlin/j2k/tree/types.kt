@@ -157,3 +157,9 @@ fun JKType.updateNullability(newNullability: Nullability): JKType =
 
 fun JKJavaMethod.returnTypeNullability(context: ConversionContext): Nullability =
     context.typeFlavorCalculator.methodNullability(psi()!!)
+
+fun JKType.isCollectionType(symbolProvider: JKSymbolProvider): Boolean {
+    if (this !is JKClassType) return false
+    val collectionType = JKClassTypeImpl(symbolProvider.provideByFqName("java.util.Collection"), emptyList())
+    return this.isSubtypeOf(collectionType, symbolProvider)
+}

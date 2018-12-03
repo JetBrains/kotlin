@@ -54,6 +54,7 @@ object ConversionsRunner {
             +InstanceOfConversion()
             +ForConversion(context)
             +ForInConversion()
+            +CollectionOperationsConversion(context)
             +ArrayOperationsConversion(context)
             +TypeMappingConversion(context)
 
