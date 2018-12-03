@@ -22,37 +22,34 @@ import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.test.ModuleKind
-import org.jetbrains.kotlin.idea.test.configureAs
+import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractHierarchyWithLibTest : AbstractHierarchyTest() {
-    override fun setUp() {
-        super.setUp()
-        myModule.configureAs(ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES)
-    }
-
     protected fun doTest(folderName: String) {
         this.folderName = folderName
 
         val filesToConfigure = filesToConfigure
         val file = filesToConfigure.first()
         val directive = InTextDirectivesUtils.findLinesWithPrefixesRemoved(
-                File("${KotlinTestUtils.getHomeDirectory()}/$folderName/$file").readText(),
-                "// BASE_CLASS: "
+            File("${KotlinTestUtils.getHomeDirectory()}/$folderName/$file").readText(),
+            "// BASE_CLASS: "
         ).singleOrNull() ?: error("File should contain BASE_CLASS directive")
 
         doHierarchyTest(
-                Computable {
-                    val targetClass = findTargetJavaClass(directive.trim())
+            Computable {
+                val targetClass = findTargetJavaClass(directive.trim())
 
-                    TypeHierarchyTreeStructure(
-                            project,
-                            targetClass,
-                            HierarchyBrowserBaseEx.SCOPE_PROJECT)
-                }, *filesToConfigure)
+                TypeHierarchyTreeStructure(
+                    project,
+                    targetClass,
+                    HierarchyBrowserBaseEx.SCOPE_PROJECT
+                )
+            }, *filesToConfigure
+        )
     }
 
     private fun findTargetJavaClass(targetClass: String): PsiClass {
@@ -60,4 +57,6 @@ abstract class AbstractHierarchyWithLibTest : AbstractHierarchyTest() {
             it.qualifiedName == targetClass
         } ?: error("Could not find java class: $targetClass")
     }
+
+    override fun getProjectDescriptor(): LightProjectDescriptor = ProjectDescriptorWithStdlibSources.INSTANCE
 }
