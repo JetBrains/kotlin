@@ -91,6 +91,24 @@ internal class KtUltraLightMethodForSourceDeclaration(
 
     override fun computeDescriptor() = kotlinOrigin?.resolve() as? FunctionDescriptor
 }
+
+internal class KtUltraLightMethodForDescriptor(
+    private val descriptor: FunctionDescriptor,
+    delegate: LightMethodBuilder,
+    closestDeclarationForOrigin: KtDeclaration?,
+    support: UltraLightSupport,
+    containingClass: KtUltraLightClass
+) : KtUltraLightMethod(
+    delegate,
+    closestDeclarationForOrigin,
+    support,
+    containingClass
+) {
+    override fun buildTypeParameterList() = buildTypeParameterList(descriptor, this, support)
+    override fun computeDescriptor() = descriptor
+
+    override val kotlinTypeForNullabilityAnnotation: KotlinType?
+        get() = descriptor.returnType
 }
 
 internal abstract class KtUltraLightParameter(
@@ -211,4 +229,21 @@ internal class KtUltraLightReceiverParameter(
     override val kotlinType: KotlinType? by lazyPub {
         computeContainingDescriptor()?.extensionReceiverParameter?.type
     }
+}
+
+internal class KtUltraLightParameterForDescriptor(
+    private val descriptor: ParameterDescriptor,
+    kotlinOrigin: KtDeclaration?,
+    support: UltraLightSupport,
+    method: KtLightMethod
+) : KtUltraLightParameter(
+    if (descriptor.name.isSpecial) "\$self" else descriptor.name.identifier,
+    kotlinOrigin, support, method
+) {
+    override val kotlinType: KotlinType?
+        get() = descriptor.type
+
+    override fun computeContainingDescriptor() = descriptor.containingDeclaration as? CallableMemberDescriptor
+
+    override fun isVarArgs() = (descriptor as? ValueParameterDescriptor)?.varargElementType != null
 }
