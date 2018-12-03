@@ -20,6 +20,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.j2k.IdeaNewJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.j2k.NewJ2KPostProcessingRegistrarImpl
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import java.io.File
 
@@ -28,7 +29,7 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
     override fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
         val factory = KtPsiFactory(project, true)
-        val postProcessor = J2kPostProcessor(true)
+        val postProcessor = J2kPostProcessor(true, NewJ2KPostProcessingRegistrarImpl)
 
 
         return NewJavaToKotlinConverter(project, settings, IdeaNewJavaToKotlinServices).filesToKotlin(listOf(file)).map {

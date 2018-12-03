@@ -40,7 +40,10 @@ import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.*
 
-class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
+class J2kPostProcessor(
+    private val formatCode: Boolean,
+    private val postProcessingRegistrar: J2KPostProcessingRegistrar = J2KPostProcessingRegistrarImpl
+) : PostProcessor {
     override fun insertImport(file: KtFile, fqName: FqName) {
         ApplicationManager.getApplication().invokeAndWait {
             runWriteAction {
@@ -122,11 +125,11 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                     super.visitElement(element)
 
                     if (rangeResult == RangeFilterResult.PROCESS) {
-                        J2KPostProcessingRegistrar.processings.forEach { processing ->
+                        postProcessingRegistrar.processings.forEach { processing ->
                             val action = processing.createAction(element, diagnostics)
                             if (action != null) {
                                 availableActions.add(ActionData(element, action,
-                                                                J2KPostProcessingRegistrar.priority(processing),
+                                                                postProcessingRegistrar.priority(processing),
                                                                 processing.writeActionNeeded))
                             }
                         }
