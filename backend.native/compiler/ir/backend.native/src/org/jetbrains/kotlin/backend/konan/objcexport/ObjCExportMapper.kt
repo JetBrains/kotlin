@@ -54,10 +54,13 @@ internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescript
         descriptor.isEffectivelyPublicApi && !descriptor.isSuspend && !descriptor.isExpect
 
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
-        descriptor.isEffectivelyPublicApi && !descriptor.defaultType.isObjCObjectType() && when (descriptor.kind) {
-            ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
-            ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
-        } && !descriptor.isExpect && !isSpecialMapped(descriptor) && !descriptor.isInlined()
+        shouldBeVisible(descriptor) && !descriptor.defaultType.isObjCObjectType()
+
+internal fun ObjCExportMapper.shouldBeVisible(descriptor: ClassDescriptor): Boolean =
+        descriptor.isEffectivelyPublicApi && when (descriptor.kind) {
+        ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
+        ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
+    } && !descriptor.isExpect && !isSpecialMapped(descriptor) && !descriptor.isInlined()
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }

@@ -220,15 +220,19 @@ abstract class ObjCExportHeaderGenerator(
             getContributedDescriptors()
                     .asSequence()
                     .filterIsInstance<ClassDescriptor>()
-                    .filter { mapper.shouldBeExposed(it) }
                     .forEach {
-                        if (it.isInterface) {
-                            translateInterface(it)
-                        } else {
-                            translateClass(it)
-                        }
+                        if (mapper.shouldBeExposed(it)) {
+                            if (it.isInterface) {
+                                translateInterface(it)
+                            } else {
+                                translateClass(it)
+                            }
 
-                        it.unsubstitutedMemberScope.translateClasses()
+                            it.unsubstitutedMemberScope.translateClasses()
+                        } else if (it.isKotlinObjCClass() && mapper.shouldBeVisible(it)) {
+                            assert(!it.isInterface)
+                            translateKotlinObjCClassAsUnavailableStub(it)
+                        }
                     }
         }
 
@@ -255,6 +259,16 @@ abstract class ObjCExportHeaderGenerator(
         }
 
         return stubs
+    }
+
+    private fun translateKotlinObjCClassAsUnavailableStub(descriptor: ClassDescriptor) {
+        stubs.add(objCInterface(
+                namer.getClassOrProtocolName(descriptor),
+                descriptor = descriptor,
+                superClass = "NSObject",
+                attributes = listOf("unavailable(\"Kotlin subclass of Objective-C class can't be imported\")")
+
+        ))
     }
 
     private fun genKotlinNumbers() {
