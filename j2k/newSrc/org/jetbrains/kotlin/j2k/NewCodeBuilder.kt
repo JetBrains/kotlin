@@ -333,7 +333,11 @@ class NewCodeBuilder {
             printer.printWithNoIndent("if (")
             ifStatement.condition.accept(this)
             printer.printWithNoIndent(")")
-            renderStatementOrBlock(ifStatement.thenBranch)
+            if (ifStatement.thenBranch.isEmpty()) {
+                printer.printWithNoIndent(";")
+            } else {
+                renderStatementOrBlock(ifStatement.thenBranch)
+            }
         }
 
         override fun visitIfElseStatement(ifElseStatement: JKIfElseStatement) {
