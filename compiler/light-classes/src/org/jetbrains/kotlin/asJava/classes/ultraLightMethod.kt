@@ -135,7 +135,6 @@ internal abstract class KtUltraLightParameter(
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 
-    internal abstract fun annotatedOrigin(): KtAnnotated?
     abstract override fun isVarArgs(): Boolean
 }
 
@@ -167,8 +166,6 @@ internal class KtUltraLightParameterForSource(
         (kotlinOrigin as? KtVariableDeclaration)?.setName(name)
         return this
     }
-
-    override fun annotatedOrigin() = kotlinOrigin
 }
 
 internal class KtUltraLightParameterForSetterParameter(
@@ -185,7 +182,6 @@ internal class KtUltraLightParameterForSetterParameter(
     }
 
     override fun isVarArgs(): Boolean = false
-    override fun annotatedOrigin() = kotlinOrigin
 }
 
 internal class KtUltraLightReceiverParameter(
@@ -199,6 +195,4 @@ internal class KtUltraLightReceiverParameter(
     override val kotlinType: KotlinType? by lazyPub {
         computeContainingDescriptor()?.extensionReceiverParameter?.type
     }
-
-    override fun annotatedOrigin(): KtAnnotated? = kotlinOrigin
 }
