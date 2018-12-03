@@ -87,11 +87,6 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/requiresApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("annotation.kt")
-        public void testAnnotation() throws Exception {
-            runTest("idea/testData/android/lintQuickfix/requiresApi/annotation.kt");
-        }
-
         @TestMetadata("companion.kt")
         public void testCompanion() throws Exception {
             runTest("idea/testData/android/lintQuickfix/requiresApi/companion.kt");
@@ -206,11 +201,6 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
 
         public void testAllFilesPresentInTargetApi() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/targetApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("annotation.kt")
-        public void testAnnotation() throws Exception {
-            runTest("idea/testData/android/lintQuickfix/targetApi/annotation.kt");
         }
 
         @TestMetadata("companion.kt")
