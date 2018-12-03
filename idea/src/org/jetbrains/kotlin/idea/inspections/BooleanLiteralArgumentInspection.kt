@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.IntentionWrapper
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -30,28 +33,57 @@ class BooleanLiteralArgumentInspection(
             if (argument.getArgumentName() != null) return
             val argumentExpression = argument.getArgumentExpression() as? KtConstantExpression ?: return
             if (argumentExpression.node.elementType != KtNodeTypes.BOOLEAN_CONSTANT) return
-            if (argumentExpression.analyze().diagnostics.forElement(argumentExpression).any { it.severity == Severity.ERROR }) return
             val call = argument.getStrictParentOfType<KtCallExpression>() ?: return
+            val valueArguments = call.valueArguments
+            if (valueArguments.takeLastWhile { it != argument }.any { !it.isNamed() }) return
+
+            if (argumentExpression.analyze().diagnostics.forElement(argumentExpression).any { it.severity == Severity.ERROR }) return
             if (call.resolveToCall()?.resultingDescriptor?.hasStableParameterNames() != true) return
 
-            val valueArguments = call.valueArguments
-            fun hasAnotherUnnamedBoolean() = valueArguments.asSequence().filter { it != argument }.any {
-                !it.isNamed() && (it.getArgumentExpression() as? KtConstantExpression)?.node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT
+            val hasPreviousUnnamedBoolean = valueArguments.asSequence().windowed(size = 2, step = 1).any { (prev, next) ->
+                next == argument && !prev.isNamed() &&
+                        (prev.getArgumentExpression() as? KtConstantExpression)?.node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT
             }
-            when {
-                valueArguments.takeLastWhile { it != argument }.none { !it.isNamed() } ->
-                    holder.registerProblem(
-                        argument,
-                        "Boolean literal argument without parameter name",
-                        if (reportSingle || hasAnotherUnnamedBoolean()) GENERIC_ERROR_OR_WARNING else INFORMATION,
-                        IntentionWrapper(AddNameToArgumentIntention(), argument.containingKtFile)
-                    )
+            val fixes = mutableListOf<LocalQuickFix>()
+            if (hasPreviousUnnamedBoolean) {
+                fixes += AddNamesToLastBooleanArgumentsFix()
             }
+            fixes += IntentionWrapper(AddNameToArgumentIntention(), argument.containingKtFile)
+            holder.registerProblem(
+                argument,
+                "Boolean literal argument without parameter name",
+                if (reportSingle || hasPreviousUnnamedBoolean) GENERIC_ERROR_OR_WARNING else INFORMATION,
+                *fixes.toTypedArray()
+            )
         })
 
     override fun createOptionsPanel(): JComponent? {
         val panel = MultipleCheckboxOptionsPanel(this)
         panel.addCheckbox("Report also on call with single boolean literal argument", "reportSingle")
         return panel
+    }
+
+    private class AddNamesToLastBooleanArgumentsFix : LocalQuickFix {
+        override fun getFamilyName(): String = name
+
+        override fun getName() = "Add names to boolean arguments"
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val argument = descriptor.psiElement as? KtValueArgument ?: return
+            val call = argument.getStrictParentOfType<KtCallExpression>() ?: return
+            val valueArguments = call.valueArguments
+
+            var problemArgumentFound = false
+            for (currentArgument in valueArguments.reversed()) {
+                if (currentArgument == argument) {
+                    problemArgumentFound = true
+                } else if (!problemArgumentFound) continue
+                if (currentArgument.isNamed()) return
+                if ((currentArgument.getArgumentExpression() as? KtConstantExpression)?.node?.elementType != KtNodeTypes.BOOLEAN_CONSTANT) {
+                    return
+                }
+                if (!AddNameToArgumentIntention.apply(currentArgument)) return
+            }
+        }
     }
 }
