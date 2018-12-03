@@ -46,7 +46,7 @@ import java.util.Calendar;
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
-@Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, String.class}, d = {Boolean.class, NoBar3.class})
+@Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, kotlin.String.class}, d = {kotlin.Boolean.class, NoBar3.class})
 public final class Test<G extends java.lang.Object> {
     @org.jetbrains.annotations.NotNull()
     public ABC a;
