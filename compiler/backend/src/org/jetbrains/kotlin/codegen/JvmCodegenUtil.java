@@ -74,7 +74,7 @@ public class JvmCodegenUtil {
         return !hasJvmDefaultAnnotation(descriptor);
     }
 
-    public static boolean isJvmInterface(DeclarationDescriptor descriptor) {
+    public static boolean isJvmInterface(@Nullable DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             ClassKind kind = ((ClassDescriptor) descriptor).getKind();
             return kind == INTERFACE || kind == ANNOTATION_CLASS;

@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -103,6 +104,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 }
                 return null
             }
+
+            override val deprecationResolver: DeprecationResolver by lazyPub {
+                element.getResolutionFacade().getFrontendService(DeprecationResolver::class.java)
+            }
         })
     }
 
@@ -110,7 +115,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         if (declaration.hasExpectModifier() ||
             declaration.hasModifier(KtTokens.ANNOTATION_KEYWORD) ||
             declaration.hasModifier(KtTokens.INLINE_KEYWORD) && declaration is KtClassOrObject ||
-            declaration.hasModifier(KtTokens.DATA_KEYWORD) ||
             declaration.hasModifier(KtTokens.SUSPEND_KEYWORD)
         ) {
             return declaration

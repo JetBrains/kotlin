@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -32,10 +33,12 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
@@ -288,7 +291,45 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 }
             }
         }
+
+        addMethodsFromDataClass(result)
+
         result
+    }
+
+    private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>) {
+        if (!classOrObject.hasModifier(DATA_KEYWORD)) return
+        val descriptor = classOrObject.resolve() as? ClassDescriptor ?: return
+        val bindingContext = classOrObject.analyze()
+
+        // Force resolving data class members set
+        descriptor.unsubstitutedMemberScope.getContributedDescriptors()
+
+        object : DataClassMethodGenerator(classOrObject, bindingContext) {
+            private fun addFunction(descriptor: FunctionDescriptor, declarationForOrigin: KtDeclaration? = null) {
+                result.add(createGeneratedMethodFromDescriptor(descriptor, declarationForOrigin))
+            }
+
+            override fun generateComponentFunction(function: FunctionDescriptor, parameter: ValueParameterDescriptor) {
+                addFunction(function, DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtDeclaration)
+            }
+
+            override fun generateCopyFunction(function: FunctionDescriptor, constructorParameters: List<KtParameter>) {
+                addFunction(function)
+            }
+
+            override fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
+                addFunction(function)
+            }
+
+            override fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
+                addFunction(function)
+            }
+
+            override fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
+                addFunction(function)
+            }
+        }.generate()
     }
 
     private fun createConstructors(): List<KtLightMethod> {
@@ -601,6 +642,7 @@ interface UltraLightSupport {
     val moduleName: String
     fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>?
     fun isTooComplexForUltraLightGeneration(element: KtClassOrObject): Boolean
+    val deprecationResolver: DeprecationResolver
 }
 
 interface KtUltraLightElementWithNullabilityAnnotation<out T : KtDeclaration, out D : PsiModifierListOwner> : KtLightDeclaration<T, D>,

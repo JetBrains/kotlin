@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.*;
 import org.jetbrains.kotlin.resolve.jvm.checkers.DalvikIdentifierUtils;
@@ -311,7 +312,11 @@ public class AsmUtil {
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
-        int flags = getCommonCallableFlags(functionDescriptor, kind, state);
+        return getMethodAsmFlags(functionDescriptor, kind, state.getDeprecationProvider());
+    }
+
+    public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, DeprecationResolver deprecationResolver) {
+        int flags = getCommonCallableFlags(functionDescriptor, kind, deprecationResolver);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
             flags |= flagAnnotation.getJvmFlag(functionDescriptor.getOriginal());
@@ -361,18 +366,18 @@ public class AsmUtil {
     }
 
     public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor, @NotNull GenerationState state) {
-        return getCommonCallableFlags(functionDescriptor, null, state);
+        return getCommonCallableFlags(functionDescriptor, null, state.getDeprecationProvider());
     }
 
     private static int getCommonCallableFlags(
             FunctionDescriptor functionDescriptor,
             @Nullable OwnerKind kind,
-            @NotNull GenerationState state
+            @NotNull DeprecationResolver deprecationResolver
     ) {
         int flags = getVisibilityAccessFlag(functionDescriptor, kind);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (state.getDeprecationProvider().isDeprecatedHidden(functionDescriptor) ||
+        if (deprecationResolver.isDeprecatedHidden(functionDescriptor) ||
             (functionDescriptor.isSuspend()) && functionDescriptor.getVisibility().equals(Visibilities.PRIVATE)) {
             flags |= ACC_SYNTHETIC;
         }
