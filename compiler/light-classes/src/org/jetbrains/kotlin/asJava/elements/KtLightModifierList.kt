@@ -22,7 +22,10 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightElementWithNullabilityAnnotation
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightNullabilityAnnotation
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -100,9 +103,7 @@ private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>
 
     if (!isFromSources(lightModifierList)) return emptyList()
 
-    val annotatedKtDeclaration =
-        if (lightModifierListOwner is KtUltraLightParameter) lightModifierListOwner.annotatedOrigin()
-        else lightModifierListOwner.kotlinOrigin as? KtDeclaration
+    val annotatedKtDeclaration = lightModifierListOwner.kotlinOrigin as? KtDeclaration
 
     if (annotatedKtDeclaration == null || !annotatedKtDeclaration.isValid || !hasAnnotationsInSource(annotatedKtDeclaration)) {
         return emptyList()
