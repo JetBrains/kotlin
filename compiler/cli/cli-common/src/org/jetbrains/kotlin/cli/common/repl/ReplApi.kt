@@ -89,7 +89,8 @@ sealed class ReplCompileResult : Serializable {
                           val classes: List<CompiledClassData>,
                           val hasResult: Boolean,
                           val classpathAddendum: List<File>,
-                          val type: String?) : ReplCompileResult() {
+                          val type: String?,
+                          val isFunctionType: Boolean) : ReplCompileResult() {
         companion object { private val serialVersionUID: Long = 2L }
     }
 
