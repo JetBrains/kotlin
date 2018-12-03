@@ -520,11 +520,10 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             loweredConstructorDescriptor.returnType = enumConstructor.descriptor.returnType
             val loweredEnumConstructor = IrConstructorImpl(
                     enumConstructor.startOffset, enumConstructor.endOffset, enumConstructor.origin,
-                    loweredConstructorDescriptor
-            ).apply {
-                returnType = enumConstructor.returnType
-                body = enumConstructor.body!! // will be transformed later
-            }
+                    loweredConstructorDescriptor,
+                    enumConstructor.returnType,
+                    enumConstructor.body!!
+            )
             loweredEnumConstructor.valueParameters += valueParameters
             loweredEnumConstructor.parent = enumConstructor.parent
 

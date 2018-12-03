@@ -105,9 +105,8 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
             val initializer = IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER,
-                    initializerMethodDescriptor)
+                    initializerMethodDescriptor, context.irBuiltIns.unitType)
 
-            initializer.returnType = context.irBuiltIns.unitType
             initializer.body = IrBlockBodyImpl(startOffset, endOffset, initializers)
 
             initializer.parent = irClass

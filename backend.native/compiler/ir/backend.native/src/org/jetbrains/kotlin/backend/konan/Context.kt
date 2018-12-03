@@ -167,9 +167,9 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                 function.startOffset,
                 function.endOffset,
                 DECLARATION_ORIGIN_BRIDGE_METHOD(function),
-                bridgeDescriptor
+                bridgeDescriptor,
+                returnType
         ).apply {
-            this.returnType = returnType
             this.parent = function.parent
         }
 

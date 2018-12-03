@@ -106,9 +106,10 @@ private fun createFakeOverride(
 
     fun FunctionDescriptor.createFunction(): IrSimpleFunction = IrFunctionImpl(
             startOffset, endOffset,
-            IrDeclarationOrigin.FAKE_OVERRIDE, this
+            IrDeclarationOrigin.FAKE_OVERRIDE,
+            this,
+            symbolTable.translateErased(this@createFunction.returnType!!)
     ).apply {
-        returnType = symbolTable.translateErased(this@createFunction.returnType!!)
         createParameterDeclarations(symbolTable)
     }
 
@@ -162,9 +163,8 @@ private fun createFakeOverride(
 
     // TODO: this function doesn't substitute types.
     fun IrSimpleFunction.copyFake(descriptor: FunctionDescriptor): IrSimpleFunction = IrFunctionImpl(
-            irClass.startOffset, irClass.endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, descriptor
+            irClass.startOffset, irClass.endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, descriptor, returnType
     ).also {
-        it.returnType = returnType
         it.parent = irClass
         it.createDispatchReceiverParameter()
 

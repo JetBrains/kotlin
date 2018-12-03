@@ -1547,7 +1547,7 @@ task sort1(type: RunKonanTest) {
 // when KT-26315 is fixed.
 task sortWith(type: RunStandaloneKonanTest) {
     source = "runtime/collections/SortWith.kt"
-    flags = ['-tr', '--disable', 'devirtualization']
+    flags = ['-tr', '-Xdisable=devirtualization']
     arguments = ['--ktest_logger=SILENT']
 }
 

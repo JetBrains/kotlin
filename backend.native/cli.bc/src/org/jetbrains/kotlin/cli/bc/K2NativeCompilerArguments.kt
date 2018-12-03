@@ -96,9 +96,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xcompatible-compiler-version", valueDescription = "<version>", description = "Assume the given compiler version to be binary compatible")
     var compatibleCompilerVersions: Array<String>? = null
 
-    @Argument(value = "-Xdisable", deprecatedName = "--disable", valueDescription = "<Phase>", description = "Disable backend phase")
-    var disablePhases: Array<String>? = null
-
     @Argument(value = EMBED_BITCODE_FLAG, description = "Embed LLVM IR bitcode as data")
     var embedBitcode: Boolean = false
 
@@ -115,9 +112,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
                     "Must be the path of a library passed with '-library'"
     )
     var exportedLibraries: Array<String>? = null
-
-    @Argument(value=  "-Xlist-phases", deprecatedName = "--list_phases", description = "List all backend phases")
-    var listPhases: Boolean = false
 
     @Argument(value = "-Xprint-bitcode", deprecatedName = "--print_bitcode", description = "Print llvm bitcode")
     var printBitCode: Boolean = false
@@ -145,9 +139,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xtime", deprecatedName = "--time", description = "Report execution time for compiler phases")
     var timePhases: Boolean = false
-
-    @Argument(value = "-Xverbose", deprecatedName = "--verbose", valueDescription = "<Phase>", description = "Trace phase execution")
-    var verbosePhases: Array<String>? = null
 
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify llvm bitcode after each method")
     var verifyBitCode: Boolean = false

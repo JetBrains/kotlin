@@ -685,11 +685,10 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                     startOffset = declaration.startOffset,
                     endOffset   = declaration.endOffset,
                     origin      = mapDeclarationOrigin(declaration.origin),
-                    descriptor  = descriptor
+                    descriptor  = descriptor,
+                    returnType  = context.ir.translateErased(descriptor.returnType!!),
+                    body        = declaration.body?.transform(this, null)
             ).also {
-                it.returnType = context.ir.translateErased(descriptor.returnType!!)
-                it.body = declaration.body?.transform(this, null)
-
                 it.setOverrides(context.ir.symbols.symbolTable)
             }.transformParameters1(declaration)
         }
@@ -700,11 +699,10 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                     startOffset = declaration.startOffset,
                     endOffset   = declaration.endOffset,
                     origin      = mapDeclarationOrigin(declaration.origin),
-                    descriptor  = descriptor
-            ).also {
-                it.returnType = context.ir.translateErased(descriptor.returnType)
-                it.body = declaration.body?.transform(this, null)
-            }.transformParameters1(declaration)
+                    descriptor  = descriptor,
+                    returnType  = context.ir.translateErased(descriptor.returnType),
+                    body        = declaration.body?.transform(this, null)
+            ).transformParameters1(declaration)
         }
 
         private fun FunctionDescriptor.getTypeParametersToTransform() =

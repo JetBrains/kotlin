@@ -285,9 +285,9 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        symbol      = symbol).apply {
-
-                    returnType = functionReferenceClass.defaultType
+                        symbol      = symbol,
+                        returnType  = functionReferenceClass.defaultType
+                ).apply {
 
                     val irBuilder = context.createIrBuilder(this.symbol, startOffset, endOffset)
 
@@ -369,9 +369,9 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        symbol      = ourSymbol).apply {
-
-                    returnType = superFunctionSymbol.owner.returnType // FIXME: substitute
+                        symbol      = ourSymbol,
+                        returnType  = superFunctionSymbol.owner.returnType // FIXME: substitute
+                ).apply {
 
                     val function = this
                     val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)

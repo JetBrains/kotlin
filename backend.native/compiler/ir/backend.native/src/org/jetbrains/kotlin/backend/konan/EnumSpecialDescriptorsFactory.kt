@@ -52,8 +52,12 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
         val valuesField = IrFieldImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, valuesProperty, valuesType)
 
         val valuesGetterDescriptor = createValuesGetterDescriptor(enumClassDescriptor, implObjectDescriptor)
-        val valuesGetter = IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, valuesGetterDescriptor).also {
-            it.returnType = valuesType
+        val valuesGetter = IrFunctionImpl(
+                startOffset, endOffset,
+                DECLARATION_ORIGIN_ENUM,
+                valuesGetterDescriptor,
+                valuesType
+        ).also {
             it.parent = implObject
             it.createDispatchReceiverParameter()
         }

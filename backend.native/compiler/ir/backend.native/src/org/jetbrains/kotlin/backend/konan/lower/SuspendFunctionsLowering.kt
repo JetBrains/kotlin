@@ -445,9 +445,9 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
-                        symbol      = symbol).apply {
-
-                    returnType  = coroutineClass.defaultType
+                        symbol      = symbol,
+                        returnType  = coroutineClass.defaultType
+                ).apply {
 
                     this.valueParameters += constructorParameters
 
@@ -509,9 +509,9 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
-                        symbol      = symbol).apply {
-
-                    returnType = coroutineClass.defaultType
+                        symbol      = symbol,
+                        returnType  = coroutineClass.defaultType
+                ).apply {
 
                     this.valueParameters += constructorParameters
 
@@ -580,9 +580,9 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
-                        symbol      = symbol).apply {
-
-                    returnType  = coroutineClass.defaultType
+                        symbol      = symbol,
+                        returnType  = coroutineClass.defaultType
+                ).apply {
                     parent = coroutineClass
 
                     this.valueParameters += parameters
@@ -660,9 +660,9 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
-                        symbol      = symbol).apply {
-
-                    returnType  = irFunction.returnType
+                        symbol      = symbol,
+                        returnType  = irFunction.returnType
+                ).apply {
                     parent = coroutineClass
 
                     valueParameters += parameters
@@ -719,9 +719,9 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
-                        symbol      = symbol).apply {
-
-                    returnType  = context.irBuiltIns.anyNType
+                        symbol      = symbol,
+                        returnType  = context.irBuiltIns.anyNType
+                ).apply {
                     parent = coroutineClass
 
                     this.createDispatchReceiverParameter()
@@ -946,9 +946,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         CallableMemberDescriptor.Kind.SYNTHESIZED,
                         SourceElement.NO_SOURCE).apply {
                     initialize(null, null, emptyList(), emptyList(), context.builtIns.unitType, Modality.ABSTRACT, Visibilities.PRIVATE)
-                }).apply {
-            returnType = context.irBuiltIns.unitType
-        }
+                }, context.irBuiltIns.unitType)
 
         private val restoreState = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED,
                 SimpleFunctionDescriptorImpl.create(
@@ -958,9 +956,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         CallableMemberDescriptor.Kind.SYNTHESIZED,
                         SourceElement.NO_SOURCE).apply {
                     initialize(null, null, emptyList(), emptyList(), context.builtIns.unitType, Modality.ABSTRACT, Visibilities.PRIVATE)
-                }).apply {
-            returnType = context.irBuiltIns.unitType
-        }
+                }, context.irBuiltIns.unitType)
 
         private inner class ExpressionSlicer(val suspensionPointIdType: IrType): IrElementTransformerVoid() {
             // TODO: optimize - it has square complexity.

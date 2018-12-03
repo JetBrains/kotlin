@@ -317,13 +317,11 @@ internal class TestProcessor (val context: KonanBackendContext) {
         : GetterBuilder(objectSymbol.typeWithoutArguments, testSuite, getterName) {
 
         override fun buildIr(): IrFunction = IrFunctionImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 TEST_SUITE_GENERATED_MEMBER,
-                symbol).apply {
-
-            this.returnType = this@ObjectGetterBuilder.returnType
-
+                symbol,
+                this@ObjectGetterBuilder.returnType
+        ).apply {
             val builder = context.createIrBuilder(symbol)
             createParameterDeclarations(context.ir.symbols.symbolTable)
             body = builder.irBlockBody {
@@ -342,13 +340,11 @@ internal class TestProcessor (val context: KonanBackendContext) {
         : GetterBuilder(classSymbol.typeWithStarProjections, testSuite, getterName) {
 
         override fun buildIr() = IrFunctionImpl(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset =   UNDEFINED_OFFSET,
-                origin =      TEST_SUITE_GENERATED_MEMBER,
-                symbol =      symbol).apply {
-
-            this.returnType = this@InstanceGetterBuilder.returnType
-
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                TEST_SUITE_GENERATED_MEMBER,
+                symbol,
+                this@InstanceGetterBuilder.returnType
+        ).apply {
             val builder = context.createIrBuilder(symbol)
             createParameterDeclarations(context.ir.symbols.symbolTable)
             body = builder.irBlockBody {
@@ -377,12 +373,11 @@ internal class TestProcessor (val context: KonanBackendContext) {
                         .single(predicate))
 
         override fun buildIr() = IrConstructorImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 TEST_SUITE_GENERATED_MEMBER,
-                symbol).apply {
-
-            returnType = testSuite.typeWithStarProjections
+                symbol,
+                testSuite.typeWithStarProjections
+        ).apply {
 
             createParameterDeclarations(context.ir.symbols.symbolTable)
 

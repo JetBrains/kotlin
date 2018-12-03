@@ -102,8 +102,7 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
     val startOffset = inlinedClass.startOffset
     val endOffset = inlinedClass.endOffset
 
-    IrFunctionImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, descriptor).apply {
-        this.returnType = returnType
+    IrFunctionImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, descriptor, returnType).apply {
         this.valueParameters.add(IrValueParameterImpl(
                 startOffset,
                 endOffset,
@@ -164,9 +163,7 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
     val startOffset = inlinedClass.startOffset
     val endOffset = inlinedClass.endOffset
 
-    IrFunctionImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, descriptor).apply {
-        this.returnType = returnType
-
+    IrFunctionImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, descriptor, returnType).apply {
         this.valueParameters.add(IrValueParameterImpl(
                 startOffset,
                 endOffset,

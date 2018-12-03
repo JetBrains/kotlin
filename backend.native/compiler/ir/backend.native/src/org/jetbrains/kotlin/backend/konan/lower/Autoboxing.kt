@@ -461,10 +461,10 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
             irConstructor.startOffset,
             irConstructor.endOffset,
             IrDeclarationOrigin.DEFINED,
-            descriptor
+            descriptor,
+            irConstructor.returnType
     ).apply {
         parent = irConstructor.parent
-        returnType = irConstructor.returnType
         irConstructor.valueParameters.mapTo(this.valueParameters) {
             it.copy(this.descriptor.valueParameters[it.index])
         }

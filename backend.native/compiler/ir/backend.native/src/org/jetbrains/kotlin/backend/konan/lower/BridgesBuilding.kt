@@ -101,10 +101,9 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                             jobFunction.startOffset,
                             jobFunction.endOffset,
                             IrDeclarationOrigin.DEFINED,
-                            runtimeJobDescriptor
+                            runtimeJobDescriptor,
+                            context.irBuiltIns.anyNType
                     ).also {
-                        it.returnType = context.irBuiltIns.anyNType
-
                         it.valueParameters += IrValueParameterImpl(
                                 it.startOffset,
                                 it.endOffset,

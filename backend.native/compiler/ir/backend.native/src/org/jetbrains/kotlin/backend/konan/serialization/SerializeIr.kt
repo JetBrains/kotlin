@@ -1205,10 +1205,7 @@ internal class IrDeserializer(val context: Context,
                                       start: Int, end: Int, origin: IrDeclarationOrigin): IrFunction {
 
         val body = deserializeStatement(proto.body)
-        val function = IrFunctionImpl(start, end, origin, descriptor)
-
-        function.returnType = descriptor.returnType!!.ir
-        function.body = body as IrBody
+        val function = IrFunctionImpl(start, end, origin, descriptor, descriptor.returnType!!.ir, body as IrBody)
 
         function.createParameterDeclarations(context.ir.symbols.symbolTable)
         function.setOverrides(context.ir.symbols.symbolTable)

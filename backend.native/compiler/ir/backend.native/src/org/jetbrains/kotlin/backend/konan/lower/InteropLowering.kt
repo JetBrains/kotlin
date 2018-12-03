@@ -197,9 +197,9 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
 
         return IrFunctionImpl(
                 constructor.startOffset, constructor.endOffset, OVERRIDING_INITIALIZER_BY_CONSTRUCTOR,
-                resultDescriptor
+                resultDescriptor,
+                irClass.defaultType
         ).also { result ->
-            result.returnType = irClass.defaultType
             result.parent = irClass
             result.createDispatchReceiverParameter()
             result.valueParameters += valueParameters
@@ -366,10 +366,9 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
         val newFunction = IrFunctionImpl(
                 function.startOffset, function.endOffset,
                 IrDeclarationOrigin.DEFINED,
-                newDescriptor
+                newDescriptor,
+                function.returnType
         ).apply {
-            this.returnType = function.returnType
-
             parameterTypes.mapIndexedTo(this.valueParameters) { index, it ->
                 IrValueParameterImpl(
                         startOffset,
