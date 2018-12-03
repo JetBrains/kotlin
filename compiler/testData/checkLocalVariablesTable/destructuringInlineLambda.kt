@@ -19,5 +19,5 @@ fun box(): String {
 // VARIABLE : NAME=a1 TYPE=Ljava/lang/String; INDEX=2
 // VARIABLE : NAME=a2 TYPE=Ljava/lang/String; INDEX=3
 // VARIABLE : NAME=a3 TYPE=I INDEX=4
-// VARIABLE : NAME=$i$a$1$foo TYPE=I INDEX=5
+// VARIABLE : NAME=$i$a$-foo-DestructuringInlineLambdaKt$box$1 TYPE=I INDEX=5
 // VARIABLE : NAME=$i$f$foo TYPE=I INDEX=6
