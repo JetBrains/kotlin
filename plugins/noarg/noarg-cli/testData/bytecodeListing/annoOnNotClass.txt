@@ -5,7 +5,7 @@ public final enum class Colors {
     public final static field RED: Colors
     public final static field WHITE: Colors
     static method <clinit>(): void
-    protected method <init>(p0: java.lang.String, p1: int): void
+    private method <init>(p0: java.lang.String, p1: int): void
     public static method valueOf(p0: java.lang.String): Colors
     public static method values(): Colors[]
 }
