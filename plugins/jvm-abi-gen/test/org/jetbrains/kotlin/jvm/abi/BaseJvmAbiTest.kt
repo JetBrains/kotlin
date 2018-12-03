@@ -32,17 +32,17 @@ abstract class BaseJvmAbiTest : TestCase() {
 
     inner class Compilation(
         val projectDir: File,
-        val name: String,
+        val name: String?,
         val dependencies: Collection<Compilation> = emptyList()
     ) {
         val srcDir: File
-            get() = projectDir.resolve(name)
+            get() = if (name == null) projectDir else projectDir.resolve(name)
 
         val destinationDir: File
-            get() = workingDir.resolve("$name/out")
+            get() = if (name == null) workingDir.resolve("out") else workingDir.resolve("$name/out")
 
         val abiDir: File
-            get() = workingDir.resolve("$name/abi")
+            get() = if (name == null) workingDir.resolve("abi") else workingDir.resolve("$name/abi")
 
         override fun toString(): String =
             "compilation '$name'"

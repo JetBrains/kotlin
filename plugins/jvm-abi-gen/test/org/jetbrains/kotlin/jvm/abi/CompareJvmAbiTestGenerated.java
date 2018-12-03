@@ -64,6 +64,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");
     }
 
+    @TestMetadata("innerClasses")
+    public void testInnerClasses() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/innerClasses/");
+    }
+
     @TestMetadata("lambda")
     public void testLambda() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/lambda/");

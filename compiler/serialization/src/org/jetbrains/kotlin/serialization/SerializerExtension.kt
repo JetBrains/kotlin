@@ -25,6 +25,7 @@ abstract class SerializerExtension {
     open fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean = true
     open fun shouldSerializeProperty(descriptor: PropertyDescriptor): Boolean = true
     open fun shouldSerializeTypeAlias(descriptor: TypeAliasDescriptor): Boolean = true
+    open fun shouldSerializeNestedClass(descriptor: ClassDescriptor): Boolean = true
 
     interface ClassMembersProducer {
         fun getCallableMembers(classDescriptor: ClassDescriptor): Collection<CallableMemberDescriptor>
