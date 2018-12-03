@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
+import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -90,8 +91,10 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             }
 
             val delegation = generateDelegationToDefaultImpl(irClass, implementation, function, isDefaultImplsGeneration)
-            toRemove.add(function)
-            replacementMap[function.symbol] = delegation.symbol
+            if (!isDefaultImplsGeneration) {
+                toRemove.add(function)
+                replacementMap[function.symbol] = delegation.symbol
+            }
         }
         irClass.declarations.removeAll(toRemove)
     }

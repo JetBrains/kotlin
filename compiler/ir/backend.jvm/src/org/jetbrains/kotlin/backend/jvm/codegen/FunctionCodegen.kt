@@ -72,7 +72,10 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
         val staticFlag = if (isStatic) Opcodes.ACC_STATIC else 0
         val varargFlag = if (irFunction.valueParameters.any { it.varargElementType != null }) Opcodes.ACC_VARARGS else 0
         val deprecation = if (irFunction.hasAnnotation(FQ_NAMES.deprecated)) Opcodes.ACC_DEPRECATED else 0
-        val bridgeFlag = 0 //TODO
+        val bridgeFlag = if (
+            irFunction.origin == IrDeclarationOrigin.BRIDGE ||
+            irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL
+        ) Opcodes.ACC_BRIDGE else 0
         val modalityFlag = when ((irFunction as? IrSimpleFunction)?.modality) {
             Modality.FINAL -> if (!classCodegen.irClass.isAnnotationClass || irFunction.isStatic) Opcodes.ACC_FINAL else Opcodes.ACC_ABSTRACT
             Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
