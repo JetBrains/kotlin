@@ -33,12 +33,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 
-val MoveCompanionObjectFieldsPhase = makePhase(
-    ::MoveCompanionObjectFieldsLowering,
-    name = "MoveCompanionObjectFields",
-    description = "Move companion object fields to static fields of companion's owner"
-)
-
 class MoveCompanionObjectFieldsLowering(val context: CommonBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val fieldReplacementMap = mutableMapOf<IrFieldSymbol, IrFieldSymbol>()

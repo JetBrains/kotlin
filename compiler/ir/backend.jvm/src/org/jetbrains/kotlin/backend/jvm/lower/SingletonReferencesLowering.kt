@@ -16,12 +16,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-val SingletonReferencesPhase = makePhase(
-    ::SingletonReferencesLowering,
-    name = "SingletonReferences",
-    description = "Handle singleton references"
-)
-
 class SingletonReferencesLowering(val context: JvmBackendContext) : BodyLoweringPass, IrElementTransformerVoid() {
     override fun lower(irBody: IrBody) {
         irBody.transformChildrenVoid(this)

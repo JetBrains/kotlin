@@ -27,12 +27,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-val StaticDefaultFunctionPhase = makePhase(
-    ::StaticDefaultFunctionLowering,
-    name = "StaticDefaultFunction",
-    description = "Generate static functions for default parameters"
-)
-
 class StaticDefaultFunctionLowering() : IrElementTransformerVoid(), ClassLoweringPass {
     constructor(@Suppress("UNUSED_PARAMETER") context: BackendContext) : this()
 

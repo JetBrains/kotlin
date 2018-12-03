@@ -40,20 +40,6 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import java.util.*
 
-val LocalDeclarationsPhase = makePhase(
-    ::LocalDeclarationsLowering,
-    name = "LocalDeclarations",
-    description = "Move local declarations to classes",
-    prerequisite = setOf(SharedVariablesPhase)
-)
-
-val JvmLocalDeclarationsPhase = makePhase(
-    ::JvmLocalDeclarationsLowering,
-    name = "JvmLocalDeclarations",
-    description = "Move local declarations to classes",
-    prerequisite = setOf(SharedVariablesPhase)
-)
-
 interface LocalNameProvider {
     fun localName(descriptor: DeclarationDescriptor): String =
         descriptor.name.asString()
@@ -71,18 +57,7 @@ val IrDeclaration.parents: Sequence<IrDeclarationParent>
 
 object BOUND_VALUE_PARAMETER: IrDeclarationOriginImpl("BOUND_VALUE_PARAMETER")
 
-class JvmLocalDeclarationsLowering(context: BackendContext) :
-    LocalDeclarationsLowering(
-        context,
-        object : LocalNameProvider {
-            override fun localName(descriptor: DeclarationDescriptor): String =
-                NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
-        },
-        Visibilities.PUBLIC, //TODO properly figure out visibility
-        true
-    )
-
-open class LocalDeclarationsLowering(
+class LocalDeclarationsLowering(
     val context: BackendContext,
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
     val loweredConstructorVisibility: Visibility = Visibilities.PRIVATE,

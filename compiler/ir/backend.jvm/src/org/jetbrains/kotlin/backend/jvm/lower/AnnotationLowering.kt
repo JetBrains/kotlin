@@ -12,12 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 
-val AnnotationPhase = makePhase(
-    ::AnnotationLowering,
-    name = "Annotation",
-    description = "Remove constructors from annotation classes"
-)
-
 class AnnotationLowering() : ClassLoweringPass {
     constructor(@Suppress("UNUSED_PARAMETER") context: BackendContext) : this()
 

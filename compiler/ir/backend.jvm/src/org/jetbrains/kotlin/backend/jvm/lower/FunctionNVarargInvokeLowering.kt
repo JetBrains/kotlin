@@ -30,12 +30,6 @@ import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.name.Name
 
-val FunctionNVarargInvokePhase = makePhase(
-    ::FunctionNVarargInvokeLowering,
-    name = "FunctionNVarargInvoke",
-    description = "Handle invoke functions with large number of arguments"
-)
-
 class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {

@@ -60,12 +60,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-val BridgePhase = makePhase(
-    ::BridgeLowering,
-    name = "Bridge",
-    description = "Generate bridges"
-)
-
 class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     private val state = context.state

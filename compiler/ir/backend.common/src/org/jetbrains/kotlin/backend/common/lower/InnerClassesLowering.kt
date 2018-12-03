@@ -28,12 +28,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
 
-val InnerClassesPhase = makePhase(
-    ::InnerClassesLowering,
-    name = "InnerClasses",
-    description = "Move inner classes to toplevel"
-)
-
 class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         InnerClassTransformer(irClass).lowerInnerClass()
@@ -174,12 +168,6 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         }
     }
 }
-
-val InnerClassConstructorCallsPhase = makePhase(
-    ::InnerClassConstructorCallsLowering,
-    name = "InnerClassConstructorCalls",
-    description = "Handle constructor calls for inner classes"
-)
 
 class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody) {

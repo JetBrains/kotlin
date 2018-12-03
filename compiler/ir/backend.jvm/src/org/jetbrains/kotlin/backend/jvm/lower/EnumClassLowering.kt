@@ -33,12 +33,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
-val EnumClassPhase = makePhase(
-    ::EnumClassLowering,
-    name = "EnumClass",
-    description = "Handle enum classes"
-)
-
 class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (!irClass.isEnumClass) return
