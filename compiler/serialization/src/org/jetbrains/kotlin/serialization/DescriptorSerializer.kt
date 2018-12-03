@@ -119,6 +119,10 @@ class DescriptorSerializer private constructor(
                 typeAliasProto(descriptor)?.let { builder.addTypeAlias(it) }
             }
             else {
+                if (descriptor is ClassDescriptor && !extension.shouldSerializeNestedClass(descriptor)) {
+                    continue
+                }
+
                 val name = getSimpleNameIndex(descriptor.name)
                 if (isEnumEntry(descriptor)) {
                     builder.addEnumEntry(enumEntryProto(descriptor as ClassDescriptor))
