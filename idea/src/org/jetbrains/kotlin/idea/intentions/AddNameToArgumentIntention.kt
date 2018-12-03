@@ -56,28 +56,34 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
         element !is KtValueArgumentList && element !is KtContainerNode && super.allowCaretInsideElement(element)
 
     override fun applyTo(element: KtValueArgument, editor: Editor?) {
-        val name = detectNameToAdd(element)!!
-        val newArgument = KtPsiFactory(element).createArgument(element.getArgumentExpression()!!, name, element.getSpreadElement() != null)
-        element.replace(newArgument)
-    }
-
-    private fun detectNameToAdd(argument: KtValueArgument): Name? {
-        if (argument.isNamed()) return null
-        if (argument is KtLambdaArgument) return null
-
-        val argumentList = argument.parent as? KtValueArgumentList ?: return null
-        if (argument != argumentList.arguments.last { !it.isNamed() }) return null
-
-        val callExpr = argumentList.parent as? KtCallElement ?: return null
-        val resolvedCall = callExpr.resolveToCall() ?: return null
-        if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
-
-        if (!argumentMatchedAndCouldBeNamedInCall(argument, resolvedCall, callExpr.languageVersionSettings)) return null
-
-        return (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter?.name
+        apply(element)
     }
 
     companion object {
+        fun apply(element: KtValueArgument): Boolean {
+            val name = detectNameToAdd(element) ?: return false
+            val argumentExpression = element.getArgumentExpression() ?: return false
+            val newArgument = KtPsiFactory(element).createArgument(argumentExpression, name, element.getSpreadElement() != null)
+            element.replace(newArgument)
+            return true
+        }
+
+        private fun detectNameToAdd(argument: KtValueArgument): Name? {
+            if (argument.isNamed()) return null
+            if (argument is KtLambdaArgument) return null
+
+            val argumentList = argument.parent as? KtValueArgumentList ?: return null
+            if (argument != argumentList.arguments.last { !it.isNamed() }) return null
+
+            val callExpr = argumentList.parent as? KtCallElement ?: return null
+            val resolvedCall = callExpr.resolveToCall() ?: return null
+            if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
+
+            if (!argumentMatchedAndCouldBeNamedInCall(argument, resolvedCall, callExpr.languageVersionSettings)) return null
+
+            return (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter?.name
+        }
+
         fun argumentMatchedAndCouldBeNamedInCall(
             argument: ValueArgument,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
