@@ -394,7 +394,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 remainingNumberOfDefaultParametersToAdd--
             }
 
-            method.addParameter(KtUltraLightParameter(parameter.name.orEmpty(), parameter, support, wrapper, null, ktFunction))
+            method.addParameter(KtUltraLightParameterForSource(parameter.name.orEmpty(), parameter, support, wrapper, ktFunction))
         }
         val returnType: PsiType? by lazyPub {
             if (isConstructor) null
@@ -406,7 +406,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private fun addReceiverParameter(callable: KtCallableDeclaration, method: KtUltraLightMethod) {
         val receiver = callable.receiverTypeReference ?: return
-        method.delegate.addParameter(KtUltraLightParameter("\$self", callable, support, method, receiver, callable))
+        method.delegate.addParameter(KtUltraLightReceiverParameter(callable, support, method))
     }
 
     private fun methodReturnType(ktDeclaration: KtDeclaration, wrapper: KtUltraLightMethod): PsiType {
@@ -560,9 +560,12 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 .setMethodReturnType(PsiType.VOID)
             val setterWrapper = KtUltraLightMethod(setterPrototype, declaration, support, this)
             addReceiverParameter(declaration, setterWrapper)
-            val parameterOrigin = ktSetter?.parameter ?: declaration
+            val setterParameter = ktSetter?.parameter
             setterPrototype.addParameter(
-                KtUltraLightParameter(propertyName, parameterOrigin, support, setterWrapper, null, declaration)
+                if (setterParameter != null)
+                    KtUltraLightParameterForSource(propertyName, setterParameter, support, setterWrapper, declaration)
+                else
+                    KtUltraLightParameterForSetterParameter(propertyName, declaration, support, setterWrapper, declaration)
             )
             result.add(setterWrapper)
         }

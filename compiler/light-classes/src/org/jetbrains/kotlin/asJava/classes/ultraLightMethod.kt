@@ -77,13 +77,11 @@ internal class KtUltraLightMethod(
     override fun getThrowsList(): PsiReferenceList = _throwsList
 }
 
-internal class KtUltraLightParameter(
+internal abstract class KtUltraLightParameter(
     name: String,
-    override val kotlinOrigin: KtDeclaration,
+    override val kotlinOrigin: KtDeclaration?,
     private val support: UltraLightSupport,
-    method: KtLightMethod,
-    private val receiver: KtTypeReference?,
-    private val containingFunction: KtCallableDeclaration
+    method: KtLightMethod
 ) : org.jetbrains.kotlin.asJava.elements.LightParameter(
     name,
     PsiType.NULL,
@@ -96,21 +94,14 @@ internal class KtUltraLightParameter(
 
     private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
 
-    override fun isVarArgs(): Boolean =
-        kotlinOrigin is KtParameter && kotlinOrigin.isVarArg && method.parameterList.parameters.last() == this
-
     override fun getModifierList(): PsiModifierList = lightModifierList
 
-    override fun getNavigationElement(): PsiElement = kotlinOrigin
+    override fun getNavigationElement(): PsiElement = kotlinOrigin ?: method.navigationElement
 
     override fun isValid() = parent.isValid
 
-    private val kotlinType: KotlinType? by lazyPub {
-        when {
-            receiver != null -> (kotlinOrigin.resolve() as? CallableMemberDescriptor)?.extensionReceiverParameter?.type
-            else -> kotlinOrigin.getKotlinType()
-        }
-    }
+    protected abstract val kotlinType: KotlinType?
+    protected abstract fun computeContainingDescriptor(): CallableDescriptor?
 
     override val kotlinTypeForNullabilityAnnotation: KotlinType?
         get() {
@@ -128,7 +119,7 @@ internal class KtUltraLightParameter(
 
     private val _type: PsiType by lazyPub {
         val kotlinType = kotlinType ?: return@lazyPub PsiType.NULL
-        val containingDescriptor = containingFunction.resolve() as? CallableDescriptor ?: return@lazyPub PsiType.NULL
+        val containingDescriptor = computeContainingDescriptor() ?: return@lazyPub PsiType.NULL
         support.mapType(this) { typeMapper, sw ->
             typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
         }
@@ -136,23 +127,78 @@ internal class KtUltraLightParameter(
 
     override fun getType(): PsiType = _type
 
+    override fun getContainingFile(): PsiFile = method.containingFile
+    override fun getParent(): PsiElement = method.parameterList
+
+    override fun equals(other: Any?): Boolean =
+        other is KtUltraLightParameter && other.kotlinOrigin == this.kotlinOrigin
+
+    override fun hashCode(): Int = kotlinOrigin.hashCode()
+
+    internal abstract fun annotatedOrigin(): KtAnnotated?
+    abstract override fun isVarArgs(): Boolean
+}
+
+internal abstract class KtAbstractUltraLightParameterForDeclaration(
+    name: String,
+    kotlinOrigin: KtDeclaration?,
+    support: UltraLightSupport,
+    method: KtLightMethod,
+    protected val containingDeclaration: KtCallableDeclaration
+) : KtUltraLightParameter(name, kotlinOrigin, support, method) {
+    override fun computeContainingDescriptor() = containingDeclaration.resolve() as? CallableMemberDescriptor
+}
+
+internal class KtUltraLightParameterForSource(
+    name: String,
+    override val kotlinOrigin: KtParameter,
+    support: UltraLightSupport,
+    method: KtLightMethod,
+    containingDeclaration: KtCallableDeclaration
+) : KtAbstractUltraLightParameterForDeclaration(name, kotlinOrigin, support, method, containingDeclaration) {
+
+    override val kotlinType: KotlinType? by lazyPub {
+        kotlinOrigin.getKotlinType()
+    }
+
+    override fun isVarArgs(): Boolean = kotlinOrigin.isVarArg && method.parameterList.parameters.last() == this
+
     override fun setName(@NonNls name: String): PsiElement {
         (kotlinOrigin as? KtVariableDeclaration)?.setName(name)
         return this
     }
 
-    override fun getContainingFile(): PsiFile = method.containingFile
-    override fun getParent(): PsiElement = method.parameterList
+    override fun annotatedOrigin() = kotlinOrigin
+}
 
-    override fun equals(other: Any?): Boolean = other is KtUltraLightParameter && other.kotlinOrigin == this.kotlinOrigin
-    override fun hashCode(): Int = kotlinOrigin.hashCode()
+internal class KtUltraLightParameterForSetterParameter(
+    name: String,
+    // KtProperty or KtParameter from primary constructor
+    private val property: KtDeclaration,
+    support: UltraLightSupport,
+    method: KtLightMethod,
+    containingDeclaration: KtCallableDeclaration
+) : KtAbstractUltraLightParameterForDeclaration(name, null, support, method, containingDeclaration) {
 
-    internal fun annotatedOrigin(): KtAnnotated? {
-        if (receiver != null) return receiver
-
-        if (kotlinOrigin is KtProperty) {
-            return null // we're a setter of a property with no explicit declaration, so we don't have annotation
-        }
-        return kotlinOrigin
+    override val kotlinType: KotlinType? by lazyPub {
+        property.getKotlinType()
     }
+
+    override fun isVarArgs(): Boolean = false
+    override fun annotatedOrigin() = kotlinOrigin
+}
+
+internal class KtUltraLightReceiverParameter(
+    containingDeclaration: KtCallableDeclaration,
+    support: UltraLightSupport,
+    method: KtLightMethod
+) : KtAbstractUltraLightParameterForDeclaration("\$self", null, support, method, containingDeclaration) {
+
+    override fun isVarArgs(): Boolean = false
+
+    override val kotlinType: KotlinType? by lazyPub {
+        computeContainingDescriptor()?.extensionReceiverParameter?.type
+    }
+
+    override fun annotatedOrigin(): KtAnnotated? = kotlinOrigin
 }
