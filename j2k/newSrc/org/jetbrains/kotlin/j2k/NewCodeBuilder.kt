@@ -554,7 +554,7 @@ class NewCodeBuilder {
         private fun renderType(type: JKType) {
             if (type is JKNoTypeImpl) return
             when (type) {
-                is JKClassType -> type.classReference.fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
+                is JKClassType -> printer.printWithNoIndent(type.classReference.displayName())
                 is JKUnresolvedClassType -> printer.printWithNoIndent(type.name)
                 is JKContextType -> return
                 is JKStarProjectionType ->
@@ -587,7 +587,7 @@ class NewCodeBuilder {
             if (javaNewExpression.isAnonymousClass()) {
                 printer.printWithNoIndent("object : ")
             }
-            printer.printWithNoIndent(javaNewExpression.classSymbol.name)
+            printer.printWithNoIndent(javaNewExpression.classSymbol.displayName())
             javaNewExpression.typeArgumentList.accept(this)
             if (javaNewExpression.constructorIsPresent()) {
                 printer.par(ROUND) {
@@ -753,7 +753,7 @@ class NewCodeBuilder {
 
         override fun visitAnnotation(annotation: JKAnnotation) {
             printer.printWithNoIndent("@")
-            printer.printWithNoIndent(annotation.classSymbol.name)
+            printer.printWithNoIndent(annotation.classSymbol.displayName())
             if (annotation.arguments.expressions.isNotEmpty()) {
                 printer.par {
                     annotation.arguments.accept(this)

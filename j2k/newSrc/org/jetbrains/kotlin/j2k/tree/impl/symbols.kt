@@ -79,6 +79,22 @@ class JKMultiverseKtClassSymbol(override val target: KtClassOrObject) : JKClassS
 
 }
 
+fun JKClassSymbol.displayName() =
+    when (this) {
+        is JKUniverseClassSymbol ->
+            target.psi<PsiClass>()
+                ?.let { it.nameWithOuterClasses() }
+                ?: name
+        is JKMultiverseClassSymbol -> target.nameWithOuterClasses()
+        else -> name
+    }
+
+fun PsiClass.nameWithOuterClasses() =
+    generateSequence(this) { it.containingClass }
+        .toList()
+        .reversed()
+        .joinToString(separator = ".") { it.name!! }
+
 class JKUniverseMethodSymbol(private val symbolProvider: JKSymbolProvider) : JKMethodSymbol, JKUniverseSymbol<JKMethod> {
     override val receiverType: JKType?
         get() = (target.parent as? JKClass)?.let {
