@@ -168,7 +168,7 @@ KNativePtr Kotlin_AtomicNativePtr_get(KRef thiz) {
 }
 
 void Kotlin_AtomicReference_checkIfFrozen(KRef value) {
-    if (value != nullptr && !value->container()->permanentOrFrozen()) {
+    if (value != nullptr && !PermanentOrFrozen(value)) {
         ThrowInvalidMutabilityException(value);
     }
 }

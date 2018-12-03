@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassConstructorDescriptor
@@ -28,6 +27,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun llvmFunction(function: FunctionDescriptor): LLVMValueRef = function.llvmFunction
     val intPtrType = LLVMIntPtrType(llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
+    // Keep in sync with OBJECT_TAG_MASK in C++.
+    internal val immTypeInfoMask = LLVMConstNot(LLVMConstInt(intPtrType, 3, 0)!!)!!
 
     //-------------------------------------------------------------------------//
 
@@ -624,7 +625,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             call(context.llvm.getObjCKotlinTypeInfo, listOf(receiver))
         } else {
             val typeInfoOrMetaPtr = structGep(receiver, 0  /* typeInfoOrMeta_ */)
-            val typeInfoOrMeta = load(typeInfoOrMetaPtr)
+            val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr)
+            // Clear two lower bits.
+            val typeInfoOrMetaWithFlagsRaw = ptrToInt(typeInfoOrMetaWithFlags, codegen.intPtrType)
+            val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlagsRaw, codegen.immTypeInfoMask)
+            val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, kTypeInfoPtr)
             val typeInfoPtrPtr = structGep(typeInfoOrMeta, 0 /* typeInfo */)
             load(typeInfoPtrPtr)
         }
@@ -634,7 +639,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         /*
          * Resolve owner of the call with special handling of Any methods:
          * if toString/eq/hc is invoked on an interface instance, we resolve
-         * owner as Any and dispatch it via vtable
+         * owner as Any and dispatch it via vtable.
          */
         val anyMethod = (descriptor as SimpleFunctionDescriptor).findOverriddenMethodOfAny()
         val owner = (anyMethod ?: descriptor).containingDeclaration as ClassDescriptor

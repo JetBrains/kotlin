@@ -457,8 +457,6 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
             origin = context.standardLlvmSymbolsOrigin
     )
 
-    val staticContainer = importRtGlobal("theStaticObjectsContainer")
-
     val memsetFunction = importMemset()
 
     val usedFunctions = mutableListOf<LLVMValueRef>()

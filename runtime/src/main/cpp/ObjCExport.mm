@@ -113,7 +113,7 @@ static void initializeClass(Class clazz);
 extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 
 static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) {
-  if (!obj->container()->permanentOrFrozen()) {
+  if (!PermanentOrFrozen(obj)) {
     SetAssociatedObject(obj, associatedObject);
     return associatedObject;
   } else {

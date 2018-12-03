@@ -31,19 +31,14 @@ typedef enum {
   // Stack container, no need to free, children cleanup still shall be there.
   CONTAINER_TAG_STACK = 2,
   // Atomic container, reference counter is atomically updated.
-  CONTAINER_TAG_ATOMIC = 5 | 1,  // shareable
-  // Those container tags shall not be refcounted.
-  // Permanent container, cannot refer to non-permanent containers, so no need to cleanup those.
-  // Please check isFreeable() if changing the numeric value.
-  CONTAINER_TAG_PERMANENT = 7 | 1,  // shareable
+  CONTAINER_TAG_ATOMIC = 3 | 1,  // shareable
   // Shift to get actual counter.
-  CONTAINER_TAG_SHIFT = 3,
+  CONTAINER_TAG_SHIFT = 2,
   // Actual value to increment/decrement container by. Tag is in lower bits.
   CONTAINER_TAG_INCREMENT = 1 << CONTAINER_TAG_SHIFT,
   // Mask for container type.
   CONTAINER_TAG_MASK = CONTAINER_TAG_INCREMENT - 1,
 
-  // Those bit masks are applied to objectCount_ field.
   // Shift to get actual object count.
   CONTAINER_TAG_GC_SHIFT     = 6,
   CONTAINER_TAG_GC_INCREMENT = 1 << CONTAINER_TAG_GC_SHIFT,
@@ -72,6 +67,14 @@ typedef enum {
   CONTAINER_TAG_GC_SEEN     = 1 << (CONTAINER_TAG_COLOR_SHIFT + 2)
 } ContainerTag;
 
+typedef enum {
+  // Must match to permTag() in Kotlin.
+  OBJECT_TAG_PERMANENT_CONTAINER = 1 << 0,
+  OBJECT_TAG_NONTRIVIAL_CONTAINER = 1 << 1,
+  // Keep in sync with immTypeInfoMask in Kotlin.
+  OBJECT_TAG_MASK = (1 << 2) - 1
+} ObjectTag;
+
 typedef uint32_t container_size_t;
 
 // Header of all container objects. Contains reference counter.
@@ -86,10 +89,6 @@ struct ContainerHeader {
       return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_NORMAL;
   }
 
-  inline bool permanent() const {
-    return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_PERMANENT;
-  }
-
   inline bool frozen() const {
     return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_FROZEN;
   }
@@ -102,12 +101,8 @@ struct ContainerHeader {
       refCount_ = (refCount_ & ~CONTAINER_TAG_MASK) | CONTAINER_TAG_ATOMIC;
   }
 
-  inline bool permanentOrFrozen() const {
-    return tag() == CONTAINER_TAG_PERMANENT || tag() == CONTAINER_TAG_FROZEN;
-  }
-
   inline bool shareable() const {
-      return (tag() & 1) != 0; // CONTAINER_TAG_PERMANENT || CONTAINER_TAG_FROZEN || CONTAINER_TAG_ATOMIC
+      return (tag() & 1) != 0; // CONTAINER_TAG_FROZEN || CONTAINER_TAG_ATOMIC
   }
 
   inline bool stack() const {
@@ -228,29 +223,83 @@ struct ContainerHeader {
   }
 };
 
+inline bool PermanentOrFrozen(ContainerHeader* container) {
+    return container == nullptr || container->frozen();
+}
+
+inline bool Shareable(ContainerHeader* container) {
+    return container == nullptr || container->shareable();
+}
+
 struct ArrayHeader;
 struct MetaObjHeader;
+
+template <typename T>
+ALWAYS_INLINE T* setPointerBits(T* ptr, unsigned bits) {
+  return reinterpret_cast<T*>(reinterpret_cast<uintptr_t>(ptr) | bits);
+}
+
+template <typename T>
+ALWAYS_INLINE T* clearPointerBits(T* ptr, unsigned bits) {
+  return reinterpret_cast<T*>(reinterpret_cast<uintptr_t>(ptr) & ~static_cast<uintptr_t>(bits));
+}
+
+template <typename T>
+ALWAYS_INLINE unsigned getPointerBits(T* ptr, unsigned bits) {
+  return reinterpret_cast<uintptr_t>(ptr) & static_cast<uintptr_t>(bits);
+}
+
+template <typename T>
+ALWAYS_INLINE bool hasPointerBits(T* ptr, unsigned bits) {
+  return getPointerBits(ptr, bits) != 0;
+}
+
+// Header for the meta-object.
+struct MetaObjHeader {
+  // Pointer to the type info. Must be first, to match ArrayHeader and ObjHeader layout.
+  const TypeInfo* typeInfo_;
+  // Strong reference to the counter object.
+  ObjHeader* counter_;
+  // Container pointer.
+  ContainerHeader* container_;
+#ifdef KONAN_OBJC_INTEROP
+  void* associatedObject_;
+#endif
+
+  // Flags for the object state.
+  int32_t flags_;
+};
 
 // Header of every object.
 struct ObjHeader {
   TypeInfo* typeInfoOrMeta_;
-  ContainerHeader* container_;
 
   const TypeInfo* type_info() const {
-    return typeInfoOrMeta_->typeInfo_;
+    return clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)->typeInfo_;
   }
 
   bool has_meta_object() const {
-    return typeInfoOrMeta_ != typeInfoOrMeta_->typeInfo_;
+    auto* typeInfoOrMeta = clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK);
+    return (typeInfoOrMeta != typeInfoOrMeta->typeInfo_);
   }
 
   MetaObjHeader* meta_object() {
      return has_meta_object() ?
-        reinterpret_cast<MetaObjHeader*>(typeInfoOrMeta_) : createMetaObject(&typeInfoOrMeta_);
+        reinterpret_cast<MetaObjHeader*>(clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)) :
+        createMetaObject(&typeInfoOrMeta_);
+  }
+
+  void setContainer(ContainerHeader* container) {
+    meta_object()->container_ = container;
+    typeInfoOrMeta_ = setPointerBits(typeInfoOrMeta_, OBJECT_TAG_NONTRIVIAL_CONTAINER);
   }
 
   ContainerHeader* container() const {
-    return container_;
+    unsigned bits = getPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK);
+    if ((bits & OBJECT_TAG_PERMANENT_CONTAINER) != 0) return nullptr;
+    return (bits & OBJECT_TAG_NONTRIVIAL_CONTAINER) != 0 ?
+         (reinterpret_cast<MetaObjHeader*>(clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)))->container_ :
+         reinterpret_cast<ContainerHeader*>(const_cast<ObjHeader*>(this)) - 1;
   }
 
   // Unsafe cast to ArrayHeader. Use carefully!
@@ -258,7 +307,7 @@ struct ObjHeader {
   const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
 
   inline bool permanent() const {
-    return container()->permanent();
+    return hasPointerBits(typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
   }
 
   static MetaObjHeader* createMetaObject(TypeInfo** location);
@@ -268,14 +317,9 @@ struct ObjHeader {
 // Header of value type array objects. Keep layout in sync with that of object header.
 struct ArrayHeader {
   TypeInfo* typeInfoOrMeta_;
-  ContainerHeader* container_;
 
   const TypeInfo* type_info() const {
-    return typeInfoOrMeta_->typeInfo_;
-  }
-
-  ContainerHeader* container() const {
-    return container_;
+    return clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)->typeInfo_;
   }
 
   ObjHeader* obj() { return reinterpret_cast<ObjHeader*>(this); }
@@ -285,19 +329,10 @@ struct ArrayHeader {
   uint32_t count_;
 };
 
-// Header for the meta-object.
-struct MetaObjHeader {
-  // Pointer to the type info. Must be first, to match ArrayHeader and ObjHeader layout.
-  const TypeInfo* typeInfo_;
-  // Strong reference to counter object.
-  ObjHeader* counter_;
-  // Flags for object state.
-  int32_t flags_;
-
-#ifdef KONAN_OBJC_INTEROP
-  void* associatedObject_;
-#endif
-};
+inline bool PermanentOrFrozen(ObjHeader* obj) {
+    auto* container = obj->container();
+    return container == nullptr || container->frozen();
+}
 
 inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
   // Instance size is negative.
@@ -311,7 +346,6 @@ class Container {
   ContainerHeader* header_;
 
   void SetHeader(ObjHeader* obj, const TypeInfo* type_info) {
-    obj->container_ = header_;
     obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(type_info);
     // Take into account typeInfo's immutability for ARC strategy.
     if ((type_info->flags_ & TF_IMMUTABLE) != 0)
@@ -393,8 +427,8 @@ class ArenaContainer {
   bool allocContainer(container_size_t minSize);
 
   void setHeader(ObjHeader* obj, const TypeInfo* typeInfo) {
-    obj->container_ = currentChunk_->asHeader();
     obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
+    obj->setContainer(currentChunk_->asHeader());
     // Here we do not take into account typeInfo's immutability for ARC strategy, as there's no ARC.
   }
 
