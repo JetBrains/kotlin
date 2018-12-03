@@ -59,3 +59,15 @@ public final class Foo {
         super();
     }
 }
+
+////////////////////
+
+package test;
+
+import lib.Anno;
+import lib.impl.Impl;
+
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION"})
+@kotlin.Metadata()
+public final class TestKt {
+}
