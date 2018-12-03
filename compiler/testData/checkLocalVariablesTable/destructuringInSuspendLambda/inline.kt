@@ -12,6 +12,6 @@ suspend fun test() = foo(A("O", "K")) { (x_param, y_param) -> x_param + y_param 
 // VARIABLE : NAME=$x_param_y_param TYPE=LA; INDEX=5
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=6
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=7
-// VARIABLE : NAME=$i$a$2$foo TYPE=I INDEX=2
+// VARIABLE : NAME=$i$a$-foo-InlineKt$test$2 TYPE=I INDEX=2
 // VARIABLE : NAME=a$iv TYPE=LA; INDEX=1
 // VARIABLE : NAME=$i$f$foo TYPE=I INDEX=8

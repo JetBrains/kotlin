@@ -5,18 +5,18 @@ public final class DeepInlineKt : java/lang/Object {
             1 $i$f$block: I
     }
 
-    public final static void foo(java.lang.String $receiver, int $i$a$1$block) {
+    public final static void foo(java.lang.String $receiver, int $i$a$-block-DeepInlineKt$foo$1$1$1) {
         Local variables:
             9 $receiver: J
-            11 $i$a$1$block: I
+            11 $i$a$-block-DeepInlineKt$foo$1$1$1: I
             12 $i$f$block: I
             8 z: Z
             6 $receiver: J
-            13 $i$a$1$block: I
+            13 $i$a$-block-DeepInlineKt$foo$1$1: I
             14 $i$f$block: I
             5 y: Z
             3 $receiver: J
-            15 $i$a$1$block: I
+            15 $i$a$-block-DeepInlineKt$foo$1: I
             16 $i$f$block: I
             2 x: Z
             0 $receiver: Ljava/lang/String;
