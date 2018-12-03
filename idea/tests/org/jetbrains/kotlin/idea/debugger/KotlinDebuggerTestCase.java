@@ -243,7 +243,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         });
 
         super.tearDown();
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
     }
 
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
