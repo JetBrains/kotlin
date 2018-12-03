@@ -117,7 +117,7 @@ class ReplFromTerminal(
             is ReplEvalResult.ValueResult, is ReplEvalResult.UnitResult -> {
                 writer.notifyCommandSuccess()
                 if (evalResult is ReplEvalResult.ValueResult) {
-                    writer.outputCommandResult(evalResult.value.toString())
+                    writer.outputCommandResult(evalResult.toString())
                 }
             }
             is ReplEvalResult.Error.Runtime -> writer.outputRuntimeError(evalResult.message)

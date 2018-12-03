@@ -48,13 +48,19 @@ class ScriptContext(
 
     val resultFieldInfo: FieldInfo
         get() {
-            assert(state.replSpecific.shouldGenerateScriptResultValue) { "Should not be called unless 'scriptResultFieldName' is set" }
+            assert(state.replSpecific.shouldGenerateScriptResultValue) { "Should not be called unless 'resultFieldName' is set" }
             val scriptResultFieldName = state.replSpecific.scriptResultFieldName!!
-            return FieldInfo.createForHiddenField(state.typeMapper.mapClass(scriptDescriptor), AsmTypes.OBJECT_TYPE, scriptResultFieldName)
+            val fieldType = state.replSpecific.resultType?.let { state.typeMapper.mapType(it) } ?: AsmTypes.OBJECT_TYPE
+            return FieldInfo.createForHiddenField(
+                state.typeMapper.mapClass(scriptDescriptor),
+                fieldType,
+                state.replSpecific.resultType,
+                scriptResultFieldName
+            )
         }
 
     val script = DescriptorToSourceUtils.getSourceFromDescriptor(scriptDescriptor) as KtScript?
-            ?: error("Declaration should be present for script: $scriptDescriptor")
+        ?: error("Declaration should be present for script: $scriptDescriptor")
 
     init {
         val lastDeclaration = script.declarations.lastOrNull()
