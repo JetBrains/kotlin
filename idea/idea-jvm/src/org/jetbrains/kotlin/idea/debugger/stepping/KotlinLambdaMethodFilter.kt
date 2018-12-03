@@ -71,7 +71,7 @@ class KotlinLambdaMethodFilter(
         return isLambdaName(method.name())
     }
 
-    override fun getCallingExpressionLines() = if (isInline) Range(0, 999) else myCallingExpressionLines
+    override fun getCallingExpressionLines() = if (isInline) Range(0, Int.MAX_VALUE) else myCallingExpressionLines
 
     private fun isLambdaName(name: String?): Boolean {
         if (isSuspend && name != null) {
