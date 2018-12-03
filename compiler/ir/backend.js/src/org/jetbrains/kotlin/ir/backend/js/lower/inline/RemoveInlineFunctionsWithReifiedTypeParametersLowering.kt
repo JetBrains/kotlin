@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 
 
-object RemoveInlineFunctionsWithReifiedTypeParametersLowering: DeclarationContainerLoweringPass {
+class RemoveInlineFunctionsWithReifiedTypeParametersLowering: DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.transformDeclarationsFlat {
             if (it is IrFunction && it.isInline && it.typeParameters.any { it.isReified }) listOf() else null

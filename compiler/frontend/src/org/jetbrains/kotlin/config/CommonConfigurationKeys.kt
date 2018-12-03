@@ -62,6 +62,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val PROFILE_PHASES = CompilerConfigurationKey.create<Boolean>("profile backend phase execution")
+
+    @JvmField
+    val EXCLUDED_ELEMENTS_FROM_DUMPING = CompilerConfigurationKey.create<Set<String>>("lowering elements which shouldn't be dumped at all")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

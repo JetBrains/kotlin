@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.CompilerPhases
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Ir
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getPropertyDeclaration
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -47,10 +49,13 @@ class JsIrBackendContext(
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
-    val configuration: CompilerConfiguration
+    val configuration: CompilerConfiguration,
+    val dependencies: List<IrModuleFragment>
 ) : CommonBackendContext {
 
     override val builtIns = module.builtIns
+
+    val phases = CompilerPhases(jsPhases, configuration)
 
     val internalPackageFragmentDescriptor = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
     val implicitDeclarationFile by lazy {
@@ -164,6 +169,9 @@ class JsIrBackendContext(
     val dynamicType = IrDynamicTypeImpl(createDynamicType(builtIns), emptyList(), Variance.INVARIANT)
 
     val originalModuleIndex = ModuleIndex(irModuleFragment)
+
+    lateinit var moduleFragmentCopy: IrModuleFragment
+    lateinit var jsProgram: JsNode
 
     fun getOperatorByName(name: Name, type: KotlinType) = operatorMap[name]?.get(type)
 
