@@ -16,25 +16,21 @@
 
 package org.jetbrains.kotlin.script.util.resolvers
 
-import org.jetbrains.kotlin.script.util.DependsOn
 import org.jetbrains.kotlin.script.util.Repository
+import org.jetbrains.kotlin.script.util.resolvers.experimental.*
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 
-interface Resolver {
-    fun tryResolve(dependsOn: DependsOn): Iterable<File>?
-    fun tryAddRepo(annotation: Repository): Boolean
+class DirectResolver : GenericRepositoryWithBridge {
+    override fun tryResolve(artifactCoordinates: GenericArtifactCoordinates): Iterable<File>? =
+        artifactCoordinates.string.takeUnless(String::isBlank)
+            ?.let(::File)?.takeIf { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
+
+    override fun tryAddRepository(repositoryCoordinates: GenericRepositoryCoordinates): Boolean = false
 }
 
-class DirectResolver : Resolver {
-    override fun tryResolve(dependsOn: DependsOn): Iterable<File>? =
-        dependsOn.value.takeUnless(String::isBlank)?.let(::File)?.takeIf { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
-
-    override fun tryAddRepo(annotation: Repository): Boolean = false
-}
-
-class FlatLibDirectoryResolver(vararg paths: File) : Resolver {
+class FlatLibDirectoryResolver(vararg paths: File) : GenericRepositoryWithBridge {
 
     private val localRepos = arrayListOf<File>()
 
@@ -45,10 +41,10 @@ class FlatLibDirectoryResolver(vararg paths: File) : Resolver {
         localRepos.addAll(paths)
     }
 
-    override fun tryResolve(dependsOn: DependsOn): Iterable<File>? {
+    override fun tryResolve(artifactCoordinates: GenericArtifactCoordinates): Iterable<File>? {
         for (path in localRepos) {
             // TODO: add coordinates and wildcard matching
-            val res = dependsOn.value.takeUnless(String::isBlank)
+            val res = artifactCoordinates.string.takeUnless(String::isBlank)
                 ?.let { File(path, it) }
                 ?.takeIf { it.exists() && (it.isFile || it.isDirectory) }
             if (res != null) return listOf(res)
@@ -56,18 +52,21 @@ class FlatLibDirectoryResolver(vararg paths: File) : Resolver {
         return null
     }
 
-    override fun tryAddRepo(annotation: Repository): Boolean {
-        val urlStr = annotation.url.takeIf { it.isNotBlank() } ?: annotation.value.takeIf { it.isNotBlank() } ?: return false
-        val dirFromUrl = urlStr.toRepositoryUrlOrNull()?.takeIf { it.protocol == "file" }?.path
-        val repoDir = (dirFromUrl ?: urlStr).toRepositoryFileOrNull() ?: return false
+    override fun tryAddRepository(repositoryCoordinates: GenericRepositoryCoordinates): Boolean {
+        val repoDir = repositoryCoordinates.file ?: return false
         localRepos.add(repoDir)
         return true
     }
 
     companion object {
-        fun tryCreate(annotation: Repository): FlatLibDirectoryResolver? =
-            annotation.value.takeUnless(String::isBlank)?.let(::File)?.takeIf { it.exists() && it.isDirectory }
-                ?.let { FlatLibDirectoryResolver(it) }
+        fun tryCreate(annotation: Repository): FlatLibDirectoryResolver? = tryCreate(
+            BasicRepositoryCoordinates(
+                annotation.url.takeUnless(String::isBlank) ?: annotation.value, annotation.id.takeUnless(String::isBlank)
+            )
+        )
+
+        fun tryCreate(repositoryCoordinates: GenericRepositoryCoordinates): FlatLibDirectoryResolver? =
+            repositoryCoordinates.file?.let { FlatLibDirectoryResolver(it) }
     }
 }
 

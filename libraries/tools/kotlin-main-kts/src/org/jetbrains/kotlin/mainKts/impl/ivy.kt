@@ -17,32 +17,33 @@ import org.apache.ivy.plugins.resolver.ChainResolver
 import org.apache.ivy.plugins.resolver.URLResolver
 import org.apache.ivy.util.DefaultMessageLogger
 import org.apache.ivy.util.Message
-import org.jetbrains.kotlin.script.util.DependsOn
 import org.jetbrains.kotlin.script.util.KotlinAnnotatedScriptDependenciesResolver
-import org.jetbrains.kotlin.script.util.Repository
 import org.jetbrains.kotlin.script.util.resolvers.DirectResolver
-import org.jetbrains.kotlin.script.util.resolvers.Resolver
+import org.jetbrains.kotlin.script.util.resolvers.experimental.GenericArtifactCoordinates
+import org.jetbrains.kotlin.script.util.resolvers.experimental.GenericRepositoryCoordinates
+import org.jetbrains.kotlin.script.util.resolvers.experimental.GenericRepositoryWithBridge
+import org.jetbrains.kotlin.script.util.resolvers.experimental.MavenArtifactCoordinates
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 
-class IvyResolver : Resolver {
+class IvyResolver : GenericRepositoryWithBridge {
 
-    private fun String.isValidParam() = isNotBlank()
+    private fun String?.isValidParam() = this?.isNotBlank() ?: false
 
-    override fun tryResolve(dependsOn: DependsOn): Iterable<File>? {
-        val artifactId = when {
-            dependsOn.groupId.isValidParam() || dependsOn.artifactId.isValidParam() -> {
-                listOf(dependsOn.groupId, dependsOn.artifactId, dependsOn.version)
+    override fun tryResolve(artifactCoordinates: GenericArtifactCoordinates): Iterable<File>? = with (artifactCoordinates) {
+        val artifactId =
+            if (this is MavenArtifactCoordinates && (groupId.isValidParam() || artifactId.isValidParam())) {
+                listOf(groupId.orEmpty(), artifactId.orEmpty(), version.orEmpty())
+            } else {
+                val stringCoordinates = string
+                if (stringCoordinates.isValidParam() && stringCoordinates.count { it == ':' } == 2) {
+                    stringCoordinates.split(':')
+                } else {
+                    error("Unknown set of arguments to maven resolver: $stringCoordinates")
+                }
             }
-            dependsOn.value.isValidParam() && dependsOn.value.count { it == ':' } == 2 -> {
-                dependsOn.value.split(':')
-            }
-            else -> {
-                error("Unknown set of arguments to maven resolver: ${dependsOn.value}")
-            }
-        }
-        return resolveArtifact(artifactId)
+        resolveArtifact(artifactId)
     }
 
     private val ivyResolvers = arrayListOf<URLResolver>()
@@ -101,17 +102,19 @@ class IvyResolver : Resolver {
         return report.allArtifactsReports.map { it.localFile }
     }
 
-    override fun tryAddRepo(annotation: Repository): Boolean {
-        val urlStr = annotation.url.takeIf { it.isValidParam() } ?: annotation.value.takeIf { it.isValidParam() } ?: return false
-        val url = urlStr.toRepositoryUrlOrNull() ?: return false
-        ivyResolvers.add(
-            URLResolver().apply {
-                isM2compatible = true
-                name = annotation.id.takeIf { it.isValidParam() } ?: url.host
-                addArtifactPattern("${url.toString().let { if (it.endsWith('/')) it else "$it/" }}$DEFAULT_ARTIFACT_PATTERN")
-            }
-        )
-        return true
+    override fun tryAddRepository(repositoryCoordinates: GenericRepositoryCoordinates): Boolean {
+        val url = repositoryCoordinates.url
+        if (url != null) {
+            ivyResolvers.add(
+                URLResolver().apply {
+                    isM2compatible = true
+                    name = repositoryCoordinates.name.takeIf { it.isValidParam() } ?: url.host
+                    addArtifactPattern("${url.toString().let { if (it.endsWith('/')) it else "$it/" }}$DEFAULT_ARTIFACT_PATTERN")
+                }
+            )
+            return true
+        }
+        return false
     }
 
     companion object {
@@ -122,13 +125,6 @@ class IvyResolver : Resolver {
         }
     }
 }
-
-private fun String.toRepositoryUrlOrNull(): URL? =
-    try {
-        URL(this)
-    } catch (_: MalformedURLException) {
-        null
-    }
 
 class FilesAndIvyResolver :
     KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver(), IvyResolver()).asIterable())
