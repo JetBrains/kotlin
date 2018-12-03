@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo
 import org.jetbrains.kotlin.ide.konan.createPackageFragmentProvider
-import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
@@ -48,7 +48,7 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
         val container = createContainerForLazyResolve(
             moduleContext,
             declarationProviderFactory,
-            BindingTraceContext(),
+            CodeAnalyzerInitializer.getInstance(moduleContext.project).createTrace(),
             targetPlatform,
             TargetPlatformVersion.NoVersion,
             targetEnvironment,
