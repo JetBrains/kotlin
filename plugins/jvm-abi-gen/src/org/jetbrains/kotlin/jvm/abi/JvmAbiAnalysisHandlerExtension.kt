@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.incremental.isClassFile
 import org.jetbrains.kotlin.jvm.abi.asm.AbiClassBuilder
 import org.jetbrains.kotlin.jvm.abi.asm.FilterInnerClassesVisitor
+import org.jetbrains.kotlin.jvm.abi.asm.InnerClassesCollectingVisitor
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
+import java.util.*
 
 class JvmAbiAnalysisHandlerExtension(
     private val compilerConfiguration: CompilerConfiguration
@@ -78,8 +80,22 @@ class JvmAbiAnalysisHandlerExtension(
      * Removes private or local classes from outputs
      */
     private fun removeUnneededClasses(outputs: Iterable<AbiOutput>) {
-        val removedClasses = HashSet<String>()
+        // maps internal names of classes: class -> inner classes
+        val innerClasses = HashMap<String, Collection<String>>()
+        val internalNameToFile = HashMap<String, File>()
 
+        for (output in outputs) {
+            if (!output.file.isClassFile()) continue
+
+            val visitor = InnerClassesCollectingVisitor()
+            output.accept(visitor)
+            val outputInternalName = visitor.ownInternalName!!
+            internalNameToFile[outputInternalName] = output.file
+            innerClasses[outputInternalName] = visitor.innerClasses
+        }
+
+        // internal names of removed files
+        val classesToRemoveQueue = ArrayDeque<String>()
         for (output in outputs) {
             if (!output.file.isClassFile()) continue
 
@@ -96,17 +112,33 @@ class JvmAbiAnalysisHandlerExtension(
             }
 
             if (!isNeededForAbi) {
-                output.delete()
                 val jvmClassName = JvmClassName.byClassId(classData.classId)
-                removedClasses.add(jvmClassName.internalName)
+                classesToRemoveQueue.add(jvmClassName.internalName)
             }
         }
 
+        // we can remove inner classes of removed classes
+        val classesToRemove = HashSet<String>()
+        classesToRemove.addAll(classesToRemoveQueue)
+        while (classesToRemoveQueue.isNotEmpty()) {
+            val classToRemove = classesToRemoveQueue.removeFirst()
+            innerClasses[classToRemove]?.forEach {
+                if (classesToRemove.add(it)) {
+                    classesToRemoveQueue.add(it)
+                }
+            }
+        }
+
+        val classFilesToRemove = classesToRemove.mapTo(HashSet()) { internalNameToFile[it] }
         for (output in outputs) {
             if (!output.file.isClassFile()) continue
 
-            output.transform { writer ->
-                FilterInnerClassesVisitor(removedClasses, Opcodes.ASM6, writer)
+            if (output.file in classFilesToRemove) {
+                output.delete()
+            } else {
+                output.transform { writer ->
+                    FilterInnerClassesVisitor(classesToRemove, Opcodes.ASM6, writer)
+                }
             }
         }
     }
@@ -162,6 +194,12 @@ class JvmAbiAnalysisHandlerExtension(
             val visitor = fn(cw)
             cr.accept(visitor, 0)
             this.bytes = cw.toByteArray()
+        }
+
+        fun accept(visitor: ClassVisitor) {
+            val bytes = bytes ?: return
+            val cr = ClassReader(bytes)
+            cr.accept(visitor, 0)
         }
 
         fun flush() {

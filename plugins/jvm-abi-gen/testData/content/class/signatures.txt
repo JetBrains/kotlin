@@ -1,0 +1,23 @@
+class test/BaseClass$Companion : java/lang/Object {
+    public fun <init> (Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+class test/BaseClass : java/lang/Object {
+    public static final val basePublicConst I = 8
+    public static final val Companion Ltest/BaseClass$Companion; = null
+    public fun getBaseClassPublicVal ()I
+    public fun baseClassPublicFun ()I
+    public final fun getBaseClassInternalVal$main ()I
+    public final fun baseClassInternalFun$main ()I
+    protected final fun getBaseClassProtectedVal ()I
+    protected final fun baseClassProtectedFun ()I
+    public fun <init> ()V
+}
+
+class test/Class : test/BaseClass, test/Interface {
+    public final fun classPublicMethod ()V
+    public fun <init> ()V
+}
+
+interface test/Interface : java/lang/Object {
+}

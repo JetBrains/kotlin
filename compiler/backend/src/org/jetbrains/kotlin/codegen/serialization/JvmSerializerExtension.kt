@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -57,6 +58,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
 
     override fun shouldSerializeTypeAlias(descriptor: TypeAliasDescriptor): Boolean {
         return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != Visibilities.PRIVATE
+    }
+
+    override fun shouldSerializeNestedClass(descriptor: ClassDescriptor): Boolean {
+        return classBuilderMode != ClassBuilderMode.ABI || !descriptor.isEffectivelyPrivateApi
     }
 
     override fun serializeClass(
