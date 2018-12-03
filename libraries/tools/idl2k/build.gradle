@@ -38,6 +38,9 @@ task downloadAllIdls(type: JavaExec) {
 }
 
 task idl2k(type: JavaExec) {
+    inputs.dir("../../stdlib/js/idl")
+    outputs.dir("../../stdlib/js/src/org.w3c")
+
     main = "org.jetbrains.idl2k.MainKt"
     classpath = sourceSets.main.runtimeClasspath
 }

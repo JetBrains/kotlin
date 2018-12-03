@@ -56,7 +56,7 @@ interface ServiceWorkerContainer : EventTarget {
 
   // events
   attribute EventHandler oncontrollerchange;
-  attribute EventHandler onmessage; // event.source of message events is ServiceWorker object
+  attribute MessageEventHandler onmessage; // event.source of message events is ServiceWorker object
 };
 dictionary RegistrationOptions {
   USVString scope;
@@ -92,7 +92,7 @@ interface ServiceWorkerGlobalScope : WorkerGlobalScope {
   attribute EventHandler onforeignfetch;
 
   // event
-  attribute EventHandler onmessage; // event.source of the message events is Client object
+  attribute MessageEventHandler onmessage; // event.source of the message events is Client object
 };
 [Exposed=ServiceWorker]
 interface Client {
@@ -303,7 +303,7 @@ interface ServiceWorkerContainer : EventTarget {
 
   // events
   attribute EventHandler oncontrollerchange;
-  attribute EventHandler onmessage; // event.source of message events is ServiceWorker object
+  attribute MessageEventHandler onmessage; // event.source of message events is ServiceWorker object
 };
 
 dictionary RegistrationOptions {
@@ -343,7 +343,7 @@ interface ServiceWorkerGlobalScope : WorkerGlobalScope {
   attribute EventHandler onforeignfetch;
 
   // event
-  attribute EventHandler onmessage; // event.source of the message events is Client object
+  attribute MessageEventHandler onmessage; // event.source of the message events is Client object
 };
 
 [Exposed=ServiceWorker]

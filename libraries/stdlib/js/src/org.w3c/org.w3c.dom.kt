@@ -9,19 +9,23 @@
 @file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.dom
 
-import kotlin.js.*
 import org.khronos.webgl.*
-import org.w3c.dom.css.*
+import org.w3c.dom.css.CSSStyleDeclaration
+import org.w3c.dom.css.ElementCSSInlineStyle
+import org.w3c.dom.css.LinkStyle
+import org.w3c.dom.css.StyleSheetList
 import org.w3c.dom.events.*
-import org.w3c.dom.parsing.*
-import org.w3c.dom.svg.*
-import org.w3c.dom.url.*
+import org.w3c.dom.svg.SVGSVGElement
 import org.w3c.fetch.*
-import org.w3c.files.*
-import org.w3c.notifications.*
-import org.w3c.performance.*
-import org.w3c.workers.*
-import org.w3c.xhr.*
+import org.w3c.files.Blob
+import org.w3c.files.File
+import org.w3c.files.FileList
+import org.w3c.performance.GlobalPerformance
+import org.w3c.performance.Performance
+import org.w3c.workers.CacheStorage
+import org.w3c.workers.ServiceWorkerContainer
+import org.w3c.workers.UnionClientOrMessagePortOrServiceWorker
+import kotlin.js.*
 
 /**
  * Exposes the JavaScript [Document](https://developer.mozilla.org/en/docs/Web/API/Document) to Kotlin
@@ -805,6 +809,9 @@ public external abstract class MediaError {
     }
 }
 
+/**
+ * Exposes the JavaScript [AudioTrackList](https://developer.mozilla.org/en/docs/Web/API/AudioTrackList) to Kotlin
+ */
 public external abstract class AudioTrackList : EventTarget {
     open val length: Int
     open var onchange: ((Event) -> dynamic)?
@@ -814,6 +821,9 @@ public external abstract class AudioTrackList : EventTarget {
 }
 @kotlin.internal.InlineOnly inline operator fun AudioTrackList.get(index: Int): AudioTrack? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [AudioTrack](https://developer.mozilla.org/en/docs/Web/API/AudioTrack) to Kotlin
+ */
 public external abstract class AudioTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
     open val id: String
     open val kind: String
@@ -822,6 +832,9 @@ public external abstract class AudioTrack : UnionAudioTrackOrTextTrackOrVideoTra
     open var enabled: Boolean
 }
 
+/**
+ * Exposes the JavaScript [VideoTrackList](https://developer.mozilla.org/en/docs/Web/API/VideoTrackList) to Kotlin
+ */
 public external abstract class VideoTrackList : EventTarget {
     open val length: Int
     open val selectedIndex: Int
@@ -832,6 +845,9 @@ public external abstract class VideoTrackList : EventTarget {
 }
 @kotlin.internal.InlineOnly inline operator fun VideoTrackList.get(index: Int): VideoTrack? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [VideoTrack](https://developer.mozilla.org/en/docs/Web/API/VideoTrack) to Kotlin
+ */
 public external abstract class VideoTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
     open val id: String
     open val kind: String
@@ -872,6 +888,9 @@ public external abstract class TextTrackCueList {
 }
 @kotlin.internal.InlineOnly inline operator fun TextTrackCueList.get(index: Int): TextTrackCue? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [TextTrackCue](https://developer.mozilla.org/en/docs/Web/API/TextTrackCue) to Kotlin
+ */
 public external abstract class TextTrackCue : EventTarget {
     open val track: TextTrack?
     open var id: String
@@ -891,6 +910,9 @@ public external abstract class TimeRanges {
     fun end(index: Int): Double
 }
 
+/**
+ * Exposes the JavaScript [TrackEvent](https://developer.mozilla.org/en/docs/Web/API/TrackEvent) to Kotlin
+ */
 public external open class TrackEvent(type: String, eventInitDict: TrackEventInit = definedExternally) : Event {
     open val track: UnionAudioTrackOrTextTrackOrVideoTrack?
 }
@@ -2179,7 +2201,7 @@ public external interface WindowEventHandlers {
     var onbeforeunload: ((Event) -> String?)?
     var onhashchange: ((Event) -> dynamic)?
     var onlanguagechange: ((Event) -> dynamic)?
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     var onoffline: ((Event) -> dynamic)?
     var ononline: ((Event) -> dynamic)?
     var onpagehide: ((Event) -> dynamic)?
@@ -2414,7 +2436,7 @@ public external open class EventSource(url: String, eventSourceInitDict: EventSo
     open val withCredentials: Boolean
     open val readyState: Short
     var onopen: ((Event) -> dynamic)?
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     var onerror: ((Event) -> dynamic)?
     fun close(): Unit
 
@@ -2452,7 +2474,7 @@ public external open class WebSocket(url: String, protocols: dynamic = definedEx
     var onclose: ((Event) -> dynamic)?
     open val extensions: String
     open val protocol: String
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     var binaryType: BinaryType
     fun close(code: Short = definedExternally, reason: String = definedExternally): Unit
     fun send(data: String): Unit
@@ -2515,7 +2537,7 @@ public external open class MessageChannel {
  * Exposes the JavaScript [MessagePort](https://developer.mozilla.org/en/docs/Web/API/MessagePort) to Kotlin
  */
 public external abstract class MessagePort : EventTarget, UnionMessagePortOrWindow, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
-    open var onmessage: ((Event) -> dynamic)?
+    open var onmessage: ((MessageEvent) -> dynamic)?
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit
     fun start(): Unit
     fun close(): Unit
@@ -2526,7 +2548,7 @@ public external abstract class MessagePort : EventTarget, UnionMessagePortOrWind
  */
 public external open class BroadcastChannel(name: String) : EventTarget {
     open val name: String
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     fun postMessage(message: Any?): Unit
     fun close(): Unit
 }
@@ -2551,7 +2573,7 @@ public external abstract class WorkerGlobalScope : EventTarget, WindowOrWorkerGl
  * Exposes the JavaScript [DedicatedWorkerGlobalScope](https://developer.mozilla.org/en/docs/Web/API/DedicatedWorkerGlobalScope) to Kotlin
  */
 public external abstract class DedicatedWorkerGlobalScope : WorkerGlobalScope {
-    open var onmessage: ((Event) -> dynamic)?
+    open var onmessage: ((MessageEvent) -> dynamic)?
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit
     fun close(): Unit
 }
@@ -2577,7 +2599,7 @@ public external interface AbstractWorker {
  * Exposes the JavaScript [Worker](https://developer.mozilla.org/en/docs/Web/API/Worker) to Kotlin
  */
 public external open class Worker(scriptURL: String, options: WorkerOptions = definedExternally) : EventTarget, AbstractWorker {
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     override var onerror: ((Event) -> dynamic)?
     fun terminate(): Unit
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit
@@ -2726,6 +2748,9 @@ public external abstract class HTMLAppletElement : HTMLElement {
     open var width: String
 }
 
+/**
+ * Exposes the JavaScript [HTMLMarqueeElement](https://developer.mozilla.org/en/docs/Web/API/HTMLMarqueeElement) to Kotlin
+ */
 public external abstract class HTMLMarqueeElement : HTMLElement {
     open var behavior: String
     open var bgColor: String
@@ -2947,6 +2972,9 @@ public external open class MutationObserver(callback: (Array<MutationRecord>, Mu
     fun takeRecords(): Array<MutationRecord>
 }
 
+/**
+ * Exposes the JavaScript [MutationObserverInit](https://developer.mozilla.org/en/docs/Web/API/MutationObserverInit) to Kotlin
+ */
 public external interface MutationObserverInit {
     var childList: Boolean? /* = false */
         get() = definedExternally
@@ -3459,6 +3487,9 @@ public external open class DOMPoint : DOMPointReadOnly {
     override var w: Double
 }
 
+/**
+ * Exposes the JavaScript [DOMPointInit](https://developer.mozilla.org/en/docs/Web/API/DOMPointInit) to Kotlin
+ */
 public external interface DOMPointInit {
     var x: Double? /* = 0.0 */
         get() = definedExternally
@@ -3662,6 +3693,9 @@ public inline fun ScrollOptions(behavior: ScrollBehavior? = ScrollBehavior.AUTO)
     return o
 }
 
+/**
+ * Exposes the JavaScript [ScrollToOptions](https://developer.mozilla.org/en/docs/Web/API/ScrollToOptions) to Kotlin
+ */
 public external interface ScrollToOptions : ScrollOptions {
     var left: Double?
         get() = definedExternally

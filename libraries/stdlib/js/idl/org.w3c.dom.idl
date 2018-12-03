@@ -1462,6 +1462,11 @@ dictionary PromiseRejectionEventInit : EventInit {
 [TreatNonObjectAsNull]
 callback EventHandlerNonNull = any (Event event);
 typedef EventHandlerNonNull? EventHandler;
+
+[TreatNonObjectAsNull]
+callback MessageEventHandlerNonNull = any (MessageEvent event);
+typedef MessageEventHandlerNonNull? MessageEventHandler;
+
 [TreatNonObjectAsNull]
 callback OnErrorEventHandlerNonNull = any ((Event or DOMString) event, optional DOMString source, optional unsigned long lineno, optional unsigned long colno, optional any error);
 typedef OnErrorEventHandlerNonNull? OnErrorEventHandler;
@@ -1540,7 +1545,7 @@ interface WindowEventHandlers {
   attribute OnBeforeUnloadEventHandler onbeforeunload;
   attribute EventHandler onhashchange;
   attribute EventHandler onlanguagechange;
-  attribute EventHandler onmessage;
+  attribute MessageEventHandler onmessage;
   attribute EventHandler onoffline;
   attribute EventHandler ononline;
   attribute EventHandler onpagehide;
@@ -1718,7 +1723,7 @@ interface EventSource : EventTarget {
 
   // networking
   attribute EventHandler onopen;
-  attribute EventHandler onmessage;
+  attribute MessageEventHandler onmessage;
   attribute EventHandler onerror;
   void close();
 };
@@ -1748,7 +1753,7 @@ interface WebSocket : EventTarget {
   void close([Clamp] optional unsigned short code, optional USVString reason);
 
   // messaging
-  attribute EventHandler onmessage;
+  attribute MessageEventHandler onmessage;
   attribute BinaryType binaryType;
   void send(USVString data);
   void send(Blob data);
@@ -1779,14 +1784,14 @@ interface MessagePort : EventTarget {
   void close();
 
   // event handlers
-  attribute EventHandler onmessage;
+  attribute MessageEventHandler onmessage;
 };
 [Constructor(DOMString name), Exposed=(Window,Worker)]
 interface BroadcastChannel : EventTarget {
   readonly attribute DOMString name;
   void postMessage(any message);
   void close();
-  attribute EventHandler onmessage;
+  attribute MessageEventHandler onmessage;
 };
 [Exposed=Worker] 
 interface WorkerGlobalScope : EventTarget {
@@ -1808,7 +1813,7 @@ interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
 
   void close();
 
-  attribute EventHandler onmessage;
+  attribute MessageEventHandler onmessage;
 };
 [Global=(Worker,SharedWorker),Exposed=SharedWorker]
 interface SharedWorkerGlobalScope : WorkerGlobalScope {
@@ -1828,7 +1833,7 @@ interface Worker : EventTarget {
   void terminate();
 
   void postMessage(any message, optional sequence<object> transfer = []);
-  attribute EventHandler onmessage;
+  attribute MessageEventHandler onmessage;
 };
 
 dictionary WorkerOptions {
