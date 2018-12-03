@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -37,7 +35,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 internal val syntheticAccessorPhase = makeIrFilePhase(
     ::SyntheticAccessorLowering,
@@ -139,7 +136,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         val source = this
         return buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = source.descriptor.accessorName()
+            name = source.accessorName()
             visibility = Visibilities.PUBLIC
             isSuspend = source.isSuspend
         }.also { accessor ->
@@ -170,7 +167,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
     private fun makeGetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol =
         buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = fieldSymbol.descriptor.accessorNameForGetter()
+            name = fieldSymbol.owner.accessorNameForGetter()
             visibility = Visibilities.PUBLIC
             modality = Modality.FINAL
             returnType = fieldSymbol.owner.type
@@ -208,7 +205,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
     private fun makeSetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol =
         buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = fieldSymbol.descriptor.accessorNameForSetter()
+            name = fieldSymbol.owner.accessorNameForSetter()
             visibility = Visibilities.PUBLIC
             modality = Modality.FINAL
             returnType = context.irBuiltIns.unitType
@@ -355,21 +352,20 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         }
     }
 
-    // !!!!!! Should I use syntheticAccesssorUtils here ???
-    private fun FunctionDescriptor.accessorName(): Name {
-        val jvmName = DescriptorUtils.getJvmName(this) ?: context.state.typeMapper.mapFunctionName(
-            this,
-            OwnerKind.getMemberOwnerKind(containingDeclaration)
+    private fun IrFunction.accessorName(): Name {
+        val jvmName = context.state.typeMapper.mapFunctionName(
+            descriptor,
+            OwnerKind.getMemberOwnerKind(parentAsClass.descriptor)
         )
         return Name.identifier("access\$$jvmName")
     }
 
-    private fun PropertyDescriptor.accessorNameForGetter(): Name {
+    private fun IrField.accessorNameForGetter(): Name {
         val getterName = JvmAbi.getterName(name.asString())
         return Name.identifier("access\$prop\$$getterName")
     }
 
-    private fun PropertyDescriptor.accessorNameForSetter(): Name {
+    private fun IrField.accessorNameForSetter(): Name {
         val setterName = JvmAbi.setterName(name.asString())
         return Name.identifier("access\$prop\$$setterName")
     }
