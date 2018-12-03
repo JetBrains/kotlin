@@ -62,6 +62,11 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         return moduleWithSrcRootSet
     }
 
+    override fun tearDown() {
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        super.tearDown()
+    }
+
     public override fun createModule(path: String, moduleType: ModuleType<*>): Module {
         return super.createModule(path, moduleType)
     }
