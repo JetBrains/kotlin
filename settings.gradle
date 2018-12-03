@@ -40,6 +40,7 @@ if (hasProperty("kotlinProjectPath")) {
     includeBuild(kotlinProjectPath) {
         dependencySubstitution {
             substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':include:kotlin-compiler')
+            substitute module("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion") with project(':include:kotlin-stdlib-common-sources')
         }
     }
 }
