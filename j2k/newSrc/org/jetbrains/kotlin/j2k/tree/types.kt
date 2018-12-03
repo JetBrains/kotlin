@@ -137,7 +137,7 @@ fun JKClassSymbol.toKtType(symbolProvider: JKSymbolProvider): KotlinType {
         is JKMultiverseClassSymbol ->
             target.getJavaClassDescriptor()!!
         is JKUniverseClassSymbol ->
-            (symbolProvider.symbolsByPsi.reverse()[target] as PsiClass).getJavaClassDescriptor()!!
+            target.psi<PsiClass>()?.getJavaClassDescriptor()!!
         else -> TODO(this::class.java.toString())
     }
     return classDescriptor.defaultType
