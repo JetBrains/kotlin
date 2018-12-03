@@ -17,12 +17,6 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi2ir.transformations.InsertImplicitCasts
 
-val JvmCoercionToUnitPhase = makePhase(
-    ::JvmCoercionToUnitPatcher,
-    name = "JvmCoercionToUnit",
-    description = "Insert conversions to unit after IrCalls where needed"
-)
-
 class JvmCoercionToUnitPatcher(val context: JvmBackendContext) :
     InsertImplicitCasts(
         context.builtIns, context.irBuiltIns,

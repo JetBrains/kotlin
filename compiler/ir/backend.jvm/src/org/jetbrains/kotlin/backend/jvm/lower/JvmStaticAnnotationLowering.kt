@@ -36,12 +36,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-val JvmStaticAnnotationPhase = makePhase(
-    ::JvmStaticAnnotationLowering,
-    name = "JvmStaticAnnotation",
-    description = "Handle JvmStatic annotations"
-)
-
 /*
  * For @JvmStatic functions within companion objects of classes, we synthesize proxy static functions that redirect
  * to the actual implementation.

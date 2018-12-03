@@ -18,12 +18,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-val PropertiesPhase = makePhase(
-    ::PropertiesLowering,
-    name = "Properties",
-    description = "move fields and accessors for properties to their classes"
-)
-
 class PropertiesLowering() : IrElementTransformerVoid(), FileLoweringPass {
     constructor(@Suppress("UNUSED_PARAMETER") context: BackendContext) : this()
 

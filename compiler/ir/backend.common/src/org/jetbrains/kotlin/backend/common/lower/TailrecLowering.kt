@@ -27,12 +27,6 @@ import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-val TailrecPhase = makePhase(
-    ::TailrecLowering,
-    name = "Tailrec",
-    description = "Handle tailrec calls"
-)
-
 /**
  * This pass lowers tail recursion calls in `tailrec` functions.
  *

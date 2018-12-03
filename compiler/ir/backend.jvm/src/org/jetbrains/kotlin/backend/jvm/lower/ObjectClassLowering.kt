@@ -25,12 +25,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isObject
 
-val ObjectClassPhase = makePhase(
-    ::ObjectClassLowering,
-    name = "ObjectClass",
-    description = "Handle object classes"
-)
-
 class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
     private var pendingTransformations = mutableListOf<Function0<Unit>>()

@@ -34,12 +34,6 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import java.util.*
 
-val FileClassPhase = makePhase(
-    ::FileClassLowering,
-    name = "FileClass",
-    description = "Put file level function and property declaration into a class"
-)
-
 class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val classes = ArrayList<IrClass>()

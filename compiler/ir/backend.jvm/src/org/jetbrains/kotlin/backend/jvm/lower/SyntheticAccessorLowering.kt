@@ -37,13 +37,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-val SyntheticAccessorPhase = makePhase(
-    ::SyntheticAccessorLowering,
-    name = "SyntheticAccessor",
-    description = "Introduce synthetic accessors",
-    prerequisite = setOf(ObjectClassPhase)
-)
-
 class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
     private val inlinedLambdasCollector = InlinedLambdasCollector()

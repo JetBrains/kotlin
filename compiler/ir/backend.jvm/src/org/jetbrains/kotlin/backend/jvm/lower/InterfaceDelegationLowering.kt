@@ -29,12 +29,6 @@ import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-val InterfaceDelegationPhase = makePhase(
-    ::InterfaceDelegationLowering,
-    name = "InterfaceDelegation",
-    description = "Delegate calls to interface members with default implementations to DefaultImpls"
-)
-
 class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
 
     val state: GenerationState = context.state

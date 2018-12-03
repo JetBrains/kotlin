@@ -43,12 +43,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.types.Variance
 
-val ToArrayPhase = makePhase(
-    ::ToArrayLowering,
-    name = "ToArray",
-    description = "Handle toArray functions"
-)
-
 class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {

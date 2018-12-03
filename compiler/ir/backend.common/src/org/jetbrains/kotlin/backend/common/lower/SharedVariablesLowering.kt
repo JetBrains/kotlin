@@ -34,12 +34,6 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.*
 import java.util.*
 
-val SharedVariablesPhase = makePhase(
-    ::SharedVariablesLowering,
-    name = "SharedVariables",
-    description = "Transform shared variables"
-)
-
 class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
         SharedVariablesTransformer(irFunction).lowerSharedVariables()
