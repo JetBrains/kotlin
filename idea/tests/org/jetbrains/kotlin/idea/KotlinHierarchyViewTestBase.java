@@ -16,23 +16,36 @@
 
 package org.jetbrains.kotlin.idea;
 
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 
-public abstract class KotlinHierarchyViewTestBase extends HierarchyViewTestBase {
-    @Override
-    protected void setUp() throws Exception {
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
-        super.setUp();
-        ConfigLibraryUtil.INSTANCE.configureKotlinRuntime(myModule);
+import java.io.File;
+import java.io.IOException;
+
+public abstract class KotlinHierarchyViewTestBase extends KotlinLightCodeInsightFixtureTestCase {
+    private final HierarchyViewTestFixture hierarchyFixture = new HierarchyViewTestFixture();
+
+    protected void doHierarchyTest(
+            @NotNull Computable<? extends HierarchyTreeStructure> treeStructureComputable,
+            @NotNull String... fileNames
+    ) throws Exception {
+        configure(fileNames);
+        String expectedStructure = loadExpectedStructure();
+
+        hierarchyFixture.doHierarchyTest(treeStructureComputable.compute(), expectedStructure);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        ConfigLibraryUtil.INSTANCE.unConfigureKotlinRuntime(myModule);
-        super.tearDown();
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
+    private void configure(@NotNull String[] fileNames) {
+        myFixture.configureByFiles(fileNames);
+    }
+
+    @NotNull
+    private String loadExpectedStructure() throws IOException {
+        String verificationFilePath = getTestDataPath() + "/" + getTestName(false) + "_verification.xml";
+        return FileUtil.loadFile(new File(verificationFilePath));
     }
 }
