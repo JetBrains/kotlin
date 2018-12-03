@@ -26,6 +26,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
@@ -344,7 +345,7 @@ object J2KPostProcessingRegistrar {
             fun check(element: KtProperty): Boolean {
                 val initializer = element.initializer ?: return false
                 val withoutExpectedType = initializer.analyzeInContext(initializer.getResolutionScope())
-                val descriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return false
+                val descriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return false
                 return when (withoutExpectedType.getType(initializer)) {
                     descriptor.returnType,
                     descriptor.returnType?.makeNotNullable() -> true
