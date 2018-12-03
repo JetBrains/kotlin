@@ -56,6 +56,7 @@ object ConversionsRunner {
             +ForInConversion()
             +CollectionOperationsConversion(context)
             +ArrayOperationsConversion(context)
+            +LowerNullabilityInFunctionParametersConversion(context)
             +TypeMappingConversion(context)
 
             //Kotlin --> Kotlin conversions
