@@ -108,18 +108,14 @@ open class GenericReplEvaluator(
 
             historyActor.addFinal(compileResult.lineId, EvalClassWithInstanceAndLoader(scriptClass.kotlin, scriptInstance, classLoader, invokeWrapper))
 
-            val resultField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
+            val resultFieldName = scriptResultFieldName(compileResult.lineId.no)
+            val resultField = scriptClass.getDeclaredField(resultFieldName).apply { isAccessible = true }
             val resultValue: Any? = resultField.get(scriptInstance)
 
-            return if (compileResult.hasResult) ReplEvalResult.ValueResult(resultValue, compileResult.type)
+            return if (compileResult.hasResult) ReplEvalResult.ValueResult(resultFieldName, resultValue, compileResult.type)
             else ReplEvalResult.UnitResult()
         }
     }
-
-    companion object {
-        private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
-    }
-
 }
 
 private open class HistoryActionsForNoRepeat(val state: GenericReplEvaluatorState) {

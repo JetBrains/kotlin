@@ -121,8 +121,13 @@ interface ReplEvalAction {
 }
 
 sealed class ReplEvalResult : Serializable {
-    class ValueResult(val value: Any?, val type: String?) : ReplEvalResult() {
-        override fun toString(): String = "$value : $type"
+    class ValueResult(val name: String, val value: Any?, val type: String?) : ReplEvalResult() {
+        override fun toString(): String {
+            val strValue = value.toString()
+            return if (type == strValue) "$name: $type = <function>"
+            else "$name: $type = $strValue"
+        }
+
         companion object { private val serialVersionUID: Long = 1L }
     }
 

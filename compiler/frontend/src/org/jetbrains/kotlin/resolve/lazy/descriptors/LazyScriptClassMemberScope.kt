@@ -54,8 +54,7 @@ class LazyScriptClassMemberScope(
             var paramsIndexBase = baseConstructorDescriptor.valueParameters.lastIndex + 1
             val syntheticParameters =
                 (implicitReceiversParamTypes + environmentVarsParamTypes).mapNotNull { param: Pair<String, KotlinType> ->
-                    if (param == null) null
-                    else ValueParameterDescriptorImpl(
+                    ValueParameterDescriptorImpl(
                         constructorDescriptor,
                         null,
                         paramsIndexBase++,
@@ -88,6 +87,15 @@ class LazyScriptClassMemberScope(
                 )
         setDeferredReturnType(constructor)
         return constructor
+    }
+
+    override fun getNonDeclaredProperties(name: Name, result: MutableSet<PropertyDescriptor>) {
+        super.getNonDeclaredProperties(name, result)
+        if (scriptDescriptor.resultFieldName() == name.asString()) {
+            scriptDescriptor.resultValue?.let {
+                result.add(it)
+            }
+        }
     }
 
     override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {

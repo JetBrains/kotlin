@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtScriptInitializer
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -31,6 +35,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
+import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ReplResultPropertyDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptEnvironmentDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.script.classId
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -40,6 +45,8 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
@@ -57,6 +64,35 @@ class LazyScriptDescriptor(
 ) {
     init {
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)
+    }
+
+    val resultValue: ReplResultPropertyDescriptor? by lazy { provideResultValue() }
+
+    private fun provideResultValue(): ReplResultPropertyDescriptor? {
+        val expression = scriptInfo.script.getChildOfType<KtBlockExpression>()?.getChildOfType<KtScriptInitializer>()
+            ?.getChildOfType<KtExpression>()
+
+        val type = expression?.let {
+            resolveSession.trace.bindingContext.getType(it)
+        }
+
+        return if (type != null && !type.isUnit() && !type.isNothing()) {
+            resultFieldName()?.let {
+                ReplResultPropertyDescriptor(
+                    Name.identifier(it),
+                    type,
+                    this.thisAsReceiverParameter,
+                    this
+                )
+            }
+        } else null
+    }
+
+    fun resultFieldName(): String? {
+        val scriptName = name.asString()
+        return if (scriptName.startsWith("Line_")) {
+            "res${scriptName.split("_")[1]}"
+        } else null
     }
 
     private val sourceElement = scriptInfo.script.toSourceElement()
