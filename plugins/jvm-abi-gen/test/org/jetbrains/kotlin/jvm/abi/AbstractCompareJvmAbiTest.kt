@@ -31,3 +31,4 @@ abstract class AbstractCompareJvmAbiTest : BaseJvmAbiTest() {
         }
     }
 }
+

@@ -10,7 +10,6 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.incremental.AbstractIncrementalCompilerRunnerTestBase
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import java.io.File
 
@@ -32,7 +31,11 @@ abstract class BaseJvmAbiTest : TestCase() {
     private fun abiOption(option: String, value: String): String =
         "plugin:${JvmAbiCommandLineProcessor.COMPILER_PLUGIN_ID}:$option=$value"
 
-    inner class Compilation(val projectDir: File, val name: String) {
+    inner class Compilation(
+        val projectDir: File,
+        val name: String,
+        val dependencies: Collection<Compilation> = emptyList()
+    ) {
         val srcDir: File
             get() = projectDir.resolve(name)
 
@@ -50,11 +53,16 @@ abstract class BaseJvmAbiTest : TestCase() {
         check(abiPluginJar.exists()) { "Plugin jar '$abiPluginJar' does not exist" }
         check(compilation.srcDir.exists()) { "Source dir '${compilation.srcDir}' does not exist" }
 
+        val abiDependencies = compilation.dependencies.map { dep ->
+            check(dep.abiDir.exists()) { "Dependency '${dep.name}' of '${compilation.name}' was not built" }
+            dep.abiDir
+        }
+
         val messageCollector = TestMessageCollector()
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
             freeArgs = listOf(compilation.srcDir.canonicalPath)
-            classpath = kotlinJvmStdlib.canonicalPath
+            classpath = (abiDependencies + kotlinJvmStdlib).joinToString(File.pathSeparator) { it.canonicalPath }
             pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
             pluginOptions = arrayOf(abiOption("outputDir", compilation.abiDir.canonicalPath))
             destination = compilation.destinationDir.canonicalPath
@@ -66,7 +74,7 @@ abstract class BaseJvmAbiTest : TestCase() {
         }
     }
 
-    private val kotlinJvmStdlib = File("dist/kotlinc/lib/kotlin-stdlib.jar").also {
+    protected val kotlinJvmStdlib = File("dist/kotlinc/lib/kotlin-stdlib.jar").also {
         UsefulTestCase.assertExists(it)
     }
 }
