@@ -17,29 +17,24 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.FunctionCodegen
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 
-internal class KtUltraLightMethod(
+internal abstract class KtUltraLightMethod(
     internal val delegate: LightMethodBuilder,
-    originalElement: KtDeclaration,
-    private val support: UltraLightSupport,
+    closestDeclarationForOrigin: KtDeclaration?,
+    protected val support: UltraLightSupport,
     containingClass: KtUltraLightClass
 ) : KtLightMethodImpl(
     { delegate },
-    LightMemberOriginForDeclaration(
-        originalElement, JvmDeclarationOriginKind.OTHER
-    ),
+    closestDeclarationForOrigin?.let {
+        LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER)
+    },
     containingClass
 ), KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiMethod> {
-
-    override val kotlinTypeForNullabilityAnnotation: KotlinType?
-        get() = kotlinOrigin?.getKotlinType()
 
     override val psiTypeForNullabilityAnnotation: PsiType?
         get() = returnType
@@ -55,16 +50,11 @@ internal class KtUltraLightMethod(
     // should be in super
     override fun isVarArgs() = PsiImplUtil.isVarArgs(this)
 
-    override fun buildTypeParameterList(): PsiTypeParameterList {
-        val origin = kotlinOrigin
-        return if (origin is KtFunction || origin is KtProperty)
-            buildTypeParameterList(origin as KtTypeParameterListOwner, this, support)
-        else LightTypeParameterListBuilder(manager, language)
-    }
+    abstract override fun buildTypeParameterList(): PsiTypeParameterList
 
     private val _throwsList: PsiReferenceList by lazyPub {
         val list = KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST)
-        (kotlinOrigin?.resolve() as? FunctionDescriptor)?.let {
+        computeDescriptor()?.let {
             for (ex in FunctionCodegen.getThrownExceptions(it)) {
                 list.addReference(ex.fqNameSafe.asString())
             }
@@ -75,6 +65,32 @@ internal class KtUltraLightMethod(
     override fun getHierarchicalMethodSignature() = PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this)
 
     override fun getThrowsList(): PsiReferenceList = _throwsList
+
+    abstract fun computeDescriptor(): FunctionDescriptor?
+}
+
+internal class KtUltraLightMethodForSourceDeclaration(
+    delegate: LightMethodBuilder,
+    declaration: KtDeclaration,
+    support: UltraLightSupport,
+    containingClass: KtUltraLightClass
+) : KtUltraLightMethod(
+    delegate,
+    declaration,
+    support, containingClass
+) {
+    override val kotlinTypeForNullabilityAnnotation: KotlinType?
+        get() = kotlinOrigin?.getKotlinType()
+
+    override fun buildTypeParameterList(): PsiTypeParameterList {
+        val origin = kotlinOrigin
+        return if (origin is KtFunction || origin is KtProperty)
+            buildTypeParameterList(origin as KtTypeParameterListOwner, this, support)
+        else LightTypeParameterListBuilder(manager, language)
+    }
+
+    override fun computeDescriptor() = kotlinOrigin?.resolve() as? FunctionDescriptor
+}
 }
 
 internal abstract class KtUltraLightParameter(

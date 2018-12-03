@@ -331,12 +331,13 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         else -> PsiModifier.PUBLIC
     }
 
-    private fun noArgConstructor(visibility: String, declaration: KtDeclaration): KtUltraLightMethod = KtUltraLightMethod(
-        LightMethodBuilder(manager, language, name.orEmpty()).setConstructor(true).addModifier(visibility),
-        declaration,
-        support,
-        this
-    )
+    private fun noArgConstructor(visibility: String, declaration: KtDeclaration): KtUltraLightMethod =
+        KtUltraLightMethodForSourceDeclaration(
+            LightMethodBuilder(manager, language, name.orEmpty()).setConstructor(true).addModifier(visibility),
+            declaration,
+            support,
+            this
+        )
 
     private fun isHiddenByDeprecation(declaration: KtDeclaration): Boolean {
         val deprecated = support.findAnnotation(declaration, FqName("kotlin.Deprecated"))?.second
@@ -377,7 +378,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             else computeMethodName(ktFunction, ktFunction.name ?: SpecialNames.NO_NAME_PROVIDED.asString())
 
         val method = lightMethod(name.orEmpty(), ktFunction, forceStatic, forcePrivate)
-        val wrapper = KtUltraLightMethod(method, ktFunction, support, this)
+        val wrapper = KtUltraLightMethodForSourceDeclaration(method, ktFunction, support, this)
         addReceiverParameter(ktFunction, wrapper)
 
 
@@ -547,7 +548,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         if (needsAccessor(ktGetter)) {
             val getterName = computeMethodName(ktGetter ?: declaration, JvmAbi.getterName(propertyName))
             val getterPrototype = lightMethod(getterName, ktGetter ?: declaration, onlyJvmStatic)
-            val getterWrapper = KtUltraLightMethod(getterPrototype, declaration, support, this)
+            val getterWrapper = KtUltraLightMethodForSourceDeclaration(getterPrototype, declaration, support, this)
             val getterType: PsiType by lazyPub { methodReturnType(declaration, getterWrapper) }
             getterPrototype.setMethodReturnType { getterType }
             addReceiverParameter(declaration, getterWrapper)
@@ -558,7 +559,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             val setterName = computeMethodName(ktSetter ?: declaration, JvmAbi.setterName(propertyName))
             val setterPrototype = lightMethod(setterName, ktSetter ?: declaration, onlyJvmStatic)
                 .setMethodReturnType(PsiType.VOID)
-            val setterWrapper = KtUltraLightMethod(setterPrototype, declaration, support, this)
+            val setterWrapper = KtUltraLightMethodForSourceDeclaration(setterPrototype, declaration, support, this)
             addReceiverParameter(declaration, setterWrapper)
             val setterParameter = ktSetter?.parameter
             setterPrototype.addParameter(
