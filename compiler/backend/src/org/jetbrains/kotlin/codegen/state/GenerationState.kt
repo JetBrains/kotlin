@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
 
 class GenerationState private constructor(
@@ -214,6 +215,7 @@ class GenerationState private constructor(
         var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
         var scriptResultFieldName: String? = null
         val shouldGenerateScriptResultValue: Boolean get() = scriptResultFieldName != null
+        var resultType: KotlinType? = null
         var hasResult: Boolean = false
     }
 
