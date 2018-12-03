@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -18,8 +20,11 @@ import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.valueArgumentVisitor
+import javax.swing.JComponent
 
-class BooleanLiteralArgumentInspection : AbstractKotlinInspection() {
+class BooleanLiteralArgumentInspection(
+    @JvmField var reportSingle: Boolean = false
+) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         valueArgumentVisitor(fun(argument: KtValueArgument) {
             if (argument.getArgumentName() != null) return
@@ -29,14 +34,24 @@ class BooleanLiteralArgumentInspection : AbstractKotlinInspection() {
             val call = argument.getStrictParentOfType<KtCallExpression>() ?: return
             if (call.resolveToCall()?.resultingDescriptor?.hasStableParameterNames() != true) return
 
+            val valueArguments = call.valueArguments
+            fun hasAnotherUnnamedBoolean() = valueArguments.asSequence().filter { it != argument }.any {
+                !it.isNamed() && (it.getArgumentExpression() as? KtConstantExpression)?.node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT
+            }
             when {
-                call.valueArguments.takeLastWhile { it != argument }.none { !it.isNamed() } ->
+                valueArguments.takeLastWhile { it != argument }.none { !it.isNamed() } ->
                     holder.registerProblem(
                         argument,
                         "Boolean literal argument without parameter name",
-                        GENERIC_ERROR_OR_WARNING,
+                        if (reportSingle || hasAnotherUnnamedBoolean()) GENERIC_ERROR_OR_WARNING else INFORMATION,
                         IntentionWrapper(AddNameToArgumentIntention(), argument.containingKtFile)
                     )
             }
         })
+
+    override fun createOptionsPanel(): JComponent? {
+        val panel = MultipleCheckboxOptionsPanel(this)
+        panel.addCheckbox("Report also on call with single boolean literal argument", "reportSingle")
+        return panel
+    }
 }
