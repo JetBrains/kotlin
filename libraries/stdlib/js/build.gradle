@@ -193,7 +193,7 @@ compileTestKotlin2Js {
     }
 }
 
-task compileJs(type: JavaExec) {
+task compileJs(type: UtilityJavaExec) {
     dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js, compileExperimentalKotlin2Js, compileCoroutinesExperimentalKotlin2Js
     inputs.files(compileBuiltinsKotlin2Js.outputs.files)
     inputs.files(compileKotlin2Js.outputs.files)
