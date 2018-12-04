@@ -1,0 +1,13 @@
+package
+
+public fun case_1(/*0*/ a: Inv<out Inv<Inv<Inv<Inv<Inv<kotlin.Int?>?>?>?>?>?>?): kotlin.Unit
+public fun case_2(/*0*/ a: Inv<out Inv<Inv<Inv<Inv<Inv<kotlin.Int?>?>?>?>?>?>?): kotlin.Unit
+public fun takeInt(/*0*/ i: kotlin.Int): kotlin.Unit
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
