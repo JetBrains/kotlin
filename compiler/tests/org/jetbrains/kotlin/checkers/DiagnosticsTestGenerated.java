@@ -7943,6 +7943,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/generics/argumentsForT.kt");
             }
 
+            @TestMetadata("capturingOfDeepNestedType.kt")
+            public void testCapturingOfDeepNestedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/capturingOfDeepNestedType.kt");
+            }
+
             @TestMetadata("commonSupertypeContravariant.kt")
             public void testCommonSupertypeContravariant() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/commonSupertypeContravariant.kt");
