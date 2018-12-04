@@ -136,6 +136,14 @@ abstract class BasicIrBoxTest(
             .filterNot { it.virtualFilePath.contains(BasicBoxTest.COMMON_FILES_DIR_PATH) }
 
 //        config.configuration.put(CommonConfigurationKeys.EXCLUDED_ELEMENTS_FROM_DUMPING, setOf("<JS_IR_RUNTIME>"))
+        config.configuration.put(
+            CommonConfigurationKeys.PHASES_TO_VALIDATE_AFTER,
+            setOf(
+                "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
+                "InnerClassConstructorCallsLowering",
+                "InlineClassLowering", "ConstLowering"
+            )
+        )
 
         val runtimeConfiguration = config.configuration.copy()
 
@@ -165,6 +173,7 @@ abstract class BasicIrBoxTest(
 //        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, setOf("UnitMaterializationLowering"))
 //        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, setOf("ReturnableBlockLowering"))
 //        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER, setOf("MultipleCatchesLowering"))
+//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_VALIDATE, setOf("ALL"))
 
         val result = compile(
             config.project,
