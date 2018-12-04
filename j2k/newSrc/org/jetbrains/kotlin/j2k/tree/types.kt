@@ -43,6 +43,8 @@ fun JKExpression.type(context: ConversionContext): JKType? =
         is JKQualifiedExpressionImpl -> this.selector.type(context)
         is JKKtThrowExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.nothing.asString(), context.symbolProvider)
         is JKClassAccessExpression -> null
+        is JKJavaNewExpression -> JKClassTypeImpl(classSymbol)
+        is JKJavaInstanceOfExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES._boolean.asString(), context.symbolProvider)
         else -> TODO(this::class.java.toString())
     }
 

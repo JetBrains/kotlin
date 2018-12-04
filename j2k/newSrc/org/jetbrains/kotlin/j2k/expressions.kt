@@ -44,6 +44,20 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
     val operatorNames =
         if (operatorName == "equals") listOf("equals", "compareTo")
         else listOf(operatorName)
+
+    fun PsiClass.methodSymbol() =
+        allMethods
+            .filter { it.name in operatorNames }
+            .firstOrNull {
+                it.parameterList.parameters.singleOrNull()?.takeIf {
+                    rightType.isSubtypeOf(
+                        it.type.toJK(symbolProvider),
+                        symbolProvider
+                    )
+                } != null
+            }?.let { symbolProvider.provideDirectSymbol(it) as JKMethodSymbol }
+
+
     val classSymbol = leftType.classSymbol(symbolProvider)
     return when (classSymbol) {
         is JKMultiverseKtClassSymbol ->
@@ -53,6 +67,9 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
                 .filter { it.name in operatorNames }
                 .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
                 .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }!!
+        is JKUniverseClassSymbol -> classSymbol.target.psi<PsiClass>()?.methodSymbol()!!
+        is JKMultiverseClassSymbol -> classSymbol.target.methodSymbol()!!
+
         else -> TODO(classSymbol::class.toString())
     }
 }
