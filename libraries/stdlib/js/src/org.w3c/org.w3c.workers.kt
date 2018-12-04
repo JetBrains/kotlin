@@ -137,7 +137,9 @@ public inline fun ServiceWorkerMessageEventInit(data: Any? = null, origin: Strin
     o["origin"] = origin
     o["lastEventId"] = lastEventId
     o["source"] = source
-    o["ports"] = ports
+    if (ports != null) {
+        o["ports"] = ports
+    }
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
@@ -235,8 +237,12 @@ public external interface ForeignFetchOptions {
 public inline fun ForeignFetchOptions(scopes: Array<String>?, origins: Array<String>?): ForeignFetchOptions {
     val o = js("({})")
 
-    o["scopes"] = scopes
-    o["origins"] = origins
+    if (scopes != null) {
+        o["scopes"] = scopes
+    }
+    if (origins != null) {
+        o["origins"] = origins
+    }
 
     return o
 }
@@ -323,7 +329,9 @@ public inline fun ForeignFetchResponse(response: Response?, origin: String? = nu
 
     o["response"] = response
     o["origin"] = origin
-    o["headers"] = headers
+    if (headers != null) {
+        o["headers"] = headers
+    }
 
     return o
 }
@@ -365,7 +373,9 @@ public inline fun ExtendableMessageEventInit(data: Any? = null, origin: String? 
     o["origin"] = origin
     o["lastEventId"] = lastEventId
     o["source"] = source
-    o["ports"] = ports
+    if (ports != null) {
+        o["ports"] = ports
+    }
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed

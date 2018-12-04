@@ -130,7 +130,9 @@ public inline fun NotificationOptions(dir: NotificationDirection? = Notification
     o["requireInteraction"] = requireInteraction
     o["sticky"] = sticky
     o["data"] = data
-    o["actions"] = actions
+    if (actions != null) {
+        o["actions"] = actions
+    }
 
     return o
 }
