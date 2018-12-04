@@ -1,4 +1,4 @@
-// "Replace with assignment" "false"
+// "Replace with assignment (original is empty)" "false"
 // ACTION: Replace overloaded operator with function call
 // ACTION: Replace with ordinary assignment
 // WITH_RUNTIME

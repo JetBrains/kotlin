@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -17,15 +14,13 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.ReplaceWithOrdinaryAssignmentIntention
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -60,11 +55,10 @@ class SuspiciousCollectionReassignmentInspection : AbstractKotlinInspection() {
             if (ReplaceWithFilterFix.isApplicable(binaryExpression, leftDefaultType, context)) {
                 fixes.add(ReplaceWithFilterFix())
             }
-            if (ReplaceWithAssignmentFix.isApplicable(binaryExpression, property, context)) {
-                fixes.add(ReplaceWithAssignmentFix())
-            }
-            if (JoinWithInitializerFix.isApplicable(binaryExpression, property)) {
-                fixes.add(JoinWithInitializerFix(operationToken))
+            when {
+                ReplaceWithAssignmentFix.isApplicable(binaryExpression, property, context) -> fixes.add(ReplaceWithAssignmentFix())
+                JoinWithInitializerFix.isApplicable(binaryExpression, property) -> fixes.add(JoinWithInitializerFix(operationToken))
+                else -> fixes.add(IntentionWrapper(ReplaceWithOrdinaryAssignmentIntention(), binaryExpression.containingKtFile))
             }
 
             val typeText = leftDefaultType.toString().takeWhile { it != '<' }.toLowerCase()
@@ -150,7 +144,7 @@ class SuspiciousCollectionReassignmentInspection : AbstractKotlinInspection() {
     }
 
     private class ReplaceWithAssignmentFix : LocalQuickFix {
-        override fun getName() = "Replace with assignment"
+        override fun getName() = "Replace with assignment (original is empty)"
 
         override fun getFamilyName() = name
 
