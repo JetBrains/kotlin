@@ -669,6 +669,7 @@ interface UltraLightSupport {
     fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>?
     fun isTooComplexForUltraLightGeneration(element: KtClassOrObject): Boolean
     val deprecationResolver: DeprecationResolver
+    val typeMapper: KotlinTypeMapper
 }
 
 interface KtUltraLightElementWithNullabilityAnnotation<out T : KtDeclaration, out D : PsiModifierListOwner> : KtLightDeclaration<T, D>,

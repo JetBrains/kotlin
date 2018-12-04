@@ -18,21 +18,17 @@ import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -147,7 +143,7 @@ internal fun UltraLightSupport.mapType(
     mapTypeToSignatureWriter: (KotlinTypeMapper, JvmSignatureWriter) -> Unit
 ): PsiType {
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
-    mapTypeToSignatureWriter(typeMapper(this), signatureWriter)
+    mapTypeToSignatureWriter(typeMapper, signatureWriter)
     val signature = StringCharacterIterator(signatureWriter.toString())
 
     val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
@@ -160,15 +156,6 @@ internal fun UltraLightSupport.mapType(
     }
     return type
 }
-
-internal fun typeMapper(support: UltraLightSupport): KotlinTypeMapper = KotlinTypeMapper(
-    BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
-    IncompatibleClassTracker.DoNothing, support.moduleName,
-    JvmTarget.JVM_1_8,
-    KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
-    false,
-    KotlinType::cleanFromAnonymousTypes
-)
 
 // Returns null when type is unchanged
 fun KotlinType.cleanFromAnonymousTypes(): KotlinType? {
@@ -234,7 +221,7 @@ fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
 private fun KtUltraLightClass.lightMethod(
     descriptor: FunctionDescriptor
 ): LightMethodBuilder {
-    val name = typeMapper(support).mapFunctionName(descriptor, OwnerKind.IMPLEMENTATION)
+    val name = support.typeMapper.mapFunctionName(descriptor, OwnerKind.IMPLEMENTATION)
 
     val accessFlags: Int by lazyPub {
         val asmFlags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, support.deprecationResolver)
