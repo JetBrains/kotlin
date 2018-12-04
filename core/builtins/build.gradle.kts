@@ -18,7 +18,7 @@ val clean by tasks.getting {
     }
 }
 
-val serialize by tasks.creating(UtilityJavaExec::class) {
+val serialize by tasks.creating(NoDebugJavaExec::class) {
     val outDir = builtinsSerialized
     val inDirs = arrayOf(builtinsSrc, builtinsNative)
     inDirs.forEach { inputs.dir(it) }
