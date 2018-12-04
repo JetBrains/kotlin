@@ -43,6 +43,11 @@ public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline 
 /**
  * This value is used as a return value of [suspendCoroutineUninterceptedOrReturn] `block` argument to state that
  * the execution was suspended and will not return any result immediately.
+ *
+ * **Note: this value should not be used in general code.** Using it outside of the context of
+ * `suspendCoroutineUninterceptedOrReturn` function return value  (including, but not limited to,
+ * storing this value in other properties, returning it from other functions, etc)
+ * can lead to unspecified behavior of the code.
  */
 // It is implemented as property with getter to avoid ProGuard <clinit> problem with multifile IntrinsicsKt class
 @SinceKotlin("1.3")
