@@ -303,25 +303,6 @@ private val CallsLoweringPhase = makeJsPhase(
     description = "Handle intrinsics"
 )
 
-object IrValidationPhase : CompilerPhase<CommonBackendContext, IrModuleFragment> {
-
-    private val validatorConfig = IrValidatorConfig(
-        abortOnError = true,
-        ensureAllNodesAreDifferent = true,
-        checkTypes = false,
-        checkDescriptors = false
-    )
-
-    override val name = "IrValidator"
-    override val description = "Make sure that various Ir Invariants are met"
-    override val prerequisite = emptySet()
-    override fun invoke(context: CommonBackendContext, input: IrModuleFragment): IrModuleFragment {
-        IrValidator(context, validatorConfig).let { input.acceptVoid(it) }
-        input.checkDeclarationParents()
-        return input
-    }
-}
-
 object IrModuleEndPhase : CompilerPhase<BackendContext, IrModuleFragment> {
     override val name = "IrModuleFragment"
     override val description = "State at end of IrModuleFragment lowering"
@@ -345,7 +326,6 @@ val jsPhases = listOf(
     ModuleCopyingPhase,
     FunctionInliningPhase,
     RemoveInlineFunctionsWithReifiedTypeParametersLoweringPhase,
-    IrValidationPhase,
     ThrowableSuccessorsLoweringPhase,
     TailrecLoweringPhase,
     UnitMaterializationLoweringPhase,
@@ -357,7 +337,6 @@ val jsPhases = listOf(
     LocalDeclarationsLoweringPhase,
     InnerClassesLoweringPhase,
     InnerClassConstructorCallsLoweringPhase,
-    IrValidationPhase,
     SuspendFunctionsLoweringPhase,
     CallableReferenceLoweringPhase,
     DefaultArgumentStubGeneratorPhase,
@@ -371,13 +350,11 @@ val jsPhases = listOf(
     TypeOperatorLoweringPhase,
     SecondaryCtorLoweringPhase,
     InlineClassLoweringPhase,
-    IrValidationPhase,
     AutoboxingTransformerPhase,
     BlockDecomposerLoweringPhase,
     ClassReferenceLoweringPhase,
     PrimitiveCompanionLoweringPhase,
     ConstLoweringPhase,
-    IrValidationPhase,
     CallsLoweringPhase,
     IrModuleEndPhase,
     IrToJsPhase

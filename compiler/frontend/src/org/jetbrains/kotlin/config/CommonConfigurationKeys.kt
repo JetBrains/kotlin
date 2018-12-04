@@ -58,6 +58,15 @@ object CommonConfigurationKeys {
     val PHASES_TO_DUMP_STATE = CompilerConfigurationKey.create<Set<String>>("backend phases where we dump compiler state both before and after the phase")
 
     @JvmField
+    val PHASES_TO_VALIDATE_BEFORE = CompilerConfigurationKey.create<Set<String>>("backend phases where we validate Ir before the phase")
+
+    @JvmField
+    val PHASES_TO_VALIDATE_AFTER = CompilerConfigurationKey.create<Set<String>>("backend phases where we validate Ir after the phase")
+
+    @JvmField
+    val PHASES_TO_VALIDATE = CompilerConfigurationKey.create<Set<String>>("backend phases where we validate Ir both before and after the phase")
+
+    @JvmField
     val VERBOSE_PHASES = CompilerConfigurationKey.create<Set<String>>("verbose backend phases")
 
     @JvmField
