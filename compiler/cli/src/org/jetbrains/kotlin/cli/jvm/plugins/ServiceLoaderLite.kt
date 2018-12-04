@@ -11,7 +11,10 @@ import java.lang.Character.isJavaIdentifierPart
 import java.lang.Character.isJavaIdentifierStart
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
+import java.lang.UnsupportedOperationException
 import java.net.URLClassLoader
+import java.nio.file.FileSystemNotFoundException
+import java.nio.file.Paths
 import java.util.zip.ZipFile
 
 /**
@@ -32,9 +35,13 @@ object ServiceLoaderLite {
      */
     fun <Service> loadImplementations(service: Class<out Service>, classLoader: URLClassLoader): List<Service> {
         val files = classLoader.urLs.map { url ->
-            if (url.protocol.toLowerCase() != "file") throw IllegalArgumentException("Only local files are supported, got $url")
-            val path = url.path.takeIf { it.isNotEmpty() } ?: throw IllegalArgumentException("Path is empty for $url")
-            File(path)
+            try {
+                Paths.get(url.toURI()).toFile()
+            } catch (e: FileSystemNotFoundException) {
+                throw IllegalArgumentException("Only local URLs are supported, got ${url.protocol}")
+            } catch (e: UnsupportedOperationException) {
+                throw IllegalArgumentException("Only local URLs are supported, got ${url.protocol}")
+            }
         }
 
         val implementations = mutableListOf<Service>()
