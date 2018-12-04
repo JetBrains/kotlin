@@ -193,28 +193,31 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         for ((index, property) in orderedProperties.filter { !it.transient }.withIndex()) {
             // output.writeXxxElementValue(classDesc, index, value)
             val sti = getSerialTypeInfo(property)
-            val innerSerial = serializerInstance(this@SerializerIrGenerator, serializableDescriptor, sti.serializer, property.module, property.type, property.genericIndex)
-            val elementCall = if (innerSerial == null) {
-                val writeFunc =
+            val innerSerial = serializerInstance(
+                this@SerializerIrGenerator,
+                serializableDescriptor,
+                sti.serializer,
+                property.module,
+                property.type,
+                property.genericIndex
+            )
+            val (writeFunc, args: List<IrExpression>) = if (innerSerial == null) {
+                val f =
                     kOutputClass.referenceMethod("${CallingConventions.encode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
-                irInvoke(
-                    irGet(localOutput),
-                    writeFunc,
-                    irGet(localSerialDesc),
-                    irInt(index),
-                    property.irGet()
-                )
+                val args = mutableListOf(irGet(localSerialDesc), irInt(index))
+                if (sti.elementMethodPrefix != "Unit") args += property.irGet()
+                f to args
             } else {
-                val writeFunc = kOutputClass.referenceMethod("${CallingConventions.encode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}")
-                irInvoke(
-                    irGet(localOutput),
-                    writeFunc,
+                val f =
+                    kOutputClass.referenceMethod("${CallingConventions.encode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}")
+                f to listOf(
                     irGet(localSerialDesc),
                     irInt(index),
                     innerSerial,
                     property.irGet()
                 )
             }
+            val elementCall = irInvoke(irGet(localOutput), writeFunc, *args.toTypedArray())
 
             // check for call to .shouldEncodeElementDefault
             if (!property.optional) {
