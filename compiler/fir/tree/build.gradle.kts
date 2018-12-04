@@ -31,7 +31,7 @@ dependencies {
     generatorClasspath(project("visitors-generator"))
 }
 
-val generateVisitors by tasks.creating(UtilityJavaExec::class) {
+val generateVisitors by tasks.creating(NoDebugJavaExec::class) {
     val generationRoot = "$projectDir/src/org/jetbrains/kotlin/fir/"
     val output = "$projectDir/visitors"
 
