@@ -135,7 +135,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         fun PsiJavaToken.toJK(): JKOperator = JKJavaOperatorImpl.tokenToOperator[tokenType] ?: error("Unsupported token-type: $tokenType")
 
         fun PsiPrefixExpression.toJK(): JKExpression {
-            return JKPrefixExpressionImpl(operand.toJK(), operationSign.toJK())
+            return JKPrefixExpressionImpl(operand.toJK(), operationSign.toJK()).let {
+                if (it.operator.token.text in listOf("+", "-") && it.expression is JKLiteralExpression) {
+                    JKJavaLiteralExpressionImpl(
+                        it.operator.token.text + (it.expression as JKLiteralExpression).literal,
+                        (it.expression as JKLiteralExpression).type
+                    )
+                } else it
+            }
         }
 
         fun PsiPostfixExpression.toJK(): JKExpression {

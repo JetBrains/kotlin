@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import com.intellij.psi.*
-import com.intellij.util.reverse
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -165,3 +164,33 @@ fun JKType.isCollectionType(symbolProvider: JKSymbolProvider): Boolean {
     val collectionType = JKClassTypeImpl(symbolProvider.provideByFqName("java.util.Collection"), emptyList())
     return this.isSubtypeOf(collectionType, symbolProvider)
 }
+
+fun JKLiteralExpression.LiteralType.toPrimitiveType(): JKJavaPrimitiveType? =
+    when (this) {
+        JKLiteralExpression.LiteralType.CHAR -> JKJavaPrimitiveTypeImpl.CHAR
+        JKLiteralExpression.LiteralType.BOOLEAN -> JKJavaPrimitiveTypeImpl.BOOLEAN
+        JKLiteralExpression.LiteralType.INT -> JKJavaPrimitiveTypeImpl.INT
+        JKLiteralExpression.LiteralType.LONG -> JKJavaPrimitiveTypeImpl.LONG
+        JKLiteralExpression.LiteralType.FLOAT -> JKJavaPrimitiveTypeImpl.FLOAT
+        JKLiteralExpression.LiteralType.DOUBLE -> JKJavaPrimitiveTypeImpl.DOUBLE
+        JKLiteralExpression.LiteralType.STRING -> null
+        JKLiteralExpression.LiteralType.NULL -> null
+    }
+
+fun JKJavaPrimitiveType.toLiteralType(): JKLiteralExpression.LiteralType? =
+    when (this) {
+        JKJavaPrimitiveTypeImpl.CHAR -> JKLiteralExpression.LiteralType.CHAR
+        JKJavaPrimitiveTypeImpl.BOOLEAN -> JKLiteralExpression.LiteralType.BOOLEAN
+        JKJavaPrimitiveTypeImpl.INT -> JKLiteralExpression.LiteralType.INT
+        JKJavaPrimitiveTypeImpl.LONG -> JKLiteralExpression.LiteralType.LONG
+        JKJavaPrimitiveTypeImpl.CHAR -> JKLiteralExpression.LiteralType.CHAR
+        JKJavaPrimitiveTypeImpl.DOUBLE -> JKLiteralExpression.LiteralType.DOUBLE
+        JKJavaPrimitiveTypeImpl.FLOAT -> JKLiteralExpression.LiteralType.FLOAT
+        else -> null
+    }
+
+fun JKJavaPrimitiveType.isNumberType() =
+    this == JKJavaPrimitiveTypeImpl.INT ||
+            this == JKJavaPrimitiveTypeImpl.LONG ||
+            this == JKJavaPrimitiveTypeImpl.FLOAT ||
+            this == JKJavaPrimitiveTypeImpl.DOUBLE

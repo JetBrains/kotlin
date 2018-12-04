@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKNullLiteral
-import org.jetbrains.kotlin.j2k.tree.impl.JKUnresolvedClassType
+import org.jetbrains.kotlin.j2k.tree.impl.*
 
 class ImplicitInitializerConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -15,9 +14,24 @@ class ImplicitInitializerConversion : RecursiveApplicableConversionBase() {
 
         if (element.initializer !is JKStubExpression) return recurse(element)
 
-        if (element.type.type is JKClassType || element.type.type is JKUnresolvedClassType) element.initializer = JKNullLiteral()
-
+        val fieldType = element.type.type
+        val newInitializer = when (fieldType) {
+            is JKClassType, is JKUnresolvedClassType -> JKNullLiteral()
+            is JKJavaPrimitiveType -> createPrimitiveTypeInitializer(fieldType)
+            else -> null
+        }
+        newInitializer?.also {
+            element.initializer = it
+        }
         return element
     }
+
+    fun createPrimitiveTypeInitializer(primitiveType: JKJavaPrimitiveType): JKJavaLiteralExpression =
+        when (primitiveType) {
+            is JKJavaPrimitiveTypeImpl.BOOLEAN ->
+                JKJavaLiteralExpressionImpl("false", JKLiteralExpression.LiteralType.BOOLEAN)
+            else ->
+                JKJavaLiteralExpressionImpl("0", JKLiteralExpression.LiteralType.INT)
+        }
 
 }

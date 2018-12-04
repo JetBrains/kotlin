@@ -31,6 +31,8 @@ class LiteralConversion : RecursiveApplicableConversionBase() {
             text
                 .replace("d", "", true)
                 .replace(".e", "e", true)
+                .replace(".f", "", true)
+                .replace("f", "", true)
 
         if (!newText.contains(".") && !newText.contains("e", true))
             newText += "."
@@ -47,7 +49,11 @@ class LiteralConversion : RecursiveApplicableConversionBase() {
         return JKKtLiteralExpressionImpl(
             text.replace(".f", "f", true)
                 .replace("F", "f")
-                .replace(".e", "e", true),
+                .replace(".e", "e", true)
+                .let {
+                    if (!it.endsWith("f")) "${it}f"
+                    else it
+                },
             FLOAT
         )
     }

@@ -37,6 +37,7 @@ object ConversionsRunner {
             +ArrayInitializerConversion(context)
             +TryStatementConversion(context)
             +ImplicitInitializerConversion()
+            +PrimitiveTypesInitializersConversion(context)
             +DefaultArgumentsConversion(context)
             +FieldToPropertyConversion(context)
             +PrintlnConversion(context)
