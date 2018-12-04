@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.ObjectInputStream
+import java.nio.file.FileSystemNotFoundException
+import java.nio.file.Paths
 
 class KaptStubLineInformation {
     private val offsets = mutableMapOf<JCTree.JCCompilationUnit, FileInfo>()
@@ -21,11 +23,16 @@ class KaptStubLineInformation {
         const val METADATA_VERSION = 1
 
         fun parseFileInfo(file: JCTree.JCCompilationUnit): FileInfo {
-            val sourceUri = file.sourcefile
-                ?.toUri()
-                ?.takeIf { it.isAbsolute && !it.isOpaque && it.path != null && it.scheme?.toLowerCase() == "file" } ?: return FileInfo.EMPTY
+            val uri = file.sourcefile?.toUri() ?: return FileInfo.EMPTY
 
-            val sourceFile = File(sourceUri).takeIf { it.exists() } ?: return FileInfo.EMPTY
+            val sourceFile = try {
+                Paths.get(uri).toFile()
+            } catch (e: FileSystemNotFoundException) {
+                return FileInfo.EMPTY
+            } catch (e: UnsupportedOperationException) {
+                return FileInfo.EMPTY
+            }
+
             val kaptMetadataFile = File(sourceFile.parentFile, sourceFile.nameWithoutExtension + KAPT_METADATA_EXTENSION)
 
             if (!kaptMetadataFile.isFile) {
