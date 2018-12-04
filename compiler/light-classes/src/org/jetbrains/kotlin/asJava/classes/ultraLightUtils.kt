@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -130,7 +131,7 @@ internal fun KtDeclaration.getKotlinType(): KotlinType? {
 }
 
 internal fun KtDeclaration.resolve() = LightClassGenerationSupport.getInstance(project).resolveToDescriptor(this)
-internal fun KtDeclaration.analyze() = LightClassGenerationSupport.getInstance(project).analyze(this)
+internal fun KtElement.analyze() = LightClassGenerationSupport.getInstance(project).analyze(this)
 
 // copy-pasted from kotlinInternalUastUtils.kt and post-processed
 internal fun KotlinType.asPsiType(
@@ -233,7 +234,7 @@ fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
 private fun KtUltraLightClass.lightMethod(
     descriptor: FunctionDescriptor
 ): LightMethodBuilder {
-    val name = descriptor.name.asString()
+    val name = typeMapper(support).mapFunctionName(descriptor, OwnerKind.IMPLEMENTATION)
 
     val accessFlags: Int by lazyPub {
         val asmFlags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, support.deprecationResolver)

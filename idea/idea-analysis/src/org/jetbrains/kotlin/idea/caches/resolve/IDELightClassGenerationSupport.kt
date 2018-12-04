@@ -122,8 +122,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
 
         if (declaration is KtClassOrObject) {
-            declaration.superTypeListEntries.find { it is KtDelegatedSuperTypeEntry }?.let { return it }
-
             declaration.primaryConstructor?.let { findTooComplexDeclaration(it) }?.let { return it }
 
             for (d in declaration.declarations) {
