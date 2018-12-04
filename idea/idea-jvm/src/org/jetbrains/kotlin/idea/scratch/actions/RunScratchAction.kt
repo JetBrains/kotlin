@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.idea.scratch.actions
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.DumbService
+import com.intellij.task.ProjectTaskManager
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
@@ -97,8 +97,8 @@ class RunScratchAction : ScratchAction(
         }
 
         if (isMakeBeforeRun) {
-            CompilerManager.getInstance(project).make(module) { aborted, errors, _, _ ->
-                if (aborted || errors > 0) {
+            ProjectTaskManager.getInstance(project).build(arrayOf(module)) { result ->
+                if (result.isAborted || result.errors > 0) {
                     handler.error(scratchFile, "There were compilation errors in module ${module.name}")
                 }
 
