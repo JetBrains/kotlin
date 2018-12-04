@@ -7,6 +7,8 @@ import groovy.json.JsonOutput
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
+import java.nio.file.Paths
+
 buildscript {
     repositories {
         maven {
@@ -108,8 +110,21 @@ def update_external_tests() {
     // Copy only used tests into the test directory.
     delete(externalTestsDir)
     externalTestsDir.mkdirs()
+
+    def files = configurations.update_tests.asFileTree
+    if (project.hasProperty("kotlinProjectPath")) {
+        def f = Paths.get(project.property("kotlinProjectPath").toString(), "dist", "kotlin-test-data.zip").toFile()
+        if (f.exists()) {
+            println("""
+                |Using $f as a source of codegen/box* and stdlib tests
+                |Update test data zip with :kotlin:zipTestData task
+            """.stripMargin())
+            files = project.files(f)
+        }
+    }
+
     copy {
-        configurations.update_tests.asFileTree.each {
+        files.each {
             from(zipTree(it))
             into(externalTestsDir)
             include 'compiler/codegen/box/**'
@@ -121,7 +136,7 @@ def update_external_tests() {
     delete(externalStdlibTestsDir)
     externalStdlibTestsDir.mkdirs()
     copy {
-        configurations.update_tests.asFileTree.each {
+        files.each {
             from(zipTree(it))
             into(externalStdlibTestsDir)
             include 'stdlib/common/**'
