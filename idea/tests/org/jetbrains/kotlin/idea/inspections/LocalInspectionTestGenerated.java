@@ -5953,6 +5953,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/invalidSubtraction.kt");
         }
 
+        @TestMetadata("list.kt")
+        public void testList() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/list.kt");
+        }
+
         @TestMetadata("multipleOperators.kt")
         public void testMultipleOperators() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/multipleOperators.kt");
@@ -5961,6 +5966,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("multipleOperatorsRightSideRepeat.kt")
         public void testMultipleOperatorsRightSideRepeat() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/multipleOperatorsRightSideRepeat.kt");
+        }
+
+        @TestMetadata("mutableList.kt")
+        public void testMutableList() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/mutableList.kt");
         }
 
         @TestMetadata("nonCommutativeRepeat.kt")

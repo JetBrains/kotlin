@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -49,8 +50,7 @@ class SuspiciousCollectionReassignmentInspection : AbstractKotlinInspection() {
             val context = binaryExpression.analyze()
             val leftType = left.getType(context) ?: return
             val leftDefaultType = leftType.constructor.declarationDescriptor?.defaultType ?: return
-            val builtIns = binaryExpression.builtIns
-            if (leftDefaultType !in listOf(builtIns.list.defaultType, builtIns.set.defaultType, builtIns.map.defaultType)) return
+            if (!leftType.isReadOnlyCollectionOrMap(binaryExpression.builtIns)) return
             if (context.diagnostics.forElement(binaryExpression).any { it.severity == Severity.ERROR }) return
 
             val fixes = mutableListOf<LocalQuickFix>()
@@ -219,3 +219,8 @@ class SuspiciousCollectionReassignmentInspection : AbstractKotlinInspection() {
 }
 
 private fun KotlinType.classDescriptor() = constructor.declarationDescriptor as? ClassDescriptor
+
+internal fun KotlinType.isReadOnlyCollectionOrMap(builtIns: KotlinBuiltIns): Boolean {
+    val leftDefaultType = constructor.declarationDescriptor?.defaultType ?: return false
+    return leftDefaultType in listOf(builtIns.list.defaultType, builtIns.set.defaultType, builtIns.map.defaultType)
+}
