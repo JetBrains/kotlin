@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
+import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.concurrent.ConcurrentMap
 
 class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
@@ -102,6 +103,22 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                         return Pair(entry, descriptor)
                     }
                 }
+
+                if (owner is KtPropertyAccessor) {
+                    // We might have from the beginning just resolve the descriptor of the accessor
+                    // But we trying to avoid analysis in case property doesn't have any relevant annotations at all
+                    // (in case of `findAnnotation` returns null)
+                    if (findAnnotation(owner.property, fqName) == null) return null
+
+                    val accessorDescriptor = owner.resolveToDescriptorIfAny() ?: return null
+
+                    // Just reuse the logic of use-site targeted annotation from the compiler
+                    val annotationDescriptor = accessorDescriptor.annotations.findAnnotation(fqName) ?: return null
+                    val entry = annotationDescriptor.source.getPsi() as? KtAnnotationEntry ?: return null
+
+                    return entry to annotationDescriptor
+                }
+
                 return null
             }
 
