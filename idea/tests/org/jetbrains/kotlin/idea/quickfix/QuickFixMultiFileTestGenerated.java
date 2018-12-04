@@ -4022,6 +4022,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/replaceWithFilter"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
             }
         }
+
+        @TestMetadata("idea/testData/quickfix/suspiciousCollectionReassignment/replaceWithOrdinaryAssignment")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReplaceWithOrdinaryAssignment extends AbstractQuickFixMultiFileTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInReplaceWithOrdinaryAssignment() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/replaceWithOrdinaryAssignment"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/toString")
