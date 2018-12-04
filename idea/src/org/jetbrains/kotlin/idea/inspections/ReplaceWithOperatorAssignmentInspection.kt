@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -24,10 +25,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspection<KtBinaryExpression>(
@@ -56,6 +59,16 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
 
     override fun fixText(element: KtBinaryExpression) =
         "Replace with '${(element.right as? KtBinaryExpression)?.operationReference?.operationSignTokenType?.value}='"
+
+    override fun inspectionHighlightType(element: KtBinaryExpression): ProblemHighlightType {
+        val left = element.left as? KtNameReferenceExpression
+        if (left != null) {
+            val context = left.analyze(BodyResolveMode.PARTIAL)
+            val leftType = left.getType(context)
+            if (leftType?.isReadOnlyCollectionOrMap(element.builtIns) == true) return ProblemHighlightType.INFORMATION
+        }
+        return ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+    }
 
     private fun checkExpressionRepeat(
         variableExpression: KtNameReferenceExpression,
