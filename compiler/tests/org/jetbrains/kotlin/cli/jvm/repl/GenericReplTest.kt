@@ -47,34 +47,11 @@ class GenericReplTest : KtUsefulTestCase() {
             val res1 = repl.replCompiler.check(state, ReplCodeLine(0, 0, "val x ="))
             TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCheckResult.Incomplete)
 
-            val codeLine0 = ReplCodeLine(0, 0, "val l1 = listOf(1 + 2)\nl1.first()")
-            val res2 = repl.replCompiler.compile(state, codeLine0)
-            val res2c = res2 as? ReplCompileResult.CompiledClasses
-            TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
+            assertEvalResult(repl, state, "val l1 = listOf(1 + 2)\nl1.first()", 3)
 
-            val res21 = repl.compiledEvaluator.eval(state, res2c!!)
-            val res21e = res21 as? ReplEvalResult.ValueResult
-            TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
-            TestCase.assertEquals(3, res21e!!.value)
+            assertEvalUnit(repl, state, "val x = 5")
 
-            val codeLine1 = ReplCodeLine(1, 0, "val x = 5")
-            val res3 = repl.replCompiler.compile(state, codeLine1)
-            val res3c = res3 as? ReplCompileResult.CompiledClasses
-            TestCase.assertNotNull("Unexpected compile result: $res3", res3c)
-
-            val res31 = repl.compiledEvaluator.eval(state, res3c!!)
-            val res31e = res31 as? ReplEvalResult.UnitResult
-            TestCase.assertNotNull("Unexpected eval result: $res31", res31e)
-
-            val codeLine2 = ReplCodeLine(2, 0, "x + 2")
-            val res4 = repl.replCompiler.compile(state, codeLine2)
-            val res4c = res4 as? ReplCompileResult.CompiledClasses
-            TestCase.assertNotNull("Unexpected compile result: $res4", res4c)
-
-            val res41 = repl.compiledEvaluator.eval(state, res4c!!)
-            val res41e = res41 as? ReplEvalResult.ValueResult
-            TestCase.assertNotNull("Unexpected eval result: $res41", res41e)
-            TestCase.assertEquals(7, res41e!!.value)
+            assertEvalResult(repl, state, "x + 2", 7)
         }
     }
 
@@ -106,25 +83,9 @@ class GenericReplTest : KtUsefulTestCase() {
         TestRepl().use { repl ->
             val state = repl.createState()
 
-            val codeLine1 = repl.nextCodeLine("package mypackage\n\nval x = 1\nx+2")
-            val res1 = repl.replCompiler.compile(state, codeLine1)
-            val res1c = res1 as? ReplCompileResult.CompiledClasses
-            TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
+            assertEvalResult(repl, state, "package mypackage\n\nval x = 1\nx+2", 3)
 
-            val res11 = repl.compiledEvaluator.eval(state, res1c!!)
-            val res11e = res11 as? ReplEvalResult.ValueResult
-            TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
-            TestCase.assertEquals(3, res11e!!.value)
-
-            val codeLine2 = repl.nextCodeLine("x+4")
-            val res2 = repl.replCompiler.compile(state, codeLine2)
-            val res2c = res2 as? ReplCompileResult.CompiledClasses
-            TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
-
-            val res21 = repl.compiledEvaluator.eval(state, res2c!!)
-            val res21e = res21 as? ReplEvalResult.ValueResult
-            TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
-            TestCase.assertEquals(5, res21e!!.value)
+            assertEvalResult(repl, state, "x+4", 5)
         }
     }
 
@@ -169,6 +130,38 @@ class GenericReplTest : KtUsefulTestCase() {
                 repl.compileAndEval(state, ReplCodeLine(i, 0, "fun <T> Test<T>.map(f: (T) -> Double): List<Double> = listOf(f(this.x))"))
             }
         }
+    }
+
+    fun testReplResultField() {
+        TestRepl().use { repl ->
+            val state = repl.createState()
+
+            assertEvalResult(repl, state, "5 * 4", 20)
+            assertEvalResult(repl, state, "res0 + 3", 23)
+        }
+    }
+
+    private fun assertEvalUnit(repl: TestRepl, state: IReplStageState<*>, line: String) {
+        val codeLine = repl.nextCodeLine(line)
+        val compileResult = repl.replCompiler.compile(state, codeLine)
+        val compiledClasses = compileResult as? ReplCompileResult.CompiledClasses
+        TestCase.assertNotNull("Unexpected compile result: $compileResult", compiledClasses)
+
+        val evalResult = repl.compiledEvaluator.eval(state, compiledClasses!!)
+        val unitResult = evalResult as? ReplEvalResult.UnitResult
+        TestCase.assertNotNull("Unexpected eval result: $evalResult", unitResult)
+    }
+
+    private fun<R> assertEvalResult(repl: TestRepl, state: IReplStageState<*>, line: String, expectedResult: R) {
+        val codeLine = repl.nextCodeLine(line)
+        val compileResult = repl.replCompiler.compile(state, codeLine)
+        val compiledClasses = compileResult as? ReplCompileResult.CompiledClasses
+        TestCase.assertNotNull("Unexpected compile result: $compileResult", compiledClasses)
+
+        val evalResult = repl.compiledEvaluator.eval(state, compiledClasses!!)
+        val valueResult = evalResult as? ReplEvalResult.ValueResult
+        TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
+        TestCase.assertEquals(expectedResult, valueResult!!.value)
     }
 }
 
