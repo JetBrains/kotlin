@@ -31,6 +31,13 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    fun testDirWithSpaces() {
+        classLoaderTest("test dir", impls<Intf>(NestedComponent::class), clazz<NestedComponent>()) { classLoader ->
+            val impls = ServiceLoaderLite.loadImplementations<Intf>(classLoader)
+            assertTrue(impls.single() is NestedComponent)
+        }
+    }
+
     fun testNestedComponent() {
         classLoaderTest("test", impls<Intf>(NestedComponent::class), clazz<NestedComponent>()) { classLoader ->
             val impls = ServiceLoaderLite.loadImplementations<Intf>(classLoader)
