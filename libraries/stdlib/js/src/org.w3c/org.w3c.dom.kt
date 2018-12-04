@@ -805,6 +805,9 @@ public external abstract class MediaError {
     }
 }
 
+/**
+ * Exposes the JavaScript [AudioTrackList](https://developer.mozilla.org/en/docs/Web/API/AudioTrackList) to Kotlin
+ */
 public external abstract class AudioTrackList : EventTarget {
     open val length: Int
     open var onchange: ((Event) -> dynamic)?
@@ -814,6 +817,9 @@ public external abstract class AudioTrackList : EventTarget {
 }
 @kotlin.internal.InlineOnly inline operator fun AudioTrackList.get(index: Int): AudioTrack? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [AudioTrack](https://developer.mozilla.org/en/docs/Web/API/AudioTrack) to Kotlin
+ */
 public external abstract class AudioTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
     open val id: String
     open val kind: String
@@ -822,6 +828,9 @@ public external abstract class AudioTrack : UnionAudioTrackOrTextTrackOrVideoTra
     open var enabled: Boolean
 }
 
+/**
+ * Exposes the JavaScript [VideoTrackList](https://developer.mozilla.org/en/docs/Web/API/VideoTrackList) to Kotlin
+ */
 public external abstract class VideoTrackList : EventTarget {
     open val length: Int
     open val selectedIndex: Int
@@ -832,6 +841,9 @@ public external abstract class VideoTrackList : EventTarget {
 }
 @kotlin.internal.InlineOnly inline operator fun VideoTrackList.get(index: Int): VideoTrack? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [VideoTrack](https://developer.mozilla.org/en/docs/Web/API/VideoTrack) to Kotlin
+ */
 public external abstract class VideoTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
     open val id: String
     open val kind: String
@@ -872,6 +884,9 @@ public external abstract class TextTrackCueList {
 }
 @kotlin.internal.InlineOnly inline operator fun TextTrackCueList.get(index: Int): TextTrackCue? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [TextTrackCue](https://developer.mozilla.org/en/docs/Web/API/TextTrackCue) to Kotlin
+ */
 public external abstract class TextTrackCue : EventTarget {
     open val track: TextTrack?
     open var id: String
@@ -891,6 +906,9 @@ public external abstract class TimeRanges {
     fun end(index: Int): Double
 }
 
+/**
+ * Exposes the JavaScript [TrackEvent](https://developer.mozilla.org/en/docs/Web/API/TrackEvent) to Kotlin
+ */
 public external open class TrackEvent(type: String, eventInitDict: TrackEventInit = definedExternally) : Event {
     open val track: UnionAudioTrackOrTextTrackOrVideoTrack?
 }
@@ -2398,7 +2416,9 @@ public inline fun MessageEventInit(data: Any? = null, origin: String? = "", last
     o["origin"] = origin
     o["lastEventId"] = lastEventId
     o["source"] = source
-    o["ports"] = ports
+    if (ports != null) {
+        o["ports"] = ports
+    }
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
@@ -2726,6 +2746,9 @@ public external abstract class HTMLAppletElement : HTMLElement {
     open var width: String
 }
 
+/**
+ * Exposes the JavaScript [HTMLMarqueeElement](https://developer.mozilla.org/en/docs/Web/API/HTMLMarqueeElement) to Kotlin
+ */
 public external abstract class HTMLMarqueeElement : HTMLElement {
     open var behavior: String
     open var bgColor: String
@@ -2947,6 +2970,9 @@ public external open class MutationObserver(callback: (Array<MutationRecord>, Mu
     fun takeRecords(): Array<MutationRecord>
 }
 
+/**
+ * Exposes the JavaScript [MutationObserverInit](https://developer.mozilla.org/en/docs/Web/API/MutationObserverInit) to Kotlin
+ */
 public external interface MutationObserverInit {
     var childList: Boolean? /* = false */
         get() = definedExternally
@@ -2981,7 +3007,9 @@ public inline fun MutationObserverInit(childList: Boolean? = false, attributes: 
     o["subtree"] = subtree
     o["attributeOldValue"] = attributeOldValue
     o["characterDataOldValue"] = characterDataOldValue
-    o["attributeFilter"] = attributeFilter
+    if (attributeFilter != null) {
+        o["attributeFilter"] = attributeFilter
+    }
 
     return o
 }
@@ -3459,6 +3487,9 @@ public external open class DOMPoint : DOMPointReadOnly {
     override var w: Double
 }
 
+/**
+ * Exposes the JavaScript [DOMPointInit](https://developer.mozilla.org/en/docs/Web/API/DOMPointInit) to Kotlin
+ */
 public external interface DOMPointInit {
     var x: Double? /* = 0.0 */
         get() = definedExternally
@@ -3662,6 +3693,9 @@ public inline fun ScrollOptions(behavior: ScrollBehavior? = ScrollBehavior.AUTO)
     return o
 }
 
+/**
+ * Exposes the JavaScript [ScrollToOptions](https://developer.mozilla.org/en/docs/Web/API/ScrollToOptions) to Kotlin
+ */
 public external interface ScrollToOptions : ScrollOptions {
     var left: Double?
         get() = definedExternally

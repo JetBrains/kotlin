@@ -304,7 +304,21 @@ fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperT
 
     for (field in fields) {
         indent(level = 1)
-        appendln("o[\"${field.name}\"] = ${field.name.replaceKeywords()}")
+
+        val escapedFieldName = field.name.replaceKeywords()
+        val nullGuardedAssignment = field.type is ArrayType
+
+        if (nullGuardedAssignment) {
+            appendln("if ($escapedFieldName != null) {")
+            indent(level = 2)
+        }
+
+        appendln("o[\"${field.name}\"] = $escapedFieldName")
+
+        if (nullGuardedAssignment) {
+            indent(level = 1)
+            appendln("}")
+        }
     }
 
     appendln()
