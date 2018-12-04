@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -46,7 +47,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
     override val BackendContext.localSymbolTable: SymbolTable
         get() = _table
 
-    private val serializableIrClass = compilerContext.externalSymbols.referenceClass(serializableDescriptor)
+    private val serializableIrClass = compilerContext.externalSymbols.referenceClass(serializableDescriptor).owner
 
     override fun generateSerialDesc() {
         val desc: PropertyDescriptor = generatedSerialDescPropertyDescriptor ?: return
@@ -97,9 +98,21 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                     for (classProp in orderedProperties) {
                         if (classProp.transient) continue
                         +addFieldCall(classProp.name)
-                        // serialDesc.pushAnnotation(...) todo
+                        // add property annotations
+                        copySerialInfoAnnotationsToDescriptor(
+                            classProp.irField.correspondingProperty?.annotations.orEmpty(),
+                            irGet(localDesc),
+                            serialDescImplClass.referenceMethod(CallingConventions.addAnnotation)
+                        )
                     }
+                    // add class annotations
+                    copySerialInfoAnnotationsToDescriptor(
+                        serializableIrClass.annotations,
+                        irGet(localDesc),
+                        serialDescImplClass.referenceMethod(CallingConventions.addClassAnnotation)
+                    )
 
+                    // save local descriptor to field
                     +irSetField(
                         generateReceiverExpressionForFieldAccess(
                             thisAsReceiverParameter.symbol,
@@ -111,6 +124,17 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                 }
                 (ctor.body as? IrBlockBody)?.statements?.addAll(initIrBody.body.statements)
             }
+        }
+    }
+
+    private fun IrBlockBodyBuilder.copySerialInfoAnnotationsToDescriptor(
+        annotations: List<IrCall>,
+        receiver: IrExpression,
+        method: IrFunctionSymbol
+    ) {
+        annotations.forEach { annotationCall ->
+            if ((annotationCall.descriptor as? ClassConstructorDescriptor)?.constructedClass?.isSerialInfoAnnotation == true)
+                +irInvoke(receiver, method, annotationCall)
         }
     }
 
@@ -159,7 +183,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
     override fun generateSave(function: FunctionDescriptor) = irClass.contributeFunction(function) { saveFunc ->
 
         val fieldInitializer: (SerializableProperty) -> IrExpression? =
-            buildInitializersRemapping(serializableIrClass.owner).run { { invoke(it.irField) } }
+            buildInitializersRemapping(serializableIrClass).run { { invoke(it.irField) } }
 
         fun irThis(): IrExpression =
             IrGetValueImpl(startOffset, endOffset, saveFunc.dispatchReceiverParameter!!.symbol)
@@ -374,7 +398,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         var args: List<IrExpression> = localProps.map { it.get() }
         val ctor: IrConstructorSymbol = if (serializableDescriptor.isInternalSerializable) {
             val ctorDesc = serializableIrClass
-                .owner.constructors.single { it.origin == SERIALIZABLE_PLUGIN_ORIGIN }
+                .constructors.single { it.origin == SERIALIZABLE_PLUGIN_ORIGIN }
             args = listOf(irGet(bitMasks[0])) + args + irNull()
             ctorDesc.symbol
         } else {
