@@ -2239,6 +2239,114 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/coroutines/redundantRunCatching/simple.kt");
             }
         }
+
+        @TestMetadata("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SuspendFunctionOnCoroutineScope extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSuspendFunctionOnCoroutineScope() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("anonymous.kt")
+            public void testAnonymous() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/anonymous.kt");
+            }
+
+            @TestMetadata("body.kt")
+            public void testBody() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/body.kt");
+            }
+
+            @TestMetadata("call.kt")
+            public void testCall() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/call.kt");
+            }
+
+            @TestMetadata("context.kt")
+            public void testContext() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/context.kt");
+            }
+
+            @TestMetadata("contextWithLabeledThis.kt")
+            public void testContextWithLabeledThis() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/contextWithLabeledThis.kt");
+            }
+
+            @TestMetadata("contextWithThis.kt")
+            public void testContextWithThis() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/contextWithThis.kt");
+            }
+
+            @TestMetadata("convertReceiver.kt")
+            public void testConvertReceiver() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/convertReceiver.kt");
+            }
+
+            @TestMetadata("declaration.kt")
+            public void testDeclaration() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/declaration.kt");
+            }
+
+            @TestMetadata("inner.kt")
+            public void testInner() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/inner.kt");
+            }
+
+            @TestMetadata("lots.kt")
+            public void testLots() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/lots.kt");
+            }
+
+            @TestMetadata("member.kt")
+            public void testMember() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/member.kt");
+            }
+
+            @TestMetadata("object.kt")
+            public void testObject() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/object.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/simple.kt");
+            }
+
+            @TestMetadata("this.kt")
+            public void testThis() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/this.kt");
+            }
+
+            @TestMetadata("thisInMember.kt")
+            public void testThisInMember() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/thisInMember.kt");
+            }
+
+            @TestMetadata("thisLabeled.kt")
+            public void testThisLabeled() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/thisLabeled.kt");
+            }
+
+            @TestMetadata("thisWrongLabeled.kt")
+            public void testThisWrongLabeled() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/thisWrongLabeled.kt");
+            }
+
+            @TestMetadata("useSite.kt")
+            public void testUseSite() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/useSite.kt");
+            }
+
+            @TestMetadata("withVariable.kt")
+            public void testWithVariable() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope/withVariable.kt");
+            }
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/delegationToVarProperty")
