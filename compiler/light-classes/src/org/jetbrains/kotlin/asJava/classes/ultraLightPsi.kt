@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
@@ -293,6 +296,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }
 
         addMethodsFromDataClass(result)
+        addDelegatesToInterfaceMethods(result)
 
         result
     }
@@ -330,6 +334,28 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 addFunction(function)
             }
         }.generate()
+    }
+
+    private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>) {
+        classOrObject.superTypeListEntries.filterIsInstance<KtDelegatedSuperTypeEntry>().forEach {
+            addDelegatesToInterfaceMethods(it, result)
+        }
+    }
+
+    private fun addDelegatesToInterfaceMethods(superTypeEntry: KtDelegatedSuperTypeEntry, result: MutableList<KtLightMethod>) {
+        val classDescriptor = classOrObject.resolve() as? ClassDescriptor ?: return
+        val typeReference = superTypeEntry.typeReference ?: return
+        val bindingContext = typeReference.analyze()
+
+        val superClassDescriptor = CodegenUtil.getSuperClassBySuperTypeListEntry(superTypeEntry, bindingContext) ?: return
+        val delegationType = superTypeEntry.delegateExpression.kotlinType(bindingContext) ?: return
+
+        for (delegate in DelegationResolver.getDelegates(classDescriptor, superClassDescriptor, delegationType).keys) {
+            when (delegate) {
+                is PropertyDescriptor -> delegate.accessors.mapTo(result, this::createGeneratedMethodFromDescriptor)
+                is FunctionDescriptor -> result.add(createGeneratedMethodFromDescriptor(delegate))
+            }
+        }
     }
 
     private fun createConstructors(): List<KtLightMethod> {
