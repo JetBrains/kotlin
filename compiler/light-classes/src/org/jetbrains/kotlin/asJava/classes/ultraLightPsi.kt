@@ -377,6 +377,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private fun shouldGenerateNoArgOverload(primary: KtPrimaryConstructor): Boolean {
         return !primary.hasModifier(PRIVATE_KEYWORD) &&
                 !classOrObject.hasModifier(INNER_KEYWORD) && !isEnum &&
+                !classOrObject.hasModifier(SEALED_KEYWORD) &&
                 primary.valueParameters.isNotEmpty() &&
                 primary.valueParameters.all { it.defaultValue != null } &&
                 classOrObject.allConstructors.none { it.valueParameters.isEmpty() }
