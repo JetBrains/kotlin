@@ -360,3 +360,5 @@ fun Scope.createTemporaryVariableWithWrappedDescriptor(
         irExpression, nameHint, isMutable, origin, descriptor
     ).apply { descriptor.bind(this) }
 }
+
+val IrFunction.isOverridable: Boolean get() = this is IrSimpleFunction && this.isOverridable
