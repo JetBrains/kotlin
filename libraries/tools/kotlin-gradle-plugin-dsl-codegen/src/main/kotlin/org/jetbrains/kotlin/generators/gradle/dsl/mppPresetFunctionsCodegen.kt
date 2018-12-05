@@ -19,7 +19,7 @@ private val parentInterface = KotlinTargetsContainerWithPresets::class
 private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
 
 private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
-    // Generate KotlinMutliplatformExtension subclass with member functions for the presets:
+    // Generate KotlinMultiplatformExtension subclass with member functions for the presets:
     val functions = allPresetEntries.map {
         generatePresetFunctions(it, presetsProperty, "configureOrCreate")
     }
@@ -78,9 +78,4 @@ private fun generatePresetFunctions(
     fun $presetName(name: String, configure: Closure<*>) = $presetName(name) { ConfigureUtil.configure(configure, this) }
     fun $presetName(configure: Closure<*>) = $presetName { ConfigureUtil.configure(configure, this) }
 """.trimIndent()
-}
-
-private fun String.indented(nSpaces: Int = 4): String {
-    val spaces = String(CharArray(nSpaces) { ' ' })
-    return lines().joinToString("\n") { "$spaces$it"  }
 }

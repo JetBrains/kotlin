@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMainCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -81,20 +78,26 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
 }
 
 // endregion
-
-open class KotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOptions> {
+abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOptions> {
 
     init {
         sourceCompatibility = "1.6"
         targetCompatibility = "1.6"
     }
 
-    @Internal
-    lateinit var compilation: KotlinNativeCompilation
+    abstract val compilation: KotlinNativeCompilation
 
     // region inputs/outputs
-    @Input
-    lateinit var outputKind: CompilerOutputKind
+    @get:Input
+    abstract val outputKind: CompilerOutputKind
+
+    @get:Input
+    abstract val optimized: Boolean
+
+    @get:Input
+    abstract val debuggable: Boolean
+
+    abstract val baseName: String
 
     // Inputs and outputs
     @InputFiles
@@ -116,23 +119,13 @@ open class KotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOp
         throw UnsupportedOperationException("Setting classpath directly is unsupported.")
     }
 
-    @Input
-    var optimized = false
-    @Input
-    var debuggable = true
-
     val processTests
         @Input get() = compilation.isTestCompilation
 
     val target: String
         @Input get() = compilation.target.konanTarget.name
 
-    val entryPoint: String?
-        @Optional @Input get() = compilation.entryPoint
-
-    val linkerOpts: List<String>
-        @Input get() = compilation.linkerOpts
-
+    // TODO: rework.
     val additionalCompilerOptions: Collection<String>
         @Input get() = compilation.extraOpts
 
@@ -163,13 +156,14 @@ open class KotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOp
             set(value) { languageSettings!!.apiVersion = value }
 
         override var languageVersion: String?
-            get() = this@KotlinNativeCompile.languageVersion
+            get() = this@AbstractKotlinNativeCompile.languageVersion
             set(value) { languageSettings!!.languageVersion = value }
 
         override var allWarningsAsErrors: Boolean = false
         override var suppressWarnings: Boolean = false
         override var verbose: Boolean = false
 
+        // TODO: deprecate extraOptions because now we have a uniform way to access these parameters.
         // Delegate for compilations's extra options.
         override var freeCompilerArgs: List<String>
             get() = compilation.extraOpts
@@ -202,7 +196,6 @@ open class KotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOp
 
         val prefix = outputKind.prefix(konanTarget)
         val suffix = outputKind.suffix(konanTarget)
-        val baseName = if (compilation.isMainCompilation) project.name else compilation.name
         var filename = "$prefix$baseName$suffix"
         if (outputKind in listOf(FRAMEWORK, STATIC, DYNAMIC) || outputKind == PROGRAM && konanTarget == KonanTarget.WASM32) {
             filename = filename.replace('-', '_')
@@ -228,7 +221,7 @@ open class KotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOp
     val defaultSerializedCompilerArguments: List<String>
         @Internal get() = buildCommonArgs(true)
 
-    private fun buildCommonArgs(defaultsOnly: Boolean = false) = mutableListOf<String>().apply {
+    private fun buildCommonArgs(defaultsOnly: Boolean = false): List<String> = mutableListOf<String>().apply {
 
         add("-Xmulti-platform")
 
@@ -264,7 +257,7 @@ open class KotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOp
         }
     }
 
-    private fun buildArgs(defaultsOnly: Boolean = false) = mutableListOf<String>().apply {
+    protected open fun buildArgs(defaultsOnly: Boolean = false): List<String> = mutableListOf<String>().apply {
         addKey("-opt", optimized)
         addKey("-g", debuggable)
         addKey("-ea", debuggable)
@@ -272,7 +265,6 @@ open class KotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOp
 
         addArg("-target", target)
         addArg("-p", outputKind.name.toLowerCase())
-        addArgIfNotNull("-entry", entryPoint)
 
         if (!defaultsOnly) {
             addArg("-o", outputFile.get().absolutePath)
@@ -291,8 +283,6 @@ open class KotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOp
             addArg("-friend-modules", friends.map { it.absolutePath }.joinToString(File.pathSeparator))
         }
 
-        addListArg("-linker-options", linkerOpts)
-
         addAll(buildCommonArgs(defaultsOnly))
 
         // Sources.
@@ -307,6 +297,73 @@ open class KotlinNativeCompile : AbstractCompile(), KotlinCompile<KotlinCommonOp
         val output = outputFile.get()
         output.parentFile.mkdirs()
         KonanCompilerRunner(project).run(buildArgs())
+    }
+}
+
+/**
+ * A task producing a klibrary from a compilation.
+ */
+open class KotlinNativeCompile : AbstractKotlinNativeCompile() {
+    @Internal
+    override lateinit var compilation: KotlinNativeCompilation
+
+    @get:Input
+    override val outputKind = LIBRARY
+
+    @get:Input
+    override val optimized = false
+
+    @get:Input
+    override val debuggable = true
+
+    @get:Internal
+    override val baseName: String
+        get() = if (compilation.isMainCompilation) project.name else compilation.name
+}
+
+/**
+ * A task producing a final binary from a compilation.
+ */
+open class KotlinNativeLink : AbstractKotlinNativeCompile() {
+    @Internal
+    lateinit var binary: NativeBinary
+
+    @get:Internal
+    override val compilation: KotlinNativeCompilation
+        get() = binary.compilation
+
+    @get:Input
+    override val outputKind: CompilerOutputKind
+        get() = binary.outputKind.compilerOutputKind
+
+    @get:Input
+    override val optimized: Boolean
+        get() = binary.optimized
+
+    @get:Input
+    override val debuggable: Boolean
+        get() = binary.debuggable
+
+    @get:Internal
+    override val baseName: String
+        get() = binary.baseName
+
+    @get:Optional
+    @get:Input
+    val entryPoint: String?
+        get() = (binary as? Executable)?.entryPoint
+
+    @get:Input
+    val linkerOpts: List<String>
+        get() = binary.linkerOpts
+
+    override fun buildArgs(defaultsOnly: Boolean): List<String> {
+        val superArgs = super.buildArgs(defaultsOnly)
+        return mutableListOf<String>().apply {
+            addAll(superArgs)
+            addArgIfNotNull("-entry", entryPoint)
+            addListArg("-linker-options", linkerOpts)
+        }
     }
 }
 

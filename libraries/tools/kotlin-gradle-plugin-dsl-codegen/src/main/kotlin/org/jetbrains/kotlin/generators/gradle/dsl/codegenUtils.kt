@@ -32,3 +32,9 @@ internal fun TypeName.renderErased(): String =
 internal fun TypeName.collectFqNames(): Set<String> =
     setOf(fqName) + typeArguments.flatMap { it.collectFqNames() }.toSet()
 
+internal fun String.indented(nSpaces: Int = 4): String {
+    val spaces = String(CharArray(nSpaces) { ' ' })
+    return lines().joinToString("\n") {
+        if (it.isNotBlank()) "$spaces$it" else it
+    }
+}
