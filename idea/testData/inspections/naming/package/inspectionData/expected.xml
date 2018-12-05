@@ -1,0 +1,7 @@
+<problems>
+    <problem>
+        <file>hasUpperCase.kt</file>
+        <line>1</line>
+        <description>Package name &lt;code&gt;one.two.Three&lt;/code&gt; doesn't match regex '[a-z][A-Za-z\d]*_?(\.[a-z][A-Za-z\d]*_?)*' #loc</description>
+    </problem>
+</problems>

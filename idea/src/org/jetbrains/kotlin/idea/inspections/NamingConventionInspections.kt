@@ -16,6 +16,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.ui.EditorTextField
 import com.siyeh.ig.psiutils.TestUtils
+import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpFileType
 import org.jetbrains.kotlin.idea.quickfix.RenameIdentifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -56,9 +57,13 @@ private val NO_BAD_CHARACTERS_OR_UNDERSCORE = NamingRule("may contain only lette
     it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' && c != '_' }
 }
 
+private val ONLY_LOWER_DIGITS_OR_UNDERSCORE = NamingRule("may contain only lowercase letters, digits or underscores") {
+    it.any { c -> c !in 'a'..'z' && c !in '0'..'9' && c != '_' }
+}
+
 abstract class NamingConventionInspection(
     private val entityName: String,
-    private val defaultNamePattern: String,
+    @Language("RegExp") private val defaultNamePattern: String,
     private vararg val rules: NamingRule
 ) : AbstractKotlinInspection() {
     protected var nameRegex: Regex? = defaultNamePattern.toRegex()
@@ -228,7 +233,7 @@ class LocalVariableNameInspection :
     )
 
 class PackageNameInspection :
-    NamingConventionInspection("Package", "[a-z][A-Za-z\\d]*(\\.[a-z][A-Za-z\\d]*)*", NO_UNDERSCORES) {
+    NamingConventionInspection("Package", "[a-z_][a-z\\d_]*(\\.[a-z_][a-z\\d_]*)*", ONLY_LOWER_DIGITS_OR_UNDERSCORE) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return packageDirectiveVisitor { directive ->
             val qualifiedName = directive.qualifiedName
