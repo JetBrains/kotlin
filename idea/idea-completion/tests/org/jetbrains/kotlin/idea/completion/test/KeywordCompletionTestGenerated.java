@@ -519,6 +519,16 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         runTest("idea/idea-completion/testData/keywords/TopScope.kt");
     }
 
+    @TestMetadata("topScope2.kt")
+    public void testTopScope2() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/topScope2.kt");
+    }
+
+    @TestMetadata("TopScope3-.kt")
+    public void testTopScope3_() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/TopScope3-.kt");
+    }
+
     @TestMetadata("UseSiteTargetForPrimaryConstructorParameter.kt")
     public void testUseSiteTargetForPrimaryConstructorParameter() throws Exception {
         runTest("idea/idea-completion/testData/keywords/UseSiteTargetForPrimaryConstructorParameter.kt");

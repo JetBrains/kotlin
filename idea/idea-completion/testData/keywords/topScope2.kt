@@ -1,18 +1,3 @@
-class A {
-    fun foo() {
-        bar()
-    }
-}
-
-class B {
-    fun bar() {
-        foo()
-    }
-}
-
-class AfterClasses {
-}
-
 <caret>
 
 // EXIST:  abstract
@@ -20,9 +5,11 @@ class AfterClasses {
 // EXIST:  enum class
 // EXIST:  final
 // EXIST:  fun
+// EXIST:  import
 // EXIST:  internal
 // EXIST:  object
 // EXIST:  open
+// EXIST:  package
 // EXIST:  private
 // EXIST:  public
 // EXIST:  interface
