@@ -704,7 +704,9 @@ class NewCodeBuilder {
         }
 
         override fun visitLambdaExpression(lambdaExpression: JKLambdaExpression) {
-            printer.par(CURVED_MULTILINE) {
+            printer.par(CURVED) {
+                if (lambdaExpression.statement.statements.size > 1)
+                    printer.println()
                 lambdaExpression.parameters.firstOrNull()?.accept(this)
                 lambdaExpression.parameters.asSequence().drop(1).forEach { printer.printWithNoIndent(", "); it.accept(this) }
                 if (lambdaExpression.parameters.isNotEmpty()) {
@@ -717,6 +719,8 @@ class NewCodeBuilder {
                 } else {
                     statement.accept(this)
                 }
+                if (lambdaExpression.statement.statements.size > 1)
+                    printer.println()
             }
         }
 
