@@ -16,10 +16,10 @@ internal class KotlinPresetEntry(
 
 internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = setOf(presetType, targetType)
 
-private const val MPP_PACKAGE = "org.jetbrains.kotlin.gradle.plugin.mpp"
+internal const val MPP_PACKAGE = "org.jetbrains.kotlin.gradle.plugin.mpp"
 
-private const val KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTargetPreset"
-private const val KOTLIN_NATIVE_TARGET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTarget"
+internal const val KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTargetPreset"
+internal const val KOTLIN_NATIVE_TARGET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTarget"
 
 private const val KOTLIN_ONLY_TARGET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinOnlyTarget"
 

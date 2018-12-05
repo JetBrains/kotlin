@@ -85,12 +85,9 @@ class KotlinNativeCompilationFactory(
         KotlinNativeCompilation(target, name).apply {
             if (name == KotlinCompilation.TEST_COMPILATION_NAME) {
                 friendCompilationName = KotlinCompilation.MAIN_COMPILATION_NAME
-                outputKinds = mutableListOf(NativeOutputKind.EXECUTABLE)
-                buildTypes = mutableListOf(NativeBuildType.DEBUG)
                 isTestCompilation = true
-            } else {
-                buildTypes = mutableListOf(NativeBuildType.DEBUG, NativeBuildType.RELEASE)
             }
+            buildTypes = mutableListOf(NativeBuildType.DEBUG, NativeBuildType.RELEASE)
         }
 
 }
