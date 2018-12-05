@@ -189,6 +189,18 @@ fun JKJavaPrimitiveType.toLiteralType(): JKLiteralExpression.LiteralType? =
         else -> null
     }
 
+fun JKClassType.toPrimitiveType(): JKJavaPrimitiveType? =
+    when (classReference.fqName) {
+        "java.lang.Character" -> JKJavaPrimitiveTypeImpl.CHAR
+        "java.lang.Boolean" -> JKJavaPrimitiveTypeImpl.BOOLEAN
+        "java.lang.Integer" -> JKJavaPrimitiveTypeImpl.INT
+        "java.lang.Long" -> JKJavaPrimitiveTypeImpl.LONG
+        "java.lang.Float" -> JKJavaPrimitiveTypeImpl.FLOAT
+        "java.lang.Double" -> JKJavaPrimitiveTypeImpl.DOUBLE
+        "java.lang.Byte" -> JKJavaPrimitiveTypeImpl.BYTE
+        else -> null
+    }
+
 fun JKJavaPrimitiveType.isNumberType() =
     this == JKJavaPrimitiveTypeImpl.INT ||
             this == JKJavaPrimitiveTypeImpl.LONG ||

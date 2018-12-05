@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.j2k.tree.impl.*
 
 class PrimitiveTypesInitializersConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaField) return recurse(element)
+        if (element !is JKVariable) return recurse(element)
         val literalInitializer = element.initializer as? JKJavaLiteralExpression ?: return recurse(element)
-        val literalType = literalInitializer.type.toPrimitiveType() ?: return recurse(element)
-        val fieldType = element.type.type as? JKJavaPrimitiveType ?: return recurse(element)
+        val literalType = literalInitializer.type.toPrimitiveType()
+            ?: return recurse(element)
+        val fieldType = element.type.type as? JKJavaPrimitiveType
+            ?: (element.type.type as? JKClassType)?.toPrimitiveType()
+            ?: return recurse(element)
 
         createPrimitiveTypeInitializer(literalInitializer.copyTreeAndDetach(), literalType, fieldType)?.also {
             element.initializer = it
