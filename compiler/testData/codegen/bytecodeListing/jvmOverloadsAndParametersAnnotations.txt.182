@@ -1,0 +1,133 @@
+@kotlin.Metadata
+public final class ASimpleClass {
+    public method <init>(): void
+    public synthetic static @kotlin.jvm.JvmOverloads method showSnackbar$default(p0: ASimpleClass, p1: java.lang.String, p2: int, p3: int, p4: int, p5: java.lang.Object): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, p2: int): void
+    public synthetic static @kotlin.jvm.JvmOverloads method showSnackbarLong$default(p0: ASimpleClass, p1: java.lang.String, p2: int, p3: int, p4: long, p5: java.lang.String, p6: int, p7: java.lang.Object): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long, @org.jetbrains.annotations.NotNull p4: java.lang.String): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @LongRes p2: long): void
+    public synthetic static @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension$default(p0: ASimpleClass, p1: int, p2: int, p3: long, p4: java.lang.String, p5: int, p6: java.lang.Object): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @LongRes p1: long): void
+    public synthetic static @kotlin.jvm.JvmOverloads method showSnackbarNoExtension$default(p0: ASimpleClass, p1: int, p2: int, p3: int, p4: java.lang.Object): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int): void
+    public final @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int, p1: int): void
+}
+
+@kotlin.Metadata
+public final class BSimpleObject {
+    public final static field INSTANCE: BSimpleObject
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbar$default(p0: java.lang.String, p1: int, p2: int, p3: int, p4: java.lang.Object): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, p2: int): void
+    public synthetic static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong$default(p0: java.lang.String, p1: int, p2: int, p3: long, p4: java.lang.String, p5: int, p6: java.lang.Object): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long, @org.jetbrains.annotations.NotNull p4: java.lang.String): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @LongRes p2: long): void
+    public synthetic static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension$default(p0: int, p1: int, p2: long, p3: java.lang.String, p4: int, p5: java.lang.Object): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @LongRes p1: long): void
+    public synthetic static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension$default(p0: int, p1: int, p2: int, p3: java.lang.Object): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int, p1: int): void
+}
+
+@kotlin.Metadata
+public final class CClassWithCompanion$Companion {
+    inner class CClassWithCompanion$Companion
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbar$default(p0: CClassWithCompanion$Companion, p1: java.lang.String, p2: int, p3: int, p4: int, p5: java.lang.Object): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, p2: int): void
+    public synthetic static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong$default(p0: CClassWithCompanion$Companion, p1: java.lang.String, p2: int, p3: int, p4: long, p5: java.lang.String, p6: int, p7: java.lang.Object): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long, @org.jetbrains.annotations.NotNull p4: java.lang.String): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @LongRes p2: long): void
+    public synthetic static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension$default(p0: CClassWithCompanion$Companion, p1: int, p2: int, p3: long, p4: java.lang.String, p5: int, p6: java.lang.Object): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @LongRes p1: long): void
+    public synthetic static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension$default(p0: CClassWithCompanion$Companion, p1: int, p2: int, p3: int, p4: java.lang.Object): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int): void
+    public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int, p1: int): void
+}
+
+@kotlin.Metadata
+public final class CClassWithCompanion {
+    public final static field Companion: CClassWithCompanion$Companion
+    inner class CClassWithCompanion$Companion
+    static method <clinit>(): void
+    public method <init>(): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, p2: int): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long, @org.jetbrains.annotations.NotNull p4: java.lang.String): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @LongRes p2: long): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @LongRes p1: long): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int): void
+    public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int, p1: int): void
+}
+
+@kotlin.Metadata
+public final class DClassConstuctors$InnerClass {
+    synthetic final field this$0: DClassConstuctors
+    inner class DClassConstuctors$InnerClass
+    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic @java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long, @org.jetbrains.annotations.NotNull p4: java.lang.String): void
+    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int): void
+    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long): void
+    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int, @LongRes p2: long): void
+    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int, p2: int): void
+    public synthetic @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, p1: int, p2: int, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, p1: int, p2: int, p3: long, p4: java.lang.String, p5: int, p6: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public final class DClassConstuctors {
+    inner class DClassConstuctors$InnerClass
+    public @kotlin.jvm.JvmOverloads method <init>(@StringRes p0: int): void
+    public @kotlin.jvm.JvmOverloads method <init>(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long): void
+    public @kotlin.jvm.JvmOverloads method <init>(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
+    public @kotlin.jvm.JvmOverloads method <init>(@StringRes p0: int, @LongRes p1: long): void
+    public @kotlin.jvm.JvmOverloads method <init>(@StringRes p0: int, p1: int): void
+    public synthetic @kotlin.jvm.JvmOverloads method <init>(p0: int, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic @kotlin.jvm.JvmOverloads method <init>(p0: int, p1: int, p2: long, p3: java.lang.String, p4: int, p5: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class DefRes
+
+@kotlin.Metadata
+public final class JvmOverloadsAndParametersAnnotationsKt {
+    public synthetic static @kotlin.jvm.JvmOverloads method showSnackbar$default(p0: java.lang.String, p1: int, p2: int, p3: int, p4: java.lang.Object): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, p2: int): void
+    public synthetic static @kotlin.jvm.JvmOverloads method showSnackbarLong$default(p0: java.lang.String, p1: int, p2: int, p3: long, p4: java.lang.String, p5: int, p6: java.lang.Object): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long, @org.jetbrains.annotations.NotNull p4: java.lang.String): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbarLong(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, @LongRes p2: long): void
+    public synthetic static @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension$default(p0: int, p1: int, p2: long, p3: java.lang.String, p4: int, p5: java.lang.Object): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @LongRes p1: long): void
+    public synthetic static @kotlin.jvm.JvmOverloads method showSnackbarNoExtension$default(p0: int, p1: int, p2: int, p3: java.lang.Object): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int): void
+    public final static @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int, p1: int): void
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class LongRes
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class StringRes

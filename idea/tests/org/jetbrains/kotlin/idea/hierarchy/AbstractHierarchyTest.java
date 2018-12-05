@@ -223,7 +223,9 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
     }
 
     @Override
-    protected void doHierarchyTest(Computable<HierarchyTreeStructure> treeStructureComputable, String... fileNames) throws Exception {
+    protected void doHierarchyTest(
+            @NotNull Computable<? extends HierarchyTreeStructure> treeStructureComputable, @NotNull String... fileNames
+    ) throws Exception {
         try {
             super.doHierarchyTest(treeStructureComputable, fileNames);
         }

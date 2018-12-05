@@ -13,7 +13,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="182.4323.46" until-build="182.*"/>
+  <idea-version since-build="183.1" until-build="191.*"/>
 
   <depends>com.intellij.modules.platform</depends>
 
@@ -55,13 +55,6 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <xi:include href="kotlinx-serialization.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-  <project-components>
-    <component>
-      <!-- This is a workaround for IDEA < 183. For details, see IDEA-200525. -->
-      <implementation-class>org.jetbrains.kotlin.idea.caches.ProjectRootModificationTrackerFixer</implementation-class>
-    </component>
-  </project-components>
-
   <extensionPoints>
     <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
 
@@ -74,4 +67,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <extensions defaultExtensionNs="com.intellij.jvm">
     <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.intellij.codeInsight">
+      <nonBlockingContextChecker implementation="org.jetbrains.kotlin.idea.inspections.blockingCallsDetection.CoroutineNonBlockingContextChecker"/>
+    </extensions>
 </idea-plugin>
