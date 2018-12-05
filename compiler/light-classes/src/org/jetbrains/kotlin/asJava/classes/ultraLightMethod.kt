@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -57,7 +57,8 @@ internal abstract class KtUltraLightMethod(
         val list = KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST)
         computeDescriptor()?.let {
             for (ex in FunctionCodegen.getThrownExceptions(it)) {
-                list.addReference(ex.fqNameSafe.asString())
+                val psiClassType = ex.defaultType.asPsiType(support, TypeMappingMode.DEFAULT, list) as? PsiClassType ?: continue
+                list.addReference(psiClassType)
             }
         }
         list
