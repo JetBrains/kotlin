@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 class KotlinPullUpHandler : AbstractPullPushMembersHandler(
@@ -110,6 +114,16 @@ class KotlinPullUpHandler : AbstractPullPushMembersHandler(
 
             KotlinPullUpDialog(project, classOrObject, superClasses, memberInfoStorage).show()
         }
+    }
+
+    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
+        super.invoke(project, elements, dataContext)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+    }
+
+    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
+        super.invoke(project, editor, file, dataContext)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 }
 
