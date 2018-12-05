@@ -1,3 +1,3 @@
 var a = 1
-a++          // RESULT: 1
-a            // RESULT: 2
+a++          // RESULT: res1: kotlin.Int = 1
+a            // RESULT: res2: kotlin.Int = 2
