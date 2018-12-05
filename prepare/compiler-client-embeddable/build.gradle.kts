@@ -49,17 +49,12 @@ projectTest {
     }
 }
 
-archives.artifacts.let { artifacts ->
-    artifacts.forEach {
-        if (it.type == "jar") {
-            artifacts.remove(it)
-        }
-    }
-}
+noDefaultJar()
 
 runtimeJar(task<ShadowJar>("shadowJar")) {
     from(jarContents)
 }
+
 sourcesJar()
 javadocJar()
 
