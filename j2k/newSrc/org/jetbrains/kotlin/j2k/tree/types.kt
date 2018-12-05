@@ -44,6 +44,8 @@ fun JKExpression.type(context: ConversionContext): JKType? =
         is JKClassAccessExpression -> null
         is JKJavaNewExpression -> JKClassTypeImpl(classSymbol)
         is JKJavaInstanceOfExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES._boolean.asString(), context.symbolProvider)
+        is JKParenthesizedExpression -> expression.type(context)
+        is JKTypeCastExpression -> type.type
         else -> TODO(this::class.java.toString())
     }
 
@@ -153,6 +155,7 @@ fun JKType.updateNullability(newNullability: Nullability): JKType =
         is JKNoType -> this
         is JKJavaVoidType -> this
         is JKJavaPrimitiveType -> this
+        is JKJavaArrayType -> JKJavaArrayTypeImpl(type, newNullability)
         else -> TODO(this::class.toString())
     }
 

@@ -87,7 +87,7 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="PsiViewerSettings">
-    <option name="splitDividerLocation" value="98" />
+    <option name="splitDividerLocation" value="35" />
   </component>
   <component name="SuppressABINotification">
     <option name="modulesWithSuppressedNotConfigured">
