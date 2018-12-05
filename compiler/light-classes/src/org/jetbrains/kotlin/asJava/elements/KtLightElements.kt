@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiElement {
     val kotlinOrigin: T?
 
+    val givenAnnotations: List<KtLightAbstractAnnotation>? get() = null
+
     val clsDelegate: D
 }
 

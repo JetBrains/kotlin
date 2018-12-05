@@ -23,11 +23,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation;
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtFile;
+
+import java.util.List;
 
 /**
  * This class serves as a workaround for usages of {@link JavaElementFinder#findClasses} which eventually only need names of files
@@ -110,5 +113,11 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
     @Override
     public LightClassOriginKind getOriginKind() {
         return LightClassOriginKind.SOURCE;
+    }
+
+    @Nullable
+    @Override
+    public List<KtLightAbstractAnnotation> getGivenAnnotations() {
+        return null;
     }
 }

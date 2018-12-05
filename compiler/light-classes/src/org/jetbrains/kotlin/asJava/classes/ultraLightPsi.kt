@@ -670,6 +670,7 @@ interface UltraLightSupport {
     fun isTooComplexForUltraLightGeneration(element: KtClassOrObject): Boolean
     val deprecationResolver: DeprecationResolver
     val typeMapper: KotlinTypeMapper
+    val moduleDescriptor: ModuleDescriptor
 }
 
 interface KtUltraLightElementWithNullabilityAnnotation<out T : KtDeclaration, out D : PsiModifierListOwner> : KtLightDeclaration<T, D>,

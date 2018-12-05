@@ -54,6 +54,11 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
         runTest("compiler/testData/asJava/ultraLightClasses/dataClasses.kt");
     }
 
+    @TestMetadata("delegatesWithAnnotations.kt")
+    public void testDelegatesWithAnnotations() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/delegatesWithAnnotations.kt");
+    }
+
     @TestMetadata("delegatingToInterfaces.kt")
     public void testDelegatingToInterfaces() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/delegatingToInterfaces.kt");
