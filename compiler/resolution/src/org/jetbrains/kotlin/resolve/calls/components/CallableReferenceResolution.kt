@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.createToFreshVariableSubstitutorAndAddInitialConstraints
@@ -28,6 +26,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -223,9 +222,9 @@ class CallableReferencesCandidateFactory(
         expectedType: UnwrappedType?,
         unboundReceiverCount: Int
     ): Triple<Array<KotlinType>, CoercionStrategy, Int>? {
-        val functionType = getFunctionTypeFromCallableReferenceExpectedType(expectedType) ?: return null
+        val inputOutputTypes = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType) ?: return null
 
-        val expectedArgumentCount = functionType.arguments.size - unboundReceiverCount - 1 // 1 -- return type
+        val expectedArgumentCount = inputOutputTypes.inputTypes.size - unboundReceiverCount
         if (expectedArgumentCount < 0) return null
 
         val fakeArguments = (0..(expectedArgumentCount - 1)).map { FakeKotlinCallArgumentForCallableReference(it) }
@@ -251,7 +250,7 @@ class CallableReferencesCandidateFactory(
         if (mappedArguments.any { it == null }) return null
 
         // lower(Unit!) = Unit
-        val returnExpectedType = functionType.getReturnTypeFromFunctionType().lowerIfFlexible()
+        val returnExpectedType = inputOutputTypes.outputType
 
         val coercion = if (returnExpectedType.isUnit()) CoercionStrategy.COERCION_TO_UNIT else CoercionStrategy.NO_COERCION
 
@@ -342,14 +341,43 @@ class CallableReferencesCandidateFactory(
     }
 }
 
-fun getFunctionTypeFromCallableReferenceExpectedType(expectedType: UnwrappedType?): UnwrappedType? {
+data class InputOutputTypes(val inputTypes: List<UnwrappedType>, val outputType: UnwrappedType)
+
+fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedType: UnwrappedType?): InputOutputTypes? {
     if (expectedType == null) return null
 
-    return if (expectedType.isFunctionType) {
-        expectedType
-    } else if (ReflectionTypes.isNumberedKFunctionOrKSuspendFunction(expectedType)) {
-        expectedType.immediateSupertypes().first { it.isFunctionType }.unwrap()
-    } else {
-        null
+    return when {
+        expectedType.isFunctionType ->
+            extractInputOutputTypesFromFunctionType(expectedType)
+
+        expectedType.isBaseTypeForNumberedReferenceTypes() ->
+            InputOutputTypes(emptyList(), expectedType.arguments.single().type.unwrap())
+
+        ReflectionTypes.isNumberedKFunctionOrKSuspendFunction(expectedType) -> {
+            val functionFromSupertype = expectedType.immediateSupertypes().first { it.isFunctionType }.unwrap()
+            extractInputOutputTypesFromFunctionType(functionFromSupertype)
+        }
+
+        ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(expectedType) -> {
+            val functionFromSupertype = expectedType.supertypes().first { it.isFunctionType }.unwrap()
+            extractInputOutputTypesFromFunctionType(functionFromSupertype)
+        }
+
+        else -> null
     }
+}
+
+private fun UnwrappedType.isBaseTypeForNumberedReferenceTypes(): Boolean =
+    ReflectionTypes.hasKPropertyTypeFqName(this) ||
+            ReflectionTypes.hasKMutablePropertyTypeFqName(this) ||
+            ReflectionTypes.hasKCallableTypeFqName(this)
+
+private fun extractInputOutputTypesFromFunctionType(functionType: UnwrappedType): InputOutputTypes {
+    val receiver = functionType.getReceiverTypeFromFunctionType()?.unwrap()
+    val parameters = functionType.getValueParameterTypesFromFunctionType().map { it.type.unwrap() }
+
+    val inputTypes = listOfNotNull(receiver) + parameters
+    val outputType = functionType.getReturnTypeFromFunctionType().unwrap()
+
+    return InputOutputTypes(inputTypes, outputType)
 }
