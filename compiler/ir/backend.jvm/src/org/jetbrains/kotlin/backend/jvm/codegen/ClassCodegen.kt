@@ -90,6 +90,9 @@ open class ClassCodegen protected constructor(
             generateDeclaration(it)
         }
 
+        val generator = CollectionStubMethodGenerator(typeMapper, irClass.descriptor)
+        generator.generateStubsButNoBridges(visitor)
+
         done()
     }
 

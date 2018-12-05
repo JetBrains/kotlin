@@ -190,6 +190,21 @@ class CollectionStubMethodGenerator(
         }
     }
 
+    // TODO: This method is used from the Ir backend. It should be unified
+    // with the method above and we should generate bridges from the Ir
+    // backend as well.
+    fun generateStubsButNoBridges(v : ClassBuilder) {
+        val (methodsStubsToGenerate, syntheticStubsToGenerate, bridgesToGenerate) = computeTasksToGenerate()
+
+        for (signature in methodsStubsToGenerate) {
+            generateMethodStub(v, signature, synthetic = false)
+        }
+
+        for (signature in syntheticStubsToGenerate) {
+            generateMethodStub(v, signature, synthetic = true)
+        }
+    }
+
     private fun isDefaultInJdk(method: FunctionDescriptor) =
         method.modality != Modality.ABSTRACT &&
         method.original.overriddenTreeUniqueAsSequence(useOriginal = true).all {
