@@ -164,15 +164,15 @@ fun KtElement.blockExpressionsOrSingle(): Sequence<KtElement> =
 fun KtExpression.lastBlockStatementOrThis(): KtExpression = (this as? KtBlockExpression)?.statements?.lastOrNull() ?: this
 
 fun KtBlockExpression.contentRange(): PsiChildRange {
-    val first = (lBrace?.nextSibling ?: firstChild)
-        ?.siblings(withItself = false)
-        ?.firstOrNull { it !is PsiWhiteSpace }
-    val rBrace = rBrace
+    val lBrace = this.lBrace ?: return PsiChildRange.EMPTY
+    val rBrace = this.rBrace ?: return PsiChildRange.EMPTY
+
+    val first = lBrace.siblings(withItself = false).firstOrNull { it !is PsiWhiteSpace }
     if (first == rBrace) return PsiChildRange.EMPTY
-    val last = rBrace!!
-        .siblings(forward = false, withItself = false)
-        .first { it !is PsiWhiteSpace }
+
+    val last = rBrace.siblings(forward = false, withItself = false).first { it !is PsiWhiteSpace }
     if (last == lBrace) return PsiChildRange.EMPTY
+
     return PsiChildRange(first, last)
 }
 
