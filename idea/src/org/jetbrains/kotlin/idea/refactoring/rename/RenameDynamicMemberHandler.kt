@@ -36,8 +36,11 @@ class RenameDynamicMemberHandler: KotlinVariableInplaceRenameHandler() {
         return calleeDescriptor.isDynamic()
     }
 
-    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to dynamically invoked members", "Rename", null)
+    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
+        super.invoke(project, editor, file, dataContext)
+        editor?.let {
+            CodeInsightUtils.showErrorHint(project, it, "Rename is not applicable to dynamically invoked members", "Rename", null)
+        }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {

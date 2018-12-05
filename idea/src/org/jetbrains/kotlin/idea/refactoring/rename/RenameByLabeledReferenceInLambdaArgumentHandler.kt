@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -45,4 +46,5 @@ class RenameByLabeledReferenceInLambdaArgumentHandler :
             DescriptorToSourceUtilsIde.getAnyDeclaration(dataContext.project, descriptor)
         }
     }
+
 }

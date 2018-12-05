@@ -26,15 +26,18 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-class RenameBackingFieldReferenceHandler: KotlinVariableInplaceRenameHandler() {
+class RenameBackingFieldReferenceHandler : KotlinVariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
         val refExpression = file.findElementForRename<KtSimpleNameExpression>(editor.caretModel.offset) ?: return false
         if (refExpression.text != "field") return false
         return refExpression.resolveToCall()?.resultingDescriptor is SyntheticFieldDescriptor
     }
 
-    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to backing field reference", "Rename", null)
+    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
+        super.invoke(project, editor, file, dataContext)
+        editor?.let {
+            CodeInsightUtils.showErrorHint(project, it, "Rename is not applicable to backing field reference", "Rename", null)
+        }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {

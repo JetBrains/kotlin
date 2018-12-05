@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
@@ -26,6 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.RenameHandler
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 
 class RenameOnSecondaryConstructorHandler : RenameHandler {
@@ -44,6 +46,7 @@ class RenameOnSecondaryConstructorHandler : RenameHandler {
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to secondary constructors", "Rename", null)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

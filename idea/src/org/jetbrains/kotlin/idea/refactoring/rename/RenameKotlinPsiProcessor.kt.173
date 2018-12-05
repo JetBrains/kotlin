@@ -41,11 +41,15 @@ import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element is KtNamedDeclaration
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
+
         val searchParameters = KotlinReferencesSearchParameters(
             element,
             element.project.projectScope() or element.useScope,

@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
     class FileRenamingPsiClassWrapper(
@@ -61,6 +64,18 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
             if (facadeClass != null) {
                 allRenames[FileRenamingPsiClassWrapper(facadeClass, jetFile)] = PackagePartClassUtils.getFilePartShortName(newName)
             }
+        }
+    }
+
+    override fun findReferences(element: PsiElement): MutableCollection<PsiReference> {
+        return super.findReferences(element).also {
+            FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        }
+    }
+
+    override fun findReferences(element: PsiElement, searchInCommentsAndStrings: Boolean): MutableCollection<PsiReference> {
+        return super.findReferences(element, searchInCommentsAndStrings).also {
+            FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
         }
     }
 }
