@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import java.io.StringWriter
@@ -340,3 +341,15 @@ val IrFunction.isStatic: Boolean
 
 val IrDeclaration.isTopLevel: Boolean
     get() = parent is IrPackageFragment
+
+val IrFunction.target: IrFunction
+    get() = when (this) {
+        is IrSimpleFunction -> this.target
+        is IrConstructor -> this
+        else -> error(this)
+    }
+
+val IrSimpleFunction.target: IrSimpleFunction
+    get() = if (modality == Modality.ABSTRACT) this else resolveFakeOverride()!!
+
+val IrFunction.isOverridable: Boolean get() = this is IrSimpleFunction && this.isOverridable
