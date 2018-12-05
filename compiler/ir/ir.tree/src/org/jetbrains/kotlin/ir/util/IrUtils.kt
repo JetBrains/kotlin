@@ -17,11 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -291,11 +287,8 @@ fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
     return this.hasAncestorInSuperTypes()
 }
 
-// This implementation is from kotlin-native
-// TODO: use this implementation instead of any other
-fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
-
-    if (isReal) return this
+fun IrSimpleFunction.collectRealOverrides(): Set<IrSimpleFunction> {
+    if (isReal) return setOf(this)
 
     val visited = mutableSetOf<IrSimpleFunction>()
     val realOverrides = mutableSetOf<IrSimpleFunction>()
@@ -324,7 +317,13 @@ fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
     visited.clear()
     realOverrides.toList().forEach { excludeRepeated(it) }
 
-    return realOverrides.singleOrNull { it.modality != Modality.ABSTRACT }
+    return realOverrides
+}
+
+// This implementation is from kotlin-native
+// TODO: use this implementation instead of any other
+fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
+    return collectRealOverrides().singleOrNull { it.modality != Modality.ABSTRACT }
 }
 
 fun IrField.resolveFakeOverride(): IrField? {

@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -121,7 +121,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
-        val symbol = expression.symbol
+        val function = expression.symbol.owner.realOverrideTarget
+        val symbol = function.symbol
 
         context.staticContext.intrinsics[symbol]?.let {
             return it(expression, context)
@@ -143,13 +144,13 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return JsInvocation(callRef, jsDispatchReceiver?.let { listOf(it) + arguments } ?: arguments)
         }
 
-        return if (symbol is IrConstructorSymbol) {
+        return if (function is IrConstructor) {
             // Inline class primary constructor takes a single value of to
             // initialize underlying property.
             // TODO: Support initialization block
-            val klass = symbol.owner.parentAsClass
+            val klass = function.parentAsClass
             if (klass.isInline) {
-                assert(symbol.owner.isPrimary) {
+                assert(function.isPrimary) {
                     "Inline class secondary constructors must be lowered into static methods"
                 }
                 // Argument value constructs unboxed inline class instance
