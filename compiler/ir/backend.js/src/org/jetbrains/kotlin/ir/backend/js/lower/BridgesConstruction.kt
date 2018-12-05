@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -188,13 +189,15 @@ class FunctionAndSignature(val function: IrSimpleFunction) {
     private data class Signature(
         val name: Name,
         val extensionReceiverType: String?,
-        val valueParameters: List<String?>
+        val valueParameters: List<String?>,
+        val returnType: String?
     )
 
     private val signature = Signature(
         function.name,
         function.extensionReceiverParameter?.type?.asString(),
-        function.valueParameters.map { it.type.asString() }
+        function.valueParameters.map { it.type.asString() },
+        function.returnType.run { if (isInlined()) asString() else null }
     )
 
     override fun equals(other: Any?): Boolean {
