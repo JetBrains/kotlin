@@ -21,12 +21,16 @@ class ImportStatementConversion : RecursiveApplicableConversionBase() {
         if (element !is JKFile) return recurse(element)
 
         for (import in element.declarationList.collectImports()) {
-            if (!element.importList.containsImport(import)) {
+            if (!element.importList.containsImport(import) && importIsInPacakge(import, packageName)) {
                 element.importList += JKImportStatementImpl(JKNameIdentifierImpl(import))
             }
         }
         return recurse(element)
     }
+
+    private fun importIsInPacakge(import: String, packageName: String) =
+        '.' !in import.substringAfter(packageName)
+
 
     private fun List<JKImportStatement>.containsImport(import: String) =
         asSequence()
