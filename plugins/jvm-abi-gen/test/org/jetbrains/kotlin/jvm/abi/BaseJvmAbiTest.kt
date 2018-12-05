@@ -10,7 +10,6 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import java.io.File
 
 abstract class BaseJvmAbiTest : TestCase() {
@@ -58,7 +57,7 @@ abstract class BaseJvmAbiTest : TestCase() {
             dep.abiDir
         }
 
-        val messageCollector = TestMessageCollector()
+        val messageCollector = LocationReportingTestMessageCollector()
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
             freeArgs = listOf(compilation.srcDir.canonicalPath)
