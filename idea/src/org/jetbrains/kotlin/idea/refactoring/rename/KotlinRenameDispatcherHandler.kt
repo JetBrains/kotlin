@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.ExtensionPointName
@@ -24,6 +25,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.RenameHandler
+import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -47,9 +49,11 @@ class KotlinRenameDispatcherHandler : RenameHandler {
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
         getRenameHandler(dataContext)?.invoke(project, editor, file, dataContext)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         getRenameHandler(dataContext)?.invoke(project, elements, dataContext)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 }

@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
 import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
     companion object {
@@ -68,4 +72,14 @@ open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
 
     override public fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile) =
         editor.settings.isVariableInplaceRenameEnabled && element != null && isInplaceRenameAvailable(element)
+
+    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
+        super.invoke(project, elements, dataContext)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+    }
+
+    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
+        super.invoke(project, editor, file, dataContext)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+    }
 }

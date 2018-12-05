@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
+import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 class AutomaticParameterRenamer(element: KtParameter, newName: String) : AutomaticRenamer() {
     init {
@@ -62,6 +65,21 @@ class AutomaticParameterRenamer(element: KtParameter, newName: String) : Automat
     override fun entityName() = "Parameter"
 
     override fun isSelectedByDefault() = true
+
+    override fun findUsages(result: MutableList<UsageInfo>?, searchInStringsAndComments: Boolean, searchInNonJavaFiles: Boolean) {
+        super.findUsages(result, searchInStringsAndComments, searchInNonJavaFiles)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+    }
+
+    override fun findUsages(result: MutableList<UsageInfo>?, searchInStringsAndComments: Boolean, searchInNonJavaFiles: Boolean, unresolvedUsages: MutableList<UnresolvableCollisionUsageInfo>?) {
+        super.findUsages(result, searchInStringsAndComments, searchInNonJavaFiles, unresolvedUsages)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+    }
+
+    override fun findUsages(result: MutableList<UsageInfo>?, searchInStringsAndComments: Boolean, searchInNonJavaFiles: Boolean, unresolvedUsages: MutableList<UnresolvableCollisionUsageInfo>?, allRenames: MutableMap<PsiElement, String>?) {
+        super.findUsages(result, searchInStringsAndComments, searchInNonJavaFiles, unresolvedUsages, allRenames)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+    }
 }
 
 class AutomaticParameterRenamerFactory : AutomaticRenamerFactory {
