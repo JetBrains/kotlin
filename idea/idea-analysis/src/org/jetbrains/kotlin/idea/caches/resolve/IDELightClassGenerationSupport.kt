@@ -90,8 +90,11 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 return false
             }
 
+            override val moduleDescriptor by lazyPub {
+                element.getResolutionFacade().moduleDescriptor
+            }
+
             override val moduleName: String by lazyPub {
-                val moduleDescriptor = element.getResolutionFacade().moduleDescriptor
                 JvmCodegenUtil.getModuleName(moduleDescriptor)
             }
 

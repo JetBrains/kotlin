@@ -144,7 +144,15 @@ internal fun UltraLightSupport.mapType(
 ): PsiType {
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
     mapTypeToSignatureWriter(typeMapper, signatureWriter)
-    val signature = StringCharacterIterator(signatureWriter.toString())
+    val canonicalSignature = signatureWriter.toString()
+    return createTypeFromCanonicalText(canonicalSignature, psiContext)
+}
+
+fun createTypeFromCanonicalText(
+    canonicalSignature: String,
+    psiContext: PsiElement
+): PsiType {
+    val signature = StringCharacterIterator(canonicalSignature)
 
     val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
     val typeInfo = TypeInfo.fromString(javaType, false)
