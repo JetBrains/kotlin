@@ -24,7 +24,8 @@ object ConversionsRunner {
     private fun createRootConversion(context: ConversionContext) =
         batchPipe {
             //Java --> Kotlin conversions
-            +JavaModifiersConversion()
+            +JavaModifiersConversion(context)
+            +JavaAnnotationsConversion()
             +InternalClassConversion(context)
             +ModalityConversion(context)
             +AssignmentAsExpressionToAlsoConversion(context)

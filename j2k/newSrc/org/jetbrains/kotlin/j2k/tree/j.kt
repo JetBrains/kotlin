@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.j2k.tree
 import org.jetbrains.kotlin.idea.search.usagesSearch.constructor
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
-interface JKField : JKVariable, JKVisibilityOwner, JKMutabilityOwner, JKModalityOwner, JKExtraModifiersOwner
+interface JKField : JKVariable, JKVisibilityOwner, JKMutabilityOwner, JKModalityOwner, JKExtraModifiersOwner, JKAnnotationListOwner
 
 interface JKJavaField : JKField, JKBranchElement
 

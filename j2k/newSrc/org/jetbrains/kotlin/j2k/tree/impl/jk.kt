@@ -501,7 +501,7 @@ class JKAnnotationListImpl(annotations: List<JKAnnotation> = emptyList()) : JKAn
 
 class JKAnnotationImpl(
     override val classSymbol: JKClassSymbol,
-    arguments: JKExpressionList
+    arguments: JKExpressionList = JKExpressionListImpl()
 ) : JKAnnotation, JKBranchElementBase() {
     override var arguments: JKExpressionList by child(arguments)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)

@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class JKJavaFieldImpl(
-    type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression,
+    type: JKTypeElement,
+    name: JKNameIdentifier,
+    initializer: JKExpression,
+    annotationList: JKAnnotationList,
     override var extraModifiers: List<ExtraModifier>,
     override var visibility: Visibility,
     override var modality: Modality,
@@ -37,6 +40,7 @@ class JKJavaFieldImpl(
     JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaField(this, data)
 
+    override var annotationList: JKAnnotationList by child(annotationList)
     override var initializer: JKExpression by child(initializer)
     override var type by child(type)
     override var name: JKNameIdentifier by child(name)

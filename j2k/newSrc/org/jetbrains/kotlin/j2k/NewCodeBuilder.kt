@@ -220,6 +220,10 @@ class NewCodeBuilder {
 
 
         override fun visitKtProperty(ktProperty: JKKtProperty) {
+            ktProperty.annotationList.accept(this)
+            if (ktProperty.annotationList.annotations.isNotEmpty()) {
+                printer.println()
+            }
             renderModifiersList(ktProperty)
 
             printer.printWithNoIndent(" ")

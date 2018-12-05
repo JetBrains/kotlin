@@ -372,6 +372,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 with(expressionTreeMapper) { typeElement?.toJK() } ?: JKTypeElementImpl(JKNoTypeImpl),
                 JKNameIdentifierImpl(name),
                 with(expressionTreeMapper) { initializer.toJK() },
+                JKAnnotationListImpl(annotations.map { it.toJK() }),
                 modifiers(),
                 visibility(),
                 modality(),
@@ -381,6 +382,15 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 it.psi = this
             }
         }
+
+        fun PsiAnnotation.toJK(): JKAnnotation =
+            JKAnnotationImpl(
+                symbolProvider.provideSymbol(nameReferenceElement!!),
+                with(expressionTreeMapper) {
+                    JKExpressionListImpl(parameterList.attributes.map { (it.value as? PsiExpression).toJK() })
+                }
+            )
+
 
         fun PsiMethod.toJK(): JKJavaMethod {
             return JKJavaMethodImpl(

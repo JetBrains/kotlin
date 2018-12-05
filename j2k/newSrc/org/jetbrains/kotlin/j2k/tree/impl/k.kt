@@ -31,6 +31,7 @@ class JKKtPropertyImpl(
     initializer: JKExpression,
     getter: JKKtGetterOrSetter,
     setter: JKKtGetterOrSetter,
+    annotationList: JKAnnotationList,
     override var extraModifiers: List<ExtraModifier>,
     override var visibility: Visibility,
     override var modality: Modality,
@@ -38,6 +39,7 @@ class JKKtPropertyImpl(
 ) : JKBranchElementBase(), JKKtProperty {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtProperty(this, data)
 
+    override var annotationList: JKAnnotationList by child(annotationList)
     override var type by child(type)
     override var name: JKNameIdentifier by child(name)
     override var initializer: JKExpression by child(initializer)
