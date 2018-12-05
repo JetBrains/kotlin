@@ -36,7 +36,7 @@ class ScratchFileHook(val project: Project) : ProjectComponent {
     }
 
     override fun projectClosed() {
-        getAllEditorsWithScratchPanel(project).forEach { (editor, panel) -> editor.removeScratchPanel(panel) }
+        getAllEditorsWithScratchPanel(project).forEach { (editor, _) -> editor.removeScratchPanel() }
     }
 
     private inner class ScratchEditorListener : FileEditorManagerListener {
