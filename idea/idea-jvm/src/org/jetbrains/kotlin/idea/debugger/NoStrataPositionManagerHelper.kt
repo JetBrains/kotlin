@@ -36,8 +36,11 @@ import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinder
+import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinderFactory
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -135,7 +138,8 @@ private fun readClassFileImpl(project: Project,
 
         val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
 
-        val fileFinder = VirtualFileFinder.getInstance(project)
+        // TODO use debugger search scope
+        val fileFinder = VirtualFileFinderFactory.getInstance(project).create(GlobalSearchScope.allScope(project))
         val classFile = fileFinder.findVirtualFileWithHeader(classId) ?: return null
         return classFile.contentsToByteArray(false)
     }

@@ -149,7 +149,7 @@ internal fun getMethodNode(
 }
 
 internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
-    return VirtualFileFinder.getInstance(state.project).findVirtualFileWithHeader(classId)
+    return VirtualFileFinder.getInstance(state.project, state.module).findVirtualFileWithHeader(classId)
 }
 
 internal fun findVirtualFileImprecise(state: GenerationState, internalClassName: String): VirtualFile? {
