@@ -11,3 +11,7 @@ class Outer {
     inner class Inner(x: Int = 1, y: String = "")
     class Nested(x: Int = 1, y: String = "")
 }
+
+sealed class A(val x: String? = null) {
+    class C : A()
+}
