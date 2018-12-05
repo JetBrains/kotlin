@@ -1681,6 +1681,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/sam.kt");
             }
 
+            @TestMetadata("subtypeArgumentFromRHSForReference.kt")
+            public void testSubtypeArgumentFromRHSForReference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/subtypeArgumentFromRHSForReference.kt");
+            }
+
             @TestMetadata("unused.kt")
             public void testUnused() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/unused.kt");

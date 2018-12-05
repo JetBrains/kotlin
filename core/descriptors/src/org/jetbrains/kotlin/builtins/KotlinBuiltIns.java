@@ -322,7 +322,9 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe kMutableProperty0 = reflect("KMutableProperty0");
         public final FqNameUnsafe kMutableProperty1 = reflect("KMutableProperty1");
         public final FqNameUnsafe kMutableProperty2 = reflect("KMutableProperty2");
-        public final ClassId kProperty = ClassId.topLevel(reflect("KProperty").toSafe());
+        public final FqNameUnsafe kPropertyFqName = reflect("KProperty");
+        public final FqNameUnsafe kMutablePropertyFqName = reflect("KMutableProperty");
+        public final ClassId kProperty = ClassId.topLevel(kPropertyFqName.toSafe());
 
         public final FqName uByteFqName = fqName("UByte");
         public final FqName uShortFqName = fqName("UShort");

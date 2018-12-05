@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
-import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
-import org.jetbrains.kotlin.resolve.calls.components.getFunctionTypeFromCallableReferenceExpectedType
+import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
@@ -132,18 +127,10 @@ class ResolvedCallableReferenceAtom(
     }
 
     override val inputTypes: Collection<UnwrappedType>
-        get() {
-            val functionType = getFunctionTypeFromCallableReferenceExpectedType(expectedType) ?: return listOfNotNull(expectedType)
-            val parameters = functionType.getValueParameterTypesFromFunctionType().map { it.type.unwrap() }
-            val receiver = functionType.getReceiverTypeFromFunctionType()?.unwrap()
-            return receiver?.let { parameters + it } ?: parameters
-        }
+        get() = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType)?.inputTypes ?: listOfNotNull(expectedType)
 
     override val outputType: UnwrappedType?
-        get() {
-            val functionType = getFunctionTypeFromCallableReferenceExpectedType(expectedType) ?: return null
-            return functionType.getReturnTypeFromFunctionType().unwrap()
-        }
+        get() = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType)?.outputType
 }
 
 class ResolvedCollectionLiteralAtom(

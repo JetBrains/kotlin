@@ -169,7 +169,7 @@ class DelegatedPropertyResolver(
     }
 
     private fun KtPsiFactory.createExpressionForProperty(): KtExpression {
-        return createExpression("null as ${KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName().asString()}<*>")
+        return createExpression("null as ${KotlinBuiltIns.FQ_NAMES.kPropertyFqName.asString()}<*>")
     }
 
     /* Resolve getValue() or setValue() methods from delegate */
