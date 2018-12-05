@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
 import com.intellij.psi.filters.*
 import com.intellij.psi.filters.position.LeftNeighbour
@@ -40,8 +41,10 @@ import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -124,27 +127,45 @@ object KeywordCompletion {
                 consumer(element)
             }
             else {
-                var element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold()
-
-                val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
-
-                val insertHandler = when {
-                    isUseSiteAnnotationTarget -> UseSiteAnnotationTargetInsertHandler
-
-                    keyword in NO_SPACE_AFTER -> null
-
-                    else -> SpaceAfterInsertHandler
+                if (listOf(CLASS_KEYWORD, OBJECT_KEYWORD, INTERFACE_KEYWORD).any { keyword.endsWith(it.value) }) {
+                    val topLevelClassName = getTopLevelClassName(position)
+                    if (topLevelClassName != null) {
+                        consumer(createLookupElementBuilder("$keyword $topLevelClassName", position))
+                    }
                 }
-
-                element = element.withInsertHandler(insertHandler)
-
-                if (isUseSiteAnnotationTarget) {
-                    element = element.withPresentableText(keyword + ":")
-                }
-
-                consumer(element)
+                consumer(createLookupElementBuilder(keyword, position))
             }
         }
+    }
+
+    private fun createLookupElementBuilder(
+        keyword: String,
+        position: PsiElement
+    ): LookupElementBuilder {
+        val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == AT
+        val insertHandler = when {
+            isUseSiteAnnotationTarget -> UseSiteAnnotationTargetInsertHandler
+            keyword in NO_SPACE_AFTER -> null
+            else -> SpaceAfterInsertHandler
+        }
+        val element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold().withInsertHandler(insertHandler)
+        return if (isUseSiteAnnotationTarget) {
+            element.withPresentableText("$keyword:")
+        } else {
+            element
+        }
+    }
+
+    private fun getTopLevelClassName(position: PsiElement): String? {
+        if (position.parents.any { it is KtDeclaration }) return null
+        val file = position.containingFile as? KtFile ?: return null
+        val name = FileUtil.getNameWithoutExtension(file.name)
+        if (!Name.isValidIdentifier(name)
+            || Name.identifier(name).render() != name
+            || !name[0].isUpperCase()
+            || file.declarations.any { it is KtClassOrObject && it.name == name }
+        ) return null
+        return name
     }
 
     private object UseSiteAnnotationTargetInsertHandler : InsertHandler<LookupElement> {

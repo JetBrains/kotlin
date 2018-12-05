@@ -204,6 +204,11 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         runTest("idea/idea-completion/testData/weighers/basic/SuperMembers.kt");
     }
 
+    @TestMetadata("TopLevelKeywordWithClassName.kt")
+    public void testTopLevelKeywordWithClassName() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/TopLevelKeywordWithClassName.kt");
+    }
+
     @TestMetadata("UnavailableDslReceiver.kt")
     public void testUnavailableDslReceiver() throws Exception {
         runTest("idea/idea-completion/testData/weighers/basic/UnavailableDslReceiver.kt");
