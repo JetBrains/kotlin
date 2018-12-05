@@ -70,13 +70,19 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
     }
 
     private fun mapClassType(type: JKClassType, element: JKTreeElement): JKClassType {
-        val newFqName = JavaToKotlinClassMap.mapJavaToKotlin(FqName(type.classReference.fqName ?: return type)) ?: return type
+        val fqName = type.classReference.fqName ?: return type
+        val newFqName = JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqName))
+            ?: mapCollectionClass(fqName)?.let { ClassId.fromString(it) }
+            ?: return type
         return JKClassTypeImpl(
             context.symbolProvider.provideByFqName(newFqName),
             type.parameters.map { mapType(it, element) },
             type.nullability
         )
     }
+
+    private fun mapCollectionClass(fqName: String): String? =
+        mapOf("java.util.Collection" to "kotlin.collections.Collection")[fqName]
 
     private fun mapPrimitiveType(type: JKJavaPrimitiveType): JKClassType {
         val fqName = type.jvmPrimitiveType.primitiveType.typeFqName
