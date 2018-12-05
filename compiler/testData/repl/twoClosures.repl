@@ -1,4 +1,4 @@
 >>> { -> }; 21
-21
+res0: kotlin.Int = 21
 >>> { -> }; 22
-22
+res1: kotlin.Int = 22

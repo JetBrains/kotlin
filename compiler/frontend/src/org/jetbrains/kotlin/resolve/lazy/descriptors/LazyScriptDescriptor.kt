@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -69,7 +70,9 @@ class LazyScriptDescriptor(
     val resultValue: ReplResultPropertyDescriptor? by lazy { provideResultValue() }
 
     private fun provideResultValue(): ReplResultPropertyDescriptor? {
-        val expression = scriptInfo.script.getChildOfType<KtBlockExpression>()?.getChildOfType<KtScriptInitializer>()
+        val expression = scriptInfo.script
+            .getChildOfType<KtBlockExpression>()
+            ?.getChildrenOfType<KtScriptInitializer>()?.lastOrNull()
             ?.getChildOfType<KtExpression>()
 
         val type = expression?.let {
