@@ -66,7 +66,8 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
     override fun toString() = "Light modifier list of $owner"
 
     private fun computeAnnotations(): List<KtLightAbstractAnnotation> {
-        val annotationsForEntries = lightAnnotationsForEntries(this)
+        val annotationsForEntries =
+            owner.givenAnnotations ?: lightAnnotationsForEntries(this)
         val modifierListOwner = parent
         if (modifierListOwner is KtLightClassForSourceDeclaration && modifierListOwner.isAnnotationType) {
             val sourceAnnotationNames = annotationsForEntries.mapTo(mutableSetOf()) { it.qualifiedName }

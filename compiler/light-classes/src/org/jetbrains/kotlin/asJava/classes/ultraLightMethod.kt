@@ -12,6 +12,7 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
@@ -109,12 +110,15 @@ internal class KtUltraLightMethodForDescriptor(
 
     override val kotlinTypeForNullabilityAnnotation: KotlinType?
         get() = descriptor.returnType
+
+    override val givenAnnotations: List<KtLightAbstractAnnotation>
+        get() = descriptor.obtainLightAnnotations(support, this)
 }
 
 internal abstract class KtUltraLightParameter(
     name: String,
     override val kotlinOrigin: KtDeclaration?,
-    private val support: UltraLightSupport,
+    protected val support: UltraLightSupport,
     method: KtLightMethod
 ) : org.jetbrains.kotlin.asJava.elements.LightParameter(
     name,
@@ -246,4 +250,7 @@ internal class KtUltraLightParameterForDescriptor(
     override fun computeContainingDescriptor() = descriptor.containingDeclaration as? CallableMemberDescriptor
 
     override fun isVarArgs() = (descriptor as? ValueParameterDescriptor)?.varargElementType != null
+
+    override val givenAnnotations: List<KtLightAbstractAnnotation>
+        get() = descriptor.obtainLightAnnotations(support, this)
 }
