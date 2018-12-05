@@ -68,7 +68,7 @@ class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
 
             val scratchPanel = getEditorWithScratchPanel(source, file)?.second
             scratchPanel?.addModuleListener { psiFile, module ->
-                psiFile.virtualFile.scriptRelatedModuleName = module.name
+                psiFile.virtualFile.scriptRelatedModuleName = module?.name
 
                 // Drop caches for old module
                 ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
@@ -79,11 +79,6 @@ class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
             val module = ktFile.virtualFile.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
             if (module != null) {
                 scratchPanel?.setModule(module)
-            } else {
-                val firstModule = ModuleManager.getInstance(project).modules.firstOrNull()
-                if (firstModule != null) {
-                    scratchPanel?.setModule(firstModule)
-                }
             }
         }
     }

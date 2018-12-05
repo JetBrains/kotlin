@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.scratch.ui
 
 
 import com.intellij.application.options.ModulesComboBox
+import com.intellij.execution.ui.ConfigurationModuleSelector
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
@@ -115,11 +116,11 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         moduleChooser.selectedModule = module
     }
 
-    fun addModuleListener(f: (PsiFile, Module) -> Unit) {
+    fun addModuleListener(f: (PsiFile, Module?) -> Unit) {
         moduleChooser.addActionListener {
             val selectedModule = moduleChooser.selectedModule
             val psiFile = scratchFile.getPsiFile()
-            if (selectedModule != null && psiFile != null) {
+            if (psiFile != null) {
                 f(psiFile, selectedModule)
             }
         }
@@ -162,6 +163,7 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
             setModules(ModuleManager.getInstance(project).modules.filter {
                 it.productionSourceInfo() != null || it.testSourceInfo() != null
             })
+            allowEmptySelection(ConfigurationModuleSelector.NO_MODULE_TEXT)
         }
     }
 }
