@@ -1954,6 +1954,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/anonymousFunctionToLambda/moveOut.kt");
         }
 
+        @TestMetadata("noSpaceAfterFunctionLeftBrace.kt")
+        public void testNoSpaceAfterFunctionLeftBrace() throws Exception {
+            runTest("idea/testData/intentions/anonymousFunctionToLambda/noSpaceAfterFunctionLeftBrace.kt");
+        }
+
         @TestMetadata("paramName.kt")
         public void testParamName() throws Exception {
             runTest("idea/testData/intentions/anonymousFunctionToLambda/paramName.kt");
