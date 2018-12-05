@@ -19,7 +19,12 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 class ImportStatementConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKFile) return recurse(element)
-
+        element.importList = element.importList.map {
+            mapOf("java.util.Collection" to "kotlin.collections.Collection")[it.name.value]?.let {
+                JKImportStatementImpl(JKNameIdentifierImpl(it))
+            } ?: it
+        }
+        val packageName = element.packageDeclaration.packageName.value
         for (import in element.declarationList.collectImports()) {
             if (!element.importList.containsImport(import) && importIsInPacakge(import, packageName)) {
                 element.importList += JKImportStatementImpl(JKNameIdentifierImpl(import))
