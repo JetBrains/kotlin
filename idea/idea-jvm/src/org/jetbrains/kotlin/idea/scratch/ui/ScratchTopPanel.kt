@@ -44,7 +44,7 @@ import javax.swing.*
 
 class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel(HorizontalLayout(5)), Disposable {
     override fun dispose() {
-        scratchFile.editor.removeScratchPanel(this)
+        scratchFile.editor.removeScratchPanel()
     }
 
     companion object {
