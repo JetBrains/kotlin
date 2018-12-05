@@ -15,8 +15,13 @@ val generateMppTargetContainerWithPresets by generator(
     sourceSets["main"]
 )
 
-generateMppTargetContainerWithPresets.run {
-    systemProperty(
+val generateAbstractBinaryContainer by generator(
+    "org.jetbrains.kotlin.generators.gradle.dsl.MppNativeBinaryDSLCodegenKt",
+    sourceSets["main"]
+)
+
+listOf(generateMppTargetContainerWithPresets, generateAbstractBinaryContainer).forEach {
+    it.systemProperty(
         "org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot",
         project(":kotlin-gradle-plugin").projectDir.resolve("src/main/kotlin").absolutePath
     )

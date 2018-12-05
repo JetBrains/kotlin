@@ -21,6 +21,7 @@ import org.gradle.util.ConfigureUtil
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
@@ -191,28 +192,41 @@ class KotlinNativeTarget(
         attributes.attribute(konanTargetAttribute, konanTarget.name)
     }
 
-    // TODO: Should binary files be output of a target or a compilation?
+    val binaries = if(isGradleVersionAtLeast(4, 2)) {
+        // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
+        project.objects.newInstance(KotlinNativeBinaryContainer::class.java, this, WrapUtil.toDomainObjectSet(NativeBinary::class.java))
+    } else {
+        KotlinNativeBinaryContainer(this, WrapUtil.toDomainObjectSet(NativeBinary::class.java))
+    }
+
+    fun binaries(configure: KotlinNativeBinaryContainer.() -> Unit) {
+        binaries.configure()
+    }
+
+    fun binaries(configure: Closure<*>) {
+        ConfigureUtil.configure(configure, binaries)
+    }
+
     override val artifactsTaskName: String
         get() = disambiguateName("link")
 
     override val publishable: Boolean
         get() = konanTarget.enabledOnCurrentHost
 
+    // User-visible constants
+    val DEBUG = NativeBuildType.DEBUG
+    val RELEASE = NativeBuildType.RELEASE
+
+    val EXECUTABLE = NativeOutputKind.EXECUTABLE
+    val FRAMEWORK = NativeOutputKind.FRAMEWORK
+    val DYNAMIC = NativeOutputKind.DYNAMIC
+    val STATIC = NativeOutputKind.STATIC
+
     companion object {
         val konanTargetAttribute = Attribute.of(
             "org.jetbrains.kotlin.native.target",
             String::class.java
         )
-
-        // TODO: Can we do it better?
-        // User-visible constants
-        val DEBUG = NativeBuildType.DEBUG
-        val RELEASE = NativeBuildType.RELEASE
-
-        val EXECUTABLE = NativeOutputKind.EXECUTABLE
-        val FRAMEWORK = NativeOutputKind.FRAMEWORK
-        val DYNAMIC = NativeOutputKind.DYNAMIC
-        val STATIC = NativeOutputKind.STATIC
     }
 }
 
