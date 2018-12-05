@@ -239,6 +239,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/naming/objectProperty/inspectionData/inspections.test");
         }
 
+        @TestMetadata("naming/package/inspectionData/inspections.test")
+        public void testNaming_package_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/naming/package/inspectionData/inspections.test");
+        }
+
         @TestMetadata("naming/privateProperty/inspectionData/inspections.test")
         public void testNaming_privateProperty_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/naming/privateProperty/inspectionData/inspections.test");
