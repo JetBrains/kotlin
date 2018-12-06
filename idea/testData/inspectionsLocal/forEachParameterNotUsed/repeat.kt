@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// FIX: Introduce anonymous parameter
+// FIX: Replace with 'repeat(size)'
 
 fun test(list: List<String>) {
     list.for<caret>Each {}
