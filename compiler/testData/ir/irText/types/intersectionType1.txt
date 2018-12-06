@@ -1,0 +1,72 @@
+FILE fqName:<root> fileName:/intersectionType1.kt
+  CLASS CLASS name:In modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:In<I> flags:
+    TYPE_PARAMETER name:I index:0 variance:in superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> () returnType:In<I> flags:primary
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='In'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:select visibility:public modality:FINAL <S> (x:S, y:S) returnType:S flags:
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?]
+    VALUE_PARAMETER name:x index:0 type:S flags:
+    VALUE_PARAMETER name:y index:1 type:S flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='select(S, S): S'
+        GET_VAR 'value-parameter x: S' type=S origin=null
+  FUN name:foo visibility:public modality:FINAL <T> (a:kotlin.Array<In<T>>, b:kotlin.Array<In<kotlin.String>>) returnType:kotlin.Boolean flags:
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Array<In<T>> flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Array<In<kotlin.String>> flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='foo(Array<In<T>>, Array<In<String>>): Boolean'
+        CALL 'ofType(Any?) on In<K>: Boolean' type=kotlin.Boolean origin=null
+          <reified K>: kotlin.Any?
+          $receiver: CALL 'get(Int): T' type=In<kotlin.Any?> origin=GET_ARRAY_ELEMENT
+            $this: CALL 'select(S, S): S' type=kotlin.Array<out In<kotlin.Any?>> origin=null
+              <S>: kotlin.Array<out In<kotlin.Any?>>
+              x: GET_VAR 'value-parameter a: Array<In<T>>' type=kotlin.Array<In<T>> origin=null
+              y: GET_VAR 'value-parameter b: Array<In<String>>' type=kotlin.Array<In<kotlin.String>> origin=null
+            index: CONST Int type=kotlin.Int value=0
+          y: CONST Boolean type=kotlin.Boolean value=true
+  FUN name:ofType visibility:public modality:FINAL <K> ($receiver:In<K>, y:kotlin.Any?) returnType:kotlin.Boolean flags:inline
+    TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?]
+    $receiver: VALUE_PARAMETER name:<this> type:In<K> flags:
+    VALUE_PARAMETER name:y index:0 type:kotlin.Any? flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='ofType(Any?) on In<K>: Boolean'
+        TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=K
+          typeOperand: TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?]
+          GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    BLOCK_BODY
+      VAR name:a1 type:kotlin.Array<In<kotlin.Int>> flags:val
+        CALL 'arrayOf(vararg T): Array<T>' type=kotlin.Array<In<kotlin.Int>> origin=null
+          <reified T>: In<kotlin.Int>
+          elements: VARARG type=kotlin.Array<out In<kotlin.Int>> varargElementType=In<kotlin.Int>
+            CALL 'constructor In()' type=In<kotlin.Int> origin=null
+              <in I>: kotlin.Int
+      VAR name:a2 type:kotlin.Array<In<kotlin.String>> flags:val
+        CALL 'arrayOf(vararg T): Array<T>' type=kotlin.Array<In<kotlin.String>> origin=null
+          <reified T>: In<kotlin.String>
+          elements: VARARG type=kotlin.Array<out In<kotlin.String>> varargElementType=In<kotlin.String>
+            CALL 'constructor In()' type=In<kotlin.String> origin=null
+              <in I>: kotlin.String
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+        CALL 'foo(Array<In<T>>, Array<In<String>>): Boolean' type=kotlin.Boolean origin=null
+          <T>: kotlin.Int
+          a: GET_VAR 'a1: Array<In<Int>>' type=kotlin.Array<In<kotlin.Int>> origin=null
+          b: GET_VAR 'a2: Array<In<String>>' type=kotlin.Array<In<kotlin.String>> origin=null
