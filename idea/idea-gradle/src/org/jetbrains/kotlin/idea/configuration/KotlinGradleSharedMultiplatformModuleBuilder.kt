@@ -181,45 +181,44 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
             apply plugin: 'maven-publish'
 
             kotlin {
-                targets {
-                    fromPreset(presets.jvm, '$jvmTargetName')
-                    fromPreset(presets.js, '$jsTargetName')
-                    // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
-                    // For Linux, preset should be changed to e.g. presets.linuxX64
-                    // For MacOS, preset should be changed to e.g. presets.macosX64
-                    fromPreset(presets.${defaultNativeTarget.presetName}, '${defaultNativeTarget.userTargetName}')
-                }
+                jvm("$jvmTargetName")
+                js("$jsTargetName")
+                // For ARM, should be changed to iosArm32 or iosArm64
+                // For Linux, should be changed to e.g. linuxX64
+                // For MacOS, should be changed to e.g. macosX64
+                // For Windows, should be changed to e.g. mingwX64
+                ${defaultNativeTarget.presetName}("${defaultNativeTarget.userTargetName}")
                 sourceSets {
                     $commonSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                            implementation kotlin('stdlib-common')
                         }
                     }
                     $commonTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                            implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                            implementation kotlin('test-common')
+                            implementation kotlin('test-annotations-common')
                         }
                     }
                     $jvmSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+                            implementation kotlin('stdlib-jdk8')
                         }
                     }
                     $jvmTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test'
-                            implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+                            implementation kotlin('test')
+                            implementation kotlin('test-junit')
                         }
                     }
                     $jsSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+                            implementation kotlin('stdlib-js')
                         }
                     }
                     $jsTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test-js'
+                            implementation kotlin('test-js')
                         }
                     }
                     $nativeSourceName {
