@@ -114,6 +114,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         runTest("idea/idea-completion/testData/smart/EmptyPrefix.kt");
     }
 
+    @TestMetadata("EnumExpected.kt")
+    public void testEnumExpected() throws Exception {
+        runTest("idea/idea-completion/testData/smart/EnumExpected.kt");
+    }
+
     @TestMetadata("EnumMembers.kt")
     public void testEnumMembers() throws Exception {
         runTest("idea/idea-completion/testData/smart/EnumMembers.kt");
