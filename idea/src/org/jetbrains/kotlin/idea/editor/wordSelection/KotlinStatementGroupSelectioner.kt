@@ -16,17 +16,16 @@
 
 package org.jetbrains.kotlin.idea.editor.wordSelection
 
+import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
-
-import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
-import org.jetbrains.kotlin.psi.psiUtil.siblings
-import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 /**
  * Originally from IDEA platform: StatementGroupSelectioner
@@ -42,23 +41,31 @@ class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() {
         val parent = e.parent
 
         val startElement = e.siblings(forward = false, withItself = false)
-                .firstOrNull { // find preceding '{' or blank line
-                    it is LeafPsiElement && it.elementType == KtTokens.LBRACE ||
-                    it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
-                }
-                ?.siblings(forward = true, withItself = false)
-                ?.dropWhile { it is PsiWhiteSpace } // and take first non-whitespace element after it
-                ?.firstOrNull() ?: parent.firstChild!!
+            .firstOrNull {
+                // find preceding '{' or blank line
+                it is LeafPsiElement && it.elementType == KtTokens.LBRACE ||
+                        it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
+            }
+            ?.siblings(forward = true, withItself = false)
+            ?.dropWhile { it is PsiWhiteSpace } // and take first non-whitespace element after it
+            ?.firstOrNull() ?: parent.firstChild!!
 
         val endElement = e.siblings(forward = true, withItself = false)
-                .firstOrNull { // find next '}' or blank line
-                    it is LeafPsiElement && it.elementType == KtTokens.RBRACE ||
-                    it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
-                }
-                ?.siblings(forward = false, withItself = false)
-                ?.dropWhile { it is PsiWhiteSpace } // and take first non-whitespace element before it
-                ?.firstOrNull() ?: parent.lastChild!!
+            .firstOrNull {
+                // find next '}' or blank line
+                it is LeafPsiElement && it.elementType == KtTokens.RBRACE ||
+                        it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
+            }
+            ?.siblings(forward = false, withItself = false)
+            ?.dropWhile { it is PsiWhiteSpace } // and take first non-whitespace element before it
+            ?.firstOrNull() ?: parent.lastChild!!
 
-        return ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(startElement.textRange!!.startOffset, endElement.textRange!!.endOffset))
+        return ExtendWordSelectionHandlerBase.expandToWholeLine(
+            editorText,
+            TextRange(
+                startElement.textRange!!.startOffset,
+                endElement.textRange!!.endOffset
+            )
+        )
     }
 }

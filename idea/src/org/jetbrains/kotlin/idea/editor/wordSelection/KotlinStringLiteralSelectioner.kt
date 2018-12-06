@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.idea.editor.wordSelection
 
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
-import com.intellij.psi.PsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset

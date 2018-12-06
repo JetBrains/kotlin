@@ -150,7 +150,9 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
         if (KtTokens.COMMENTS.contains(tokenType)
             || tokenType == KtTokens.REGULAR_STRING_PART
             || tokenType == KtTokens.OPEN_QUOTE
-            || tokenType == KtTokens.CHARACTER_LITERAL) return;
+            || tokenType == KtTokens.CHARACTER_LITERAL) {
+            return;
+        }
 
         AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, null);
     }
@@ -187,7 +189,9 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 if (!endsWith(chars, offset, "this@")
                     && !endsWith(chars, offset, "return@")
                     && !endsWith(chars, offset, "break@")
-                    && !endsWith(chars, offset, "continue@")) return false;
+                    && !endsWith(chars, offset, "continue@")) {
+                    return false;
+                }
 
                 PsiElement lastElement = file.findElementAt(offset - 1);
                 if (lastElement == null) return false;
@@ -233,7 +237,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             int offset = editor.getCaretModel().getOffset();
             PsiElement previousElement = file.findElementAt(offset - 1);
             if (previousElement instanceof LeafPsiElement
-                    && ((LeafPsiElement) previousElement).getElementType() == KtTokens.LONG_TEMPLATE_ENTRY_START) {
+                && ((LeafPsiElement) previousElement).getElementType() == KtTokens.LONG_TEMPLATE_ENTRY_START) {
                 editor.getDocument().insertString(offset, "}");
                 return Result.STOP;
             }
@@ -253,7 +257,8 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             if (autoIndentCase(editor, project, file, KtOperationReferenceExpression.class)) {
                 return Result.STOP;
             }
-        } else if (c == '&') {
+        }
+        else if (c == '&') {
             if (autoIndentCase(editor, project, file, KtOperationReferenceExpression.class)) {
                 return Result.STOP;
             }
@@ -264,6 +269,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
     /**
      * Copied from
+     *
      * @see com.intellij.codeInsight.editorActions.TypedHandler#indentBrace(Project, Editor, char)
      */
     private static void indentBrace(@NotNull final Project project, @NotNull final Editor editor, char braceChar) {

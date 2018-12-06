@@ -100,7 +100,8 @@ class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
         caretOffset = CharArrayUtil.shiftBackward(chars, caretOffset - 1, " \t") + 1
 
         if (CharArrayUtil.regionMatches(chars, caretOffset - "{}".length, "{}") ||
-            CharArrayUtil.regionMatches(chars, caretOffset - "{\n}".length, "{\n}")) {
+            CharArrayUtil.regionMatches(chars, caretOffset - "{\n}".length, "{\n}")
+        ) {
             commit(editor)
             val settings = CodeStyleSettingsManager.getSettings(file.project)
             val old = settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE

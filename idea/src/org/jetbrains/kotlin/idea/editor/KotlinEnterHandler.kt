@@ -30,19 +30,19 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
+class KotlinEnterHandler : EnterHandlerDelegateAdapter() {
     companion object {
         private val LOG = Logger.getInstance(KotlinEnterHandler::class.java)
         private val FORCE_INDENT_IN_LAMBDA_AFTER = TokenSet.create(KtTokens.ARROW, KtTokens.LBRACE)
     }
 
     override fun preprocessEnter(
-            file: PsiFile,
-            editor: Editor,
-            caretOffsetRef: Ref<Int>,
-            caretAdvance: Ref<Int>,
-            dataContext: DataContext,
-            originalHandler: EditorActionHandler?
+        file: PsiFile,
+        editor: Editor,
+        caretOffsetRef: Ref<Int>,
+        caretAdvance: Ref<Int>,
+        dataContext: DataContext,
+        originalHandler: EditorActionHandler?
     ): EnterHandlerDelegate.Result? {
         if (file !is KtFile) return EnterHandlerDelegate.Result.Continue
 
@@ -74,8 +74,7 @@ class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
 
             try {
                 CodeStyleManager.getInstance(file.getProject())!!.adjustLineIndent(file, editor.caretModel.offset)
-            }
-            catch (e: IncorrectOperationException) {
+            } catch (e: IncorrectOperationException) {
                 LOG.error(e)
             }
 
@@ -88,10 +87,12 @@ class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
     // We can't use the core platform logic (EnterInStringLiteralHandler) because it assumes that the string
     // is a single token and the first character of the token is an opening quote. In the case of Kotlin,
     // the opening quote is a separate token and the first character of the string token is just a random letter.
-    private fun preprocessEnterInStringLiteral(psiFile: PsiFile,
-                                               editor: Editor,
-                                               caretOffsetRef: Ref<Int>,
-                                               caretAdvanceRef: Ref<Int>): Boolean {
+    private fun preprocessEnterInStringLiteral(
+        psiFile: PsiFile,
+        editor: Editor,
+        caretOffsetRef: Ref<Int>,
+        caretAdvanceRef: Ref<Int>
+    ): Boolean {
         var caretOffset = caretOffsetRef.get()
         val psiAtOffset = psiFile.findElementAt(caretOffset) ?: return false
         val stringTemplate = psiAtOffset.getStrictParentOfType<KtStringTemplateExpression>() ?: return false

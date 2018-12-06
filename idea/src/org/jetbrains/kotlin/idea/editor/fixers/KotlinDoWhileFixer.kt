@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.editor.fixers
 
 import com.intellij.lang.SmartEnterProcessorWithFixers
-import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.KtDoWhileExpression
+import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtDoWhileExpression
 
 class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
@@ -35,13 +35,11 @@ class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterH
         if (body == null) {
             if (whileKeyword == null) {
                 doc.replaceString(start, start + "do".length, "do {} while()")
-            }
-            else {
+            } else {
                 doc.insertString(start + "do".length, "{}")
             }
             return
-        }
-        else if (whileKeyword != null && body !is KtBlockExpression && body.startLine(doc) > psiElement.startLine(doc)) {
+        } else if (whileKeyword != null && body !is KtBlockExpression && body.startLine(doc) > psiElement.startLine(doc)) {
             doc.insertString(whileKeyword.range.start, "}")
             doc.insertString(start + "do".length, "{")
 

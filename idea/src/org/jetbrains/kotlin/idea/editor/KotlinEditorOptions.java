@@ -70,7 +70,8 @@ public class KotlinEditorOptions implements PersistentStateComponent<KotlinEdito
     public Object clone() {
         try {
             return super.clone();
-        } catch (CloneNotSupportedException e) {
+        }
+        catch (CloneNotSupportedException e) {
             return null;
         }
     }
