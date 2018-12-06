@@ -5,13 +5,13 @@ public final class InlineReceiversKt : java/lang/Object {
             1 $i$f$block: I
     }
 
-    public final static void foo(java.lang.String $receiver, int $i$a$-block-InlineReceiversKt$foo$1) {
+    public final static void foo(java.lang.String $this$block, int $i$a$-block-InlineReceiversKt$foo$1) {
         Local variables:
-            4 $receiver: J
+            4 $this$block: J
             6 $i$a$-block-InlineReceiversKt$foo$1: I
             3 $i$f$block: I
             2 x: Z
-            0 $receiver: Ljava/lang/String;
+            0 $this$foo: Ljava/lang/String;
             1 count: I
     }
 }

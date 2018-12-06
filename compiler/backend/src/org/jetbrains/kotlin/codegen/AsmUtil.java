@@ -103,6 +103,8 @@ public class AsmUtil {
 
     public static final String LABELED_THIS_FIELD = THIS + "_";
 
+    public static final String LABELED_THIS_PARAMETER = "$" + THIS + "$";
+
     public static final String CAPTURED_THIS_FIELD = "this$0";
 
     public static final String RECEIVER_PARAMETER_NAME = "$receiver";
@@ -141,13 +143,35 @@ public class AsmUtil {
     }
 
     @NotNull
-    public static String getLabeledThisNameForReceiver(
+    public static String getNameForCapturedReceiverField(
             @NotNull CallableDescriptor descriptor,
             @NotNull BindingContext bindingContext,
             @NotNull LanguageVersionSettings languageVersionSettings
     ) {
+        return getLabeledThisNameForReceiver(
+                descriptor, bindingContext, languageVersionSettings, LABELED_THIS_FIELD, CAPTURED_RECEIVER_FIELD);
+    }
+
+    @NotNull
+    public static String getNameForReceiverParameter(
+            @NotNull CallableDescriptor descriptor,
+            @NotNull BindingContext bindingContext,
+            @NotNull LanguageVersionSettings languageVersionSettings
+    ) {
+        return getLabeledThisNameForReceiver(
+                descriptor, bindingContext, languageVersionSettings, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME);
+    }
+
+    @NotNull
+    private static String getLabeledThisNameForReceiver(
+            @NotNull CallableDescriptor descriptor,
+            @NotNull BindingContext bindingContext,
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull String prefix,
+            @NotNull String defaultName
+    ) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-            return CAPTURED_RECEIVER_FIELD;
+            return defaultName;
         }
 
         Name callableName = null;
@@ -155,7 +179,7 @@ public class AsmUtil {
         if (descriptor instanceof FunctionDescriptor) {
             String labelName = bindingContext.get(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, (FunctionDescriptor) descriptor);
             if (labelName != null) {
-                return getLabeledThisName(labelName, CAPTURED_RECEIVER_FIELD);
+                return getLabeledThisName(labelName, prefix, defaultName);
             }
 
             if (descriptor instanceof VariableAccessorDescriptor) {
@@ -169,23 +193,23 @@ public class AsmUtil {
         }
 
         if (callableName.isSpecial()) {
-            return CAPTURED_RECEIVER_FIELD;
+            return defaultName;
         }
 
-        return getLabeledThisName(callableName.asString(), CAPTURED_RECEIVER_FIELD);
+        return getLabeledThisName(callableName.asString(), prefix, defaultName);
     }
 
     @NotNull
-    private static String getLabeledThisName(@NotNull String callableName, @NotNull String defaultName) {
+    public static String getLabeledThisName(@NotNull String callableName, @NotNull String prefix, @NotNull String defaultName) {
         if (!Name.isValidIdentifier(callableName)) {
             return defaultName;
         }
 
         if (!DalvikIdentifierUtils.isValidDalvikIdentifier(callableName)) {
-            return LABELED_THIS_FIELD + mangleLabel(callableName);
+            return prefix + mangleLabel(callableName);
         }
 
-        return LABELED_THIS_FIELD + callableName;
+        return prefix + callableName;
     }
 
     private static String mangleLabel(String label) {
@@ -925,7 +949,8 @@ public class AsmUtil {
             if (descriptor.isOperator()) {
                 ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
-                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, CAPTURED_RECEIVER_FIELD, descriptor);
+                    String name = getNameForReceiverParameter(descriptor, state.getBindingContext(), state.getLanguageVersionSettings());
+                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, name, descriptor);
                 }
             }
             return;
@@ -933,7 +958,8 @@ public class AsmUtil {
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, CAPTURED_RECEIVER_FIELD, descriptor);
+            String name = getNameForReceiverParameter(descriptor, state.getBindingContext(), state.getLanguageVersionSettings());
+            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, name, descriptor);
         }
 
         for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {

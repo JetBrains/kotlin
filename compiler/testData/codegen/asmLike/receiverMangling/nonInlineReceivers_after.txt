@@ -9,10 +9,10 @@ final class NonInlineReceivers_afterKt$foo$1 : kotlin/jvm/internal/Lambda, kotli
 
     public java.lang.Object invoke(java.lang.Object p0)
 
-    public final void invoke(long $receiver) {
+    public final void invoke(long $this$block) {
         Local variables:
             0 this: LNonInlineReceivers_afterKt$foo$1;
-            1 $receiver: J
+            1 $this$block: J
     }
 }
 
@@ -22,10 +22,10 @@ public final class NonInlineReceivers_afterKt : java/lang/Object {
             0 block: Lkotlin/jvm/functions/Function1;
     }
 
-    public final static void foo(java.lang.String x, int $receiver) {
+    public final static void foo(java.lang.String x, int $this$foo) {
         Local variables:
             2 x: Z
-            0 $receiver: Ljava/lang/String;
+            0 $this$foo: Ljava/lang/String;
             1 count: I
     }
 }

@@ -217,6 +217,10 @@ public class KotlinTypeMapper {
         return jvmTarget;
     }
 
+    public LanguageVersionSettings getLanguageVersionSettings() {
+        return languageVersionSettings;
+    }
+
     @NotNull
     public Type mapOwner(@NotNull DeclarationDescriptor descriptor) {
         return mapOwner(descriptor, true);
