@@ -25,6 +25,8 @@ object KotlinExtractInterfaceHandler : KotlinExtractSuperHandlerBase(true) {
     val REFACTORING_NAME = "Extract Interface"
 
     override fun getErrorMessage(klass: KtClassOrObject): String? {
+        val superMessage = super.getErrorMessage(klass)
+        if (superMessage != null) return superMessage
         if (klass is KtClass && klass.isAnnotation()) return "Interface cannot be extracted from an annotation class"
         return null
     }

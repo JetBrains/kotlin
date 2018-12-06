@@ -26,6 +26,8 @@ object KotlinExtractSuperclassHandler : KotlinExtractSuperHandlerBase(false) {
     val REFACTORING_NAME = "Extract Superclass"
 
     override fun getErrorMessage(klass: KtClassOrObject): String? {
+        val superMessage = super.getErrorMessage(klass)
+        if (superMessage != null) return superMessage
         if (klass is KtClass) {
             if (klass.isInterface()) return RefactoringBundle.message("superclass.cannot.be.extracted.from.an.interface")
             if (klass.isEnum()) return RefactoringBundle.message("superclass.cannot.be.extracted.from.an.enum")
