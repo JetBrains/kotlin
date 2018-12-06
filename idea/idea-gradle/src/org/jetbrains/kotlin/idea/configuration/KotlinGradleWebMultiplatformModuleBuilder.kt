@@ -229,7 +229,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun buildMultiPlatformPart(): String {
         return """
-            def ktor_version = '1.0.0-beta-1'
+            def ktor_version = '1.0.1'
             def logback_version = '1.2.3'
 
             kotlin {
