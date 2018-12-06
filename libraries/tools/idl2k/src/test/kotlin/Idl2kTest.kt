@@ -33,26 +33,20 @@ class Idl2kTests {
         return stringWriter
     }
 
-    private fun assertIdlCompiledTo(fileName: String, output: String) {
+    private fun assertIdlCompiledTo(fileName: String, expectedOutputName: String) {
+        val testResourcePrefix = "src/test/resources/"
+
         assertEquals(
-            output.trimIndent(),
-            convertIdlToWriter(File(fileName)).toString()
+            File("$testResourcePrefix$expectedOutputName").bufferedReader().use { it.readText() },
+            convertIdlToWriter(File("$testResourcePrefix$fileName")).toString()
         )
     }
 
     @Test
     fun basicTest() {
         assertIdlCompiledTo(
-            "src/test/resources/SomethingNotInCache.idl", """public external open class SomethingNotInCache {
-    open val someReadOnlyParam: dynamic
-    var someWriteableParam: dynamic
-    fun someEmptyMethod(): String
-    fun someMethod(root: dynamic): String
-    fun optionalUsvStringFetcher(name: String): String?
-}
-
-
-"""
+            "SomethingNotInCache.idl",
+            "SomethingNotInCache.kt"
         )
     }
 }
