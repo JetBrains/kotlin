@@ -30,11 +30,13 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.extractSuperclass.ExtractSuperClassUtil
 import com.intellij.refactoring.lang.ElementsHandler
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.refactoring.SeparateFileWrapper
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui.KotlinExtractSuperDialogBase
 import org.jetbrains.kotlin.idea.refactoring.showWithTransaction
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -108,7 +110,11 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
         return ExtractSuperClassUtil.showConflicts(dialog, conflicts, originalClass.project)
     }
 
-    internal abstract fun getErrorMessage(klass: KtClassOrObject): String?
+    internal open fun getErrorMessage(klass: KtClassOrObject): String? = when {
+        klass.isExpectDeclaration() -> "Extraction from expect class is not yet supported"
+        klass.toLightClass() == null -> "Extraction from non-JVM class is not yet supported"
+        else -> null
+    }
 
     protected abstract fun createDialog(klass: KtClassOrObject, targetParent: PsiElement): KotlinExtractSuperDialogBase
 }
