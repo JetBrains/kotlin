@@ -62,11 +62,11 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
               $this: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
                 typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:CharSequence modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
                 GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T, fn:(S) -> kotlin.Unit) returnType:kotlin.Unit flags:
+  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T, fn:kotlin.Function1<S, kotlin.Unit>) returnType:kotlin.Unit flags:
     TYPE_PARAMETER name:T index:0 variance: superTypes:[S?]
     TYPE_PARAMETER name:S index:1 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:x index:0 type:T flags:
-    VALUE_PARAMETER name:fn index:1 type:(S) -> kotlin.Unit flags:
+    VALUE_PARAMETER name:fn index:1 type:kotlin.Function1<S, kotlin.Unit> flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
@@ -75,6 +75,5 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
               arg0: GET_VAR 'value-parameter x: T' type=T origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
           then: CALL 'invoke(P1): R' type=kotlin.Unit origin=INVOKE
-            $this: GET_VAR 'value-parameter fn: (S) -> Unit' type=(S) -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
+            $this: GET_VAR 'value-parameter fn: (S) -> Unit' type=kotlin.Function1<S, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
             p1: GET_VAR 'value-parameter x: T' type=T origin=null
-
