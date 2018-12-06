@@ -54,10 +54,14 @@ fun main(args: Array<String>) {
                 println("Loading $url...")
 
                 w.appendln("// Downloaded from $url")
-                if (url.endsWith(".idl")) {
-                    w.appendln(URL(url).readText())
-                } else {
-                    extractIDLText(url, w)
+                val content = fetch(url)
+
+                if (content != null) {
+                    if (url.endsWith(".idl")) {
+                        w.appendln(content)
+                    } else {
+                        extractIDLText(content, w)
+                    }
                 }
             }
 
@@ -66,9 +70,18 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun extractIDLText(url: String, out: Appendable) {
-    //    val soup = Jsoup.connect(url).validateTLSCertificates(false).ignoreHttpErrors(true).get()
-    val soup = Jsoup.parse(URL(url).readText())
+private fun fetch(fqdn: String): String? {
+    try {
+        return URL(fqdn).readText()
+    } catch (e: Exception) {
+        println("failed to download ${fqdn}, if it's not a local problem, revisit the list of downloaded entities")
+        e.printStackTrace()
+        return null
+    }
+}
+
+private fun extractIDLText(rawContent: String, out: Appendable) {
+    val soup = Jsoup.parse(rawContent)
     fun append(it : Element) {
         if (!it.tag().preserveWhitespace()) {
             return append(Element(Tag.valueOf("pre"), it.baseUri()).appendChild(it))
