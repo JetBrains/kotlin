@@ -33,6 +33,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
@@ -41,25 +42,12 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     override fun setUp() {
         super.setUp()
 
-        val distPaths = with(PathUtil.kotlinPathsForIdeaPlugin) {
-            listOf(
-                    stdlibPath,
-                    stdlibSourcesPath,
-                    reflectPath,
-                    kotlinTestPath,
-                    jsKotlinTestJarPath,
-                    jsStdLibJarPath,
-                    jsStdLibSrcJarPath
-            )
-        }
-
-        for (path in distPaths) {
-            VfsRootAccess.allowRootAccess(testRootDisposable, path.absolutePath)
-        }
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 
     @Throws(Exception::class)
     override fun tearDown() {
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
         PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY)
 
         super.tearDown()
