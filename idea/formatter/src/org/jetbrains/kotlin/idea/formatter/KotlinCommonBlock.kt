@@ -367,7 +367,7 @@ abstract class KotlinCommonBlock(
             parentType in BINARY_EXPRESSIONS && getOperationType(node) in ALIGN_FOR_BINARY_OPERATIONS ->
                 createAlignmentStrategy(kotlinCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())
 
-            parentType === KtNodeTypes.SUPER_TYPE_LIST || parentType === KtNodeTypes.INITIALIZER_LIST ->
+            parentType === KtNodeTypes.SUPER_TYPE_LIST ->
                 createAlignmentStrategy(kotlinCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())
 
             parentType === KtNodeTypes.PARENTHESIZED ->
@@ -765,7 +765,7 @@ private val INDENT_RULES = arrayOf(
         .set(Indent.getNormalIndent(false)),
 
     strategy("Delegation list")
-        .within(KtNodeTypes.SUPER_TYPE_LIST, KtNodeTypes.INITIALIZER_LIST)
+        .within(KtNodeTypes.SUPER_TYPE_LIST)
         .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_SUPERTYPE_LISTS, indentFirst = true),
 
     strategy("Indices")
