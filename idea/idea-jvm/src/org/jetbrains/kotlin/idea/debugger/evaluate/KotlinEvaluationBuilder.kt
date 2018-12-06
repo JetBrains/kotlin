@@ -325,7 +325,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     // Prepare the main class
 
                     val argumentTypes = Type.getArgumentTypes(methodToInvoke.desc)
-                    val args = context.getArgumentsForEval4j(compiledData.parameters, argumentTypes)
+                    val args = context.getArgumentsForEvaluation(compiledData.parameters, argumentTypes)
                             .zip(argumentTypes)
                             .map { (value, type) ->
                                 // Make argument type classes prepared for sure
@@ -358,7 +358,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     // Maybe just take the single method from the class, as it is done in 'evaluateWithCompilation'
                     if (name == GENERATED_FUNCTION_NAME || name.startsWith(GENERATED_FUNCTION_NAME + "-")) {
                         val argumentTypes = Type.getArgumentTypes(desc)
-                        val args = context.getArgumentsForEval4j(compiledData.parameters, argumentTypes)
+                        val args = context.getArgumentsForEvaluation(compiledData.parameters, argumentTypes)
 
                         return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
@@ -501,7 +501,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
         }
 
-        private fun EvaluationContextImpl.getArgumentsForEval4j(
+        private fun EvaluationContextImpl.getArgumentsForEvaluation(
             parameters: List<Parameter>,
             parameterTypes: Array<Type>
         ): List<Value> {
