@@ -4482,6 +4482,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/inIfWhenEntry2.kt");
         }
 
+        @TestMetadata("it.kt")
+        public void testIt() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/it.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/simple.kt");
