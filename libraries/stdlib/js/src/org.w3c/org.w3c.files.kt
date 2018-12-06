@@ -44,9 +44,7 @@ public external interface BlobPropertyBag {
 public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
     val o = js("({})")
 
-    if (type !== undefined) {
-        o["type"] = type
-    }
+    o["type"] = type
 
     return o
 }
@@ -69,12 +67,8 @@ public external interface FilePropertyBag : BlobPropertyBag {
 public inline fun FilePropertyBag(lastModified: Int? = undefined, type: String? = ""): FilePropertyBag {
     val o = js("({})")
 
-    if (lastModified !== undefined) {
-        o["lastModified"] = lastModified
-    }
-    if (type !== undefined) {
-        o["type"] = type
-    }
+    o["lastModified"] = lastModified
+    o["type"] = type
 
     return o
 }

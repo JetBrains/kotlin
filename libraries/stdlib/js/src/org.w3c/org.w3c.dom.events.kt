@@ -44,21 +44,11 @@ public external interface UIEventInit : EventInit {
 public inline fun UIEventInit(view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): UIEventInit {
     val o = js("({})")
 
-    if (view !== undefined) {
-        o["view"] = view
-    }
-    if (detail !== undefined) {
-        o["detail"] = detail
-    }
-    if (bubbles !== undefined) {
-        o["bubbles"] = bubbles
-    }
-    if (cancelable !== undefined) {
-        o["cancelable"] = cancelable
-    }
-    if (composed !== undefined) {
-        o["composed"] = composed
-    }
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
@@ -80,24 +70,12 @@ public external interface FocusEventInit : UIEventInit {
 public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): FocusEventInit {
     val o = js("({})")
 
-    if (relatedTarget !== undefined) {
-        o["relatedTarget"] = relatedTarget
-    }
-    if (view !== undefined) {
-        o["view"] = view
-    }
-    if (detail !== undefined) {
-        o["detail"] = detail
-    }
-    if (bubbles !== undefined) {
-        o["bubbles"] = bubbles
-    }
-    if (cancelable !== undefined) {
-        o["cancelable"] = cancelable
-    }
-    if (composed !== undefined) {
-        o["composed"] = composed
-    }
+    o["relatedTarget"] = relatedTarget
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
@@ -153,84 +131,32 @@ public external interface MouseEventInit : EventModifierInit {
 public inline fun MouseEventInit(screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MouseEventInit {
     val o = js("({})")
 
-    if (screenX !== undefined) {
-        o["screenX"] = screenX
-    }
-    if (screenY !== undefined) {
-        o["screenY"] = screenY
-    }
-    if (clientX !== undefined) {
-        o["clientX"] = clientX
-    }
-    if (clientY !== undefined) {
-        o["clientY"] = clientY
-    }
-    if (button !== undefined) {
-        o["button"] = button
-    }
-    if (buttons !== undefined) {
-        o["buttons"] = buttons
-    }
-    if (relatedTarget !== undefined) {
-        o["relatedTarget"] = relatedTarget
-    }
-    if (ctrlKey !== undefined) {
-        o["ctrlKey"] = ctrlKey
-    }
-    if (shiftKey !== undefined) {
-        o["shiftKey"] = shiftKey
-    }
-    if (altKey !== undefined) {
-        o["altKey"] = altKey
-    }
-    if (metaKey !== undefined) {
-        o["metaKey"] = metaKey
-    }
-    if (modifierAltGraph !== undefined) {
-        o["modifierAltGraph"] = modifierAltGraph
-    }
-    if (modifierCapsLock !== undefined) {
-        o["modifierCapsLock"] = modifierCapsLock
-    }
-    if (modifierFn !== undefined) {
-        o["modifierFn"] = modifierFn
-    }
-    if (modifierFnLock !== undefined) {
-        o["modifierFnLock"] = modifierFnLock
-    }
-    if (modifierHyper !== undefined) {
-        o["modifierHyper"] = modifierHyper
-    }
-    if (modifierNumLock !== undefined) {
-        o["modifierNumLock"] = modifierNumLock
-    }
-    if (modifierScrollLock !== undefined) {
-        o["modifierScrollLock"] = modifierScrollLock
-    }
-    if (modifierSuper !== undefined) {
-        o["modifierSuper"] = modifierSuper
-    }
-    if (modifierSymbol !== undefined) {
-        o["modifierSymbol"] = modifierSymbol
-    }
-    if (modifierSymbolLock !== undefined) {
-        o["modifierSymbolLock"] = modifierSymbolLock
-    }
-    if (view !== undefined) {
-        o["view"] = view
-    }
-    if (detail !== undefined) {
-        o["detail"] = detail
-    }
-    if (bubbles !== undefined) {
-        o["bubbles"] = bubbles
-    }
-    if (cancelable !== undefined) {
-        o["cancelable"] = cancelable
-    }
-    if (composed !== undefined) {
-        o["composed"] = composed
-    }
+    o["screenX"] = screenX
+    o["screenY"] = screenY
+    o["clientX"] = clientX
+    o["clientY"] = clientY
+    o["button"] = button
+    o["buttons"] = buttons
+    o["relatedTarget"] = relatedTarget
+    o["ctrlKey"] = ctrlKey
+    o["shiftKey"] = shiftKey
+    o["altKey"] = altKey
+    o["metaKey"] = metaKey
+    o["modifierAltGraph"] = modifierAltGraph
+    o["modifierCapsLock"] = modifierCapsLock
+    o["modifierFn"] = modifierFn
+    o["modifierFnLock"] = modifierFnLock
+    o["modifierHyper"] = modifierHyper
+    o["modifierNumLock"] = modifierNumLock
+    o["modifierScrollLock"] = modifierScrollLock
+    o["modifierSuper"] = modifierSuper
+    o["modifierSymbol"] = modifierSymbol
+    o["modifierSymbolLock"] = modifierSymbolLock
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
@@ -284,63 +210,25 @@ public external interface EventModifierInit : UIEventInit {
 public inline fun EventModifierInit(ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): EventModifierInit {
     val o = js("({})")
 
-    if (ctrlKey !== undefined) {
-        o["ctrlKey"] = ctrlKey
-    }
-    if (shiftKey !== undefined) {
-        o["shiftKey"] = shiftKey
-    }
-    if (altKey !== undefined) {
-        o["altKey"] = altKey
-    }
-    if (metaKey !== undefined) {
-        o["metaKey"] = metaKey
-    }
-    if (modifierAltGraph !== undefined) {
-        o["modifierAltGraph"] = modifierAltGraph
-    }
-    if (modifierCapsLock !== undefined) {
-        o["modifierCapsLock"] = modifierCapsLock
-    }
-    if (modifierFn !== undefined) {
-        o["modifierFn"] = modifierFn
-    }
-    if (modifierFnLock !== undefined) {
-        o["modifierFnLock"] = modifierFnLock
-    }
-    if (modifierHyper !== undefined) {
-        o["modifierHyper"] = modifierHyper
-    }
-    if (modifierNumLock !== undefined) {
-        o["modifierNumLock"] = modifierNumLock
-    }
-    if (modifierScrollLock !== undefined) {
-        o["modifierScrollLock"] = modifierScrollLock
-    }
-    if (modifierSuper !== undefined) {
-        o["modifierSuper"] = modifierSuper
-    }
-    if (modifierSymbol !== undefined) {
-        o["modifierSymbol"] = modifierSymbol
-    }
-    if (modifierSymbolLock !== undefined) {
-        o["modifierSymbolLock"] = modifierSymbolLock
-    }
-    if (view !== undefined) {
-        o["view"] = view
-    }
-    if (detail !== undefined) {
-        o["detail"] = detail
-    }
-    if (bubbles !== undefined) {
-        o["bubbles"] = bubbles
-    }
-    if (cancelable !== undefined) {
-        o["cancelable"] = cancelable
-    }
-    if (composed !== undefined) {
-        o["composed"] = composed
-    }
+    o["ctrlKey"] = ctrlKey
+    o["shiftKey"] = shiftKey
+    o["altKey"] = altKey
+    o["metaKey"] = metaKey
+    o["modifierAltGraph"] = modifierAltGraph
+    o["modifierCapsLock"] = modifierCapsLock
+    o["modifierFn"] = modifierFn
+    o["modifierFnLock"] = modifierFnLock
+    o["modifierHyper"] = modifierHyper
+    o["modifierNumLock"] = modifierNumLock
+    o["modifierScrollLock"] = modifierScrollLock
+    o["modifierSuper"] = modifierSuper
+    o["modifierSymbol"] = modifierSymbol
+    o["modifierSymbolLock"] = modifierSymbolLock
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
@@ -380,96 +268,36 @@ public external interface WheelEventInit : MouseEventInit {
 public inline fun WheelEventInit(deltaX: Double? = 0.0, deltaY: Double? = 0.0, deltaZ: Double? = 0.0, deltaMode: Int? = 0, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): WheelEventInit {
     val o = js("({})")
 
-    if (deltaX !== undefined) {
-        o["deltaX"] = deltaX
-    }
-    if (deltaY !== undefined) {
-        o["deltaY"] = deltaY
-    }
-    if (deltaZ !== undefined) {
-        o["deltaZ"] = deltaZ
-    }
-    if (deltaMode !== undefined) {
-        o["deltaMode"] = deltaMode
-    }
-    if (screenX !== undefined) {
-        o["screenX"] = screenX
-    }
-    if (screenY !== undefined) {
-        o["screenY"] = screenY
-    }
-    if (clientX !== undefined) {
-        o["clientX"] = clientX
-    }
-    if (clientY !== undefined) {
-        o["clientY"] = clientY
-    }
-    if (button !== undefined) {
-        o["button"] = button
-    }
-    if (buttons !== undefined) {
-        o["buttons"] = buttons
-    }
-    if (relatedTarget !== undefined) {
-        o["relatedTarget"] = relatedTarget
-    }
-    if (ctrlKey !== undefined) {
-        o["ctrlKey"] = ctrlKey
-    }
-    if (shiftKey !== undefined) {
-        o["shiftKey"] = shiftKey
-    }
-    if (altKey !== undefined) {
-        o["altKey"] = altKey
-    }
-    if (metaKey !== undefined) {
-        o["metaKey"] = metaKey
-    }
-    if (modifierAltGraph !== undefined) {
-        o["modifierAltGraph"] = modifierAltGraph
-    }
-    if (modifierCapsLock !== undefined) {
-        o["modifierCapsLock"] = modifierCapsLock
-    }
-    if (modifierFn !== undefined) {
-        o["modifierFn"] = modifierFn
-    }
-    if (modifierFnLock !== undefined) {
-        o["modifierFnLock"] = modifierFnLock
-    }
-    if (modifierHyper !== undefined) {
-        o["modifierHyper"] = modifierHyper
-    }
-    if (modifierNumLock !== undefined) {
-        o["modifierNumLock"] = modifierNumLock
-    }
-    if (modifierScrollLock !== undefined) {
-        o["modifierScrollLock"] = modifierScrollLock
-    }
-    if (modifierSuper !== undefined) {
-        o["modifierSuper"] = modifierSuper
-    }
-    if (modifierSymbol !== undefined) {
-        o["modifierSymbol"] = modifierSymbol
-    }
-    if (modifierSymbolLock !== undefined) {
-        o["modifierSymbolLock"] = modifierSymbolLock
-    }
-    if (view !== undefined) {
-        o["view"] = view
-    }
-    if (detail !== undefined) {
-        o["detail"] = detail
-    }
-    if (bubbles !== undefined) {
-        o["bubbles"] = bubbles
-    }
-    if (cancelable !== undefined) {
-        o["cancelable"] = cancelable
-    }
-    if (composed !== undefined) {
-        o["composed"] = composed
-    }
+    o["deltaX"] = deltaX
+    o["deltaY"] = deltaY
+    o["deltaZ"] = deltaZ
+    o["deltaMode"] = deltaMode
+    o["screenX"] = screenX
+    o["screenY"] = screenY
+    o["clientX"] = clientX
+    o["clientY"] = clientY
+    o["button"] = button
+    o["buttons"] = buttons
+    o["relatedTarget"] = relatedTarget
+    o["ctrlKey"] = ctrlKey
+    o["shiftKey"] = shiftKey
+    o["altKey"] = altKey
+    o["metaKey"] = metaKey
+    o["modifierAltGraph"] = modifierAltGraph
+    o["modifierCapsLock"] = modifierCapsLock
+    o["modifierFn"] = modifierFn
+    o["modifierFnLock"] = modifierFnLock
+    o["modifierHyper"] = modifierHyper
+    o["modifierNumLock"] = modifierNumLock
+    o["modifierScrollLock"] = modifierScrollLock
+    o["modifierSuper"] = modifierSuper
+    o["modifierSymbol"] = modifierSymbol
+    o["modifierSymbolLock"] = modifierSymbolLock
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
@@ -495,27 +323,13 @@ public external interface InputEventInit : UIEventInit {
 public inline fun InputEventInit(data: String? = "", isComposing: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): InputEventInit {
     val o = js("({})")
 
-    if (data !== undefined) {
-        o["data"] = data
-    }
-    if (isComposing !== undefined) {
-        o["isComposing"] = isComposing
-    }
-    if (view !== undefined) {
-        o["view"] = view
-    }
-    if (detail !== undefined) {
-        o["detail"] = detail
-    }
-    if (bubbles !== undefined) {
-        o["bubbles"] = bubbles
-    }
-    if (cancelable !== undefined) {
-        o["cancelable"] = cancelable
-    }
-    if (composed !== undefined) {
-        o["composed"] = composed
-    }
+    o["data"] = data
+    o["isComposing"] = isComposing
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
@@ -568,78 +382,30 @@ public external interface KeyboardEventInit : EventModifierInit {
 public inline fun KeyboardEventInit(key: String? = "", code: String? = "", location: Int? = 0, repeat: Boolean? = false, isComposing: Boolean? = false, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): KeyboardEventInit {
     val o = js("({})")
 
-    if (key !== undefined) {
-        o["key"] = key
-    }
-    if (code !== undefined) {
-        o["code"] = code
-    }
-    if (location !== undefined) {
-        o["location"] = location
-    }
-    if (repeat !== undefined) {
-        o["repeat"] = repeat
-    }
-    if (isComposing !== undefined) {
-        o["isComposing"] = isComposing
-    }
-    if (ctrlKey !== undefined) {
-        o["ctrlKey"] = ctrlKey
-    }
-    if (shiftKey !== undefined) {
-        o["shiftKey"] = shiftKey
-    }
-    if (altKey !== undefined) {
-        o["altKey"] = altKey
-    }
-    if (metaKey !== undefined) {
-        o["metaKey"] = metaKey
-    }
-    if (modifierAltGraph !== undefined) {
-        o["modifierAltGraph"] = modifierAltGraph
-    }
-    if (modifierCapsLock !== undefined) {
-        o["modifierCapsLock"] = modifierCapsLock
-    }
-    if (modifierFn !== undefined) {
-        o["modifierFn"] = modifierFn
-    }
-    if (modifierFnLock !== undefined) {
-        o["modifierFnLock"] = modifierFnLock
-    }
-    if (modifierHyper !== undefined) {
-        o["modifierHyper"] = modifierHyper
-    }
-    if (modifierNumLock !== undefined) {
-        o["modifierNumLock"] = modifierNumLock
-    }
-    if (modifierScrollLock !== undefined) {
-        o["modifierScrollLock"] = modifierScrollLock
-    }
-    if (modifierSuper !== undefined) {
-        o["modifierSuper"] = modifierSuper
-    }
-    if (modifierSymbol !== undefined) {
-        o["modifierSymbol"] = modifierSymbol
-    }
-    if (modifierSymbolLock !== undefined) {
-        o["modifierSymbolLock"] = modifierSymbolLock
-    }
-    if (view !== undefined) {
-        o["view"] = view
-    }
-    if (detail !== undefined) {
-        o["detail"] = detail
-    }
-    if (bubbles !== undefined) {
-        o["bubbles"] = bubbles
-    }
-    if (cancelable !== undefined) {
-        o["cancelable"] = cancelable
-    }
-    if (composed !== undefined) {
-        o["composed"] = composed
-    }
+    o["key"] = key
+    o["code"] = code
+    o["location"] = location
+    o["repeat"] = repeat
+    o["isComposing"] = isComposing
+    o["ctrlKey"] = ctrlKey
+    o["shiftKey"] = shiftKey
+    o["altKey"] = altKey
+    o["metaKey"] = metaKey
+    o["modifierAltGraph"] = modifierAltGraph
+    o["modifierCapsLock"] = modifierCapsLock
+    o["modifierFn"] = modifierFn
+    o["modifierFnLock"] = modifierFnLock
+    o["modifierHyper"] = modifierHyper
+    o["modifierNumLock"] = modifierNumLock
+    o["modifierScrollLock"] = modifierScrollLock
+    o["modifierSuper"] = modifierSuper
+    o["modifierSymbol"] = modifierSymbol
+    o["modifierSymbolLock"] = modifierSymbolLock
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
@@ -661,24 +427,12 @@ public external interface CompositionEventInit : UIEventInit {
 public inline fun CompositionEventInit(data: String? = "", view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): CompositionEventInit {
     val o = js("({})")
 
-    if (data !== undefined) {
-        o["data"] = data
-    }
-    if (view !== undefined) {
-        o["view"] = view
-    }
-    if (detail !== undefined) {
-        o["detail"] = detail
-    }
-    if (bubbles !== undefined) {
-        o["bubbles"] = bubbles
-    }
-    if (cancelable !== undefined) {
-        o["cancelable"] = cancelable
-    }
-    if (composed !== undefined) {
-        o["composed"] = composed
-    }
+    o["data"] = data
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }

@@ -114,57 +114,23 @@ public external interface NotificationOptions {
 public inline fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = undefined, icon: String? = undefined, badge: String? = undefined, sound: String? = undefined, vibrate: dynamic = undefined, timestamp: Number? = undefined, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
     val o = js("({})")
 
-    if (dir !== undefined) {
-        o["dir"] = dir
-    }
-    if (lang !== undefined) {
-        o["lang"] = lang
-    }
-    if (body !== undefined) {
-        o["body"] = body
-    }
-    if (tag !== undefined) {
-        o["tag"] = tag
-    }
-    if (image !== undefined) {
-        o["image"] = image
-    }
-    if (icon !== undefined) {
-        o["icon"] = icon
-    }
-    if (badge !== undefined) {
-        o["badge"] = badge
-    }
-    if (sound !== undefined) {
-        o["sound"] = sound
-    }
-    if (vibrate !== undefined) {
-        o["vibrate"] = vibrate
-    }
-    if (timestamp !== undefined) {
-        o["timestamp"] = timestamp
-    }
-    if (renotify !== undefined) {
-        o["renotify"] = renotify
-    }
-    if (silent !== undefined) {
-        o["silent"] = silent
-    }
-    if (noscreen !== undefined) {
-        o["noscreen"] = noscreen
-    }
-    if (requireInteraction !== undefined) {
-        o["requireInteraction"] = requireInteraction
-    }
-    if (sticky !== undefined) {
-        o["sticky"] = sticky
-    }
-    if (data !== undefined) {
-        o["data"] = data
-    }
-    if (actions !== undefined) {
-        o["actions"] = actions
-    }
+    o["dir"] = dir
+    o["lang"] = lang
+    o["body"] = body
+    o["tag"] = tag
+    o["image"] = image
+    o["icon"] = icon
+    o["badge"] = badge
+    o["sound"] = sound
+    o["vibrate"] = vibrate
+    o["timestamp"] = timestamp
+    o["renotify"] = renotify
+    o["silent"] = silent
+    o["noscreen"] = noscreen
+    o["requireInteraction"] = requireInteraction
+    o["sticky"] = sticky
+    o["data"] = data
+    o["actions"] = actions
 
     return o
 }
@@ -185,15 +151,9 @@ public external interface NotificationAction {
 public inline fun NotificationAction(action: String?, title: String?, icon: String? = undefined): NotificationAction {
     val o = js("({})")
 
-    if (action !== undefined) {
-        o["action"] = action
-    }
-    if (title !== undefined) {
-        o["title"] = title
-    }
-    if (icon !== undefined) {
-        o["icon"] = icon
-    }
+    o["action"] = action
+    o["title"] = title
+    o["icon"] = icon
 
     return o
 }
@@ -208,9 +168,7 @@ public external interface GetNotificationOptions {
 public inline fun GetNotificationOptions(tag: String? = ""): GetNotificationOptions {
     val o = js("({})")
 
-    if (tag !== undefined) {
-        o["tag"] = tag
-    }
+    o["tag"] = tag
 
     return o
 }
@@ -236,21 +194,11 @@ public external interface NotificationEventInit : ExtendableEventInit {
 public inline fun NotificationEventInit(notification: Notification?, action: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): NotificationEventInit {
     val o = js("({})")
 
-    if (notification !== undefined) {
-        o["notification"] = notification
-    }
-    if (action !== undefined) {
-        o["action"] = action
-    }
-    if (bubbles !== undefined) {
-        o["bubbles"] = bubbles
-    }
-    if (cancelable !== undefined) {
-        o["cancelable"] = cancelable
-    }
-    if (composed !== undefined) {
-        o["composed"] = composed
-    }
+    o["notification"] = notification
+    o["action"] = action
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
