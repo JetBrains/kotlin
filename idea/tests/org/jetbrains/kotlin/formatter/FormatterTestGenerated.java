@@ -291,6 +291,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/EnumArguments.after.kt");
         }
 
+        @TestMetadata("EnumInitializerList.after.kt")
+        public void testEnumInitializerList() throws Exception {
+            runTest("idea/testData/formatter/EnumInitializerList.after.kt");
+        }
+
         @TestMetadata("EnumWrapping.after.kt")
         public void testEnumWrapping() throws Exception {
             runTest("idea/testData/formatter/EnumWrapping.after.kt");
@@ -299,6 +304,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("ExpressionBodyWrap.after.kt")
         public void testExpressionBodyWrap() throws Exception {
             runTest("idea/testData/formatter/ExpressionBodyWrap.after.kt");
+        }
+
+        @TestMetadata("ExtendsListAlignEnum.after.kt")
+        public void testExtendsListAlignEnum() throws Exception {
+            runTest("idea/testData/formatter/ExtendsListAlignEnum.after.kt");
         }
 
         @TestMetadata("ExtendsListWrap.after.kt")
@@ -1184,6 +1194,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("EmptyLineBetweenEnumEntries.after.inv.kt")
         public void testEmptyLineBetweenEnumEntries() throws Exception {
             runTest("idea/testData/formatter/EmptyLineBetweenEnumEntries.after.inv.kt");
+        }
+
+        @TestMetadata("ExtendsListAlignEnum.after.inv.kt")
+        public void testExtendsListAlignEnum() throws Exception {
+            runTest("idea/testData/formatter/ExtendsListAlignEnum.after.inv.kt");
         }
 
         @TestMetadata("ForLineBreak.after.inv.kt")
