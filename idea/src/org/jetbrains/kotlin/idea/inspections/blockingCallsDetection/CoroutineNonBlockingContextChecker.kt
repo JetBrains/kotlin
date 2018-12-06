@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictsSuspensionReceiver
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-
 
 class CoroutineNonBlockingContextChecker : NonBlockingContextChecker {
 
@@ -45,10 +45,11 @@ class CoroutineNonBlockingContextChecker : NonBlockingContextChecker {
             val callExpression = PsiTreeUtil.getParentOfType(containingArgument, KtCallExpression::class.java) ?: return false
             val call = callExpression.resolveToCall(BodyResolveMode.PARTIAL) ?: return false
 
-            val hasBlockingAnnotation = call.getFirstArgument()?.resolveToCall()
-                ?.resultingDescriptor?.annotations?.hasAnnotation(FqName(BLOCKING_CONTEXT_ANNOTATION))
-            if (hasBlockingAnnotation == true)
-                return false
+            val argumentDescriptor = call.getFirstArgument()?.resolveToCall()?.resultingDescriptor
+            val hasBlockingAnnotation = argumentDescriptor?.annotations?.hasAnnotation(FqName(BLOCKING_CONTEXT_ANNOTATION))
+            if (hasBlockingAnnotation == true) return false
+            val isIoDispatcherUsed = argumentDescriptor?.fqNameOrNull()?.asString() == IO_DISPATCHER_FQN
+            if (isIoDispatcherUsed) return false
 
             val parameterForArgument = call.getParameterForArgument(containingArgument) ?: return false
             val type = parameterForArgument.returnType ?: return false
@@ -69,5 +70,6 @@ class CoroutineNonBlockingContextChecker : NonBlockingContextChecker {
 
     companion object {
         private const val BLOCKING_CONTEXT_ANNOTATION = "org.jetbrains.annotations.BlockingContext"
+        private const val IO_DISPATCHER_FQN = "kotlinx.coroutines.Dispatchers.IO"
     }
 }
