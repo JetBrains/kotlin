@@ -1,6 +1,6 @@
 // RUNTIME_WITH_KOTLIN_TEST
 
-import kotlin.test.*
+import kotlin.test.assertFalse
 
 fun foo() {
     val a = "a"

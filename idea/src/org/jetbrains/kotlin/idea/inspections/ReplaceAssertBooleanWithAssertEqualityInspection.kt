@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -31,18 +34,22 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
         val expression = element as? KtCallExpression ?: return
-        val condition = expression.valueArguments.first().getArgumentExpression() as? KtBinaryExpression ?: return
+        val valueArguments = expression.valueArguments
+        val condition = valueArguments.firstOrNull()?.getArgumentExpression() as? KtBinaryExpression ?: return
         val left = condition.left ?: return
         val right = condition.right ?: return
         val assertion = expression.replaceableAssertion() ?: return
-        val factory = KtPsiFactory(project)
 
-        if (expression.valueArguments.size == 1) {
-            expression.replace(factory.createExpressionByPattern("$assertion($0, $1)", left, right))
-        } else if (expression.valueArguments.size == 2) {
-            val message = expression.valueArguments[1].getArgumentExpression() ?: return
-            expression.replace(factory.createExpressionByPattern("$assertion($0, $1, $2)", left, right, message))
+        val file = expression.containingKtFile
+        val factory = KtPsiFactory(project)
+        val replaced = if (valueArguments.size == 2) {
+            val message = valueArguments[1].getArgumentExpression() ?: return
+            expression.replaced(factory.createExpressionByPattern("$assertion($0, $1, $2)", left, right, message))
+        } else {
+            expression.replaced(factory.createExpressionByPattern("$assertion($0, $1)", left, right))
         }
+        ShortenReferences.DEFAULT.process(replaced)
+        OptimizeImportsProcessor(project, file).run()
     }
 
     private fun KtCallExpression.replaceableAssertion(): String? {
@@ -51,7 +58,7 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
             return null
         }
 
-        if (getCallableDescriptor()?.containingDeclaration?.fqNameSafe != FqName("kotlin.test")) {
+        if (getCallableDescriptor()?.containingDeclaration?.fqNameSafe != FqName(kotlinTestPackage)) {
             return null
         }
 
@@ -63,13 +70,15 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
     }
 
     companion object {
+        private const val kotlinTestPackage = "kotlin.test"
+
         private val assertions = setOf("assertTrue", "assertFalse")
 
         private val assertionMap = mapOf(
-            Pair("assertTrue", KtTokens.EQEQ) to "assertEquals",
-            Pair("assertTrue", KtTokens.EQEQEQ) to "assertSame",
-            Pair("assertFalse", KtTokens.EQEQ) to "assertNotEquals",
-            Pair("assertFalse", KtTokens.EQEQEQ) to "assertNotSame"
+            Pair("assertTrue", KtTokens.EQEQ) to "$kotlinTestPackage.assertEquals",
+            Pair("assertTrue", KtTokens.EQEQEQ) to "$kotlinTestPackage.assertSame",
+            Pair("assertFalse", KtTokens.EQEQ) to "$kotlinTestPackage.assertNotEquals",
+            Pair("assertFalse", KtTokens.EQEQEQ) to "$kotlinTestPackage.assertNotSame"
         )
     }
 }
