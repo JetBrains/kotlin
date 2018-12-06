@@ -95,7 +95,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
                     kotlinSourceSet.kotlin.srcDirs,
                     javaSourceSet.resources.srcDirs,
                     destinationDir,
-                    javaSourceSet.output.resourcesDir,
+                    javaSourceSet.output.resourcesDir!!,
                     createCompilerArguments()
                 )
             } else null

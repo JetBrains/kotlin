@@ -1,5 +1,4 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.gradle.publish.PluginConfig
+
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.pill.PillExtension
@@ -46,6 +45,9 @@ dependencies {
     compileOnly(project(":kotlin-scripting-compiler"))
 
     compileOnly("com.android.tools.build:gradle:2.0.0")
+    compileOnly("com.android.tools.build:gradle-core:2.0.0")
+    compileOnly("com.android.tools.build:builder:2.0.0")
+    compileOnly("com.android.tools.build:builder-model:2.0.0")
     compileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     compileOnly(gradleApi())
 

@@ -38,10 +38,10 @@ class KotlinWithJavaCompilationOutput(
         get() = compilation.javaSourceSet.output
 
     override val resourcesDir: File
-        get() = javaSourceSetOutput.resourcesDir
+        get() = javaSourceSetOutput.resourcesDir!!
 
     override var resourcesDirProvider: Any
-        get() = javaSourceSetOutput.resourcesDir
+        get() = javaSourceSetOutput.resourcesDir!!
         set(value) {
             javaSourceSetOutput.setResourcesDir(value)
         }
