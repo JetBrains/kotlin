@@ -236,10 +236,10 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
             def logback_version = '1.2.3'
 
             kotlin {
-                targets {
-                    fromPreset(presets.jvm, '$jvmTargetName')
-                    fromPreset(presets.js, '$jsTargetName') {
-                        [tasks.getByName(compilations.main.compileKotlinTaskName), tasks.getByName(compilations.test.compileKotlinTaskName)]*.kotlinOptions {
+                jvm("$jvmTargetName")
+                js("$jsTargetName") {
+                    compilations.all {
+                        kotlinOptions {
                             languageVersion = "1.3"
                             moduleKind = "umd"
                             sourceMap = true
@@ -250,18 +250,18 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                 sourceSets {
                     $commonSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                            implementation kotlin('stdlib-common')
                         }
                     }
                     $commonTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                            implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                            implementation kotlin('test-common')
+                            implementation kotlin('test-annotations-common')
                         }
                     }
                     $jvmSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+                            implementation kotlin('stdlib-jdk8')
                             implementation "io.ktor:ktor-server-netty:${"$"}ktor_version"
                             implementation "io.ktor:ktor-html-builder:${"$"}ktor_version"
                             implementation "ch.qos.logback:logback-classic:${"$"}logback_version"
@@ -269,18 +269,18 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                     }
                     $jvmTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test'
-                            implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+                            implementation kotlin('test')
+                            implementation kotlin('test-junit')
                         }
                     }
                     $jsSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+                            implementation kotlin('stdlib-js')
                         }
                     }
                     $jsTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test-js'
+                            implementation kotlin('test-js')
                         }
                     }
                 }

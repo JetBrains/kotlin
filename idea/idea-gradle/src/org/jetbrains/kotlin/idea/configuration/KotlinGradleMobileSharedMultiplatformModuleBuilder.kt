@@ -145,35 +145,33 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
             apply plugin: 'maven-publish'
 
             kotlin {
-                targets {
-                    fromPreset(presets.jvm, '$jvmTargetName')
-                    // This preset is for iPhone emulator
-                    // Switch here to presets.iosArm64 to build library for iPhone device
-                    fromPreset(presets.iosX64, '$nativeTargetName') {
-                        compilations.main.outputKinds 'FRAMEWORK'
-                    }
+                jvm("$jvmTargetName")
+                // This is for iPhone emulator
+                // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
+                iosX64("$nativeTargetName") {
+                    compilations.main.outputKinds("framework")
                 }
                 sourceSets {
                     $commonSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                            implementation kotlin('stdlib-common')
                         }
                     }
                     $commonTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                            implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                            implementation kotlin('test-common')
+                            implementation kotlin('test-annotations-common')
                         }
                     }
                     $jvmSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+                            implementation kotlin('stdlib')
                         }
                     }
                     $jvmTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test'
-                            implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+                            implementation kotlin('test')
+                            implementation kotlin('test-junit')
                         }
                     }
                     $nativeSourceName {
