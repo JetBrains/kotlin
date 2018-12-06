@@ -43,7 +43,7 @@ object CommonPatterns {
     val issuesPattern: Pattern = Pattern.compile("""(KT-[1-9]\d*)(,\s*KT-[1-9]\d*)*""")
     val sectionsInFilePattern: Pattern = Pattern.compile("""\w+(,\s+\w+)*""")
     val sectionsInPathRegex = """(?<sections>(?:[\w-]+)(?:$ps[\w-]+)*?)"""
-    val packagePattern: Pattern = Pattern.compile("""(?:^|\n)package (?<packageName>.*?)(?:;|\ns)""")
+    val packagePattern: Pattern = Pattern.compile("""(?:^|\n)package (?<packageName>.*?)(?:;|\n)""")
 }
 
 interface BasePatterns {
