@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
     companion object {
@@ -32,16 +31,16 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return callExpressionVisitor {
+        return callExpressionVisitor(fun(it: KtCallExpression) {
             val calleeExpression = it.calleeExpression as? KtNameReferenceExpression
-            if (calleeExpression?.getReferencedName() != FOREACH_NAME) return@callExpressionVisitor
+            if (calleeExpression?.getReferencedName() != FOREACH_NAME) return
             val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression()
-            if (lambda == null || lambda.functionLiteral.arrow != null) return@callExpressionVisitor
+            if (lambda == null || lambda.functionLiteral.arrow != null) return
             val context = it.analyze()
             when (it.getResolvedCall(context)?.resultingDescriptor?.fqNameOrNull()) {
                 COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME -> {
-                    val descriptor = context[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
-                    val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
+                    val descriptor = context[BindingContext.FUNCTION, lambda.functionLiteral] ?: return
+                    val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return
 
                     if (iterableParameter !is WithDestructuringDeclaration &&
                         !lambda.bodyExpression.usesDescriptor(iterableParameter, context)
@@ -55,7 +54,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
                     }
                 }
             }
-        }
+        })
     }
 
     private class IntroduceAnonymousParameterFix : LocalQuickFix {
