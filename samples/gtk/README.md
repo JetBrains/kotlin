@@ -32,3 +32,8 @@ on Debian flavours of Linux
 on Fedora
 
     sudo dnf install gtk3-devel
+
+on Windows in MinGW64 console, if you do
+not have MSYS2-MinGW64 installed - install it first as described in http://www.msys2.org
+
+    pacman -S mingw-w64-x86_64-gtk3
