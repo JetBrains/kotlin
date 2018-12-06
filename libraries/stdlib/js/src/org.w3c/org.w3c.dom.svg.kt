@@ -54,10 +54,18 @@ public external interface SVGBoundingBoxOptions {
 public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? = false, markers: Boolean? = false, clipped: Boolean? = false): SVGBoundingBoxOptions {
     val o = js("({})")
 
-    o["fill"] = fill
-    o["stroke"] = stroke
-    o["markers"] = markers
-    o["clipped"] = clipped
+    if (fill !== undefined) {
+        o["fill"] = fill
+    }
+    if (stroke !== undefined) {
+        o["stroke"] = stroke
+    }
+    if (markers !== undefined) {
+        o["markers"] = markers
+    }
+    if (clipped !== undefined) {
+        o["clipped"] = clipped
+    }
 
     return o
 }

@@ -54,14 +54,30 @@ public external interface WebGLContextAttributes {
 public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean? = true, stencil: Boolean? = false, antialias: Boolean? = true, premultipliedAlpha: Boolean? = true, preserveDrawingBuffer: Boolean? = false, preferLowPowerToHighPerformance: Boolean? = false, failIfMajorPerformanceCaveat: Boolean? = false): WebGLContextAttributes {
     val o = js("({})")
 
-    o["alpha"] = alpha
-    o["depth"] = depth
-    o["stencil"] = stencil
-    o["antialias"] = antialias
-    o["premultipliedAlpha"] = premultipliedAlpha
-    o["preserveDrawingBuffer"] = preserveDrawingBuffer
-    o["preferLowPowerToHighPerformance"] = preferLowPowerToHighPerformance
-    o["failIfMajorPerformanceCaveat"] = failIfMajorPerformanceCaveat
+    if (alpha !== undefined) {
+        o["alpha"] = alpha
+    }
+    if (depth !== undefined) {
+        o["depth"] = depth
+    }
+    if (stencil !== undefined) {
+        o["stencil"] = stencil
+    }
+    if (antialias !== undefined) {
+        o["antialias"] = antialias
+    }
+    if (premultipliedAlpha !== undefined) {
+        o["premultipliedAlpha"] = premultipliedAlpha
+    }
+    if (preserveDrawingBuffer !== undefined) {
+        o["preserveDrawingBuffer"] = preserveDrawingBuffer
+    }
+    if (preferLowPowerToHighPerformance !== undefined) {
+        o["preferLowPowerToHighPerformance"] = preferLowPowerToHighPerformance
+    }
+    if (failIfMajorPerformanceCaveat !== undefined) {
+        o["failIfMajorPerformanceCaveat"] = failIfMajorPerformanceCaveat
+    }
 
     return o
 }
@@ -908,10 +924,18 @@ public external interface WebGLContextEventInit : EventInit {
 public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): WebGLContextEventInit {
     val o = js("({})")
 
-    o["statusMessage"] = statusMessage
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (statusMessage !== undefined) {
+        o["statusMessage"] = statusMessage
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }

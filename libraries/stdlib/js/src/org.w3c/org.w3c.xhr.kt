@@ -112,12 +112,24 @@ public external interface ProgressEventInit : EventInit {
 public inline fun ProgressEventInit(lengthComputable: Boolean? = false, loaded: Int? = 0, total: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ProgressEventInit {
     val o = js("({})")
 
-    o["lengthComputable"] = lengthComputable
-    o["loaded"] = loaded
-    o["total"] = total
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (lengthComputable !== undefined) {
+        o["lengthComputable"] = lengthComputable
+    }
+    if (loaded !== undefined) {
+        o["loaded"] = loaded
+    }
+    if (total !== undefined) {
+        o["total"] = total
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }

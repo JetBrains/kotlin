@@ -44,7 +44,9 @@ public external interface BlobPropertyBag {
 public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
     val o = js("({})")
 
-    o["type"] = type
+    if (type !== undefined) {
+        o["type"] = type
+    }
 
     return o
 }
@@ -64,11 +66,15 @@ public external interface FilePropertyBag : BlobPropertyBag {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = ""): FilePropertyBag {
+public inline fun FilePropertyBag(lastModified: Int? = undefined, type: String? = ""): FilePropertyBag {
     val o = js("({})")
 
-    o["lastModified"] = lastModified
-    o["type"] = type
+    if (lastModified !== undefined) {
+        o["lastModified"] = lastModified
+    }
+    if (type !== undefined) {
+        o["type"] = type
+    }
 
     return o
 }

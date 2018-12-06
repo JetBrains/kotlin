@@ -17,7 +17,6 @@
 package org.jetbrains.idl2k
 
 import org.jetbrains.idl2k.util.mapEnumConstant
-import java.io.*
 import java.math.BigInteger
 
 private fun <O : Appendable> O.indent(commented: Boolean = false, level: Int) {
@@ -88,7 +87,7 @@ private val keywords = setOf("interface", "is", "as")
 
 private fun String.parse() = if (this.startsWith("0x")) BigInteger(this.substring(2), 16) else BigInteger(this)
 private fun String.replaceWrongConstants(type: Type) = when {
-    this == "null" && type.nullable -> "null"
+    this == "undefined" && type.nullable -> "undefined"
     this == "definedExternally" || type is SimpleType && type.type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong()) -> "definedExternally"
     type is SimpleType && type.type == "Double" && this.matches("[0-9]+".toRegex()) -> "${this}.0"
     else -> this
@@ -291,7 +290,7 @@ fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperT
             .distinctBy { it.signature }
             .map { it.copy(kind = AttributeKind.ARGUMENT) }
             .dynamicIfUnknownType(allTypes)
-            .map { if (it.initializer == null && (it.type.nullable || it.type == DynamicType) && !it.required) it.copy(initializer = "null") else it }
+            .map { if (it.initializer == null && (it.type.nullable || it.type == DynamicType) && !it.required) it.copy(initializer = "undefined") else it }
 
     appendln("@kotlin.internal.InlineOnly")
     append("public inline fun ${dictionary.name}")
@@ -306,19 +305,14 @@ fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperT
         indent(level = 1)
 
         val escapedFieldName = field.name.replaceKeywords()
-        val nullGuardedAssignment = field.type is ArrayType
 
-        if (nullGuardedAssignment) {
-            appendln("if ($escapedFieldName != null) {")
-            indent(level = 2)
-        }
+        appendln("if ($escapedFieldName !== undefined) {")
+        indent(level = 2)
 
         appendln("o[\"${field.name}\"] = $escapedFieldName")
 
-        if (nullGuardedAssignment) {
-            indent(level = 1)
-            appendln("}")
-        }
+        indent(level = 1)
+        appendln("}")
     }
 
     appendln()

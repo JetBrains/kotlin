@@ -91,11 +91,15 @@ public external interface RegistrationOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun RegistrationOptions(scope: String? = null, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions {
+public inline fun RegistrationOptions(scope: String? = undefined, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions {
     val o = js("({})")
 
-    o["scope"] = scope
-    o["type"] = type
+    if (scope !== undefined) {
+        o["scope"] = scope
+    }
+    if (type !== undefined) {
+        o["type"] = type
+    }
 
     return o
 }
@@ -130,19 +134,33 @@ public external interface ServiceWorkerMessageEventInit : EventInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ServiceWorkerMessageEventInit(data: Any? = null, origin: String? = null, lastEventId: String? = null, source: UnionMessagePortOrServiceWorker? = null, ports: Array<MessagePort>? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
+public inline fun ServiceWorkerMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
     val o = js("({})")
 
-    o["data"] = data
-    o["origin"] = origin
-    o["lastEventId"] = lastEventId
-    o["source"] = source
-    if (ports != null) {
+    if (data !== undefined) {
+        o["data"] = data
+    }
+    if (origin !== undefined) {
+        o["origin"] = origin
+    }
+    if (lastEventId !== undefined) {
+        o["lastEventId"] = lastEventId
+    }
+    if (source !== undefined) {
+        o["source"] = source
+    }
+    if (ports !== undefined) {
         o["ports"] = ports
     }
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -190,8 +208,12 @@ public external interface ClientQueryOptions {
 public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type: ClientType? = ClientType.WINDOW): ClientQueryOptions {
     val o = js("({})")
 
-    o["includeUncontrolled"] = includeUncontrolled
-    o["type"] = type
+    if (includeUncontrolled !== undefined) {
+        o["includeUncontrolled"] = includeUncontrolled
+    }
+    if (type !== undefined) {
+        o["type"] = type
+    }
 
     return o
 }
@@ -210,9 +232,15 @@ public external interface ExtendableEventInit : EventInit {
 public inline fun ExtendableEventInit(bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableEventInit {
     val o = js("({})")
 
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -237,10 +265,10 @@ public external interface ForeignFetchOptions {
 public inline fun ForeignFetchOptions(scopes: Array<String>?, origins: Array<String>?): ForeignFetchOptions {
     val o = js("({})")
 
-    if (scopes != null) {
+    if (scopes !== undefined) {
         o["scopes"] = scopes
     }
-    if (origins != null) {
+    if (origins !== undefined) {
         o["origins"] = origins
     }
 
@@ -273,12 +301,24 @@ public external interface FetchEventInit : ExtendableEventInit {
 public inline fun FetchEventInit(request: Request?, clientId: String? = null, isReload: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): FetchEventInit {
     val o = js("({})")
 
-    o["request"] = request
-    o["clientId"] = clientId
-    o["isReload"] = isReload
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (request !== undefined) {
+        o["request"] = request
+    }
+    if (clientId !== undefined) {
+        o["clientId"] = clientId
+    }
+    if (isReload !== undefined) {
+        o["isReload"] = isReload
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -302,11 +342,21 @@ public external interface ForeignFetchEventInit : ExtendableEventInit {
 public inline fun ForeignFetchEventInit(request: Request?, origin: String? = "null", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ForeignFetchEventInit {
     val o = js("({})")
 
-    o["request"] = request
-    o["origin"] = origin
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (request !== undefined) {
+        o["request"] = request
+    }
+    if (origin !== undefined) {
+        o["origin"] = origin
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -324,12 +374,16 @@ public external interface ForeignFetchResponse {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ForeignFetchResponse(response: Response?, origin: String? = null, headers: Array<String>? = null): ForeignFetchResponse {
+public inline fun ForeignFetchResponse(response: Response?, origin: String? = undefined, headers: Array<String>? = undefined): ForeignFetchResponse {
     val o = js("({})")
 
-    o["response"] = response
-    o["origin"] = origin
-    if (headers != null) {
+    if (response !== undefined) {
+        o["response"] = response
+    }
+    if (origin !== undefined) {
+        o["origin"] = origin
+    }
+    if (headers !== undefined) {
         o["headers"] = headers
     }
 
@@ -366,19 +420,33 @@ public external interface ExtendableMessageEventInit : ExtendableEventInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ExtendableMessageEventInit(data: Any? = null, origin: String? = null, lastEventId: String? = null, source: UnionClientOrMessagePortOrServiceWorker? = null, ports: Array<MessagePort>? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
+public inline fun ExtendableMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionClientOrMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
     val o = js("({})")
 
-    o["data"] = data
-    o["origin"] = origin
-    o["lastEventId"] = lastEventId
-    o["source"] = source
-    if (ports != null) {
+    if (data !== undefined) {
+        o["data"] = data
+    }
+    if (origin !== undefined) {
+        o["origin"] = origin
+    }
+    if (lastEventId !== undefined) {
+        o["lastEventId"] = lastEventId
+    }
+    if (source !== undefined) {
+        o["source"] = source
+    }
+    if (ports !== undefined) {
         o["ports"] = ports
     }
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -412,13 +480,21 @@ public external interface CacheQueryOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = null): CacheQueryOptions {
+public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = undefined): CacheQueryOptions {
     val o = js("({})")
 
-    o["ignoreSearch"] = ignoreSearch
-    o["ignoreMethod"] = ignoreMethod
-    o["ignoreVary"] = ignoreVary
-    o["cacheName"] = cacheName
+    if (ignoreSearch !== undefined) {
+        o["ignoreSearch"] = ignoreSearch
+    }
+    if (ignoreMethod !== undefined) {
+        o["ignoreMethod"] = ignoreMethod
+    }
+    if (ignoreVary !== undefined) {
+        o["ignoreVary"] = ignoreVary
+    }
+    if (cacheName !== undefined) {
+        o["cacheName"] = cacheName
+    }
 
     return o
 }
@@ -439,13 +515,21 @@ public external interface CacheBatchOperation {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun CacheBatchOperation(type: String? = null, request: Request? = null, response: Response? = null, options: CacheQueryOptions? = null): CacheBatchOperation {
+public inline fun CacheBatchOperation(type: String? = undefined, request: Request? = undefined, response: Response? = undefined, options: CacheQueryOptions? = undefined): CacheBatchOperation {
     val o = js("({})")
 
-    o["type"] = type
-    o["request"] = request
-    o["response"] = response
-    o["options"] = options
+    if (type !== undefined) {
+        o["type"] = type
+    }
+    if (request !== undefined) {
+        o["request"] = request
+    }
+    if (response !== undefined) {
+        o["response"] = response
+    }
+    if (options !== undefined) {
+        o["options"] = options
+    }
 
     return o
 }

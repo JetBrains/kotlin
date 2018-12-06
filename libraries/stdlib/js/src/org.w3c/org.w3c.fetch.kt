@@ -112,21 +112,45 @@ public external interface RequestInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun RequestInit(method: String? = null, headers: dynamic = null, body: dynamic = null, referrer: String? = null, referrerPolicy: dynamic = null, mode: RequestMode? = null, credentials: RequestCredentials? = null, cache: RequestCache? = null, redirect: RequestRedirect? = null, integrity: String? = null, keepalive: Boolean? = null, window: Any? = null): RequestInit {
+public inline fun RequestInit(method: String? = undefined, headers: dynamic = undefined, body: dynamic = undefined, referrer: String? = undefined, referrerPolicy: dynamic = undefined, mode: RequestMode? = undefined, credentials: RequestCredentials? = undefined, cache: RequestCache? = undefined, redirect: RequestRedirect? = undefined, integrity: String? = undefined, keepalive: Boolean? = undefined, window: Any? = undefined): RequestInit {
     val o = js("({})")
 
-    o["method"] = method
-    o["headers"] = headers
-    o["body"] = body
-    o["referrer"] = referrer
-    o["referrerPolicy"] = referrerPolicy
-    o["mode"] = mode
-    o["credentials"] = credentials
-    o["cache"] = cache
-    o["redirect"] = redirect
-    o["integrity"] = integrity
-    o["keepalive"] = keepalive
-    o["window"] = window
+    if (method !== undefined) {
+        o["method"] = method
+    }
+    if (headers !== undefined) {
+        o["headers"] = headers
+    }
+    if (body !== undefined) {
+        o["body"] = body
+    }
+    if (referrer !== undefined) {
+        o["referrer"] = referrer
+    }
+    if (referrerPolicy !== undefined) {
+        o["referrerPolicy"] = referrerPolicy
+    }
+    if (mode !== undefined) {
+        o["mode"] = mode
+    }
+    if (credentials !== undefined) {
+        o["credentials"] = credentials
+    }
+    if (cache !== undefined) {
+        o["cache"] = cache
+    }
+    if (redirect !== undefined) {
+        o["redirect"] = redirect
+    }
+    if (integrity !== undefined) {
+        o["integrity"] = integrity
+    }
+    if (keepalive !== undefined) {
+        o["keepalive"] = keepalive
+    }
+    if (window !== undefined) {
+        o["window"] = window
+    }
 
     return o
 }
@@ -171,12 +195,18 @@ public external interface ResponseInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: dynamic = null): ResponseInit {
+public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: dynamic = undefined): ResponseInit {
     val o = js("({})")
 
-    o["status"] = status
-    o["statusText"] = statusText
-    o["headers"] = headers
+    if (status !== undefined) {
+        o["status"] = status
+    }
+    if (statusText !== undefined) {
+        o["statusText"] = statusText
+    }
+    if (headers !== undefined) {
+        o["headers"] = headers
+    }
 
     return o
 }

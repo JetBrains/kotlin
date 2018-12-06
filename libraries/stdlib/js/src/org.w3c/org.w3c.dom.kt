@@ -923,10 +923,18 @@ public external interface TrackEventInit : EventInit {
 public inline fun TrackEventInit(track: UnionAudioTrackOrTextTrackOrVideoTrack? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): TrackEventInit {
     val o = js("({})")
 
-    o["track"] = track
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (track !== undefined) {
+        o["track"] = track
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -1414,10 +1422,18 @@ public external interface RelatedEventInit : EventInit {
 public inline fun RelatedEventInit(relatedTarget: EventTarget? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): RelatedEventInit {
     val o = js("({})")
 
-    o["relatedTarget"] = relatedTarget
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (relatedTarget !== undefined) {
+        o["relatedTarget"] = relatedTarget
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -1474,7 +1490,9 @@ public external interface AssignedNodesOptions {
 public inline fun AssignedNodesOptions(flatten: Boolean? = false): AssignedNodesOptions {
     val o = js("({})")
 
-    o["flatten"] = flatten
+    if (flatten !== undefined) {
+        o["flatten"] = flatten
+    }
 
     return o
 }
@@ -1500,7 +1518,9 @@ public external interface CanvasRenderingContext2DSettings {
 public inline fun CanvasRenderingContext2DSettings(alpha: Boolean? = true): CanvasRenderingContext2DSettings {
     val o = js("({})")
 
-    o["alpha"] = alpha
+    if (alpha !== undefined) {
+        o["alpha"] = alpha
+    }
 
     return o
 }
@@ -1704,14 +1724,30 @@ public external interface HitRegionOptions {
 public inline fun HitRegionOptions(path: Path2D? = null, fillRule: CanvasFillRule? = CanvasFillRule.NONZERO, id: String? = "", parentID: String? = null, cursor: String? = "inherit", control: Element? = null, label: String? = null, role: String? = null): HitRegionOptions {
     val o = js("({})")
 
-    o["path"] = path
-    o["fillRule"] = fillRule
-    o["id"] = id
-    o["parentID"] = parentID
-    o["cursor"] = cursor
-    o["control"] = control
-    o["label"] = label
-    o["role"] = role
+    if (path !== undefined) {
+        o["path"] = path
+    }
+    if (fillRule !== undefined) {
+        o["fillRule"] = fillRule
+    }
+    if (id !== undefined) {
+        o["id"] = id
+    }
+    if (parentID !== undefined) {
+        o["parentID"] = parentID
+    }
+    if (cursor !== undefined) {
+        o["cursor"] = cursor
+    }
+    if (control !== undefined) {
+        o["control"] = control
+    }
+    if (label !== undefined) {
+        o["label"] = label
+    }
+    if (role !== undefined) {
+        o["role"] = role
+    }
 
     return o
 }
@@ -1772,7 +1808,9 @@ public external interface ImageBitmapRenderingContextSettings {
 public inline fun ImageBitmapRenderingContextSettings(alpha: Boolean? = true): ImageBitmapRenderingContextSettings {
     val o = js("({})")
 
-    o["alpha"] = alpha
+    if (alpha !== undefined) {
+        o["alpha"] = alpha
+    }
 
     return o
 }
@@ -1793,10 +1831,12 @@ public external interface ElementDefinitionOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ElementDefinitionOptions(extends: String? = null): ElementDefinitionOptions {
+public inline fun ElementDefinitionOptions(extends: String? = undefined): ElementDefinitionOptions {
     val o = js("({})")
 
-    o["extends"] = extends
+    if (extends !== undefined) {
+        o["extends"] = extends
+    }
 
     return o
 }
@@ -1860,33 +1900,87 @@ public external interface DragEventInit : MouseEventInit {
 public inline fun DragEventInit(dataTransfer: DataTransfer? = null, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): DragEventInit {
     val o = js("({})")
 
-    o["dataTransfer"] = dataTransfer
-    o["screenX"] = screenX
-    o["screenY"] = screenY
-    o["clientX"] = clientX
-    o["clientY"] = clientY
-    o["button"] = button
-    o["buttons"] = buttons
-    o["relatedTarget"] = relatedTarget
-    o["ctrlKey"] = ctrlKey
-    o["shiftKey"] = shiftKey
-    o["altKey"] = altKey
-    o["metaKey"] = metaKey
-    o["modifierAltGraph"] = modifierAltGraph
-    o["modifierCapsLock"] = modifierCapsLock
-    o["modifierFn"] = modifierFn
-    o["modifierFnLock"] = modifierFnLock
-    o["modifierHyper"] = modifierHyper
-    o["modifierNumLock"] = modifierNumLock
-    o["modifierScrollLock"] = modifierScrollLock
-    o["modifierSuper"] = modifierSuper
-    o["modifierSymbol"] = modifierSymbol
-    o["modifierSymbolLock"] = modifierSymbolLock
-    o["view"] = view
-    o["detail"] = detail
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (dataTransfer !== undefined) {
+        o["dataTransfer"] = dataTransfer
+    }
+    if (screenX !== undefined) {
+        o["screenX"] = screenX
+    }
+    if (screenY !== undefined) {
+        o["screenY"] = screenY
+    }
+    if (clientX !== undefined) {
+        o["clientX"] = clientX
+    }
+    if (clientY !== undefined) {
+        o["clientY"] = clientY
+    }
+    if (button !== undefined) {
+        o["button"] = button
+    }
+    if (buttons !== undefined) {
+        o["buttons"] = buttons
+    }
+    if (relatedTarget !== undefined) {
+        o["relatedTarget"] = relatedTarget
+    }
+    if (ctrlKey !== undefined) {
+        o["ctrlKey"] = ctrlKey
+    }
+    if (shiftKey !== undefined) {
+        o["shiftKey"] = shiftKey
+    }
+    if (altKey !== undefined) {
+        o["altKey"] = altKey
+    }
+    if (metaKey !== undefined) {
+        o["metaKey"] = metaKey
+    }
+    if (modifierAltGraph !== undefined) {
+        o["modifierAltGraph"] = modifierAltGraph
+    }
+    if (modifierCapsLock !== undefined) {
+        o["modifierCapsLock"] = modifierCapsLock
+    }
+    if (modifierFn !== undefined) {
+        o["modifierFn"] = modifierFn
+    }
+    if (modifierFnLock !== undefined) {
+        o["modifierFnLock"] = modifierFnLock
+    }
+    if (modifierHyper !== undefined) {
+        o["modifierHyper"] = modifierHyper
+    }
+    if (modifierNumLock !== undefined) {
+        o["modifierNumLock"] = modifierNumLock
+    }
+    if (modifierScrollLock !== undefined) {
+        o["modifierScrollLock"] = modifierScrollLock
+    }
+    if (modifierSuper !== undefined) {
+        o["modifierSuper"] = modifierSuper
+    }
+    if (modifierSymbol !== undefined) {
+        o["modifierSymbol"] = modifierSymbol
+    }
+    if (modifierSymbolLock !== undefined) {
+        o["modifierSymbolLock"] = modifierSymbolLock
+    }
+    if (view !== undefined) {
+        o["view"] = view
+    }
+    if (detail !== undefined) {
+        o["detail"] = detail
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -1945,10 +2039,18 @@ public external interface PopStateEventInit : EventInit {
 public inline fun PopStateEventInit(state: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PopStateEventInit {
     val o = js("({})")
 
-    o["state"] = state
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (state !== undefined) {
+        o["state"] = state
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -1974,11 +2076,21 @@ public external interface HashChangeEventInit : EventInit {
 public inline fun HashChangeEventInit(oldURL: String? = "", newURL: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): HashChangeEventInit {
     val o = js("({})")
 
-    o["oldURL"] = oldURL
-    o["newURL"] = newURL
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (oldURL !== undefined) {
+        o["oldURL"] = oldURL
+    }
+    if (newURL !== undefined) {
+        o["newURL"] = newURL
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -2000,10 +2112,18 @@ public external interface PageTransitionEventInit : EventInit {
 public inline fun PageTransitionEventInit(persisted: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PageTransitionEventInit {
     val o = js("({})")
 
-    o["persisted"] = persisted
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (persisted !== undefined) {
+        o["persisted"] = persisted
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -2079,14 +2199,30 @@ public external interface ErrorEventInit : EventInit {
 public inline fun ErrorEventInit(message: String? = "", filename: String? = "", lineno: Int? = 0, colno: Int? = 0, error: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ErrorEventInit {
     val o = js("({})")
 
-    o["message"] = message
-    o["filename"] = filename
-    o["lineno"] = lineno
-    o["colno"] = colno
-    o["error"] = error
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (message !== undefined) {
+        o["message"] = message
+    }
+    if (filename !== undefined) {
+        o["filename"] = filename
+    }
+    if (lineno !== undefined) {
+        o["lineno"] = lineno
+    }
+    if (colno !== undefined) {
+        o["colno"] = colno
+    }
+    if (error !== undefined) {
+        o["error"] = error
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -2109,14 +2245,24 @@ public external interface PromiseRejectionEventInit : EventInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun PromiseRejectionEventInit(promise: Promise<Any?>?, reason: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PromiseRejectionEventInit {
+public inline fun PromiseRejectionEventInit(promise: Promise<Any?>?, reason: Any? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PromiseRejectionEventInit {
     val o = js("({})")
 
-    o["promise"] = promise
-    o["reason"] = reason
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (promise !== undefined) {
+        o["promise"] = promise
+    }
+    if (reason !== undefined) {
+        o["reason"] = reason
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -2365,15 +2511,27 @@ public external interface ImageBitmapOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ImageBitmapOptions(imageOrientation: ImageOrientation? = ImageOrientation.NONE, premultiplyAlpha: PremultiplyAlpha? = PremultiplyAlpha.DEFAULT, colorSpaceConversion: ColorSpaceConversion? = ColorSpaceConversion.DEFAULT, resizeWidth: Int? = null, resizeHeight: Int? = null, resizeQuality: ResizeQuality? = ResizeQuality.LOW): ImageBitmapOptions {
+public inline fun ImageBitmapOptions(imageOrientation: ImageOrientation? = ImageOrientation.NONE, premultiplyAlpha: PremultiplyAlpha? = PremultiplyAlpha.DEFAULT, colorSpaceConversion: ColorSpaceConversion? = ColorSpaceConversion.DEFAULT, resizeWidth: Int? = undefined, resizeHeight: Int? = undefined, resizeQuality: ResizeQuality? = ResizeQuality.LOW): ImageBitmapOptions {
     val o = js("({})")
 
-    o["imageOrientation"] = imageOrientation
-    o["premultiplyAlpha"] = premultiplyAlpha
-    o["colorSpaceConversion"] = colorSpaceConversion
-    o["resizeWidth"] = resizeWidth
-    o["resizeHeight"] = resizeHeight
-    o["resizeQuality"] = resizeQuality
+    if (imageOrientation !== undefined) {
+        o["imageOrientation"] = imageOrientation
+    }
+    if (premultiplyAlpha !== undefined) {
+        o["premultiplyAlpha"] = premultiplyAlpha
+    }
+    if (colorSpaceConversion !== undefined) {
+        o["colorSpaceConversion"] = colorSpaceConversion
+    }
+    if (resizeWidth !== undefined) {
+        o["resizeWidth"] = resizeWidth
+    }
+    if (resizeHeight !== undefined) {
+        o["resizeHeight"] = resizeHeight
+    }
+    if (resizeQuality !== undefined) {
+        o["resizeQuality"] = resizeQuality
+    }
 
     return o
 }
@@ -2412,16 +2570,30 @@ public external interface MessageEventInit : EventInit {
 public inline fun MessageEventInit(data: Any? = null, origin: String? = "", lastEventId: String? = "", source: UnionMessagePortOrWindow? = null, ports: Array<MessagePort>? = arrayOf(), bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MessageEventInit {
     val o = js("({})")
 
-    o["data"] = data
-    o["origin"] = origin
-    o["lastEventId"] = lastEventId
-    o["source"] = source
-    if (ports != null) {
+    if (data !== undefined) {
+        o["data"] = data
+    }
+    if (origin !== undefined) {
+        o["origin"] = origin
+    }
+    if (lastEventId !== undefined) {
+        o["lastEventId"] = lastEventId
+    }
+    if (source !== undefined) {
+        o["source"] = source
+    }
+    if (ports !== undefined) {
         o["ports"] = ports
     }
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -2455,7 +2627,9 @@ public external interface EventSourceInit {
 public inline fun EventSourceInit(withCredentials: Boolean? = false): EventSourceInit {
     val o = js("({})")
 
-    o["withCredentials"] = withCredentials
+    if (withCredentials !== undefined) {
+        o["withCredentials"] = withCredentials
+    }
 
     return o
 }
@@ -2513,12 +2687,24 @@ public external interface CloseEventInit : EventInit {
 public inline fun CloseEventInit(wasClean: Boolean? = false, code: Short? = 0, reason: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): CloseEventInit {
     val o = js("({})")
 
-    o["wasClean"] = wasClean
-    o["code"] = code
-    o["reason"] = reason
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (wasClean !== undefined) {
+        o["wasClean"] = wasClean
+    }
+    if (code !== undefined) {
+        o["code"] = code
+    }
+    if (reason !== undefined) {
+        o["reason"] = reason
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -2616,8 +2802,12 @@ public external interface WorkerOptions {
 public inline fun WorkerOptions(type: WorkerType? = WorkerType.CLASSIC, credentials: RequestCredentials? = RequestCredentials.OMIT): WorkerOptions {
     val o = js("({})")
 
-    o["type"] = type
-    o["credentials"] = credentials
+    if (type !== undefined) {
+        o["type"] = type
+    }
+    if (credentials !== undefined) {
+        o["credentials"] = credentials
+    }
 
     return o
 }
@@ -2720,14 +2910,30 @@ public external interface StorageEventInit : EventInit {
 public inline fun StorageEventInit(key: String? = null, oldValue: String? = null, newValue: String? = null, url: String? = "", storageArea: Storage? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): StorageEventInit {
     val o = js("({})")
 
-    o["key"] = key
-    o["oldValue"] = oldValue
-    o["newValue"] = newValue
-    o["url"] = url
-    o["storageArea"] = storageArea
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (key !== undefined) {
+        o["key"] = key
+    }
+    if (oldValue !== undefined) {
+        o["oldValue"] = oldValue
+    }
+    if (newValue !== undefined) {
+        o["newValue"] = newValue
+    }
+    if (url !== undefined) {
+        o["url"] = url
+    }
+    if (storageArea !== undefined) {
+        o["storageArea"] = storageArea
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -2823,9 +3029,15 @@ public external interface EventInit {
 public inline fun EventInit(bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): EventInit {
     val o = js("({})")
 
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -2848,10 +3060,18 @@ public external interface CustomEventInit : EventInit {
 public inline fun CustomEventInit(detail: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): CustomEventInit {
     val o = js("({})")
 
-    o["detail"] = detail
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (detail !== undefined) {
+        o["detail"] = detail
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -2866,7 +3086,9 @@ public external interface EventListenerOptions {
 public inline fun EventListenerOptions(capture: Boolean? = false): EventListenerOptions {
     val o = js("({})")
 
-    o["capture"] = capture
+    if (capture !== undefined) {
+        o["capture"] = capture
+    }
 
     return o
 }
@@ -2884,9 +3106,15 @@ public external interface AddEventListenerOptions : EventListenerOptions {
 public inline fun AddEventListenerOptions(passive: Boolean? = false, once: Boolean? = false, capture: Boolean? = false): AddEventListenerOptions {
     val o = js("({})")
 
-    o["passive"] = passive
-    o["once"] = once
-    o["capture"] = capture
+    if (passive !== undefined) {
+        o["passive"] = passive
+    }
+    if (once !== undefined) {
+        o["once"] = once
+    }
+    if (capture !== undefined) {
+        o["capture"] = capture
+    }
 
     return o
 }
@@ -2998,16 +3226,28 @@ public external interface MutationObserverInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun MutationObserverInit(childList: Boolean? = false, attributes: Boolean? = null, characterData: Boolean? = null, subtree: Boolean? = false, attributeOldValue: Boolean? = null, characterDataOldValue: Boolean? = null, attributeFilter: Array<String>? = null): MutationObserverInit {
+public inline fun MutationObserverInit(childList: Boolean? = false, attributes: Boolean? = undefined, characterData: Boolean? = undefined, subtree: Boolean? = false, attributeOldValue: Boolean? = undefined, characterDataOldValue: Boolean? = undefined, attributeFilter: Array<String>? = undefined): MutationObserverInit {
     val o = js("({})")
 
-    o["childList"] = childList
-    o["attributes"] = attributes
-    o["characterData"] = characterData
-    o["subtree"] = subtree
-    o["attributeOldValue"] = attributeOldValue
-    o["characterDataOldValue"] = characterDataOldValue
-    if (attributeFilter != null) {
+    if (childList !== undefined) {
+        o["childList"] = childList
+    }
+    if (attributes !== undefined) {
+        o["attributes"] = attributes
+    }
+    if (characterData !== undefined) {
+        o["characterData"] = characterData
+    }
+    if (subtree !== undefined) {
+        o["subtree"] = subtree
+    }
+    if (attributeOldValue !== undefined) {
+        o["attributeOldValue"] = attributeOldValue
+    }
+    if (characterDataOldValue !== undefined) {
+        o["characterDataOldValue"] = characterDataOldValue
+    }
+    if (attributeFilter !== undefined) {
         o["attributeFilter"] = attributeFilter
     }
 
@@ -3095,7 +3335,9 @@ public external interface GetRootNodeOptions {
 public inline fun GetRootNodeOptions(composed: Boolean? = false): GetRootNodeOptions {
     val o = js("({})")
 
-    o["composed"] = composed
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -3122,10 +3364,12 @@ public external interface ElementCreationOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ElementCreationOptions(is_: String? = null): ElementCreationOptions {
+public inline fun ElementCreationOptions(is_: String? = undefined): ElementCreationOptions {
     val o = js("({})")
 
-    o["is"] = is_
+    if (is_ !== undefined) {
+        o["is"] = is_
+    }
 
     return o
 }
@@ -3250,7 +3494,9 @@ public external interface ShadowRootInit {
 public inline fun ShadowRootInit(mode: ShadowRootMode?): ShadowRootInit {
     val o = js("({})")
 
-    o["mode"] = mode
+    if (mode !== undefined) {
+        o["mode"] = mode
+    }
 
     return o
 }
@@ -3509,10 +3755,18 @@ public external interface DOMPointInit {
 public inline fun DOMPointInit(x: Double? = 0.0, y: Double? = 0.0, z: Double? = 0.0, w: Double? = 1.0): DOMPointInit {
     val o = js("({})")
 
-    o["x"] = x
-    o["y"] = y
-    o["z"] = z
-    o["w"] = w
+    if (x !== undefined) {
+        o["x"] = x
+    }
+    if (y !== undefined) {
+        o["y"] = y
+    }
+    if (z !== undefined) {
+        o["z"] = z
+    }
+    if (w !== undefined) {
+        o["w"] = w
+    }
 
     return o
 }
@@ -3560,10 +3814,18 @@ public external interface DOMRectInit {
 public inline fun DOMRectInit(x: Double? = 0.0, y: Double? = 0.0, width: Double? = 0.0, height: Double? = 0.0): DOMRectInit {
     val o = js("({})")
 
-    o["x"] = x
-    o["y"] = y
-    o["width"] = width
-    o["height"] = height
+    if (x !== undefined) {
+        o["x"] = x
+    }
+    if (y !== undefined) {
+        o["y"] = y
+    }
+    if (width !== undefined) {
+        o["width"] = width
+    }
+    if (height !== undefined) {
+        o["height"] = height
+    }
 
     return o
 }
@@ -3688,7 +3950,9 @@ public external interface ScrollOptions {
 public inline fun ScrollOptions(behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollOptions {
     val o = js("({})")
 
-    o["behavior"] = behavior
+    if (behavior !== undefined) {
+        o["behavior"] = behavior
+    }
 
     return o
 }
@@ -3706,12 +3970,18 @@ public external interface ScrollToOptions : ScrollOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ScrollToOptions(left: Double? = null, top: Double? = null, behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollToOptions {
+public inline fun ScrollToOptions(left: Double? = undefined, top: Double? = undefined, behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollToOptions {
     val o = js("({})")
 
-    o["left"] = left
-    o["top"] = top
-    o["behavior"] = behavior
+    if (left !== undefined) {
+        o["left"] = left
+    }
+    if (top !== undefined) {
+        o["top"] = top
+    }
+    if (behavior !== undefined) {
+        o["behavior"] = behavior
+    }
 
     return o
 }
@@ -3750,11 +4020,21 @@ public external interface MediaQueryListEventInit : EventInit {
 public inline fun MediaQueryListEventInit(media: String? = "", matches: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaQueryListEventInit {
     val o = js("({})")
 
-    o["media"] = media
-    o["matches"] = matches
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
+    if (media !== undefined) {
+        o["media"] = media
+    }
+    if (matches !== undefined) {
+        o["matches"] = matches
+    }
+    if (bubbles !== undefined) {
+        o["bubbles"] = bubbles
+    }
+    if (cancelable !== undefined) {
+        o["cancelable"] = cancelable
+    }
+    if (composed !== undefined) {
+        o["composed"] = composed
+    }
 
     return o
 }
@@ -3793,9 +4073,15 @@ public external interface ScrollIntoViewOptions : ScrollOptions {
 public inline fun ScrollIntoViewOptions(block: ScrollLogicalPosition? = ScrollLogicalPosition.CENTER, inline: ScrollLogicalPosition? = ScrollLogicalPosition.CENTER, behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollIntoViewOptions {
     val o = js("({})")
 
-    o["block"] = block
-    o["inline"] = inline
-    o["behavior"] = behavior
+    if (block !== undefined) {
+        o["block"] = block
+    }
+    if (inline !== undefined) {
+        o["inline"] = inline
+    }
+    if (behavior !== undefined) {
+        o["behavior"] = behavior
+    }
 
     return o
 }
@@ -3810,11 +4096,15 @@ public external interface BoxQuadOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun BoxQuadOptions(box: CSSBoxType? = CSSBoxType.BORDER, relativeTo: dynamic = null): BoxQuadOptions {
+public inline fun BoxQuadOptions(box: CSSBoxType? = CSSBoxType.BORDER, relativeTo: dynamic = undefined): BoxQuadOptions {
     val o = js("({})")
 
-    o["box"] = box
-    o["relativeTo"] = relativeTo
+    if (box !== undefined) {
+        o["box"] = box
+    }
+    if (relativeTo !== undefined) {
+        o["relativeTo"] = relativeTo
+    }
 
     return o
 }
@@ -3832,8 +4122,12 @@ public external interface ConvertCoordinateOptions {
 public inline fun ConvertCoordinateOptions(fromBox: CSSBoxType? = CSSBoxType.BORDER, toBox: CSSBoxType? = CSSBoxType.BORDER): ConvertCoordinateOptions {
     val o = js("({})")
 
-    o["fromBox"] = fromBox
-    o["toBox"] = toBox
+    if (fromBox !== undefined) {
+        o["fromBox"] = fromBox
+    }
+    if (toBox !== undefined) {
+        o["toBox"] = toBox
+    }
 
     return o
 }
