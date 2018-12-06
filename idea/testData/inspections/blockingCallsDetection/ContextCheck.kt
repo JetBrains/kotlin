@@ -2,7 +2,6 @@
 
 import kotlin.coroutines.*
 import org.jetbrains.annotations.BlockingContext
-import kotlin.coroutines.experimental.buildSequence
 import java.lang.Thread.sleep
 
 suspend fun testFunction() {

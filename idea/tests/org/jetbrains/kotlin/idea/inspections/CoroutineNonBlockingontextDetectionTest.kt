@@ -10,11 +10,9 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 
-class CoroutineNonBlockingontextDetectionTest: KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String
-            = PluginTestCaseBase.getTestDataPathBase() + "/inspections/blockingCallsDetection"
+class CoroutineNonBlockingContextDetectionTest : KotlinLightCodeInsightFixtureTestCase() {
+    override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/inspections/blockingCallsDetection"
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
@@ -42,5 +40,10 @@ class CoroutineNonBlockingontextDetectionTest: KotlinLightCodeInsightFixtureTest
     fun testNestedFunctionsInsideSuspendLambda() {
         myFixture.configureByFile("NestedFunctionsInsideSuspendLambda.kt")
         myFixture.testHighlighting(true, false, false, "NestedFunctionsInsideSuspendLambda.kt")
+    }
+
+    fun testDispatchersTypeDetection() {
+        myFixture.configureByFile("DispatchersTypeCheck.kt")
+        myFixture.testHighlighting(true, false, false, "DispatchersTypeCheck.kt")
     }
 }
