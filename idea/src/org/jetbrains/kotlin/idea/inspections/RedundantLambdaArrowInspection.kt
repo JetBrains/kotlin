@@ -30,7 +30,9 @@ class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
             val arrow = functionLiteral.arrow ?: return@lambdaExpressionVisitor
             val parameters = functionLiteral.valueParameters
             val singleParameter = parameters.singleOrNull()
-            if (parameters.isNotEmpty() && singleParameter?.isSingleUnderscore != true) return@lambdaExpressionVisitor
+            if (parameters.isNotEmpty() && singleParameter?.isSingleUnderscore != true && singleParameter?.name != "it") {
+                return@lambdaExpressionVisitor
+            }
 
             if (lambdaExpression.getStrictParentOfType<KtWhenEntry>()?.expression == lambdaExpression) return@lambdaExpressionVisitor
             if (lambdaExpression.getStrictParentOfType<KtContainerNodeForControlStructureBody>()?.let {
