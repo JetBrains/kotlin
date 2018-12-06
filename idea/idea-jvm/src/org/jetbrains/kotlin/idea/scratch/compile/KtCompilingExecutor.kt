@@ -66,7 +66,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             return error("Compilation Error")
         }
 
-        val result = KtScratchSourceFileProcessor().process(file)
+        val result = runReadAction { KtScratchSourceFileProcessor().process(file) }
         when (result) {
             is KtScratchSourceFileProcessor.Result.Error -> return error(result.message)
             is KtScratchSourceFileProcessor.Result.OK -> {
