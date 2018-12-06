@@ -46,9 +46,7 @@ dependencies {
         testRuntime(intellijPluginDep("maven"))
     }
     testRuntime(intellijPluginDep("android"))
-    Ide.IJ181.orHigher {
-        testRuntime(intellijPluginDep("smali"))
-    }
+    testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("testng"))
     testRuntime(intellijPluginDep("IntelliLang"))
