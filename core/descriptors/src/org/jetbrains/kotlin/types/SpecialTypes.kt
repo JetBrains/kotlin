@@ -81,8 +81,8 @@ class DefinitelyNotNullType private constructor(val original: SimpleType) : Dele
             }
         }
 
-        fun makesSenseToBeDefinitelyNotNull(type: UnwrappedType): Boolean =
-                type.canHaveUndefinedNullability() && !NullabilityChecker.isSubtypeOfAny(type)
+        private fun makesSenseToBeDefinitelyNotNull(type: UnwrappedType): Boolean =
+            type.canHaveUndefinedNullability() && !NullabilityChecker.isSubtypeOfAny(type)
     }
 
     override val delegate: SimpleType
