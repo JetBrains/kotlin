@@ -20,7 +20,10 @@ import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.QuickFixFactory
 import com.intellij.lang.java.beans.PropertyKind
-import com.intellij.lang.jvm.*
+import com.intellij.lang.jvm.JvmClass
+import com.intellij.lang.jvm.JvmElement
+import com.intellij.lang.jvm.JvmModifier
+import com.intellij.lang.jvm.JvmModifiersOwner
 import com.intellij.lang.jvm.actions.*
 import com.intellij.lang.jvm.types.JvmType
 import com.intellij.openapi.editor.Editor
@@ -144,7 +147,7 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
     }
 
     class CreatePropertyFix(
-            contextElement: KtElement,
+        contextElement: KtElement,
         propertyInfo: PropertyInfo,
         private val classOrFileName: String?
     ) : CreateCallableFromUsageFix<KtElement>(contextElement, listOf(propertyInfo)) {
@@ -347,17 +350,16 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         val ktType = (propertyType as? PsiType)?.resolveToKotlinType(resolutionFacade) ?: nullableAnyType
         val propertyInfo = PropertyInfo(
             propertyName,
-                TypeInfo.Empty,
-                TypeInfo(ktType, Variance.INVARIANT),
+            TypeInfo.Empty,
+            TypeInfo(ktType, Variance.INVARIANT),
             setterRequired,
-                listOf(targetContainer),
-                modifierList = modifierBuilder.modifierList,
-                withInitializer = true
+            listOf(targetContainer),
+            modifierList = modifierBuilder.modifierList,
+            withInitializer = true
         )
         val propertyInfos = if (setterRequired) {
             listOf(propertyInfo, propertyInfo.copyProperty(isLateinitPreferred = true))
-        }
-        else {
+        } else {
             listOf(propertyInfo)
         }
         return propertyInfos.map { CreatePropertyFix(targetContainer, it, classOrFileName) }
@@ -424,6 +426,7 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
             preferEmptyBody = true
         )
         val targetClassName = targetClass.name
+
         val action = object : CreateCallableFromUsageFix<KtElement>(targetContainer, listOf(functionInfo)) {
             override fun getFamilyName() = "Add method"
             override fun getText() = "Add method '$methodName' to '$targetClassName'"
@@ -500,21 +503,6 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
 
     }
 
-    override fun createChangeParametersActions(target: JvmMethod, request: ChangeParametersRequest): List<IntentionAction> {
-        val ktNamedFunction = (target as? KtLightElement<*, *>)?.kotlinOrigin as? KtNamedFunction ?: return emptyList()
-
-        val helper = JvmPsiConversionHelper.getInstance(target.project)
-
-        val params = request.expectedParameters.map { ep ->
-            val name = ep.semanticNames.singleOrNull() ?: return emptyList()
-            val expectedType = ep.expectedTypes.singleOrNull() ?: return emptyList()
-
-            val kotlinType =
-                helper.convertType(expectedType.theType).resolveToKotlinType(ktNamedFunction.getResolutionFacade()) ?: return emptyList()
-            Name.identifier(name) to kotlinType
-        }
-        return listOf(ChangeMethodParameters(ktNamedFunction, params, { request.isValid }))
-    }
 }
 
 private fun JvmPsiConversionHelper.asPsiType(param: Pair<SuggestedNameInfo, List<ExpectedType>>): PsiType? =

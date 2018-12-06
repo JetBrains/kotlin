@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.perf
 
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -64,10 +63,5 @@ class WholeProjectLightClassTest : WholeProjectPerformanceTest(), WholeProjectKo
         }
 
         return PerFileTestResult(results, totalNs, errors)
-    }
-
-    fun testUltraLightPerformance() {
-        Registry.get("kotlin.use.ultra.light.classes").setValue(true, testRootDisposable)
-        testWholeProjectPerformance()
     }
 }

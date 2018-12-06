@@ -14,7 +14,7 @@ public final class Sealed$Inner {
     synthetic final field this$0: Sealed
     private final field z2: int
     inner class Sealed$Inner
-    public synthetic @Ann method <init>(p0: Sealed, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic @Ann method <init>(@java.lang.Synthetic p0: Sealed, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: Sealed, p1: int, p2: int, p3: java.lang.String): void
     public final method getZ2(): int
 }
@@ -34,7 +34,7 @@ public final class Test$Inner {
     synthetic final field this$0: Test
     private final field z2: int
     inner class Test$Inner
-    public synthetic @Ann method <init>(p0: Test, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic @Ann method <init>(@java.lang.Synthetic p0: Test, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: Test, p1: int, p2: int, p3: java.lang.String): void
     public final method getZ2(): int
 }

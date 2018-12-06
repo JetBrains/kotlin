@@ -81,11 +81,11 @@ public final class CClassWithCompanion {
 public final class DClassConstuctors$InnerClass {
     synthetic final field this$0: DClassConstuctors
     inner class DClassConstuctors$InnerClass
-    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic @java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long, @org.jetbrains.annotations.NotNull p4: java.lang.String): void
-    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int): void
-    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long): void
-    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int, @LongRes p2: long): void
-    public @kotlin.jvm.JvmOverloads method <init>(@java.lang.Synthetic p0: DClassConstuctors, @StringRes p1: int, p2: int): void
+    public @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, @StringRes p1: int): void
+    public @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long): void
+    public @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long, @org.jetbrains.annotations.NotNull p4: java.lang.String): void
+    public @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, @StringRes p1: int, @LongRes p2: long): void
+    public @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, @StringRes p1: int, p2: int): void
     public synthetic @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, p1: int, p2: int, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, p1: int, p2: int, p3: long, p4: java.lang.String, p5: int, p6: kotlin.jvm.internal.DefaultConstructorMarker): void
 }
