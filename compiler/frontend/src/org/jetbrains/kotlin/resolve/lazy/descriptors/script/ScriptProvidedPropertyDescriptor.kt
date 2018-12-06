@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 
-class ScriptEnvironmentPropertyDescriptor(
+class ScriptProvidedPropertyDescriptor(
     name: Name,
     typeDescriptor: ClassDescriptor,
     receiver: ReceiverParameterDescriptor?,

@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.Printer
 
-class ScriptEnvironmentDescriptor(script: LazyScriptDescriptor) :
+class ScriptProvidedPropertiesDescriptor(script: LazyScriptDescriptor) :
     MutableClassDescriptor(
         script,
         ClassKind.CLASS, false, false,
-        Name.special("<synthetic script environment for ${script.name}>"),
+        Name.special("<synthetic script provided properties for ${script.name}>"),
         SourceElement.NO_SOURCE,
         LockBasedStorageManager.NO_LOCKS
     ) {
@@ -33,8 +33,8 @@ class ScriptEnvironmentDescriptor(script: LazyScriptDescriptor) :
         createTypeConstructor()
     }
 
-    private val memberScope: () -> ScriptEnvironmentMemberScope = script.resolveSession.storageManager.createLazyValue {
-        ScriptEnvironmentMemberScope(
+    private val memberScope: () -> ScriptProvidedPropertiesMemberScope = script.resolveSession.storageManager.createLazyValue {
+        ScriptProvidedPropertiesMemberScope(
             script.name.identifier,
             properties()
         )
@@ -42,13 +42,13 @@ class ScriptEnvironmentDescriptor(script: LazyScriptDescriptor) :
 
     override fun getUnsubstitutedMemberScope(): MemberScope = memberScope()
 
-    val properties: () -> List<ScriptEnvironmentPropertyDescriptor> = script.resolveSession.storageManager.createLazyValue {
-        script.scriptDefinition().environmentVariables.mapNotNull { (name, type) ->
-            script.findTypeDescriptor(type, Errors.MISSING_SCRIPT_ENVIRONMENT_PROPERTY_CLASS)?.let {
+    val properties: () -> List<ScriptProvidedPropertyDescriptor> = script.resolveSession.storageManager.createLazyValue {
+        script.scriptDefinition().providedProperties.mapNotNull { (name, type) ->
+            script.findTypeDescriptor(type, Errors.MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS)?.let {
                 name to it
             }
         }.map { (name, classDescriptor) ->
-            ScriptEnvironmentPropertyDescriptor(
+            ScriptProvidedPropertyDescriptor(
                 Name.identifier(name),
                 classDescriptor,
                 thisAsReceiverParameter,
@@ -58,21 +58,21 @@ class ScriptEnvironmentDescriptor(script: LazyScriptDescriptor) :
         }
     }
 
-    private class ScriptEnvironmentMemberScope(
+    private class ScriptProvidedPropertiesMemberScope(
         private val scriptId: String,
-        private val environmentProperties: List<PropertyDescriptor>
+        private val providedProperties: List<PropertyDescriptor>
     ) : MemberScopeImpl() {
         override fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
         ): Collection<DeclarationDescriptor> =
-            environmentProperties
+            providedProperties
 
         override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> =
-            environmentProperties.filter { it.name == name }
+            providedProperties.filter { it.name == name }
 
         override fun printScopeStructure(p: Printer) {
-            p.println("Scope of script environment: $scriptId")
+            p.println("Scope of script provided properties: $scriptId")
         }
     }
 }

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptEnvironmentDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptProvidedPropertiesDescriptor
 import org.jetbrains.org.objectweb.asm.Type
 import kotlin.reflect.KClass
 
@@ -76,7 +76,7 @@ class ScriptContext(
     private val ctorImplicitReceiversParametersStart =
         ctorValueParametersStart + (scriptDescriptor.getSuperClassNotAny()?.unsubstitutedPrimaryConstructor?.valueParameters?.size ?: 0)
 
-    private val ctorEnvironmentVarsParametersStart =
+    private val ctorProvidedPropertiesParametersStart =
         ctorImplicitReceiversParametersStart + scriptDescriptor.implicitReceivers.size
 
     fun getImplicitReceiverName(index: Int): String =
@@ -88,13 +88,13 @@ class ScriptContext(
         return kClass?.java?.classId?.let(AsmUtil::asmTypeByClassId)
     }
 
-    fun getEnvironmentVarName(index: Int): String =
-        scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters[ctorEnvironmentVarsParametersStart + index].name.identifier
+    fun getProvidedPropertyName(index: Int): String =
+        scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters[ctorProvidedPropertiesParametersStart + index].name.identifier
 
-    fun getEnvironmentVarType(index: Int): Type = typeMapper.mapType(scriptDescriptor.scriptEnvironmentProperties[index].type)
+    fun getProvidedPropertyType(index: Int): Type = typeMapper.mapType(scriptDescriptor.scriptProvidedProperties[index].type)
 
     fun getOuterReceiverExpression(prefix: StackValue?, thisOrOuterClass: ClassDescriptor): StackValue {
-        if (thisOrOuterClass is ScriptEnvironmentDescriptor) {
+        if (thisOrOuterClass is ScriptProvidedPropertiesDescriptor) {
             return prefix ?: StackValue.LOCAL_0
         }
         receiverDescriptors.forEachIndexed { index, outerReceiver ->

@@ -43,8 +43,8 @@ class LazyScriptClassMemberScope(
                 scriptDescriptor.implicitReceivers.mapIndexed { idx, receiver ->
                     "$IMPLICIT_RECEIVER_PARAM_NAME_PREFIX$idx" to receiver.defaultType
                 }
-            val environmentVarsParamTypes =
-                scriptDescriptor.scriptEnvironmentProperties.map {
+            val providedPropertiesParamTypes =
+                scriptDescriptor.scriptProvidedProperties.map {
                     it.name.identifier to it.type
                 }
             val annotations = baseConstructorDescriptor.annotations
@@ -53,7 +53,7 @@ class LazyScriptClassMemberScope(
             )
             var paramsIndexBase = baseConstructorDescriptor.valueParameters.lastIndex + 1
             val syntheticParameters =
-                (implicitReceiversParamTypes + environmentVarsParamTypes).map { param: Pair<String, KotlinType> ->
+                (implicitReceiversParamTypes + providedPropertiesParamTypes).map { param: Pair<String, KotlinType> ->
                     ValueParameterDescriptorImpl(
                         constructorDescriptor,
                         null,

@@ -67,7 +67,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
             .map { getScriptingClass(it).starProjectedType }
     }
 
-    override val environmentVariables: List<Pair<String, KType>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val providedProperties: List<Pair<String, KType>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scriptCompilationConfiguration[ScriptCompilationConfiguration.providedProperties]
             ?.map { (k, v) -> k to getScriptingClass(v).starProjectedType }.orEmpty()
     }
