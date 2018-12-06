@@ -8435,6 +8435,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/generics/nullability/kt25182.kt");
                 }
 
+                @TestMetadata("notNullSmartcastOnIntersectionOfNullables.kt")
+                public void testNotNullSmartcastOnIntersectionOfNullables() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/nullability/notNullSmartcastOnIntersectionOfNullables.kt");
+                }
+
                 @TestMetadata("nullToGeneric.kt")
                 public void testNullToGeneric() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/nullability/nullToGeneric.kt");
