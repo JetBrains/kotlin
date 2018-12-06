@@ -285,7 +285,7 @@ private fun GenerateAttribute.kindNotChanged(superAttributesByName: Map<String, 
 
 private fun GenerateAttribute.hasSuperImplementation(allSuperTypes: List<GenerateTraitOrClass>) = allSuperTypes.any { st -> st.kind != GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == signature } }
 
-private fun GenerateAttribute.shouldBeUndefinedByDefault() =
+private fun GenerateAttribute.hasNoDefaultValue() =
      this.initializer == null && (this.type.nullable || this.type == DynamicType) && !this.required
 
 fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperTypes: List<GenerateTraitOrClass>, allTypes: Set<String>) {
@@ -293,7 +293,7 @@ fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperT
             .distinctBy { it.signature }
             .map { it.copy(kind = AttributeKind.ARGUMENT) }
             .dynamicIfUnknownType(allTypes)
-            .map { if (it.shouldBeUndefinedByDefault()) it.copy(initializer = "undefined") else it }
+            .map { if (it.hasNoDefaultValue()) it.copy(initializer = "undefined") else it }
 
     appendln("@kotlin.internal.InlineOnly")
     append("public inline fun ${dictionary.name}")
@@ -308,7 +308,7 @@ fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperT
         indent(level = 1)
 
         val escapedFieldName = field.name.replaceKeywords()
-        val nullGuardedAssignment = field.shouldBeUndefinedByDefault()
+        val nullGuardedAssignment = field.hasNoDefaultValue()
 
         if (nullGuardedAssignment) {
             appendln("if ($escapedFieldName !== undefined) {")
