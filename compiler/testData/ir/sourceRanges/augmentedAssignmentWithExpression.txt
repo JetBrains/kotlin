@@ -37,10 +37,10 @@
       @17:4..14 CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         @17:4..9 CALL 'foo(): Host' type=test.Host origin=null
         @17:13..14 CONST Int type=kotlin.Int value=1
-  @20:0..22:1 FUN name:test4 visibility:public modality:FINAL <> (a:() -> test.Host) returnType:kotlin.Unit flags:
-    @20:10..23 VALUE_PARAMETER name:a index:0 type:() -> test.Host flags:
+  @20:0..22:1 FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<test.Host>) returnType:kotlin.Unit flags:
+    @20:10..23 VALUE_PARAMETER name:a index:0 type:kotlin.Function0<test.Host> flags:
     @20:25..22:1 BLOCK_BODY
       @21:4..12 CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         @21:4..7 CALL 'invoke(): R' type=test.Host origin=INVOKE
-          @21:4..5 GET_VAR 'value-parameter a: () -> Host' type=() -> test.Host origin=VARIABLE_AS_FUNCTION
+          @21:4..5 GET_VAR 'value-parameter a: () -> Host' type=kotlin.Function0<test.Host> origin=VARIABLE_AS_FUNCTION
         @21:11..12 CONST Int type=kotlin.Int value=1

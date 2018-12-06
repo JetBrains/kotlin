@@ -16,23 +16,23 @@ FILE fqName:<root> fileName:/builtinMap.kt
               pair: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'apply(T.() -> Unit) on T: T' type=kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */ origin=null
-              <T>: kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */
-              $receiver: CALL 'constructor LinkedHashMap((MutableMap<out K!, out V!>..Map<out K!, V!>?))' type=java.util.LinkedHashMap<K1!, V1!> origin=null
+            then: CALL 'apply(T.() -> Unit) on T: T' type=java.util.LinkedHashMap<K1?, V1?> origin=null
+              <T>: java.util.LinkedHashMap<K1?, V1?>
+              $receiver: CALL 'constructor LinkedHashMap((MutableMap<out K!, out V!>..Map<out K!, V!>?))' type=java.util.LinkedHashMap<K1?, V1?> origin=null
                 <K : Any!>: K1?
                 <V : Any!>: V1?
                 p0: GET_VAR 'this@plus: Map<out K1, V1>' type=kotlin.collections.Map<out K1, V1> origin=null
-              block: BLOCK type=kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */.() -> kotlin.Unit origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */) returnType:kotlin.Unit flags:
-                  $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */ flags:
+              block: BLOCK type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<java.util.LinkedHashMap<K1?, V1?>, kotlin.Unit> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.LinkedHashMap<K1?, V1?>) returnType:kotlin.Unit flags:
+                  $receiver: VALUE_PARAMETER name:<this> type:java.util.LinkedHashMap<K1?, V1?> flags:
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='<anonymous>() on LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */: Unit'
                       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                         typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
                         CALL 'put(K, V): V?' type=V1? origin=null
-                          $this: GET_VAR 'this@<anonymous>: LinkedHashMap<(K1..K1?), (V1..V1?)>' type=kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */ origin=null
+                          $this: GET_VAR 'this@<anonymous>: LinkedHashMap<(K1..K1?), (V1..V1?)>' type=java.util.LinkedHashMap<K1?, V1?> origin=null
                           key: CALL '<get-first>(): A' type=K1 origin=GET_PROPERTY
                             $this: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
                           value: CALL '<get-second>(): B' type=V1 origin=GET_PROPERTY
                             $this: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
-                FUNCTION_REFERENCE '<anonymous>() on LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */: Unit' type=kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */.() -> kotlin.Unit origin=LAMBDA
+                FUNCTION_REFERENCE '<anonymous>() on LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */: Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<java.util.LinkedHashMap<K1?, V1?>, kotlin.Unit> origin=LAMBDA

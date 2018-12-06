@@ -32,10 +32,9 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   TYPEALIAS typealias IntAlias = Cell<Int> type=Cell<kotlin.Int>
-  FUN name:test visibility:public modality:FINAL <> () returnType:IntAlias /* = Cell<kotlin.Int> */ flags:
+  FUN name:test visibility:public modality:FINAL <> () returnType:Cell<kotlin.Int> flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(): IntAlias /* = Cell<Int> */'
         CALL 'constructor Cell(T)' type=Cell<kotlin.Int> origin=null
           <T>: kotlin.Int
           value: CONST Int type=kotlin.Int value=42
-

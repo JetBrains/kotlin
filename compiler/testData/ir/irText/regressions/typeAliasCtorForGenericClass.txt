@@ -35,12 +35,11 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   TYPEALIAS typealias B2 = A<A<T>> type=A<A<T>>
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
-      VAR name:b type:B<kotlin.Int> /* = A<kotlin.Int> */ flags:val
+      VAR name:b type:A<kotlin.Int> flags:val
         CALL 'constructor A(Q)' type=A<kotlin.Int> origin=null
           <Q>: kotlin.Int
           q: CONST Int type=kotlin.Int value=2
-      VAR name:b2 type:B2<kotlin.Int> /* = A<A<kotlin.Int>> */ flags:val
+      VAR name:b2 type:A<A<kotlin.Int>> flags:val
         CALL 'constructor A(Q)' type=A<A<kotlin.Int>> origin=null
           <Q>: A<kotlin.Int>
-          q: GET_VAR 'b: B<Int> /* = A<Int> */' type=B<kotlin.Int> /* = A<kotlin.Int> */ origin=null
-
+          q: GET_VAR 'b: B<Int> /* = A<Int> */' type=A<kotlin.Int> origin=null

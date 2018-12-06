@@ -61,7 +61,7 @@
       @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<Test5> flags:
     @18:0..11 FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<Test5>) returnType:kotlin.Unit flags:
       @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<Test5> flags:
-    @18:0..11 FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<Test5>) returnType:java.lang.Class<Test5!>? flags:
+    @18:0..11 FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<Test5>) returnType:java.lang.Class<Test5?>? flags:
       @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<Test5> flags:
     @18:0..11 FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<Test5>, other:Test5) returnType:kotlin.Int flags:
       @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<Test5> flags:

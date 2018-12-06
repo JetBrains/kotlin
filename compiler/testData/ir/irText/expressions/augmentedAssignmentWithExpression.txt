@@ -43,11 +43,10 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
       CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         $this: CALL 'foo(): Host' type=Host origin=null
         x: CONST Int type=kotlin.Int value=1
-  FUN name:test4 visibility:public modality:FINAL <> (a:() -> Host) returnType:kotlin.Unit flags:
-    VALUE_PARAMETER name:a index:0 type:() -> Host flags:
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<Host>) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<Host> flags:
     BLOCK_BODY
       CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
         $this: CALL 'invoke(): R' type=Host origin=INVOKE
-          $this: GET_VAR 'value-parameter a: () -> Host' type=() -> Host origin=VARIABLE_AS_FUNCTION
+          $this: GET_VAR 'value-parameter a: () -> Host' type=kotlin.Function0<Host> origin=VARIABLE_AS_FUNCTION
         x: CONST Int type=kotlin.Int value=1
-

@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
           <T>: A
           <R>: kotlin.Int
           receiver: GET_OBJECT 'A' type=A
-          block: BLOCK type=A.() -> kotlin.Int origin=LAMBDA
+          block: BLOCK type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<A, kotlin.Int> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:A) returnType:kotlin.Int flags:
               $receiver: VALUE_PARAMETER name:<this> type:A flags:
               BLOCK_BODY
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                     <T>: IFoo
                     <R>: kotlin.Int
                     receiver: GET_VAR 'value-parameter fooImpl: IFoo' type=IFoo origin=null
-                    block: BLOCK type=IFoo.() -> kotlin.Int origin=LAMBDA
+                    block: BLOCK type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<IFoo, kotlin.Int> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:IFoo) returnType:kotlin.Int flags:
                         $receiver: VALUE_PARAMETER name:<this> type:IFoo flags:
                         BLOCK_BODY
@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                               <T>: IInvoke
                               <R>: kotlin.Int
                               receiver: GET_VAR 'value-parameter invokeImpl: IInvoke' type=IInvoke origin=null
-                              block: BLOCK type=IInvoke.() -> kotlin.Int origin=LAMBDA
+                              block: BLOCK type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<IInvoke, kotlin.Int> origin=LAMBDA
                                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:IInvoke) returnType:kotlin.Int flags:
                                   $receiver: VALUE_PARAMETER name:<this> type:IInvoke flags:
                                   BLOCK_BODY
@@ -119,7 +119,6 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                                         $receiver: CALL '<get-foo>() on A: B' type=B origin=GET_PROPERTY
                                           $this: GET_VAR 'this@<anonymous>: IFoo' type=IFoo origin=null
                                           $receiver: GET_VAR 'this@<anonymous>: A' type=A origin=null
-                                FUNCTION_REFERENCE '<anonymous>() on IInvoke: Int' type=IInvoke.() -> kotlin.Int origin=LAMBDA
-                      FUNCTION_REFERENCE '<anonymous>() on IFoo: Int' type=IFoo.() -> kotlin.Int origin=LAMBDA
-            FUNCTION_REFERENCE '<anonymous>() on A: Int' type=A.() -> kotlin.Int origin=LAMBDA
-
+                                FUNCTION_REFERENCE '<anonymous>() on IInvoke: Int' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<IInvoke, kotlin.Int> origin=LAMBDA
+                      FUNCTION_REFERENCE '<anonymous>() on IFoo: Int' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<IFoo, kotlin.Int> origin=LAMBDA
+            FUNCTION_REFERENCE '<anonymous>() on A: Int' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<A, kotlin.Int> origin=LAMBDA

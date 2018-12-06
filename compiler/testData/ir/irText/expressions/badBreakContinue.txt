@@ -15,13 +15,13 @@ FILE fqName:<root> fileName:/badBreakContinue.kt
       WHILE label=L1 origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
-          VAR name:lambda type:() -> kotlin.Nothing flags:val
-            BLOCK type=() -> kotlin.Nothing origin=LAMBDA
+          VAR name:lambda type:kotlin.Function0<kotlin.Nothing> flags:val
+            BLOCK type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing flags:
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
                   ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
-              FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
+              FUNCTION_REFERENCE '<anonymous>(): Nothing' type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP
@@ -30,4 +30,3 @@ FILE fqName:<root> fileName:/badBreakContinue.kt
       WHILE label=null origin=WHILE_LOOP
         condition: ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
-

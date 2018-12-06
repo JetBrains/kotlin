@@ -7,15 +7,15 @@ FILE fqName:<root> fileName:/genericInnerClass.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS name:Inner modality:FINAL visibility:public flags:inner superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer<T1>.Inner<T2> flags:
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.Inner<T2, T1> flags:
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
-      CONSTRUCTOR visibility:public <> ($this:Outer<T1>) returnType:Outer<T1>.Inner<T2> flags:primary
+      CONSTRUCTOR visibility:public <> ($this:Outer<T1>) returnType:Outer.Inner<T2, T1> flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Outer<T1> flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
-      FUN name:foo visibility:public modality:FINAL <> ($this:Outer<T1>.Inner<T2>, x1:T1, x2:T2) returnType:kotlin.Unit flags:
-        $this: VALUE_PARAMETER name:<this> type:Outer<T1>.Inner<T2> flags:
+      FUN name:foo visibility:public modality:FINAL <> ($this:Outer.Inner<T2, T1>, x1:T1, x2:T2) returnType:kotlin.Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:Outer.Inner<T2, T1> flags:
         VALUE_PARAMETER name:x1 index:0 type:T1 flags:
         VALUE_PARAMETER name:x2 index:1 type:T2 flags:
         BLOCK_BODY
@@ -45,4 +45,3 @@ FILE fqName:<root> fileName:/genericInnerClass.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-

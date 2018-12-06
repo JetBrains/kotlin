@@ -28,23 +28,23 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
                 GET_FIELD 'value2: String' type=kotlin.String origin=null
                   receiver: GET_VAR 'this@B: B' type=X.B origin=null
         PROPERTY name:value visibility:public modality:OPEN flags:val
-          FIELD PROPERTY_BACKING_FIELD name:value type:() -> kotlin.String visibility:public flags:final
+          FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:public flags:final
             EXPRESSION_BODY
-              BLOCK type=() -> kotlin.String origin=LAMBDA
+              BLOCK type=kotlin.Function0<kotlin.String> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String flags:
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='<anonymous>(): String'
                       CALL '<get-value2>(): String' type=kotlin.String origin=GET_PROPERTY
                         $this: GET_ENUM 'B' type=X.B
-                FUNCTION_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:OPEN <> ($this:X.B) returnType:() -> kotlin.String flags:
+                FUNCTION_REFERENCE '<anonymous>(): String' type=kotlin.Function0<kotlin.String> origin=LAMBDA
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:OPEN <> ($this:X.B) returnType:kotlin.Function0<kotlin.String> flags:
             correspondingProperty: PROPERTY name:value visibility:public modality:OPEN flags:val
             overridden:
-              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:X) returnType:() -> kotlin.String flags:
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:X) returnType:kotlin.Function0<kotlin.String> flags:
             $this: VALUE_PARAMETER name:<this> type:X.B flags:
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-value>(): () -> String'
-                GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
+                GET_FIELD 'value: () -> String' type=kotlin.Function0<kotlin.String> origin=null
                   receiver: GET_VAR 'this@B: B' type=X.B origin=null
         FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Any flags:
           overridden:
@@ -54,9 +54,9 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
           overridden:
             FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Unit flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:java.lang.Class<X!>? flags:
+        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:java.lang.Class<X?>? flags:
           overridden:
-            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:java.lang.Class<X!>? flags:
+            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:java.lang.Class<X?>? flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:X) returnType:kotlin.Int flags:
           overridden:
@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
             FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<X>) returnType:kotlin.String flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
     PROPERTY name:value visibility:public modality:ABSTRACT flags:val
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:X) returnType:() -> kotlin.String flags:
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:X) returnType:kotlin.Function0<kotlin.String> flags:
         correspondingProperty: PROPERTY name:value visibility:public modality:ABSTRACT flags:val
         $this: VALUE_PARAMETER name:<this> type:X flags:
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Any flags:
@@ -100,9 +100,9 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Unit flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:java.lang.Class<X!>? flags:
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:java.lang.Class<X?>? flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E!>? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E?>? flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:X) returnType:kotlin.Int flags:
       overridden:
@@ -143,5 +143,5 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='box(): String'
         CALL 'invoke(): R' type=kotlin.String origin=INVOKE
-          $this: CALL '<get-value>(): () -> String' type=() -> kotlin.String origin=GET_PROPERTY
+          $this: CALL '<get-value>(): () -> String' type=kotlin.Function0<kotlin.String> origin=GET_PROPERTY
             $this: GET_ENUM 'B' type=X

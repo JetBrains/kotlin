@@ -37,12 +37,12 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
         VAR DELEGATE name:test$delegate type:kotlin.Lazy<kotlin.Int> flags:val
           CALL 'lazy(() -> T): Lazy<T>' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: kotlin.Int
-            initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
+            initializer: BLOCK type=kotlin.Function0<kotlin.Int> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                     CONST Int type=kotlin.Int value=42
-              FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
+              FUNCTION_REFERENCE '<anonymous>(): Int' type=kotlin.Function0<kotlin.Int> origin=LAMBDA
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-test>(): Int'

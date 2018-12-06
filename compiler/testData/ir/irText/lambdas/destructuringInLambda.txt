@@ -140,9 +140,9 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value=true
   PROPERTY name:fn visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:fn type:(A) -> kotlin.Int visibility:public flags:static
+    FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1<A, kotlin.Int> visibility:public flags:static
       EXPRESSION_BODY
-        BLOCK type=(A) -> kotlin.Int origin=LAMBDA
+        BLOCK type=kotlin.Function1<A, kotlin.Int> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<name for destructuring parameter 0>:A) returnType:kotlin.Int flags:
             VALUE_PARAMETER name:<name for destructuring parameter 0> index:0 type:A flags:
             BLOCK_BODY
@@ -153,16 +153,15 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
                 CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
                   $this: CONST Int type=kotlin.Int value=42
                   other: GET_VAR 'y: Int' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE '<anonymous>(A): Int' type=(A) -> kotlin.Int origin=LAMBDA
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> visibility:public modality:FINAL <> () returnType:(A) -> kotlin.Int flags:
+          FUNCTION_REFERENCE '<anonymous>(A): Int' type=kotlin.Function1<A, kotlin.Int> origin=LAMBDA
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> visibility:public modality:FINAL <> () returnType:kotlin.Function1<A, kotlin.Int> flags:
       correspondingProperty: PROPERTY name:fn visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-fn>(): (A) -> Int'
-          GET_FIELD 'fn: (A) -> Int' type=(A) -> kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fn> visibility:public modality:FINAL <> (<set-?>:(A) -> kotlin.Int) returnType:kotlin.Unit flags:
+          GET_FIELD 'fn: (A) -> Int' type=kotlin.Function1<A, kotlin.Int> origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fn> visibility:public modality:FINAL <> (<set-?>:kotlin.Function1<A, kotlin.Int>) returnType:kotlin.Unit flags:
       correspondingProperty: PROPERTY name:fn visibility:public modality:FINAL flags:var
-      VALUE_PARAMETER name:<set-?> index:0 type:(A) -> kotlin.Int flags:
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Function1<A, kotlin.Int> flags:
       BLOCK_BODY
         SET_FIELD 'fn: (A) -> Int' type=kotlin.Unit origin=null
-          value: GET_VAR 'value-parameter <set-?>: (A) -> Int' type=(A) -> kotlin.Int origin=null
-
+          value: GET_VAR 'value-parameter <set-?>: (A) -> Int' type=kotlin.Function1<A, kotlin.Int> origin=null
