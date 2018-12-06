@@ -1485,4 +1485,32 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/stubs/simple.kt");
         }
     }
+
+    @TestMetadata("compiler/testData/ir/irText/types")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Types extends AbstractIrTextTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypes() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/types"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("intersectionType1.kt")
+        public void testIntersectionType1() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionType1.kt");
+        }
+
+        @TestMetadata("intersectionType2.kt")
+        public void testIntersectionType2() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionType2.kt");
+        }
+
+        @TestMetadata("intersectionType3.kt")
+        public void testIntersectionType3() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionType3.kt");
+        }
+    }
 }
