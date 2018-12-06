@@ -2542,6 +2542,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testNormal() throws Exception {
             runTest("idea/testData/inspectionsLocal/forEachParameterNotUsed/normal.kt");
         }
+
+        @TestMetadata("repeat.kt")
+        public void testRepeat() throws Exception {
+            runTest("idea/testData/inspectionsLocal/forEachParameterNotUsed/repeat.kt");
+        }
+
+        @TestMetadata("safe.kt")
+        public void testSafe() throws Exception {
+            runTest("idea/testData/inspectionsLocal/forEachParameterNotUsed/safe.kt");
+        }
+
+        @TestMetadata("sequence.kt")
+        public void testSequence() throws Exception {
+            runTest("idea/testData/inspectionsLocal/forEachParameterNotUsed/sequence.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType")
