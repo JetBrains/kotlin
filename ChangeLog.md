@@ -1,5 +1,93 @@
 # CHANGELOG
 
+## 1.3.11
+
+### Compiler
+
+- [`KT-28097`](https://youtrack.jetbrains.com/issue/KT-28097) AbstractMethodError for @JvmSuppressWildcards annotation used with coroutines
+- [`KT-28225`](https://youtrack.jetbrains.com/issue/KT-28225) Report a warning when comparing incompatible enums
+
+### IDE. Gradle
+
+- [`KT-28389`](https://youtrack.jetbrains.com/issue/KT-28389) MPP IDE import does not recognize a dependency from a subproject to the root project
+
+### IDE. Inspections and Intentions
+
+- [`KT-28445`](https://youtrack.jetbrains.com/issue/KT-28445) "Redundant async" inspection does not work with release coroutines
+
+### IDE. Multiplatform
+
+- [`KT-27632`](https://youtrack.jetbrains.com/issue/KT-27632) MPP IDE commonMain cannot see other commonMain types transitively which are exposed through a middle multiplatform module
+
+### JavaScript
+
+- [`KT-27946`](https://youtrack.jetbrains.com/issue/KT-27946) Late initialization based on contracts breaks Kotlin/JS in 1.3.0
+
+### Tools. Gradle
+
+- [`KT-27500`](https://youtrack.jetbrains.com/issue/KT-27500) MPP: Native: `.module` dependency is reported as error in the IDE after import
+
+
+## 1.3.10
+
+### Compiler
+
+- [`KT-27758`](https://youtrack.jetbrains.com/issue/KT-27758) Kotlin 1.3 breaks compilation of calling of function named 'contract' with block as a last parameter
+- [`KT-27895`](https://youtrack.jetbrains.com/issue/KT-27895) Kotlin 1.3.0 broken runtime annotation issue
+
+### IDE
+
+- [`KT-27230`](https://youtrack.jetbrains.com/issue/KT-27230) Freeze on paste
+- [`KT-27907`](https://youtrack.jetbrains.com/issue/KT-27907) Exception on processing auto-generated classes from AS
+
+### IDE. Debugger
+
+- [`KT-27540`](https://youtrack.jetbrains.com/issue/KT-27540) 2018.3 and 2019.1 Debugger: Evaluating anything fails with KNPE in LabelNormalizationMethodTransformer
+- [`KT-27833`](https://youtrack.jetbrains.com/issue/KT-27833) Evaluate exception in 183/191 with `asm-7.0-beta1`/'asm-7.0'
+- [`KT-27965`](https://youtrack.jetbrains.com/issue/KT-27965) Sequence debugger does not work in Android Studio
+- [`KT-27980`](https://youtrack.jetbrains.com/issue/KT-27980) Kotlin sequence debugger throws IDE exception in IDEA 183
+
+### IDE. Gradle
+
+- [`KT-27265`](https://youtrack.jetbrains.com/issue/KT-27265) Unresolved reference in IDE on calling JVM source set members of a multiplatform project with Android target from a plain Kotlin/JVM module
+- [`KT-27849`](https://youtrack.jetbrains.com/issue/KT-27849) IntelliJ: Wrong scope of JVM platform MPP dependency
+
+### IDE. Inspections and Intentions
+
+- [`KT-26481`](https://youtrack.jetbrains.com/issue/KT-26481) Flaky false positive "Receiver parameter is never used" for local extension function
+- [`KT-27357`](https://youtrack.jetbrains.com/issue/KT-27357) Function with inline class type value parameters is marked as unused by IDE
+- [`KT-27434`](https://youtrack.jetbrains.com/issue/KT-27434) False positive "Unused symbol" inspection for functions and secondary constructors of inline classes
+- [`KT-27945`](https://youtrack.jetbrains.com/issue/KT-27945) Quick-fix whitespace bug in KtPrimaryConstructor.addAnnotationEntry()
+
+### IDE. Scratch
+
+- [`KT-27746`](https://youtrack.jetbrains.com/issue/KT-27746) Scratch: "Cannot pop operand off an empty stack" in a new scratch file
+
+### IDE. Tests Support
+
+- [`KT-27371`](https://youtrack.jetbrains.com/issue/KT-27371) Common tests can not be launched from gutter in MPP Android/iOS project
+
+### Reflection
+
+- [`KT-27878`](https://youtrack.jetbrains.com/issue/KT-27878) Spring: "AssertionError: Non-primitive type name passed: void"
+
+### Tools. Gradle
+
+- [`KT-27160`](https://youtrack.jetbrains.com/issue/KT-27160) Kotlin Gradle plugin 1.3 resolves script configurations during project evaluation
+- [`KT-27803`](https://youtrack.jetbrains.com/issue/KT-27803) CInterop input configuration has 'java-api' as a Usage attribute value in new MPP
+- [`KT-27984`](https://youtrack.jetbrains.com/issue/KT-27984) Kotlin Gradle Plugin: Circular dependency
+
+### Tools. JPS
+
+- [`KT-26489`](https://youtrack.jetbrains.com/issue/KT-26489) JPS: support -Xcommon-sources for multiplatform projects (JVM)
+- [`KT-27037`](https://youtrack.jetbrains.com/issue/KT-27037) Incremental compilation failed after update to 1.3.0-rc-60
+- [`KT-27792`](https://youtrack.jetbrains.com/issue/KT-27792) Incremental compilation failed with NullPointerException in KotlinCompileContext.markChunkForRebuildBeforeBuild
+
+### Tools. kapt
+
+- [`KT-27126`](https://youtrack.jetbrains.com/issue/KT-27126) kapt: class implementing List<T> generates bad stub
+
+
 ## 1.3.0
 
 ### IDE
@@ -432,7 +520,7 @@
 
 #### Performance Improvements
 
-- [`KT-18483`](https://youtrack.jetbrains.com/issue/KT-18483) Check to contains value in range can be dramatically slow 
+- [`KT-18483`](https://youtrack.jetbrains.com/issue/KT-18483) Check to contains value in range can be dramatically slow
 
 #### Fixes
 
