@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.editor.fixers
 
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 
 val PsiElement.range: TextRange get() = textRange!!
 val TextRange.start: Int get() = startOffset

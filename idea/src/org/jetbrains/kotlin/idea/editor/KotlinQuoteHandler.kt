@@ -29,8 +29,7 @@ class KotlinQuoteHandler : QuoteHandler {
             val start = iterator.start
             val end = iterator.end
             return end - start >= 1 && offset == end - 1
-        }
-        else if (tokenType == KtTokens.CLOSING_QUOTE) {
+        } else if (tokenType == KtTokens.CLOSING_QUOTE) {
             return true
         }
         return false
@@ -53,10 +52,10 @@ class KotlinQuoteHandler : QuoteHandler {
     override fun isInsideLiteral(iterator: HighlighterIterator): Boolean {
         val tokenType = iterator.tokenType
         return tokenType == KtTokens.REGULAR_STRING_PART ||
-               tokenType == KtTokens.OPEN_QUOTE ||
-               tokenType == KtTokens.CLOSING_QUOTE ||
-               tokenType == KtTokens.SHORT_TEMPLATE_ENTRY_START ||
-               tokenType == KtTokens.LONG_TEMPLATE_ENTRY_END ||
-               tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START
+                tokenType == KtTokens.OPEN_QUOTE ||
+                tokenType == KtTokens.CLOSING_QUOTE ||
+                tokenType == KtTokens.SHORT_TEMPLATE_ENTRY_START ||
+                tokenType == KtTokens.LONG_TEMPLATE_ENTRY_END ||
+                tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START
     }
 }

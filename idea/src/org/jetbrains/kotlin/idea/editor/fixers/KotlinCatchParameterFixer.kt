@@ -37,8 +37,7 @@ class KotlinCatchParameterFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmar
             val parameter = parameterList?.parameters?.firstOrNull()?.text ?: ""
             editor.document.replaceString(catchEnd, endOffset, "($parameter)")
             processor.registerUnresolvedError(endOffset - 1)
-        }
-        else if (parameterList.parameters.firstOrNull()?.text.isNullOrBlank()) {
+        } else if (parameterList.parameters.firstOrNull()?.text.isNullOrBlank()) {
             processor.registerUnresolvedError(parameterList.startOffset + 1)
         }
     }

@@ -16,21 +16,21 @@
 
 package org.jetbrains.kotlin.idea.editor.wordSelection
 
+import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtValueArgumentList
-import org.jetbrains.kotlin.lexer.KtTokens
-import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 
 class KotlinListSelectioner : ExtendWordSelectionHandlerBase() {
     companion object {
-        fun canSelect(e: PsiElement)
-            = e is KtParameterList || e is KtValueArgumentList || e is KtTypeParameterList || e is KtTypeArgumentList
+        fun canSelect(e: PsiElement) =
+            e is KtParameterList || e is KtValueArgumentList || e is KtTypeParameterList || e is KtTypeArgumentList
     }
 
     override fun canSelect(e: PsiElement) = KotlinListSelectioner.canSelect(e)
@@ -41,8 +41,10 @@ class KotlinListSelectioner : ExtendWordSelectionHandlerBase() {
         val endNode = node.findChildByType(TokenSet.create(KtTokens.RPAR, KtTokens.GT)) ?: return null
         val innerRange = TextRange(startNode.startOffset + 1, endNode.startOffset)
         if (e is KtTypeArgumentList || e is KtTypeParameterList) {
-            return listOf(innerRange,
-                          TextRange(startNode.startOffset, endNode.startOffset + endNode.textLength))
+            return listOf(
+                innerRange,
+                TextRange(startNode.startOffset, endNode.startOffset + endNode.textLength)
+            )
         }
         return listOf(innerRange)
     }

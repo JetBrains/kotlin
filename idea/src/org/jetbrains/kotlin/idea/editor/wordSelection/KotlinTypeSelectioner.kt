@@ -32,8 +32,8 @@ class KotlinTypeSelectioner : ExtendWordSelectionHandlerBase() {
 
     override fun canSelect(e: PsiElement): Boolean {
         return e is KtTypeReference
-               && e.getStrictParentOfType<KtObjectDeclaration>() == null
-               && e.getStrictParentOfType<KtParameter>() == null
+                && e.getStrictParentOfType<KtObjectDeclaration>() == null
+                && e.getStrictParentOfType<KtParameter>() == null
     }
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {

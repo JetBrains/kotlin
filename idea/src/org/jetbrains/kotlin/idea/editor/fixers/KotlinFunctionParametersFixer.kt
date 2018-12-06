@@ -35,8 +35,7 @@ class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<Kotlin
             val offset = Math.max(identifier.range.end, psiElement.typeParameterList?.range?.end ?: psiElement.range.start)
             editor.document.insertString(offset, "()")
             processor.registerUnresolvedError(offset + 1)
-        }
-        else {
+        } else {
             val rParen = parameterList.lastChild ?: return
 
             if (")" != rParen.text) {

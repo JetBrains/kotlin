@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.idea.editor.wordSelection
 
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.psi.KtContainerNode
+import org.jetbrains.kotlin.KtNodeTypes.BLOCK
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtContainerNode
 
-class KotlinWordSelectionFilter : Condition<PsiElement>{
+class KotlinWordSelectionFilter : Condition<PsiElement> {
     override fun value(e: PsiElement): Boolean {
         if (e.language != KotlinLanguage.INSTANCE) return true
 
