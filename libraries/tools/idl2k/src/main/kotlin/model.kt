@@ -74,18 +74,46 @@ data class GenerateFunction(
 )
 
 data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute)
-data class GenerateTraitOrClass(
-        val name: String,
-        val namespace: String,
-        val kind: GenerateDefinitionKind,
-        val superTypes: List<String>,
-        val memberAttributes: MutableList<GenerateAttribute>,
-        val memberFunctions: MutableList<GenerateFunction>,
-        val constants: List<GenerateAttribute>,
-        val primaryConstructor: ConstructorWithSuperTypeCall?,
-        val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
-        val generateBuilderFunction: Boolean
-)
+
+interface ClassLike {
+    val name: String
+    val namespace: String
+    val kind: GenerateDefinitionKind
+    val superTypes: List<String>
+    val memberAttributes: MutableList<GenerateAttribute>
+    val memberFunctions: MutableList<GenerateFunction>
+    val constants: List<GenerateAttribute>
+    val primaryConstructor: ConstructorWithSuperTypeCall?
+    val secondaryConstructors: List<ConstructorWithSuperTypeCall>
+    val generateBuilderFunction: Boolean
+}
+
+data class GenerateClass(
+    override val name: String,
+    override val namespace: String,
+    override val kind: GenerateDefinitionKind,
+    override val superTypes: List<String>,
+    override val memberAttributes: MutableList<GenerateAttribute>,
+    override val memberFunctions: MutableList<GenerateFunction>,
+    override val constants: List<GenerateAttribute>,
+    override val primaryConstructor: ConstructorWithSuperTypeCall?,
+    override val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
+    override val generateBuilderFunction: Boolean,
+    val namedConstructors: List<NamedConstructorClass>
+) : ClassLike
+
+data class NamedConstructorClass(
+    override val name: String,
+    override val namespace: String,
+    override val kind: GenerateDefinitionKind,
+    override val superTypes: List<String>,
+    override val memberAttributes: MutableList<GenerateAttribute>,
+    override val memberFunctions: MutableList<GenerateFunction>,
+    override val constants: List<GenerateAttribute>,
+    override val primaryConstructor: ConstructorWithSuperTypeCall?,
+    override val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
+    override val generateBuilderFunction: Boolean
+) : ClassLike
 
 val GenerateFunction.signature: String
     get() = arguments.map { it.type.typeSignature }.joinToString(", ", "$name(", ")")
@@ -94,12 +122,11 @@ fun GenerateFunction.dynamicIfUnknownType(allTypes : Set<String>) = standardType
     copy(returnType = returnType.dynamicIfUnknownType(allTypes, standardTypes), arguments = arguments.map { it.dynamicIfUnknownType(allTypes, standardTypes) })
 }
 
-fun InterfaceDefinition.findExtendedAttributes(name: String) = extendedAttributes.filter { it.call == name }
-fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtendedAttributes(name)?.isNotEmpty() ?: false
-fun InterfaceDefinition.findConstructors() = findExtendedAttributes("Constructor")
+fun InterfaceDefinition.findExtendedAttributes(name: String) = extendedAttributes.filter { it.name == name }
+fun InterfaceDefinition.findConstructors() = extendedAttributes.filter { it.call == "Constructor" }
 
 data class GenerateUnionTypes(
-        val typeNamesToUnionsMap: Map<String, List<String>>,
-        val anonymousUnionsMap: Map<String, GenerateTraitOrClass>,
-        val typedefsMarkersMap: Map<String, GenerateTraitOrClass>
+    val typeNamesToUnionsMap: Map<String, List<String>>,
+    val anonymousUnionsMap: Map<String, GenerateClass>,
+    val typedefsMarkersMap: Map<String, GenerateClass>
 )

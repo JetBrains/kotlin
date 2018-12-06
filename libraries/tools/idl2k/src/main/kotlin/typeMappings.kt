@@ -46,9 +46,9 @@ private val typeMapper = mapOf(
 )
 
 
-fun GenerateTraitOrClass.allSuperTypes(all: Map<String, GenerateTraitOrClass>) = LinkedHashSet<GenerateTraitOrClass>().let { result -> allSuperTypesImpl(listOf(this), all, result); result.toList() }
+fun ClassLike.allSuperTypes(all: Map<String, ClassLike>) = LinkedHashSet<ClassLike>().let { result -> allSuperTypesImpl(listOf(this), all, result); result.toList() }
 
-tailrec fun allSuperTypesImpl(roots: List<GenerateTraitOrClass>, all: Map<String, GenerateTraitOrClass>, result: MutableSet<GenerateTraitOrClass>) {
+tailrec fun allSuperTypesImpl(roots: List<ClassLike>, all: Map<String, ClassLike>, result: MutableSet<ClassLike>) {
     if (roots.isNotEmpty()) {
         allSuperTypesImpl(roots.flatMap { it.superTypes }.map { all[it] ?: all[it.substringBefore("<")] }.filterNotNull().filter { result.add(it) }, all, result)
     }
@@ -108,7 +108,7 @@ private fun mapTypedef(repository: Repository, type: SimpleType): Type {
 
 private fun GenerateFunction?.allTypes() = if (this != null) sequenceOf(returnType) + arguments.asSequence().map { it.type } else emptySequence()
 
-internal fun collectUnionTypes(allTypes: Map<String, GenerateTraitOrClass>) =
+internal fun collectUnionTypes(allTypes: Map<String, ClassLike>) =
         allTypes.values.asSequence()
                 .flatMap {
                     it.secondaryConstructors.asSequence().flatMap { it.constructor.allTypes() } +
@@ -122,7 +122,7 @@ internal fun collectUnionTypes(allTypes: Map<String, GenerateTraitOrClass>) =
                 .distinct()
                 .map { it.copy(namespace = guessPackage(it.memberTypes.filterIsInstance<SimpleType>().map { it.type }, allTypes), types = it.memberTypes) }
 
-private fun guessPackage(types : List<String>, allTypes: Map<String, GenerateTraitOrClass>) =
+private fun guessPackage(types : List<String>, allTypes: Map<String, ClassLike>) =
         types.map { allTypes[it] }
         .map { it?.namespace }
         .filterNotNull()
