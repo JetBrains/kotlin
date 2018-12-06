@@ -109,6 +109,9 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                         routing {
                             get("/") {
                                 call.respondHtml {
+                                    head {
+                                        title("Hello from Ktor!")
+                                    }
                                     body {
                                         +"${"$"}{hello()} from Ktor. Check me value: ${"$"}{Sample().checkMe()}"
                                         div {
