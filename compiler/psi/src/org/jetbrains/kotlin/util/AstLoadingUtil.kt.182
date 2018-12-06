@@ -18,6 +18,6 @@ import com.intellij.util.AstLoadingFilter
 object AstLoadingFilter {
     @JvmStatic
     fun <T, E : Throwable> forceAllowTreeLoading(psiFile: PsiFile, computable: ThrowableComputable<out T, E>): T {
-        return AstLoadingFilter.forceAllowTreeLoading(psiFile, computable)
+        return AstLoadingFilter.forceEnableTreeLoading(psiFile, computable)
     }
 }

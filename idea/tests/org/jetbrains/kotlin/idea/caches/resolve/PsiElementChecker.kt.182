@@ -59,7 +59,7 @@ object PsiElementChecker {
 
         with(element) {
             try {
-                Assert.assertEquals("Number of methods has changed. Please update test.", 55, PsiElement::class.java.methods.size)
+                Assert.assertEquals("Number of methods has changed. Please update test.", 54, PsiElement::class.java.methods.size)
 
                 project
                 Assert.assertTrue(language == KotlinLanguage.INSTANCE)
@@ -72,7 +72,6 @@ object PsiElementChecker {
                 prevSibling
                 containingFile
                 textRange
-                //textRangeInParent - throws an exception for non-physical elements, it is expected behaviour
                 startOffsetInParent
                 textLength
                 findElementAt(0)

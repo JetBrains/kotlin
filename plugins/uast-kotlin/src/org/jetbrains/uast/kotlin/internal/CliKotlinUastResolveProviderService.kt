@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
@@ -40,6 +41,9 @@ class CliKotlinUastResolveProviderService : KotlinUastResolveProviderService {
     override fun getLanguageVersionSettings(element: KtElement): LanguageVersionSettings {
         return element.project.analysisCompletedHandler?.getLanguageVersionSettings() ?: LanguageVersionSettingsImpl.DEFAULT
     }
+
+    override fun getReferenceVariants(ktElement: KtElement, nameHint: String): Sequence<DeclarationDescriptor> =
+        emptySequence() // Not supported
 }
 
 class UastAnalysisHandlerExtension : AnalysisHandlerExtension {

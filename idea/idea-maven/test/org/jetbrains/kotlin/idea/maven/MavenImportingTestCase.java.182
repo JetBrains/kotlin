@@ -46,6 +46,7 @@ import org.jetbrains.idea.maven.execution.*;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenExplicitProfiles;
 import org.jetbrains.idea.maven.project.*;
+import org.jetbrains.idea.maven.server.MavenServerManager;
 import org.jetbrains.jps.model.java.JavaResourceRootType;
 import org.jetbrains.jps.model.java.JavaSourceRootProperties;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
@@ -388,14 +389,32 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
     }
 
     protected void importProjectWithProfiles(String... profiles) {
-        doImportProjects(Collections.singletonList(myProjectPom), profiles);
+        doImportProjects(true, Collections.singletonList(myProjectPom), profiles);
+    }
+
+    protected void importProject(VirtualFile file) {
+        importProjects(file);
     }
 
     protected void importProjects(VirtualFile... files) {
-        doImportProjects(Arrays.asList(files));
+        doImportProjects(true, Arrays.asList(files));
     }
 
-    private void doImportProjects(List<VirtualFile> files, String... profiles) {
+    protected void importProjectWithMaven3(@NonNls String xml) throws IOException {
+        createProjectPom(xml);
+        importProjectWithMaven3();
+    }
+
+    protected void importProjectWithMaven3() {
+        importProjectWithMaven3WithProfiles();
+    }
+
+    protected void importProjectWithMaven3WithProfiles(String... profiles) {
+        doImportProjects(false, Collections.singletonList(myProjectPom), profiles);
+    }
+
+    private void doImportProjects(boolean useMaven2, final List<VirtualFile> files, String... profiles) {
+        MavenServerManager.getInstance().setUseMaven2(useMaven2);
         initProjectsManager(false);
 
         readProjects(files, profiles);
