@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ReplResultPropertyDescriptor
-import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptEnvironmentDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptProvidedPropertiesDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.script.classId
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
@@ -174,19 +174,19 @@ class LazyScriptDescriptor(
 
     override fun getImplicitReceivers(): List<ClassDescriptor> = scriptImplicitReceivers()
 
-    private val scriptEnvironment: () -> ScriptEnvironmentDescriptor = resolveSession.storageManager.createLazyValue {
-        ScriptEnvironmentDescriptor(this)
+    private val scriptProvidedProperties: () -> ScriptProvidedPropertiesDescriptor = resolveSession.storageManager.createLazyValue {
+        ScriptProvidedPropertiesDescriptor(this)
     }
 
-    override fun getScriptEnvironmentProperties(): List<PropertyDescriptor> = scriptEnvironment().properties()
+    override fun getScriptProvidedProperties(): List<PropertyDescriptor> = scriptProvidedProperties().properties()
 
     private val scriptOuterScope: () -> LexicalScope = resolveSession.storageManager.createLazyValue {
         var outerScope = super.getOuterScope()
         val outerScopeReceivers = implicitReceivers.let {
-            if (scriptDefinition().environmentVariables.isEmpty()) {
+            if (scriptDefinition().providedProperties.isEmpty()) {
                 it
             } else {
-                it + ScriptEnvironmentDescriptor(this)
+                it + ScriptProvidedPropertiesDescriptor(this)
             }
         }
         for (receiverClassDescriptor in outerScopeReceivers.asReversed()) {
