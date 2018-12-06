@@ -30,7 +30,7 @@ dependencies {
     testRuntime("org.apache.maven:maven-core:3.0.3")
     compileOnly(intellijDep()) { includeJars("openapi", "util") }
 
-    if (Ide.IJ173()) {
+    if (Platform[173].orLower()) {
         testCompile(intellijDep()) { includeJars("openapi", "util") }
     } else {
         testCompile(intellijDep()) { includeJars("openapi", "platform-api", "util") }
