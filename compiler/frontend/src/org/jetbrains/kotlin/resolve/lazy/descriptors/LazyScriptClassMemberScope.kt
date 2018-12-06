@@ -41,7 +41,10 @@ class LazyScriptClassMemberScope(
         if (baseConstructorDescriptor != null) {
             val implicitReceiversParamTypes =
                 scriptDescriptor.implicitReceivers.mapIndexed { idx, receiver ->
-                    "$IMPLICIT_RECEIVER_PARAM_NAME_PREFIX$idx" to receiver.defaultType
+                    val name =
+                        if (receiver is ScriptDescriptor) "$IMPORTED_SCRIPT_PARAM_NAME_PREFIX${receiver.name}"
+                        else "$IMPLICIT_RECEIVER_PARAM_NAME_PREFIX$idx"
+                    name to receiver.defaultType
                 }
             val providedPropertiesParamTypes =
                 scriptDescriptor.scriptProvidedProperties.map {
@@ -103,6 +106,7 @@ class LazyScriptClassMemberScope(
 
     companion object {
         const val IMPLICIT_RECEIVER_PARAM_NAME_PREFIX = "\$\$implicitReceiver"
+        const val IMPORTED_SCRIPT_PARAM_NAME_PREFIX = "\$\$importedScript"
     }
 }
 
