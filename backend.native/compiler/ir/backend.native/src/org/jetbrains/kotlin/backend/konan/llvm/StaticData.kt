@@ -174,5 +174,5 @@ internal class StaticData(override val context: Context): ContextUtils {
  */
 internal fun StaticData.createImmutableBlob(value: IrConst<String>): LLVMValueRef {
     val args = value.value.map { Int8(it.toByte()).llvm }
-    return createKotlinArray(context.ir.symbols.immutableBlob.owner, args)
+    return createConstKotlinArray(context.ir.symbols.immutableBlob.owner, args)
 }

@@ -304,6 +304,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             Struct(runtime.extendedTypeInfoType, Int32(fields.size), offsetsPtr, typesPtr, namesPtr)
         }
         val result = staticData.placeGlobal("", value)
+        result.setConstant(true)
         return result.pointer
     }
 

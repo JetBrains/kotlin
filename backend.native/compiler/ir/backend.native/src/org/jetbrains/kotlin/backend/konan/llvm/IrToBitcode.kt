@@ -955,7 +955,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         // Note: even if all elements are const, they aren't guaranteed to be statically initialized.
         // E.g. an element may be a pointer to lazy-initialized object (aka singleton).
         // However it is guaranteed that all elements are already initialized at this point.
-        return codegen.staticData.createKotlinArray(arrayClass, elements)
+        return codegen.staticData.createConstKotlinArray(arrayClass, elements)
     }
 
     //-------------------------------------------------------------------------//
@@ -2330,11 +2330,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 // TODO: store length in `vararg` itself when more abstract types will be used for values.
 
                 val array = constPointer(vararg)
-                // Note: dirty hack here: `vararg` has type `Array<out E>`, but `createArrayList` expects `Array<E>`;
+                // Note: dirty hack here: `vararg` has type `Array<out E>`, but `createConstArrayList` expects `Array<E>`;
                 // however `vararg` is immutable, and in current implementation it has type `Array<E>`,
                 // so let's ignore this mismatch currently for simplicity.
 
-                return context.llvm.staticData.createArrayList(array, length).llvm
+                return context.llvm.staticData.createConstArrayList(array, length).llvm
             }
 
             else -> TODO(callee.descriptor.original.toString())
