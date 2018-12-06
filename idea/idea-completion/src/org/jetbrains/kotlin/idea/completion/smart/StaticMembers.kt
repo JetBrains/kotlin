@@ -91,7 +91,7 @@ class StaticMembers(
         expectedInfos: Collection<ExpectedInfo>,
         context: KtSimpleNameExpression,
         enumEntriesToSkip: Set<DeclarationDescriptor>,
-        priority: SmartCompletionItemPriority
+        defaultPriority: SmartCompletionItemPriority
     ) {
         fun processMember(descriptor: DeclarationDescriptor) {
             if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(
@@ -112,6 +112,11 @@ class StaticMembers(
                     { ExpectedInfoMatch.match(TypeSubstitutor.EMPTY) }
                 }
                 else -> return
+            }
+
+            val priority = when {
+                DescriptorUtils.isEnumEntry(descriptor) -> SmartCompletionItemPriority.ENUM_ENTRIES
+                else -> defaultPriority
             }
 
             collection.addLookupElements(descriptor, expectedInfos, matcher) { createLookupElements(it, priority) }
