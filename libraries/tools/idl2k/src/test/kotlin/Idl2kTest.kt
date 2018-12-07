@@ -37,7 +37,7 @@ class Idl2kTests {
         val testResourcePrefix = "src/test/resources/"
 
         assertEquals(
-            File("$testResourcePrefix$expectedOutputName").bufferedReader().use { it.readText() },
+            File(testResourcePrefix).resolve(expectedOutputName).readText(),
             convertIdlToWriter(File("$testResourcePrefix$fileName")).toString()
         )
     }
