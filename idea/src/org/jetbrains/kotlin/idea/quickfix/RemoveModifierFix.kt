@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -30,7 +31,7 @@ class RemoveModifierFix(
     element: KtModifierListOwner,
     private val modifier: KtModifierKeywordToken,
     private val isRedundant: Boolean
-) : KotlinQuickFixAction<KtModifierListOwner>(element) {
+) : KotlinCrossLanguageQuickFixAction<KtModifierListOwner>(element) {
 
     private val text = run {
         val modifierText = modifier.value
@@ -48,9 +49,9 @@ class RemoveModifierFix(
 
     override fun getText() = text
 
-    override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = (element?.hasModifier(modifier) ?: false)
+    override fun isAvailableImpl(project: Project, editor: Editor?, file: PsiFile) = (element?.hasModifier(modifier) ?: false)
 
-    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+    override fun invokeImpl(project: Project, editor: Editor?, file: PsiFile) {
         invoke()
     }
 
@@ -68,7 +69,7 @@ class RemoveModifierFix(
             isRedundant: Boolean = false
         ): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): RemoveModifierFix? {
                     val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, KtModifierListOwner::class.java) ?: return null
                     return RemoveModifierFix(modifierListOwner, modifier, isRedundant)
                 }
@@ -77,7 +78,7 @@ class RemoveModifierFix(
 
         fun createRemoveModifierFactory(isRedundant: Boolean = false): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): RemoveModifierFix? {
                     val psiElement = diagnostic.psiElement
                     val elementType = psiElement.node.elementType as? KtModifierKeywordToken ?: return null
                     val modifierListOwner = psiElement.getStrictParentOfType<KtModifierListOwner>() ?: return null
@@ -88,7 +89,7 @@ class RemoveModifierFix(
 
         fun createRemoveProjectionFactory(isRedundant: Boolean): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): RemoveModifierFix? {
                     val projection = diagnostic.psiElement as KtTypeProjection
                     val elementType = projection.projectionToken?.node?.elementType as? KtModifierKeywordToken ?: return null
                     return RemoveModifierFix(projection, elementType, isRedundant)
@@ -98,7 +99,7 @@ class RemoveModifierFix(
 
         fun createRemoveVarianceFactory(): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): RemoveModifierFix? {
                     val psiElement = diagnostic.psiElement as KtTypeParameter
                     val modifier = when (psiElement.variance) {
                         Variance.IN_VARIANCE -> KtTokens.IN_KEYWORD
@@ -112,7 +113,7 @@ class RemoveModifierFix(
 
         fun createRemoveSuspendFactory(): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): RemoveModifierFix? {
                     val suspendKeyword = diagnostic.psiElement
                     val modifierList = suspendKeyword.parent as KtDeclarationModifierList
                     val type = modifierList.parent as KtTypeReference
@@ -124,7 +125,7 @@ class RemoveModifierFix(
 
         fun createRemoveLateinitFactory(): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): RemoveModifierFix? {
                     val keyword = diagnostic.psiElement
                     val modifierList = keyword.parent as? KtDeclarationModifierList ?: return null
                     val property = modifierList.parent as? KtProperty ?: return null
