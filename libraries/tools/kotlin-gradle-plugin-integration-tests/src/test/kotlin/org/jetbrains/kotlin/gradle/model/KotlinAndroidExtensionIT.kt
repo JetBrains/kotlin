@@ -16,11 +16,11 @@ import kotlin.test.assertTrue
 
 class KotlinAndroidExtensionIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.1")
+        get() = GradleVersionRequired.AtLeast("4.4")
 
     override fun defaultBuildOptions(): BuildOptions {
         return super.defaultBuildOptions().copy(
-            androidGradlePluginVersion = "3.0.0",
+            androidGradlePluginVersion = "3.1.0",
             androidHome = KotlinTestUtils.findAndroidSdk()
         )
     }

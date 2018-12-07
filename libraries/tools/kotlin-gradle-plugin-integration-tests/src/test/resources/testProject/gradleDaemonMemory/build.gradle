@@ -19,6 +19,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
-task exit << {
-    System.exit(0)
+task('exit') {
+    doFirst { 
+        System.exit(0)
+    }
 }

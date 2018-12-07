@@ -142,7 +142,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
     @Test
     fun testJsCustomSourceSet() {
-        val project = Project("kotlin2JsProjectWithCustomSourceset")
+        val project = Project("kotlin2JsProjectWithCustomSourceset", GradleVersionRequired.AtLeast("4.0"))
 
         project.build("build") {
             assertSuccessful()

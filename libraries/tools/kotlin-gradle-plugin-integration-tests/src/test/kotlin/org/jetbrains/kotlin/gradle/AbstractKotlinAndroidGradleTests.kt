@@ -14,7 +14,7 @@ import kotlin.test.assertTrue
 
 class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion = "2.3.0") {
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("3.4")
+        get() = GradleVersionRequired.InRange("3.4", "4.10.2")
 }
 
 // TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
@@ -138,7 +138,7 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
 
 class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = "3.0.0") {
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.1")
+        get() = GradleVersionRequired.InRange("4.1", "4.10.2")
 }
 
 abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: String) : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion) {
@@ -170,7 +170,7 @@ abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: String) : Abst
     }
 }
 
-abstract class AbstractKotlinAndroidGradleTests(private val androidGradlePluginVersion: String) : BaseGradleIT() {
+abstract class AbstractKotlinAndroidGradleTests(val androidGradlePluginVersion: String) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
