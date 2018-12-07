@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.tasks.cacheOnlyIfEnabledForKotlin
 import org.jetbrains.kotlin.gradle.tasks.isBuildCacheSupported
 import org.jetbrains.kotlin.gradle.utils.isJavaFile
 import java.io.File
+import java.util.jar.JarFile
 
 @CacheableTask
 abstract class KaptTask : ConventionTask() {
@@ -109,4 +110,53 @@ abstract class KaptTask : ConventionTask() {
 
     private fun FileCollection?.orEmpty(): FileCollection =
         this ?: project.files()
+
+    protected fun checkAnnotationProcessorClasspath() {
+        if (!includeCompileClasspath) return
+
+        val kaptClasspath = kaptClasspath.toSet()
+        val processorsFromCompileClasspath = classpath.files.filterTo(LinkedHashSet()) {
+            hasAnnotationProcessors(it)
+        }
+        val processorsAbsentInKaptClasspath = processorsFromCompileClasspath.filter { it !in kaptClasspath }
+        if (processorsAbsentInKaptClasspath.isNotEmpty()) {
+            if (logger.isInfoEnabled) {
+                logger.warn(
+                    "Annotation processors discovery from compile classpath is deprecated."
+                            + "\nSet 'kapt.includeCompileClasspath = false' to disable discovery."
+                            + "\nThe following files, containing annotation processors, are not present in KAPT classpath:\n"
+                            + processorsAbsentInKaptClasspath.joinToString("\n") { "  '$it'" }
+                            + "\nAdd corresponding dependencies to any of the following configurations:\n"
+                            + kaptClasspathConfigurations.joinToString("\n") { " '${it.name}'" }
+                )
+            } else {
+                logger.warn(
+                    "Annotation processors discovery from compile classpath is deprecated."
+                            + "\nSet 'kapt.includeCompileClasspath = false' to disable discovery."
+                            + "\nRun the build with '--info' for more details."
+                )
+            }
+
+        }
+    }
+
+    private fun hasAnnotationProcessors(file: File): Boolean {
+        val processorEntryPath = "META-INF/services/javax.annotation.processing.Processor"
+
+        try {
+            when {
+                file.isDirectory -> {
+                    return file.resolve(processorEntryPath).exists()
+                }
+                file.isFile && file.extension.equals("jar", ignoreCase = true) -> {
+                    return JarFile(file).use { jar ->
+                        jar.getJarEntry(processorEntryPath) != null
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logger.debug("Could not check annotation processors existence in $file: $e")
+        }
+        return false
+    }
 }

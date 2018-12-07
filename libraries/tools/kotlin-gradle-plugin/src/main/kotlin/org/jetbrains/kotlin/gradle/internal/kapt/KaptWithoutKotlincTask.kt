@@ -47,7 +47,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     @TaskAction
     fun compile() {
         logger.info("Running kapt annotation processing using the Gradle Worker API")
-
+        checkAnnotationProcessorClasspath()
         clearLocalStateDirectories()
 
         val compileClasspath = classpath.files.toMutableList()
