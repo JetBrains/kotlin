@@ -1,10 +1,9 @@
 package org.jetbrains.kotlin.jvm.abi.asm
 
 import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
 
-internal class InnerClassesCollectingVisitor : ClassVisitor(Opcodes.ASM6) {
-    var ownInternalName: String? = null
+internal class InnerClassesCollectingVisitor : ClassVisitor(AbiExtensionAsmApiVersion) {
+    lateinit var ownInternalName: String
         private set
 
     private val myInnerClasses = arrayListOf<String>()
