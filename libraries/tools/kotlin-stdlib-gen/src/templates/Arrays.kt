@@ -77,6 +77,12 @@ object ArrayOps : TemplateGroupBase() {
             body { "return storage.contentEquals(other.storage)" }
             return@builder
         }
+        doc {
+            doc + """
+            The elements are compared for equality with the [equals][Any.equals] function.
+            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+            """
+        }
         on(Platform.JVM) {
             inlineOnly()
             body { "return java.util.Arrays.equals(this, other)" }
@@ -106,6 +112,9 @@ object ArrayOps : TemplateGroupBase() {
 
             If two corresponding elements are nested arrays, they are also compared deeply.
             If any of arrays contains itself on any nesting level the behavior is undefined.
+
+            The elements of other types are compared for equality with the [equals][Any.equals] function.
+            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
             """
         }
         returns("Boolean")
