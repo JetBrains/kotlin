@@ -32,6 +32,7 @@ import com.intellij.util.containers.MultiMap
 import org.apache.log4j.Logger
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.Value
+import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -206,11 +207,12 @@ class KotlinDebuggerCaches(project: Project) {
     }
 
     private fun canBeEvaluatedInThisContext(compiledData: CompiledDataDescriptor, context: EvaluationContextImpl): Boolean {
-        val frameVisitor = FrameVisitor(context)
+        val variableFinder = VariableFinder.instance(context) ?: return false
+
         return compiledData.parameters.all { p ->
             val (name, jetType) = p
-            val value = frameVisitor.findValue(name, asmType = null, checkType = false, failIfNotFound = false)
-            if (value == null) return@all false
+            val lookupResult = variableFinder.find(name, null) ?: return@all false
+            val value = lookupResult.value.asValue()
 
             val thisDescriptor = value.asmType.getClassDescriptor(context.debugProcess.searchScope)
             val superClassDescriptor = jetType.constructor.declarationDescriptor as? ClassDescriptor

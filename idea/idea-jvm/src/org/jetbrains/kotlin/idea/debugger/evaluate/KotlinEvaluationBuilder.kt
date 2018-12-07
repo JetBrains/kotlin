@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil.LABELED_THIS_PARAMETER
+import org.jetbrains.kotlin.codegen.AsmUtil.RECEIVER_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -93,7 +95,6 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 
-internal val RECEIVER_NAME = "\$receiver"
 internal val THIS_NAME = "this"
 internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluator")
 internal val GENERATED_FUNCTION_NAME = "generated_for_debugger_fun"
@@ -411,7 +412,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
 
             if (!AsmUtil.isPrimitive(parameterType) && AsmUtil.isPrimitive(argumentType)) {
-                if (parameterType == FrameVisitor.OBJECT_TYPE || parameterType == AsmUtil.boxType(argumentType)) {
+                if (parameterType.descriptor == "Ljava/lang/Object;" || parameterType == AsmUtil.boxType(argumentType)) {
                     return eval.boxType(argumentValue)
                 }
             }
@@ -437,8 +438,14 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
 
             val vm = context.debugProcess.virtualMachineProxy.virtualMachine
-            val sharedVar = FrameVisitor(context).getValueIfSharedVar(jdiValue, jdiValue.asmType, false)
-            return sharedVar?.asJdiValue(vm, sharedVar.asmType) ?: jdiValue.asJdiValue(vm, jdiValue.asmType)
+
+            val sharedVar = getValueIfSharedVar(jdiValue)
+            return sharedVar?.value ?: jdiValue.asJdiValue(vm, jdiValue.asmType)
+        }
+
+        private fun getValueIfSharedVar(value: Value): VariableFinder.Result? {
+            val obj = value.obj(value.asmType) as? ObjectReference ?: return null
+            return VariableFinder.Result(VariableFinder.unwrapRefValue(obj))
         }
 
         private fun ExtractionResult.getParametersForDebugger(
@@ -505,12 +512,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             parameters: List<Parameter>,
             parameterTypes: Array<Type>
         ): List<Value> {
-            val frameVisitor = FrameVisitor(this)
+            val variableFinder = VariableFinder.instance(this) ?: error("No stack frame available")
             return parameters.zip(parameterTypes).map { (parameter, type) ->
                 parameter.error?.let { throw it }
 
-                val result = parameter.value
-                    ?: frameVisitor.findValue(parameter.callText, type, checkType = false, failIfNotFound = true)!!
+                val result = parameter.value ?: variableFinder.get(parameter.callText, type).asValue()
 
                 if (LOG.isDebugEnabled) {
                     LOG.debug("Parameter for eval4j: name = ${parameter.callText}, type = $type, value = $result")
@@ -549,10 +555,14 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                         CompilerConfiguration.EMPTY
                 ).generateDeclaredClassFilter(generateClassFilter).build()
 
-                val frameVisitor = FrameVisitor(context)
+                val variableFinder = VariableFinder.instance(context) ?: error("No stack frame available")
+
+                val extractedFunctionName = extractedFunction.name
+                    ?: error("Extracted function has an empty name: ${extractedFunction.text}")
 
                 extractedFunction.receiverTypeReference?.let {
-                    state.bindingTrace.recordAnonymousType(it, THIS_NAME, frameVisitor)
+                    val name = AsmUtil.getLabeledThisName(extractedFunctionName, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME)
+                    state.bindingTrace.recordAnonymousType(it, name, variableFinder)
                 }
 
                 val valueParameters = extractedFunction.valueParameters
@@ -569,7 +579,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                         exception("An exception occurs during Evaluate Expression Action")
                     }
 
-                    state.bindingTrace.recordAnonymousType(paramRef, param.callText, frameVisitor)
+                    state.bindingTrace.recordAnonymousType(paramRef, param.callText, variableFinder)
                 }
 
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
@@ -578,13 +588,19 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
         }
 
-        private fun BindingTrace.recordAnonymousType(typeReference: KtTypeReference, localVariableName: String, visitor: FrameVisitor) {
+        private fun BindingTrace.recordAnonymousType(
+            typeReference: KtTypeReference,
+            localVariableName: String,
+            variableFinder: VariableFinder
+        ) {
             val paramAnonymousType = typeReference.debugTypeInfo
             if (paramAnonymousType != null) {
                 val declarationDescriptor = paramAnonymousType.constructor.declarationDescriptor
                 if (declarationDescriptor is ClassDescriptor) {
-                    val localVariable = visitor.findValue(localVariableName, asmType = null, checkType = false, failIfNotFound = false)
-                                        ?: exception("Couldn't find local variable this in current frame to get classType for anonymous type $paramAnonymousType}")
+                    val lookupResult = variableFinder.find(localVariableName, null)
+                        ?: exception("Couldn't find local variable this in current frame to get classType for anonymous type $paramAnonymousType}")
+                    val localVariable = lookupResult.value.asValue()
+
                     record(CodegenBinding.ASM_TYPE, declarationDescriptor, localVariable.asmType)
                     if (LOG.isDebugEnabled) {
                         LOG.debug("Asm type ${localVariable.asmType.className} was recorded for ${declarationDescriptor.name}")

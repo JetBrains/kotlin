@@ -41,11 +41,9 @@ Compile bytecode for extClass.testCompPrivate()
 extensionMemberFunction.kt:88
 Compile bytecode for testCompPrivate()
 extensionMemberFunction.kt:98
-Compile bytecode for testCompPublic()
 extensionMemberFunction.kt:103
 Compile bytecode for this.testCompPublic()
 extensionMemberFunction.kt:108
-Compile bytecode for testCompPrivate()
 extensionMemberFunction.kt:113
 Compile bytecode for this.testCompPrivate()
 Disconnected from the target VM
