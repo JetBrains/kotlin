@@ -40,7 +40,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
 
     override fun buildAll(modelName: String, project: Project): Any? {
         if (modelName == KotlinProject::class.java.name) {
-            val kotlinCompileTasks = project.tasks.withType(AbstractKotlinCompile::class.java)
+            val kotlinCompileTasks = project.tasks.withType(AbstractKotlinCompile::class.java).toList()
             val projectType = getProjectType(project)
             return KotlinProjectImpl(
                 project.name,
