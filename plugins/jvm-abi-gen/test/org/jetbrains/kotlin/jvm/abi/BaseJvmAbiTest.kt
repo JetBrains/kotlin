@@ -31,7 +31,7 @@ abstract class BaseJvmAbiTest : TestCase() {
         "plugin:${JvmAbiCommandLineProcessor.COMPILER_PLUGIN_ID}:$option=$value"
 
     inner class Compilation(
-        val projectDir: File,
+        private val projectDir: File,
         val name: String?,
         val dependencies: Collection<Compilation> = emptyList()
     ) {
