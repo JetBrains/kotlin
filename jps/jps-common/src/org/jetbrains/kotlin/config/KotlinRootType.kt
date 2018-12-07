@@ -14,7 +14,7 @@ fun isSameRootType(kotlinRoot: KotlinRootType, other: Any?): Boolean {
             val invokeLevel = 3
             val stack = Thread.currentThread().stackTrace
             if (stack.size > invokeLevel && "isTestSource" == stack[invokeLevel].methodName && "com.intellij.openapi.roots.impl.SourceFolderImpl" == stack[invokeLevel].className) {
-                if (JavaResourceRootType.TEST_RESOURCE == other) {
+                if (JavaResourceRootType.TEST_RESOURCE == other || JavaSourceRootType.TEST_SOURCE == other) {
                     return true
                 }
             }
