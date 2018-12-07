@@ -60,11 +60,13 @@ fun main(args: Array<String>) {
    local    = element: float = 1.0 (sp = frameInlineFunCallInsideInlineFun.kt, 5)
    local    = this_$iv: frameInlineFunCallInsideInlineFun.B = {frameInlineFunCallInsideInlineFun.B@uniqueID} (sp = null)
               - Class has no fields
+   local    = $i$f$foo: int = undefined (sp = null)
    local    = element$iv: int = 2 (sp = frameInlineFunCallInsideInlineFun.kt, 5)
    local    = a$iv: frameInlineFunCallInsideInlineFun.A = {frameInlineFunCallInsideInlineFun.A@uniqueID} (sp = null)
      field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFun.kt, 10)
    local    = this_$iv$iv: frameInlineFunCallInsideInlineFun.A = {frameInlineFunCallInsideInlineFun.A@uniqueID} (sp = null)
      field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFun.kt, 10)
+   local    = $i$f$inlineFun: int = undefined (sp = null)
    local    = element$iv$iv: double = 1.0 (sp = frameInlineFunCallInsideInlineFun.kt, 5)
 Disconnected from the target VM
 

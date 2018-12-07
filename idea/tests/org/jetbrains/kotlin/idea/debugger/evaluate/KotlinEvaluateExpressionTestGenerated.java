@@ -231,6 +231,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt22366.kt");
         }
 
+        @TestMetadata("kt28087.kt")
+        public void testKt28087() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt28087.kt");
+        }
+
         @TestMetadata("kt5554OnlyIntsShouldBeCoerced.kt")
         public void testKt5554OnlyIntsShouldBeCoerced() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt5554OnlyIntsShouldBeCoerced.kt");
@@ -623,6 +628,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("frameInlineFunCallInsideInlineFun.kt")
             public void testFrameInlineFunCallInsideInlineFun() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameInlineFunCallInsideInlineFun.kt");
+            }
+
+            @TestMetadata("frameInlineFunCallInsideInlineFunKotlinVariables.kt")
+            public void testFrameInlineFunCallInsideInlineFunKotlinVariables() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameInlineFunCallInsideInlineFunKotlinVariables.kt");
             }
 
             @TestMetadata("frameInnerClass.kt")

@@ -37,6 +37,7 @@ class A {
    local    = element: int = 1 (sp = frameInlineFun.kt, 12)
    local    = this_$iv: frameInlineFun.A = {frameInlineFun.A@uniqueID} (sp = null)
      field    = prop: int = 1 (sp = frameInlineFun.kt, 17)
+   local    = $i$f$inlineFun: int = undefined (sp = null)
    local    = element$iv: double = 1.0 (sp = frameInlineFun.kt, 12)
 Disconnected from the target VM
 

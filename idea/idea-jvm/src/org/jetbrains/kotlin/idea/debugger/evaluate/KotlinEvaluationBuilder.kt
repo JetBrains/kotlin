@@ -470,15 +470,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val parameters = mutableListOf<Parameter>()
                 val receiver = config.descriptor.receiverParameter
                 if (receiver != null) {
-                    parameters += Parameter(THIS_NAME, receiver.getParameterType(true))
+                    parameters += Parameter(THIS_NAME + "@" + config.descriptor.name, receiver.getParameterType(true))
                 }
 
                 for (param in config.descriptor.parameters) {
-                    val paramName = when {
-                        param.argumentText.contains("@") -> param.argumentText.substringBefore("@")
-                        param.argumentText.startsWith("::") -> param.argumentText.substring(2)
-                        else -> param.argumentText
-                    }
+                    val argument = param.argumentText
+                    val paramName = if (argument.startsWith("::")) argument.substring(2) else argument
 
                     val paramDescriptor = param.originalDescriptor
                     if (paramDescriptor is SyntheticFieldDescriptor) {
