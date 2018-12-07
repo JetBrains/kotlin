@@ -33,9 +33,13 @@ abstract class AbstractJavaAgainstKotlinBinariesCheckerTest : AbstractJavaAgains
         if (KotlinTestUtils.isAllFilesPresentTest(testName)) {
             return
         }
+
+        val languageLevelOption = InTextDirectivesUtils.findListWithPrefixes(configFileText ?: "", "// KOTLINC_EXTRA_OPTS")
+
         val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
-                PluginTestCaseBase.getTestDataPathBase() + "/kotlinAndJavaChecker/javaAgainstKotlin/" + getTestName(false) + ".kt",
-                "libFor$testName"
+            PluginTestCaseBase.getTestDataPathBase() + "/kotlinAndJavaChecker/javaAgainstKotlin/" + getTestName(false) + ".kt",
+            "libFor$testName",
+            extraOptions = languageLevelOption
         )
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)
