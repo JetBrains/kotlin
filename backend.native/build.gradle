@@ -102,6 +102,8 @@ configurations {
     kotlin_reflect_jar
     kotlin_script_runtime_jar
     kotlin_common_stdlib_src
+    kotlin_test_common_src
+    kotlin_test_annotations_common_src
     trove4j_jar
 
     cli_bcRuntime {
@@ -121,6 +123,8 @@ dependencies {
     kotlin_reflect_jar "$kotlinReflectModule@jar"
     kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
     kotlin_common_stdlib_src kotlinCommonStdlibModule
+    kotlin_test_common_src kotlinTestCommonModule
+    kotlin_test_annotations_common_src kotlinTestAnnotationsCommonModule
 
     compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
 
@@ -151,9 +155,16 @@ task start(dependsOn: "${hostName}Start")
 def commonSrc = file('build/stdlib')
 
 task unzipStdlibSources(type: Copy) {
-    from (zipTree(configurations.kotlin_common_stdlib_src.singleFile)) {
-        include 'generated/**/*.kt'
-        include 'kotlin/**/*.kt'
+    def jarFiles = configurations.kotlin_common_stdlib_src.files +
+            configurations.kotlin_test_common_src.files +
+            configurations.kotlin_test_annotations_common_src.files
+
+    jarFiles.forEach { jarFile ->
+        from(zipTree(jarFile)) {
+            include 'generated/**/*.kt'
+            include 'kotlin/**/*.kt'
+            include 'kotlin.test/*.kt'
+        }
     }
     destinationDir commonSrc
 }

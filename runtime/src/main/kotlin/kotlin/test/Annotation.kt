@@ -9,7 +9,7 @@ package kotlin.test
  * Marks a function as a test.
  */
 @Target(AnnotationTarget.FUNCTION)
-public annotation class Test
+public actual annotation class Test
 
 /**
  * Marks a function to be executed before a suite. Not supported in Kotlin/Common.
@@ -27,20 +27,21 @@ public annotation class AfterClass
  * Marks a function to be executed before a test.
  */
 @Target(AnnotationTarget.FUNCTION)
-public annotation class BeforeEach
-
+public actual annotation class BeforeTest
 
 /**
  * Marks a function to be executed after a test.
  */
 @Target(AnnotationTarget.FUNCTION)
-public annotation class AfterEach
+public actual annotation class AfterTest
 
 /**
  * Marks a test or a suite as ignored.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-public annotation class Ignore
+public actual annotation class Ignore
 
-public typealias AfterTest = AfterEach
-public typealias BeforeTest = BeforeEach
+@Deprecated("AfterEach should be replaced with AfterTest to unify usage of kotlin.test")
+public typealias AfterEach = AfterTest
+@Deprecated("BeforeEach should be replaced with BeforeTest to unify usage of kotlin.test")
+public typealias BeforeEach = BeforeTest
