@@ -30,7 +30,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             withBuildCache = true,
-            androidGradlePluginVersion = "3.0.0",
+            androidGradlePluginVersion = "3.1.0",
             androidHome = KotlinTestUtils.findAndroidSdk()
         )
 
@@ -47,7 +47,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
 
         val (firstProject, secondProject) = (0..1).map { id ->
             workingDir = workingDirs[id]
-            Project(projectName, GradleVersionRequired.AtLeast("4.3"), projectDirectoryPrefix).apply {
+            Project(projectName, GradleVersionRequired.AtLeast("4.4"), projectDirectoryPrefix).apply {
                 setupWorkingDir()
                 initProject()
                 prepareLocalBuildCache(localBuildCacheDirectory)

@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
@@ -24,7 +24,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
         get() = "2.3.0"
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.1")
+        get() = GradleVersionRequired.InRange("4.1", "4.10.2")
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
