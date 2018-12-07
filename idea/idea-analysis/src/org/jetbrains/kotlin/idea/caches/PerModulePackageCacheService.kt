@@ -61,9 +61,8 @@ class KotlinPackageContentModificationListener(private val project: Project) {
                 } else {
                     events
                         .asSequence()
-                        .filter { it.isValid }
-                        .filter { it.file != null }
                         .filter(::isRelevant)
+                        .filter { (it.isValid || it !is VFileCreateEvent) && it.file != null }
                         .filter {
                             val vFile = it.file!!
                             vFile.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(vFile.nameSequence) == KotlinFileType.INSTANCE
