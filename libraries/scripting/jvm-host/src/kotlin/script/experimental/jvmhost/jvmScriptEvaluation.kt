@@ -41,14 +41,34 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                     scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.implicitReceivers)?.let {
                         args.addAll(it)
                     }
-                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.constructorArgs)?.let {
-                        args.addAll(it)
+                    val importedScriptsReports = ArrayList<ScriptDiagnostic>()
+                    var importedScriptsLoadingFailed = false
+                    compiledScript.importedScripts?.forEach {
+                        val importedScriptEvalRes = invoke(it, scriptEvaluationConfiguration)
+                        importedScriptsReports.addAll(importedScriptEvalRes.reports)
+                        when (importedScriptEvalRes) {
+                            is ResultWithDiagnostics.Success -> {
+                                args.add(importedScriptEvalRes.value)
+                            }
+                            else -> {
+                                importedScriptsLoadingFailed = true
+                                return@forEach
+                            }
+                        }
                     }
-                    val ctor = scriptClass.java.constructors.single()
-                    val instance = ctor.newInstance(*args.toArray())
+                    if (importedScriptsLoadingFailed) {
+                        ResultWithDiagnostics.Failure(importedScriptsReports)
+                    } else {
 
-                    // TODO: fix result value
-                    ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", instance, ""), scriptEvaluationConfiguration))
+                        scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.constructorArgs)?.let {
+                            args.addAll(it)
+                        }
+                        val ctor = scriptClass.java.constructors.single()
+                        val instance = ctor.newInstance(*args.toArray())
+
+                        // TODO: fix result value
+                        ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", instance, ""), scriptEvaluationConfiguration))
+                    }
                 }
             }
         } catch (e: Throwable) {
