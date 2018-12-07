@@ -10,6 +10,8 @@ import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.SearchScope
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
@@ -136,6 +138,7 @@ internal abstract class KtUltraLightParameter(
     override fun getModifierList(): PsiModifierList = lightModifierList
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin ?: method.navigationElement
+    override fun getUseScope(): SearchScope = kotlinOrigin?.useScope ?: LocalSearchScope(this)
 
     override fun isValid() = parent.isValid
 
