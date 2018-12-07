@@ -41,11 +41,9 @@ Compile bytecode for extClass.testCompPrivate
 extensionMemberProperty.kt:92
 Compile bytecode for testCompPrivate
 extensionMemberProperty.kt:102
-Compile bytecode for testCompPublic
 extensionMemberProperty.kt:107
 Compile bytecode for this.testCompPublic
 extensionMemberProperty.kt:112
-Compile bytecode for testCompPrivate
 extensionMemberProperty.kt:117
 Compile bytecode for this.testCompPrivate
 Disconnected from the target VM

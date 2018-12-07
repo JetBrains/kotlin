@@ -523,7 +523,7 @@ private fun SuspendContextImpl.getNextPositionWithFilter(
 }
 
 fun getInlineRangeLocalVariables(stackFrame: StackFrameProxyImpl): List<LocalVariable> {
-    return stackFrame.visibleVariablesSafe()
+    return stackFrame.safeVisibleVariables()
         .filter {
             val name = it.name()
             name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION)
