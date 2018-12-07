@@ -295,6 +295,9 @@
     <inspection_tool class="PackageDirectoryMismatch" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="all except testData" level="WARNING" enabled="true" />
     </inspection_tool>
+    <inspection_tool class="PackageName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="namePattern" value="[a-z_][a-z\d_]*(\.[a-z_][a-zA-Z\d_]*)*" />
+    </inspection_tool>
     <inspection_tool class="ProblematicAPIUsage" enabled="true" level="ERROR" enabled_by_default="true">
       <option name="problems">
         <list>
