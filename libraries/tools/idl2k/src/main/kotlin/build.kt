@@ -1,13 +1,11 @@
 package org.jetbrains.idl2k
 
-import org.antlr.v4.runtime.ANTLRFileStream
-import kotlin.collections.HashSet
+import org.antlr.v4.runtime.CharStreams
 import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.util.ArrayList
 import java.util.LinkedHashMap
-
 
 class BuildWebIdl(val mdnCacheFile: File, val srcDir: File) {
     val repositoryPre = loadPreliminaryRepository()
@@ -18,16 +16,17 @@ class BuildWebIdl(val mdnCacheFile: File, val srcDir: File) {
             System.exit(1)
         }
 
-        return srcDir.walkTopDown().filter { it.isDirectory || it.extension == "idl" }.asSequence().filter { it.isFile }.toList().sortedBy { it.absolutePath }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
+        return srcDir.walkTopDown().filter { it.isDirectory || it.extension == "idl" }.asSequence().filter { it.isFile }.toList()
+            .sortedBy { it.absolutePath }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
             System.err.flush()
             System.err.println("Parsing ${e.absolutePath}")
-            val fileRepository = parseIDL(ANTLRFileStream(e.absolutePath, "UTF-8"))
+            val fileRepository = parseIDL(CharStreams.fromFileName(e.absolutePath, Charsets.UTF_8))
 
             Repository(
-                    interfaces = acc.interfaces.mergeReduce(fileRepository.interfaces, ::merge),
-                    typeDefs = acc.typeDefs + fileRepository.typeDefs,
-                    externals = acc.externals.merge(fileRepository.externals),
-                    enums = acc.enums + fileRepository.enums
+                interfaces = acc.interfaces.mergeReduce(fileRepository.interfaces, ::merge),
+                typeDefs = acc.typeDefs + fileRepository.typeDefs,
+                externals = acc.externals.merge(fileRepository.externals),
+                enums = acc.enums + fileRepository.enums
             )
         }
     }
@@ -36,7 +35,8 @@ class BuildWebIdl(val mdnCacheFile: File, val srcDir: File) {
         println("Prepare...")
     }
 
-    val repository = repositoryPre.copy(typeDefs = repositoryPre.typeDefs.mapValues { it.value.copy(mapType(repositoryPre, it.value.types)) })
+    val repository =
+        repositoryPre.copy(typeDefs = repositoryPre.typeDefs.mapValues { it.value.copy(mapType(repositoryPre, it.value.types)) })
 
     val definitions = mapDefinitions(repository, repository.interfaces.values).map {
         if (it.name in relocations) {
@@ -91,9 +91,9 @@ class BuildWebIdl(val mdnCacheFile: File, val srcDir: File) {
 }
 
 
-internal fun <K, V> Map<K, List<V>>.reduceValues(reduce: (V, V) -> V = { a, b -> b }): Map<K, V> = mapValues { it.value.reduce(reduce) }
+internal fun <K, V> Map<K, List<V>>.reduceValues(reduce: (V, V) -> V = { _, b -> b }): Map<K, V> = mapValues { it.value.reduce(reduce) }
 
-internal fun <K, V> Map<K, V>.mergeReduce(other: Map<K, V>, reduce: (V, V) -> V = { a, b -> b }): Map<K, V> {
+internal fun <K, V> Map<K, V>.mergeReduce(other: Map<K, V>, reduce: (V, V) -> V = { _, b -> b }): Map<K, V> {
     val result = LinkedHashMap<K, V>(this.size + other.size)
     result.putAll(this)
     other.forEach { e ->
@@ -101,8 +101,7 @@ internal fun <K, V> Map<K, V>.mergeReduce(other: Map<K, V>, reduce: (V, V) -> V 
 
         if (existing == null) {
             result[e.key] = e.value
-        }
-        else {
+        } else {
             result[e.key] = reduce(e.value, existing)
         }
     }
@@ -119,8 +118,7 @@ internal fun <K, V> Map<K, List<V>>.merge(other: Map<K, List<V>>): Map<K, List<V
         val list = result[it.key]
         if (list == null) {
             result[it.key] = ArrayList(it.value)
-        }
-        else {
+        } else {
             list.addAll(it.value)
         }
     }
