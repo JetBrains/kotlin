@@ -41,7 +41,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     }
 }
 
-class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignatures: Boolean) : ClassVisitor(ASM5) {
+class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignatures: Boolean, api: Int = ASM5) : ClassVisitor(api) {
     companion object {
         @JvmOverloads
         fun getText(
