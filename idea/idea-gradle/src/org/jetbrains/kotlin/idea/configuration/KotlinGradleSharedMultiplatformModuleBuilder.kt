@@ -181,8 +181,8 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
             apply plugin: 'maven-publish'
 
             kotlin {
-                jvm("$jvmTargetName")
-                js("$jsTargetName")
+                jvm()
+                js()
                 // For ARM, should be changed to iosArm32 or iosArm64
                 // For Linux, should be changed to e.g. linuxX64
                 // For MacOS, should be changed to e.g. macosX64
