@@ -18,6 +18,7 @@ dependencies {
     runtimeOnly(project(":kotlin-compiler"))
 
     testCompile(commonDep("junit:junit"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:incremental-compilation-impl"))
 }
 

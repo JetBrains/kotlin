@@ -1,23 +1,25 @@
-class test/BaseClass$Companion : java/lang/Object {
-    public fun <init> (Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+@kotlin.Metadata
+public final class test/BaseClass$Companion {
+    inner class test/BaseClass$Companion
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
 }
-
-class test/BaseClass : java/lang/Object {
-    public static final val basePublicConst I = 8
-    public static final val Companion Ltest/BaseClass$Companion; = null
-    public fun getBaseClassPublicVal ()I
-    public fun baseClassPublicFun ()I
-    public final fun getBaseClassInternalVal$main ()I
-    public final fun baseClassInternalFun$main ()I
-    protected final fun getBaseClassProtectedVal ()I
-    protected final fun baseClassProtectedFun ()I
-    public fun <init> ()V
+@kotlin.Metadata
+public class test/BaseClass {
+    public final static field Companion: test.BaseClass$Companion
+    public final static field basePublicConst: int
+    inner class test/BaseClass$Companion
+    public method <init>(): void
+    public final method baseClassInternalFun$main(): int
+    protected final method baseClassProtectedFun(): int
+    public method baseClassPublicFun(): int
+    public final method getBaseClassInternalVal$main(): int
+    protected final method getBaseClassProtectedVal(): int
+    public method getBaseClassPublicVal(): int
 }
-
-class test/Class : test/BaseClass, test/Interface {
-    public final fun classPublicMethod ()V
-    public fun <init> ()V
+@kotlin.Metadata
+public final class test/Class {
+    public method <init>(): void
+    public final method classPublicMethod(): void
 }
-
-interface test/Interface : java/lang/Object {
-}
+@kotlin.Metadata
+public interface test/Interface
