@@ -54,6 +54,7 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     @TaskAction
     fun compile() {
         logger.debug("Running kapt annotation processing using the Kotlin compiler")
+        checkAnnotationProcessorClasspath()
 
         val args = prepareCompilerArguments()
 

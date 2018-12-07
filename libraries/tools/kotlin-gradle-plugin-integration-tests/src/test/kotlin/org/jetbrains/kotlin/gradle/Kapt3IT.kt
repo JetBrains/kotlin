@@ -452,6 +452,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
         build("assemble") {
             assertSuccessful()
+            assertContains("Annotation processors discovery from compile classpath is deprecated")
         }
 
         buildGradle.modify {
@@ -459,6 +460,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
         build("assemble") {
             assertFailed()
+            assertNotContains("Annotation processors discovery from compile classpath is deprecated")
         }
     }
 
