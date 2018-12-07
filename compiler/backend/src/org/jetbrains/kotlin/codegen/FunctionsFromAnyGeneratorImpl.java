@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -107,21 +108,22 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
 
             JvmKotlinType type = genOrLoadOnStack(iv, context, propertyDescriptor, 0);
             Type asmType = type.getType();
+            KotlinType kotlinType = type.getKotlinType();
 
             if (asmType.getSort() == Type.ARRAY) {
                 Type elementType = correctElementType(asmType);
                 if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
                     iv.invokestatic("java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;", false);
                     asmType = JAVA_STRING_TYPE;
+                    kotlinType = DescriptorUtilsKt.getBuiltIns(function).getStringType();
                 }
-                else {
-                    if (elementType.getSort() != Type.CHAR) {
-                        iv.invokestatic("java/util/Arrays", "toString", "(" + asmType.getDescriptor() + ")Ljava/lang/String;", false);
-                        asmType = JAVA_STRING_TYPE;
-                    }
+                else if (elementType.getSort() != Type.CHAR) {
+                    iv.invokestatic("java/util/Arrays", "toString", "(" + asmType.getDescriptor() + ")Ljava/lang/String;", false);
+                    asmType = JAVA_STRING_TYPE;
+                    kotlinType = DescriptorUtilsKt.getBuiltIns(function).getStringType();
                 }
             }
-            genInvokeAppendMethod(iv, asmType, type.getKotlinType(), typeMapper);
+            genInvokeAppendMethod(iv, asmType, kotlinType, typeMapper);
         }
 
         iv.aconst(")");
