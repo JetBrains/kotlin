@@ -40,14 +40,14 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
 
         statementGenerator.bodyGenerator.putLoop(ktWhile, irLoop)
 
+        irLoop.label = getLoopLabel(ktWhile)
+
         irLoop.body = ktWhile.body?.let { ktLoopBody ->
             if (ktLoopBody is KtBlockExpression)
                 generateWhileLoopBody(ktLoopBody)
             else
                 ktLoopBody.genExpr()
         }
-
-        irLoop.label = getLoopLabel(ktWhile)
 
         return irLoop
     }
@@ -60,6 +60,8 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
 
         statementGenerator.bodyGenerator.putLoop(ktDoWhile, irLoop)
 
+        irLoop.label = getLoopLabel(ktDoWhile)
+
         irLoop.body = ktDoWhile.body?.let { ktLoopBody ->
             if (ktLoopBody is KtBlockExpression)
                 generateDoWhileLoopBody(ktLoopBody)
@@ -68,8 +70,6 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         }
 
         irLoop.condition = ktDoWhile.condition!!.genExpr()
-
-        irLoop.label = getLoopLabel(ktDoWhile)
 
         return IrBlockImpl(ktDoWhile.startOffsetSkippingComments, ktDoWhile.endOffset, context.irBuiltIns.unitType).apply {
             statements.add(irLoop)
@@ -90,20 +90,26 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         )
 
     fun generateBreak(ktBreak: KtBreakExpression): IrExpression {
-        val parentLoop = findParentLoop(ktBreak) ?: return ErrorExpressionGenerator(statementGenerator).generateErrorExpression(
-            ktBreak, RuntimeException("Loop not found for break expression: ${ktBreak.text}")
-        )
-        return IrBreakImpl(ktBreak.startOffsetSkippingComments, ktBreak.endOffset, context.irBuiltIns.nothingType, parentLoop).apply {
-            label = ktBreak.getLabelName()
+        val parentLoop = findParentLoop(ktBreak)
+            ?: return ErrorExpressionGenerator(statementGenerator).generateErrorExpression(
+                ktBreak, RuntimeException("Loop not found for break expression: ${ktBreak.text}")
+            )
+        return IrBreakImpl(
+            ktBreak.startOffsetSkippingComments, ktBreak.endOffset, context.irBuiltIns.nothingType, parentLoop
+        ).apply {
+            label = parentLoop.label.takeIf { ktBreak.getLabelName() != null }
         }
     }
 
     fun generateContinue(ktContinue: KtContinueExpression): IrExpression {
-        val parentLoop = findParentLoop(ktContinue) ?: return ErrorExpressionGenerator(statementGenerator).generateErrorExpression(
-            ktContinue, RuntimeException("Loop not found for continue expression: ${ktContinue.text}")
-        )
-        return IrContinueImpl(ktContinue.startOffsetSkippingComments, ktContinue.endOffset, context.irBuiltIns.nothingType, parentLoop).apply {
-            label = ktContinue.getLabelName()
+        val parentLoop = findParentLoop(ktContinue)
+            ?: return ErrorExpressionGenerator(statementGenerator).generateErrorExpression(
+                ktContinue, RuntimeException("Loop not found for continue expression: ${ktContinue.text}")
+            )
+        return IrContinueImpl(
+            ktContinue.startOffsetSkippingComments, ktContinue.endOffset, context.irBuiltIns.nothingType, parentLoop
+        ).apply {
+            label = parentLoop.label.takeIf { ktContinue.getLabelName() != null }
         }
     }
 
@@ -115,20 +121,21 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
 
     private fun findParentLoop(ktExpression: KtExpression, targetLabel: String?): IrLoop? {
         var finger: KtExpression? = ktExpression
-        while (finger != null) {
+        BY_LOOP_EXPRESSIONS@ while (finger != null) {
             finger = finger.getParentOfType<KtLoopExpression>(true)
             if (finger == null) {
                 break
             }
             if (targetLabel == null) {
-                return getLoop(finger) ?: continue
+                return getLoop(finger) ?: continue@BY_LOOP_EXPRESSIONS
             } else {
-                val parent = finger.parent
-                if (parent is KtLabeledExpression) {
+                var parent = finger.parent
+                while (parent is KtLabeledExpression) {
                     val label = parent.getLabelName()!!
                     if (targetLabel == label) {
-                        return getLoop(finger) ?: continue
+                        return getLoop(finger) ?: continue@BY_LOOP_EXPRESSIONS
                     }
+                    parent = parent.parent
                 }
             }
         }

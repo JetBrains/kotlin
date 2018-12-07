@@ -37,16 +37,16 @@ import java.util.*
 
 // adds java static members, enum members and members from companion object
 class StaticMembers(
-        private val bindingContext: BindingContext,
-        private val lookupElementFactory: LookupElementFactory,
-        private val resolutionFacade: ResolutionFacade,
-        private val moduleDescriptor: ModuleDescriptor
+    private val bindingContext: BindingContext,
+    private val lookupElementFactory: LookupElementFactory,
+    private val resolutionFacade: ResolutionFacade,
+    private val moduleDescriptor: ModuleDescriptor
 ) {
     fun addToCollection(
-            collection: MutableCollection<LookupElement>,
-            expectedInfos: Collection<ExpectedInfo>,
-            context: KtSimpleNameExpression,
-            enumEntriesToSkip: Set<DeclarationDescriptor>
+        collection: MutableCollection<LookupElement>,
+        expectedInfos: Collection<ExpectedInfo>,
+        context: KtSimpleNameExpression,
+        enumEntriesToSkip: Set<DeclarationDescriptor>
     ) {
         val expectedInfosByClass = HashMap<ClassDescriptor, MutableList<ExpectedInfo>>()
         for (expectedInfo in expectedInfos) {
@@ -56,41 +56,67 @@ class StaticMembers(
             }
 
             if (expectedInfo.additionalData is PropertyDelegateAdditionalData) {
-                val delegatesClass = resolutionFacade.resolveImportReference(moduleDescriptor, FqName("kotlin.properties.Delegates")).singleOrNull()
+                val delegatesClass =
+                    resolutionFacade.resolveImportReference(moduleDescriptor, FqName("kotlin.properties.Delegates")).singleOrNull()
                 if (delegatesClass is ClassDescriptor) {
-                    addToCollection(collection, delegatesClass, listOf(expectedInfo), context, enumEntriesToSkip, SmartCompletionItemPriority.DELEGATES_STATIC_MEMBER)
+                    addToCollection(
+                        collection,
+                        delegatesClass,
+                        listOf(expectedInfo),
+                        context,
+                        enumEntriesToSkip,
+                        SmartCompletionItemPriority.DELEGATES_STATIC_MEMBER
+                    )
                 }
             }
         }
 
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
             if (!classDescriptor.name.isSpecial) {
-                addToCollection(collection, classDescriptor, expectedInfosForClass, context, enumEntriesToSkip, SmartCompletionItemPriority.STATIC_MEMBER)
+                addToCollection(
+                    collection,
+                    classDescriptor,
+                    expectedInfosForClass,
+                    context,
+                    enumEntriesToSkip,
+                    SmartCompletionItemPriority.STATIC_MEMBER
+                )
             }
         }
     }
 
     private fun addToCollection(
-            collection: MutableCollection<LookupElement>,
-            classDescriptor: ClassDescriptor,
-            expectedInfos: Collection<ExpectedInfo>,
-            context: KtSimpleNameExpression,
-            enumEntriesToSkip: Set<DeclarationDescriptor>,
-            priority: SmartCompletionItemPriority
+        collection: MutableCollection<LookupElement>,
+        classDescriptor: ClassDescriptor,
+        expectedInfos: Collection<ExpectedInfo>,
+        context: KtSimpleNameExpression,
+        enumEntriesToSkip: Set<DeclarationDescriptor>,
+        defaultPriority: SmartCompletionItemPriority
     ) {
         fun processMember(descriptor: DeclarationDescriptor) {
-            if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(context, null, bindingContext, resolutionFacade)) return
+            if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(
+                    context,
+                    null,
+                    bindingContext,
+                    resolutionFacade
+                )
+            ) return
 
-            val matcher: (ExpectedInfo) -> ExpectedInfoMatch
-            if (descriptor is CallableDescriptor) {
-                val returnType = descriptor.fuzzyReturnType() ?: return
-                matcher = { expectedInfo -> returnType.matchExpectedInfo(expectedInfo) }
+            val matcher: (ExpectedInfo) -> ExpectedInfoMatch = when {
+                descriptor is CallableDescriptor -> {
+                    val returnType = descriptor.fuzzyReturnType() ?: return
+                    { expectedInfo -> returnType.matchExpectedInfo(expectedInfo) }
+                }
+                DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor) -> {
+                    /* we do not need to check type of enum entry because it's taken from proper enum */
+                    { ExpectedInfoMatch.match(TypeSubstitutor.EMPTY) }
+                }
+                else -> return
             }
-            else if (DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor)) {
-                matcher = { ExpectedInfoMatch.match(TypeSubstitutor.EMPTY) } /* we do not need to check type of enum entry because it's taken from proper enum */
-            }
-            else {
-                return
+
+            val priority = when {
+                DescriptorUtils.isEnumEntry(descriptor) -> SmartCompletionItemPriority.ENUM_ENTRIES
+                else -> defaultPriority
             }
 
             collection.addLookupElements(descriptor, expectedInfos, matcher) { createLookupElements(it, priority) }
@@ -101,8 +127,8 @@ class StaticMembers(
         val companionObject = classDescriptor.companionObjectDescriptor
         if (companionObject != null) {
             companionObject.defaultType.memberScope.getContributedDescriptors()
-                    .filter { !it.isExtension }
-                    .forEach(::processMember)
+                .filter { !it.isExtension }
+                .forEach(::processMember)
         }
 
         val members = classDescriptor.defaultType.memberScope.getContributedDescriptors().filter { member ->
@@ -115,11 +141,14 @@ class StaticMembers(
         members.forEach(::processMember)
     }
 
-    private fun createLookupElements(memberDescriptor: DeclarationDescriptor, priority: SmartCompletionItemPriority): Collection<LookupElement> {
+    private fun createLookupElements(
+        memberDescriptor: DeclarationDescriptor,
+        priority: SmartCompletionItemPriority
+    ): Collection<LookupElement> {
         return lookupElementFactory.createStandardLookupElementsForDescriptor(memberDescriptor, useReceiverTypes = false)
-                .map {
-                    it.decorateAsStaticMember(memberDescriptor, classNameAsLookupString = true)!!
-                            .assignSmartCompletionPriority(priority)
-                }
+            .map {
+                it.decorateAsStaticMember(memberDescriptor, classNameAsLookupString = true)!!
+                    .assignSmartCompletionPriority(priority)
+            }
     }
 }

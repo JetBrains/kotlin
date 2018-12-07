@@ -1,10 +1,10 @@
 FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
   PROPERTY name:test visibility:public modality:FINAL flags:val
-    FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:java.lang.Class<*>) returnType:kotlin.Array<out java.lang.reflect.Field!>? flags:
+    FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:java.lang.Class<*>) returnType:kotlin.Array<out java.lang.reflect.Field?>? flags:
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL flags:val
       $receiver: VALUE_PARAMETER name:<this> type:java.lang.Class<*> flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test>() on Class<*>: Array<(out) Field!>!'
-          CALL 'getDeclaredFields(): Array<(out) Field!>!' type=kotlin.Array<out java.lang.reflect.Field!>? origin=GET_PROPERTY
+          CALL 'getDeclaredFields(): Array<(out) Field!>!' type=kotlin.Array<out java.lang.reflect.Field?>? origin=GET_PROPERTY
             <`0>: kotlin.Any?
             $this: GET_VAR 'this@test: Class<*>' type=java.lang.Class<*> origin=null

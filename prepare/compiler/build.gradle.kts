@@ -78,23 +78,11 @@ dependencies {
     fatJarContents(commonDep("io.javaslang", "javaslang"))
     fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
-    fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
+    fatJarContents(intellijCoreDep()) { includeJars("intellij-core", "java-compatibility-1.0.1") }
     fatJarContents(intellijDep()) { includeIntellijCoreJarDependencies(project, { !(it.startsWith("jdom") || it.startsWith("log4j")) }) }
-    when {
-        Platform[173].orLower() -> {
-            fatJarContents(intellijDep()) { includeJars("jna-platform") }
-            fatJarContentsStripMetadata(intellijDep()) { includeJars("oromatcher", "jdom", "log4j") }
-        }
-        Platform[181].orLower() -> {
-            fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-java-1.3") }
-            fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
-        }
-        else -> {
-            fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-1.3.0") }
-            fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
-        }
-    }
+    fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-1.3.0") }
     fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
+    fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
 }
 
 noDefaultJar()

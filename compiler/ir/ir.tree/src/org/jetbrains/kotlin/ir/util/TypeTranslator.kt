@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 
 class TypeTranslator(
@@ -33,14 +34,14 @@ class TypeTranslator(
 
     fun enterScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.enterTypeParameterScope(irElement)
-        if(enterTableScope) {
+        if (enterTableScope) {
             symbolTable.enterScope(irElement.descriptor)
         }
     }
 
     fun leaveScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.leaveTypeParameterScope()
-        if(enterTableScope) {
+        if (enterTableScope) {
             symbolTable.leaveScope(irElement.descriptor)
         }
     }
@@ -54,43 +55,45 @@ class TypeTranslator(
 
     private fun resolveTypeParameter(typeParameterDescriptor: TypeParameterDescriptor) =
         typeParametersResolver.resolveScopedTypeParameter(typeParameterDescriptor)
-                ?: symbolTable.referenceTypeParameter(typeParameterDescriptor)
+            ?: symbolTable.referenceTypeParameter(typeParameterDescriptor)
 
     fun translateType(ktType: KotlinType): IrType =
         translateType(ktType, Variance.INVARIANT).type
 
-    private fun translateType(ktType0: KotlinType, variance: Variance): IrTypeProjection {
-        // TODO "old" JVM BE does this for reified type arguments. Is it ok for arbitrary subexpressions?
-
-        val ktTypeUpper = ktType0.approximate(languageVersionSettings)
+    private fun translateType(ktType: KotlinType, variance: Variance): IrTypeProjection {
+        val approximatedType = LegacyTypeApproximation().approximate(ktType)
 
         when {
-            ktTypeUpper.isError -> return IrErrorTypeImpl(ktTypeUpper, translateTypeAnnotations(ktTypeUpper.annotations), variance)
-            ktTypeUpper.isDynamic() -> return IrDynamicTypeImpl(ktTypeUpper, translateTypeAnnotations(ktTypeUpper.annotations), variance)
-            ktTypeUpper.isFlexible() -> return translateType(ktTypeUpper.upperIfFlexible(), variance)
+            approximatedType.isError ->
+                return IrErrorTypeImpl(approximatedType, translateTypeAnnotations(approximatedType.annotations), variance)
+            approximatedType.isDynamic() ->
+                return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType.annotations), variance)
+            approximatedType.isFlexible() ->
+                return translateType(approximatedType.upperIfFlexible(), variance)
         }
 
-        val ktTypeConstructor = ktTypeUpper.constructor
-        val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor ?: throw AssertionError("No descriptor for type $ktTypeUpper")
+        val ktTypeConstructor = approximatedType.constructor
+        val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor
+            ?: throw AssertionError("No descriptor for type $approximatedType")
 
         return when (ktTypeDescriptor) {
             is TypeParameterDescriptor ->
                 IrSimpleTypeImpl(
-                    ktTypeUpper,
+                    approximatedType,
                     resolveTypeParameter(ktTypeDescriptor),
-                    ktTypeUpper.isMarkedNullable,
+                    approximatedType.isMarkedNullable,
                     emptyList(),
-                    translateTypeAnnotations(ktTypeUpper.annotations),
+                    translateTypeAnnotations(approximatedType.annotations),
                     variance
                 )
 
             is ClassDescriptor ->
                 IrSimpleTypeImpl(
-                    ktTypeUpper,
+                    approximatedType,
                     symbolTable.referenceClass(ktTypeDescriptor),
-                    ktTypeUpper.isMarkedNullable,
-                    translateTypeArguments(ktTypeUpper.arguments),
-                    translateTypeAnnotations(ktTypeUpper.annotations),
+                    approximatedType.isMarkedNullable,
+                    translateTypeArguments(approximatedType.arguments),
+                    translateTypeAnnotations(approximatedType.annotations),
                     variance
                 )
 
@@ -99,14 +102,35 @@ class TypeTranslator(
         }
     }
 
-    private fun KotlinType.approximate(languageVersionSettings: LanguageVersionSettings): KotlinType {
-        if (this.constructor.isDenotable) return this
+    private inner class LegacyTypeApproximation {
 
-        return if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-            typeApproximatorForNI.approximateDeclarationType(this, local = false, languageVersionSettings = languageVersionSettings)
-        else
-            approximateCapturedTypes(this).upper
+        fun approximate(ktType: KotlinType): KotlinType {
+            val properlyApproximatedType = approximateByKotlinRules(ktType)
+
+            // If there's an intersection type, take the most common supertype of its intermediate supertypes.
+            // That's what old back-end effectively does.
+            val typeConstructor = properlyApproximatedType.constructor
+            if (typeConstructor is IntersectionTypeConstructor) {
+                val commonSupertype = CommonSupertypes.commonSupertype(typeConstructor.supertypes)
+                return approximate(commonSupertype.replaceArgumentsWithStarProjections())
+            }
+
+            // Other types should be approximated properly. Right? Riiight?
+            return properlyApproximatedType
+        }
+
+
+        private fun approximateByKotlinRules(ktType: KotlinType): KotlinType {
+            if (ktType.constructor.isDenotable) return ktType
+
+            return if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
+                typeApproximatorForNI.approximateDeclarationType(ktType, local = false, languageVersionSettings = languageVersionSettings)
+            else
+                approximateCapturedTypes(ktType).upper
+        }
+
     }
+
 
     private fun translateTypeAnnotations(annotations: Annotations): List<IrCall> =
         annotations.map(constantValueGenerator::generateAnnotationConstructorCall)

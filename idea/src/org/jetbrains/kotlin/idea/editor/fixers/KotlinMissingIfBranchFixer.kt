@@ -53,8 +53,7 @@ class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSma
 
         if (thenBranch == null || probablyNextStatementParsedAsThen) {
             document.insertString(rParen.range.end, "{}")
-        }
-        else {
+        } else {
             document.insertString(rParen.range.end, "{")
             document.insertString(thenBranch.range.end + 1, "}")
         }

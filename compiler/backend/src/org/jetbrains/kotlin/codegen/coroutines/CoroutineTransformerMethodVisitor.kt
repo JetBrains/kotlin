@@ -284,7 +284,7 @@ class CoroutineTransformerMethodVisitor(
             variablesMapping.forEach { v.visit(null, it.variableName) }
         }.visitEnd()
         metadata.visit(COROUTINES_METADATA_METHOD_NAME_JVM_NAME, methodNode.name)
-        metadata.visit(COROUTINES_METADATA_CLASS_NAME_JVM_NAME, containingClassInternalName)
+        metadata.visit(COROUTINES_METADATA_CLASS_NAME_JVM_NAME, Type.getObjectType(containingClassInternalName).className)
         @Suppress("ConstantConditionIf")
         if (COROUTINES_DEBUG_METADATA_VERSION != 1) {
             metadata.visit(COROUTINES_METADATA_VERSION_JVM_NAME, COROUTINES_DEBUG_METADATA_VERSION)

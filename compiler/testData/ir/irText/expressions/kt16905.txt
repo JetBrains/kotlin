@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/kt16905.kt
         overridden:
           FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    CLASS CLASS name:InnerDerived1 modality:FINAL visibility:public flags:inner superTypes:[OI /* = Outer.Inner */]
+    CLASS CLASS name:InnerDerived1 modality:FINAL visibility:public flags:inner superTypes:[Outer.Inner]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.InnerDerived1 flags:
       CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.InnerDerived1 flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Outer flags:
@@ -81,9 +81,8 @@ FILE fqName:<root> fileName:/kt16905.kt
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   TYPEALIAS typealias OI = Outer.Inner type=Outer.Inner
-  FUN name:test visibility:public modality:FINAL <> () returnType:OI /* = Outer.Inner */ flags:
+  FUN name:test visibility:public modality:FINAL <> () returnType:Outer.Inner flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(): OI /* = Outer.Inner */'
         CALL 'constructor Inner()' type=Outer.Inner origin=null
           $this: CALL 'constructor Outer()' type=Outer origin=null
-

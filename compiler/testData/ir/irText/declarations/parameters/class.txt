@@ -59,9 +59,9 @@ FILE fqName:<root> fileName:/class.kt
           FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     CLASS CLASS name:TestInner modality:FINAL visibility:public flags:inner superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test<T0>.TestInner<T2> flags:
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test.TestInner<T2, T0> flags:
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
-      CONSTRUCTOR visibility:public <> ($this:Test<T0>) returnType:Test<T0>.TestInner<T2> flags:primary
+      CONSTRUCTOR visibility:public <> ($this:Test<T0>) returnType:Test.TestInner<T2, T0> flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Test<T0> flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

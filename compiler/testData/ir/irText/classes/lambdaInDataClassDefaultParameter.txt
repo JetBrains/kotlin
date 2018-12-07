@@ -1,47 +1,47 @@
 FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
   CLASS CLASS name:A modality:FINAL visibility:public flags:data superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
-    CONSTRUCTOR visibility:public <> (runA:A.(kotlin.String) -> kotlin.Unit) returnType:A flags:primary
-      VALUE_PARAMETER name:runA index:0 type:A.(kotlin.String) -> kotlin.Unit flags:
+    CONSTRUCTOR visibility:public <> (runA:@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit>) returnType:A flags:primary
+      VALUE_PARAMETER name:runA index:0 type:@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> flags:
         EXPRESSION_BODY
-          BLOCK type=A.(kotlin.String) -> kotlin.Unit origin=LAMBDA
+          BLOCK type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:A, it:kotlin.String) returnType:kotlin.Unit flags:
               $receiver: VALUE_PARAMETER name:<this> type:A flags:
               VALUE_PARAMETER name:it index:0 type:kotlin.String flags:
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='<anonymous>(String) on A: Unit'
                   GET_OBJECT 'Unit' type=kotlin.Unit
-            FUNCTION_REFERENCE '<anonymous>(String) on A: Unit' type=A.(kotlin.String) -> kotlin.Unit origin=LAMBDA
+            FUNCTION_REFERENCE '<anonymous>(String) on A: Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=LAMBDA
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     PROPERTY name:runA visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:runA type:A.(kotlin.String) -> kotlin.Unit visibility:public flags:final
+      FIELD PROPERTY_BACKING_FIELD name:runA type:@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> visibility:public flags:final
         EXPRESSION_BODY
-          GET_VAR 'value-parameter runA: A.(String) -> Unit = ...' type=A.(kotlin.String) -> kotlin.Unit origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-runA> visibility:public modality:FINAL <> ($this:A) returnType:A.(kotlin.String) -> kotlin.Unit flags:
+          GET_VAR 'value-parameter runA: A.(String) -> Unit = ...' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-runA> visibility:public modality:FINAL <> ($this:A) returnType:@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> flags:
         correspondingProperty: PROPERTY name:runA visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-runA>(): A.(String) -> Unit'
-            GET_FIELD 'runA: A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=null
+            GET_FIELD 'runA: A.(String) -> Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:A) returnType:A.(kotlin.String) -> kotlin.Unit flags:
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:A) returnType:@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component1(): A.(String) -> Unit'
-          CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+          CALL '<get-runA>(): A.(String) -> Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
             $this: GET_VAR 'this@A: A' type=A origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:A, runA:A.(kotlin.String) -> kotlin.Unit) returnType:A flags:
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:A, runA:@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit>) returnType:A flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
-      VALUE_PARAMETER name:runA index:0 type:A.(kotlin.String) -> kotlin.Unit flags:
+      VALUE_PARAMETER name:runA index:0 type:@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> flags:
         EXPRESSION_BODY
-          CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+          CALL '<get-runA>(): A.(String) -> Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
             $this: GET_VAR 'this@A: A' type=A origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(A.(String) -> Unit = ...): A'
           CALL 'constructor A(A.(String) -> Unit = ...)' type=A origin=null
-            runA: GET_VAR 'value-parameter runA: A.(String) -> Unit = ...' type=A.(kotlin.String) -> kotlin.Unit origin=null
+            runA: GET_VAR 'value-parameter runA: A.(String) -> Unit = ...' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:A) returnType:kotlin.String flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value="A("
             CONST String type=kotlin.String value="runA="
-            CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+            CALL '<get-runA>(): A.(String) -> Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
               $this: GET_VAR 'this@A: A' type=A origin=null
             CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:A) returnType:kotlin.Int flags:
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           CONST Int type=kotlin.Int value=0
         SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
           CALL 'hashCode(): Int' type=kotlin.Int origin=null
-            $this: CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+            $this: CALL '<get-runA>(): A.(String) -> Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
               $this: GET_VAR 'this@A: A' type=A origin=null
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
@@ -95,9 +95,9 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           BRANCH
             if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-                arg0: CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+                arg0: CALL '<get-runA>(): A.(String) -> Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
                   $this: GET_VAR 'this@A: A' type=A origin=null
-                arg1: CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+                arg1: CALL '<get-runA>(): A.(String) -> Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
                   $this: GET_VAR 'tmp0_other_with_cast: A' type=A origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false

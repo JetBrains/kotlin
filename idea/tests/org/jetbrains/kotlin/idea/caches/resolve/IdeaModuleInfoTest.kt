@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
@@ -342,11 +343,6 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         }
     }
 
-    override fun setUp() {
-        super.setUp()
-        VfsRootAccess.allowRootAccess("C:/Work/Projects/kotlin/")
-    }
-
     fun testScriptDependenciesForProject() {
         val a = module("a")
 
@@ -484,8 +480,16 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         kind = JSLibraryKind
     )
 
+    override fun setUp() {
+        super.setUp()
+
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+    }
+
     override fun tearDown() {
         clearSdkTable(testRootDisposable)
+
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         super.tearDown()
     }

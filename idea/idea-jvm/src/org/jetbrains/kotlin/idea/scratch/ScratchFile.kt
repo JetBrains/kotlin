@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -24,13 +25,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 
 abstract class ScratchFile(val project: Project, val editor: TextEditor) {
-    fun getExpressions(): List<ScratchExpression> {
-        val psiFile = getPsiFile() ?: return emptyList()
-        return getExpressions(psiFile)
+    fun getExpressions(): List<ScratchExpression> = runReadAction {
+        getPsiFile()?.let { getExpressions(it) } ?: emptyList()
     }
 
-    fun getPsiFile(): PsiFile? {
-        return PsiDocumentManager.getInstance(project).getPsiFile(editor.editor.document)
+    fun getPsiFile(): PsiFile? = runReadAction {
+        PsiDocumentManager.getInstance(project).getPsiFile(editor.editor.document)
     }
 
     fun getModule(): Module? {

@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   TYPEALIAS typealias CT = Cell<T> type=Cell<T>
   TYPEALIAS typealias CStr = Cell<String> type=Cell<kotlin.String>
-  CLASS CLASS name:C1 modality:FINAL visibility:public flags: superTypes:[CT<kotlin.String> /* = Cell<kotlin.String> */]
+  CLASS CLASS name:C1 modality:FINAL visibility:public flags: superTypes:[Cell<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C1 flags:
     CONSTRUCTOR visibility:public <> () returnType:C1 flags:primary
       BLOCK_BODY
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
       overridden:
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  CLASS CLASS name:C2 modality:FINAL visibility:public flags: superTypes:[CStr /* = Cell<kotlin.String> */]
+  CLASS CLASS name:C2 modality:FINAL visibility:public flags: superTypes:[Cell<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C2 flags:
     CONSTRUCTOR visibility:public <> () returnType:C2 flags:primary
       BLOCK_BODY

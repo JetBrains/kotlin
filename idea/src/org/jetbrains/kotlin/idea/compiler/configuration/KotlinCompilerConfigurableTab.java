@@ -20,6 +20,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.ThreeStateCheckBox;
 import com.intellij.util.ui.UIUtil;
@@ -134,18 +135,57 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         warningLabel.setIcon(AllIcons.General.WarningDialog);
 
         if (isProjectSettings) {
-            languageVersionComboBox.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            onLanguageLevelChanged(getSelectedLanguageVersionView());
-                        }
-                    }
-            );
+            languageVersionComboBox.addActionListener(e -> onLanguageLevelChanged(getSelectedLanguageVersionView()));
         }
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
 
+        fillLanguageAndAPIVersionList();
+        fillCoroutineSupportList();
+
+        if (PlatformUtils.isCidr()) {
+            keepAliveCheckBox.setVisible(false);
+            k2jvmPanel.setVisible(false);
+            k2jsPanel.setVisible(false);
+        }
+        else {
+            initializeNonCidrSettings(isMultiEditor);
+        }
+
+        reportWarningsCheckBox.setThirdStateEnabled(isMultiEditor);
+
+        if (isProjectSettings) {
+            List<String> modulesOverridingProjectSettings = ArraysKt.mapNotNull(
+                    ModuleManager.getInstance(project).getModules(),
+                    module -> {
+                        KotlinFacet facet = KotlinFacet.Companion.get(module);
+                        if (facet == null) return null;
+                        KotlinFacetSettings facetSettings = facet.getConfiguration().getSettings();
+                        if (facetSettings.getUseProjectSettings()) return null;
+                        return module.getName();
+                    }
+            );
+            CollectionsKt.sort(modulesOverridingProjectSettings);
+            if (!modulesOverridingProjectSettings.isEmpty()) {
+                warningLabel.setVisible(true);
+                warningLabel.setText(buildOverridingModulesWarning(modulesOverridingProjectSettings));
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public KotlinCompilerConfigurableTab(Project project) {
+        this(project,
+             (CommonCompilerArguments) KotlinCommonCompilerArgumentsHolder.Companion.getInstance(project).getSettings().unfrozen(),
+             (K2JSCompilerArguments) Kotlin2JsCompilerArgumentsHolder.Companion.getInstance(project).getSettings().unfrozen(),
+             (K2JVMCompilerArguments) Kotlin2JvmCompilerArgumentsHolder.Companion.getInstance(project).getSettings().unfrozen(),
+             (CompilerSettings) KotlinCompilerSettings.Companion.getInstance(project).getSettings().unfrozen(),
+             ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
+             true,
+             false);
+    }
+
+    private void initializeNonCidrSettings(boolean isMultiEditor) {
         setupFileChooser(labelForOutputPrefixFile, outputPrefixFile,
                          KotlinBundle.message("kotlin.compiler.js.option.output.prefix.browse.title"),
                          true);
@@ -159,8 +199,12 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         fillModuleKindList();
         fillSourceMapSourceEmbeddingList();
         fillJvmVersionList();
-        fillLanguageAndAPIVersionList();
-        fillCoroutineSupportList();
+
+        generateSourceMapsCheckBox.setThirdStateEnabled(isMultiEditor);
+        generateSourceMapsCheckBox.addActionListener(event -> sourceMapPrefix.setEnabled(generateSourceMapsCheckBox.isSelected()));
+
+        copyRuntimeFilesCheckBox.setThirdStateEnabled(isMultiEditor);
+        keepAliveCheckBox.setThirdStateEnabled(isMultiEditor);
 
         if (compilerWorkspaceSettings == null) {
             keepAliveCheckBox.setVisible(false);
@@ -168,47 +212,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             enableIncrementalCompilationForJsCheckBox.setVisible(false);
         }
 
-        reportWarningsCheckBox.setThirdStateEnabled(isMultiEditor);
-        generateSourceMapsCheckBox.setThirdStateEnabled(isMultiEditor);
-        copyRuntimeFilesCheckBox.setThirdStateEnabled(isMultiEditor);
-        keepAliveCheckBox.setThirdStateEnabled(isMultiEditor);
-
-        if (isProjectSettings) {
-            List<String> modulesOverridingProjectSettings = ArraysKt.mapNotNull(
-                    ModuleManager.getInstance(project).getModules(),
-                    new Function1<Module, String>() {
-                        @Override
-                        public String invoke(Module module) {
-                            KotlinFacet facet = KotlinFacet.Companion.get(module);
-                            if (facet == null) return null;
-                            KotlinFacetSettings facetSettings = facet.getConfiguration().getSettings();
-                            if (facetSettings.getUseProjectSettings()) return null;
-                            return module.getName();
-                        }
-                    }
-            );
-            CollectionsKt.sort(modulesOverridingProjectSettings);
-            if (!modulesOverridingProjectSettings.isEmpty()) {
-                warningLabel.setVisible(true);
-                warningLabel.setText(buildOverridingModulesWarning(modulesOverridingProjectSettings));
-            }
-        }
-
-        generateSourceMapsCheckBox.addActionListener(event -> sourceMapPrefix.setEnabled(generateSourceMapsCheckBox.isSelected()));
-
         updateOutputDirEnabled();
-    }
-
-    @SuppressWarnings("unused")
-    public KotlinCompilerConfigurableTab(Project project) {
-        this(project,
-             (CommonCompilerArguments) KotlinCommonCompilerArgumentsHolder.Companion.getInstance(project).getSettings().unfrozen(),
-             (K2JSCompilerArguments) Kotlin2JsCompilerArgumentsHolder.Companion.getInstance(project).getSettings().unfrozen(),
-             (K2JVMCompilerArguments) Kotlin2JvmCompilerArgumentsHolder.Companion.getInstance(project).getSettings().unfrozen(),
-             (CompilerSettings) KotlinCompilerSettings.Companion.getInstance(project).getSettings().unfrozen(),
-             ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
-             true,
-             false);
     }
 
     private static int calculateNameCountToShowInWarning(List<String> allNames) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -110,10 +110,10 @@ class ParametersBuilder private constructor() {
         @JvmOverloads
         @JvmStatic
         fun initializeBuilderFrom(
-                objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null
+            objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null, isStatic: Boolean = false
         ): ParametersBuilder {
             val builder = newBuilder()
-            if (inlineLambda?.hasDispatchReceiver != false) {
+            if (inlineLambda?.hasDispatchReceiver != false && !isStatic) {
                 //skipped this for inlined lambda cause it will be removed
                 builder.addThis(objectType, inlineLambda != null).lambda = inlineLambda
             }

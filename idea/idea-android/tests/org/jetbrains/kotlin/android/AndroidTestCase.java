@@ -21,9 +21,7 @@ import com.android.tools.idea.rendering.RenderSecurityManager;
 import com.android.tools.idea.startup.AndroidCodeStyleSettingsModifier;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.GlobalInspectionTool;
-import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper;
-import com.intellij.codeInspection.ex.InspectionManagerEx;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.Disposable;
@@ -41,13 +39,13 @@ import com.intellij.psi.codeStyle.CodeStyleSchemes;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.InspectionTestUtil;
+import com.intellij.testFramework.InspectionsKt;
 import com.intellij.testFramework.ThreadTracker;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.android.facet.AndroidFacet;
@@ -61,6 +59,7 @@ import org.picocontainer.MutablePicoContainer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -343,9 +342,8 @@ public abstract class AndroidTestCase extends AndroidTestBase {
 
         scope.invalidate();
 
-        InspectionManagerEx inspectionManager = (InspectionManagerEx)InspectionManager.getInstance(getProject());
         GlobalInspectionContextForTests globalContext =
-                CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, getProject(), inspectionManager, wrapper);
+                InspectionsKt.createGlobalContextForTool(scope, getProject(), Collections.singletonList(wrapper));
 
         InspectionTestUtil.runTool(wrapper, scope, globalContext);
         InspectionTestUtil.compareToolResults(globalContext, wrapper, false, getTestDataPath() + globalTestDir);

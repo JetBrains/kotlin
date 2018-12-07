@@ -18,9 +18,9 @@ FILE fqName:<root> fileName:/enum.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Unit flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum1> flags:
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum1>) returnType:java.lang.Class<TestEnum1!>? flags:
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum1>) returnType:java.lang.Class<TestEnum1?>? flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E!>? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E?>? flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum1> flags:
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum1>, other:TestEnum1) returnType:kotlin.Int flags:
       overridden:
@@ -93,9 +93,9 @@ FILE fqName:<root> fileName:/enum.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Unit flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum2> flags:
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum2>) returnType:java.lang.Class<TestEnum2!>? flags:
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum2>) returnType:java.lang.Class<TestEnum2?>? flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E!>? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E?>? flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum2> flags:
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum2>, other:TestEnum2) returnType:kotlin.Int flags:
       overridden:
@@ -164,9 +164,9 @@ FILE fqName:<root> fileName:/enum.kt
           overridden:
             FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<TestEnum3>) returnType:kotlin.Unit flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum3> flags:
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum3>) returnType:java.lang.Class<TestEnum3!>? flags:
+        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum3>) returnType:java.lang.Class<TestEnum3?>? flags:
           overridden:
-            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum3>) returnType:java.lang.Class<TestEnum3!>? flags:
+            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum3>) returnType:java.lang.Class<TestEnum3?>? flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum3> flags:
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum3>, other:TestEnum3) returnType:kotlin.Int flags:
           overridden:
@@ -208,9 +208,9 @@ FILE fqName:<root> fileName:/enum.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Unit flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum3> flags:
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum3>) returnType:java.lang.Class<TestEnum3!>? flags:
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum3>) returnType:java.lang.Class<TestEnum3?>? flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E!>? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E?>? flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum3> flags:
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum3>, other:TestEnum3) returnType:kotlin.Int flags:
       overridden:
@@ -292,9 +292,9 @@ FILE fqName:<root> fileName:/enum.kt
           overridden:
             FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:kotlin.Unit flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum4> flags:
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4!>? flags:
+        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4?>? flags:
           overridden:
-            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4!>? flags:
+            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4?>? flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum4> flags:
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>, other:TestEnum4) returnType:kotlin.Int flags:
           overridden:
@@ -376,9 +376,9 @@ FILE fqName:<root> fileName:/enum.kt
           overridden:
             FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:kotlin.Unit flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum4> flags:
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4!>? flags:
+        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4?>? flags:
           overridden:
-            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4!>? flags:
+            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4?>? flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum4> flags:
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>, other:TestEnum4) returnType:kotlin.Int flags:
           overridden:
@@ -429,9 +429,9 @@ FILE fqName:<root> fileName:/enum.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Unit flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum4> flags:
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4!>? flags:
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>) returnType:java.lang.Class<TestEnum4?>? flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E!>? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E?>? flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum4> flags:
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum4>, other:TestEnum4) returnType:kotlin.Int flags:
       overridden:
@@ -504,9 +504,9 @@ FILE fqName:<root> fileName:/enum.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Unit flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum5> flags:
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum5>) returnType:java.lang.Class<TestEnum5!>? flags:
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum5>) returnType:java.lang.Class<TestEnum5?>? flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E!>? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E?>? flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<TestEnum5> flags:
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<TestEnum5>, other:TestEnum5) returnType:kotlin.Int flags:
       overridden:

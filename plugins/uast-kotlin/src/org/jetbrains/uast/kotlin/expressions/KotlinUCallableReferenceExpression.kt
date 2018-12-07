@@ -17,16 +17,19 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.ResolveResult
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
 import org.jetbrains.uast.UCallableReferenceExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.UMultiResolvable
+import org.jetbrains.uast.kotlin.internal.getResolveResultVariants
 
 class KotlinUCallableReferenceExpression(
         override val psi: KtCallableReferenceExpression,
         givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), UCallableReferenceExpression, KotlinUElementWithType {
+) : KotlinAbstractUExpression(givenParent), UCallableReferenceExpression, UMultiResolvable, KotlinUElementWithType {
     override val qualifierExpression: UExpression?
         get() {
             if (qualifierType != null) return null
@@ -46,4 +49,7 @@ class KotlinUCallableReferenceExpression(
         get() = (resolve() as? PsiNamedElement)?.name
 
     override fun resolve() = psi.callableReference.resolveCallToDeclaration(this)
+
+    override fun multiResolve(): Iterable<ResolveResult> = getResolveResultVariants(psi.callableReference)
+
 }

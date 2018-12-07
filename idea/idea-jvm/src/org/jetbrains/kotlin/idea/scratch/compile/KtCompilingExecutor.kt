@@ -23,7 +23,9 @@ import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.OrderEnumerator
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -64,7 +66,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             return error("Compilation Error")
         }
 
-        val result = KtScratchSourceFileProcessor().process(file)
+        val result = runReadAction { KtScratchSourceFileProcessor().process(file) }
         when (result) {
             is KtScratchSourceFileProcessor.Result.Error -> return error(result.message)
             is KtScratchSourceFileProcessor.Result.OK -> {
@@ -77,7 +79,11 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                         }
 
                         try {
-                            val tempDir = runReadAction { compileFileToTempDir(modifiedScratchSourceFile) } ?: return
+                            val tempDir = DumbService.getInstance(project).runReadActionInSmartMode(
+                                Computable {
+                                    compileFileToTempDir(modifiedScratchSourceFile)
+                                }
+                            ) ?: return
 
                             try {
                                 val commandLine = createCommandLine(module, result.mainClassName, tempDir.path)
