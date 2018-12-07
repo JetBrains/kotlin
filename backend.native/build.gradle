@@ -3,12 +3,12 @@
  * that can be found in the LICENSE file.
  */
 buildscript {
-   apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
-   apply plugin: 'project-report'
+    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+    apply plugin: 'project-report'
 
-   dependencies {
-       classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
-   }
+    dependencies {
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
+    }
 }
 
 String protobufVersion = '2.6.1'
@@ -64,7 +64,7 @@ task renamePackage(type: Copy) {
     dependsOn('generateCompilerProto')
     from 'build/generated/source/proto/compiler/java'
     into 'build/renamed/source/proto/compiler/java'
-    filter {line -> line.replaceAll("com.google.protobuf", "org.jetbrains.kotlin.protobuf")}
+    filter { line -> line.replaceAll("com.google.protobuf", "org.jetbrains.kotlin.protobuf") }
     outputs.dir('build/renamed')
 }
 
@@ -87,8 +87,8 @@ kotlinNativeInterop {
         linkOutputs ":common:${hostName}Hash"
 
         headers fileTree('../common/src/hash/headers') {
-          include '**/*.h'
-          include '**/*.hpp'
+            include '**/*.h'
+            include '**/*.hpp'
         }
 
         pkg 'org.jetbrains.kotlin.backend.konan.hash'
@@ -145,7 +145,7 @@ dependencies {
 }
 
 
-classes.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
+classes.dependsOn 'compilerClasses', 'cli_bcClasses', 'bc_frontendClasses'
 
 
 // These are just a couple of aliases
@@ -181,7 +181,7 @@ task zipStdLibSources(type: Zip, dependsOn: unzipStdlibSources) {
         into "native"
     }
 
-    from commonSrc, { 
+    from commonSrc, {
         into "common"
     }
 
@@ -190,12 +190,12 @@ task zipStdLibSources(type: Zip, dependsOn: unzipStdlibSources) {
 }
 
 task teamcityPublishStdLibSources {
-  dependsOn zipStdLibSources
-  if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null) {
-    doLast {
-      println " ##teamcity[publishArtifacts '${tasks.zipStdLibSources.archivePath}'] "
+    dependsOn zipStdLibSources
+    if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null) {
+        doLast {
+            println " ##teamcity[publishArtifacts '${tasks.zipStdLibSources.archivePath}'] "
+        }
     }
-  }
 }
 
 // These files are built before the 'dist' is complete,
@@ -204,15 +204,15 @@ task teamcityPublishStdLibSources {
 
 targetList.each { target ->
     def konanJvmArgs = ["-ea", "-Xmx3G",
-    "-Dkonan.home=${rootProject.projectDir}",
-    "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
-    "-Dfile.encoding=UTF-8"]
+                        "-Dkonan.home=${rootProject.projectDir}",
+                        "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
+                        "-Dfile.encoding=UTF-8"]
 
-    def defaultArgs = ['-nopack', '-nostdlib', '-nodefaultlibs', '-ea' ]
+    def defaultArgs = ['-nopack', '-nostdlib', '-nodefaultlibs', '-ea']
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,
-                     "-Xruntime=${project(':runtime').file('build/' + target +'/runtime.bc')}",
+                     "-Xruntime=${project(':runtime').file('build/' + target + '/runtime.bc')}",
                      *project.globalBuildArgs]
 
     task("${target}Stdlib", type: JavaExec) {
@@ -255,15 +255,15 @@ targetList.each { target ->
 
 task run {
     doLast {
-    logger.quiet("Run the outer project 'demo' target to compile the test source." )
+        logger.quiet("Run the outer project 'demo' target to compile the test source.")
     }
 }
 
 jar {
     from sourceSets.cli_bc.output,
-         sourceSets.compiler.output,
-         sourceSets.hashInteropStubs.output,
-         sourceSets.llvmInteropStubs.output
+            sourceSets.compiler.output,
+            sourceSets.hashInteropStubs.output,
+            sourceSets.llvmInteropStubs.output
 
     dependsOn ':runtime:hostRuntime', 'external_jars'
 }
@@ -281,7 +281,7 @@ task trove4jCopy(type: Copy) {
 
 externalJars.each { arg ->
     def jar = arg.replace('_', '-') // :(
-    task ("${arg}Copy", type:Copy) {
+    task("${arg}Copy", type: Copy) {
         from configurations.getByName("kotlin_${arg}_jar") {
             include "kotlin-${jar}*.jar"
             rename "kotlin-${jar}(.*).jar", "kotlin-${jar}.jar"
@@ -292,7 +292,7 @@ externalJars.each { arg ->
 }
 
 task external_jars(type: Copy) {
-    dependsOn externalJars.collect{"${it}Copy"}
+    dependsOn externalJars.collect { "${it}Copy" }
     dependsOn trove4jCopy
 
     from configurations.compilerCompile {
