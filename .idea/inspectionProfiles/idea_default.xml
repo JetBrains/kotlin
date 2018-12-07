@@ -113,6 +113,8 @@
           <Problem reference="com.intellij.execution.configurations.LocatableConfigurationBase" reason="Generalized in 183. Use LocatableConfigurationBaseAny instead in signatures." />
           <Problem reference="com.intellij.execution.configurations.ModuleBasedConfiguration" reason="Generalized in 183. Use ModuleBasedConfigurationElement instead." />
           <Problem reference="com.intellij.util.AstLoadingFilter" reason="Absent in 181. Almost all methods were renamed in 183. Use org.jetbrains.kotlin.util.AstLoadingFilter instead." />
+          <Problem reference="com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture" reason="Absent in &lt;= 181. Use org.jetbrains.kotlin.test.HierarchyViewTestFixture instead." />
+          <Problem reference="org.jetbrains.kotlin.test.HierarchyViewTestFixtureCompat" reason="Do not use the wrapper for 181 directly. Use org.jetbrains.kotlin.test.HierarchyViewTestFixture instead." />
         </list>
       </option>
     </inspection_tool>

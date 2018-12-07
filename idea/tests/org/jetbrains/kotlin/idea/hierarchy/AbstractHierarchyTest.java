@@ -84,7 +84,6 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
     protected void doCallerJavaHierarchyTest(@NotNull String folderName) throws Exception {
         this.folderName = folderName;
         doHierarchyTest(getCallerJavaHierarchyStructure(), getFilesToConfigure());
-
     }
 
     protected void doCalleeHierarchyTest(@NotNull String folderName) throws Exception {
