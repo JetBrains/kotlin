@@ -266,6 +266,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         pluginOptions += SubpluginOption("javacArguments", encodeList(kaptExtension.getJavacOptions()))
 
+        pluginOptions += SubpluginOption("includeCompileClasspath", kaptExtension.includeCompileClasspath.toString())
+
         addMiscOptions(pluginOptions)
 
         return pluginOptions
@@ -389,6 +391,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptVariantData?.annotationProcessorOptionProviders?.let {
             kaptTask.annotationProcessorOptionProviders.add(it)
         }
+
+        kaptTask.includeCompileClasspath = kaptExtension.includeCompileClasspath
 
         if (kaptTask is KaptWithKotlincTask) {
             buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "apt")
