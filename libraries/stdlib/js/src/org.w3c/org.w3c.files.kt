@@ -64,7 +64,7 @@ public external interface FilePropertyBag : BlobPropertyBag {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = ""): FilePropertyBag {
+public inline fun FilePropertyBag(lastModified: Int? = undefined, type: String? = ""): FilePropertyBag {
     val o = js("({})")
 
     o["lastModified"] = lastModified

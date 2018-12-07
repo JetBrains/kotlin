@@ -1793,7 +1793,7 @@ public external interface ElementDefinitionOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ElementDefinitionOptions(extends: String? = null): ElementDefinitionOptions {
+public inline fun ElementDefinitionOptions(extends: String? = undefined): ElementDefinitionOptions {
     val o = js("({})")
 
     o["extends"] = extends
@@ -2109,7 +2109,7 @@ public external interface PromiseRejectionEventInit : EventInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun PromiseRejectionEventInit(promise: Promise<Any?>?, reason: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PromiseRejectionEventInit {
+public inline fun PromiseRejectionEventInit(promise: Promise<Any?>?, reason: Any? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PromiseRejectionEventInit {
     val o = js("({})")
 
     o["promise"] = promise
@@ -2365,7 +2365,7 @@ public external interface ImageBitmapOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ImageBitmapOptions(imageOrientation: ImageOrientation? = ImageOrientation.NONE, premultiplyAlpha: PremultiplyAlpha? = PremultiplyAlpha.DEFAULT, colorSpaceConversion: ColorSpaceConversion? = ColorSpaceConversion.DEFAULT, resizeWidth: Int? = null, resizeHeight: Int? = null, resizeQuality: ResizeQuality? = ResizeQuality.LOW): ImageBitmapOptions {
+public inline fun ImageBitmapOptions(imageOrientation: ImageOrientation? = ImageOrientation.NONE, premultiplyAlpha: PremultiplyAlpha? = PremultiplyAlpha.DEFAULT, colorSpaceConversion: ColorSpaceConversion? = ColorSpaceConversion.DEFAULT, resizeWidth: Int? = undefined, resizeHeight: Int? = undefined, resizeQuality: ResizeQuality? = ResizeQuality.LOW): ImageBitmapOptions {
     val o = js("({})")
 
     o["imageOrientation"] = imageOrientation
@@ -2416,9 +2416,7 @@ public inline fun MessageEventInit(data: Any? = null, origin: String? = "", last
     o["origin"] = origin
     o["lastEventId"] = lastEventId
     o["source"] = source
-    if (ports != null) {
-        o["ports"] = ports
-    }
+    o["ports"] = ports
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
@@ -2998,7 +2996,7 @@ public external interface MutationObserverInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun MutationObserverInit(childList: Boolean? = false, attributes: Boolean? = null, characterData: Boolean? = null, subtree: Boolean? = false, attributeOldValue: Boolean? = null, characterDataOldValue: Boolean? = null, attributeFilter: Array<String>? = null): MutationObserverInit {
+public inline fun MutationObserverInit(childList: Boolean? = false, attributes: Boolean? = undefined, characterData: Boolean? = undefined, subtree: Boolean? = false, attributeOldValue: Boolean? = undefined, characterDataOldValue: Boolean? = undefined, attributeFilter: Array<String>? = undefined): MutationObserverInit {
     val o = js("({})")
 
     o["childList"] = childList
@@ -3007,9 +3005,7 @@ public inline fun MutationObserverInit(childList: Boolean? = false, attributes: 
     o["subtree"] = subtree
     o["attributeOldValue"] = attributeOldValue
     o["characterDataOldValue"] = characterDataOldValue
-    if (attributeFilter != null) {
-        o["attributeFilter"] = attributeFilter
-    }
+    o["attributeFilter"] = attributeFilter
 
     return o
 }
@@ -3122,7 +3118,7 @@ public external interface ElementCreationOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ElementCreationOptions(is_: String? = null): ElementCreationOptions {
+public inline fun ElementCreationOptions(is_: String? = undefined): ElementCreationOptions {
     val o = js("({})")
 
     o["is"] = is_
@@ -3706,7 +3702,7 @@ public external interface ScrollToOptions : ScrollOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ScrollToOptions(left: Double? = null, top: Double? = null, behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollToOptions {
+public inline fun ScrollToOptions(left: Double? = undefined, top: Double? = undefined, behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollToOptions {
     val o = js("({})")
 
     o["left"] = left
@@ -3810,7 +3806,7 @@ public external interface BoxQuadOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun BoxQuadOptions(box: CSSBoxType? = CSSBoxType.BORDER, relativeTo: dynamic = null): BoxQuadOptions {
+public inline fun BoxQuadOptions(box: CSSBoxType? = CSSBoxType.BORDER, relativeTo: dynamic = undefined): BoxQuadOptions {
     val o = js("({})")
 
     o["box"] = box

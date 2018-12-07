@@ -111,7 +111,7 @@ public external interface NotificationOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = null, icon: String? = null, badge: String? = null, sound: String? = null, vibrate: dynamic = null, timestamp: Number? = null, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
+public inline fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = undefined, icon: String? = undefined, badge: String? = undefined, sound: String? = undefined, vibrate: dynamic = undefined, timestamp: Number? = undefined, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
     val o = js("({})")
 
     o["dir"] = dir
@@ -130,9 +130,7 @@ public inline fun NotificationOptions(dir: NotificationDirection? = Notification
     o["requireInteraction"] = requireInteraction
     o["sticky"] = sticky
     o["data"] = data
-    if (actions != null) {
-        o["actions"] = actions
-    }
+    o["actions"] = actions
 
     return o
 }
@@ -150,7 +148,7 @@ public external interface NotificationAction {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun NotificationAction(action: String?, title: String?, icon: String? = null): NotificationAction {
+public inline fun NotificationAction(action: String?, title: String?, icon: String? = undefined): NotificationAction {
     val o = js("({})")
 
     o["action"] = action
