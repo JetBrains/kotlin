@@ -233,4 +233,7 @@ interface CompiledScript<out ScriptBase : Any> {
      * @return result wrapper, if successful - with loaded KClass
      */
     suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>>
+
+    val importedScripts: List<CompiledScript<*>>?
+        get() = null
 }

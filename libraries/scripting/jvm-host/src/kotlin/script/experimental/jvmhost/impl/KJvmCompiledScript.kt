@@ -19,7 +19,8 @@ import kotlin.script.experimental.jvmhost.baseClassLoader
 class KJvmCompiledScript<out ScriptBase : Any>(
     compilationConfiguration: ScriptCompilationConfiguration,
     generationState: GenerationState,
-    private var scriptClassFQName: String
+    private var scriptClassFQName: String,
+    override val importedScripts: List<CompiledScript<*>>? = null
 ) : CompiledScript<ScriptBase>, Serializable {
 
     private var _compilationConfiguration: ScriptCompilationConfiguration? = compilationConfiguration
