@@ -42,6 +42,7 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerTestBase
 import org.jetbrains.kotlin.idea.debugger.KotlinFrameExtraVariablesProvider
+import org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractKotlinEvaluateExpressionTest.PrinterConfig.DescriptorViewOptions
 import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -57,6 +58,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private var appender: AppenderSkeleton? = null
 
     private var oldLogLevel: Level? = null
+    private var oldShowKotlinVariables: Boolean = false
     private var oldShowFqTypeNames = false
 
     override fun setUp() {
@@ -65,6 +67,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         val classRenderer = NodeRendererSettings.getInstance()!!.classRenderer!!
         oldShowFqTypeNames = classRenderer.SHOW_FQ_TYPE_NAMES
         classRenderer.SHOW_FQ_TYPE_NAMES = true
+
+        oldShowKotlinVariables = ToggleKotlinVariablesState.getService().kotlinVariableView
 
         oldLogLevel = logger.level
         logger.level = Level.DEBUG
@@ -82,6 +86,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     }
 
     override fun tearDown() {
+        ToggleKotlinVariablesState.getService().kotlinVariableView = oldShowKotlinVariables
+
         logger.level = oldLogLevel
         logger.removeAppender(appender)
 
@@ -103,6 +109,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         val shouldPrintFrame = isDirectiveDefined(fileText, "// PRINT_FRAME")
         val skipInPrintFrame = if (shouldPrintFrame) findListWithPrefixes(fileText, "// SKIP: ") else emptyList()
         val descriptorViewOptions = DescriptorViewOptions.valueOf(findStringWithPrefixes(fileText, "// DESCRIPTOR_VIEW_OPTIONS: ") ?: "FULL")
+
+        ToggleKotlinVariablesState.getService().kotlinVariableView = isDirectiveDefined(fileText, "// SHOW_KOTLIN_VARIABLES")
 
         val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 

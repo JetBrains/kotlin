@@ -47,11 +47,14 @@ fun main(args: Array<String>) {
    local    = element: float = 1.0 (sp = frameInlineArgumentInsideInlineFun.kt, 13)
    local    = this_$iv: frameInlineArgumentInsideInlineFun.B = {frameInlineArgumentInsideInlineFun.B@uniqueID} (sp = null)
               - Class has no fields
+   local    = $i$f$foo: int = undefined (sp = null)
    local    = element$iv: int = 1 (sp = frameInlineArgumentInsideInlineFun.kt, 13)
    local    = this_$iv$iv: frameInlineArgumentInsideInlineFun.A = {frameInlineArgumentInsideInlineFun.A@uniqueID} (sp = null)
               - Class has no fields
+   local    = $i$f$inlineFun: int = undefined (sp = null)
    local    = element$iv$iv: double = 1.0 (sp = frameInlineArgumentInsideInlineFun.kt, 13)
    local    = it$iv: int = 1 (sp = null)
+   local    = $i$a$-inlineFun-B$foo$1: int = undefined (sp = null)
 Disconnected from the target VM
 
 Process finished with exit code 0

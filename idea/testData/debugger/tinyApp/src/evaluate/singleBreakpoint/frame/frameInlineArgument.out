@@ -33,7 +33,9 @@ class A {
    local    = element: int = 1 (sp = frameInlineArgument.kt, 4)
    local    = this_$iv: frameInlineArgument.A = {frameInlineArgument.A@uniqueID} (sp = null)
      field    = prop: int = 1 (sp = frameInlineArgument.kt, 17)
+   local    = $i$f$inlineFun: int = undefined (sp = null)
    local    = element$iv: double = 1.0 (sp = frameInlineArgument.kt, 4)
+   local    = $i$a$-inlineFun-FrameInlineArgumentKt$main$1: int = undefined (sp = null)
 Disconnected from the target VM
 
 Process finished with exit code 0

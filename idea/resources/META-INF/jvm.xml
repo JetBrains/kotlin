@@ -61,6 +61,17 @@
         <action id="AddToProblemApiInspection" class="org.jetbrains.kotlin.idea.inspections.api.AddIncompatibleApiAction"
                 text="Report as incompatible API">
         </action>
+
+        <group id="Kotlin.XDebugger.Actions">
+            <action id="Kotlin.XDebugger.ToggleKotlinVariableView"
+                    class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView"
+                    icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"/>
+        </group>
+
+        <group id="Kotlin.XDebugger.Watches.Tree.Toolbar">
+            <reference ref="Kotlin.XDebugger.ToggleKotlinVariableView"/>
+            <add-to-group group-id="XDebugger.Watches.Tree.Toolbar" relative-to-action="XDebugger.SwitchWatchesInVariables" anchor="after"/>
+        </group>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -76,6 +87,8 @@
                         serviceImplementation="org.jetbrains.kotlin.idea.scratch.ScratchFileAutoRunner"/>
 
         <projectService serviceImplementation="org.jetbrains.kotlin.idea.versions.SuppressNotificationState"/>
+
+        <applicationService serviceImplementation="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState"/>
 
         <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler"/>
         <debugger.positionManagerFactory implementation="org.jetbrains.kotlin.idea.debugger.KotlinPositionManagerFactory"/>
