@@ -38,7 +38,7 @@ class Idl2kTests {
 
         assertEquals(
             File(testResourcePrefix).resolve(expectedOutputName).readText(),
-            convertIdlToWriter(File("$testResourcePrefix$fileName")).toString()
+            convertIdlToWriter(File(testResourcePrefix).resolve(fileName)).toString()
         )
     }
 
