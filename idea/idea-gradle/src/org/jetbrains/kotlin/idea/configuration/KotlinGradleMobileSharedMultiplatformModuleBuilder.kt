@@ -145,7 +145,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
             apply plugin: 'maven-publish'
 
             kotlin {
-                jvm("$jvmTargetName")
+                jvm()
                 // This is for iPhone emulator
                 // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
                 iosX64("$nativeTargetName") {

@@ -236,8 +236,8 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
             def logback_version = '1.2.3'
 
             kotlin {
-                jvm("$jvmTargetName")
-                js("$jsTargetName") {
+                jvm()
+                js() {
                     compilations.all {
                         kotlinOptions {
                             languageVersion = "1.3"
