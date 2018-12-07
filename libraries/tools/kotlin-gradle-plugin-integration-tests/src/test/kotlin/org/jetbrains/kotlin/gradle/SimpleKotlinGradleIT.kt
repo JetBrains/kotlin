@@ -84,7 +84,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testDestinationDirReferencedDuringEvaluation() {
-        Project("destinationDirReferencedDuringEvaluation").build("build") {
+        Project("destinationDirReferencedDuringEvaluation", GradleVersionRequired.AtLeast("4.0")).build("build") {
             assertSuccessful()
             assertContains("GreeterTest PASSED")
         }

@@ -190,9 +190,11 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                     group 'com.example.oldmpp'
                     version '1.0'
                     apply plugin: 'maven-publish'
-                    publishing {
-                        repositories { maven { url "file://${'$'}{rootDir.absolutePath.replace('\\', '/')}/repo" } }
-                        publications { kotlin(MavenPublication) { from(components.java) } }
+                    afterEvaluate {
+                        publishing {
+                            repositories { maven { url "file://${'$'}{rootDir.absolutePath.replace('\\', '/')}/repo" } }
+                            publications { kotlin(MavenPublication) { from(components.java) } }
+                        }
                     }
                 }
             """.trimIndent()

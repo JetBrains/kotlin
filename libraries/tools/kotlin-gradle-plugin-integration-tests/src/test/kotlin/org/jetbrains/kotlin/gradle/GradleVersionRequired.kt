@@ -31,6 +31,8 @@ sealed class GradleVersionRequired(val minVersion: String, val maxVersion: Strin
 
     class AtLeast(version: String) : GradleVersionRequired(version, null)
 
+    class InRange(minVersion: String, maxVersion: String) : GradleVersionRequired(minVersion, maxVersion)
+
     object None : GradleVersionRequired(GradleVersionRequired.OLDEST_SUPPORTED, null)
 }
 
