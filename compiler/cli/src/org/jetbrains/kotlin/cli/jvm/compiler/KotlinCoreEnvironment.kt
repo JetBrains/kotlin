@@ -242,7 +242,9 @@ class KotlinCoreEnvironment private constructor(
         sourceFiles += createKtFiles(project)
 
         if (scriptDefinitionProvider != null) {
-            sourceFiles += collectRequiredSourcesFromDependencies(configuration, project, sourceFiles)
+            val (classpath, newSources, _) = collectScriptsCompilationDependencies(configuration, project, sourceFiles)
+            configuration.addJvmClasspathRoots(classpath)
+            sourceFiles += newSources
         }
         sourceFiles.sortBy { it.virtualFile.path }
 
@@ -703,29 +705,58 @@ private fun createSourceFilesFromSourceRoots(
     return result
 }
 
-fun collectRequiredSourcesFromDependencies(
+data class ScriptsCompilationDependencies(
+    val classpath: List<File>,
+    val sources: List<KtFile>,
+    val sourceDependencies: List<SourceDependencies>
+) {
+    data class SourceDependencies(
+        val script: KtFile,
+        val sourceDependencies: List<KtFile>
+    )
+}
+
+// recursively collect dependencies from initial and imported scripts
+fun collectScriptsCompilationDependencies(
     configuration: CompilerConfiguration,
     project: Project,
     initialSources: Iterable<KtFile>
-): List<KtFile> {
+): ScriptsCompilationDependencies{
+    val collectedClassPath = ArrayList<File>()
     val collectedSources = ArrayList<KtFile>()
-    val importsProvider = ScriptDependenciesProvider.getInstance(project)
-    var remainingSources = initialSources.sortedBy { it.virtualFile.path }
+    val collectedSourceDependencies = ArrayList<ScriptsCompilationDependencies.SourceDependencies>()
+    var remainingSources = initialSources
     val knownSourcePaths = HashSet<String>()
+    val importsProvider = ScriptDependenciesProvider.getInstance(project)
     while (true) {
-        val dependencies = remainingSources.mapNotNull(importsProvider::getScriptDependencies)
-        configuration.addJvmClasspathRoots(dependencies.flatMap { it.classpath }.distinctBy { it.absolutePath })
-        val addedSourceRoots = dependencies.flatMap { it.scripts.map { KotlinSourceRoot(it.path, false) } }
-        val addedSources = createSourceFilesFromSourceRoots(configuration, project, addedSourceRoots)
-        val newSources = if (addedSources.isEmpty()) emptyList() else {
-            remainingSources.forEach { knownSourcePaths.add(it.virtualFile.path) }
-            addedSources.filterNot { knownSourcePaths.contains(it.virtualFile.path) }
+        val newRemainingSources = ArrayList<KtFile>()
+        for (source in remainingSources) {
+            val dependencies = importsProvider.getScriptDependencies(source)
+            if (dependencies != null) {
+                collectedClassPath.addAll(dependencies.classpath)
+
+                val sourceDependenciesRoots = dependencies.scripts.map { KotlinSourceRoot(it.path, false) }
+                val sourceDependencies = createSourceFilesFromSourceRoots(configuration, project, sourceDependenciesRoots)
+                if (sourceDependencies.isNotEmpty()) {
+                    collectedSourceDependencies.add(ScriptsCompilationDependencies.SourceDependencies(source, sourceDependencies))
+
+                    val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.virtualFile.path) }
+                    for (newSource in newSources) {
+                        collectedSources.add(newSource)
+                        newRemainingSources.add(newSource)
+                        knownSourcePaths.add(newSource.virtualFile.path)
+                    }
+                }
+            }
         }
-        if (newSources.isEmpty()) break
+        if (newRemainingSources.isEmpty()) break
         else {
-            collectedSources += newSources
-            remainingSources = newSources
+            remainingSources = newRemainingSources
         }
     }
-    return collectedSources
+    return ScriptsCompilationDependencies(
+        collectedClassPath.distinctBy { it.absolutePath },
+        collectedSources,
+        collectedSourceDependencies
+    )
 }
