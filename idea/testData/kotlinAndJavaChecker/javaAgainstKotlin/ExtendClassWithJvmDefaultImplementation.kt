@@ -6,12 +6,6 @@ interface KotlinInterface {
 
     }
 
-    @JvmDefault
-    var foo: String
-        get() = "123"
-        set(field) {
-
-        }
 }
 
 
