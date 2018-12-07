@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 open class AddModifierFix(
     element: KtModifierListOwner,
     protected val modifier: KtModifierKeywordToken
-) : KotlinQuickFixAction<KtModifierListOwner>(element), KotlinUniversalQuickFix {
+) : KotlinCrossLanguageQuickFixAction<KtModifierListOwner>(element), KotlinUniversalQuickFix {
     override fun getText(): String {
         val element = element ?: return ""
         if (modifier in modalityModifiers || modifier in KtTokens.VISIBILITY_MODIFIERS || modifier == KtTokens.CONST_KEYWORD) {
@@ -69,7 +69,7 @@ open class AddModifierFix(
         }
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+    override fun invokeImpl(project: Project, editor: Editor?, file: PsiFile) {
         val originalElement = element
         if (originalElement is KtDeclaration && modifier.isMultiplatformPersistent()) {
             originalElement.runOnExpectAndAllActuals { invokeOnElement(it) }
@@ -77,7 +77,7 @@ open class AddModifierFix(
         invokeOnElement(originalElement)
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+    override fun isAvailableImpl(project: Project, editor: Editor?, file: PsiFile): Boolean {
         val element = element ?: return false
         return element.canRefactor()
     }
