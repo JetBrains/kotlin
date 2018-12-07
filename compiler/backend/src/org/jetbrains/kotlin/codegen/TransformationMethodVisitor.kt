@@ -33,8 +33,9 @@ abstract class TransformationMethodVisitor(
     name: String,
     desc: String,
     signature: String?,
-    exceptions: Array<String>?
-) : MethodVisitor(Opcodes.ASM5) {
+    exceptions: Array<out String>?,
+    api: Int = Opcodes.ASM5
+) : MethodVisitor(api) {
 
     private val methodNode = MethodNode(access, name, desc, signature, exceptions).apply {
         localVariables = ArrayList(5)
