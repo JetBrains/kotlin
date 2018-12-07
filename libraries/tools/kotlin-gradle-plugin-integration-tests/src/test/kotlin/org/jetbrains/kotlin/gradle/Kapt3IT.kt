@@ -444,6 +444,75 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
+    fun testDisableDiscoveryInCompileClasspath() = with(Project("kaptAvoidance", directoryPrefix = "kapt2")) {
+        setupWorkingDir()
+        val buildGradle = projectDir.resolve("app/build.gradle")
+        buildGradle.modify {
+            it.addBeforeSubstring("//", "kapt \"org.jetbrains.kotlin")
+        }
+        build("assemble") {
+            assertSuccessful()
+        }
+
+        buildGradle.modify {
+            "$it\n\nkapt.includeCompileClasspath = false"
+        }
+        build("assemble") {
+            assertFailed()
+        }
+    }
+
+
+    @Test
+    fun testKaptAvoidance() = with(Project("kaptAvoidance", directoryPrefix = "kapt2")) {
+        build("assemble") {
+            assertSuccessful()
+            assertTasksExecuted(
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin",
+                ":app:compileKotlin",
+                ":app:compileJava",
+                ":lib:compileKotlin"
+            )
+        }
+
+        val original = "fun foo() = 0"
+        val replacement1 = "fun foo() = 1"
+        val replacement2 = "fun foo() = 2"
+        val libClassKt = projectDir.getFileByName("LibClass.kt")
+        libClassKt.modify { it.checkedReplace(original, replacement1) }
+
+        build("assemble") {
+            assertSuccessful()
+            assertTasksExecuted(
+                ":lib:compileKotlin",
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin"
+            )
+        }
+
+        // enable discovery
+        projectDir.resolve("app/build.gradle").modify {
+            "$it\n\nkapt.includeCompileClasspath = false"
+        }
+        build("assemble") {
+            assertSuccessful()
+            assertTasksUpToDate(":lib:compileKotlin")
+            assertTasksExecuted(
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin"
+            )
+        }
+
+        libClassKt.modify { it.checkedReplace(replacement1, replacement2) }
+        build("assemble") {
+            assertSuccessful()
+            assertTasksExecuted(":lib:compileKotlin", ":app:kaptGenerateStubsKotlin")
+            assertTasksUpToDate(":app:kaptKotlin")
+        }
+    }
+
+    @Test
     fun testKt19179() {
         val project = Project("kt19179", directoryPrefix = "kapt2")
 

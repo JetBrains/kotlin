@@ -58,6 +58,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
         val kaptFlagsForWorker = mutableSetOf<String>().apply {
             if (isVerbose) add("VERBOSE")
             if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
+            if (includeCompileClasspath) add("INCLUDE_COMPILE_CLASSPATH")
         }
 
         val optionsForWorker = KaptOptionsForWorker(
