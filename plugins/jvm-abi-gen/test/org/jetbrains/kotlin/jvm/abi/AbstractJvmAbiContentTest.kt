@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.jvm.abi
 
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.incremental.isClassFile
+import org.jetbrains.kotlin.jvm.abi.asm.AbiExtensionAsmApiVersion
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
@@ -35,7 +36,7 @@ abstract class AbstractJvmAbiContentTest : BaseJvmAbiTest() {
     }
 }
 
-private class PrintingClassVisitor(private val p: Printer) : ClassVisitor(Opcodes.ASM6) {
+private class PrintingClassVisitor(private val p: Printer) : ClassVisitor(AbiExtensionAsmApiVersion) {
     override fun visit(
         version: Int,
         access: Int,

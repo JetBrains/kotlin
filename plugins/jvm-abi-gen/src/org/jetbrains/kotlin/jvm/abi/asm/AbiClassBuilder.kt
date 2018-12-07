@@ -26,11 +26,13 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
 
         val mv = super.newMethod(origin, access, name, desc, signature, exceptions)
         val descriptor = origin.descriptor
+        // inline function bodies are part of ABI,
+        // but non-inline functions can be thrown out
         if (descriptor is FunctionDescriptor && descriptor.isInline) return mv
 
         // getArgumentsAndReturnSizes returns `(argSize << 2) | retSize`, where argSize includes `this`
         val maxLocals = (Type.getArgumentsAndReturnSizes(desc) shr 2) - 1
-        return ReplaceWithEmptyMethodVisitor(maxLocals, mv, Opcodes.ASM6)
+        return ReplaceWithEmptyMethodVisitor(maxLocals, mv, AbiExtensionAsmApiVersion)
     }
 
     override fun newField(
