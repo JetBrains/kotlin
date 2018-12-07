@@ -728,15 +728,20 @@ public abstract class StackValue {
             @NotNull Field refWrapper,
             @NotNull VariableDescriptor variableDescriptor
     ) {
-        return new FieldForSharedVar(localType, classType, fieldName, refWrapper,
-                                     variableDescriptor.isLateInit(), variableDescriptor.getName());
+        return new FieldForSharedVar(
+                localType, variableDescriptor.getType(), classType, fieldName, refWrapper,
+                variableDescriptor.isLateInit(), variableDescriptor.getName()
+        );
     }
 
     @NotNull
     public static FieldForSharedVar fieldForSharedVar(@NotNull FieldForSharedVar field, @NotNull StackValue newReceiver) {
         Field oldReceiver = (Field) field.receiver;
         Field newSharedVarReceiver = field(oldReceiver, newReceiver);
-        return new FieldForSharedVar(field.type, field.owner, field.name, newSharedVarReceiver, field.isLateinit, field.variableName);
+        return new FieldForSharedVar(
+                field.type, field.kotlinType,
+                field.owner, field.name, newSharedVarReceiver, field.isLateinit, field.variableName
+        );
     }
 
     public static StackValue coercion(@NotNull StackValue value, @NotNull Type castType, @Nullable KotlinType castKotlinType) {
@@ -1900,10 +1905,11 @@ public abstract class StackValue {
         final Name variableName;
 
         public FieldForSharedVar(
-                Type type, Type owner, String name, StackValue.Field receiver,
+                Type type, KotlinType kotlinType,
+                Type owner, String name, StackValue.Field receiver,
                 boolean isLateinit, Name variableName
         ) {
-            super(type, null, false, false, receiver, receiver.canHaveSideEffects());
+            super(type, kotlinType, false, false, receiver, receiver.canHaveSideEffects());
 
             if (isLateinit && variableName == null) {
                 throw new IllegalArgumentException("variableName should be non-null for captured lateinit variable " + name);
