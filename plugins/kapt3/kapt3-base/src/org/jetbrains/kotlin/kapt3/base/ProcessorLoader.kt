@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.kapt3.base
 
+import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.info
 import java.io.Closeable
+import java.io.File
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.net.URLClassLoader
@@ -23,7 +25,12 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
     fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): LoadedProcessors {
         clearJarURLCache()
 
-        val classpath = (options.processingClasspath + options.compileClasspath).distinct()
+        val classpath = LinkedHashSet<File>().apply {
+            addAll(options.processingClasspath)
+            if (options[KaptFlag.INCLUDE_COMPILE_CLASSPATH]) {
+                addAll(options.compileClasspath)
+            }
+        }
         val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassLoader)
         this.annotationProcessingClassLoader = classLoader
 

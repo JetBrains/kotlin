@@ -149,6 +149,11 @@ enum class KaptCliOption(
     ),
 
     DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),
+    INCLUDE_COMPILE_CLASSPATH(
+        "includeCompileClasspath",
+        "true | false",
+        "Discover annotation processors in compile classpath"
+    ),
 
     INFO_AS_WARNINGS_OPTION("infoAsWarnings", "true | false", "Show information messages as warnings"),
 

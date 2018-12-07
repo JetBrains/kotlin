@@ -47,7 +47,10 @@ class KaptOptions(
         val processingOptions: MutableMap<String, String> = mutableMapOf()
         val javacOptions: MutableMap<String, String> = mutableMapOf()
 
-        val flags: MutableSet<KaptFlag> = mutableSetOf(KaptFlag.USE_LIGHT_ANALYSIS)
+        val flags: MutableSet<KaptFlag> = mutableSetOf(
+            KaptFlag.USE_LIGHT_ANALYSIS,
+            KaptFlag.INCLUDE_COMPILE_CLASSPATH
+        )
 
         var mode: AptMode = AptMode.WITH_COMPILATION
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
@@ -88,7 +91,8 @@ enum class KaptFlag(val description: String) {
     USE_LIGHT_ANALYSIS("Use light analysis"),
     CORRECT_ERROR_TYPES("Correct error types"),
     MAP_DIAGNOSTIC_LOCATIONS("Map diagnostic locations"),
-    STRICT("Strict mode");
+    STRICT("Strict mode"),
+    INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath");
 }
 
 interface KaptSelector {
