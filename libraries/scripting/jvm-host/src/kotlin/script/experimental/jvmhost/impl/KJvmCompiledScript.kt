@@ -14,37 +14,49 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvmhost.JvmScriptEvaluationConfiguration
+import kotlin.script.experimental.jvmhost.actualClassLoader
 import kotlin.script.experimental.jvmhost.baseClassLoader
+
+class KJvmCompiledModule(
+    generationState: GenerationState
+) : Serializable {
+    val compilerOutputFiles: Map<String, ByteArray> =
+        generationState.factory.asList()
+            .associateTo(sortedMapOf<String, ByteArray>()) { it.relativePath to it.asByteArray() }
+
+    companion object {
+        @JvmStatic
+        private val serialVersionUID = 0L
+    }
+}
 
 class KJvmCompiledScript<out ScriptBase : Any>(
     compilationConfiguration: ScriptCompilationConfiguration,
-    generationState: GenerationState,
     private var scriptClassFQName: String,
-    override val importedScripts: List<CompiledScript<*>>? = null
+    override val otherScripts: List<CompiledScript<*>> = emptyList(),
+    private var compiledModule: KJvmCompiledModule? = null
 ) : CompiledScript<ScriptBase>, Serializable {
 
     private var _compilationConfiguration: ScriptCompilationConfiguration? = compilationConfiguration
-    private var compilerOutputFiles: Map<String, ByteArray> = run {
-        val res = sortedMapOf<String, ByteArray>()
-        for (it in generationState.factory.asList()) {
-            res[it.relativePath] = it.asByteArray()
-        }
-        res
-    }
 
     override val compilationConfiguration: ScriptCompilationConfiguration
         get() = _compilationConfiguration!!
 
     override suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>> = try {
-        val baseClassLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationConfiguration.baseClassLoader)
-            ?: Thread.currentThread().contextClassLoader
-        val dependencies = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
-            ?.flatMap { (it as? JvmDependency)?.classpath?.map { it.toURI().toURL() } ?: emptyList() }
-        // TODO: previous dependencies and classloaders should be taken into account here
-        val classLoaderWithDeps =
-            if (dependencies == null) baseClassLoader
-            else URLClassLoader(dependencies.toTypedArray(), baseClassLoader)
-        val classLoader = CompiledScriptClassLoader(classLoaderWithDeps, compilerOutputFiles)
+        val classLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationConfiguration.actualClassLoader)
+            ?: run {
+                if (compiledModule == null)
+                    return ResultWithDiagnostics.Failure("Unable to load class $scriptClassFQName: no compiled module is provided".asErrorDiagnostics())
+                val baseClassLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationConfiguration.baseClassLoader)
+                    ?: Thread.currentThread().contextClassLoader
+                val dependencies = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
+                    ?.flatMap { (it as? JvmDependency)?.classpath?.map { it.toURI().toURL() } ?: emptyList() }
+                // TODO: previous dependencies and classloaders should be taken into account here
+                val classLoaderWithDeps =
+                    if (dependencies == null) baseClassLoader
+                    else URLClassLoader(dependencies.toTypedArray(), baseClassLoader)
+                CompiledScriptClassLoader(classLoaderWithDeps, compiledModule!!.compilerOutputFiles)
+            }
 
         val clazz = classLoader.loadClass(scriptClassFQName).kotlin
         clazz.asSuccess()
@@ -65,13 +77,13 @@ class KJvmCompiledScript<out ScriptBase : Any>(
     }
 
     private fun writeObject(outputStream: ObjectOutputStream) {
-        outputStream.writeObject(compilerOutputFiles)
+        outputStream.writeObject(compiledModule)
         outputStream.writeObject(scriptClassFQName)
     }
 
     private fun readObject(inputStream: ObjectInputStream) {
         _compilationConfiguration = null
-        compilerOutputFiles = inputStream.readObject() as Map<String, ByteArray>
+        compiledModule = inputStream.readObject() as KJvmCompiledModule
         scriptClassFQName = inputStream.readObject() as String
     }
 
