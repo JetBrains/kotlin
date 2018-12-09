@@ -19,7 +19,7 @@ let heap;
 let global_arguments;
 
 function isBrowser() {
-    return typeof window !== 'undefined';
+    return typeof self !== 'undefined';
 }
 
 let runtime;
