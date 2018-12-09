@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.context
 
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.FieldInfo
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.StackValue
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptProvidedPropertiesDescriptor
 import org.jetbrains.org.objectweb.asm.Type
-import kotlin.reflect.KClass
 
 class ScriptContext(
     val typeMapper: KotlinTypeMapper,
@@ -83,9 +81,8 @@ class ScriptContext(
         scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters[ctorImplicitReceiversParametersStart + index].name.identifier
 
     fun getImplicitReceiverType(index: Int): Type? {
-        val receivers = script.kotlinScriptDefinition.implicitReceivers
-        val kClass = receivers.getOrNull(index)?.classifier as? KClass<*>
-        return kClass?.java?.classId?.let(AsmUtil::asmTypeByClassId)
+        val receiverParam = scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters[ctorImplicitReceiversParametersStart + index]
+        return state.typeMapper.mapType(receiverParam.type)
     }
 
     fun getProvidedPropertyName(index: Int): String =
@@ -113,10 +110,8 @@ class ScriptContext(
 
     fun getScriptFieldName(scriptDescriptor: ScriptDescriptor): String {
         val index = earlierScripts.indexOf(scriptDescriptor)
-        if (index < 0) {
-            throw IllegalStateException("Unregistered script: $scriptDescriptor")
-        }
-        return "script$" + (index + 1)
+        return if (index >= 0) "script$" + (index + 1)
+        else "\$\$importedScript${scriptDescriptor.name.identifier}"
     }
 
     override fun toString(): String {

@@ -42,9 +42,9 @@ fun getMergedScriptText(script: SourceCode, configuration: ScriptCompilationConf
 /**
  * The implementation of the SourceCode for a script located in a file
  */
-open class FileScriptSource(val file: File) : ExternalSourceCode {
+open class FileScriptSource(val file: File, private val preloadedText: String? = null) : ExternalSourceCode {
     override val externalLocation: URL get() = file.toURI().toURL()
-    override val text: String by lazy { file.readText() }
+    override val text: String by lazy { preloadedText ?: file.readText() }
 }
 
 /**

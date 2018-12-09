@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.util.KotlinJars
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.starProjectedType
@@ -172,20 +173,38 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                 sourceFiles,
                 kotlinCompilerConfiguration
             ).build()
+
             KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
-            fun makeCompiledScript(script: KtScript): KJvmCompiledScript<*> {
+            val scriptDependenciesStack = ArrayDeque<KtScript>()
 
-                val importedScripts = sourceDependencies.find { it.script == script }?.sourceDependencies?.mapNotNull { sourceFile ->
-                    sourceFile.declarations.firstIsInstanceOrNull<KtScript>()?.let { makeCompiledScript(it) }
-                } ?: emptyList()
+            fun makeOtherScripts(script: KtScript): List<KJvmCompiledScript<*>> {
 
-                return KJvmCompiledScript<Any>(updatedConfiguration, generationState, script.fqName.asString(), importedScripts)
+                // TODO: ensure that it is caught earlier (as well) since it would be more economical
+                if (scriptDependenciesStack.contains(script))
+                    throw IllegalArgumentException("Unable to handle recursive script dependencies")
+                scriptDependenciesStack.push(script)
+
+                val containingKtFile = script.containingKtFile
+                val otherScripts: List<KJvmCompiledScript<*>> =
+                    sourceDependencies.find { it.scriptFile == containingKtFile }?.sourceDependencies?.mapNotNull { sourceFile ->
+                        sourceFile.declarations.firstIsInstanceOrNull<KtScript>()?.let {
+                            KJvmCompiledScript<Any>(updatedConfiguration, it.fqName.asString(), makeOtherScripts(it))
+                        }
+                    } ?: emptyList()
+
+                scriptDependenciesStack.pop()
+                return otherScripts
             }
 
-            val res = makeCompiledScript(ktScript)
+            val compiledScript = KJvmCompiledScript<Any>(
+                updatedConfiguration,
+                ktScript.fqName.asString(),
+                makeOtherScripts(ktScript),
+                KJvmCompiledModule(generationState)
+            )
 
-            return ResultWithDiagnostics.Success(res, messageCollector.diagnostics)
+            return ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
         } catch (ex: Throwable) {
             return failure(ex.asDiagnostics())
         }
