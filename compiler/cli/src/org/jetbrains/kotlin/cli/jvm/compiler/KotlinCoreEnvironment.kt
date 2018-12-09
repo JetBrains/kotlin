@@ -711,7 +711,7 @@ data class ScriptsCompilationDependencies(
     val sourceDependencies: List<SourceDependencies>
 ) {
     data class SourceDependencies(
-        val script: KtFile,
+        val scriptFile: KtFile,
         val sourceDependencies: List<KtFile>
     )
 }
@@ -721,7 +721,7 @@ fun collectScriptsCompilationDependencies(
     configuration: CompilerConfiguration,
     project: Project,
     initialSources: Iterable<KtFile>
-): ScriptsCompilationDependencies{
+): ScriptsCompilationDependencies {
     val collectedClassPath = ArrayList<File>()
     val collectedSources = ArrayList<KtFile>()
     val collectedSourceDependencies = ArrayList<ScriptsCompilationDependencies.SourceDependencies>()

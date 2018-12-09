@@ -15,6 +15,7 @@ import java.security.MessageDigest
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.BasicScriptingHost
+import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvmhost.*
@@ -49,6 +50,31 @@ class ScriptingHostTest : TestCase() {
         }
         Assert.assertEquals(greeting, output)
     }
+
+    @Test
+    fun testSimpleImport() {
+        val greeting = "Hello from helloWithVal script!\nHello from imported helloWithVal script!"
+        val script = "println(\"Hello from imported \$helloScriptName script!\")"
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    val importedScript = File(TEST_DATA_DIR, "importTest/helloWithVal.kts")
+                    if ((ctx.script as? FileScriptSource)?.file?.canonicalFile == importedScript.canonicalFile) {
+                        ctx.compilationConfiguration
+                    } else {
+                        ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                            importScripts(importedScript.toScriptSource())
+                        }
+                    }.asSuccess()
+                }
+            }
+        }
+        val output = captureOut {
+            BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure()
+        }
+        Assert.assertEquals(greeting, output)
+    }
+
 
     @Test
     fun testMemoryCache() {
@@ -159,7 +185,11 @@ class ScriptingHostTest : TestCase() {
 
 fun ResultWithDiagnostics<*>.throwOnFailure(): ResultWithDiagnostics<*> = apply {
     if (this is ResultWithDiagnostics.Failure) {
-        throw Exception("Compilation/evaluation failed:\n  ${reports.joinToString("\n  ") { it.exception?.toString() ?: it.message }}")
+        val firstExceptionFromReports = reports.find { it.exception != null }?.exception
+        throw Exception(
+            "Compilation/evaluation failed:\n  ${reports.joinToString("\n  ") { it.exception?.toString() ?: it.message }}",
+            firstExceptionFromReports
+        )
     }
 }
 
