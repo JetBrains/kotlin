@@ -35,10 +35,10 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -52,8 +52,8 @@ class AddReifiedToTypeParameterOfFunctionFix(
 
     override fun getText() = element?.let { "Make ${getElementName(it)} reified and ${getElementName(function)} inline" } ?: ""
 
-    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        super.invoke(project, editor, file)
+    override fun invokeImpl(project: Project, editor: Editor?, file: PsiFile) {
+        super.invokeImpl(project, editor, file)
         inlineFix.invoke(project, editor, file)
     }
 
