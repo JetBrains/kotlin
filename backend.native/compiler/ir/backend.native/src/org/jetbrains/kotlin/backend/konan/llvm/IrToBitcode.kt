@@ -1592,7 +1592,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
             functionGenerationContext.gep(objCPtr, bodyOffset)
         } else {
-            LLVMBuildGEP(functionGenerationContext.builder, objectPtr, cValuesOf(kImmOne), 1, "")!!
+            objectPtr
         }
     }
 

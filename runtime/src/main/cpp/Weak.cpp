@@ -18,7 +18,17 @@
 
 namespace {
 
-// TODO: an ugly hack with fixed offsets.
+// TODO: an ugly hack with fixed layout.
+struct WeakReferenceCounter {
+  ObjHeader header;
+  KRef referred;
+  KInt lock;
+};
+
+inline WeakReferenceCounter* asWeakReferenceCounter(ObjHeader* obj) {
+  return reinterpret_cast<WeakReferenceCounter*>(obj);
+}
+
 constexpr int referredOffset = 0;
 constexpr int lockOffset = sizeof(void*);
 
@@ -64,11 +74,11 @@ OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
 
 // Materialize a weak reference to either null or the real reference.
 OBJ_GETTER(Konan_WeakReferenceCounter_get, ObjHeader* counter) {
-  ObjHeader** referredAddress = reinterpret_cast<ObjHeader**>(reinterpret_cast<char*>(counter + 1) + referredOffset);
+  ObjHeader** referredAddress = &asWeakReferenceCounter(counter)->referred;
 #if KONAN_NO_THREADS
   RETURN_OBJ(*referredAddress);
 #else
-  int32_t* lockAddress = reinterpret_cast<int32_t*>(reinterpret_cast<char*>(counter + 1) + lockOffset);
+  int32_t* lockAddress = &asWeakReferenceCounter(counter)->lock;
   // Spinlock.
   lock(lockAddress);
   ObjHolder holder(*referredAddress);
@@ -78,12 +88,12 @@ OBJ_GETTER(Konan_WeakReferenceCounter_get, ObjHeader* counter) {
 }
 
 void WeakReferenceCounterClear(ObjHeader* counter) {
-  ObjHeader** referredAddress = reinterpret_cast<ObjHeader**>(reinterpret_cast<char*>(counter + 1) + referredOffset);
+  ObjHeader** referredAddress = &asWeakReferenceCounter(counter)->referred;
   // Note, that we don't do UpdateRef here, as reference is weak.
 #if KONAN_NO_THREADS
   *referredAddress = nullptr;
 #else
-  int32_t* lockAddress = reinterpret_cast<int32_t*>(reinterpret_cast<char*>(counter + 1) + lockOffset);
+  int32_t* lockAddress = &asWeakReferenceCounter(counter)->lock;
   // Spinlock.
   lock(lockAddress);
   *referredAddress = nullptr;

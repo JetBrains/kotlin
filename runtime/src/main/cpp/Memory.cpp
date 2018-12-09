@@ -47,6 +47,9 @@ constexpr container_size_t kContainerAlignment = 1024;
 // Single object alignment.
 constexpr container_size_t kObjectAlignment = 8;
 
+// Required e.g. for object size computations to be correct.
+static_assert(sizeof(ContainerHeader) % kObjectAlignment == 0, "sizeof(ContainerHeader) is not aligned");
+
 #if TRACE_MEMORY
 #define MEMORY_LOG(...) konan::consolePrintf(__VA_ARGS__);
 #else
@@ -396,14 +399,25 @@ inline container_size_t alignUp(container_size_t size, int alignment) {
   return (size + alignment - 1) & ~(alignment - 1);
 }
 
+inline uint32_t arrayObjectSize(const TypeInfo* typeInfo, uint32_t count) {
+  // Note: array body is aligned, but for size computation it is enough to align the sum.
+  static_assert(kObjectAlignment % alignof(KLong) == 0, "");
+  static_assert(kObjectAlignment % alignof(KDouble) == 0, "");
+  return alignUp(sizeof(ArrayHeader) - typeInfo->instanceSize_ * count, kObjectAlignment);
+}
+
+inline uint32_t arrayObjectSize(const ArrayHeader* obj) {
+  return arrayObjectSize(obj->type_info(), obj->count_);
+}
+
 // TODO: shall we do padding for alignment?
 inline container_size_t objectSize(const ObjHeader* obj) {
   const TypeInfo* type_info = obj->type_info();
   container_size_t size = (type_info->instanceSize_ < 0 ?
       // An array.
-      ArrayDataSizeBytes(obj->array()) + sizeof(ArrayHeader)
+      arrayObjectSize(obj->array())
       :
-      type_info->instanceSize_ + sizeof(ObjHeader));
+      type_info->instanceSize_);
   return alignUp(size, kObjectAlignment);
 }
 
@@ -494,7 +508,7 @@ inline void traverseContainerObjectFields(ContainerHeader* container, func proce
     if (typeInfo != theArrayTypeInfo) {
       for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
         ObjHeader** location = reinterpret_cast<ObjHeader**>(
-            reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
+            reinterpret_cast<uintptr_t>(obj) + typeInfo->objOffsets_[index]);
         process(location);
       }
     } else {
@@ -1003,7 +1017,7 @@ void FreeContainer(ContainerHeader* container) {
 void ObjectContainer::Init(const TypeInfo* typeInfo) {
   RuntimeAssert(typeInfo->instanceSize_ >= 0, "Must be an object");
   uint32_t alloc_size =
-      sizeof(ContainerHeader) + sizeof(ObjHeader) + typeInfo->instanceSize_;
+      sizeof(ContainerHeader) + typeInfo->instanceSize_;
   header_ = AllocContainer(alloc_size);
   if (header_) {
     // One object in this container.
@@ -1018,8 +1032,7 @@ void ObjectContainer::Init(const TypeInfo* typeInfo) {
 void ArrayContainer::Init(const TypeInfo* typeInfo, uint32_t elements) {
   RuntimeAssert(typeInfo->instanceSize_ < 0, "Must be an array");
   uint32_t alloc_size =
-      sizeof(ContainerHeader) + sizeof(ArrayHeader) -
-      typeInfo->instanceSize_ * elements;
+      sizeof(ContainerHeader) + arrayObjectSize(typeInfo, elements);
   header_ = AllocContainer(alloc_size);
   RuntimeAssert(header_ != nullptr, "Cannot alloc memory");
   if (header_) {
@@ -1030,7 +1043,7 @@ void ArrayContainer::Init(const TypeInfo* typeInfo, uint32_t elements) {
     SetHeader(GetPlace()->obj(), typeInfo);
     MEMORY_LOG("array at %p\n", GetPlace())
     OBJECT_ALLOC_EVENT(
-        memoryState, -typeInfo->instanceSize_ * elements, GetPlace()->obj())
+        memoryState, arrayObjectSize(typeInfo, elements), GetPlace()->obj())
   }
 }
 
@@ -1102,7 +1115,7 @@ ObjHeader** ArenaContainer::getSlot() {
 
 ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
-  uint32_t size = type_info->instanceSize_ + sizeof(ObjHeader);
+  uint32_t size = type_info->instanceSize_;
   ObjHeader* result = reinterpret_cast<ObjHeader*>(place(size));
   if (!result) {
     return nullptr;
@@ -1115,12 +1128,12 @@ ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
 
 ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, uint32_t count) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
-  container_size_t size = sizeof(ArrayHeader) - type_info->instanceSize_ * count;
+  container_size_t size = arrayObjectSize(type_info, count);
   ArrayHeader* result = reinterpret_cast<ArrayHeader*>(place(size));
   if (!result) {
     return nullptr;
   }
-  OBJECT_ALLOC_EVENT(memoryState, -type_info->instanceSize_ * count, result->obj())
+  OBJECT_ALLOC_EVENT(memoryState, arrayObjectSize(type_info, count), result->obj())
   currentChunk_->asHeader()->incObjectCount();
   setHeader(result->obj(), type_info);
   result->count_ = count;
@@ -1923,7 +1936,7 @@ KBoolean Konan_ensureAcyclicAndSet(ObjHeader* where, KInt index, ObjHeader* what
         if (!acyclic) return false;
     }
     UpdateRef(reinterpret_cast<ObjHeader**>(
-            reinterpret_cast<uintptr_t>(where + 1) + where->type_info()->objOffsets_[index]), what);
+            reinterpret_cast<uintptr_t>(where) + where->type_info()->objOffsets_[index]), what);
     // Fence on updated location?
     return true;
 }

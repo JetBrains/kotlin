@@ -133,7 +133,8 @@ private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<Ir
 }
 
 private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>): LLVMTypeRef {
-    val fieldTypes = fields.map { getLLVMType(it.type) }
+    val fieldTypes = listOf(runtime.objHeaderType) + fields.map { getLLVMType(it.type) }
+    // TODO: consider adding synthetic ObjHeader field to Any.
 
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!
 
@@ -369,7 +370,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                 error(containingClass.descriptor.toString())
             val allFields = classDeclarations.fields
             this.fields[descriptor] = FieldLlvmDeclarations(
-                    allFields.indexOf(descriptor),
+                    allFields.indexOf(descriptor) + 1, // First field is ObjHeader.
                     classDeclarations.bodyType
             )
         } else {

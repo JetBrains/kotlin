@@ -289,9 +289,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     NullPointer(int32Type), NullPointer(int8Type), NullPointer(kInt8Ptr))
         } else {
             data class FieldRecord(val offset: Int, val type: Int, val name: String)
-            val fields = getStructElements(bodyType).mapIndexedNotNull { index, type ->
+            val fields = getStructElements(bodyType).drop(1).mapIndexedNotNull { index, type ->
                 FieldRecord(
-                        LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt(),
+                        LLVMOffsetOfElement(llvmTargetData, bodyType, index + 1).toInt(),
                         mapRuntimeType(type),
                         llvmDeclarations.fields[index].name.asString())
             }
@@ -316,7 +316,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     ): ConstPointer {
         assert(descriptor.isInterface)
 
-        val size = 0
+        val size = LLVMStoreSizeOfType(llvmTargetData, kObjHeader).toInt()
 
         val superClass = context.ir.symbols.any.owner
 

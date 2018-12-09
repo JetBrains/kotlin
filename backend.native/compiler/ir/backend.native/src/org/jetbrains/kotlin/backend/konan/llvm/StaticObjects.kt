@@ -71,24 +71,20 @@ internal fun StaticData.createConstKotlinArray(arrayClass: IrClass, elements: Li
     return createRef(objHeaderPtr)
 }
 
-internal fun StaticData.createConstKotlinObject(type: IrClass, body: ConstValue): ConstPointer {
+internal fun StaticData.createConstKotlinObject(type: IrClass, vararg fields: ConstValue): ConstPointer {
     val typeInfo = type.typeInfoPtr
-
-    val compositeType = structType(runtime.objHeaderType, body.llvmType)
-
-    val global = this.createGlobal(compositeType, "")
-
-    val objHeaderPtr = global.pointer.getElementPtr(0)
     val objHeader = objHeader(typeInfo)
 
-    global.setInitializer(Struct(compositeType, objHeader, body))
+    val global = this.placeGlobal("", Struct(objHeader, *fields))
     global.setConstant(true)
+
+    val objHeaderPtr = global.pointer.getElementPtr(0)
 
     return createRef(objHeaderPtr)
 }
 
-internal fun StaticData.createInitializer(type: IrClass, body: ConstValue): ConstValue =
-        Struct(objHeader(type.typeInfoPtr), body)
+internal fun StaticData.createInitializer(type: IrClass, vararg fields: ConstValue): ConstValue =
+        Struct(objHeader(type.typeInfoPtr), *fields)
 
 private fun StaticData.getArrayListClass(): ClassDescriptor {
     val module = context.irModule!!.descriptor
@@ -122,15 +118,13 @@ internal fun StaticData.createConstArrayList(array: ConstPointer, length: Int): 
         val fqName = it.fqNameSafe.asString()
         sorted.put(fqName, arrayListFields[fqName]!!)
     }
-        
-    val body = Struct(*(sorted.values.toTypedArray()))
 
-    return createConstKotlinObject(arrayListClass, body)
+    return createConstKotlinObject(arrayListClass, *sorted.values.toTypedArray())
 }
 
 internal fun StaticData.createUniqueInstance(
         kind: UniqueKind, bodyType: LLVMTypeRef, typeInfo: ConstPointer): ConstPointer {
-    assert (getStructElements(bodyType).isEmpty())
+    assert (getStructElements(bodyType).size == 1) // ObjHeader only.
     val objHeader = when (kind) {
         UniqueKind.UNIT -> objHeader(typeInfo)
         UniqueKind.EMPTY_ARRAY -> arrayHeader(typeInfo, 0)

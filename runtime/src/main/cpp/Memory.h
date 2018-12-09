@@ -334,11 +334,6 @@ inline bool PermanentOrFrozen(ObjHeader* obj) {
     return container == nullptr || container->frozen();
 }
 
-inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
-  // Instance size is negative.
-  return -obj->type_info()->instanceSize_ * obj->count_;
-}
-
 // Class representing arbitrary placement container.
 class Container {
  protected:

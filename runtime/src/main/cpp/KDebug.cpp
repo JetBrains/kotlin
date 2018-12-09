@@ -45,6 +45,19 @@ constexpr int runtimeTypeSize[] = {
     1                    // BOOLEAN
 };
 
+constexpr int runtimeTypeAlignment[] = {
+    -1,                  // INVALID
+    alignof(ObjHeader*), // OBJECT
+    alignof(int8_t),     // INT8
+    alignof(int16_t),    // INT16
+    alignof(int32_t),    // INT32
+    alignof(int64_t),    // INT64
+    alignof(float),      // FLOAT32
+    alignof(double),     // FLOAT64
+    alignof(void*),      // NATIVE_PTR
+    1                    // BOOLEAN
+};
+
 }  // namespace
 
 extern "C" {
@@ -130,13 +143,16 @@ RUNTIME_USED void* Konan_DebugGetFieldAddress(KRef obj, int index) {
      if (index > obj->array()->count_)
         return nullptr;
 
-      return reinterpret_cast<uint8_t*>(obj->array() + 1) + index * runtimeTypeSize[-extendedTypeInfo->fieldsCount_];
+      int32_t typeIndex = -extendedTypeInfo->fieldsCount_;
+      return reinterpret_cast<uint8_t*>(obj->array())
+          + alignUp(sizeof(struct ArrayHeader), runtimeTypeAlignment[typeIndex])
+          + index * runtimeTypeSize[typeIndex];
    }
 
    if (index >= extendedTypeInfo->fieldsCount_)
      return nullptr;
 
-   return reinterpret_cast<uint8_t*>(obj + 1) + extendedTypeInfo->fieldOffsets_[index];
+   return reinterpret_cast<uint8_t*>(obj) + extendedTypeInfo->fieldOffsets_[index];
 }
 
 // Compute address of field or an array element at the index, or null, if incorrect.

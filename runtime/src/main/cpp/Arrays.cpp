@@ -489,13 +489,58 @@ KNativePtr Kotlin_ImmutableBlob_asCPointerImpl(KRef thiz, KInt offset) {
   return PrimitiveArrayAddressOfElementAt<KByte>(array, offset);
 }
 
-KNativePtr Kotlin_Arrays_getAddressOfElement(KRef thiz, KInt index) {
+KNativePtr Kotlin_Arrays_getByteArrayAddressOfElement(KRef thiz, KInt index) {
   ArrayHeader* array = thiz->array();
   if (index < 0 || index >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
 
-  return AddressOfElementAt(array, index);
+  return AddressOfElementAt<KByte>(array, index);
+}
+
+KNativePtr Kotlin_Arrays_getShortArrayAddressOfElement(KRef thiz, KInt index) {
+  ArrayHeader* array = thiz->array();
+  if (index < 0 || index >= array->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+
+  return AddressOfElementAt<KShort>(array, index);
+}
+
+KNativePtr Kotlin_Arrays_getIntArrayAddressOfElement(KRef thiz, KInt index) {
+  ArrayHeader* array = thiz->array();
+  if (index < 0 || index >= array->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+
+  return AddressOfElementAt<KInt>(array, index);
+}
+
+KNativePtr Kotlin_Arrays_getLongArrayAddressOfElement(KRef thiz, KInt index) {
+  ArrayHeader* array = thiz->array();
+  if (index < 0 || index >= array->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+
+  return AddressOfElementAt<KLong>(array, index);
+}
+
+KNativePtr Kotlin_Arrays_getFloatArrayAddressOfElement(KRef thiz, KInt index) {
+  ArrayHeader* array = thiz->array();
+  if (index < 0 || index >= array->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+
+  return AddressOfElementAt<KFloat>(array, index);
+}
+
+KNativePtr Kotlin_Arrays_getDoubleArrayAddressOfElement(KRef thiz, KInt index) {
+  ArrayHeader* array = thiz->array();
+  if (index < 0 || index >= array->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+
+  return AddressOfElementAt<KDouble>(array, index);
 }
 
 }  // extern "C"

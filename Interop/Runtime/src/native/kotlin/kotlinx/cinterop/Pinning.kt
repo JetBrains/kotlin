@@ -44,16 +44,16 @@ inline fun <T : Any, R> T.usePinned(block: (Pinned<T>) -> R): R {
     }
 }
 
-fun Pinned<ByteArray>.addressOf(index: Int): CPointer<ByteVar> = this.addressOfElement(index)
+fun Pinned<ByteArray>.addressOf(index: Int): CPointer<ByteVar> = this.get().addressOfElement(index)
 fun ByteArray.refTo(index: Int): CValuesRef<ByteVar> = this.usingPinned { addressOf(index) }
 
-fun Pinned<ShortArray>.addressOf(index: Int): CPointer<ShortVar> = this.addressOfElement(index)
+fun Pinned<ShortArray>.addressOf(index: Int): CPointer<ShortVar> = this.get().addressOfElement(index)
 fun ShortArray.refTo(index: Int): CValuesRef<ShortVar> = this.usingPinned { addressOf(index) }
 
-fun Pinned<IntArray>.addressOf(index: Int): CPointer<IntVar> = this.addressOfElement(index)
+fun Pinned<IntArray>.addressOf(index: Int): CPointer<IntVar> = this.get().addressOfElement(index)
 fun IntArray.refTo(index: Int): CValuesRef<IntVar> = this.usingPinned { addressOf(index) }
 
-fun Pinned<LongArray>.addressOf(index: Int): CPointer<LongVar> = this.addressOfElement(index)
+fun Pinned<LongArray>.addressOf(index: Int): CPointer<LongVar> = this.get().addressOfElement(index)
 fun LongArray.refTo(index: Int): CValuesRef<LongVar> = this.usingPinned { addressOf(index) }
 
 // TODO: pinning of unsigned arrays involves boxing as they are inline classes wrapping signed arrays.
@@ -69,10 +69,10 @@ fun UIntArray.refTo(index: Int): CValuesRef<UIntVar> = this.usingPinned { addres
 fun Pinned<ULongArray>.addressOf(index: Int): CPointer<ULongVar> = this.get().addressOfElement(index)
 fun ULongArray.refTo(index: Int): CValuesRef<ULongVar> = this.usingPinned { addressOf(index) }
 
-fun Pinned<FloatArray>.addressOf(index: Int): CPointer<FloatVar> = this.addressOfElement(index)
+fun Pinned<FloatArray>.addressOf(index: Int): CPointer<FloatVar> = this.get().addressOfElement(index)
 fun FloatArray.refTo(index: Int): CValuesRef<FloatVar> = this.usingPinned { addressOf(index) }
 
-fun Pinned<DoubleArray>.addressOf(index: Int): CPointer<DoubleVar> = this.addressOfElement(index)
+fun Pinned<DoubleArray>.addressOf(index: Int): CPointer<DoubleVar> = this.get().addressOfElement(index)
 fun DoubleArray.refTo(index: Int): CValuesRef<DoubleVar> = this.usingPinned { addressOf(index) }
 
 private inline fun <T : Any, P : CPointed> T.usingPinned(
@@ -86,21 +86,32 @@ private inline fun <T : Any, P : CPointed> T.usingPinned(
     }
 }
 
-@SymbolName("Kotlin_Arrays_getAddressOfElement")
-private external fun getAddressOfElement(array: Any, index: Int): COpaquePointer
+@SymbolName("Kotlin_Arrays_getByteArrayAddressOfElement")
+private external fun ByteArray.addressOfElement(index: Int): CPointer<ByteVar>
 
-@Suppress("NOTHING_TO_INLINE")
-private inline fun <P : CVariable> Pinned<*>.addressOfElement(index: Int): CPointer<P> =
-        getAddressOfElement(this.get(), index).reinterpret()
+@SymbolName("Kotlin_Arrays_getShortArrayAddressOfElement")
+private external fun ShortArray.addressOfElement(index: Int): CPointer<ShortVar>
 
-@SymbolName("Kotlin_Arrays_getAddressOfElement")
+@SymbolName("Kotlin_Arrays_getIntArrayAddressOfElement")
+private external fun IntArray.addressOfElement(index: Int): CPointer<IntVar>
+
+@SymbolName("Kotlin_Arrays_getLongArrayAddressOfElement")
+private external fun LongArray.addressOfElement(index: Int): CPointer<LongVar>
+
+@SymbolName("Kotlin_Arrays_getByteArrayAddressOfElement")
 private external fun UByteArray.addressOfElement(index: Int): CPointer<UByteVar>
 
-@SymbolName("Kotlin_Arrays_getAddressOfElement")
+@SymbolName("Kotlin_Arrays_getShortArrayAddressOfElement")
 private external fun UShortArray.addressOfElement(index: Int): CPointer<UShortVar>
 
-@SymbolName("Kotlin_Arrays_getAddressOfElement")
+@SymbolName("Kotlin_Arrays_getIntArrayAddressOfElement")
 private external fun UIntArray.addressOfElement(index: Int): CPointer<UIntVar>
 
-@SymbolName("Kotlin_Arrays_getAddressOfElement")
+@SymbolName("Kotlin_Arrays_getLongArrayAddressOfElement")
 private external fun ULongArray.addressOfElement(index: Int): CPointer<ULongVar>
+
+@SymbolName("Kotlin_Arrays_getFloatArrayAddressOfElement")
+private external fun FloatArray.addressOfElement(index: Int): CPointer<FloatVar>
+
+@SymbolName("Kotlin_Arrays_getDoubleArrayAddressOfElement")
+private external fun DoubleArray.addressOfElement(index: Int): CPointer<DoubleVar>

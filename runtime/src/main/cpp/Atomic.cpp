@@ -23,37 +23,48 @@
 namespace {
 
 struct AtomicReferenceLayout {
+  ObjHeader header;
   KRef value_;
   KInt lock_;
 };
 
+template<typename T> struct AtomicPrimitive {
+  ObjHeader header;
+  volatile T value_;
+};
+
+template <typename T> inline volatile T* getValueLocation(KRef thiz) {
+  AtomicPrimitive<T>* atomic = reinterpret_cast<AtomicPrimitive<T>*>(thiz);
+  return &atomic->value_;
+}
+
 template <typename T> void setImpl(KRef thiz, T value) {
-  volatile T* location = reinterpret_cast<volatile T*>(thiz + 1);
+  volatile T* location = getValueLocation<T>(thiz);
   atomicSet(location, value);
 }
 
 template <typename T> T getImpl(KRef thiz) {
-  volatile T* location = reinterpret_cast<volatile T*>(thiz + 1);
+  volatile T* location = getValueLocation<T>(thiz);
   return atomicGet(location);
 }
 
 template <typename T> T addAndGetImpl(KRef thiz, T delta) {
-  volatile T* location = reinterpret_cast<volatile T*>(thiz + 1);
+  volatile T* location = getValueLocation<T>(thiz);
   return atomicAdd(location, delta);
 }
 
 template <typename T> T compareAndSwapImpl(KRef thiz, T expectedValue, T newValue) {
-    volatile T* location = reinterpret_cast<volatile T*>(thiz + 1);
-    return compareAndSwap(location, expectedValue, newValue);
+  volatile T* location = getValueLocation<T>(thiz);
+  return compareAndSwap(location, expectedValue, newValue);
 }
 
 template <typename T> KBoolean compareAndSetImpl(KRef thiz, T expectedValue, T newValue) {
-    volatile T* location = reinterpret_cast<volatile T*>(thiz + 1);
+    volatile T* location = getValueLocation<T>(thiz);
     return compareAndSet(location, expectedValue, newValue);
 }
 
 inline AtomicReferenceLayout* asAtomicReference(KRef thiz) {
-    return reinterpret_cast<AtomicReferenceLayout*>(thiz + 1);
+    return reinterpret_cast<AtomicReferenceLayout*>(thiz);
 }
 
 }  // namespace
@@ -93,7 +104,7 @@ KLong Kotlin_AtomicLong_compareAndSwap(KRef thiz, KLong expectedValue, KLong new
     // Potentially huge performance penalty, but correct.
     // TODO: reconsider, once target MIPS can do proper 64-bit CAS.
     while (compareAndSwap(&lock64, 0, 1) != 0);
-    KLong* address = reinterpret_cast<KLong*>(thiz + 1);
+    volatile KLong* address = getValueLocation<KLong>(thiz);
     KLong old = *address;
     if (old == expectedValue) {
       *address = newValue;
@@ -111,7 +122,7 @@ KBoolean Kotlin_AtomicLong_compareAndSet(KRef thiz, KLong expectedValue, KLong n
     // TODO: reconsider, once target MIPS can do proper 64-bit CAS.
     KBoolean result = false;
     while (compareAndSwap(&lock64, 0, 1) != 0);
-    KLong* address = reinterpret_cast<KLong*>(thiz + 1);
+    volatile KLong* address = getValueLocation<KLong>(thiz);
     KLong old = *address;
     if (old == expectedValue) {
       result = true;
@@ -129,7 +140,7 @@ void Kotlin_AtomicLong_set(KRef thiz, KLong newValue) {
     // Potentially huge performance penalty, but correct.
     // TODO: reconsider, once target MIPS can do proper 64-bit atomic store.
     while (compareAndSwap(&lock64, 0, 1) != 0);
-    KLong* address = reinterpret_cast<KLong*>(thiz + 1);
+    volatile KLong* address = getValueLocation<KLong>(thiz);
     *address = newValue;
     compareAndSwap(&lock64, 1, 0);
 #else
@@ -142,7 +153,7 @@ KLong Kotlin_AtomicLong_get(KRef thiz) {
     // Potentially huge performance penalty, but correct.
     // TODO: reconsider, once target MIPS can do proper 64-bit atomic store.
     while (compareAndSwap(&lock64, 0, 1) != 0);
-    KLong* address = reinterpret_cast<KLong*>(thiz + 1);
+    volatile KLong* address = getValueLocation<KLong>(thiz);
     KLong value = *address;
     compareAndSwap(&lock64, 1, 0);
     return value;
