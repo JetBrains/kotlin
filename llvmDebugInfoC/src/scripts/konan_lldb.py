@@ -48,10 +48,13 @@ def is_array(value):
     return int(evaluate("(int)Konan_DebugIsArray({})".format(lldb_val_to_ptr(value))).GetValue()) == 1
 
 
-def check_type_info(addr):
+def check_type_info(value):
     """This method checks self-referencing of pointer of first member of TypeInfo including case when object has an
-    meta-object pointed by TypeInfo. """
-    result = evaluate("**(void ***){0} == ***(void****){0}".format(addr))
+    meta-object pointed by TypeInfo. Two lower bits are reserved for memory management needs see runtime/src/main/cpp/Memory.h."""
+    if str(value.type) != "struct ObjHeader *":
+        return False
+    expr = "*(void **)((uintptr_t)(*(void**){0}) & ~0x3) == **(void***)((uintptr_t)(*(void**){0}) & ~0x3)".format(value.unsigned)
+    result = evaluate(expr)
     return result.IsValid() and result.GetValue() == "true"
 
 
@@ -68,7 +71,7 @@ def kotlin_object_type_summary(lldb_val, internal_dict):
     if str(lldb_val.type) != "struct ObjHeader *":
         return fallback
 
-    if not check_type_info(fallback):
+    if not check_type_info(lldb_val):
         return NULL
 
     ptr = lldb_val_to_ptr(lldb_val)
@@ -154,7 +157,7 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
         if not value:
             print "_deref_or_obj_summary: value none, index:{}, type:{}".format(index, self._children_types[index])
             return None
-        if check_type_info(value.unsigned):
+        if check_type_info(value):
             return kotlin_object_type_summary(value, None)
         else:
             return kotlin_object_type_summary(value.deref, None)
@@ -263,8 +266,7 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
 
 class KonanProxyTypeProvider:
     def __init__(self, valobj, _):
-        fallback = int(valobj.GetValue(), 0)
-        if not check_type_info(fallback):
+        if not check_type_info(valobj):
             return
         self._proxy = select_provider(valobj)
         self.update()
