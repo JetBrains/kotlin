@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
@@ -69,7 +71,7 @@ private val assignmentOperators = listOf(KtTokens.EQ, KtTokens.PLUSEQ, KtTokens.
 private val incrementAndDecrementOperators = listOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS)
 
 private class AssignBackingFieldFix : LocalQuickFix {
-    override fun getName() = "Assign backing filed"
+    override fun getName() = "Assign backing field"
 
     override fun getFamilyName() = name
 
@@ -77,10 +79,11 @@ private class AssignBackingFieldFix : LocalQuickFix {
         val setter = descriptor.psiElement as? KtPropertyAccessor ?: return
         val parameter = setter.valueParameters.firstOrNull() ?: return
         val bodyExpression = setter.bodyBlockExpression ?: return
-        setter.hasBlockBody()
-        bodyExpression.addBefore(
-            KtPsiFactory(setter).createExpression("field = ${parameter.text}"),
-            bodyExpression.rBrace
-        )
+        bodyExpression.lBrace
+            ?.siblings(withItself = false)
+            ?.takeWhile { it != bodyExpression.rBrace }
+            ?.singleOrNull { it is PsiWhiteSpace }
+            ?.also { it.delete() }
+        bodyExpression.addBefore(KtPsiFactory(setter).createExpression("field = ${parameter.text}"), bodyExpression.rBrace)
     }
 }
