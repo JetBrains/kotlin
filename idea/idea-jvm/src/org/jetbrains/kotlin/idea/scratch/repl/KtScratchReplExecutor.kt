@@ -40,7 +40,9 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
     private lateinit var osProcessHandler: OSProcessHandler
 
     override fun execute() {
-        val module = file.getModule() ?: return error(file, "Module should be selected")
+        handlers.forEach { it.onStart(file) }
+
+        val module = file.getModule() ?: return error("Module should be selected")
         val cmdLine = KotlinConsoleKeeper.createCommandLine(module)
 
         LOG.printDebugMessage("Execute REPL: ${cmdLine.commandLineString}")
