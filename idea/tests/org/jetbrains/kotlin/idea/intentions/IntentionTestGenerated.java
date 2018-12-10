@@ -9466,6 +9466,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testInsertBrackets5() throws Exception {
             runTest("idea/testData/intentions/insertCurlyBracesToTemplate/insertBrackets5.kt");
         }
+
+        @TestMetadata("insertBracketsEnd.kt")
+        public void testInsertBracketsEnd() throws Exception {
+            runTest("idea/testData/intentions/insertCurlyBracesToTemplate/insertBracketsEnd.kt");
+        }
+
+        @TestMetadata("insertBracketsMiddle.kt")
+        public void testInsertBracketsMiddle() throws Exception {
+            runTest("idea/testData/intentions/insertCurlyBracesToTemplate/insertBracketsMiddle.kt");
+        }
     }
 
     @TestMetadata("idea/testData/intentions/insertExplicitTypeArguments")
