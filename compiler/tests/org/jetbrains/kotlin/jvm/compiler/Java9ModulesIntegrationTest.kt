@@ -249,7 +249,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val command = listOf<String>(
             File(KotlinTestUtils.getJdk9Home(), "bin/java").path,
             "-p",
-            "${ForTestCompileRuntime.runtimeJarForTests().path}:${jar.path}",
+            "${ForTestCompileRuntime.runtimeJarForTests().path}${File.pathSeparator}${jar.path}",
             "-m",
             "usage/some.module.withsome.packages.UsageKt"
         )
