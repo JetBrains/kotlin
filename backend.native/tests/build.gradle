@@ -1884,6 +1884,7 @@ task listof0(type: RunKonanTest) {
 }
 
 task listof1(type: RunKonanTest) {
+    disabled = true
     goldValue = "true\n[a, b, c]\n"
     source = "datagen/literals/listof1.kt"
 }

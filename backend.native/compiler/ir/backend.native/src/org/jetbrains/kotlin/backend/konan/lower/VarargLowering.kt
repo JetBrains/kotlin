@@ -100,10 +100,6 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
             override fun visitVararg(expression: IrVararg): IrExpression {
                 expression.transformChildrenVoid(transformer)
                 val hasSpreadElement = hasSpreadElement(expression)
-                if (!hasSpreadElement && expression.elements.all { it is IrConst<*> && it.type.isString() }) {
-                    log { "skipped vararg expression because it's string array literal" }
-                    return expression
-                }
                 val irBuilder = context.createIrBuilder(owner, expression.startOffset, expression.endOffset)
                 irBuilder.run {
                     val type = expression.varargElementType
