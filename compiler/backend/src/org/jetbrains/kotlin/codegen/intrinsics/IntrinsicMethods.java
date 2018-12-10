@@ -79,6 +79,8 @@ public class IntrinsicMethods {
 
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOf", 1, new ArrayOf());
 
+        intrinsicsMap.registerIntrinsic(new FqName("kotlin.collections"), new FqNameUnsafe("kotlin.collections.MutableMap"), "set", 2, new MutableMapSet());
+
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
             String methodName = method.asString();
