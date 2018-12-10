@@ -54,52 +54,48 @@ class RunScratchAction : ScratchAction(
 
         val provider = ScratchFileLanguageProvider.get(psiFile.language) ?: return
 
-        val handler = provider.getOutputHandler()
-        handler.onStart(scratchFile)
-
         log.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
 
+        val defaultOutputHandler = provider.getOutputHandler()
+
         val module = scratchPanel.getModule()
+
+        @Suppress("FoldInitializerAndIfToElvis")
         if (module == null) {
-            handler.error(scratchFile, "Module should be selected")
-            handler.onFinish(scratchFile)
-            return
+            return defaultOutputHandler.error(scratchFile, "Module should be selected")
         }
 
-        fun executeScratch() {
-            val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
-            if (executor == null) {
-                handler.error(scratchFile, "Couldn't run ${psiFile.name}")
-                handler.onFinish(scratchFile)
-                return
+        val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
+
+        @Suppress("FoldInitializerAndIfToElvis")
+        if (executor == null) {
+            return defaultOutputHandler.error(scratchFile, "Couldn't run ${psiFile.name}")
+        }
+
+        executor.addOutputHandler(defaultOutputHandler)
+
+        executor.addOutputHandler(object : ScratchOutputHandlerAdapter() {
+            override fun onStart(file: ScratchFile) {
+                e.presentation.isEnabled = false
             }
 
-            e.presentation.isEnabled = false
+            override fun onFinish(file: ScratchFile) {
+                e.presentation.isEnabled = true
+            }
+        })
 
-            executor.addOutputHandler(handler)
-
-            executor.addOutputHandler(object : ScratchOutputHandlerAdapter() {
-                override fun onFinish(file: ScratchFile) {
-                    e.presentation.isEnabled = true
-                }
-            })
-
+        fun executeScratch() {
             try {
                 executor.execute()
             } catch (ex: Throwable) {
-                handler.error(scratchFile, "Exception occurs during Run Scratch Action")
-                handler.onFinish(scratchFile)
-
-                e.presentation.isEnabled = true
-
-                log.error(ex)
+                executor.errorOccurs("Exception occurs during Run Scratch Action", ex, true)
             }
         }
 
         if (isMakeBeforeRun) {
             ProjectTaskManager.getInstance(project).build(arrayOf(module)) { result ->
                 if (result.isAborted || result.errors > 0) {
-                    handler.error(scratchFile, "There were compilation errors in module ${module.name}")
+                    executor.errorOccurs("There were compilation errors in module ${module.name}")
                 }
 
                 if (DumbService.isDumb(project)) {

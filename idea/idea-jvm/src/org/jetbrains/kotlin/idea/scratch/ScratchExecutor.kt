@@ -26,4 +26,15 @@ abstract class ScratchExecutor(protected val file: ScratchFile) {
     fun addOutputHandler(outputHandler: ScratchOutputHandler) {
         handlers.add(outputHandler)
     }
+
+    fun errorOccurs(message: String, e: Throwable? = null, isFatal: Boolean = false) {
+        handlers.forEach {
+            it.error(file, message)
+            if (isFatal) {
+                it.onFinish(file)
+            }
+        }
+
+        if (e != null) LOG.error(e)
+    }
 }
