@@ -42,7 +42,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
 
     additionalCallCheckers = listOf(
         JavaAnnotationCallChecker(),
-        SuspensionPointInSynchronizedCallChecker(),
+        SuspensionPointInsideMutexLockChecker(),
         JavaClassOnCompanionChecker(),
         ProtectedInSuperClassCompanionCallChecker(),
         UnsupportedSyntheticCallableReferenceChecker(),

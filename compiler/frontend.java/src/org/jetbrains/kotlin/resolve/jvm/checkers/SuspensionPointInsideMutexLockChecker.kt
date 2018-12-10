@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-class SuspensionPointInSynchronizedCallChecker : CallChecker {
+class SuspensionPointInsideMutexLockChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor
         if (descriptor !is FunctionDescriptor || !descriptor.isSuspend) return
@@ -61,10 +61,20 @@ class SuspensionPointInSynchronizedCallChecker : CallChecker {
         if (isSynchronized) {
             val isSecondArgument = (resolved.valueArgumentsByIndex?.get(1) as? ExpressionValueArgument)?.valueArgument == child
             if (insideLambda && isSecondArgument) {
-                context.trace.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_SYNCHRONIZED.on(reportOn, resolvedCall.resultingDescriptor))
+                reportProblem(context, reportOn, resolvedCall)
             }
             return true
         }
+
+        val isWithLock = resolved.resultingDescriptor.isTopLevelInPackage("withLock", "kotlin.concurrent")
+        if (isWithLock) {
+            reportProblem(context, reportOn, resolvedCall)
+            return true
+        }
         return false
+    }
+
+    private fun reportProblem(context: CallCheckerContext, reportOn: PsiElement, resolvedCall: ResolvedCall<*>) {
+        context.trace.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION.on(reportOn, resolvedCall.resultingDescriptor))
     }
 }
