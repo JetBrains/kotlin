@@ -145,7 +145,7 @@
       <registryKey key="kotlin.uast.multiresolve.enabled"
                    description="Whether to use muiti resolve for UAST in Kotlin provided by `Call.resolveCandidates`,
                       otherwise PsiPolyVariantReference-based multiResolve will be performed"
-                   defaultValue="false"
+                   defaultValue="true"
                    restartRequired="false"/>
     </extensions>
 
