@@ -9,7 +9,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -20,7 +19,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.ThreeStateCheckBox;
 import com.intellij.util.ui.UIUtil;
@@ -41,6 +39,7 @@ import org.jetbrains.kotlin.idea.PluginStartupComponent;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.roots.RootUtilsKt;
+import org.jetbrains.kotlin.idea.util.CidrUtil;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.platform.IdePlatform;
 import org.jetbrains.kotlin.platform.IdePlatformKind;
@@ -49,8 +48,6 @@ import org.jetbrains.kotlin.platform.impl.JvmIdePlatformUtil;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
@@ -143,7 +140,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         fillLanguageAndAPIVersionList();
         fillCoroutineSupportList();
 
-        if (PlatformUtils.isCidr()) {
+        if (CidrUtil.isRunningInCidrIde()) {
             keepAliveCheckBox.setVisible(false);
             k2jvmPanel.setVisible(false);
             k2jsPanel.setVisible(false);
