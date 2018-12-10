@@ -226,3 +226,6 @@ messages/**)
 
 # remove when KT-18563 would be fixed
 -keep class org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt { *; }
+
+# used in LazyScriptDescriptor
+-keep class org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt { *; }
