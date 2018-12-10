@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
@@ -15,7 +16,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class JvmTypeOperatorLowering(val context: JvmBackendContext) : FileLoweringPass {
+internal val jvmTypeOperatorLoweringPhase = makeIrFilePhase(
+    ::JvmTypeOperatorLowering,
+    name = "JvmTypeOperatorLoweringPhase",
+    description = "Handle JVM-specific type operator lowerings"
+)
+
+private class JvmTypeOperatorLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
 

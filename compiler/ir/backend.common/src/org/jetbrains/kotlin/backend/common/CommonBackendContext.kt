@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.name.FqName
 
 interface LoggingContext {
+    var inVerbosePhase: Boolean
     fun log(message: () -> String)
 }
 
@@ -28,4 +30,6 @@ interface CommonBackendContext : BackendContext, LoggingContext {
     fun getInternalFunctions(name: String): List<FunctionDescriptor>
 
     fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
+
+    val configuration: CompilerConfiguration
 }

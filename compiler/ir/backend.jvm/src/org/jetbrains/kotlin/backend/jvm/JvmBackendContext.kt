@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.CompilerPhaseManager
-import org.jetbrains.kotlin.backend.common.CompilerPhases
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.builtins.ReflectionTypes
@@ -47,18 +46,16 @@ class JvmBackendContext(
 
     override val ir = JvmIr(irModuleFragment, symbolTable)
 
-    val phases = CompilerPhases(jvmPhases, state.configuration)
+    val phaseConfig = PhaseConfig(jvmPhases, state.configuration)
+    override var inVerbosePhase: Boolean = false
+
+    override val configuration get() = state.configuration
 
     init {
         if (state.configuration.get(CommonConfigurationKeys.LIST_PHASES) == true) {
-            phases.list()
+            phaseConfig.list()
         }
     }
-
-    var inVerbosePhase = false
-
-    fun rootPhaseManager(irFile: IrFile) = CompilerPhaseManager(this, phases, irFile, JvmPhaseRunner)
-
 
     private fun find(memberScope: MemberScope, className: String): ClassDescriptor {
         return find(memberScope, Name.identifier(className))
@@ -146,7 +143,7 @@ class JvmBackendContext(
             override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
                 get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
-            override val lateinitIsInitializedPropertyGetter= symbolTable.referenceSimpleFunction(
+            override val lateinitIsInitializedPropertyGetter = symbolTable.referenceSimpleFunction(
                 state.module.getPackage(FqName("kotlin")).memberScope.getContributedVariables(
                     Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND
                 ).single {

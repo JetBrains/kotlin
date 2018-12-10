@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmFunctionDescriptorImpl
@@ -55,7 +56,13 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
+internal val bridgePhase = makeIrFilePhase(
+    ::BridgeLowering,
+    name = "Bridge",
+    description = "Generate bridges"
+)
+
+private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     private val state = context.state
 

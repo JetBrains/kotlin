@@ -16,32 +16,78 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.CompilerPhase
+import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-fun makePatchParentsPhase(number: Int) = object : CompilerPhase<BackendContext, IrFile> {
-    override val name: String = "PatchParents$number"
-    override val description: String = "Patch parent references in IrFile, pass $number"
-    override val prerequisite: Set<CompilerPhase<BackendContext, *>> = emptySet()
+private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
+    lower = object : SameTypeCompilerPhase<CommonBackendContext, IrFile> {
+        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState, context: CommonBackendContext, input: IrFile): IrFile {
+            input.acceptVoid(PatchDeclarationParentsVisitor())
+            return input
+        }
+    },
+    name = "PatchParents$number",
+    description = "Patch parent references in IrFile, pass $number",
+    nlevels = 0
+)
 
-    override fun invoke(context: BackendContext, input: IrFile): IrFile {
-        input.acceptVoid(PatchDeclarationParentsVisitor())
-        return input
-    }
-}
+internal val jvmPhases = namedIrFilePhase(
+    name = "IrLowering",
+    description = "IR lowering",
+    lower = jvmCoercionToUnitPhase then
+            fileClassPhase then
+            kCallableNamePropertyPhase then
+
+            jvmLateinitPhase then
+
+            moveCompanionObjectFieldsPhase then
+            constAndJvmFieldPropertiesPhase then
+            propertiesPhase then
+            annotationPhase then
+
+            jvmDefaultArgumentStubPhase then
+
+            interfacePhase then
+            interfaceDelegationPhase then
+            sharedVariablesPhase then
+
+            makePatchParentsPhase(1) then
+
+            jvmLocalDeclarationsPhase then
+            callableReferencePhase then
+            functionNVarargInvokePhase then
+
+            innerClassesPhase then
+            innerClassConstructorCallsPhase then
+
+            makePatchParentsPhase(2) then
+
+            enumClassPhase then
+            objectClassPhase then
+            makeInitializersPhase(JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, true) then
+            singletonReferencesPhase then
+            syntheticAccessorPhase then
+            bridgePhase then
+            jvmOverloadsAnnotationPhase then
+            jvmStaticAnnotationPhase then
+            staticDefaultFunctionPhase then
+
+            tailrecPhase then
+            toArrayPhase then
+            jvmTypeOperatorLoweringPhase then
+            jvmBuiltinOptimizationLoweringPhase then
+
+            makePatchParentsPhase(3)
+)
 
 class JvmLower(val context: JvmBackendContext) {
     fun lower(irFile: IrFile) {
-        var state = irFile
         // TODO run lowering passes as callbacks in bottom-up visitor
-
-        context.rootPhaseManager(irFile).apply {
-            for (jvmPhase in jvmPhases) {
-                state = phase(jvmPhase, context, state)
-            }
-        }
+        jvmPhases.invokeToplevel(context.phaseConfig, context, irFile)
     }
 }

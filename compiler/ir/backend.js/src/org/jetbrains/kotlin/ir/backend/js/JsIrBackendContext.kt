@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.CompilerPhases
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -47,13 +47,14 @@ class JsIrBackendContext(
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     val dependencies: List<IrModuleFragment>
 ) : CommonBackendContext {
 
     override val builtIns = module.builtIns
 
-    val phases = CompilerPhases(jsPhases, configuration)
+    val phaseConfig = PhaseConfig(jsPhases, configuration)
+    override var inVerbosePhase: Boolean = false
 
     val internalPackageFragmentDescriptor = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
     val implicitDeclarationFile by lazy {
@@ -283,7 +284,7 @@ class JsIrBackendContext(
 
     override fun log(message: () -> String) {
         /*TODO*/
-        print(message())
+        if (inVerbosePhase) print(message())
     }
 
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {

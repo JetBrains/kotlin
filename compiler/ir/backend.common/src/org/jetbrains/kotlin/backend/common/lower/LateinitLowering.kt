@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.CompilerPhase
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -34,15 +34,11 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-fun makeLateinitPhase() = object : CompilerPhase<CommonBackendContext, IrFile> {
-    override val name = "Lateinit"
-    override val description = "Insert checks for lateinit field references"
-
-    override fun invoke(context: CommonBackendContext, input: IrFile): IrFile {
-        LateinitLowering(context).lower(input)
-        return input
-    }
-}
+val jvmLateinitPhase = makeIrFilePhase(
+    ::LateinitLowering,
+    name = "Lateinit",
+    description = "Insert checks for lateinit field references"
+)
 
 class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {

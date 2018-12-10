@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.CompilerPhaseManager
+import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -62,9 +62,7 @@ fun compile(
         irDependencyModules
     )
 
-    CompilerPhaseManager(context, context.phases, moduleFragment, JsPhaseRunner).run {
-        jsPhases.fold(data) { m, p -> phase(p, context, m) }
-    }
+    jsPhases.invokeToplevel(context.phaseConfig, context, moduleFragment)
 
     return Result(analysisResult.moduleDescriptor, context.jsProgram.toString(), context.moduleFragmentCopy)
 }

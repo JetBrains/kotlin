@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.intrinsics.Not
 import org.jetbrains.kotlin.ir.IrStatement
@@ -23,6 +24,12 @@ import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.ir.util.isTrueConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+
+internal val jvmBuiltinOptimizationLoweringPhase = makeIrFilePhase(
+    ::JvmBuiltinOptimizationLowering,
+    name = "JvmBuiltinOptimizationLowering",
+    description = "Optimize builtin calls for JVM code generation"
+)
 
 class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
 
