@@ -750,7 +750,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
      */
     private boolean parseAnnotation(AnnotationParsingMode mode) {
         assert _at(IDENTIFIER) ||
-               (_at(AT) && !WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(1)));
+               // We have "@ann" or "@:ann" or "@ :ann", but not "@ ann"
+               // (it's guaranteed that call sites do not allow the latter case)
+               (_at(AT) && (!isNextRawTokenCommentOrWhitespace() || lookahead(1) == COLON))
+                : "Invalid annotation prefix";
 
         PsiBuilder.Marker annotation = mark();
 
@@ -778,6 +781,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
         annotation.done(ANNOTATION_ENTRY);
 
         return true;
+    }
+
+    private boolean isNextRawTokenCommentOrWhitespace() {
+        return WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(1));
     }
 
     public enum NameParsingMode {
