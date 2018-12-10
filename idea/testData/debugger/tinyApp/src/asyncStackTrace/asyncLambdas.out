@@ -1,0 +1,12 @@
+LineBreakpoint created at asyncLambdas.kt:19
+Run Java
+Connected to the target VM
+asyncLambdas.kt:19
+Async stack trace:
+    asyncLambdas.AsyncLambdasKt$bar$1:14
+        b = 3
+    asyncLambdas.AsyncLambdasKt$foo$1:9
+        a = 5
+Disconnected from the target VM
+
+Process finished with exit code 0

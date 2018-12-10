@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.utils.kapt
 
+import org.jetbrains.kotlin.utils.getSafe
 import java.lang.ref.WeakReference
-import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
 import javax.annotation.processing.*
@@ -138,20 +138,5 @@ private fun ClassLoader.loadedClasses(): Vector<Class<*>> {
         return classesField.getSafe(this) as? Vector<Class<*>> ?: Vector()
     } catch (e: Throwable) {
         return Vector()
-    }
-}
-
-private fun Field.getSafe(obj: Any?): Any? {
-    return try {
-        val oldIsAccessible = isAccessible
-
-        try {
-            isAccessible = true
-            get(obj)
-        } finally {
-            isAccessible = oldIsAccessible
-        }
-    } catch (e: Throwable) {
-        null
     }
 }
