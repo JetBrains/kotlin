@@ -20,18 +20,19 @@ val CompilerOutputKind.isNativeBinary: Boolean get() = when (this) {
     CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
 }
 
-internal fun produceOutput(context: Context, phaser: PhaseManager) {
+internal fun produceCStubs(context: Context) {
+    val llvmModule = context.llvmModule!!
+    context.cStubsManager.compile(context.config.clang, context.messageCollector, context.inVerbosePhase)?.let {
+        parseAndLinkBitcodeFile(llvmModule, it.absolutePath)
+    }
+}
+
+internal fun produceOutput(context: Context) {
 
     val llvmModule = context.llvmModule!!
     val config = context.config.configuration
     val tempFiles = context.config.tempFiles
     val produce = config.get(KonanConfigKeys.PRODUCE)
-
-    phaser.phase(KonanPhase.C_STUBS) {
-        context.cStubsManager.compile(context.config.clang, context.messageCollector, context.phase!!.verbose)?.let {
-            parseAndLinkBitcodeFile(llvmModule, it.absolutePath)
-        }
-    }
 
     when (produce) {
         CompilerOutputKind.STATIC,
@@ -55,10 +56,8 @@ internal fun produceOutput(context: Context, phaser: PhaseManager) {
                 context.config.defaultNativeLibraries + 
                 generatedBitcodeFiles
 
-            phaser.phase(KonanPhase.BITCODE_LINKER) {
-                for (library in nativeLibraries) {
-                    parseAndLinkBitcodeFile(llvmModule, library)
-                }
+            for (library in nativeLibraries) {
+                parseAndLinkBitcodeFile(llvmModule, library)
             }
 
             LLVMWriteBitcodeToFile(llvmModule, output)
