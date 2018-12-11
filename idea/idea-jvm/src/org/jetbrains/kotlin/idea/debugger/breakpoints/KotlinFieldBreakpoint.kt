@@ -101,7 +101,8 @@ class KotlinFieldBreakpoint(
         super.reload()
 
         val property = getProperty(sourcePosition) ?: return
-        setFieldName(property.name!!)
+        val propertyName = property.name ?: return
+        setFieldName(propertyName)
 
         if (property is KtProperty && property.isTopLevel) {
             properties.myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingKtFile()).fileClassFqName.asString()
