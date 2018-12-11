@@ -52,7 +52,7 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
             )
         }
 
-fun inspectAttributes(iface: InterfaceDefinition, repository: Repository) : List<GenerateAttribute> {
+fun resolveNamedConstructorAttributes(iface: InterfaceDefinition, repository: Repository) : List<GenerateAttribute> {
     val attributes = if (iface.isInterface())  {
         iface.mapAttributes(repository) .toMutableList()
     } else { mutableListOf() }
@@ -62,11 +62,11 @@ fun inspectAttributes(iface: InterfaceDefinition, repository: Repository) : List
 
     superTypes.addAll(externals)
 
-    attributes.addAll(superTypes.flatMap { it -> inspectAttributes(it, repository) })
+    attributes.addAll(superTypes.flatMap { it -> resolveNamedConstructorAttributes(it, repository) })
     return attributes
 }
 
-fun inspectMethods(iface: InterfaceDefinition, repository: Repository) : List<GenerateFunction> {
+fun resolveNamedConstructorMethods(iface: InterfaceDefinition, repository: Repository) : List<GenerateFunction> {
     val attributes = if (iface.isInterface())  {
         iface.mapOperations(repository).map { it.copy(override = true)} .toMutableList()
     } else { mutableListOf() }
@@ -76,7 +76,7 @@ fun inspectMethods(iface: InterfaceDefinition, repository: Repository) : List<Ge
 
     superTypes.addAll(externals)
 
-    attributes.addAll(superTypes.flatMap { it -> inspectMethods(it, repository) })
+    attributes.addAll(superTypes.flatMap { it -> resolveNamedConstructorMethods(it, repository) })
     return attributes
 }
 
@@ -205,8 +205,8 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateC
                 namespace = "",
                 kind = GenerateDefinitionKind.CLASS,
                 superTypes = listOf(iface.name),
-                memberAttributes = inspectAttributes(iface, repository).toMutableList(),
-                memberFunctions = inspectMethods(iface, repository).toMutableList(),
+                memberAttributes = resolveNamedConstructorAttributes(iface, repository).toMutableList(),
+                memberFunctions = resolveNamedConstructorMethods(iface, repository).toMutableList(),
                 constants = emptyList(),
                 primaryConstructor = ConstructorWithSuperTypeCall(generateConstructorAsFunction(repository, namedConstructor), namedConstructor),
                 secondaryConstructors = emptyList(),
