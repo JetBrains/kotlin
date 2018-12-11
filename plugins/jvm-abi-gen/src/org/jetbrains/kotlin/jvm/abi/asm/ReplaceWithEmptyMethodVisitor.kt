@@ -19,5 +19,7 @@ internal class ReplaceWithEmptyMethodVisitor(
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions, api = ABI_EXTENSION_ASM_API_VERSION) {
     override fun performTransformations(methodNode: MethodNode) {
         methodNode.instructions.clear()
+        methodNode.localVariables.clear()
+        methodNode.tryCatchBlocks.clear()
     }
 }
