@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.scratch.actions
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.DumbService
@@ -26,6 +25,7 @@ import com.intellij.task.ProjectTaskManager
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
+import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.jetbrains.kotlin.idea.scratch.LOG as log
@@ -43,8 +43,7 @@ class RunScratchAction : ScratchAction(
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val editor = e.getData(CommonDataKeys.EDITOR) ?: return
-        val scratchPanel = getScratchPanel(editor) ?: return
+        val scratchPanel = getScratchPanelFromSelectedEditor(project) ?: return
 
         val scratchFile = scratchPanel.scratchFile
         val psiFile = scratchFile.getPsiFile() ?: return
