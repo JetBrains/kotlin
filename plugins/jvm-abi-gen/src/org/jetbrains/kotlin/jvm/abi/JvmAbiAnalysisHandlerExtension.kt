@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.incremental.isClassFile
 import org.jetbrains.kotlin.jvm.abi.asm.AbiClassBuilder
-import org.jetbrains.kotlin.jvm.abi.asm.AbiExtensionAsmApiVersion
+import org.jetbrains.kotlin.jvm.abi.asm.ABI_EXTENSION_ASM_API_VERSION
 import org.jetbrains.kotlin.jvm.abi.asm.FilterInnerClassesVisitor
 import org.jetbrains.kotlin.jvm.abi.asm.InnerClassesCollectingVisitor
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
@@ -158,7 +158,7 @@ class JvmAbiAnalysisHandlerExtension(
                 output.delete()
             } else {
                 output.transform { writer ->
-                    FilterInnerClassesVisitor(classesToRemove, AbiExtensionAsmApiVersion, writer)
+                    FilterInnerClassesVisitor(classesToRemove, ABI_EXTENSION_ASM_API_VERSION, writer)
                 }
             }
         }
