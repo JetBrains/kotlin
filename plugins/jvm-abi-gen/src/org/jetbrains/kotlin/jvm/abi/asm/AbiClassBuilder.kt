@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.jvm.abi.asm
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
 
@@ -22,10 +24,15 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
         signature: String?,
         exceptions: Array<out String>?
     ): MethodVisitor {
-        if (isPrivate(access) || isClinit(name, access)) return EMPTY_METHOD_VISITOR
+        // if both descriptor's and access's visibilities are private, we can generate an empty method
+        // 1. we need to check a descriptor, because inline reified functions
+        //    might have a non-private visibility in ABI, but they are private in bytecode
+        // 2. we need to check an access, because synthetic methods
+        //    for default parameters have private visibility, but public in bytecode
+        val descriptor = origin.descriptor as? MemberDescriptor
+        if (isPrivate(access) && descriptor != null && isPrivate(descriptor) || isClinit(name, access)) return EMPTY_METHOD_VISITOR
 
         val mv = super.newMethod(origin, access, name, desc, signature, exceptions)
-        val descriptor = origin.descriptor
         // inline function bodies are part of ABI,
         // but non-inline functions can be thrown out
         if (descriptor is FunctionDescriptor && descriptor.isInline) return mv
@@ -66,6 +73,9 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
 
         super.defineClass(origin, version, access, name, signature, superName, interfaces)
     }
+
+    private fun isPrivate(descriptor: MemberDescriptor): Boolean =
+        descriptor.visibility == Visibilities.PRIVATE
 
     private fun isPrivate(access: Int): Boolean =
         (access and Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE
