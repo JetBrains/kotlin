@@ -8,8 +8,14 @@ package org.jetbrains.kotlin.jvm.abi
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -73,7 +79,15 @@ class JvmAbiAnalysisHandlerExtension(
         }
 
         removeUnneededClasses(outputs)
-        outputs.forEach { it.flush() }
+
+        val messageCollector = compilerConfiguration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+        val reportOutputFiles = generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
+        val outputItemsCollector =
+            OutputItemsCollector { sourceFiles, outputFile ->
+                messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sourceFiles, outputFile))
+            }.takeIf { reportOutputFiles }
+        outputs.forEach { it.flush(outputItemsCollector) }
         return null
     }
 
@@ -170,7 +184,6 @@ class JvmAbiAnalysisHandlerExtension(
 
     private class AbiOutput(
         val file: File,
-        // todo report
         val sources: List<File>,
         // null bytes means that file should not be written
         private var bytes: ByteArray?
@@ -203,8 +216,10 @@ class JvmAbiAnalysisHandlerExtension(
             cr.accept(visitor, 0)
         }
 
-        fun flush() {
-            bytes?.let { FileUtil.writeToFile(file, it) }
+        fun flush(outputItemsCollector: OutputItemsCollector?) {
+            val bytes = bytes ?: return
+            FileUtil.writeToFile(file, bytes)
+            outputItemsCollector?.add(sources, file)
         }
     }
 }
