@@ -20,6 +20,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:incremental-compilation-impl"))
+    testRuntime(intellijCoreDep())
 }
 
 sourceSets {
