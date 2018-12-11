@@ -20,13 +20,10 @@ import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
-import org.jetbrains.kotlinx.serialization.compiler.resolve.classSerializer
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
-import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
-import org.jetbrains.kotlinx.serialization.compiler.resolve.toClassDescriptor
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
-class SerializableCompanionCodegenImpl(private val codegen: ImplementationBodyCodegen) :
-        SerializableCompanionCodegen(codegen.descriptor, codegen.bindingContext) {
+class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationBodyCodegen) :
+    SerializableCompanionCodegen(classCodegen.descriptor, classCodegen.bindingContext) {
 
     companion object {
         fun generateSerializableExtensions(codegen: ImplementationBodyCodegen) {
@@ -38,8 +35,15 @@ class SerializableCompanionCodegenImpl(private val codegen: ImplementationBodyCo
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
         val serial = serializableDescriptor.classSerializer?.toClassDescriptor ?: return
-        codegen.generateMethod(methodDescriptor) { _, _ ->
-            stackValueSerializerInstance(codegen, serializableDescriptor.module, serializableDescriptor.defaultType, serial, this, null) {
+        classCodegen.generateMethod(methodDescriptor) { _, _ ->
+            stackValueSerializerInstance(
+                classCodegen,
+                serializableDescriptor.module,
+                serializableDescriptor.defaultType,
+                serial,
+                this,
+                null
+            ) {
                 load(it + 1, kSerializerType)
             }
             areturn(kSerializerType)

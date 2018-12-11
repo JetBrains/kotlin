@@ -18,13 +18,17 @@ package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
@@ -424,9 +428,18 @@ object KSerializerDescriptorResolver {
             else this.makeNullable()
 
     fun createWriteSelfFunctionDescriptor(thisClass: ClassDescriptor): FunctionDescriptor {
+        val jvmStaticClass = thisClass.module.findClassAcrossModuleDependencies(
+            ClassId(
+                FqName("kotlin.jvm"),
+                Name.identifier("JvmStatic")
+            )
+        )!!
+        val jvmStaticAnnotation = AnnotationDescriptorImpl(jvmStaticClass.defaultType, mapOf(), jvmStaticClass.source)
+        val annotations = Annotations.create(listOf(jvmStaticAnnotation))
+
         val f = SimpleFunctionDescriptorImpl.create(
             thisClass,
-            Annotations.EMPTY,
+            annotations,
             SerialEntityNames.WRITE_SELF_NAME,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
             thisClass.source
@@ -435,6 +448,15 @@ object KSerializerDescriptorResolver {
 
         val args = mutableListOf<ValueParameterDescriptor>()
         var i = 0
+        // object
+        args.add(
+            ValueParameterDescriptorImpl(
+                f, null, i++, Annotations.EMPTY, Name.identifier("self"), thisClass.defaultType, false,
+                false, false, null, f.source
+            )
+        )
+
+        // encoder
         args.add(
             ValueParameterDescriptorImpl(
                 f,
@@ -451,6 +473,7 @@ object KSerializerDescriptorResolver {
             )
         )
 
+        //descriptor
         args.add(
             ValueParameterDescriptorImpl(
                 f,
@@ -469,6 +492,7 @@ object KSerializerDescriptorResolver {
 
         val kSerialClassDesc = thisClass.getClassFromSerializationPackage(SerialEntityNames.KSERIALIZER_CLASS)
 
+        // type parameters serialziers
         thisClass.declaredTypeParameters.forEach {
             val typeArgument = TypeProjectionImpl(it.defaultType)
             val kSerialClass = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kSerialClassDesc, listOf(typeArgument))
@@ -497,7 +521,7 @@ object KSerializerDescriptorResolver {
             emptyList(),
             args,
             returnType,
-            Modality.OPEN,
+            Modality.FINAL,
             Visibilities.PUBLIC
         )
 

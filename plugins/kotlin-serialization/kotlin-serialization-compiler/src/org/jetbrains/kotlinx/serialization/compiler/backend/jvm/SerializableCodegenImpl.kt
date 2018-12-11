@@ -109,7 +109,7 @@ class SerializableCodegenImpl(
             }
             val superSignature =
                 classCodegen.typeMapper.mapSignatureSkipGeneric(KSerializerDescriptorResolver.createWriteSelfFunctionDescriptor(superClass))
-            invokespecial(
+            invokestatic(
                 classCodegen.typeMapper.mapType(superClass).internalName,
                 superSignature.asmMethod.name,
                 superSignature.asmMethod.descriptor,
@@ -242,8 +242,9 @@ class SerializableCodegenImpl(
         load(0, thisAsmType)
 
         if (!superClass.isInternalSerializable) {
-            require(superClass.constructors.firstOrNull { it.valueParameters.isEmpty() } != null,
-                    { "Non-serializable parent of serializable $serializableDescriptor must have no arg constructor" })
+            require(superClass.constructors.firstOrNull { it.valueParameters.isEmpty() } != null) {
+                "Non-serializable parent of serializable $serializableDescriptor must have no arg constructor"
+            }
 
             // call
             // Sealed classes have private <init> so they cannot be inherited from Java src

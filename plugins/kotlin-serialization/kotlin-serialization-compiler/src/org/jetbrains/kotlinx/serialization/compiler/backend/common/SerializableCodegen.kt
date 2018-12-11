@@ -54,5 +54,7 @@ abstract class SerializableCodegen(
 
     protected abstract fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor)
 
-    protected abstract fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor)
+    protected open fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor) {
+
+    }
 }

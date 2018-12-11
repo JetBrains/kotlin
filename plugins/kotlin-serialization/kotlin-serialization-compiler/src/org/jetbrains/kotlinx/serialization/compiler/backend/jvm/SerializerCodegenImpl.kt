@@ -228,7 +228,7 @@ class SerializerCodegenImpl(
             )
             store(outputVar, kOutputType)
             if (serializableDescriptor.isInternalSerializable) {
-                val sig = StringBuilder("(${kOutputType.descriptor}${descType.descriptor}")
+                val sig = StringBuilder("(${objType.descriptor}${kOutputType.descriptor}${descType.descriptor}")
                 // call obj.write$Self(output, classDesc)
                 load(objVar, objType)
                 load(outputVar, kOutputType)
@@ -239,7 +239,7 @@ class SerializerCodegenImpl(
                     sig.append(kSerializerType.descriptor)
                 }
                 sig.append(")V")
-                invokevirtual(
+                invokestatic(
                     objType.internalName, SerialEntityNames.WRITE_SELF_NAME.asString(),
                     sig.toString(), false
                 )
