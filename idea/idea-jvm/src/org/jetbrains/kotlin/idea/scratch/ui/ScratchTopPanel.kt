@@ -63,6 +63,7 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     private val isMakeBeforeRunCheckbox: JCheckBox
     private val isInteractiveCheckbox: JCheckBox
 
+    private val moduleSeparator: JSeparator
     private val actionsToolbar: ActionToolbar
 
     init {
@@ -81,7 +82,10 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
             }
         }
 
-        add(JSeparator(SwingConstants.VERTICAL))
+        moduleSeparator = JSeparator(SwingConstants.VERTICAL)
+        add(moduleSeparator)
+
+        changeMakeModuleCheckboxVisibility(false)
 
         isInteractiveCheckbox = JCheckBox("Interactive mode")
         add(isInteractiveCheckbox)
@@ -119,6 +123,9 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     fun addModuleListener(f: (PsiFile, Module?) -> Unit) {
         moduleChooser.addActionListener {
             val selectedModule = moduleChooser.selectedModule
+
+            changeMakeModuleCheckboxVisibility(selectedModule != null)
+
             val psiFile = scratchFile.getPsiFile()
             if (psiFile != null) {
                 f(psiFile, selectedModule)
@@ -139,6 +146,11 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     @TestOnly
     fun setInteractiveMode(isSelected: Boolean) {
         isInteractiveCheckbox.isSelected = isSelected
+    }
+
+    private fun changeMakeModuleCheckboxVisibility(isVisible: Boolean) {
+        isMakeBeforeRunCheckbox.isVisible = isVisible
+        moduleSeparator.isVisible = isVisible
     }
 
     fun updateToolbar() {
