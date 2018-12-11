@@ -42,6 +42,20 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
 class Kapt3WorkersIT : Kapt3IT() {
     override fun kaptOptions(): KaptOptions =
         super.kaptOptions().copy(useWorkers = true)
+
+    @Test
+    fun testJavacIsLoadedOnce() {
+        // todo: actual minimum version is 4.3, but I had some problems. Investigate later.
+        // todo: consider minimum version for the whole class, with Gradle <4.3 all tests duplicate tests without workers
+        val gradleVersionRequired = GradleVersionRequired.AtLeast("4.5.1")
+
+        val project =
+            Project("javacIsLoadedOnce", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+        project.build("build") {
+            assertSuccessful()
+            assertSubstringCount("Loaded com.sun.tools.javac.util.Context from", 1)
+        }
+    }
 }
 
 open class Kapt3IT : Kapt3BaseIT() {
