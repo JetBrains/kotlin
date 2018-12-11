@@ -10,4 +10,3 @@ fun goo(a: String) {    // ERROR: Unresolved reference: goo
 @HidesMembers public inline fun <T> Iterable<???>.forEach(action: (???) -> Unit): Unit defined in kotlin.collections
 @HidesMembers public inline fun <K, V> Map<out ???, ???>.forEach(action: (Map.Entry<???, ???>) -> Unit): Unit defined in kotlin.collections */
 /** unresolvedMultiline.kts:5 Unresolved reference: goo */
-/** Compilation Error */
