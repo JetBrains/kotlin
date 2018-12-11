@@ -241,6 +241,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsArraySlice = unOp("slice")
 
+    val jsBind = defineJsBindIntrinsic()
+
     // TODO move to IntrinsifyCallsLowering
     val doNotIntrinsifyAnnotationSymbol = context.symbolTable.referenceClass(context.getInternalClass("DoNotIntrinsify"))
 
@@ -297,6 +299,19 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
         ).also {
             listOf("receiver", "fieldName").mapIndexedTo(it.valueParameters) { i, p ->
+                JsIrBuilder.buildValueParameter(p, i, irBuiltIns.anyType).also { v -> v.parent = it }
+            }
+            externalPackageFragment.declarations += it
+        }
+
+    private fun defineJsBindIntrinsic() =
+        JsIrBuilder.buildFunction(
+            "\$jsBind\$",
+            returnType = irBuiltIns.anyNType,
+            parent = externalPackageFragment,
+            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+        ).also {
+            listOf("receiver", "target").mapIndexedTo(it.valueParameters) { i, p ->
                 JsIrBuilder.buildValueParameter(p, i, irBuiltIns.anyType).also { v -> v.parent = it }
             }
             externalPackageFragment.declarations += it

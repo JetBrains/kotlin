@@ -153,6 +153,14 @@ fun IrClass.addSimpleDelegatingConstructor(
 val IrCall.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
 val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
 
+val IrSimpleFunction.isOverridable: Boolean
+    get() = visibility != Visibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
+
+val IrSimpleFunction.isOverridableOrOverrides: Boolean get() = isOverridable || overriddenSymbols.isNotEmpty()
+
+val IrClass.isFinalClass: Boolean
+    get() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
+
 fun IrValueParameter.copyTo(
     irFunction: IrFunction,
     origin: IrDeclarationOrigin = this.origin,

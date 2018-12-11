@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.ir2string
@@ -39,7 +36,7 @@ import org.jetbrains.kotlin.name.Name
 
 // TODO: fix expect/actual default parameters
 
-open class DefaultArgumentStubGenerator constructor(val context: CommonBackendContext, private val skipInlineMethods: Boolean = true) :
+open class DefaultArgumentStubGenerator constructor(open val context: CommonBackendContext, private val skipInlineMethods: Boolean = true) :
     DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.transformDeclarationsFlat { memberDeclaration ->
@@ -50,7 +47,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
         }
     }
 
-    private val symbols = context.ir.symbols
+    private val symbols get() = context.ir.symbols
 
     private fun lower(irFunction: IrFunction): List<IrFunction> {
         if (!irFunction.needsDefaultArgumentsLowering(skipInlineMethods))
@@ -124,8 +121,8 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                 variables[valueParameter] = temporaryVariable
             }
 
-            if (irFunction is IrConstructor) {
-                +IrDelegatingConstructorCallImpl(
+            when (irFunction) {
+                is IrConstructor -> +IrDelegatingConstructorCallImpl(
                     startOffset = irFunction.startOffset,
                     endOffset = irFunction.endOffset,
                     type = context.irBuiltIns.unitType,
@@ -139,16 +136,8 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
 
                     params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                 }
-            } else {
-                +irReturn(irCall(irFunction).apply {
-                    newIrFunction.typeParameters.forEachIndexed { i, param ->
-                        putTypeArgument(i, param.defaultType)
-                    }
-                    dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
-                    extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }
-
-                    params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
-                })
+                is IrSimpleFunction -> +irReturn(dispatchToImplementation(irFunction, newIrFunction, params))
+                else -> error("Unknown function declaration")
             }
         }
         // Remove default argument initializers.
@@ -158,6 +147,42 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
         return listOf(irFunction, newIrFunction)
     }
 
+    private fun IrBlockBodyBuilder.dispatchToImplementation(
+        irFunction: IrSimpleFunction,
+        newIrFunction: IrFunction,
+        params: MutableList<IrVariable>
+    ): IrExpression {
+        val dispatchCall = irCall(irFunction).apply {
+            newIrFunction.typeParameters.forEachIndexed { i, param ->
+                putTypeArgument(i, param.defaultType)
+            }
+            dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
+            extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }
+
+            params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
+        }
+        return if (needSpecialDispatch(irFunction)) {
+            val handlerDeclaration = newIrFunction.valueParameters.last()
+            // if $handler != null $handler(a, b, c) else foo(a, b, c)
+            irIfThenElse(
+                irFunction.returnType,
+                irEqualsNull(irGet(handlerDeclaration)),
+                dispatchCall,
+                generateHandleCall(handlerDeclaration, irFunction, newIrFunction, params)
+            )
+        } else dispatchCall
+    }
+
+    protected open fun needSpecialDispatch(irFunction: IrSimpleFunction) = false
+    protected open fun IrBlockBodyBuilder.generateHandleCall(
+        handlerDeclaration: IrValueParameter,
+        oldIrFunction: IrFunction,
+        newIrFunction: IrFunction,
+        params: MutableList<IrVariable>
+    ): IrExpression {
+        assert(needSpecialDispatch(oldIrFunction as IrSimpleFunction))
+        error("This method should be overridden")
+    }
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-REPLACER: ${msg()}" }
 }
@@ -170,6 +195,8 @@ private fun maskParameter(function: IrFunction, number: Int) =
 
 private fun markerParameterDeclaration(function: IrFunction) =
     function.valueParameters.single { it.name == kConstructorMarkerName }
+
+val DEFAULT_DISPATCH_CALL = object : IrStatementOriginImpl("DEFAULT_DISPATCH_CALL") {}
 
 open class DefaultParameterInjector constructor(
     val context: CommonBackendContext,
@@ -192,12 +219,11 @@ open class DefaultParameterInjector constructor(
                     return expression
 
                 val (symbolForCall, params) = parametersForCall(expression)
-                symbolForCall as IrConstructorSymbol
                 return IrDelegatingConstructorCallImpl(
                     startOffset = expression.startOffset,
                     endOffset = expression.endOffset,
                     type = context.irBuiltIns.unitType,
-                    symbol = symbolForCall,
+                    symbol = symbolForCall as IrConstructorSymbol,
                     descriptor = symbolForCall.descriptor,
                     typeArgumentsCount = symbolForCall.owner.typeParameters.size
                 )
@@ -209,7 +235,6 @@ open class DefaultParameterInjector constructor(
                         }
                         dispatchReceiver = expression.dispatchReceiver
                     }
-
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
@@ -238,7 +263,9 @@ open class DefaultParameterInjector constructor(
                     type = symbol.owner.returnType,
                     symbol = symbol,
                     descriptor = descriptor,
-                    typeArgumentsCount = expression.typeArgumentsCount
+                    typeArgumentsCount = expression.typeArgumentsCount,
+                    origin = DEFAULT_DISPATCH_CALL,
+                    superQualifierSymbol = expression.superQualifierSymbol
                 )
                     .apply {
                         this.copyTypeArgumentsFrom(expression)

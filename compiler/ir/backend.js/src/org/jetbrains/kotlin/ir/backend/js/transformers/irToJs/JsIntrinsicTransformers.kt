@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
@@ -200,6 +201,20 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val field = getInlineClassBackingField(inlineClass)
                 val fieldName = context.getNameForSymbol(field.symbol)
                 JsNameRef(fieldName, arg)
+            }
+
+            add(intrinsics.jsBind) { call: IrCall, context: JsGenerationContext ->
+                val receiver = call.getValueArgument(0)!!
+                val reference = call.getValueArgument(1) as IrFunctionReference
+                val superClass = call.superQualifierSymbol!!
+
+                val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
+                val functionName = context.getNameForSymbol(reference.symbol)
+                val superName = context.getNameForSymbol(superClass).makeRef()
+                val qPrototype = JsNameRef(functionName, prototypeOf(superName))
+                val bindRef = JsNameRef(Namer.BIND_FUNCTION, qPrototype)
+
+                JsInvocation(bindRef, jsReceiver)
             }
         }
     }
