@@ -1,7 +1,11 @@
-// EXPECTED_REACHABLE_NODES: 1305
 // IGNORE_BACKEND: JS_IR
-
-import kotlin.coroutines.*
+// IGNORE_BACKEND: JVM_IR
+// WITH_RUNTIME
+// WITH_COROUTINES
+// COMMON_COROUTINES_TEST
+import helpers.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 suspend inline fun doTwice(block: suspend () -> Unit) {
     block()
@@ -11,7 +15,7 @@ suspend inline fun doTwice(block: suspend () -> Unit) {
 var testResult: String = ""
 
 fun build(c: suspend () -> Unit) {
-    c.startCoroutine(Continuation<Unit>(EmptyCoroutineContext) { })
+    c.startCoroutine(EmptyContinuation)
 }
 
 fun box(): String {

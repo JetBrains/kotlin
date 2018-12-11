@@ -5446,6 +5446,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineSuspendFunction.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("inlineSuspendLambdaNonLocalReturn.kt")
+        public void testInlineSuspendLambdaNonLocalReturn_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineSuspendLambdaNonLocalReturn.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("inlineSuspendLambdaNonLocalReturn.kt")
+        public void testInlineSuspendLambdaNonLocalReturn_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineSuspendLambdaNonLocalReturn.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("inlinedTryCatchFinally.kt")
         public void testInlinedTryCatchFinally_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlinedTryCatchFinally.kt", "kotlin.coroutines.experimental");
