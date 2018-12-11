@@ -58,6 +58,8 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
         private val TIMEOUT_MS = 30000
     }
 
+    private var backgroundProcessIndicator: ProgressIndicator? = null
+
     override fun execute() {
         handlers.forEach { it.onStart(file) }
 
@@ -76,6 +78,8 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
                 object : Task.Backgroundable(psiFile.project, "Running Kotlin Scratch...", true) {
                     override fun run(indicator: ProgressIndicator) {
+                        backgroundProcessIndicator = indicator
+
                         val modifiedScratchSourceFile = runReadAction {
                             KtPsiFactory(psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, psiFile)
                         }
@@ -111,6 +115,14 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                     }
                 }.queue()
             }
+        }
+    }
+
+    override fun stop() {
+        try {
+            backgroundProcessIndicator?.cancel()
+        } finally {
+            handlers.forEach { it.onFinish(file) }
         }
     }
 

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
 
 abstract class ScratchExecutor(protected val file: ScratchFile) {
     abstract fun execute()
+    abstract fun stop()
 
     protected val handlers = mutableListOf<ScratchOutputHandler>()
 
