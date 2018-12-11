@@ -90,7 +90,7 @@ class ScriptDependenciesUpdater(
             }
 
             private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
-                if (file.fileType != KotlinFileType.INSTANCE) return
+                if (file.fileType != KotlinFileType.INSTANCE || !file.isValid) return
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
 
                 if (ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true) return
