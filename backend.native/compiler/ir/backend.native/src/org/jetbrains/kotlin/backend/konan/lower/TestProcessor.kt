@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class TestProcessor (val context: KonanBackendContext) {
 
@@ -82,10 +83,16 @@ internal class TestProcessor (val context: KonanBackendContext) {
 
     private fun MutableList<TestFunction>.registerFunction(
             function: IrFunctionSymbol,
-            kinds: Collection<FunctionKind>) = kinds.forEach { add(TestFunction(function, it)) }
+            kinds: Collection<Pair<FunctionKind, /* ignored: */ Boolean>>) =
+        kinds.forEach { (kind, ignored) ->
+            add(TestFunction(function, kind, ignored))
+        }
 
-    private fun MutableList<TestFunction>.registerFunction(function: IrFunctionSymbol, kind: FunctionKind) =
-            add(TestFunction(function, kind))
+    private fun MutableList<TestFunction>.registerFunction(
+        function: IrFunctionSymbol,
+        kind: FunctionKind,
+        ignored: Boolean
+    ) = add(TestFunction(function, kind, ignored))
 
     private fun <T: IrElement> IrStatementsBuilder<T>.generateFunctionRegistration(
             receiver: IrValueDeclaration,
@@ -161,19 +168,22 @@ internal class TestProcessor (val context: KonanBackendContext) {
     private val FunctionKind.runtimeKind: IrEnumEntrySymbol
         get() = symbols.getTestFunctionKind(this)
 
-    private data class TestFunction(val function: IrFunctionSymbol, val kind: FunctionKind) {
+    private data class TestFunction(
+        val function: IrFunctionSymbol,
+        val kind: FunctionKind,
         val ignored: Boolean
-            get() = function.descriptor.annotations.hasAnnotation(IGNORE_FQ_NAME)
-    }
+    )
 
     private inner class TestClass(val ownerClass: IrClassSymbol) {
         var companion: IrClassSymbol? = null
         val functions = mutableListOf<TestFunction>()
 
-        fun registerFunction(function: IrFunctionSymbol, kinds: Collection<FunctionKind>) =
-                functions.registerFunction(function, kinds)
-        fun registerFunction(function: IrFunctionSymbol, kind: FunctionKind) =
-                functions.registerFunction(function, kind)
+        fun registerFunction(
+            function: IrFunctionSymbol,
+            kinds: Collection<Pair<FunctionKind, /* ignored: */ Boolean>>
+        ) = functions.registerFunction(function, kinds)
+        fun registerFunction(function: IrFunctionSymbol, kind: FunctionKind, ignored: Boolean) =
+                functions.registerFunction(function, kind, ignored)
     }
 
     private inner class AnnotationCollector(val irFile: IrFile) : IrElementVisitorVoid {
@@ -192,27 +202,53 @@ internal class TestProcessor (val context: KonanBackendContext) {
 
         fun IrFunctionSymbol.hasAnnotation(fqName: FqName) = descriptor.annotations.any { it.fqName == fqName }
 
+        /**
+         * Checks if [this] or any of its parent functions has the annotation with the given [testAnnotation].
+         * If [this] contains the given annotation, returns [this].
+         * If one of the parent functions contains the given annotation, returns the [IrFunctionSymbol] for it.
+         * If the annotation isn't found or found only in interface methods, returns null.
+         */
+        fun IrFunctionSymbol.findAnnotatedFunction(testAnnotation: FqName): IrFunctionSymbol? {
+            val owner = this.owner
+            val parent = owner.parent
+            if (parent is IrClass && parent.isInterface) {
+                return null
+            }
+
+            if (hasAnnotation(testAnnotation)) {
+                return this
+            }
+
+            return (owner as? IrSimpleFunction)
+                ?.overriddenSymbols
+                ?.firstNotNullResult {
+                    it.findAnnotatedFunction(testAnnotation)
+                }
+        }
+
         fun registerClassFunction(classDescriptor: ClassDescriptor,
                                   function: IrFunctionSymbol,
-                                  kinds: Collection<FunctionKind>) {
+                                  kinds: Collection<Pair<FunctionKind, /* ignored: */ Boolean>>) {
 
             fun warn(msg: String) = context.reportWarning(msg, irFile, function.owner)
 
-            kinds.forEach { kind ->
+            kinds.forEach { (kind, ignored) ->
                 val annotation = kind.annotationFqName
                 when (kind) {
                     in FunctionKind.INSTANCE_KINDS -> with(classDescriptor) {
                         when {
                             isInner ->
                                 warn("Annotation $annotation is not allowed for methods of an inner class")
-                            isAbstract() ->
-                                warn("Annotation $annotation is not allowed for methods of an abstract class")
+                            isAbstract() -> {
+                                // We cannot create an abstract test class but it's allowed to mark its methods as
+                                // tests because the class can be extended. So skip this case without warnings.
+                            }
                             isCompanionObject ->
                                 warn("Annotation $annotation is not allowed for methods of a companion object")
                             constructors.none { it.valueParameters.size == 0 } ->
                                 warn("Test class has no default constructor: ${fqNameSafe}")
                             else ->
-                                testClasses.getTestClass(classDescriptor).registerFunction(function, kind)
+                                testClasses.getTestClass(classDescriptor).registerFunction(function, kind, ignored)
                         }
                     }
                     in FunctionKind.COMPANION_KINDS ->
@@ -221,10 +257,10 @@ internal class TestProcessor (val context: KonanBackendContext) {
                                 val containingClass = classDescriptor.containingDeclaration as ClassDescriptor
                                 val testClass = testClasses.getTestClass(containingClass)
                                 testClass.companion = symbols.symbolTable.referenceClass(classDescriptor)
-                                testClass.registerFunction(function, kind)
+                                testClass.registerFunction(function, kind, ignored)
                             }
                             classDescriptor.kind == ClassKind.OBJECT -> {
-                                testClasses.getTestClass(classDescriptor).registerFunction(function, kind)
+                                testClasses.getTestClass(classDescriptor).registerFunction(function, kind, ignored)
                             }
                             else -> warn("Annotation $annotation is only allowed for methods of an object " +
                                     "(named or companion) or top level functions")
@@ -249,12 +285,44 @@ internal class TestProcessor (val context: KonanBackendContext) {
             }
         }
 
+        private fun warnAboutInheritedAnnotations(
+            kind: FunctionKind,
+            function: IrFunctionSymbol,
+            annotatedFunction: IrFunctionSymbol
+        ) {
+            if (function.owner != annotatedFunction.owner) {
+                context.reportWarning(
+                    "Super method has a test annotation ${kind.annotationFqName} but the overriding method doesn't. " +
+                            "Note that the overriding method will still be executed.",
+                    irFile,
+                    function.owner
+                )
+            }
+        }
+
+        private fun warnAboutLoneIgnore(functionSymbol: IrFunctionSymbol): Unit = with(functionSymbol) {
+            if (hasAnnotation(IGNORE_FQ_NAME) && !hasAnnotation(FunctionKind.TEST.annotationFqName)) {
+                context.reportWarning(
+                    "Unused $IGNORE_FQ_NAME annotation (not paired with ${FunctionKind.TEST.annotationFqName}).",
+                    irFile,
+                    owner
+                )
+            }
+        }
+
         // TODO: Use symbols instead of containingDeclaration when such information is available.
         override fun visitFunction(declaration: IrFunction) {
             val symbol = declaration.symbol
             val owner = declaration.descriptor.containingDeclaration
 
-            val kinds = FunctionKind.values().filter { symbol.hasAnnotation(it.annotationFqName)  }
+            warnAboutLoneIgnore(symbol)
+            val kinds = FunctionKind.values().mapNotNull { kind ->
+                symbol.findAnnotatedFunction(kind.annotationFqName)?.let { annotatedFunction ->
+                    warnAboutInheritedAnnotations(kind, symbol, annotatedFunction)
+                    kind to (kind == FunctionKind.TEST && annotatedFunction.hasAnnotation(IGNORE_FQ_NAME))
+                }
+            }
+
             if (kinds.isEmpty()) {
                 return
             }

@@ -88,6 +88,13 @@ konanArtifacts {
         }
         srcDir 'testLibrary'
     }
+    def target = project.testTarget ?: 'host'
+    library('baseTestClass', targets: [target]) {
+        if (!useCustomDist) {
+            dependsOn ':dist'
+        }
+        srcFiles 'testing/library.kt'
+    }
 }
 
 task installTestLibrary(type: KlibInstall) {
@@ -2759,6 +2766,15 @@ task testing_custom_main(type: RunStandaloneKonanTest) {
             'Test suite finished: kotlin.test.tests.Custom_mainKt\n' +
             'Iteration finished: 2\n' +
             'Testing finished\n'
+}
+
+task testing_library_usage(type: RunStandaloneKonanTest) {
+    def target = project.testTarget ?: 'host'
+    dependsOn konanArtifacts.baseTestClass.getByTarget(target)
+    def klib = konanArtifacts.baseTestClass.getArtifactByTarget(target)
+    source = 'testing/library_user.kt'
+    flags = ['-tr', '-e', 'main', '-l', klib.absolutePath]
+    arguments = ['--ktest_logger=SILENT']
 }
 
 // Just check that the driver is able to produce runnable binaries.
