@@ -7,7 +7,7 @@ plugins {
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":js:js.ast"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "annotations") }
 }
 
 sourceSets {

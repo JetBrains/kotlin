@@ -13,6 +13,7 @@ dependencies {
     compile(project(":core:metadata.jvm"))
     compile(project(":core:util.runtime"))
     compile(commonDep("javax.inject"))
+    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 sourceSets {

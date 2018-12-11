@@ -11,6 +11,7 @@ javaHome = rootProject.extra["JDK_16"] as String
 dependencies {
     compile(protobufLite())
     compile(project(":kotlin-stdlib"))
+    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 sourceSets {
