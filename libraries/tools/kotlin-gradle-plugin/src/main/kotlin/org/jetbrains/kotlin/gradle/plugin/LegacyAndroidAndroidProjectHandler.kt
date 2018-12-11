@@ -66,7 +66,7 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
         }
 
         configureJavaTask(kotlinTask, javaTask, logger)
-        createSyncOutputTask(project, kotlinTask, javaTask, getVariantName(variantData))
+        registerSyncOutputTask(project, kotlinTask, javaTask, getVariantName(variantData))
 
         // In lib modules, the androidTest variants get the classes jar in their classpath instead of the Java
         // destination dir. Attach the JAR to be consumed as friend path:
