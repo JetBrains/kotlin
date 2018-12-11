@@ -102,7 +102,7 @@ class StorageComponentContainer(private val id: String, parent: StorageComponent
     override fun <T> create(request: Class<T>): T {
         val constructorBinding = request.bindToConstructor(unknownContext)
         val args = constructorBinding.argumentDescriptors.map { it.getValue() }.toTypedArray()
-        return constructorBinding.constructor.newInstance(*args) as T
+        return runWithUnwrappingInvocationException { constructorBinding.constructor.newInstance(*args) as T }
     }
 
     override fun toString() = "Container $id"
