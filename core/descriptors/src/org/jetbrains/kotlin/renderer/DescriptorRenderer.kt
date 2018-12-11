@@ -187,7 +187,7 @@ interface DescriptorRendererOptions {
     var renderDefaultVisibility: Boolean
     var renderDefaultModality: Boolean
     var renderConstructorDelegation: Boolean
-    var renderAnnotationPropertiesInPrimaryConstructor: Boolean
+    var renderPrimaryConstructorParametersAsProperties: Boolean
     var actualPropertiesInPrimaryConstructor: Boolean
     var uninferredTypeParameterAsName: Boolean
     var overrideRenderingPolicy: OverrideRenderingPolicy

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
@@ -815,7 +814,9 @@ internal class DescriptorRendererImpl(
         renderModifier(builder, valueParameter.isCrossinline, "crossinline")
         renderModifier(builder, valueParameter.isNoinline, "noinline")
 
-        if (renderAnnotationPropertiesInPrimaryConstructor && valueParameter.containingDeclaration.isAnnotationConstructor()) {
+        if (renderPrimaryConstructorParametersAsProperties &&
+            (valueParameter.containingDeclaration as? ClassConstructorDescriptor)?.isPrimary == true
+        ) {
             renderModifier(builder, actualPropertiesInPrimaryConstructor, "actual")
             renderModifier(builder, true, "val")
         }
