@@ -22,6 +22,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(project(":kotlin-stdlib"))
+    testCompileOnly("org.jetbrains:annotations:13.0")
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }

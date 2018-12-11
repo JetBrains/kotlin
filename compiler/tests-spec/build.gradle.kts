@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     testCompile(projectTests(":compiler"))
+    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 sourceSets {

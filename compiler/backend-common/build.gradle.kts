@@ -13,6 +13,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:ir.tree"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 sourceSets {

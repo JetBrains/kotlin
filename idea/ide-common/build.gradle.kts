@@ -10,7 +10,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":js:js.frontend"))
     compile(project(":js:js.serializer"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "annotations") }
     compileOnly(intellijDep())
 }
 

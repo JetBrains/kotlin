@@ -12,6 +12,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend"))
     compile(project(":kotlin-stdlib"))
+    compileOnly("org.jetbrains:annotations:13.0")
     compile(project(":kotlin-reflect"))
     compile(projectTests(":compiler:tests-common"))
     compile(commonDep("junit:junit"))

@@ -9,7 +9,7 @@ jvmTarget = "1.6"
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "annotations") }
     compileOnly(intellijDep()) { includeJars("trove4j") }
 }
 
