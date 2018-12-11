@@ -774,7 +774,7 @@ class TypeResolver(
                 return Pair(result, null)
             } else {
                 assert(restParameters.size == restArguments.size) {
-                    "Number of type of restParameters should be equal to ${restArguments.size}, " +
+                    "Number of type of restParameters should be equal to ${restParameters.size}, " +
                             "but ${restArguments.size} were found for $classifierDescriptor/$nextParameterOwner"
                 }
 
