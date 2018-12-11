@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.lang.AssertionError
+import java.util.*
 
 interface KtQualifiedExpression : KtExpression {
     val receiverExpression: KtExpression
@@ -32,7 +32,9 @@ interface KtQualifiedExpression : KtExpression {
         get() = getExpression(true)
 
     val operationTokenNode: ASTNode
-        get() = node.findChildByType(KtTokens.OPERATIONS)!!
+        get() = node.findChildByType(KtTokens.OPERATIONS) ?: error(
+            "No operation node for ${node.elementType}. Children: ${Arrays.toString(children)}"
+        )
 
     val operationSign: KtSingleValueToken
         get() = operationTokenNode.elementType as KtSingleValueToken
