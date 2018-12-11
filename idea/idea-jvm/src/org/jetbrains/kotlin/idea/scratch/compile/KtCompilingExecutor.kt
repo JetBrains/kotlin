@@ -63,16 +63,14 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     override fun execute() {
         handler.onStart(file)
 
-        val module = file.getModule() ?: return error("Module should be selected")
-        val psiFile = file.getPsiFile() as? KtFile ?: return error("Couldn't find KtFile for current editor")
+        val module = file.getModule() ?: return errorOccurs("Module should be selected", isFatal = true)
+        val psiFile = file.getPsiFile() as? KtFile ?: return errorOccurs("Couldn't find KtFile for current editor", isFatal = true)
 
-        if (!checkForErrors(psiFile)) {
-            return error("Compilation Error")
-        }
+        if (!checkForErrors(psiFile)) return
 
         val result = runReadAction { KtScratchSourceFileProcessor().process(file) }
         when (result) {
-            is KtScratchSourceFileProcessor.Result.Error -> return error(result.message)
+            is KtScratchSourceFileProcessor.Result.Error -> return errorOccurs(result.message, isFatal = true)
             is KtScratchSourceFileProcessor.Result.OK -> {
                 LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
 
@@ -96,21 +94,26 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
                                 LOG.printDebugMessage(commandLine.commandLineString)
 
-                                val handler = CapturingProcessHandler(commandLine)
-                                val executionResult = handler.runProcessWithProgressIndicator(indicator, TIMEOUT_MS)
+                                val processHandler = CapturingProcessHandler(commandLine)
+                                val executionResult = processHandler.runProcessWithProgressIndicator(indicator, TIMEOUT_MS)
                                 when {
-                                    executionResult.isTimeout -> error("Couldn't get scratch execution result - stopped by timeout ($TIMEOUT_MS ms)")
-                                    executionResult.isCancelled -> error("Couldn't get scratch execution result - cancelled by user")
-                                    else -> ProcessOutputParser().parse(executionResult)
+                                    executionResult.isTimeout -> {
+                                        errorOccurs("Couldn't get scratch execution result - stopped by timeout ($TIMEOUT_MS ms)")
+                                    }
+                                    executionResult.isCancelled -> {
+                                        errorOccurs("Couldn't get scratch execution result - cancelled by user")
+                                    }
+                                    else -> {
+                                        ProcessOutputParser().parse(executionResult)
+                                    }
                                 }
                             } finally {
                                 tempDir.delete()
+                                handler.onFinish(file)
                             }
                         } catch (e: Throwable) {
-                            LOG.info(result.code, e)
-                            handler.error(file, e.message ?: "Couldn't compile ${psiFile.name}")
-                        } finally {
-                            handler.onFinish(file)
+                            LOG.printDebugMessage(result.code)
+                            errorOccurs(e.message ?: "Couldn't compile ${psiFile.name}", e, isFatal = true)
                         }
                     }
                 }.queue()
@@ -192,14 +195,14 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             try {
                 AnalyzingUtils.checkForSyntacticErrors(psiFile)
             } catch (e: IllegalArgumentException) {
-                handler.error(file, e.message ?: "Couldn't compile ${psiFile.name}")
+                errorOccurs(e.message ?: "Couldn't compile ${psiFile.name}", isFatal = true)
                 return@runReadAction false
             }
 
             val analysisResult = psiFile.analyzeWithAllCompilerChecks()
 
             if (analysisResult.isError()) {
-                handler.error(file, analysisResult.error.message ?: "Couldn't compile ${psiFile.name}")
+                errorOccurs(analysisResult.error.message ?: "Couldn't compile ${psiFile.name}", isFatal = true)
                 return@runReadAction false
             }
 
@@ -226,15 +229,11 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                         handler.error(file, errorText)
                     }
                 }
+                handler.onFinish(file)
                 return@runReadAction false
             }
             return@runReadAction true
         }
-    }
-
-    private fun error(message: String) {
-        handler.error(file, message)
-        handler.onFinish(file)
     }
 
     private fun ScratchFile.findExpression(psiElement: PsiElement): ScratchExpression? {
@@ -272,7 +271,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                     val lineWoPrefix = line.removePrefix(KtScratchSourceFileProcessor.GENERATED_OUTPUT_PREFIX)
                     if (isResultEnd(lineWoPrefix)) {
                         val extractedLineInfo = extractLineInfoFrom(lineWoPrefix)
-                                ?: return error("Couldn't extract line info from line: $lineWoPrefix")
+                            ?: return errorOccurs("Couldn't extract line info from line: $lineWoPrefix", isFatal = true)
                         val (startLine, endLine) = extractedLineInfo
                         val scratchExpression = file.findExpression(startLine, endLine)
                         if (scratchExpression == null) {

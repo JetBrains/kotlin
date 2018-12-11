@@ -42,7 +42,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
     override fun execute() {
         handler.onStart(file)
 
-        val module = file.getModule() ?: return error("Module should be selected")
+        val module = file.getModule() ?: return errorOccurs("Module should be selected", isFatal = true)
         val cmdLine = KotlinConsoleKeeper.createCommandLine(module)
 
         LOG.printDebugMessage("Execute REPL: ${cmdLine.commandLineString}")
@@ -77,11 +77,6 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         val bytes = ("$xmlRes\n").toByteArray(charset)
         processInputOS.write(bytes)
         processInputOS.flush()
-    }
-
-    private fun error(file: ScratchFile, message: String) {
-        handler.error(file, message)
-        handler.onFinish(file)
     }
 
     private class ReplHistory {
