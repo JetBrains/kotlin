@@ -2557,6 +2557,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testSequence() throws Exception {
             runTest("idea/testData/inspectionsLocal/forEachParameterNotUsed/sequence.kt");
         }
+
+        @TestMetadata("string.kt")
+        public void testString() throws Exception {
+            runTest("idea/testData/inspectionsLocal/forEachParameterNotUsed/string.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType")
