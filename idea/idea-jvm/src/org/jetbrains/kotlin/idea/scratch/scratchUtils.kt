@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.scratch
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
@@ -37,6 +38,11 @@ fun getAllEditorsWithScratchPanel(project: Project): List<Pair<TextEditor, Scrat
         val panel = it.scratchTopPanel
         if (panel != null) it to panel else null
     }
+
+fun getScratchPanelFromSelectedEditor(project: Project): ScratchTopPanel? {
+    val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
+    return TextEditorProvider.getInstance().getTextEditor(editor).getScratchPanel()
+}
 
 fun TextEditor.getScratchPanel(): ScratchTopPanel? {
     return scratchTopPanel
