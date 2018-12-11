@@ -43,6 +43,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 
@@ -127,6 +128,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
             case '@':
                 autoPopupLabelLookup(project, editor);
+                autoPopupKDocTag(project, editor);
                 return Result.CONTINUE;
 
             case ':':
@@ -176,6 +178,16 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
                 return false;
             }
+        });
+    }
+
+    private static void autoPopupKDocTag(Project project, final Editor editor) {
+        AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, (PsiFile file) -> {
+            int offset = editor.getCaretModel().getOffset();
+            PsiElement lastElement = file.findElementAt(offset - 1);
+            if (lastElement == null) return false;
+
+            return lastElement.getNode().getElementType() == KDocTokens.TEXT;
         });
     }
 

@@ -8,3 +8,4 @@ fun f(x: Int): Int {
 // EXIST: @return
 // EXIST: @suppress
 // ABSENT: @receiver
+// INVOCATION_COUNT: 1

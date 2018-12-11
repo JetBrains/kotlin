@@ -133,11 +133,13 @@ object KDocTagCompletionProvider : CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
         // findIdentifierPrefix() requires identifier part characters to be a superset of identifier start characters
         val prefix = CompletionUtil.findIdentifierPrefix(
-                parameters.position.containingFile,
-                parameters.offset,
-                StandardPatterns.character().javaIdentifierPart() or singleCharPattern('@'),
-                StandardPatterns.character().javaIdentifierStart() or singleCharPattern('@'))
+            parameters.position.containingFile,
+            parameters.offset,
+            StandardPatterns.character().javaIdentifierPart() or singleCharPattern('@'),
+            StandardPatterns.character().javaIdentifierStart() or singleCharPattern('@')
+        )
 
+        if (parameters.isAutoPopup && prefix.isEmpty()) return
         if (prefix.isNotEmpty() && !prefix.startsWith('@')) {
             return
         }

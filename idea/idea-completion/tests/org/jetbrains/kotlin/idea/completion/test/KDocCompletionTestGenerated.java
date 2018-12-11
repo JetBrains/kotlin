@@ -34,6 +34,11 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/kdoc"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("AutoPopupAfterAtInKDoc.kt")
+    public void testAutoPopupAfterAtInKDoc() throws Exception {
+        runTest("idea/idea-completion/testData/kdoc/AutoPopupAfterAtInKDoc.kt");
+    }
+
     @TestMetadata("ExtensionsFQLink.kt")
     public void testExtensionsFQLink() throws Exception {
         runTest("idea/idea-completion/testData/kdoc/ExtensionsFQLink.kt");
@@ -77,6 +82,11 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
     @TestMetadata("MemberLink.kt")
     public void testMemberLink() throws Exception {
         runTest("idea/idea-completion/testData/kdoc/MemberLink.kt");
+    }
+
+    @TestMetadata("NoAutoPopupAfterDigitInKDoc.kt")
+    public void testNoAutoPopupAfterDigitInKDoc() throws Exception {
+        runTest("idea/idea-completion/testData/kdoc/NoAutoPopupAfterDigitInKDoc.kt");
     }
 
     @TestMetadata("NoCompletionAfterFunName.kt")
