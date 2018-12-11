@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -46,6 +47,10 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWrapper() {
+    companion object {
+        private val LOG = Logger.getInstance(KotlinShortNamesCache::class.java)
+    }
+
     //region Classes
 
     override fun processAllClassNames(processor: Processor<String>): Boolean {
@@ -77,8 +82,14 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
             if (fqName == null) return@Processor true
 
             val isInterfaceDefaultImpl = name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && fqName.shortName().asString() != name
-            assert(fqName.shortName().asString() == name || isInterfaceDefaultImpl) {
-                "A declaration obtained from index has non-matching name:\nin index: $name\ndeclared: ${fqName.shortName()}($fqName)"
+
+            if (fqName.shortName().asString() != name && !isInterfaceDefaultImpl) {
+                LOG.error(
+                    "A declaration obtained from index has non-matching name:" +
+                            "\nin index: $name" +
+                            "\ndeclared: ${fqName.shortName()}($fqName)")
+
+                return@Processor true
             }
 
             val fqNameToSearch = if (isInterfaceDefaultImpl) fqName.defaultImplsChild() else fqName
