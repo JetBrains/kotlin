@@ -40,7 +40,7 @@ class ReformatInspection : LocalInspectionTool() {
     override fun runForWholeFile(): Boolean = true
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
-        if (file !is KtFile || !ProjectRootsUtil.isInProjectSource(file)) {
+        if (file !is KtFile || !file.isWritable || !ProjectRootsUtil.isInProjectSource(file)) {
             return null
         }
 
