@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.jvm.abi.asm
 
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 
-internal class InnerClassesCollectingVisitor : ClassVisitor(AbiExtensionAsmApiVersion) {
+internal class InnerClassesCollectingVisitor : ClassVisitor(ABI_EXTENSION_ASM_API_VERSION) {
     lateinit var ownInternalName: String
         private set
 
