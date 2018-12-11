@@ -19,6 +19,8 @@ fun run() {
     testConversions()
     testWeakRefs()
 
+    assertEquals(2, ForwardDeclaredEnum.TWO.value)
+
     println(
             getSupplier(
                     invoke1(42) { it * 2 }

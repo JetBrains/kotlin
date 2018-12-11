@@ -240,7 +240,13 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 
     private fun getEnumDefAt(cursor: CValue<CXCursor>): EnumDefImpl {
         if (clang_isCursorDefinition(cursor) == 0) {
-            TODO("support enum forward declarations")
+            val definitionCursor = clang_getCursorDefinition(cursor)
+            if (clang_isCursorDefinition(definitionCursor) != 0) {
+                return getEnumDefAt(definitionCursor)
+            } else {
+                TODO("support enum forward declarations: " +
+                        clang_getTypeSpelling(clang_getCursorType(cursor)).convertAndDispose())
+            }
         }
 
         return enumRegistry.getOrPut(cursor) {

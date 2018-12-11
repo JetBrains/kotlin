@@ -9,3 +9,8 @@ struct StructWithConstFields getStructWithConstFields() {
     struct StructWithConstFields result = { 111, 222 };
     return result;
 }
+
+enum ForwardDeclaredEnum;
+enum ForwardDeclaredEnum {
+    ZERO, ONE, TWO
+};

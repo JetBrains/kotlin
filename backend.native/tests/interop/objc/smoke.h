@@ -61,3 +61,8 @@ int formatStringLength(NSString* format, ...);
 
 #define STRING_MACRO @"String macro"
 #define CFSTRING_MACRO CFSTR("CFString macro")
+
+typedef NS_ENUM(int32_t, ForwardDeclaredEnum);
+typedef NS_ENUM(int32_t, ForwardDeclaredEnum) {
+    ZERO, ONE, TWO,
+};

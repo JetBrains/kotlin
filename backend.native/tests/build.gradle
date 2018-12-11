@@ -2838,8 +2838,8 @@ kotlinNativeInterop {
         defFile 'interop/basics/cunsupported.def'
     }
 
-    cstructs {
-        defFile 'interop/basics/cstructs.def'
+    ctypes {
+        defFile 'interop/basics/ctypes.def'
     }
 
     if (isMac()) {
@@ -2935,10 +2935,10 @@ task interop_unsupported(type: RunInteropKonanTest) {
     interop = 'cunsupported'
 }
 
-task interop_structs(type: RunInteropKonanTest) {
+task interop_types(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-    source = "interop/basics/structs.kt"
-    interop = 'cstructs'
+    source = "interop/basics/types.kt"
+    interop = 'ctypes'
 }
 
 task interop_echo_server(type: RunInteropKonanTest) {
