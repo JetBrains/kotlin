@@ -182,7 +182,7 @@ private val CallableReferenceLoweringPhase = makeJsPhase(
 )
 
 private val DefaultArgumentStubGeneratorPhase = makeJsPhase(
-    { context, module -> DefaultArgumentStubGenerator(context).lower(module) },
+    { context, module -> JsDefaultArgumentStubGenerator(context).lower(module) },
     name = "DefaultArgumentStubGenerator",
     description = "Generate synthetic stubs for functions with default parameter values"
 )
@@ -198,6 +198,12 @@ private val DefaultParameterCleanerPhase = makeJsPhase(
     { context, module -> DefaultParameterCleaner(context).lower(module) },
     name = "DefaultParameterCleaner",
     description = "Clean default parameters up"
+)
+
+private val JsDefaultCallbackGeneratorPhase = makeJsPhase(
+    { context, module -> JsDefaultCallbackGenerator(context).lower(module) },
+    name = "JsDefaultCallbackGenerator",
+    description = "Build binding for super calls with default parameters"
 )
 
 private val VarargLoweringPhase = makeJsPhase(
@@ -342,6 +348,7 @@ val jsPhases = listOf(
     DefaultArgumentStubGeneratorPhase,
     DefaultParameterInjectorPhase,
     DefaultParameterCleanerPhase,
+    JsDefaultCallbackGeneratorPhase,
     VarargLoweringPhase,
     PropertiesLoweringPhase,
     InitializersLoweringPhase,

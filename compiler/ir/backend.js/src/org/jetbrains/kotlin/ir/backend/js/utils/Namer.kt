@@ -33,6 +33,7 @@ object Namer {
 
     val CALL_FUNCTION = "call"
     val APPLY_FUNCTION = "apply"
+    val BIND_FUNCTION = "bind"
 
     val SLICE_FUNCTION = "slice"
     val CONCAT_FUNCTION = "concat"
