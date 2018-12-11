@@ -139,10 +139,16 @@ fun OverrideMemberChooserObject.generateMember(
         else -> bodyType
     }
 
-    val renderer = when {
+    val renderer = if (!forceActual && !forceExpect) OVERRIDE_RENDERER else when {
         forceActual -> ACTUAL_RENDERER
-        forceExpect -> EXPECT_RENDERER
-        else -> OVERRIDE_RENDERER
+        else -> EXPECT_RENDERER
+    }.withOptions {
+        if (descriptor is ClassConstructorDescriptor && descriptor.isPrimary) {
+            val containingClass = descriptor.containingDeclaration
+            if (containingClass.kind == ClassKind.ANNOTATION_CLASS || containingClass.isInline) {
+                renderPrimaryConstructorParametersAsProperties = true
+            }
+        }
     }
 
     if (preferConstructorParameter && descriptor is PropertyDescriptor) {
@@ -214,7 +220,6 @@ private val EXPECT_RENDERER = OVERRIDE_RENDERER.withOptions {
     secondaryConstructorsAsPrimary = false
     renderDefaultVisibility = false
     renderDefaultModality = false
-    renderAnnotationPropertiesInPrimaryConstructor = true
     renderTypeExpansions = true
 }
 
