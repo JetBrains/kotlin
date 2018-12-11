@@ -74,18 +74,26 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     }
 
     open fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Boolean) {
-        (target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).apply {
+        fun AbstractKotlinCompile<*>.configureAction() {
             source(sourceSet.kotlin)
             sourceFilesExtensions(sourceSet.customSourceFilesExtensions)
             if (addAsCommonSources) {
                 commonSourceSet += sourceSet.kotlin
             }
         }
+        // Note! Invocation of getByName results in preliminary task instantiation. After fix of this issue the following code should be uncommented:
+//        if (useLazyTaskConfiguration) {
+//            (target.project.tasks.named(compileKotlinTaskName) as TaskProvider<AbstractKotlinCompile<*>>).configure {
+//                it.configureAction()
+//            }
+//        }
+        (target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).configureAction()
     }
 
     override fun source(sourceSet: KotlinSourceSet) {
         if (kotlinSourceSets.add(sourceSet)) {
             with(target.project) {
+                //TODO possibly issue with forced instantiation
                 whenEvaluated {
                     sourceSet.getSourceSetHierarchy().forEach { sourceSet ->
                         val isCommonSource =
