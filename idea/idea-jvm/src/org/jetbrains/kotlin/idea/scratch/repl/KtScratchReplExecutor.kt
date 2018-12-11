@@ -40,7 +40,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
     private lateinit var osProcessHandler: OSProcessHandler
 
     override fun execute() {
-        handlers.forEach { it.onStart(file) }
+        handler.onStart(file)
 
         val module = file.getModule() ?: return error("Module should be selected")
         val cmdLine = KotlinConsoleKeeper.createCommandLine(module)
@@ -62,7 +62,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         try {
             osProcessHandler.process.destroy()
         } finally {
-            handlers.forEach { it.onFinish(file) }
+            handler.onFinish(file)
         }
     }
 
@@ -80,8 +80,8 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
     }
 
     private fun error(file: ScratchFile, message: String) {
-        handlers.forEach { it.error(file, message) }
-        handlers.forEach { it.onFinish(file) }
+        handler.error(file, message)
+        handler.onFinish(file)
     }
 
     private class ReplHistory {
@@ -118,7 +118,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         }
 
         override fun notifyProcessTerminated(exitCode: Int) {
-            handlers.forEach { it.onFinish(file) }
+            handler.onFinish(file)
         }
 
         private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))
@@ -128,8 +128,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
             val output = try {
                 factory.newDocumentBuilder().parse(strToSource(text))
             } catch (e: Exception) {
-                handlers.forEach { it.error(file, "Couldn't parse REPL output: $text") }
-                return
+                return handler.error(file, "Couldn't parse REPL output: $text")
             }
 
             val root = output.firstChild as Element
@@ -152,7 +151,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
                 }
 
                 if (lastExpression != null) {
-                    handlers.forEach { it.handle(file, lastExpression, result) }
+                    handler.handle(file, lastExpression, result)
                 }
             }
         }
