@@ -61,7 +61,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     private var backgroundProcessIndicator: ProgressIndicator? = null
 
     override fun execute() {
-        handlers.forEach { it.onStart(file) }
+        handler.onStart(file)
 
         val module = file.getModule() ?: return error("Module should be selected")
         val psiFile = file.getPsiFile() as? KtFile ?: return error("Couldn't find KtFile for current editor")
@@ -108,9 +108,9 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                             }
                         } catch (e: Throwable) {
                             LOG.info(result.code, e)
-                            handlers.forEach { it.error(file, e.message ?: "Couldn't compile ${psiFile.name}") }
+                            handler.error(file, e.message ?: "Couldn't compile ${psiFile.name}")
                         } finally {
-                            handlers.forEach { it.onFinish(file) }
+                            handler.onFinish(file)
                         }
                     }
                 }.queue()
@@ -122,7 +122,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
         try {
             backgroundProcessIndicator?.cancel()
         } finally {
-            handlers.forEach { it.onFinish(file) }
+            handler.onFinish(file)
         }
     }
 
@@ -192,14 +192,14 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             try {
                 AnalyzingUtils.checkForSyntacticErrors(psiFile)
             } catch (e: IllegalArgumentException) {
-                handlers.forEach { it.error(file, e.message ?: "Couldn't compile ${psiFile.name}") }
+                handler.error(file, e.message ?: "Couldn't compile ${psiFile.name}")
                 return@runReadAction false
             }
 
             val analysisResult = psiFile.analyzeWithAllCompilerChecks()
 
             if (analysisResult.isError()) {
-                handlers.forEach { it.error(file, analysisResult.error.message ?: "Couldn't compile ${psiFile.name}") }
+                handler.error(file, analysisResult.error.message ?: "Couldn't compile ${psiFile.name}")
                 return@runReadAction false
             }
 
@@ -214,16 +214,16 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                             val scratchExpression = file.findExpression(diagnostic.psiElement)
                             if (scratchExpression == null) {
                                 LOG.error("Couldn't find expression to report error: ${diagnostic.psiElement.getElementTextWithContext()}")
-                                handlers.forEach { it.error(file, errorText) }
+                                handler.error(file, errorText)
 
                             } else {
-                                handlers.forEach { it.handle(file, scratchExpression, ScratchOutput(errorText, ScratchOutputType.ERROR)) }
+                                handler.handle(file, scratchExpression, ScratchOutput(errorText, ScratchOutputType.ERROR))
                             }
                         } else {
-                            handlers.forEach { it.error(file, errorText) }
+                            handler.error(file, errorText)
                         }
                     } else {
-                        handlers.forEach { it.error(file, errorText) }
+                        handler.error(file, errorText)
                     }
                 }
                 return@runReadAction false
@@ -233,8 +233,8 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     }
 
     private fun error(message: String) {
-        handlers.forEach { it.error(file, message) }
-        handlers.forEach { it.onFinish(file) }
+        handler.error(file, message)
+        handler.onFinish(file)
     }
 
     private fun ScratchFile.findExpression(psiElement: PsiElement): ScratchExpression? {
@@ -251,7 +251,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             val out = processOutput.stdout
             val err = processOutput.stderr
             if (err.isNotBlank()) {
-                handlers.forEach { it.error(file, err) }
+                handler.error(file, err)
             }
             if (out.isNotBlank()) {
                 parseStdOut(out)
@@ -282,15 +282,11 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                             )
                         } else {
                             userOutput.forEach { output ->
-                                handlers.forEach {
-                                    it.handle(file, scratchExpression, ScratchOutput(output, ScratchOutputType.OUTPUT))
-                                }
+                                handler.handle(file, scratchExpression, ScratchOutput(output, ScratchOutputType.OUTPUT))
                             }
 
                             results.forEach { result ->
-                                handlers.forEach {
-                                    it.handle(file, scratchExpression, ScratchOutput(result, ScratchOutputType.RESULT))
-                                }
+                                handler.handle(file, scratchExpression, ScratchOutput(result, ScratchOutputType.RESULT))
                             }
                         }
 
