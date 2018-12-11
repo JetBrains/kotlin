@@ -1,3 +1,11 @@
+## v1.1.0 (Dec 2018)
+  * Performance optimizations:
+    * optimization of queue of finalization
+    * loop generation optimization
+	* reduce RTTI size
+  * Contract support
+  * Regexp fix
+
 ## v0.9.3 (Sep 2018)
   * Bugfixes
 
