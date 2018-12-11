@@ -5,19 +5,9 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve.util
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 
-
-private val LOG = Logger.getInstance("kotlin.resolve.dumb.mode")
-
-fun Project.isInDumbMode(): Boolean {
-    val dumbService = DumbService.getInstance(this)
-    val dumb = dumbService.isDumb
-    if (dumb && dumbService.isAlternativeResolveEnabled) {
-        LOG.warn("Kotlin does not support alternative resolve", Throwable("<stacktrace>"))
-    }
-    return dumb
-}
+// ideally we should do something if dumbService.isAlternativeResolveEnabled, because platform expects resolve to work in such cases
+fun Project.isInDumbMode(): Boolean = DumbService.getInstance(this).isDumb
 
