@@ -22,7 +22,9 @@ import com.intellij.execution.ui.ConfigurationModuleSelector
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
+import org.jetbrains.kotlin.idea.scratch.actions.StopScratchAction
 import org.jetbrains.kotlin.idea.scratch.addScratchPanel
 import org.jetbrains.kotlin.idea.scratch.removeScratchPanel
 import javax.swing.*
@@ -59,8 +62,11 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     private val isReplCheckbox: JCheckBox
     private val isMakeBeforeRunCheckbox: JCheckBox
 
+    private val actionsToolbar: ActionToolbar
+
     init {
-        add(createActionsToolbar())
+        actionsToolbar = createActionsToolbar()
+        add(actionsToolbar.component)
 
         moduleChooser = createModuleChooser(scratchFile.project)
         add(JLabel("Use classpath of module"))
@@ -123,14 +129,21 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         isMakeBeforeRunCheckbox.isSelected = isSelected
     }
 
-    private fun createActionsToolbar(): JComponent {
+    fun updateToolbar() {
+        ApplicationManager.getApplication().invokeLater {
+            actionsToolbar.updateActionsImmediately()
+        }
+    }
+
+    private fun createActionsToolbar(): ActionToolbar {
         val toolbarGroup = DefaultActionGroup().apply {
             add(RunScratchAction())
+            add(StopScratchAction())
             addSeparator()
             add(ClearScratchAction())
         }
 
-        return ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, toolbarGroup, true).component
+        return ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, toolbarGroup, true)
     }
 
     private fun createModuleChooser(project: Project): ModulesComboBox {

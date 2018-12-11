@@ -198,6 +198,9 @@
     <action id="Kotlin.ClearScratch" class="org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction"
             text="Clear Kotlin Scratch" description="Clear Kotlin Scratch">
     </action>
+    <action id="Kotlin.StopScratch" class="org.jetbrains.kotlin.idea.scratch.actions.StopScratchAction"
+            text="Stop scratch execution" description="Stop scratch execution">
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
