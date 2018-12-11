@@ -29,11 +29,6 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/jvm-abi-gen/testData/compare"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
-    @TestMetadata("anonymousClass")
-    public void testAnonymousClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/anonymousClass/");
-    }
-
     @TestMetadata("classFlags")
     public void testClassFlags() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/classFlags/");
@@ -64,39 +59,14 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");
     }
 
-    @TestMetadata("innerClasses")
-    public void testInnerClasses() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/innerClasses/");
-    }
-
-    @TestMetadata("lambda")
-    public void testLambda() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/lambda/");
-    }
-
-    @TestMetadata("localClass")
-    public void testLocalClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/localClass/");
-    }
-
     @TestMetadata("parameterName")
     public void testParameterName() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/parameterName/");
     }
 
-    @TestMetadata("privateClass")
-    public void testPrivateClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/privateClass/");
-    }
-
     @TestMetadata("privateTypealias")
     public void testPrivateTypealias() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/privateTypealias/");
-    }
-
-    @TestMetadata("propertyReference")
-    public void testPropertyReference() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/propertyReference/");
     }
 
     @TestMetadata("returnType")

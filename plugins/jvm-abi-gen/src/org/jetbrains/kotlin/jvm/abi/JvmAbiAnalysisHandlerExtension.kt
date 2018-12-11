@@ -78,7 +78,11 @@ class JvmAbiAnalysisHandlerExtension(
             outputs.add(AbiOutput(file, outputFile.sourceFiles, outputFile.asByteArray()))
         }
 
-        removeUnneededClasses(outputs)
+        // private/local/synthetic class removal is temporarily turned off, because the implementation
+        // was not correct: it was not taking into account that private/local classes could be used
+        // from inline functions
+        // todo: implement correct removal
+        //removeUnneededClasses(outputs)
 
         val messageCollector = compilerConfiguration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
@@ -94,6 +98,8 @@ class JvmAbiAnalysisHandlerExtension(
     /**
      * Removes private or local classes from outputs
      */
+    // todo: fix usage (see analysisCompleted)
+    @Suppress("unused")
     private fun removeUnneededClasses(outputs: Iterable<AbiOutput>) {
         // maps internal names of classes: class -> inner classes
         val innerClasses = HashMap<String, Collection<String>>()
