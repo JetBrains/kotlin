@@ -1948,6 +1948,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inline/finallyMarkers.kt");
         }
 
+        @TestMetadata("inlineArgumentSlots.kt")
+        public void testInlineArgumentSlots() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/inlineArgumentSlots.kt");
+        }
+
         @TestMetadata("inlineReturnsNothing1.kt")
         public void testInlineReturnsNothing1() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inline/inlineReturnsNothing1.kt");
