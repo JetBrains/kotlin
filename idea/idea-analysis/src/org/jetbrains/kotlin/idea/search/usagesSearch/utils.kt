@@ -25,6 +25,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.MethodSignatureUtil
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
@@ -146,7 +147,7 @@ private fun PsiElement.buildProcessDelegationCallKotlinConstructorUsagesTask(
     }
 
     if (klass !is KtClass || element !is KtDeclaration) return { true }
-    val descriptor = element.constructor ?: return { true }
+    val descriptor = lazyPub { element.constructor }
 
     if (!processClassDelegationCallsToSpecifiedConstructor(klass, descriptor, process)) return { false }
 
@@ -163,7 +164,7 @@ private fun PsiElement.buildProcessDelegationCallJavaConstructorUsagesTask(
     if (this is KtLightMethod && this.kotlinOrigin == null) return { true }
     if (!(this is PsiMethod && isConstructor)) return { true }
     val klass = containingClass ?: return { true }
-    val descriptor = getJavaMethodDescriptor() as? ConstructorDescriptor ?: return { true }
+    val descriptor = lazyPub { getJavaMethodDescriptor() as? ConstructorDescriptor }
     return { processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process) }
 }
 
@@ -171,14 +172,14 @@ private fun PsiElement.buildProcessDelegationCallJavaConstructorUsagesTask(
 private fun processInheritorsDelegatingCallToSpecifiedConstructor(
     klass: PsiElement,
     scope: SearchScope,
-    descriptor: ConstructorDescriptor,
+    lazyDescriptor: Lazy<ConstructorDescriptor?>,
     process: (KtCallElement) -> Boolean
 ): Boolean {
     return HierarchySearchRequest(klass, scope, false).searchInheritors().all {
         runReadAction {
             val unwrapped = it.takeIf { it.isValid }?.unwrapped
             if (unwrapped is KtClass)
-                processClassDelegationCallsToSpecifiedConstructor(unwrapped, descriptor, process)
+                processClassDelegationCallsToSpecifiedConstructor(unwrapped, lazyDescriptor, process)
             else
                 true
         }
@@ -186,19 +187,30 @@ private fun processInheritorsDelegatingCallToSpecifiedConstructor(
 }
 
 private fun processClassDelegationCallsToSpecifiedConstructor(
-    klass: KtClass, constructor: DeclarationDescriptor, process: (KtCallElement) -> Boolean
+    klass: KtClass,
+    lazyDescriptor: Lazy<ConstructorDescriptor?>,
+    process: (KtCallElement) -> Boolean
 ): Boolean {
     for (secondaryConstructor in klass.secondaryConstructors) {
-        val delegationCallDescriptor = secondaryConstructor.getDelegationCall().getConstructorCallDescriptor()
-        if (constructor == delegationCallDescriptor) {
+        val delegationCallDescriptor =
+            secondaryConstructor.getDelegationCall().getConstructorCallDescriptor()
+                ?: continue
+
+        if (lazyDescriptor.value == delegationCallDescriptor) {
             if (!process(secondaryConstructor.getDelegationCall())) return false
         }
     }
     if (!klass.isEnum()) return true
     for (declaration in klass.declarations) {
         if (declaration is KtEnumEntry) {
-            val delegationCall = declaration.superTypeListEntries.firstOrNull()
-            if (delegationCall is KtSuperTypeCallEntry && constructor == delegationCall.calleeExpression.getConstructorCallDescriptor()) {
+            val delegationCall =
+                declaration.superTypeListEntries.firstOrNull() as? KtSuperTypeCallEntry
+                    ?: continue
+            val constructorCallDescriptor =
+                delegationCall.calleeExpression.getConstructorCallDescriptor()
+                    ?: continue
+
+            if (lazyDescriptor.value == constructorCallDescriptor) {
                 if (!process(delegationCall)) return false
             }
         }
