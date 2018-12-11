@@ -110,13 +110,13 @@ class ProgramFragmentInliningScope(
         }
     }
 
-    private fun addInlinedModule(moduleName: JsName) {
-        if (moduleName !in existingModules) {
-            fragment.importedModules.add(moduleMap[moduleName]!!.let {
-                // Copy so that the Merger.kt doesn't operate on the same instance in different fragments.
-                JsImportedModule(it.externalName, it.internalName, it.plainReference)
-            })
-        }
+    private fun addInlinedModule(module: JsImportedModule) {
+//        if (moduleName !in existingModules) {
+//            fragment.importedModules.add(moduleMap[moduleName]!!.let {
+//                // Copy so that the Merger.kt doesn't operate on the same instance in different fragments.
+//                JsImportedModule(it.externalName, it.internalName, it.plainReference)
+//            })
+//        }
     }
 
     private fun addImport(tag: String, e: JsExpression) {
@@ -241,7 +241,8 @@ class ProgramFragmentInliningScope(
             private fun replaceIfNecessary(expression: JsExpression, ctx: JsContext<JsNode>) {
                 val alias = expression.localAlias
                 if (alias != null) {
-                    ctx.replaceMe(alias.makeRef())
+                    // TODO wrong!
+                    ctx.replaceMe(alias.internalName.makeRef())
                     addInlinedModule(alias)
                 }
             }

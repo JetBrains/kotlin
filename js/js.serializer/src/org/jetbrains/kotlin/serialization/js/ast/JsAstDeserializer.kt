@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.serialization.js.ast
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.protobuf.CodedInputStream
@@ -280,9 +281,13 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         expression.synthetic = proto.synthetic
         expression.sideEffects = map(proto.sideEffects)
         if (proto.hasLocalAlias()) {
-            expression.localAlias = deserializeName(proto.localAlias)
+            expression.localAlias = deserializeJsImportedModule(proto.localAlias)
         }
         return expression
+    }
+
+    private fun deserializeJsImportedModule(proto: JsAstProtoBuf.JsImportedModule): JsImportedModule {
+        return JsImportedModule(proto.externalName, deserializeName(proto.internalName), if (proto.hasPlainReference()) deserialize(proto.plainReference!!) else null)
     }
 
     private fun deserializeNoMetadata(proto: Expression): JsExpression = when (proto.expressionCase) {

@@ -108,6 +108,9 @@ public final class StaticContext {
     private final ModuleDescriptor currentModule;
 
     @NotNull
+    private final JsImportedModule currentModuleAsImported;
+
+    @NotNull
     private final NameSuggestion nameSuggestion = new NameSuggestion();
 
     @NotNull
@@ -171,6 +174,7 @@ public final class StaticContext {
         this.rootScope = fragment.getScope();
         this.config = config;
         this.currentModule = moduleDescriptor;
+        this.currentModuleAsImported = new JsImportedModule(Namer.getRootPackageName(), rootScope.declareName(Namer.getRootPackageName()), null);
 
         JsName kotlinName = rootScope.declareName(Namer.KOTLIN_NAME);
         createImportedModule(new JsImportedModuleKey(Namer.KOTLIN_LOWER_NAME, null), Namer.KOTLIN_LOWER_NAME, kotlinName, null);
@@ -697,15 +701,21 @@ public final class StaticContext {
 
     @Nullable
     private JsName getModuleInnerName(@NotNull DeclarationDescriptor descriptor) {
+        JsImportedModule module = getJsImportedModuleModule(descriptor);
+        return module == null ? null : module.getInternalName();
+    }
+
+    @Nullable
+    public JsImportedModule getJsImportedModuleModule(@NotNull DeclarationDescriptor descriptor) {
         ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
         if (currentModule == module) {
-            return rootScope.declareName(Namer.getRootPackageName());
+            return currentModuleAsImported;
         }
         String moduleName = suggestModuleName(module);
 
         if (UNKNOWN_EXTERNAL_MODULE_NAME.equals(moduleName)) return null;
 
-        return getImportedModule(moduleName, null).getInternalName();
+        return getImportedModule(moduleName, null);
     }
 
     @NotNull
@@ -830,11 +840,14 @@ public final class StaticContext {
         String moduleName = suggestModuleName(declaration);
         if (moduleName.equals(Namer.KOTLIN_LOWER_NAME)) return null;
 
-        return exportModuleForInline(moduleName, getInnerNameForDescriptor(declaration));
+        JsImportedModule importedModule = getJsImportedModuleModule(declaration);
+        if (importedModule == null) return null;
+
+        return exportModuleForInline(moduleName, importedModule);
     }
 
     @NotNull
-    public JsExpression exportModuleForInline(@NotNull String moduleId, @NotNull JsName moduleName) {
+    public JsExpression exportModuleForInline(@NotNull String moduleId, @NotNull JsImportedModule moduleName) {
         JsExpression moduleRef = modulesImportedForInline.get(moduleId);
         if (moduleRef == null) {
             JsExpression currentModuleRef = pureFqn(getInnerNameForDescriptor(getCurrentModule()), null);
@@ -853,7 +866,7 @@ public final class StaticContext {
             }
             MetadataProperties.setLocalAlias(moduleRef, moduleName);
 
-            JsExpressionStatement importStmt = new JsExpressionStatement(JsAstUtils.assignment(lhsModuleRef, moduleName.makeRef()));
+            JsExpressionStatement importStmt = new JsExpressionStatement(JsAstUtils.assignment(lhsModuleRef, moduleName.getInternalName().makeRef()));
             MetadataProperties.setExportedTag(importStmt, "imports:" + moduleId);
             getFragment().getExportBlock().getStatements().add(importStmt);
 

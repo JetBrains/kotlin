@@ -32,7 +32,9 @@ class FunctionContext(
 ) {
     private val functionReader = FunctionReader(inliner.reporter, inliner.config, inliner.translationResult.innerModuleName)
 
-    private data class FunctionsAndAccessors(val functions: Map<JsName, FunctionWithWrapper>, val accessors: Map<String, FunctionWithWrapper>)
+    private data class FunctionsAndAccessors(
+        val functions: Map<JsName, FunctionWithWrapper>,
+        val accessors: Map<String, FunctionWithWrapper>)
 
     private val fragmentInfo = mutableMapOf<JsProgramFragment, FunctionsAndAccessors>()
 

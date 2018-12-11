@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.js.ast
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
@@ -456,6 +457,16 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         }
 
         return visitor.builder.build()
+    }
+
+    private fun serialize(module: JsImportedModule): JsAstProtoBuf.JsImportedModule {
+        val moduleBuilder = JsAstProtoBuf.JsImportedModule.newBuilder()
+        moduleBuilder.externalName = module.externalName
+        moduleBuilder.internalName = serialize(module.externalName)
+        module.plainReference?.let {
+            moduleBuilder.plainReference = serialize(it)
+        }
+        return moduleBuilder.build()
     }
 
     private fun serializeParameter(parameter: JsParameter): Parameter {

@@ -198,7 +198,12 @@ class Merger(
                     }
                 }
                 if (node is JsExpression) {
-                    node.localAlias = node.localAlias?.let { rename(it) }
+                    node.localAlias = node.localAlias?.let {
+                        JsImportedModule(it.externalName,
+                                         rename(it.internalName),
+                                         it.plainReference?.let { rename(it) }
+                        )
+                    }
                 }
             }
         })

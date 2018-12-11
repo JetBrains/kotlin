@@ -418,16 +418,17 @@ public class TranslationContext {
         SuggestedName suggested = staticContext.suggestName(descriptor);
         if (suggested != null && getConfig().getModuleKind() != ModuleKind.PLAIN && isPublicInlineFunction()) {
             String moduleId = AnnotationsUtils.getModuleName(suggested.getDescriptor());
-            if (moduleId != null) {
-                JsExpression replacement = staticContext.exportModuleForInline(moduleId, name);
+            JsImportedModule importedModule = staticContext.getJsImportedModuleModule(suggested.getDescriptor());
+            if (moduleId != null && importedModule != null) {
+                JsExpression replacement = staticContext.exportModuleForInline(moduleId, importedModule);
                 result = replaceModuleReference(result, name, replacement);
             }
             else if (isNativeObject(suggested.getDescriptor()) && DescriptorUtils.isTopLevelDeclaration(suggested.getDescriptor())) {
                 String fileModuleId = AnnotationsUtils.getFileModuleName(bindingContext(), suggested.getDescriptor());
                 if (fileModuleId != null) {
-                    JsName fileModuleName = staticContext.getImportedModule(fileModuleId, null).getInternalName();
+                    JsImportedModule fileModuleName = staticContext.getImportedModule(fileModuleId, null);
                     JsExpression replacement = staticContext.exportModuleForInline(fileModuleId, fileModuleName);
-                    result = replaceModuleReference(staticContext.getQualifiedReference(descriptor), fileModuleName, replacement);
+                    result = replaceModuleReference(staticContext.getQualifiedReference(descriptor), fileModuleName.getInternalName(), replacement);
                 }
             }
         }
