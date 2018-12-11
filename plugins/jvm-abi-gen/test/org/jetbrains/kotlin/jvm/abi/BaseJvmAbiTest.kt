@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
-import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -74,6 +73,6 @@ abstract class BaseJvmAbiTest : TestCase() {
     }
 
     protected val kotlinJvmStdlib = File("dist/kotlinc/lib/kotlin-stdlib.jar").also {
-        UsefulTestCase.assertExists(it)
+        check(it.exists()) { "Stdlib file '$it' does not exist" }
     }
 }
