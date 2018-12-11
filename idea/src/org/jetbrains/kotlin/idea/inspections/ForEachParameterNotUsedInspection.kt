@@ -34,6 +34,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
         private const val FOREACH_NAME = "forEach"
         private val COLLECTIONS_FOREACH_FQNAME = FqName("kotlin.collections.$FOREACH_NAME")
         private val SEQUENCES_FOREACH_FQNAME = FqName("kotlin.sequences.$FOREACH_NAME")
+        private val TEXT_FOREACH_FQNAME = FqName("kotlin.text.$FOREACH_NAME")
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -44,7 +45,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
             if (lambda == null || lambda.functionLiteral.arrow != null) return
             val context = it.analyze()
             when (it.getResolvedCall(context)?.resultingDescriptor?.fqNameOrNull()) {
-                COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME -> {
+                COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME, TEXT_FOREACH_FQNAME -> {
                     val descriptor = context[BindingContext.FUNCTION, lambda.functionLiteral] ?: return
                     val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return
 
@@ -83,7 +84,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
     }
 
     private class ReplaceWithRepeatFix : LocalQuickFix {
-        override fun getFamilyName() = "Replace with 'repeat(size)'"
+        override fun getFamilyName() = "Replace with 'repeat()'"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val callExpression = descriptor.psiElement.parent as? KtCallExpression ?: return
@@ -92,8 +93,10 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
             val receiverClass =
                 receiverExpression.resolveToCall()?.resultingDescriptor?.returnType?.constructor?.declarationDescriptor as? ClassDescriptor
             val collection = callExpression.builtIns.collection
+            val charSequence = callExpression.builtIns.charSequence
             val sizeText = when {
                 receiverClass != null && DescriptorUtils.isSubclass(receiverClass, collection) -> "size"
+                receiverClass != null && DescriptorUtils.isSubclass(receiverClass, charSequence) -> "length"
                 else -> "count()"
             }
             val lambdaExpression = callExpression.lambdaArguments.singleOrNull()?.getArgumentExpression() ?: return
