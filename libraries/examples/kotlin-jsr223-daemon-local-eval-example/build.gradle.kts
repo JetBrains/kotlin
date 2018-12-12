@@ -20,6 +20,7 @@ dependencies {
     compilerClasspath(project(":kotlin-reflect"))
     compilerClasspath(project(":kotlin-stdlib"))
     compilerClasspath(project(":kotlin-script-runtime"))
+    compilerClasspath(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 }
 
 projectTest {

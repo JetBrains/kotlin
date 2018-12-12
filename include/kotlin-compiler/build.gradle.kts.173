@@ -9,7 +9,6 @@ val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
 
 val compilerModules: Array<String> by rootProject.extra
-val compilerManifestClassPath = "kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar"
 
 dependencies {
     compilerModules.forEach { module ->
