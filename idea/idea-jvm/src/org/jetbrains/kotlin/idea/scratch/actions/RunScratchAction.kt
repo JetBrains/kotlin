@@ -45,8 +45,8 @@ class RunScratchAction : ScratchAction(
         val scratchFile = scratchPanel.scratchFile
         val psiFile = scratchFile.getPsiFile() ?: return
 
-        val isMakeBeforeRun = scratchPanel.isMakeBeforeRun()
-        val isRepl = scratchPanel.isRepl()
+            val isMakeBeforeRun = scratchFile.options.isMakeBeforeRun
+            val isRepl = scratchFile.options.isRepl
 
         val provider = ScratchFileLanguageProvider.get(psiFile.language) ?: return
 

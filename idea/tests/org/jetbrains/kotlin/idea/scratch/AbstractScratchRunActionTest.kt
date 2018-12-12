@@ -112,7 +112,9 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         if (!KotlinHighlightingUtil.shouldHighlight(psiFile)) error("Highlighting for scratch file is switched off")
 
         val (editor, scratchPanel) = getEditorWithScratchPanel(myManager, scratchFile)?: error("Couldn't find scratch panel")
-        scratchPanel.setReplMode(isRepl)
+        scratchPanel.scratchFile.saveOptions {
+            copy(isRepl = isRepl)
+        }
 
         launchScratch(scratchFile)
 

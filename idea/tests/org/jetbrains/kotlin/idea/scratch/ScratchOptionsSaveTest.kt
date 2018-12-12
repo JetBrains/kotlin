@@ -37,8 +37,8 @@ class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
             ScratchTopPanel::class.declaredMemberProperties.filter { it.returnType == JCheckBox::class.createType() }.size
         )
 
-        val newIsReplValue = !scratchPanelBeforeClosingFile.isRepl()
-        val newIsMakeBeforeRunValue = !scratchPanelBeforeClosingFile.isMakeBeforeRun()
+        val newIsReplValue = !scratchPanelBeforeClosingFile.scratchFile.options.isRepl
+        val newIsMakeBeforeRunValue = !scratchPanelBeforeClosingFile.scratchFile.options.isMakeBeforeRun
         scratchPanelBeforeClosingFile.setReplMode(newIsReplValue)
         scratchPanelBeforeClosingFile.setMakeBeforeRun(newIsMakeBeforeRunValue)
 
@@ -47,11 +47,11 @@ class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
 
         val (_, scratchPanelAfterClosingFile) = getEditorWithScratchPanel(myManager, scratchFile) ?: error("Couldn't find scratch panel")
 
-        Assert.assertEquals("Wrong value for isRepl checkbox", newIsReplValue, scratchPanelAfterClosingFile.isRepl())
+        Assert.assertEquals("Wrong value for isRepl checkbox", newIsReplValue, scratchPanelAfterClosingFile.scratchFile.options.isRepl)
         Assert.assertEquals(
             "Wrong value for isMakeBeforeRun checkbox",
             newIsMakeBeforeRunValue,
-            scratchPanelAfterClosingFile.isMakeBeforeRun()
+            scratchPanelAfterClosingFile.scratchFile.options.isMakeBeforeRun
         )
     }
 }
