@@ -22,12 +22,15 @@ enum class TestsExceptionFilePostfix(val text: String) {
 sealed class TestsError(val postfix: TestsExceptionFilePostfix) : Error() {
     abstract val original: Throwable
     override fun toString() = original.toString()
+    override fun getStackTrace() = original.stackTrace
 }
 
 class TestsCompilerError(override val original: Throwable) : TestsError(TestsExceptionFilePostfix.COMPILER_ERROR)
 class TestsInfrastructureError(override val original: Throwable) : TestsError(TestsExceptionFilePostfix.INFRASTRUCTURE_ERROR)
 class TestsCompiletimeError(override val original: Throwable) : TestsError(TestsExceptionFilePostfix.COMPILETIME_ERROR)
-class TestsRuntimeError(override val original: Throwable) : TestsError(TestsExceptionFilePostfix.RUNTIME_ERROR)
+class TestsRuntimeError(override val original: Throwable) : TestsError(TestsExceptionFilePostfix.RUNTIME_ERROR) {
+    override val cause = original.cause
+}
 
 private enum class ExceptionType {
     ANALYZING_EXPRESSION,
