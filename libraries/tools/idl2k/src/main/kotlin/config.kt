@@ -24,6 +24,8 @@ val urls = listOf(
         "http://www.w3.org/TR/geometry-1/" to "org.w3c.dom",
         "http://www.w3.org/TR/cssom-view/" to "org.w3c.dom",
         "http://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
+        "http://www.w3.org/TR/pointerevents/" to "org.w3c.dom.pointerevents",
+
         "https://drafts.csswg.org/cssom/" to "org.w3c.dom.css",
         "http://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
         "https://raw.githubusercontent.com/whatwg/url/master/url.html" to "org.w3c.dom.url",

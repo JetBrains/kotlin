@@ -14,6 +14,7 @@ import org.khronos.webgl.*
 import org.w3c.dom.css.*
 import org.w3c.dom.events.*
 import org.w3c.dom.parsing.*
+import org.w3c.dom.pointerevents.*
 import org.w3c.dom.svg.*
 import org.w3c.dom.url.*
 import org.w3c.fetch.*
@@ -74,6 +75,16 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     open val documentElement: Element?
     open val scrollingElement: Element?
     open val styleSheets: StyleSheetList
+    override var ongotpointercapture: ((Event) -> dynamic)?
+    override var onlostpointercapture: ((Event) -> dynamic)?
+    override var onpointerdown: ((Event) -> dynamic)?
+    override var onpointermove: ((Event) -> dynamic)?
+    override var onpointerup: ((Event) -> dynamic)?
+    override var onpointercancel: ((Event) -> dynamic)?
+    override var onpointerover: ((Event) -> dynamic)?
+    override var onpointerout: ((Event) -> dynamic)?
+    override var onpointerenter: ((Event) -> dynamic)?
+    override var onpointerleave: ((Event) -> dynamic)?
     override var onabort: ((Event) -> dynamic)?
     override var onblur: ((Event) -> dynamic)?
     override var oncancel: ((Event) -> dynamic)?
@@ -2125,6 +2136,16 @@ public inline fun PromiseRejectionEventInit(promise: Promise<Any?>?, reason: Any
  * Exposes the JavaScript [GlobalEventHandlers](https://developer.mozilla.org/en/docs/Web/API/GlobalEventHandlers) to Kotlin
  */
 public external interface GlobalEventHandlers {
+    var ongotpointercapture: ((Event) -> dynamic)?
+    var onlostpointercapture: ((Event) -> dynamic)?
+    var onpointerdown: ((Event) -> dynamic)?
+    var onpointermove: ((Event) -> dynamic)?
+    var onpointerup: ((Event) -> dynamic)?
+    var onpointercancel: ((Event) -> dynamic)?
+    var onpointerover: ((Event) -> dynamic)?
+    var onpointerout: ((Event) -> dynamic)?
+    var onpointerenter: ((Event) -> dynamic)?
+    var onpointerleave: ((Event) -> dynamic)?
     var onabort: ((Event) -> dynamic)?
     var onblur: ((Event) -> dynamic)?
     var oncancel: ((Event) -> dynamic)?
@@ -2237,6 +2258,7 @@ public external interface WindowOrWorkerGlobalScope {
  */
 public external abstract class Navigator : NavigatorID, NavigatorLanguage, NavigatorOnLine, NavigatorContentUtils, NavigatorCookies, NavigatorPlugins, NavigatorConcurrentHardware {
     open val serviceWorker: ServiceWorkerContainer
+    open val maxTouchPoints: Int
     fun vibrate(pattern: dynamic): Boolean
 }
 
@@ -3199,6 +3221,9 @@ public external abstract class Element : Node, ParentNode, NonDocumentTypeChildN
     open val clientWidth: Int
     open val clientHeight: Int
     fun requestFullscreen(): Promise<Unit>
+    fun setPointerCapture(pointerId: Int): Unit
+    fun releasePointerCapture(pointerId: Int): Unit
+    fun hasPointerCapture(pointerId: Int): Boolean
     fun insertAdjacentHTML(position: String, text: String): Unit
     fun hasAttributes(): Boolean
     fun getAttributeNames(): Array<String>
