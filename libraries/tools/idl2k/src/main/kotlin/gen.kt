@@ -175,15 +175,20 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): List<Gene
         ConstructorWithSuperTypeCall(constructorAsFunction, secondaryConstructor)
     }
 
+    val memberAttributes = iface.mapAttributes(repository)
+    val memberFunctions = iface.mapOperations(repository)
+
+    val extensionsNames = extensions.map { it.name }
+
     val namedConstructors =
         iface.findExtendedAttributes("NamedConstructor").map { namedConstructor ->
             GenerateClass(
                 name = namedConstructor.call,
                 namespace = iface.namespace,
                 kind = GenerateDefinitionKind.CLASS,
-                superTypes = listOf(iface.name) + extensions.map { it.name },
-                memberAttributes = iface.mapAttributes(repository).toMutableList(),
-                memberFunctions = iface.mapOperations(repository).toMutableList(),
+                superTypes = listOf(iface.name) + extensionsNames,
+                memberAttributes = memberAttributes.toMutableList(),
+                memberFunctions = memberFunctions.toMutableList(),
                 constants = emptyList(),
                 primaryConstructor = ConstructorWithSuperTypeCall(generateConstructorAsFunction(repository, namedConstructor), namedConstructor),
                 secondaryConstructors = emptyList(),
@@ -191,13 +196,13 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): List<Gene
             )
         }
 
-    return (listOf(GenerateClass(iface.name, iface.namespace, entityKind, (iface.superTypes + extensions.map { it.name }).distinct(),
-                               memberAttributes = iface.mapAttributes(repository).toMutableList(),
-                               memberFunctions = iface.mapOperations(repository).toMutableList(),
-                               constants = (iface.constants.map { it.mapConstant(repository) } + extensions.flatMap { it.constants.map { it.mapConstant(repository) } }.distinct().toList()),
-                               primaryConstructor = primaryConstructorWithCall,
-                               secondaryConstructors = secondaryConstructorsWithCall,
-                               generateBuilderFunction = iface.dictionary
+    return (listOf(GenerateClass(iface.name, iface.namespace, entityKind, (iface.superTypes + extensionsNames).distinct(),
+                                 memberAttributes = memberAttributes.toMutableList(),
+                                 memberFunctions = memberFunctions.toMutableList(),
+                                 constants = (iface.constants.map { it.mapConstant(repository) } + extensions.flatMap { it.constants.map { it.mapConstant(repository) } }.distinct().toList()),
+                                 primaryConstructor = primaryConstructorWithCall,
+                                 secondaryConstructors = secondaryConstructorsWithCall,
+                                 generateBuilderFunction = iface.dictionary
     )) + namedConstructors).map(::markAsArrayLikeIfApplicable)
 }
 
