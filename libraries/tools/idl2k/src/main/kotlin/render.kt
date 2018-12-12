@@ -55,7 +55,7 @@ private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, modali
         }
 
         append(" = ")
-        append(arg.initializer.replaceWrongConstants(arg.type))
+        append(arg.initializer.specifyInitializerConstant(arg.type))
 
         if (omitDefaults) {
             append(" */")
@@ -86,10 +86,11 @@ private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribu
 private val keywords = setOf("interface", "is", "as")
 
 private fun String.parse() = if (this.startsWith("0x")) BigInteger(this.substring(2), 16) else BigInteger(this)
-private fun String.replaceWrongConstants(type: Type) = when {
+private fun String.specifyInitializerConstant(type: Type) = when {
     this == "undefined" && type.nullable -> "undefined"
     this == "definedExternally" || type is SimpleType && type.type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong()) -> "definedExternally"
     type is SimpleType && type.type == "Double" && this.matches("[0-9]+".toRegex()) -> "${this}.0"
+    type is SimpleType && type.type == "Float" -> "${this}f"
     else -> this
 }
 private fun String.replaceKeywords() = if (this in keywords) this + "_" else this
