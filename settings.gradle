@@ -199,6 +199,7 @@ include ":kotlin-build-common",
         ":libraries:tools:mutability-annotations-compat",
         ":include:kotlin-compiler",
         ":plugins:jvm-abi-gen",
+        ":usage-statistics",
 
         // plugin markers:
         ':kotlin-gradle-plugin:plugin-marker',
@@ -337,6 +338,7 @@ project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate
 project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins/imports-dumper" as File
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as File
+project(':usage-statistics').projectDir = "$rootDir/usage-statistics" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")
