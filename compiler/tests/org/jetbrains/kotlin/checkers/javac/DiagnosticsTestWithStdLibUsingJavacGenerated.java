@@ -2705,6 +2705,16 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/java"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("concurrentHashMapContains.kt")
+        public void testConcurrentHashMapContains() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/java/concurrentHashMapContains.kt");
+        }
+
+        @TestMetadata("concurrentHashMapContainsError.kt")
+        public void testConcurrentHashMapContainsError() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/java/concurrentHashMapContainsError.kt");
+        }
+
         @TestMetadata("functionN.kt")
         public void testFunctionN() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/java/functionN.kt");
