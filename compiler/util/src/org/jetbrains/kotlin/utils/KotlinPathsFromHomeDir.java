@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.utils;
 
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
 
 public class KotlinPathsFromHomeDir implements KotlinPaths {
     // kotlinc directory
@@ -104,6 +106,18 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
     @Override
     public File getSamWithReceiverJarPath() {
         return getLibraryFile(PathUtil.SAM_WITH_RECEIVER_PLUGIN_JAR_NAME);
+    }
+
+    @NotNull
+    @Override
+    public File getTrove4jJarPath() {
+        return getLibraryFile(PathUtil.TROVE4J_NAME);
+    }
+
+    @NotNull
+    @Override
+    public List<File> getCompilerClasspath() {
+        return CollectionsKt.listOf(getStdlibPath(), getReflectPath(), getScriptRuntimePath(), getTrove4jJarPath());
     }
 
     @NotNull

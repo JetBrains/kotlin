@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
 
 public interface KotlinPaths {
     @NotNull
@@ -59,6 +60,12 @@ public interface KotlinPaths {
 
     @NotNull
     File getSamWithReceiverJarPath();
+
+    @NotNull
+    File getTrove4jJarPath();
+
+    @NotNull
+    List<File> getCompilerClasspath();
 
     @NotNull
     File getCompilerPath();

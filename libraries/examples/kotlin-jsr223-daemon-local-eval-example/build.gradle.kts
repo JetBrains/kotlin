@@ -20,6 +20,7 @@ dependencies {
     compilerClasspath(project(":kotlin-reflect"))
     compilerClasspath(project(":kotlin-stdlib"))
     compilerClasspath(project(":kotlin-script-runtime"))
+    compilerClasspath(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     compileOnly(project(":compiler:cli-common")) // TODO: fix import (workaround for jps build)
     testCompileOnly(project(":core:util.runtime")) // TODO: fix import (workaround for jps build)
     testCompileOnly(project(":compiler:daemon-common")) // TODO: fix import (workaround for jps build)
