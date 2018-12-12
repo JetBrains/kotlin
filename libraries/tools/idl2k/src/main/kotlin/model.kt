@@ -75,45 +75,18 @@ data class GenerateFunction(
 
 data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute)
 
-interface ClassLike {
-    val name: String
-    val namespace: String
-    val kind: GenerateDefinitionKind
-    val superTypes: List<String>
-    val memberAttributes: MutableList<GenerateAttribute>
-    val memberFunctions: MutableList<GenerateFunction>
-    val constants: List<GenerateAttribute>
-    val primaryConstructor: ConstructorWithSuperTypeCall?
-    val secondaryConstructors: List<ConstructorWithSuperTypeCall>
-    val generateBuilderFunction: Boolean
-}
-
 data class GenerateClass(
-    override val name: String,
-    override val namespace: String,
-    override val kind: GenerateDefinitionKind,
-    override val superTypes: List<String>,
-    override val memberAttributes: MutableList<GenerateAttribute>,
-    override val memberFunctions: MutableList<GenerateFunction>,
-    override val constants: List<GenerateAttribute>,
-    override val primaryConstructor: ConstructorWithSuperTypeCall?,
-    override val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
-    override val generateBuilderFunction: Boolean,
-    val namedConstructors: List<NamedConstructorClass>
-) : ClassLike
-
-data class NamedConstructorClass(
-    override val name: String,
-    override val namespace: String,
-    override val kind: GenerateDefinitionKind,
-    override val superTypes: List<String>,
-    override val memberAttributes: MutableList<GenerateAttribute>,
-    override val memberFunctions: MutableList<GenerateFunction>,
-    override val constants: List<GenerateAttribute>,
-    override val primaryConstructor: ConstructorWithSuperTypeCall?,
-    override val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
-    override val generateBuilderFunction: Boolean
-) : ClassLike
+    val name: String,
+    val namespace: String,
+    val kind: GenerateDefinitionKind,
+    val superTypes: List<String>,
+    val memberAttributes: MutableList<GenerateAttribute>,
+    val memberFunctions: MutableList<GenerateFunction>,
+    val constants: List<GenerateAttribute>,
+    val primaryConstructor: ConstructorWithSuperTypeCall?,
+    val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
+    val generateBuilderFunction: Boolean
+)
 
 val GenerateFunction.signature: String
     get() = arguments.map { it.type.typeSignature }.joinToString(", ", "$name(", ")")

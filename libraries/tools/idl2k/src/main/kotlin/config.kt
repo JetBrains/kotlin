@@ -89,7 +89,6 @@ val kotlinBuiltinInterfaces = mapOf(
                                          constants = emptyList(),
                                          generateBuilderFunction = false,
                                          primaryConstructor = null,
-                                         secondaryConstructors = emptyList(),
-                                         namedConstructors = emptyList()
+                                         secondaryConstructors = emptyList()
                 )
 )

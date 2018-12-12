@@ -145,7 +145,7 @@ private fun GenerateFunction.isCommented(parent: String) =
 private fun GenerateAttribute.isRequiredFunctionArgument(owner: String, functionName: String) = "$owner.$functionName.$name" in requiredArguments
 private fun GenerateFunction.fixRequiredArguments(parent: String) = copy(arguments = arguments.map { arg -> arg.copy(initializer = if (arg.isRequiredFunctionArgument(parent, name)) null else arg.initializer) })
 
-fun Appendable.render(allTypes: Map<String, ClassLike>, enums: List<EnumDefinition>, typeNamesToUnions: Map<String, List<String>>, iface: ClassLike, markerAnnotation: Boolean = false, mdnCache: MDNDocumentationCache? = null) {
+fun Appendable.render(allTypes: Map<String, GenerateClass>, enums: List<EnumDefinition>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateClass, markerAnnotation: Boolean = false, mdnCache: MDNDocumentationCache? = null) {
 
     val url = "https://developer.mozilla.org/en/docs/Web/API/${iface.name}"
     if (mdnCache?.checkInCache(url) == true) {
@@ -282,31 +282,16 @@ fun Appendable.render(allTypes: Map<String, ClassLike>, enums: List<EnumDefiniti
     if (iface.generateBuilderFunction) {
         renderBuilderFunction(iface, allSuperTypes, allTypesAndEnums)
     }
-
-    if (iface is GenerateClass) {
-        for (namedConstructor in iface.namedConstructors) {
-            appendln()
-
-            render(
-                allTypes = allTypes,
-                enums = emptyList(),
-                typeNamesToUnions = emptyMap(),
-                iface = namedConstructor
-            )
-
-            appendln()
-        }
-    }
 }
 
 private fun GenerateAttribute.kindNotChanged(superAttributesByName: Map<String, List<GenerateAttribute>>) = superAttributesByName[name].orEmpty().all { it.kind == kind }
 
-private fun GenerateAttribute.hasSuperImplementation(allSuperTypes: List<ClassLike>) = allSuperTypes.any { st -> st.kind != GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == signature } }
+private fun GenerateAttribute.hasSuperImplementation(allSuperTypes: List<GenerateClass>) = allSuperTypes.any { st -> st.kind != GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == signature } }
 
 private fun GenerateAttribute.hasNoDefaultValue() =
      this.initializer == null && (this.type.nullable || this.type == DynamicType) && !this.required
 
-fun Appendable.renderBuilderFunction(dictionary: ClassLike, allSuperTypes: List<ClassLike>, allTypes: Set<String>) {
+fun Appendable.renderBuilderFunction(dictionary: GenerateClass, allSuperTypes: List<GenerateClass>, allTypes: Set<String>) {
     val fields = (dictionary.memberAttributes + allSuperTypes.flatMap { it.memberAttributes })
             .distinctBy { it.signature }
             .map { it.copy(kind = AttributeKind.ARGUMENT) }

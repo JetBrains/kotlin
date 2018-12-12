@@ -632,7 +632,9 @@ public external abstract class HTMLImageElement : HTMLElement, TexImageSource, H
     open val y: Int
 }
 
-
+/**
+ * Exposes the JavaScript [Image](https://developer.mozilla.org/en/docs/Web/API/Image) to Kotlin
+ */
 public external open class Image(width: Int = definedExternally, height: Int = definedExternally) : HTMLImageElement {
     override val children: HTMLCollection
     override val firstElementChild: Element?
@@ -642,6 +644,16 @@ public external open class Image(width: Int = definedExternally, height: Int = d
     override val nextElementSibling: Element?
     override val assignedSlot: HTMLSlotElement?
     override val style: CSSStyleDeclaration
+    override var ongotpointercapture: ((Event) -> dynamic)?
+    override var onlostpointercapture: ((Event) -> dynamic)?
+    override var onpointerdown: ((Event) -> dynamic)?
+    override var onpointermove: ((Event) -> dynamic)?
+    override var onpointerup: ((Event) -> dynamic)?
+    override var onpointercancel: ((Event) -> dynamic)?
+    override var onpointerover: ((Event) -> dynamic)?
+    override var onpointerout: ((Event) -> dynamic)?
+    override var onpointerenter: ((Event) -> dynamic)?
+    override var onpointerleave: ((Event) -> dynamic)?
     override var onabort: ((Event) -> dynamic)?
     override var onblur: ((Event) -> dynamic)?
     override var oncancel: ((Event) -> dynamic)?
@@ -721,7 +733,6 @@ public external open class Image(width: Int = definedExternally, height: Int = d
     override fun convertRectFromNode(rect: DOMRectReadOnly, from: dynamic, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
     override fun convertPointFromNode(point: DOMPointInit, from: dynamic, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
 }
-
 
 /**
  * Exposes the JavaScript [HTMLIFrameElement](https://developer.mozilla.org/en/docs/Web/API/HTMLIFrameElement) to Kotlin
@@ -821,7 +832,6 @@ public external abstract class HTMLVideoElement : HTMLMediaElement, TexImageSour
 public external abstract class HTMLAudioElement : HTMLMediaElement {
 }
 
-
 public external open class Audio(src: String = definedExternally) : HTMLAudioElement {
     override val children: HTMLCollection
     override val firstElementChild: Element?
@@ -831,6 +841,16 @@ public external open class Audio(src: String = definedExternally) : HTMLAudioEle
     override val nextElementSibling: Element?
     override val assignedSlot: HTMLSlotElement?
     override val style: CSSStyleDeclaration
+    override var ongotpointercapture: ((Event) -> dynamic)?
+    override var onlostpointercapture: ((Event) -> dynamic)?
+    override var onpointerdown: ((Event) -> dynamic)?
+    override var onpointermove: ((Event) -> dynamic)?
+    override var onpointerup: ((Event) -> dynamic)?
+    override var onpointercancel: ((Event) -> dynamic)?
+    override var onpointerover: ((Event) -> dynamic)?
+    override var onpointerout: ((Event) -> dynamic)?
+    override var onpointerenter: ((Event) -> dynamic)?
+    override var onpointerleave: ((Event) -> dynamic)?
     override var onabort: ((Event) -> dynamic)?
     override var onblur: ((Event) -> dynamic)?
     override var oncancel: ((Event) -> dynamic)?
@@ -910,7 +930,6 @@ public external open class Audio(src: String = definedExternally) : HTMLAudioEle
     override fun convertRectFromNode(rect: DOMRectReadOnly, from: dynamic, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
     override fun convertPointFromNode(point: DOMPointInit, from: dynamic, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
 }
-
 
 /**
  * Exposes the JavaScript [HTMLTrackElement](https://developer.mozilla.org/en/docs/Web/API/HTMLTrackElement) to Kotlin
@@ -1427,7 +1446,9 @@ public external abstract class HTMLOptionElement : HTMLElement, UnionHTMLOptGrou
     open val index: Int
 }
 
-
+/**
+ * Exposes the JavaScript [Option](https://developer.mozilla.org/en/docs/Web/API/Option) to Kotlin
+ */
 public external open class Option(text: String = definedExternally, value: String = definedExternally, defaultSelected: Boolean = definedExternally, selected: Boolean = definedExternally) : HTMLOptionElement {
     override val children: HTMLCollection
     override val firstElementChild: Element?
@@ -1437,6 +1458,16 @@ public external open class Option(text: String = definedExternally, value: Strin
     override val nextElementSibling: Element?
     override val assignedSlot: HTMLSlotElement?
     override val style: CSSStyleDeclaration
+    override var ongotpointercapture: ((Event) -> dynamic)?
+    override var onlostpointercapture: ((Event) -> dynamic)?
+    override var onpointerdown: ((Event) -> dynamic)?
+    override var onpointermove: ((Event) -> dynamic)?
+    override var onpointerup: ((Event) -> dynamic)?
+    override var onpointercancel: ((Event) -> dynamic)?
+    override var onpointerover: ((Event) -> dynamic)?
+    override var onpointerout: ((Event) -> dynamic)?
+    override var onpointerenter: ((Event) -> dynamic)?
+    override var onpointerleave: ((Event) -> dynamic)?
     override var onabort: ((Event) -> dynamic)?
     override var onblur: ((Event) -> dynamic)?
     override var oncancel: ((Event) -> dynamic)?
@@ -1516,7 +1547,6 @@ public external open class Option(text: String = definedExternally, value: Strin
     override fun convertRectFromNode(rect: DOMRectReadOnly, from: dynamic, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
     override fun convertPointFromNode(point: DOMPointInit, from: dynamic, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
 }
-
 
 /**
  * Exposes the JavaScript [HTMLTextAreaElement](https://developer.mozilla.org/en/docs/Web/API/HTMLTextAreaElement) to Kotlin
