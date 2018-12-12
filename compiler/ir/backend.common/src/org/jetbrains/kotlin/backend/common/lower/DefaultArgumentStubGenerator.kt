@@ -69,7 +69,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
         }
 
         val newIrFunction =
-            irFunction.generateDefaultsFunction(context, DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER, skipInlineMethods)
+            irFunction.generateDefaultsFunction(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, skipInlineMethods)
 
         log { "$irFunction -> $newIrFunction" }
         val builder = context.createIrBuilder(newIrFunction.symbol)
@@ -273,7 +273,7 @@ open class DefaultParameterInjector constructor(
 
                 val keyFunction = declaration.findSuperMethodWithDefaultArguments()!!
                 val realFunction =
-                    keyFunction.generateDefaultsFunction(context, DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER, skipInline)
+                    keyFunction.generateDefaultsFunction(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, skipInline)
 
                 log { "$declaration -> $realFunction" }
                 val maskValues = Array((declaration.valueParameters.size + 31) / 32) { 0 }
@@ -403,7 +403,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
             val baseFun = baseFunSymbol.owner
             if (baseFun.needsDefaultArgumentsLowering(skipInlineMethods)) {
                 val baseOrigin = if (baseFun.valueParameters.any { it.defaultValue != null }) {
-                    DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
+                    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
                 } else {
                     IrDeclarationOrigin.FAKE_OVERRIDE
                 }
@@ -447,7 +447,7 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
                 IrSimpleFunctionSymbolImpl(descriptor),
                 name,
                 irFunction.visibility,
-                if (irFunction.modality === Modality.ABSTRACT) Modality.OPEN else irFunction.modality,
+                Modality.FINAL,
                 irFunction.returnType,
                 irFunction.isInline,
                 false,
@@ -470,9 +470,6 @@ private fun IrFunction.generateDefaultsFunction(
     context.ir.defaultParameterDeclarationsCache.getOrPut(this) {
         generateDefaultsFunctionImpl(context, origin, skipInlineMethods)
     }
-
-object DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER :
-    IrDeclarationOriginImpl("DEFAULT_PARAMETER_EXTENT")
 
 private fun IrFunction.valueParameter(index: Int, name: Name, type: IrType): IrValueParameter {
     val parameterDescriptor = WrappedValueParameterDescriptor()

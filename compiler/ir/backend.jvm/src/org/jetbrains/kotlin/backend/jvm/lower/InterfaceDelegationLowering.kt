@@ -135,5 +135,6 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
 
     private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
         resolveFakeOverride()?.let { origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB } == true ||
+                origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
                 hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
 }

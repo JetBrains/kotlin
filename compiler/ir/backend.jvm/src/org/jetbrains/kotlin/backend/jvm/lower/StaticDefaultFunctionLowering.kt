@@ -18,23 +18,21 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
-import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 class StaticDefaultFunctionLowering() : IrElementTransformerVoid(), ClassLoweringPass {
     constructor(@Suppress("UNUSED_PARAMETER") context: BackendContext) : this()
 
-
     override fun lower(irClass: IrClass) {
         irClass.accept(this, null)
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        return if (declaration.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null) {
+        return if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null) {
             createStaticFunctionWithReceivers(declaration.parent, declaration.name, declaration)
         } else {
             super.visitFunction(declaration)
