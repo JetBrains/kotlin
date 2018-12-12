@@ -12,6 +12,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.net.URLClassLoader
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.full.primaryConstructor
 
 class MetadataSmokeTest {
@@ -143,5 +144,32 @@ class MetadataSmokeTest {
         val result = kClass.members.single { it.name == "hello" }.call(hello) as String
 
         assertEquals("Hello, world!", result)
+    }
+
+    @Test
+    fun jvmInternalName() {
+        class ClassNameReader : KmClassVisitor() {
+            lateinit var className: ClassName
+
+            override fun visit(flags: Flags, name: ClassName) {
+                className = name
+            }
+        }
+
+        class L
+
+        val l = ClassNameReader().run {
+            (KotlinClassMetadata.read(L::class.java.readMetadata()) as KotlinClassMetadata.Class).accept(this)
+            className
+        }
+        assertEquals(".kotlinx/metadata/test/MetadataSmokeTest\$jvmInternalName\$L", l)
+        assertEquals("kotlinx/metadata/test/MetadataSmokeTest\$jvmInternalName\$L", l.jvmInternalName)
+
+        val coroutineContextKey = ClassNameReader().run {
+            (KotlinClassMetadata.read(CoroutineContext.Key::class.java.readMetadata()) as KotlinClassMetadata.Class).accept(this)
+            className
+        }
+        assertEquals("kotlin/coroutines/CoroutineContext.Key", coroutineContextKey)
+        assertEquals("kotlin/coroutines/CoroutineContext\$Key", coroutineContextKey.jvmInternalName)
     }
 }
