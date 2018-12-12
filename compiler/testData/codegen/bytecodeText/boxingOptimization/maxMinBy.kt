@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 // FILE: list.kt
 val intList = listOf(1, 2, 3)
 val longList = listOf(1L, 2L, 3L)
@@ -26,7 +25,8 @@ fun box(): String {
 // -- no compareTo
 // 0 compareTo
 // -- comparisons are properly fused with conditional jumps
-// 0 ICONST_0
+// comparisons: 0 + fake inline variables: 8
+// 8 ICONST_0
 // 1 IF_ICMPGE
 // 1 IF_ICMPLE
 // 4 LCMP
