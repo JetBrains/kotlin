@@ -15,6 +15,7 @@ fun Project.smartJavaExec(configure: JavaExec.() -> Unit) = task<JavaExec> javaE
         val classpath = classpath
         val main = main
         dependsOn(classpath)
+        inputs.files(classpath)
         inputs.property("main", main)
         doFirst {
             val classPathString = classpath.joinToString(" ") { project.file(it).toURI().toString() }
