@@ -163,11 +163,9 @@ private class ClearableLazyValue<in R, out T : Any>(
     private val compute: () -> T
 ) : ReadOnlyProperty<R, T> {
     override fun getValue(thisRef: R, property: KProperty<*>): T {
-        lock.read {
+        lock.write {
             if (value == null) {
-                lock.write {
-                    value = compute()
-                }
+                value = compute()
             }
             return value!!
         }
