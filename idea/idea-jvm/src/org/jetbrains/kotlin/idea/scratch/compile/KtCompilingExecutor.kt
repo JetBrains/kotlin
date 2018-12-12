@@ -101,7 +101,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                                         errorOccurs("Couldn't get scratch execution result - stopped by timeout ($TIMEOUT_MS ms)")
                                     }
                                     executionResult.isCancelled -> {
-                                        errorOccurs("Couldn't get scratch execution result - cancelled by user")
+                                        // ignore
                                     }
                                     else -> {
                                         ProcessOutputParser().parse(executionResult)
