@@ -52,12 +52,6 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
             )
         }
 
-
-private fun InterfaceDefinition.getAllSuperTypes(repository: Repository) : List<InterfaceDefinition> {
-    val externals = repository.externals[name]?.mapNotNull { repository.interfaces[it] } ?: emptyList()
-    return superTypes.mapNotNull { repository.interfaces.get(it) } + externals
-}
-
 fun generateFunctions(repository: Repository, function: Operation): List<GenerateFunction> {
     val realFunction = when {
         function.name == "" -> null

@@ -63,7 +63,6 @@ enum class GenerateDefinitionKind {
     ABSTRACT_CLASS
 }
 
-data class GenerateFunctionCall(val name: String, val arguments: List<String>)
 data class GenerateFunction(
         val name: String,
         val returnType: Type,
