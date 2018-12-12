@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering.Companion.clinitName
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -53,7 +52,7 @@ class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVo
         }
 
         val defaultBodies = irClass.declarations.filterIsInstance<IrFunction>().filter {
-            it.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
+            it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
         }
         irClass.declarations.removeAll(privateToRemove)
         irClass.declarations.removeAll(defaultBodies)
