@@ -53,13 +53,8 @@ class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileFi
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
             findVirtualFileWithHeader(classId, KotlinClassFileIndex.KEY)
 
-    private fun findVirtualFileWithHeader(classId: ClassId, key: ID<FqName, Void>): VirtualFile? {
-        val files = FileBasedIndex.getInstance().getContainingFiles<FqName, Void>(key, classId.asSingleFqName(), scope)
-        if (files.size > 1) {
-            LOG.warn("There are ${files.size} classes with same fqName: $classId found.")
-        }
-        return files.firstOrNull()
-    }
+    private fun findVirtualFileWithHeader(classId: ClassId, key: ID<FqName, Void>): VirtualFile? =
+        FileBasedIndex.getInstance().getContainingFiles(key, classId.asSingleFqName(), scope).firstOrNull()
 
     companion object {
         private val LOG = Logger.getInstance(IDEVirtualFileFinder::class.java)
