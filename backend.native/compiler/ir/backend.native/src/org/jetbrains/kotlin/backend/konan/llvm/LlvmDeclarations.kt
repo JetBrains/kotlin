@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -418,7 +419,10 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             } else {
                 "kfun:" + qualifyInternalName(descriptor)
             }
-            LLVMAddFunction(context.llvmModule, symbolName, llvmFunctionType)!!
+            val function = LLVMAddFunction(context.llvmModule, symbolName, llvmFunctionType)!!
+            if (descriptor.returnType.isNothing())
+                setFunctionNoReturn(function)
+            function
         }
 
         // TODO: do we still need it?

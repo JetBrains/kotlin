@@ -271,13 +271,16 @@ private val nounwindAttrKindId by lazy {
     getAttributeKindId("nounwind")
 }
 
+private val noreturnAttrKindId by lazy {
+    getAttributeKindId("noreturn")
+}
+
 private val signextAttrKindId by lazy {
     getAttributeKindId("signext")
 }
 
 
 fun isFunctionNoUnwind(function: LLVMValueRef): Boolean {
-
     val attribute = LLVMGetEnumAttributeAtIndex(function, LLVMAttributeFunctionIndex, nounwindAttrKindId)
     return attribute != null
 }
@@ -292,6 +295,11 @@ private fun getAttributeKindId(attributeName: String): Int {
 
 fun setFunctionNoUnwind(function: LLVMValueRef) {
     val attribute = LLVMCreateEnumAttribute(LLVMGetTypeContext(function.type), nounwindAttrKindId, 0)!!
+    LLVMAddAttributeAtIndex(function, LLVMAttributeFunctionIndex, attribute)
+}
+
+fun setFunctionNoReturn(function: LLVMValueRef) {
+    val attribute = LLVMCreateEnumAttribute(LLVMGetTypeContext(function.type), noreturnAttrKindId, 0)!!
     LLVMAddAttributeAtIndex(function, LLVMAttributeFunctionIndex, attribute)
 }
 

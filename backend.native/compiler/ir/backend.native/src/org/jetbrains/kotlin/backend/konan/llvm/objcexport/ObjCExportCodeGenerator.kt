@@ -22,8 +22,14 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
+
+internal fun TypeBridge.makeNothing() = when (this) {
+    is ReferenceBridge -> kNullInt8Ptr
+    is ValueTypeBridge -> LLVMConstNull(this.objCValueType.llvmType)!!
+}
 
 internal class ObjCExportCodeGenerator(
         codegen: CodeGenerator,
@@ -113,16 +119,19 @@ internal class ObjCExportCodeGenerator(
     fun FunctionGenerationContext.kotlinToObjC(
             value: LLVMValueRef,
             typeBridge: TypeBridge
-    ): LLVMValueRef = when (typeBridge) {
-        is ReferenceBridge -> kotlinReferenceToObjC(value)
-        is ValueTypeBridge -> kotlinToObjC(value, typeBridge.objCValueType)
-    }
+    ): LLVMValueRef = when {
+            LLVMTypeOf(value) == voidType -> typeBridge.makeNothing()
+            typeBridge is ReferenceBridge -> kotlinReferenceToObjC(value)
+            typeBridge is ValueTypeBridge -> kotlinToObjC(value, typeBridge.objCValueType)
+            else -> TODO()
+        }
 
     fun FunctionGenerationContext.objCToKotlin(
             value: LLVMValueRef,
             typeBridge: TypeBridge,
             resultLifetime: Lifetime
     ): LLVMValueRef = when (typeBridge) {
+        // TODO: if we add value type check here, we could bridge on Unit better.
         is ReferenceBridge -> objCReferenceToKotlin(value, resultLifetime)
         is ValueTypeBridge -> objCToKotlin(value, typeBridge.objCValueType)
     }
@@ -608,7 +617,6 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
     }
 
     ret(genReturnValueOnSuccess(returnType))
-
 }
 
 private fun ObjCExportCodeGenerator.generateObjCImpForArrayConstructor(
@@ -737,11 +745,11 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
         val actualReturnType = descriptor.returnType!!
 
         val retVal = when {
-            actualReturnType.isUnit() -> {
+            actualReturnType.isUnit() || actualReturnType.isNothing() -> {
                 genKotlinBaseMethodResult(Lifetime.ARGUMENT, methodBridge.returnBridge)
                 null
             }
-            baseReturnType.isUnit() -> {
+            baseReturnType.isUnit() || baseReturnType.isNothing() -> {
                 genKotlinBaseMethodResult(Lifetime.ARGUMENT, methodBridge.returnBridge)
                 codegen.theUnitInstanceRef.llvm
             }
@@ -919,13 +927,9 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 
         } else {
             // Mark it as non-overridable:
-            baseMethods.distinctBy { namer.getSelector(it) }.forEach { base ->
+            baseMethods.distinctBy { namer.getSelector(it) }.forEach { baseMethod ->
                 reverseAdapters += KotlinToObjCMethodAdapter(
-                        namer.getSelector(base),
-                        -1,
-                        -1,
-                        NullPointer(int8Type)
-                )
+                        namer.getSelector(baseMethod), -1, -1, NullPointer(int8Type))
             }
 
             // TODO: some fake-overrides can be skipped.

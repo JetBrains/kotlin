@@ -9,6 +9,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 
 private val primitiveToLlvm = PrimitiveBinaryType.values().associate {
@@ -36,9 +37,7 @@ internal fun RuntimeAware.getLLVMType(type: DataFlowIR.Type) =
 
 internal fun RuntimeAware.getLLVMReturnType(type: IrType): LLVMTypeRef {
     return when {
-        type.isUnit() -> LLVMVoidType()!!
-        // TODO: stdlib have methods taking Nothing, such as kotlin.collections.EmptySet.contains().
-        // KotlinBuiltIns.isNothing(type) -> LLVMVoidType()
+        type.isUnit() || type.isNothing() -> LLVMVoidType()!!
         else -> getLLVMType(type)
     }
 }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal abstract class ObjCExportMapper {
@@ -159,7 +160,7 @@ private fun ObjCExportMapper.bridgeReturnType(
             MethodBridge.ReturnValue.Mapped(bridgePropertyType(descriptor.correspondingProperty))
         }
 
-        returnType.isUnit() -> if (convertExceptionsToErrors) {
+        returnType.isUnit() || returnType.isNothing() -> if (convertExceptionsToErrors) {
             MethodBridge.ReturnValue.WithError.Success
         } else {
             MethodBridge.ReturnValue.Void

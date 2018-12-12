@@ -242,3 +242,23 @@ fun isFrozen(obj: Any): Boolean = obj.isFrozen
 fun kotlinLambda(block: (Any) -> Any): Any = block
 
 fun multiply(int: Int, long: Long) = int * long
+
+class MyException : Exception()
+
+open class BridgeBase {
+    @Throws
+    open fun foo1(): Any = Any()
+    @Throws
+    open fun foo2(): Int = 42
+    @Throws
+    open fun foo3(): Unit = Unit
+    @Throws
+    open fun foo4(): Nothing? = throw IllegalStateException()
+}
+
+class Bridge : BridgeBase() {
+    override fun foo1() = throw MyException()
+    override fun foo2() = throw MyException()
+    override fun foo3() = throw MyException()
+    override fun foo4() = throw MyException()
+}

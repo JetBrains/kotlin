@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.serialization.konan.KonanPackageFragment
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -82,6 +83,9 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
     }
 
 internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
+
+internal fun ClassDescriptor.isNothing() = this.defaultType.isNothing()
+
 
 internal val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
     get() {
