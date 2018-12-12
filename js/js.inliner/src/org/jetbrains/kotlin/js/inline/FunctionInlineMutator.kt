@@ -38,7 +38,7 @@ private constructor(
     var resultExpr: JsNameRef? = null
     private var resultName: JsName? = null
     var breakLabel: JsLabel? = null
-    private val currentStatement = inliningContext.statementContext.currentNode
+    private val currentStatement = inliningContext.currentStatement
 
     init {
         invokedFunction = uncoverClosure(function.deepCopy())
@@ -112,7 +112,7 @@ private constructor(
         val breakName = JsScope.declareTemporaryName(getBreakLabel())
         this.breakLabel = JsLabel(breakName).apply { synthetic = true }
 
-        val visitor = ReturnReplacingVisitor(resultExpr as? JsNameRef, breakName.makeRef(), invokedFunction, call.isSuspend)
+        val visitor = ReturnReplacingVisitor(resultExpr, breakName.makeRef(), invokedFunction, call.isSuspend)
         visitor.accept(body)
     }
 

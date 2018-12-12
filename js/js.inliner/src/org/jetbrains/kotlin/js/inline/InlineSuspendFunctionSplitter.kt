@@ -47,10 +47,10 @@ class InlineSuspendFunctionSplitter(
                     val statementContext = lastStatementLevelContext
 
                     // This function will be exported to JS
-                    val function = scope.importFunctionDefinition(PublicInlineFunctionDefinition(inlineMetadata.tag.value, inlineMetadata.function, scope.fragment, scope))
+                    val function = scope.importFunctionDefinition(InlineFunctionDefinition(inlineMetadata.function, inlineMetadata.tag.value))
 
                     // Original function should be not be transformed into a state machine
-                    f.function.setName(null)
+                    f.function.name = null
                     f.function.coroutineMetadata = null
                     f.function.isInlineableCoroutineBody = true
 

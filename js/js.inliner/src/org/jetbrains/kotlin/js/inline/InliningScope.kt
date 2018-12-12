@@ -12,75 +12,134 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.inline.clean.removeUnusedFunctionDefinitions
 import org.jetbrains.kotlin.js.inline.clean.removeUnusedImports
 import org.jetbrains.kotlin.js.inline.clean.simplifyWrappedFunctions
-import org.jetbrains.kotlin.js.inline.context.FunctionContext
 import org.jetbrains.kotlin.js.inline.util.*
+import org.jetbrains.kotlin.js.translate.declaration.transformSpecialFunctionsToCoroutineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import java.util.*
-
 
 // Handles interpreting an inline function in terms of the current context.
 // Either an program fragment, or a public inline function
 sealed class InliningScope {
 
-    private val cache = mutableMapOf<String, Map<JsName, JsNameRef>>()
+    abstract val fragment: JsProgramFragment
 
-    protected fun computeIfAbsent(tag: String?, fn: () -> Map<JsName, JsNameRef>): Map<JsName, JsNameRef> {
-        if (tag == null) return fn()
+    abstract fun addInlinedDeclaration(tag: String?, declaration: JsStatement)
 
-        return cache.computeIfAbsent(tag) { fn() }
+    abstract fun hasImport(tag: String): JsName?
+
+    abstract fun addImport(tag: String, vars: JsVars)
+
+    open fun preprocess(statement: JsStatement) {}
+
+    abstract fun update()
+
+    private val publicFunctionCache = mutableMapOf<String, Map<JsName, JsNameRef>>()
+
+    private val localFunctionCache = mutableMapOf<JsFunction, Map<JsName, JsNameRef>>()
+
+    private fun computeIfAbsent(tag: String?, function: JsFunction, fn: () -> Map<JsName, JsNameRef>): Map<JsName, JsNameRef> {
+        if (tag == null) return localFunctionCache.computeIfAbsent(function) { fn() }
+
+        return publicFunctionCache.computeIfAbsent(tag) { fn() }
     }
 
-    abstract fun importFunctionDefinition(f: InlineFunctionDefinition): JsFunction
+    fun importFunctionDefinition(definition: InlineFunctionDefinition): JsFunction {
+        // Apparently we should avoid this trick when we implement fair support for crossinline
+        // That's because crossinline lambdas inline into the declaration block and specialize those.
+        val replacements = computeIfAbsent(definition.tag, definition.fn.function) {
+            val newReplacements = HashMap<JsName, JsNameRef>()
 
-    abstract fun process()
+            val copiedStatements = ArrayList<JsStatement>()
+            val importStatements = mutableMapOf<JsVars, String>()
 
-    abstract val fragment: JsProgramFragment
+            definition.fn.wrapperBody?.let {
+                it.statements.asSequence()
+                    .filterNot { it is JsReturn }
+                    .map { it.deepCopy() }
+                    .forEach { statement ->
+                        preprocess(statement)
+
+                        if (statement is JsVars) {
+                            val tag = getImportTag(statement)
+                            if (tag != null) {
+                                val name = statement.vars[0].name
+                                val existingName = name.localAlias ?: hasImport(tag) ?: JsScope.declareTemporaryName(name.ident).also {
+                                    it.copyMetadataFrom(name)
+                                    importStatements[statement] = tag
+                                }
+
+                                if (name !== existingName) {
+                                    val replacement = JsAstUtils.pureFqn(existingName, null)
+                                    newReplacements[name] = replacement
+                                }
+                            }
+                        }
+
+                        copiedStatements.add(statement)
+                    }
+            }
+
+            copiedStatements.asSequence()
+                .flatMap { node -> collectDefinedNamesInAllScopes(node).asSequence() }
+                .filter { name -> !newReplacements.containsKey(name) }
+                .forEach { name ->
+                    val alias = JsScope.declareTemporaryName(name.ident)
+                    alias.copyMetadataFrom(name)
+                    val replacement = JsAstUtils.pureFqn(alias, null)
+                    newReplacements[name] = replacement
+                }
+
+            // Apply renaming and restore the static ref links
+            JsBlock(copiedStatements).let {
+                replaceNames(it, newReplacements)
+
+                // Restore the staticRef links
+                for ((key, value) in collectNamedFunctions(it)) {
+                    if (key.staticRef is JsFunction) {
+                        key.staticRef = value
+                    }
+                }
+            }
+
+            copiedStatements.forEach {
+                if (it is JsVars && it in importStatements) {
+                    addImport(importStatements[it]!!, it)
+                } else {
+                    addInlinedDeclaration(definition.tag, it)
+                }
+            }
+
+            newReplacements
+        }
+
+        val paramMap = definition.fn.function.parameters.associate {
+            val alias = JsScope.declareTemporaryName(it.name.ident)
+            alias.copyMetadataFrom(it.name)
+            it.name to JsAstUtils.pureFqn(alias, null)
+        }
+
+        val result = definition.fn.function.deepCopy()
+
+        replaceNames(result, replacements)
+        replaceNames(result, paramMap)
+
+        result.body = transformSpecialFunctionsToCoroutineMetadata(result.body)
+
+        return result
+    }
 }
 
 class ProgramFragmentInliningScope(
-    override val fragment: JsProgramFragment,
-    val functionContext: FunctionContext,
-    val rootInliner: JsInliner
+    override val fragment: JsProgramFragment
 ) : InliningScope() {
 
-    private val existingModules = fragment.importedModules.mapTo(IdentitySet()) { it.internalName }
+    private val existingModules = fragment.importedModules.associateTo(mutableMapOf()) { it.key to it }
 
-    private val existingImports = fragment.nameBindings.associateTo(mutableMapOf()) { it.key to it.name }
-
-    private val existingNameBindings = fragment.nameBindings.associateTo(IdentityHashMap()) { it.name to it.key }
+    private val existingBindings = fragment.nameBindings.associateTo(mutableMapOf()) { it.key to it.name }
 
     private val additionalDeclarations = mutableListOf<JsStatement>()
 
-    private var processed = false
-
-    override fun process() {
-        if (!processed) {
-            // TODO is this even needed?
-            processed = true
-
-            val inliner = InlinerImpl(rootInliner.cycleReporter, functionContext, this)
-
-            // TODO any way and/or need to visit everything inside the fragment?
-            inliner.acceptStatement(fragment.declarationBlock)
-
-            // TODO Atm it's placed after inliner in order not to perform the body inlining twice. Is that OK?
-            // Ideally it could be moved to the coroutine transformers. The info regarding which inline function wrappers have been imported
-            // on top level should be persisted for that sake. Also it going to be needed in order to avoid duplicate code.
-            InlineSuspendFunctionSplitter(this).accept(fragment.declarationBlock)
-
-            // Mostly for the sake of post-processor
-            // TODO are inline function marked with @Test possible?
-            if (fragment.tests != null) {
-                inliner.acceptStatement(fragment.tests)
-            }
-            // TODO wrap in a function in order to do the post-processing
-            inliner.acceptStatement(fragment.initializerBlock)
-
-            updateProgramFragment()
-        }
-    }
-
-    private fun updateProgramFragment() {
+    override fun update() {
         // TODO fix the order
         // TODO this probably will be replaced with a special tag -> block map for the imported stuff, so that we can merge same imports.
         // TODO in that case this method will become obsolete
@@ -110,125 +169,25 @@ class ProgramFragmentInliningScope(
         }
     }
 
-    private fun addInlinedModule(module: JsImportedModule) {
-//        if (moduleName !in existingModules) {
-//            fragment.importedModules.add(moduleMap[moduleName]!!.let {
-//                // Copy so that the Merger.kt doesn't operate on the same instance in different fragments.
-//                JsImportedModule(it.externalName, it.internalName, it.plainReference)
-//            })
-//        }
+    override fun hasImport(tag: String): JsName? = existingBindings[tag]
+
+    override fun addImport(tag: String, vars: JsVars) {
+        val name = vars.vars[0].name
+        val expr = vars.vars[0].initExpression
+        fragment.imports[tag] = expr
+        fragment.nameBindings.add(JsNameBinding(tag, name))
+        existingBindings[tag] = name
     }
 
-    private fun addImport(tag: String, e: JsExpression) {
-        fragment.imports[tag] = e
-    }
-
-    private fun addNameBinding(binding: JsNameBinding) {
-        fragment.nameBindings.add(binding)
-        existingNameBindings[binding.name] = binding.key
-    }
-
-    override fun importFunctionDefinition(f: InlineFunctionDefinition): JsFunction {
-
-        // Apparently we should avoid this trick when we implement fair support for crossinline
-        // That's because crossinline lambdas inline into the declaration block and specialize those.
-        val replacements = computeIfAbsent(f.tag) {
-            val newReplacements = HashMap<JsName, JsNameRef>()
-
-            val copiedStatements = ArrayList<JsStatement>()
-            val importStatements = ArrayList<Pair<String, JsVars.JsVar>>()
-
-            f.functionWithWrapper.wrapperBody?.let {
-                it.statements.asSequence()
-                    .filterNot { it is JsReturn }
-                    .map { it.deepCopy() }
-                    .forEach { statement ->
-                        replaceExpressionsWithLocalAliases(statement)
-
-                        if (statement is JsVars) {
-                            val tag = getImportTag(statement)
-                            if (tag != null) {
-                                // TODO handle JsVars with multiple vars?
-                                val name = statement.vars[0].name
-                                var existingName: JsName? = name.localAlias
-                                if (existingName == null) {
-                                    existingName = existingImports.computeIfAbsent(tag) {
-                                        importStatements.add(tag to statement.vars[0])
-                                        val alias = JsScope.declareTemporaryName(name.ident)
-                                        alias.copyMetadataFrom(name)
-                                        newReplacements[name] = JsAstUtils.pureFqn(alias, null)
-                                        alias
-                                    }
-                                }
-
-                                if (name !== existingName) {
-                                    val replacement = JsAstUtils.pureFqn(existingName, null)
-                                    newReplacements[name] = replacement
-                                }
-
-                                return@forEach
-                            }
-                        }
-
-                        copiedStatements.add(statement)
-                    }
-            }
-
-            (importStatements.asSequence().map { JsVars(it.second) } + copiedStatements.asSequence())
-                .flatMap { node -> collectDefinedNamesInAllScopes(node).asSequence() }
-                .filter { name -> !newReplacements.containsKey(name) }
-                .forEach { name ->
-                    val alias = JsScope.declareTemporaryName(name.ident)
-                    alias.copyMetadataFrom(name)
-                    val replacement = JsAstUtils.pureFqn(alias, null)
-                    newReplacements[name] = replacement
-                }
-
-
-            for ((tag, statement) in importStatements) {
-                val renamed = replaceNames(statement, newReplacements)
-                // TODO shouldn't this be done at `existingImports.computeIfAbsent` moment?
-                addImport(tag, renamed.initExpression)
-
-                addNameBinding(JsNameBinding(tag, renamed.name))
-            }
-
-            if (f.tag != null) {
-                fragment.inlinedFunctionWrappers[f.tag!!] = JsGlobalBlock().also {
-                    copiedStatements.mapTo(it.statements) { replaceNames(it, newReplacements) }
-                }
-            } else {
-                // TODO Handle it better?
-                for (statement in copiedStatements) {
-                    additionalDeclarations.add(replaceNames(statement, newReplacements))
-                }
-            }
-
-            // TODO shouldn't this be moved to renamer?
-            for ((key, value) in collectNamedFunctions(JsBlock(copiedStatements))) {
-                if (key.staticRef is JsFunction) {
-                    key.staticRef = value
-                }
-            }
-
-            newReplacements
+    override fun addInlinedDeclaration(tag: String?, declaration: JsStatement) {
+        if (tag != null) {
+            fragment.inlinedFunctionWrappers.computeIfAbsent(tag) { JsGlobalBlock() }.statements.add(declaration)
+        } else {
+            additionalDeclarations.add(declaration)
         }
-
-        val paramMap = f.functionWithWrapper.function.parameters.associate {
-            val alias = JsScope.declareTemporaryName(it.name.ident)
-            alias.copyMetadataFrom(it.name)
-            it.name to JsAstUtils.pureFqn(alias, null)
-        }
-
-        val result = f.functionWithWrapper.function.deepCopy()
-
-        replaceNames(result, replacements)
-        replaceNames(result, paramMap)
-
-        return result
     }
 
-    private fun replaceExpressionsWithLocalAliases(statement: JsStatement) {
+    override fun preprocess(statement: JsStatement) {
         object : JsVisitorWithContextImpl() {
             override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
                 replaceIfNecessary(x, ctx)
@@ -241,97 +200,44 @@ class ProgramFragmentInliningScope(
             private fun replaceIfNecessary(expression: JsExpression, ctx: JsContext<JsNode>) {
                 val alias = expression.localAlias
                 if (alias != null) {
-                    // TODO wrong!
-                    ctx.replaceMe(alias.internalName.makeRef())
-                    addInlinedModule(alias)
+                    ctx.replaceMe(addInlinedModule(alias).makeRef())
                 }
             }
 
         }.accept(statement)
     }
+
+    private fun addInlinedModule(module: JsImportedModule): JsName {
+        return existingModules.computeIfAbsent(module.key) {
+            // Copy so that the Merger.kt doesn't operate on the same instance in different fragments.
+            // TODO What about nameBindings?
+            JsImportedModule(module.externalName, module.internalName, module.plainReference).also {
+                fragment.importedModules.add(it)
+            }
+        }.internalName
+    }
 }
 
 class PublicInlineFunctionInliningScope(
-    override val fragment: JsProgramFragment,
-    cycleReporter: InlinerCycleReporter,
-    functionContext: FunctionContext,
     val function: JsFunction,
-    val wrapperBody: JsBlock
+    val wrapperBody: JsBlock,
+    override val fragment: JsProgramFragment
 ) : InliningScope() {
-
     val additionalStatements = mutableListOf<JsStatement>()
 
-    val innerInliner = InlinerImpl(
-        cycleReporter,
-        functionContext,
-        this
-    )
+    override fun addInlinedDeclaration(tag: String?, declaration: JsStatement) {
+        additionalStatements.add(declaration)
+    }
 
-    override fun process() {
-        for (statement in wrapperBody.statements) {
-            if (statement !is JsReturn) {
-                innerInliner.acceptStatement(statement)
-            } else {
-                innerInliner.accept((statement.expression as JsFunction).body)
-            }
-        }
+    override fun hasImport(tag: String): JsName? {
+        return null // TODO
+    }
 
-        // TODO keep order
+    override fun addImport(tag: String, vars: JsVars) {
+        additionalStatements.add(vars) // TODO
+    }
+
+    override fun update() {
         wrapperBody.statements.addAll(0, additionalStatements)
-    }
-
-    private fun addPrevious(statement: JsStatement) {
-        // TODO Is this correct?
-        additionalStatements.add(innerInliner.accept(statement))
-    }
-
-    override fun importFunctionDefinition(f: InlineFunctionDefinition): JsFunction {
-        // TODO Decrypt the comment below
-        // Apparently we should avoid this trick when we implement fair support for crossinline
-        val replacements = computeIfAbsent(f.tag) {
-            val newReplacements = HashMap<JsName, JsNameRef>()
-
-            // TODO Why don't we collect existing imports?
-
-            val copiedStatements = f.functionWithWrapper.wrapperBody!!.statements.asSequence()
-                .filterNot { it is JsReturn }
-                .map { it.deepCopy() }.toList()
-
-            val definedNames = copiedStatements.asSequence()
-                .flatMap { node -> collectDefinedNamesInAllScopes(node).asSequence() }
-                .filter { name -> !newReplacements.containsKey(name) }
-                .toSet()
-            for (name in definedNames) {
-                val alias = JsScope.declareTemporaryName(name.ident)
-                alias.copyMetadataFrom(name)
-                val replacement = JsAstUtils.pureFqn(alias, null)
-                newReplacements[name] = replacement
-            }
-
-            for (statement in copiedStatements) {
-                addPrevious(replaceNames(statement, newReplacements))
-            }
-
-            for ((key, value) in collectNamedFunctions(JsBlock(copiedStatements))) {
-                if (key.staticRef is JsFunction) {
-                    key.staticRef = value
-                }
-            }
-
-            newReplacements
-        }
-
-        val paramMap = f.functionWithWrapper.function.parameters.associate {
-            val alias = JsScope.declareTemporaryName(it.name.ident)
-            alias.copyMetadataFrom(it.name)
-            it.name to JsAstUtils.pureFqn(alias, null)
-        }
-
-        val result = f.functionWithWrapper.function.deepCopy()
-
-        replaceNames(result, replacements)
-        replaceNames(result, paramMap)
-
-        return result
     }
 }

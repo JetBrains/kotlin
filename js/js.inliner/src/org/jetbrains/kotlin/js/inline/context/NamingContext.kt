@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.replaceNames
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class NamingContext(private val statementContext: JsContext<JsStatement>) {
+class NamingContext(private val previousStatements: MutableList<JsStatement>) {
     private val renamings = mutableMapOf<JsName, JsNameRef>()
     private val declarations = mutableListOf<JsVars>()
     private var addedDeclarations = false
 
     fun applyRenameTo(target: JsNode): JsNode {
         if (!addedDeclarations) {
-            statementContext.addPrevious(declarations)
+            previousStatements.addAll(declarations)
             addedDeclarations = true
         }
 

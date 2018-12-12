@@ -12,12 +12,9 @@ import org.jetbrains.kotlin.js.backend.ast.JsInvocation
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.backend.ast.metadata.psiElement
-import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
-import org.jetbrains.kotlin.js.inline.clean.removeUnusedLocalFunctionDeclarations
 import org.jetbrains.kotlin.js.inline.context.FunctionContext
 import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
-import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import java.util.*
 
@@ -66,13 +63,24 @@ class InlinerCycleReporter(
     }
 
 
-    // Return true iff the definition should be visited by the inliner
-    fun shouldProcess(definition: FunctionWithWrapper, call: JsInvocation): Boolean {
-
+    fun <T> withInlining(call: JsInvocation, body: () -> T): T {
         currentNamedFunction?.let {
             inlineCallInfos.add(JsCallInfo(call, it))
         }
 
+        val result = body()
+
+        if (!inlineCallInfos.isEmpty()) {
+            if (inlineCallInfos.last.call == call) {
+                inlineCallInfos.removeLast()
+            }
+        }
+
+        return result
+    }
+
+    // Return true iff the definition should be visited by the inliner
+    fun shouldProcess(definition: FunctionWithWrapper, call: JsInvocation?): Boolean {
         if (definition.function in inProcessFunctions) {
             reportInlineCycle(call, definition.function)
         } else if (definition.function !in processedFunctions) {
@@ -82,16 +90,8 @@ class InlinerCycleReporter(
         return false
     }
 
-    fun endVisit(x: JsInvocation) {
-        if (!inlineCallInfos.isEmpty()) {
-            if (inlineCallInfos.last.call == x) {
-                inlineCallInfos.removeLast()
-            }
-        }
-    }
-
-    private fun reportInlineCycle(call: JsInvocation, calledFunction: JsFunction) {
-        call.inlineStrategy = InlineStrategy.NOT_INLINE
+    private fun reportInlineCycle(call: JsInvocation?, calledFunction: JsFunction) {
+        call?.inlineStrategy = InlineStrategy.NOT_INLINE
         val it = inlineCallInfos.descendingIterator()
 
         while (it.hasNext()) {

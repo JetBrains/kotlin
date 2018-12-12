@@ -16,15 +16,12 @@
 
 package org.jetbrains.kotlin.js.inline.context
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
-import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.*
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.general.AstGenerationResult
 import java.util.HashMap
 
 class FunctionContext(
@@ -51,8 +48,6 @@ class FunctionContext(
     fun hasFunctionDefinition(call: JsInvocation, scope: InliningScope): Boolean {
         return getFunctionDefinitionImpl(call, scope) != null
     }
-
-    val functionsByWrapperNodes = HashMap<JsBlock, FunctionWithWrapper>()
 
     val functionsByFunctionNodes = HashMap<JsFunction, FunctionWithWrapper>()
 
@@ -88,17 +83,13 @@ class FunctionContext(
      */
     private fun getFunctionDefinitionImpl(call: JsInvocation, scope: InliningScope): InlineFunctionDefinition? {
         // Ensure we have the local function information
+        // TODO is this necessary?
         loadFragment(scope.fragment)
 
-        val descriptor = call.descriptor
-        if (descriptor != null) {
-            return lookUpFunctionDirect(descriptor) ?: lookUpFunctionIndirect(call, scope) ?: lookUpFunctionExternal(descriptor)
-        }
-
-        return lookUpFunctionIndirect(call, scope)
+        return lookUpFunctionDirect(call) ?: lookUpFunctionIndirect(call, scope) ?: lookUpFunctionExternal(call, scope.fragment)
     }
 
-    private fun lookUpFunctionIndirect(call: JsInvocation, scope: InliningScope): LocalInlineFunctionDefinition? {
+    private fun lookUpFunctionIndirect(call: JsInvocation, scope: InliningScope): InlineFunctionDefinition? {
         /** remove ending `()` */
         val callQualifier: JsExpression = if (isCallInvocation(call)) {
             (call.qualifier as JsNameRef).qualifier!!
@@ -121,21 +112,23 @@ class FunctionContext(
             is JsFunction -> functionsByFunctionNodes[qualifier] ?: FunctionWithWrapper(qualifier, null)
             else -> null
         }?.let {
-            LocalInlineFunctionDefinition(it, scope)
+            InlineFunctionDefinition(it, null).also { definition ->
+                if (scope.fragment in newFragments) {
+                    inliner.process(definition, call, scope)
+                }
+            }
         }
     }
 
-    fun functionTag(call: JsInvocation): String? {
-        return call.descriptor?.let { Namer.getFunctionTag(it, inliner.config) }
-    }
-
-    private val newFragmentSet = inliner.translationResult.newFragments.toIdentitySet()
-
     private val inliningScopeCache = mutableMapOf<JsProgramFragment, ProgramFragmentInliningScope>()
 
-    fun scopeForFragment(fragment: JsProgramFragment) = inliningScopeCache.computeIfAbsent(fragment) {
-        ProgramFragmentInliningScope(fragment, this, inliner)
-    }
+    private val newFragments = inliner.translationResult.newFragments.toIdentitySet()
+
+    fun scopeForFragment(fragment: JsProgramFragment) = if (fragment in newFragments) {
+        inliningScopeCache.computeIfAbsent(fragment) {
+            ProgramFragmentInliningScope(fragment)
+        }
+    } else null
 
     private fun loadFragment(fragment: JsProgramFragment) {
         fragmentInfo.computeIfAbsent(fragment) {
@@ -145,36 +138,38 @@ class FunctionContext(
             ).also { (functions, accessors) ->
                 (functions.values.asSequence() + accessors.values.asSequence()).forEach { f ->
                     functionsByFunctionNodes[f.function] = f
-                    if (f.wrapperBody != null) {
-                        functionsByWrapperNodes[f.wrapperBody] = f
-                    }
                 }
             }
         }
     }
 
-    private fun fragmentByTag(tag: String): JsProgramFragment? {
+    fun fragmentByTag(tag: String): JsProgramFragment? {
         return inliner.translationResult.inlineFunctionTagMap[tag]?.let { unit ->
             inliner.translationResult.translate(unit).fragment.also { loadFragment(it) }
         }
     }
 
-    private fun lookUpFunctionDirect(descriptor: CallableDescriptor): InlineFunctionDefinition? =
-        Namer.getFunctionTag(descriptor, inliner.config).let { tag ->
-            fragmentByTag(tag)?.let { fragment ->
-                lookUpStaticFunctionByTag(tag, fragment)?.let {
-                    if (fragment !in newFragmentSet) {
-                        BinaryInlineFunctionDefinition(tag, it, fragment)
-                    } else {
-                        // TODO This is a wrong scope =(
-                        PublicInlineFunctionDefinition(tag, it, fragment, scopeForFragment(fragment))
+    private fun lookUpFunctionDirect(call: JsInvocation): InlineFunctionDefinition? =
+        call.descriptor?.let { descriptor ->
+            Namer.getFunctionTag(descriptor, inliner.config).let { tag ->
+                fragmentByTag(tag)?.let { definitionFragment ->
+                    return lookUpStaticFunctionByTag(tag, definitionFragment)?.let { fn ->
+                        InlineFunctionDefinition(fn, tag).also { definition ->
+                            scopeForFragment(definitionFragment)?.let { definitionScope ->
+                                inliner.process(definition, call, definitionScope)
+                            }
+                        }
                     }
                 }
             }
         }
 
-
-    private fun lookUpFunctionExternal(descriptor: CallableDescriptor): LibraryInlineFunctionDefinition? = functionReader[descriptor]
+    private fun lookUpFunctionExternal(call: JsInvocation, fragment: JsProgramFragment): InlineFunctionDefinition? =
+        call.descriptor?.let { descriptor ->
+            functionReader[descriptor, fragment]?.let {
+                InlineFunctionDefinition(it, Namer.getFunctionTag(descriptor, inliner.config))
+            }
+        }
 
     private fun tryExtractCallableReference(invocation: JsInvocation): FunctionWithWrapper? {
         if (invocation.isCallableReference) {
