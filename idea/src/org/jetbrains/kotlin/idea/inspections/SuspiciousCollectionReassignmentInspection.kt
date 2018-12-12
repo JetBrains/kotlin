@@ -84,12 +84,7 @@ class SuspiciousCollectionReassignmentInspection : AbstractKotlinInspection() {
             val initializer = property.initializer ?: return
             val fqName = initializer.resolveToCall()?.resultingDescriptor?.fqNameOrNull()?.asString()
             val psiFactory = KtPsiFactory(binaryExpression)
-            val mutableOf = when (fqName) {
-                "kotlin.collections.listOf" -> "mutableListOf"
-                "kotlin.collections.setOf" -> "mutableSetOf"
-                "kotlin.collections.mapOf" -> "mutableMapOf"
-                else -> null
-            }
+            val mutableOf = mutableConversionMap[fqName]
             if (mutableOf != null) {
                 (initializer as? KtCallExpression)?.calleeExpression?.replaced(psiFactory.createExpression(mutableOf)) ?: return
             } else {
@@ -113,6 +108,15 @@ class SuspiciousCollectionReassignmentInspection : AbstractKotlinInspection() {
         }
 
         companion object {
+
+            private const val COLLECTIONS = "kotlin.collections"
+
+            private val mutableConversionMap = mapOf(
+                "$COLLECTIONS.listOf" to "mutableListOf",
+                "$COLLECTIONS.setOf" to "mutableSetOf",
+                "$COLLECTIONS.mapOf" to "mutableMapOf"
+            )
+
             fun isApplicable(property: KtProperty): Boolean {
                 return property.isLocal && property.initializer != null
             }
