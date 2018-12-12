@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.util.OperatorChecks
 
 fun KtContainerNode.description(): String? {
     when (node.elementType) {
@@ -330,3 +332,11 @@ fun KtDotQualifiedExpression.isToString(): Boolean {
     val callableDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return false
     return callableDescriptor.getDeepestSuperDeclarations().any { it.fqNameUnsafe.asString() == "kotlin.Any.toString" }
 }
+
+val FunctionDescriptor.isOperatorOrCompatible: Boolean
+    get() {
+        if (this is JavaMethodDescriptor) {
+            return OperatorChecks.check(this).isSuccess
+        }
+        return isOperator
+    }

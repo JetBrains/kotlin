@@ -22,13 +22,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
-import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
+import org.jetbrains.kotlin.idea.intentions.isOperatorOrCompatible
+import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
+import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -63,7 +67,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
 
     override fun isApplicable(element: KtDotQualifiedExpression): Boolean {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression ?: return false
-        val operation = operation(calleeExpression) ?: return false
+        if (operation(calleeExpression) == null) return false
 
         val resolvedCall = element.toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
         if (!resolvedCall.isReallySuccess()) return false
@@ -137,6 +141,9 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     private fun operation(calleeExpression: KtSimpleNameExpression): KtSingleValueToken? {
         val identifier = calleeExpression.getReferencedNameAsName()
         val dotQualified = calleeExpression.parent.parent as? KtDotQualifiedExpression ?: return null
+        val isOperatorOrCompatible by lazy {
+            (calleeExpression.resolveToCall()?.resultingDescriptor as? FunctionDescriptor)?.isOperatorOrCompatible == true
+        }
         return when (identifier) {
             OperatorNameConventions.EQUALS -> {
                 if (!dotQualified.isAnyEquals()) return null
@@ -145,6 +152,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
                 else KtTokens.EQEQ
             }
             OperatorNameConventions.COMPARE_TO -> {
+                if (!isOperatorOrCompatible) return null
                 // callee -> call -> DotQualified -> Binary
                 val binaryParent = dotQualified.parent as? KtBinaryExpression ?: return null
                 val notZero = when {
@@ -160,7 +168,10 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
                     null
                 }
             }
-            else -> OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]
+            else -> {
+                if (!isOperatorOrCompatible) return null
+                OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]
+            }
         }
     }
 
