@@ -649,6 +649,12 @@ public class FunctionCodegen {
                     parentCodegen.state, signature, functionDescriptor.getExtensionReceiverParameter(),
                     functionDescriptor.getValueParameters(), isStaticMethod(context.getContextKind(), functionDescriptor)
             );
+            // Manually add `continuation` parameter to frame map, thus it will not overlap with fake indices
+            if (functionDescriptor.isSuspend() && CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(functionDescriptor)) {
+                FunctionDescriptor view = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(functionDescriptor, parentCodegen.state);
+                ValueParameterDescriptor continuationValueDescriptor = view.getValueParameters().get(view.getValueParameters().size() - 1);
+                frameMap.enter(continuationValueDescriptor, typeMapper.mapType(continuationValueDescriptor));
+            }
             if (context.isInlineMethodContext()) {
                 functionFakeIndex = newFakeTempIndex(mv, frameMap);
             }
