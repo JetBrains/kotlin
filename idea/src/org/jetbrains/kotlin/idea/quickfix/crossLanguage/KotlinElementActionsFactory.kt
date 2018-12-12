@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix.crossLanguage
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.QuickFixFactory
-import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.lang.java.beans.PropertyKind
 import com.intellij.lang.jvm.*
 import com.intellij.lang.jvm.actions.*
@@ -73,7 +72,6 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.statistics.KotlinIdeIntentionTrigger
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -472,11 +470,6 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
 
 
         override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-            FUSApplicationUsageTrigger.getInstance().trigger(
-                    KotlinIdeIntentionTrigger::class.java,
-                    this::class.java.simpleName
-            )
-
             val target = pointer.element ?: return
             val kotlinAnnotation = JavaPsiFacade.getInstance(project).findClass(
                 request.qualifiedName,
