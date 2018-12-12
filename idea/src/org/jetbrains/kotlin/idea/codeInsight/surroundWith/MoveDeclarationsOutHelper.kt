@@ -32,104 +32,102 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import java.util.*
 
-object MoveDeclarationsOutHelper {
-    fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultInitializers: Boolean): Array<PsiElement> {
-        if (statements.isEmpty()) {
-            return statements
-        }
+fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultInitializers: Boolean): Array<PsiElement> {
+    if (statements.isEmpty()) {
+        return statements
+    }
 
-        val project = container.project
+    val project = container.project
 
-        val resultStatements = ArrayList<PsiElement>()
-        val propertiesDeclarations = ArrayList<KtProperty>()
+    val resultStatements = ArrayList<PsiElement>()
+    val propertiesDeclarations = ArrayList<KtProperty>()
 
-        // Dummy element to add new declarations at the beginning
-        val psiFactory = KtPsiFactory(project)
-        val dummyFirstStatement = container.addBefore(psiFactory.createExpression("dummyStatement"), statements[0])
+    // Dummy element to add new declarations at the beginning
+    val psiFactory = KtPsiFactory(project)
+    val dummyFirstStatement = container.addBefore(psiFactory.createExpression("dummyStatement"), statements[0])
 
-        try {
-            val scope = LocalSearchScope(container)
-            val lastStatementOffset = statements[statements.size - 1].textRange.endOffset
+    try {
+        val scope = LocalSearchScope(container)
+        val lastStatementOffset = statements[statements.size - 1].textRange.endOffset
 
-            for (statement in statements) {
-                if (needToDeclareOut(statement, lastStatementOffset, scope)) {
-                    val property = statement as? KtProperty
-                    if (property?.initializer != null) {
-                        var declaration = createVariableDeclaration(property, generateDefaultInitializers)
-                        declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
-                        propertiesDeclarations.add(declaration)
-                        container.addAfter(psiFactory.createNewLine(), declaration)
+        for (statement in statements) {
+            if (needToDeclareOut(statement, lastStatementOffset, scope)) {
+                val property = statement as? KtProperty
+                if (property?.initializer != null) {
+                    var declaration = createVariableDeclaration(property, generateDefaultInitializers)
+                    declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
+                    propertiesDeclarations.add(declaration)
+                    container.addAfter(psiFactory.createNewLine(), declaration)
 
-                        val assignment = createVariableAssignment(property)
-                        resultStatements.add(property.replace(assignment))
-                    } else {
-                        val newStatement = container.addBefore(statement, dummyFirstStatement)
-                        container.addAfter(psiFactory.createNewLine(), newStatement)
-                        container.deleteChildRange(statement, statement)
-                    }
+                    val assignment = createVariableAssignment(property)
+                    resultStatements.add(property.replace(assignment))
                 } else {
-                    resultStatements.add(statement)
+                    val newStatement = container.addBefore(statement, dummyFirstStatement)
+                    container.addAfter(psiFactory.createNewLine(), newStatement)
+                    container.deleteChildRange(statement, statement)
                 }
-            }
-        } finally {
-            dummyFirstStatement.delete()
-        }
-
-        ShortenReferences.DEFAULT.process(propertiesDeclarations)
-
-        return PsiUtilCore.toPsiElementArray(resultStatements)
-    }
-
-    private fun createVariableAssignment(property: KtProperty): KtBinaryExpression {
-        val propertyName = property.name ?: error("Property should have a name " + property.text)
-        val assignment = KtPsiFactory(property).createExpression("$propertyName = x") as KtBinaryExpression
-        val right = assignment.right ?: error("Created binary expression should have a right part " + assignment.text)
-        val initializer = property.initializer ?: error("Initializer should exist for property " + property.text)
-        right.replace(initializer)
-        return assignment
-    }
-
-    private fun createVariableDeclaration(property: KtProperty, generateDefaultInitializers: Boolean): KtProperty {
-        val propertyType = getPropertyType(property)
-        var defaultInitializer: String? = null
-        if (generateDefaultInitializers && property.isVar) {
-            defaultInitializer = CodeInsightUtils.defaultInitializer(propertyType)
-        }
-        return createProperty(property, propertyType, defaultInitializer)
-    }
-
-    private fun getPropertyType(property: KtProperty): KotlinType {
-        val variableDescriptor = property.resolveToDescriptorIfAny(BodyResolveMode.PARTIAL)
-            ?: error("Couldn't resolve property to property descriptor " + property.text)
-        return variableDescriptor.type
-    }
-
-    private fun createProperty(property: KtProperty, propertyType: KotlinType, initializer: String?): KtProperty {
-        val typeRef = property.typeReference
-        var typeString: String? = null
-        if (typeRef != null) {
-            typeString = typeRef.text
-        } else if (!propertyType.isError) {
-            typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType)
-        }
-
-        return KtPsiFactory(property).createProperty(property.name!!, typeString, property.isVar, initializer)
-    }
-
-    private fun needToDeclareOut(element: PsiElement, lastStatementOffset: Int, scope: SearchScope): Boolean {
-        if (element is KtProperty ||
-            element is KtClassOrObject ||
-            element is KtFunction
-        ) {
-            val refs = ReferencesSearch.search(element, scope, false).toArray(PsiReference.EMPTY_ARRAY)
-            if (refs.isNotEmpty()) {
-                val lastRef = refs[refs.size - 1]
-                if (lastRef.element.textOffset > lastStatementOffset) {
-                    return true
-                }
+            } else {
+                resultStatements.add(statement)
             }
         }
-
-        return false
+    } finally {
+        dummyFirstStatement.delete()
     }
+
+    ShortenReferences.DEFAULT.process(propertiesDeclarations)
+
+    return PsiUtilCore.toPsiElementArray(resultStatements)
+}
+
+private fun createVariableAssignment(property: KtProperty): KtBinaryExpression {
+    val propertyName = property.name ?: error("Property should have a name " + property.text)
+    val assignment = KtPsiFactory(property).createExpression("$propertyName = x") as KtBinaryExpression
+    val right = assignment.right ?: error("Created binary expression should have a right part " + assignment.text)
+    val initializer = property.initializer ?: error("Initializer should exist for property " + property.text)
+    right.replace(initializer)
+    return assignment
+}
+
+private fun createVariableDeclaration(property: KtProperty, generateDefaultInitializers: Boolean): KtProperty {
+    val propertyType = getPropertyType(property)
+    var defaultInitializer: String? = null
+    if (generateDefaultInitializers && property.isVar) {
+        defaultInitializer = CodeInsightUtils.defaultInitializer(propertyType)
+    }
+    return createProperty(property, propertyType, defaultInitializer)
+}
+
+private fun getPropertyType(property: KtProperty): KotlinType {
+    val variableDescriptor = property.resolveToDescriptorIfAny(BodyResolveMode.PARTIAL)
+        ?: error("Couldn't resolve property to property descriptor " + property.text)
+    return variableDescriptor.type
+}
+
+private fun createProperty(property: KtProperty, propertyType: KotlinType, initializer: String?): KtProperty {
+    val typeRef = property.typeReference
+    var typeString: String? = null
+    if (typeRef != null) {
+        typeString = typeRef.text
+    } else if (!propertyType.isError) {
+        typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType)
+    }
+
+    return KtPsiFactory(property).createProperty(property.name!!, typeString, property.isVar, initializer)
+}
+
+private fun needToDeclareOut(element: PsiElement, lastStatementOffset: Int, scope: SearchScope): Boolean {
+    if (element is KtProperty ||
+        element is KtClassOrObject ||
+        element is KtFunction
+    ) {
+        val refs = ReferencesSearch.search(element, scope, false).toArray(PsiReference.EMPTY_ARRAY)
+        if (refs.isNotEmpty()) {
+            val lastRef = refs[refs.size - 1]
+            if (lastRef.element.textOffset > lastStatementOffset) {
+                return true
+            }
+        }
+    }
+
+    return false
 }
