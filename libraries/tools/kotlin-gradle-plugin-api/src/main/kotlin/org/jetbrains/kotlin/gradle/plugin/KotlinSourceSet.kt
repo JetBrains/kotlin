@@ -41,4 +41,6 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
     }
 
     val customSourceFilesExtensions: Iterable<String> // lazy iterable expected
+
+    fun addCustomSourceFilesExtensions(extensions: List<String>) {}
 }

@@ -167,7 +167,7 @@ internal class Kotlin2JvmSourceSetProcessor(
             Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, kotlinCompilation.compilationName)
         }
 
-        ScriptingGradleSubplugin.createDiscoveryConfigurationIfNeeded(project, kotlinCompilation.compilationName)
+        ScriptingGradleSubplugin.configureForSourceSet(project, kotlinCompilation.compilationName)
 
         project.afterEvaluate { project ->
             val javaTask = javaSourceSet?.let { project.tasks.findByName(it.compileJavaTaskName) as JavaCompile }
