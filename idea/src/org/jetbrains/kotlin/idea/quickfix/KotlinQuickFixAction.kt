@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.FileModificationService
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.statistics.KotlinIdeQuickfixTrigger
 
 abstract class KotlinQuickFixAction<out T : PsiElement>(element: T) : QuickFixActionBase<T>(element) {
     protected open fun isAvailable(project: Project, editor: Editor?, file: KtFile) = true
@@ -34,6 +36,10 @@ abstract class KotlinQuickFixAction<out T : PsiElement>(element: T) : QuickFixAc
     final override fun invoke(project: Project, editor: Editor?, file: PsiFile) {
         val element = element ?: return
         if (file is KtFile && FileModificationService.getInstance().prepareFileForWrite(element.containingFile)) {
+            FUSApplicationUsageTrigger.getInstance().trigger(
+                    KotlinIdeQuickfixTrigger::class.java,
+                    this::class.java.simpleName
+            )
             invoke(project, editor, file)
         }
     }
