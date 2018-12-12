@@ -56,11 +56,16 @@ interface IrBuilderExtension {
 
     val BackendContext.localSymbolTable: SymbolTable
 
+    private fun IrClass.declareSimpleFunctionWithExternalOverrides(descriptor: FunctionDescriptor): IrSimpleFunction {
+        return compilerContext.localSymbolTable.declareSimpleFunction(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, descriptor).also {f ->
+            descriptor.overriddenDescriptors.mapTo(f.overriddenSymbols) {
+                compilerContext.externalSymbols.referenceSimpleFunction(it.original)
+            }
+        }
+    }
+
     fun IrClass.contributeFunction(descriptor: FunctionDescriptor, fromStubs: Boolean = false, bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit) {
-        val f: IrSimpleFunction = if (!fromStubs) compilerContext.localSymbolTable.declareSimpleFunctionWithOverrides(
-            this.startOffset,
-            this.endOffset,
-            SERIALIZABLE_PLUGIN_ORIGIN,
+        val f: IrSimpleFunction = if (!fromStubs) declareSimpleFunctionWithExternalOverrides(
             descriptor
         ) else compilerContext.externalSymbols.referenceSimpleFunction(descriptor).owner
         f.parent = this
