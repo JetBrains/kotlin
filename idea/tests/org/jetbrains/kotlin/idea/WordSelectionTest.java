@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.idea;
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
@@ -26,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TagsTestDataUtil;
 
 import java.io.File;
 
@@ -183,21 +179,6 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     }
 
     private void wrapToFileComparisonFailure(String failedFilePath) {
-        Editor editor = myFixture.getEditor();
-
-        Caret caret = editor.getCaretModel().getCurrentCaret();
-        int selectionStart = caret.getSelectionStart();
-        int selectionEnd = caret.getSelectionEnd();
-
-        String actualText = TagsTestDataUtil.insertTagsInText(
-                Lists.<TagsTestDataUtil.TagInfo>newArrayList(
-                        new TagsTestDataUtil.TagInfo<String>(caret.getOffset(), true, "caret"),
-                        new TagsTestDataUtil.TagInfo<String>(selectionStart, true, "selection"),
-                        new TagsTestDataUtil.TagInfo<String>(selectionEnd, false, "selection")),
-                editor.getDocument().getText()
-        );
-
-        KotlinTestUtils.assertEqualsToFile(new File(failedFilePath), actualText);
+        KotlinTestUtils.assertEqualsToFile(new File(failedFilePath), myFixture.getEditor());
     }
-
 }
