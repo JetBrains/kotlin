@@ -17,5 +17,5 @@ fun box() : String {
 // 0 NULL
 
 //proper variable start label: after assignment
-// 1 LOCALVARIABLE p\$iv Ljava/lang/String; L2 L3 0
+// 1 LOCALVARIABLE p\$iv Ljava/lang/String; L2 L4 0
 // 1 LDC "OK"\s*ASTORE 0\s*L2

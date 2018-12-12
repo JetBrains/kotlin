@@ -19,12 +19,12 @@ fun box(): String {
 
 
 // Shared variable slots (x1, x2):
-// 4 ILOAD 0
-// 4 ISTORE 0
+// 4 ILOAD 2
+// 4 ISTORE 2
 
-// Temporary variable slots for 'x2++':
+// Temporary variable slots for 'x2++' + store to fake index:
 // 0 ILOAD 1
-// 1 ISTORE 1
+// 2 ISTORE 1
 
 // 0 NEW
 // 0 GETFIELD
