@@ -74,27 +74,27 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
 
         add(JSeparator(SwingConstants.VERTICAL))
 
-        isReplCheckbox = JCheckBox("Use REPL", false)
+        isReplCheckbox = JCheckBox("Use REPL")
         add(isReplCheckbox)
         isReplCheckbox.addItemListener {
-            scratchFile.getPsiFile()?.virtualFile?.apply {
-                scratchPanelConfig = (scratchPanelConfig ?: ScratchPanelConfig()).copy(isRepl = isReplCheckbox.isSelected)
+            scratchFile.saveOptions {
+                copy(isRepl = isReplCheckbox.isSelected)
             }
         }
 
         add(JSeparator(SwingConstants.VERTICAL))
 
-        isMakeBeforeRunCheckbox = JCheckBox("Make before Run", false)
+        isMakeBeforeRunCheckbox = JCheckBox("Make before Run")
         add(isMakeBeforeRunCheckbox)
         isMakeBeforeRunCheckbox.addItemListener {
-            scratchFile.getPsiFile()?.virtualFile?.apply {
-                scratchPanelConfig = (scratchPanelConfig ?: ScratchPanelConfig()).copy(isMakeBeforeRun = isMakeBeforeRunCheckbox.isSelected)
+            scratchFile.saveOptions {
+                copy(isMakeBeforeRun = isMakeBeforeRunCheckbox.isSelected)
             }
         }
 
         add(JSeparator(SwingConstants.VERTICAL))
 
-        (scratchFile.getPsiFile()?.virtualFile?.scratchPanelConfig ?: ScratchPanelConfig()).let {
+        scratchFile.options.let {
             isReplCheckbox.isSelected = it.isRepl
             isMakeBeforeRunCheckbox.isSelected = it.isMakeBeforeRun
         }
@@ -115,9 +115,6 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
             }
         }
     }
-
-    fun isRepl() = isReplCheckbox.isSelected
-    fun isMakeBeforeRun() = isMakeBeforeRunCheckbox.isSelected
 
     @TestOnly
     fun setReplMode(isSelected: Boolean) {
@@ -154,5 +151,3 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         }
     }
 }
-
-data class ScratchPanelConfig(val isRepl: Boolean = false, val isMakeBeforeRun: Boolean = false)
