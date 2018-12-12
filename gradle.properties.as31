@@ -13,3 +13,4 @@ kotlin.compiler.newInferenceEnabled=true
 #signingRequired=true
 
 intellijUltimateEnabled=false
+intellijEnforceCommunitySdk=true
