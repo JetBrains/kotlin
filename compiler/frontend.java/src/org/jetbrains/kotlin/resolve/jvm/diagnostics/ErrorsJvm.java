@@ -125,6 +125,9 @@ public interface ErrorsJvm {
     DiagnosticFactory1<PsiElement, String> SUSPENSION_POINT_INSIDE_MONITOR = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, CallableDescriptor> SUSPENSION_POINT_INSIDE_SYNCHRONIZED = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> CONCURRENT_HASH_MAP_CONTAINS_OPERATOR = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR = DiagnosticFactory0.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

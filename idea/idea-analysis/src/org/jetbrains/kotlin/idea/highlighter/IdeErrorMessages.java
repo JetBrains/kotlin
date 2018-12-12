@@ -35,6 +35,8 @@ import static org.jetbrains.kotlin.idea.highlighter.IdeRenderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.ACCIDENTAL_OVERRIDE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.CONFLICTING_JVM_DECLARATIONS;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR;
 
 
 /**
@@ -186,6 +188,13 @@ public class IdeErrorMessages {
 
         MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "<html>Actual class ''{0}'' has no corresponding members for expected class members:{1}</html>",
                 NAME, new IncompatibleExpectedActualClassScopesRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
+
+        String MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS =
+                "<html>Method 'contains' from ConcurrentHashMap may have unexpected semantics: it calls 'containsValue' instead of 'containsKey'.<br/>" +
+                "Use explicit form of the call to 'containsKey'/'containsValue'/'contains' or cast the value to kotlin.collections.Map instead.<br/>" +
+                "See https://youtrack.jetbrains.com/issue/KT-18053 for more details</html>";
+        MAP.put(CONCURRENT_HASH_MAP_CONTAINS_OPERATOR, MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS);
+        MAP.put(CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR, MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS);
 
         MAP.setImmutable();
     }
