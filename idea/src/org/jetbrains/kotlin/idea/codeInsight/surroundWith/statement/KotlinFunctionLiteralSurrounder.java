@@ -31,7 +31,7 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
     @Nullable
     @Override
     protected TextRange surroundStatements(Project project, Editor editor, PsiElement container, PsiElement[] statements) {
-        statements = MoveDeclarationsOutHelper.move(container, statements, true);
+        statements = MoveDeclarationsOutHelper.INSTANCE.move(container, statements, true);
 
         if (statements.length == 0) {
             KotlinSurrounderUtils.showErrorHint(project, editor, KotlinSurrounderUtils.SURROUND_WITH_ERROR);
