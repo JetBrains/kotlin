@@ -10,8 +10,11 @@ import org.gradle.api.attributes.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
-internal object ProjectLocalConfigurations {
-    val ATTRIBUTE = Attribute.of("org.jetbrains.kotlin.localToProject", String::class.java)
+object ProjectLocalConfigurations {
+    val ATTRIBUTE: Attribute<String> = Attribute.of("org.jetbrains.kotlin.localToProject", String::class.java)
+
+    const val PUBLIC_VALUE = "public"
+    const val LOCAL_TO_PROJECT_PREFIX = "local to "
 
     fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) = with(attributesSchema) {
         attribute(ATTRIBUTE) {
@@ -30,9 +33,8 @@ internal object ProjectLocalConfigurations {
 
     class ProjectLocalDisambiguation : AttributeDisambiguationRule<String> {
         override fun execute(details: MultipleCandidatesDetails<String?>) = with(details) {
-            if (candidateValues.contains(null)) {
-                @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                closestMatch(null as String?)
+            if (candidateValues.contains(PUBLIC_VALUE)) {
+                closestMatch(PUBLIC_VALUE)
             }
         }
     }
@@ -46,7 +48,15 @@ internal fun Configuration.setupAsLocalTargetSpecificConfigurationIfSupported(ta
         (target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)
     ) {
         usesPlatformOf(target)
-        attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, target.project.path)
+        attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, ProjectLocalConfigurations.LOCAL_TO_PROJECT_PREFIX + target.project.path)
+    }
+}
+
+internal fun Configuration.setupAsPublicConfigurationIfSupported(target: KotlinTarget) {
+    if (gradleVersionSupportsAttributeRules &&
+        (target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)
+    ) {
+        attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, ProjectLocalConfigurations.PUBLIC_VALUE)
     }
 }
 

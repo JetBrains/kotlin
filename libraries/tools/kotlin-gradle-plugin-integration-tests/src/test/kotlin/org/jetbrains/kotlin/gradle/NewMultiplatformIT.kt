@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
@@ -74,6 +75,9 @@ class NewMultiplatformIT : BaseGradleIT() {
                 listOf(jvmJarName, jsJarName, metadataJarName, "sample-lib/1.0/sample-lib-1.0.module").forEach {
                     Assert.assertTrue("$it should exist", groupDir.resolve(it).exists())
                 }
+
+                val gradleMetadata = groupDir.resolve("sample-lib/1.0/sample-lib-1.0.module").readText()
+                assertFalse(gradleMetadata.contains(ProjectLocalConfigurations.ATTRIBUTE.name))
 
                 listOf(jvmJarName, jsJarName, metadataJarName, wasmKlibName, nativeKlibName).forEach {
                     val pom = groupDir.resolve(it.replaceAfterLast('.', "pom"))

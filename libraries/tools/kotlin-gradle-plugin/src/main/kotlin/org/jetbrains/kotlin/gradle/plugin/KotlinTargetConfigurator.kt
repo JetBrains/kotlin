@@ -187,6 +187,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 extendsFrom(runtimeConfiguration)
             }
             usesPlatformOf(target)
+            setupAsPublicConfigurationIfSupported(target)
         }
 
         if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
@@ -199,6 +200,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 val runtimeConfiguration = configurations.maybeCreate(mainCompilation.deprecatedRuntimeConfigurationName)
                 extendsFrom(implementationConfiguration, runtimeOnlyConfiguration, runtimeConfiguration)
                 usesPlatformOf(target)
+                setupAsPublicConfigurationIfSupported(target)
             }
             defaultConfiguration.extendsFrom(runtimeElementsConfiguration)
         } else {

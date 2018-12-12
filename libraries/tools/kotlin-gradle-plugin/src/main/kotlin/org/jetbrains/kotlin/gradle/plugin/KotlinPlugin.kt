@@ -448,11 +448,13 @@ internal abstract class AbstractKotlinPlugin(
             if (kotlinTarget.platformType != KotlinPlatformType.common) {
                 project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).run {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(kotlinTarget))
+                    setupAsPublicConfigurationIfSupported(kotlinTarget)
                     usesPlatformOf(kotlinTarget)
                 }
 
                 project.configurations.getByName(kotlinTarget.runtimeElementsConfigurationName).run {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(kotlinTarget))
+                    setupAsPublicConfigurationIfSupported(kotlinTarget)
                     usesPlatformOf(kotlinTarget)
                 }
             }
