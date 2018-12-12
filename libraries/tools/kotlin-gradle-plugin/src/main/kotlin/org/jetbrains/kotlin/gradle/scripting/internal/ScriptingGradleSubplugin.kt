@@ -3,41 +3,49 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.gradle.scripting.internal
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.transform.ArtifactTransform
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
-import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
-import kotlin.properties.Delegates
+import java.io.File
+
+private const val MISCONFIGURATION_MESSAGE_SUFFIX = "the plugin is probably applied by a mistake"
 
 class ScriptingGradleSubplugin : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(ScriptingGradleSubplugin::class.java) != null
 
-        val MAIN_CONFIGURATION_NAME = "kotlinScriptDef"
+        fun configureForSourceSet(project: Project, sourceSetName: String) {
 
-        fun getConfigurationName(sourceSetName: String): String = when (sourceSetName) {
-            "main" -> MAIN_CONFIGURATION_NAME
-            else -> "$sourceSetName${MAIN_CONFIGURATION_NAME.capitalize()}"
-        }
+            if (!org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(4, 0)) return
 
-        fun createDiscoveryConfigurationIfNeeded(project: Project, sourceSetName: String) {
-            project.configurations.maybeCreate(getConfigurationName(sourceSetName))
+            val discoveryConfiguration = project.configurations.maybeCreate(getDiscoveryClasspathConfigurationName(sourceSetName)).apply {
+                isVisible = false
+                isCanBeConsumed = false
+                description = "Script filename extensions discovery classpath configuration"
+            }
+
+            configureDiscoveryTransformation(project, discoveryConfiguration, getDiscoveryResultsConfigurationName(sourceSetName))
         }
     }
 
     override fun apply(project: Project) {
+
+        if (!org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(4, 0)) return
 
         project.afterEvaluate {
 
@@ -45,64 +53,145 @@ class ScriptingGradleSubplugin : Plugin<Project> {
             if (javaPluginConvention?.sourceSets?.isEmpty() == false) {
 
                 project.tasks.withType(KotlinCompile::class.java) { task ->
+
                     if (task !is KaptGenerateStubsTask) {
-                        javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->
-                            project.tasks.create(
-                                "discover${task.sourceSetName.capitalize()}ScriptsExtensions",
-                                DiscoverScriptExtensionsTask::class.java
-                            ) { extensionsTask ->
-                                extensionsTask.sourceSet = sourceSet
-                                extensionsTask.discoveryClasspathConfiguration =
-                                        project.configurations.findByName(getConfigurationName(task.sourceSetName))
-                                extensionsTask.kotlinCompile = task
-                                task.dependsOn(extensionsTask)
-                            }
+
+                        val discoveryClasspathConfigurationName = getDiscoveryClasspathConfigurationName(task.sourceSetName)
+                        project.configurations.findByName(discoveryClasspathConfigurationName)?.let { _ ->
+                            configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName)
                         }
+                            ?: project.logger.warn("kotlin scripting plugin: $project.${task.name} - configuration not found: $discoveryClasspathConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
                     }
                 }
             } else {
-                project.logger.warn("kotlin scripting plugin: applied to a non-JVM project $project")
+                project.logger.warn("kotlin scripting plugin: applied to a non-JVM project $project, $MISCONFIGURATION_MESSAGE_SUFFIX")
+            }
+        }
+    }
+
+    private fun configureScriptsExtensions(
+        project: Project,
+        javaPluginConvention: JavaPluginConvention,
+        sourceSetName: String
+    ) {
+        javaPluginConvention.sourceSets.findByName(sourceSetName)?.let { sourceSet ->
+
+            val discoveryResultsConfigurationName = getDiscoveryResultsConfigurationName(sourceSetName)
+
+            val kotlinSourceSet = sourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
+            if (kotlinSourceSet == null) {
+                project.logger.warn("kotlin scripting plugin: kotlin source set not found: $project.$sourceSet, $MISCONFIGURATION_MESSAGE_SUFFIX")
+            } else {
+                val extensions by lazy {
+                    val discoveryResultsConfiguration = project.configurations.findByName(discoveryResultsConfigurationName)
+                    if (discoveryResultsConfiguration == null) {
+                        project.logger.warn("kotlin scripting plugin: discovery results not found: $project.$discoveryResultsConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
+                        emptySet<String>()
+                    } else {
+                        discoveryResultsConfiguration.files.flatMapTo(HashSet()) {
+                            it.readLines().filter(String::isNotBlank)
+                        }.also {
+                            kotlinSourceSet.addCustomSourceFilesExtensions(it.toList())
+                            project.logger.debug("kotlin scripting plugin: $project.$sourceSet: discovered script extensions: $it")
+                        }
+                    }
+                }
+                kotlinSourceSet.kotlin.filter.include { it.file.extension in extensions }
+            }
+        }
+    }
+
+}
+
+private const val MAIN_CONFIGURATION_NAME = "kotlinScriptDef"
+private const val RESULTS_CONFIGURATION_SUFFIX = "Extensions"
+
+private fun getDiscoveryClasspathConfigurationName(sourceSetName: String): String = when (sourceSetName) {
+    "main" -> MAIN_CONFIGURATION_NAME
+    else -> "$sourceSetName${MAIN_CONFIGURATION_NAME.capitalize()}"
+}
+
+private fun getDiscoveryResultsConfigurationName(sourceSetName: String): String =
+    getDiscoveryClasspathConfigurationName(sourceSetName) + RESULTS_CONFIGURATION_SUFFIX
+
+
+
+private fun configureDiscoveryTransformation(
+    project: Project,
+    discoveryConfiguration: Configuration,
+    discoveryResultsConfigurationName: String
+) {
+    project.configurations.maybeCreate(discoveryResultsConfigurationName).apply {
+        isCanBeConsumed = false
+    }
+    project.dependencies.apply {
+        add(
+            discoveryResultsConfigurationName,
+            project.withRegisteredDiscoverScriptExtensionsTransform {
+                discoveryConfiguration.discoverScriptExtensionsFiles()
+            }
+        )
+    }
+}
+
+internal class DiscoverScriptExtensionsTransform : ArtifactTransform() {
+
+    override fun transform(input: File): List<File> {
+        val definitions =
+            ScriptDefinitionsFromClasspathDiscoverySource(
+                listOf(input), emptyMap(),
+                PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
+            ).definitions
+        val extensions = definitions.mapTo(arrayListOf()) { it.fileExtension }
+        return if (extensions.isNotEmpty()) {
+            val outputFile = outputDirectory.resolve("${input.nameWithoutExtension}.discoveredScriptsExtensions.txt")
+            outputFile.writeText(extensions.joinToString("\n"))
+            listOf(outputFile)
+        } else emptyList()
+    }
+}
+
+private
+fun Project.registerDiscoverScriptExtensionsTransform() {
+    dependencies.apply {
+        registerTransform {
+            with(it) {
+                from.attribute(artifactType, "jar")
+                to.attribute(artifactType, scriptFilesExtensions)
+                artifactTransform(DiscoverScriptExtensionsTransform::class.java)
+            }
+        }
+        registerTransform {
+            with(it) {
+                from.attribute(artifactType, "classes")
+                to.attribute(artifactType, scriptFilesExtensions)
+                artifactTransform(DiscoverScriptExtensionsTransform::class.java)
             }
         }
     }
 }
 
-open class DiscoverScriptExtensionsTask : DefaultTask() {
-
-    @get:Internal
-    internal var sourceSet: SourceSet by Delegates.notNull()
-
-    @get:InputFiles
-    @get:Classpath
-    @get:Optional
-    internal var discoveryClasspathConfiguration: Configuration? = null
-
-    @get:Internal
-    internal var kotlinCompile: KotlinCompile by Delegates.notNull()
-
-    @Input
-    override fun getDependsOn(): MutableSet<Any> = kotlinCompile.dependsOn
-
-    @TaskAction
-    @Suppress("unused")
-    fun findKnownScriptExtensions() {
-        val scriptingClasspath = discoveryClasspathConfiguration?.files?.takeIf { it.isNotEmpty() } ?: return
-
-        val definitions =
-            ScriptDefinitionsFromClasspathDiscoverySource(
-                scriptingClasspath.toList(), emptyMap(),
-                GradlePrintingMessageCollector(logger)
-            ).definitions
-        val extensions = definitions.mapTo(arrayListOf(), KotlinScriptDefinition::fileExtension)
-        val kotlinSourceSet = sourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
-        if (kotlinSourceSet == null) {
-            logger.warn("kotlin scripting plugin: kotlin source set not found: $project.$sourceSet")
-        } else if (extensions.isNotEmpty()) {
-            logger.info("kotlin scripting plugin: Add new extensions to the sourceset $project.$sourceSet: $extensions")
-            kotlinSourceSet.kotlin.filter.include(extensions.map { "**/*.$it" })
-        }
+private
+fun <T> Project.withRegisteredDiscoverScriptExtensionsTransform(block: () -> T): T {
+    if (!project.extensions.extraProperties.has("DiscoverScriptExtensionsTransform")) {
+        registerDiscoverScriptExtensionsTransform()
+        project.extensions.extraProperties["DiscoverScriptExtensionsTransform"] = true
     }
+    return block()
 }
+
+private val artifactType = Attribute.of("artifactType", String::class.java)
+
+private val scriptFilesExtensions = "script-files-extensions"
+
+private
+fun Configuration.discoverScriptExtensionsFiles() =
+    incoming.artifactView {
+        attributes {
+            it.attribute(artifactType, scriptFilesExtensions)
+        }
+    }.artifacts.artifactFiles
+
 
 class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
