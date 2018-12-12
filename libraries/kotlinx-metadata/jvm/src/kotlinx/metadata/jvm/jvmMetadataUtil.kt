@@ -16,4 +16,4 @@ import kotlinx.metadata.isLocal
 val ClassName.jvmInternalName: String
     get() =
         if (this.isLocal) substring(1)
-        else replace('/', '$')
+        else replace('.', '$')
