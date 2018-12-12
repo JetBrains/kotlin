@@ -24,15 +24,27 @@ import kotlinx.cinterop.*
 /**
  * Class representing worker.
  */
-@Frozen
-public class Worker private constructor(val id: Int) {
+@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+public inline class Worker @PublishedApi internal constructor(val id: Int) {
     companion object {
         /**
          * Start new scheduling primitive, such as thread, to accept new tasks via `execute` interface.
          * Typically new worker may be needed for computations offload to another core, for IO it may be
          * better to use non-blocking IO combined with more lightweight coroutines.
+         *
+         * @param errorReporting controls if an uncaught exceptions in the worker will be printed out
          */
-        public fun start(): Worker = Worker(startInternal())
+        public fun start(errorReporting: Boolean = true): Worker = Worker(startInternal(errorReporting))
+
+        /**
+         * Return the current worker, if known, null otherwise. null value will be returned in the main thread
+         * or platform thread without an associated worker, non-null - if called inside worker started with
+         * [Worker.start].
+         */
+        public val current: Worker? get() {
+            val id = currentInternal()
+            return if (id != 0) Worker(id) else null
+        }
     }
 
     /**
@@ -64,10 +76,6 @@ public class Worker private constructor(val id: Int) {
              * but first ensuring that `job` parameter  doesn't capture any state.
              */
             throw RuntimeException("Shall not be called directly")
-
-    override public fun equals(other: Any?): Boolean = (other is Worker) && (id == other.id)
-
-    override public fun hashCode(): Int = id
 
     override public fun toString(): String = "worker $id"
 }

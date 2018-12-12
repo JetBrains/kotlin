@@ -28,6 +28,7 @@
 #endif
 
 #include "Alloc.h"
+#include "Exceptions.h"
 #include "KAssert.h"
 #include "Memory.h"
 #include "Runtime.h"
@@ -49,13 +50,16 @@ enum {
   INVALID = 0,
   SCHEDULED = 1,
   COMPUTED = 2,
-  CANCELLED = 3
+  CANCELLED = 3,
+  THROWN = 4
 };
 
 enum {
   CHECKED = 0,
   UNCHECKED = 1
 };
+
+THREAD_LOCAL_VARIABLE KInt g_currentWorkerId = 0;
 
 KNativePtr transfer(KRef object, KInt mode) {
   switch (mode) {
@@ -102,12 +106,15 @@ class Future {
     while (state_ == SCHEDULED) {
       pthread_cond_wait(&cond_, &lock_);
     }
+    // TODO: maybe use message from exception?
+    if (state_ == THROWN)
+        ThrowIllegalStateException();
     auto result = AdoptStablePointer(result_, OBJ_RESULT);
     result_ = nullptr;
     return result;
   }
 
-  void storeResultUnlocked(KNativePtr result);
+  void storeResultUnlocked(KNativePtr result, bool ok);
 
   void cancelUnlocked();
 
@@ -136,7 +143,7 @@ struct Job {
 
 class Worker {
  public:
-  Worker(KInt id) : id_(id) {
+  Worker(KInt id, bool errorReporting) : id_(id), errorReporting_(errorReporting) {
     pthread_mutex_init(&lock_, nullptr);
     pthread_cond_init(&cond_, nullptr);
   }
@@ -173,12 +180,15 @@ class Worker {
 
   KInt id() const { return id_; }
 
+  bool errorReporting() const { return errorReporting_; }
+
  private:
   KInt id_;
   KStdDeque<Job> queue_;
   // Lock and condition for waiting on the queue.
   pthread_mutex_t lock_;
   pthread_cond_t cond_;
+  bool errorReporting_;
 };
 
 class State {
@@ -198,9 +208,9 @@ class State {
     pthread_cond_destroy(&cond_);
   }
 
-  Worker* addWorkerUnlocked() {
+  Worker* addWorkerUnlocked(bool errorReporting) {
     Locker locker(&lock_);
-    Worker* worker = konanConstructInstance<Worker>(nextWorkerId());
+    Worker* worker = konanConstructInstance<Worker>(nextWorkerId(), errorReporting);
     if (worker == nullptr) return nullptr;
     workers_[worker->id()] = worker;
     return worker;
@@ -332,14 +342,14 @@ State* theState() {
   return state;
 }
 
-void Future::storeResultUnlocked(KNativePtr result) {
+void Future::storeResultUnlocked(KNativePtr result, bool ok) {
   {
     Locker locker(&lock_);
-    state_ = COMPUTED;
+    state_ = ok ? COMPUTED : THROWN;
     result_ = result;
     // Beware here: although manual clearly says that pthread_cond_signal() could be called outside
-    // of the taken lock, it's not on OSX (as of 10.13.1). If moved outside of the lock,
-    // some notifications gets missed.
+    // of the taken lock, it's not on macOS (as of 10.13.1). If moved outside of the lock,
+    // some notifications are missing.
     pthread_cond_signal(&cond_);
   }
   theState()->signalAnyFuture();
@@ -361,12 +371,14 @@ extern "C" void ReportUnhandledException(KRef e);
 void* workerRoutine(void* argument) {
   Worker* worker = reinterpret_cast<Worker*>(argument);
 
+  g_currentWorkerId = worker->id();
   Kotlin_initRuntimeIfNeeded();
+
   while (true) {
     Job job = worker->getJob();
     if (job.function == nullptr) {
        // Termination request, notify the future.
-      job.future->storeResultUnlocked(nullptr);
+      job.future->storeResultUnlocked(nullptr, true);
       theState()->removeWorkerUnlocked(worker->id());
       break;
     }
@@ -377,16 +389,19 @@ void* workerRoutine(void* argument) {
     // It is so, as ownership is transferred.
     KRef resultRef = nullptr;
     KNativePtr result = nullptr;
+    bool ok = true;
     try {
         job.function(argument, &resultRef);
         argumentHolder.clear();
         // Transfer the result.
         result = transfer(resultRef, job.transferMode);
     } catch (ObjHolder& e) {
-        ReportUnhandledException(e.obj());
+        ok = false;
+        if (worker->errorReporting())
+            ReportUnhandledException(e.obj());
     }
     // Notify the future.
-    job.future->storeResultUnlocked(result);
+    job.future->storeResultUnlocked(result, ok);
   }
 
   Kotlin_deinitRuntimeIfNeeded();
@@ -396,12 +411,16 @@ void* workerRoutine(void* argument) {
   return nullptr;
 }
 
-KInt startWorker() {
-  Worker* worker = theState()->addWorkerUnlocked();
+KInt startWorker(KBoolean errorReporting) {
+  Worker* worker = theState()->addWorkerUnlocked(errorReporting != 0);
   if (worker == nullptr) return -1;
   pthread_t thread = 0;
   pthread_create(&thread, nullptr, workerRoutine, worker);
   return worker->id();
+}
+
+KInt currentWorker() {
+  return g_currentWorkerId;
 }
 
 KInt schedule(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) {
@@ -454,7 +473,7 @@ KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
 
 #else
 
-KInt startWorker() {
+KInt startWorker(KBoolean errorReporting) {
   ThrowWorkerUnsupported();
   return -1;
 }
@@ -465,6 +484,11 @@ KInt stateOfFuture(KInt id) {
 }
 
 KInt schedule(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) {
+  ThrowWorkerUnsupported();
+  return 0;
+}
+
+KInt currentWorker() {
   ThrowWorkerUnsupported();
   return 0;
 }
@@ -505,8 +529,12 @@ KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
 
 extern "C" {
 
-KInt Kotlin_Worker_startInternal() {
-  return startWorker();
+KInt Kotlin_Worker_startInternal(KBoolean noErrorReporting) {
+  return startWorker(noErrorReporting);
+}
+
+KInt Kotlin_Worker_currentInternal() {
+  return currentWorker();
 }
 
 KInt Kotlin_Worker_requestTerminationWorkerInternal(KInt id, KBoolean processScheduledJobs) {

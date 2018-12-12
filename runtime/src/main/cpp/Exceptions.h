@@ -55,10 +55,11 @@ void RUNTIME_NORETURN ThrowNotImplementedError();
 // Throws illegal character conversion exception (used in UTF8/UTF16 conversions).
 void RUNTIME_NORETURN ThrowIllegalCharacterConversionException();
 void RUNTIME_NORETURN ThrowIllegalArgumentException();
+void RUNTIME_NORETURN ThrowIllegalStateException();
 void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where);
 void RUNTIME_NORETURN ThrowIncorrectDereferenceException();
 void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address);
-// Prints out mesage of Throwable.
+// Prints out message of Throwable.
 void PrintThrowable(KRef);
 
 #ifdef __cplusplus

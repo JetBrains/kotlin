@@ -30,7 +30,10 @@ internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any
         Future<Any?>(executeInternal(worker.id, mode.value, producer, job))
 
 @SymbolName("Kotlin_Worker_startInternal")
-external internal fun startInternal(): Int
+external internal fun startInternal(errorReporting: Boolean): Int
+
+@SymbolName("Kotlin_Worker_currentInternal")
+external internal fun currentInternal(): Int
 
 @SymbolName("Kotlin_Worker_requestTerminationWorkerInternal")
 external internal fun requestTerminationInternal(id: Int, processScheduledJobs: Boolean): Int

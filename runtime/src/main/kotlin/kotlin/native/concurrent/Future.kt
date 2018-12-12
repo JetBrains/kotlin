@@ -17,31 +17,40 @@ enum class FutureState(val value: Int) {
     /** Future result is computed. */
     COMPUTED(2),
     /** Future is cancelled. */
-    CANCELLED(3)
+    CANCELLED(3),
+    /** Computation thrown an exception. */
+    THROWN(4)
 }
 
 /**
  * Class representing abstract computation, whose result may become available in the future.
  */
-@Frozen
-public class Future<T> internal constructor(val id: Int) {
+@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+public inline class Future<T> @PublishedApi internal constructor(val id: Int) {
     /**
      * Blocks execution until the future is ready.
      *
-     * @return the execution result of [code] consumed futures's computaiton
-     * @throws IllegalStateException if current future has [FutureState.INVALID] or [FutureState.CANCELLED] state
+     * @return the execution result of [code] consumed future's computaiton
+     * @throws IllegalStateException if future is in [FutureState.INVALID], [FutureState.CANCELLED] or
+     * [FutureState.THROWN] state
      */
-    public inline fun <R> consume(code: (T) -> R): R =
-            when (state) {
-                FutureState.SCHEDULED, FutureState.COMPUTED -> {
-                    val value = @Suppress("UNCHECKED_CAST", "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE") (consumeFuture(id) as T)
-                    code(value)
-                }
-                FutureState.INVALID ->
-                    throw IllegalStateException("Future is in an invalid state: $state")
-                FutureState.CANCELLED ->
-                    throw IllegalStateException("Future is cancelled")
+    public inline fun <R> consume(code: (T) -> R): R = when (state) {
+            FutureState.SCHEDULED, FutureState.COMPUTED -> {
+                val value = @Suppress("UNCHECKED_CAST", "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+                    (consumeFuture(id) as T)
+                code(value)
             }
+            FutureState.INVALID ->
+                throw IllegalStateException("Future is in an invalid state")
+            FutureState.CANCELLED -> {
+                consumeFuture(id)
+                throw IllegalStateException("Future is cancelled")
+            }
+            FutureState.THROWN -> {
+                consumeFuture(id)
+                throw IllegalStateException("Job has thrown an exception")
+            }
+        }
 
     /**
      * The result of the future computation.
@@ -55,10 +64,6 @@ public class Future<T> internal constructor(val id: Int) {
      */
     public val state: FutureState
         get() = FutureState.values()[stateOfFuture(id)]
-
-    public override fun equals(other: Any?): Boolean = (other is Future<*>) && (id == other.id)
-
-    public override fun hashCode(): Int = id
 
     override public fun toString(): String = "future $id"
 }
