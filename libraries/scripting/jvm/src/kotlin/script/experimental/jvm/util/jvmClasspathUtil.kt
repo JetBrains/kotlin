@@ -16,9 +16,12 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 // TODO: consider moving all these utilites to the build-common or some other shared compiler API module
 
+// Kotlin Compiler dependencies
 internal const val KOTLIN_JAVA_STDLIB_JAR = "kotlin-stdlib.jar"
 internal const val KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar"
 internal const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar"
+internal const val TROVE4J_JAR = "trove4j.jar"
+
 internal const val KOTLIN_COMPILER_NAME = "kotlin-compiler"
 internal const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"
 
@@ -160,7 +163,8 @@ object KotlinJars {
         val kotlinLibsJars = listOf(
             KOTLIN_JAVA_STDLIB_JAR,
             KOTLIN_JAVA_REFLECT_JAR,
-            KOTLIN_JAVA_SCRIPT_RUNTIME_JAR
+            KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
+            TROVE4J_JAR
         )
         val kotlinBaseJars = kotlinCompilerJars + kotlinLibsJars
 

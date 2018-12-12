@@ -104,6 +104,9 @@ fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = Fi
 fun Project.toolsJar(jdkHome: File = File(this.property("JDK_18") as String)): File? =
     firstFromJavaHomeThatExists("lib/tools.jar", jdkHome = jdkHome)
 
+val compilerManifestClassPath
+    get() = "kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar trove4j.jar"
+
 object EmbeddedComponents {
     val CONFIGURATION_NAME = "embeddedComponents"
 }
