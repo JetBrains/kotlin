@@ -50,7 +50,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
         ProtectedSyntheticExtensionCallChecker,
         ReifiedTypeParameterSubstitutionChecker(),
         RuntimeAssertionsOnExtensionReceiverCallChecker,
-        ApiVersionIsAtLeastArgumentsChecker
+        ApiVersionIsAtLeastArgumentsChecker,
+        InconsistentOperatorFromJavaCallChecker
     ),
 
     additionalTypeCheckers = listOf(
