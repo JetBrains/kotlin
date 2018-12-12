@@ -20,19 +20,25 @@ import org.gradle.api.attributes.AttributeContainer
 import java.util.*
 
 // TODO better implementation: attribute invariants (no attrs with same name and different types allowed), thread safety?
-class HierarchyAttributeContainer(val parent: AttributeContainer?) : AttributeContainer {
+class HierarchyAttributeContainer(
+    val parent: AttributeContainer?,
+    val filterParentAttributes: (Attribute<*>) -> Boolean = { true }
+) : AttributeContainer {
     private val attributesMap = Collections.synchronizedMap(mutableMapOf<Attribute<*>, Any>())
 
+    private fun getFilteredParentAttribute(key: Attribute<*>) =
+        if (parent != null && filterParentAttributes(key)) parent.getAttribute(key) else null
+
     override fun contains(key: Attribute<*>): Boolean =
-        attributesMap.contains(key) || parent?.contains(key) ?: false
+        attributesMap.contains(key) || getFilteredParentAttribute(key) != null
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any?> getAttribute(key: Attribute<T>?): T? =
-        attributesMap.get(key as Attribute<*>) as T? ?: parent?.getAttribute(key)
+        attributesMap.get(key as Attribute<*>) as T? ?: getFilteredParentAttribute(key) as T?
 
-    override fun isEmpty(): Boolean = attributesMap.isEmpty() && (parent?.isEmpty ?: true)
+    override fun isEmpty(): Boolean = attributesMap.isEmpty() && (parent?.keySet().orEmpty().filter(filterParentAttributes).isEmpty())
 
-    override fun keySet(): Set<Attribute<*>> = attributesMap.keys + parent?.keySet().orEmpty()
+    override fun keySet(): Set<Attribute<*>> = attributesMap.keys + parent?.keySet().orEmpty().filter(filterParentAttributes)
 
     override fun <T : Any?> attribute(key: Attribute<T>?, value: T): AttributeContainer {
         val checkedValue = requireNotNull(value as Any?) { "null values for attributes are not supported" }

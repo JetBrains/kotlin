@@ -13,10 +13,7 @@ import org.gradle.api.capabilities.Capability
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class KotlinSoftwareComponent(
@@ -72,7 +69,7 @@ internal class KotlinPlatformUsageContext(
         configuration.artifacts
 
     override fun getAttributes(): AttributeContainer =
-        configuration.outgoing.attributes
+        HierarchyAttributeContainer(configuration.outgoing.attributes) { it != ProjectLocalConfigurations.ATTRIBUTE }
 
     override fun getCapabilities(): Set<Capability> = emptySet()
 
