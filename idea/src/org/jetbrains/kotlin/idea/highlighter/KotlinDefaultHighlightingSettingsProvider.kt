@@ -10,11 +10,14 @@ import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.internal.isKotlinDecompiledFile
+import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinDefaultHighlightingSettingsProvider : DefaultHighlightingSettingProvider() {
     override fun getDefaultSetting(project: Project, file: VirtualFile): FileHighlightingSetting? {
         return when {
+            file.toPsiFile(project) !is KtFile -> null
             ProjectRootsUtil.isLibraryFile(project, file) -> FileHighlightingSetting.SKIP_INSPECTION
             file.isKotlinDecompiledFile -> FileHighlightingSetting.SKIP_HIGHLIGHTING
             else -> null
