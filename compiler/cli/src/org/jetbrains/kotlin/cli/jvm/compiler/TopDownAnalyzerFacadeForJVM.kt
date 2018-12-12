@@ -91,6 +91,7 @@ object TopDownAnalyzerFacadeForJVM {
         val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
 
         fun invokeExtensionsOnAnalysisComplete(): AnalysisResult? {
+            container.get<JavaClassesTracker>().onCompletedAnalysis(module)
             for (extension in analysisHandlerExtensions) {
                 val result = extension.analysisCompleted(project, module, trace, files)
                 if (result != null) return result
@@ -108,7 +109,6 @@ object TopDownAnalyzerFacadeForJVM {
         }
 
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
-        container.get<JavaClassesTracker>().onCompletedAnalysis(module)
 
         invokeExtensionsOnAnalysisComplete()?.let { return it }
 
