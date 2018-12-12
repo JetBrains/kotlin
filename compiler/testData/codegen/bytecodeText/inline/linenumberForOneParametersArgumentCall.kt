@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 fun box() {
     lookAtMe {
         val c = "c"
@@ -9,4 +11,4 @@ inline fun lookAtMe(f: (String) -> Unit) {
     f(a) // Should be no unneeded nops on this line, that might be generated for zero-parameters lambda
 }
 
-// 4 NOP
+// 3 NOP

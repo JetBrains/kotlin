@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// IGNORE_BACKEND: JVM_IR
 
 class Range<T>(val min: T, val max: T)
 
