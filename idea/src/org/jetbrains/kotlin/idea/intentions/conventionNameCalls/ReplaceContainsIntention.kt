@@ -23,13 +23,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace 'contains' call with 'in' operator"), HighPriorityAction {
@@ -53,14 +51,6 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
 
         return element.callExpression!!.calleeExpression!!.textRange
     }
-
-    private val FunctionDescriptor.isOperatorOrCompatible: Boolean
-        get() {
-            if (this is JavaMethodDescriptor) {
-                return OperatorChecks.check(this).isSuccess
-            }
-            return isOperator
-        }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val argument = element.callExpression!!.valueArguments.single().getArgumentExpression()!!
