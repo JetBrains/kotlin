@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -496,6 +497,12 @@ class CoroutineTransformerMethodVisitor(
         val frames = performRefinedTypeAnalysis(methodNode, containingClassInternalName)
         fun AbstractInsnNode.index() = instructions.indexOf(this)
 
+        fun Int.isInlinerFakeVariable(index: Int) = methodNode.localVariables.any {
+            (it.name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) || it.name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION))
+                    && it.index == this
+                    && it.start.index() <= index && index <= it.end.index()
+        }
+
         // We postpone these actions because they change instruction indices that we use when obtaining frames
         val postponedActions = mutableListOf<() -> Unit>()
         val maxVarsCountByType = mutableMapOf<Type, Int>()
@@ -537,8 +544,9 @@ class CoroutineTransformerMethodVisitor(
             // k + 2 - exception
             val variablesToSpill =
                 (0 until localsCount)
-                    .filter { it !in setOf(continuationIndex, dataIndex, exceptionIndex) }
-                    .map { Pair(it, frame.getLocal(it)) }
+                    .filterNot {
+                        it in setOf(continuationIndex, dataIndex, exceptionIndex) || it.isInlinerFakeVariable(suspensionCallBegin.index())
+                    }.map { Pair(it, frame.getLocal(it)) }
                     .filter { (index, value) ->
                         (index == 0 && needDispatchReceiver && isForNamedFunction) ||
                                 (value != StrictBasicValue.UNINITIALIZED_VALUE && livenessFrame.isAlive(index))
