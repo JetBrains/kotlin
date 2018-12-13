@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
+import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.search.SearchScope
@@ -69,7 +69,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element is KtNamedDeclaration
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
+        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
 
         val searchParameters = KotlinReferencesSearchParameters(
             element,

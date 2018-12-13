@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
+import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -31,12 +31,12 @@ class KotlinDirectoryAsPackageRenameHandler : DirectoryAsPackageRenameHandler() 
     override fun isIdentifier(name: String, project: Project): Boolean = name.quoteIfNeeded().isIdentifier()
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
         super.invoke(project, elements, dataContext)
-        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
+        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
         super.invoke(project, editor, file, dataContext)
-        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
+        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
     }
 
 }

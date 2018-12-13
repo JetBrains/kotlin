@@ -5,15 +5,10 @@
 
 package org.jetbrains.kotlin.statistics
 
-import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsageTriggerCollector
-import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
-
-open class KotlinStatisticsTrigger(private val groupIdSufix: String) : ApplicationUsageTriggerCollector() {
-    override fun getGroupId() = "statistics.kotlin.$groupIdSufix"
-
+open class KotlinStatisticsTrigger(private val groupIdSufix: String) {
     companion object {
         public fun trigger(clazz: Class<out KotlinStatisticsTrigger>, event: String) {
-            FUSApplicationUsageTrigger.getInstance().trigger(clazz, event)
+            // FUS is not working for 181
         }
     }
 }
