@@ -1,13 +1,9 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.Project
-import java.util.*
-import java.io.File
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import proguard.gradle.ProGuardTask
 
 buildscript {
@@ -148,7 +144,9 @@ fun checkJDK() {
 rootProject.apply {
     from(rootProject.file("versions.gradle.kts"))
     from(rootProject.file("report.gradle.kts"))
+    from(rootProject.file("javaInstrumentation.gradle.kts"))
 }
+
 IdeVersionConfigurator.setCurrentIde(this)
 
 extra["versions.protobuf-java"] = "2.6.1"
