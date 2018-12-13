@@ -32,7 +32,6 @@ fun ThrowInvalidReceiverTypeException(klass: KClass<*>): Nothing {
     throw RuntimeException("Unexpected receiver type: " + (klass.qualifiedName ?: "noname"))
 }
 
-@ExportForCppRuntime
 internal fun ThrowArithmeticException() : Nothing {
     throw ArithmeticException()
 }

@@ -398,7 +398,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         }
 
         val llvmFunction = if (descriptor.isExternal) {
-            if (descriptor.isIntrinsic || descriptor.isObjCBridgeBased()) {
+            if (descriptor.isTypedIntrinsic || descriptor.isIntrinsic || descriptor.isObjCBridgeBased()) {
                 return
             }
 

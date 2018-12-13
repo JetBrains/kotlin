@@ -5,6 +5,9 @@
 
 package kotlin
 
+import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.IntrinsicType
+
 /**
  * Represents a value which is either `true` or `false`. On the JVM, non-nullable values of this type are
  * represented as values of the primitive type `boolean`.
@@ -18,30 +21,30 @@ public class Boolean private constructor(
     /**
      * Returns the inverse of this boolean.
      */
-    @SymbolName("Kotlin_Boolean_not")
+    @TypedIntrinsic(IntrinsicType.NOT)
     external public operator fun not(): Boolean
 
     /**
      * Performs a logical `and` operation between this Boolean and the [other] one. Unlike the `&&` operator,
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
-    @SymbolName("Kotlin_Boolean_and_Boolean")
+    @TypedIntrinsic(IntrinsicType.AND)
     external public infix fun and(other: Boolean): Boolean
 
     /**
      * Performs a logical `or` operation between this Boolean and the [other] one. Unlike the `||` operator,
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
-    @SymbolName("Kotlin_Boolean_or_Boolean")
+    @TypedIntrinsic(IntrinsicType.OR)
     external public infix fun or(other: Boolean): Boolean
 
     /**
      * Performs a logical `xor` operation between this Boolean and the [other] one.
      */
-    @SymbolName("Kotlin_Boolean_xor_Boolean")
+    @TypedIntrinsic(IntrinsicType.XOR)
     external public infix fun xor(other: Boolean): Boolean
 
-    @SymbolName("Kotlin_Boolean_compareTo_Boolean")
+    @TypedIntrinsic(IntrinsicType.SIGNED_COMPARE_TO)
     external public override fun compareTo(other: Boolean): Int
 
     public fun equals(other: Boolean): Boolean = kotlin.native.internal.areEqualByValue(this, other)

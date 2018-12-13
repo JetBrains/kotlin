@@ -239,6 +239,7 @@ fun CallableMemberDescriptor.findSourceFile(): SourceFile {
     }
 }
 
+internal val TypedIntrinsic = FqName("kotlin.native.internal.TypedIntrinsic")
 private val intrinsicAnnotation = FqName("kotlin.native.internal.Intrinsic")
 private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
 private val objCMethodAnnotation = FqName("kotlinx.cinterop.ObjCMethod")
@@ -252,6 +253,9 @@ internal val DeclarationDescriptor.isFrozen: Boolean
 
 internal val FunctionDescriptor.isIntrinsic: Boolean
     get() = this.annotations.hasAnnotation(intrinsicAnnotation)
+
+internal val FunctionDescriptor.isTypedIntrinsic: Boolean
+    get() = this.annotations.hasAnnotation(TypedIntrinsic)
 
 // TODO: coalesce all our annotation value getters into fewer functions.
 fun getAnnotationValue(annotation: AnnotationDescriptor): String? {
@@ -269,5 +273,7 @@ fun CallableMemberDescriptor.externalSymbolOrThrow(): String? {
 
     if (this.annotations.hasAnnotation(objCMethodAnnotation)) return null
 
-    throw Error("external function ${this} must have @SymbolName, @Intrinsic or @ObjCMethod annotation")
+    if (this.annotations.hasAnnotation(TypedIntrinsic)) return null
+
+    throw Error("external function ${this} must have @TypedIntrinsic, @SymbolName, @Intrinsic or @ObjCMethod annotation")
 }

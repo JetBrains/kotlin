@@ -1048,6 +1048,19 @@ task initializers_correctOrder2(type: RunKonanTest) {
     source = "codegen/initializers/correctOrder2.kt"
 }
 
+task arithmetic_basic(type: RunKonanTest) {
+    source = "codegen/arithmetic/basic.kt"
+}
+
+task arithmetic_division(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "codegen/arithmetic/division.kt"
+}
+
+task arithmetic_github1856(type: RunKonanTest) {
+    source = "codegen/arithmetic/github1856.kt"
+}
+
 task bridges_test0(type: RunKonanTest) {
     goldValue = "42\n42\n"
     source = "codegen/bridges/test0.kt"

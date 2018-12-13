@@ -260,6 +260,9 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
 
     override val areEqual get() = error("Must not be used")
 
+    val throwArithmeticException = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("ThrowArithmeticException").single())
+
     override val ThrowNullPointerException = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("ThrowNullPointerException").single())
 

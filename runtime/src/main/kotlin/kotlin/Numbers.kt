@@ -5,6 +5,9 @@
 
 package kotlin
 
+import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.IntrinsicType
+
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
@@ -68,7 +71,7 @@ public actual inline fun Double.toRawBits(): Long = bits()
 public actual inline fun Double.Companion.fromBits(bits: Long): Double = kotlin.fromBits(bits)
 
 @PublishedApi
-@SymbolName("Kotlin_Double_fromBits")
+@TypedIntrinsic(IntrinsicType.FROM_BITS)
 external internal fun fromBits(bits: Long): Double
 
 /**
@@ -96,5 +99,5 @@ public actual inline fun Float.toRawBits(): Int = bits()
 public actual inline fun Float.Companion.fromBits(bits: Int): Float = kotlin.fromBits(bits)
 
 @PublishedApi
-@SymbolName("Kotlin_Float_fromBits")
+@TypedIntrinsic(IntrinsicType.FROM_BITS)
 external internal fun fromBits(bits: Int): Float

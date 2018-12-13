@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassDescriptor
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.ConstructorDescriptor
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.SimpleType
 
 /**
@@ -80,6 +78,10 @@ internal fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
 // TODO: don't forget to remove descriptor access here.
 internal val FunctionDescriptor.isIntrinsic: Boolean
     get() = this.descriptor.isIntrinsic
+
+// TODO: Merge with `isIntrinsic`
+internal val FunctionDescriptor.isTypedIntrinsic: Boolean
+    get() = this.descriptor.isTypedIntrinsic
 
 internal val DeclarationDescriptor.isFrozen: Boolean
     get() = this.descriptor.isFrozen
