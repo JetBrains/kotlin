@@ -546,10 +546,11 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                         e1.printStackTrace();
                         System.err.println("-----------------------------------------------------------------------------");
                     }
-                    fail("See exceptions above");
+                    System.err.println("See exceptions above");
                 } else {
-                    fail("Compilation failure");
+                    System.err.println("Compilation failure");
                 }
+                throw e;
             } catch (Throwable e) {
                 throw new TestsCompilerError(e);
             }

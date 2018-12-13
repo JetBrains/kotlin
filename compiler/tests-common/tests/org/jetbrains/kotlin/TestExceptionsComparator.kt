@@ -67,8 +67,7 @@ class TestExceptionsComparator(wholeFile: File) {
                 (e.original.cause ?: e.original).run {
                     casesAsString + toString() + stackTrace[0]?.let { ls + it }
                 }
-            is TestsCompilerError, is TestsInfrastructureError -> casesAsString + (e.original.cause ?: e.original).toString()
-            is TestsCompiletimeError -> throw e.original
+            is TestsCompilerError, is TestsCompiletimeError, is TestsInfrastructureError -> casesAsString + (e.original.cause ?: e.original).toString()
         }
     }
 

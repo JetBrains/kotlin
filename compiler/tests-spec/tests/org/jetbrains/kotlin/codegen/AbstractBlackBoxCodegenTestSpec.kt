@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.TestExceptionsComparator
 import org.jetbrains.kotlin.spec.parsers.CommonParser
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns.packagePattern
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
+import org.jetbrains.kotlin.spec.validators.BlackBoxTestTypeValidator
+import org.jetbrains.kotlin.spec.validators.SpecTestValidationException
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.junit.Assert
 import java.io.*
 
 abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
@@ -47,10 +50,18 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
     }
 
     override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
-        val (specTest, _) = CommonParser.parseSpecTest(
+        val (specTest, testLinkedType) = CommonParser.parseSpecTest(
             wholeFile.canonicalPath,
             mapOf("main.kt" to FileUtil.loadFile(wholeFile, true))
         )
+
+        val validator = BlackBoxTestTypeValidator(wholeFile, specTest)
+
+        try {
+            validator.validatePathConsistency(testLinkedType)
+        } catch (e: SpecTestValidationException) {
+            Assert.fail(e.description)
+        }
 
         println(specTest)
 
