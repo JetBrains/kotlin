@@ -21,7 +21,10 @@ import java.io.File
 import java.util.regex.Pattern
 
 object CommonParser {
-    fun String.withUnderscores() = replace(" ", "_").toUpperCase()
+    fun String.withUnderscores() = replace(" ", "_")
+        .replace(File.separator, "_")
+        .toUpperCase()
+
     fun String.splitByComma() = split(Regex(""",\s*"""))
     fun String.splitByPathSeparator() = split(File.separator)
     fun String.withSpaces() = replace("_", " ")
