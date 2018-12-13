@@ -11,11 +11,11 @@
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)
 
-abstract class Bar<T : @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Any>
+abstract class Bar<T : @Ann(unresolved_reference) Any>
 
 class Foo<T : Any> : Bar<T>()
 
-class B<T> where @<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) T : Number
+class B<T> where @Ann(unresolved_reference) T : Number
 
 fun box(): String? {
     val x = Foo<Int>()

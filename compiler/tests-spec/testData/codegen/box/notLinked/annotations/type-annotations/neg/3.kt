@@ -13,11 +13,11 @@ annotation class Ann(val x: Int)
 
 class Inv<T>
 
-fun foo(i: Inv<@Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) String>) {}
+fun foo(i: Inv<@Ann(unresolved_reference) String>) {}
 
-fun bar(vararg a: @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Any) {}
+fun bar(vararg a: @Ann(unresolved_reference) Any) {}
 
-class A<T>(a: @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) T)
+class A<T>(a: @Ann(unresolved_reference) T)
 
 fun box(): String? {
     val x = foo(Inv<String>())

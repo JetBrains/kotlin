@@ -11,7 +11,7 @@
 @Target(AnnotationTarget.TYPE)
 annotation class Ann
 
-fun foo(x: String): @Ann(unresolved_reference) String {  // OK, error only in IDE but not in the compiler
+fun foo(x: String): @Ann(unresolved_reference) String {
     return x
 }
 

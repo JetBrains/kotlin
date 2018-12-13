@@ -11,10 +11,10 @@
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)
 
-val <T> @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) T.test // OK, error only in IDE but not in the compiler
+val <T> @Ann(unresolved_reference) T.test // OK, error only in IDE but not in the compiler
     get() = 10
 
-val @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Int.test
+val @Ann(unresolved_reference) Int.test
     get() = 10
 
 fun box(): String? {

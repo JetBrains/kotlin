@@ -13,11 +13,11 @@ annotation class Ann
 
 open class TypeToken<T>
 
-val case_1 = object : TypeToken<@<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) String>() {}
+val case_1 = object : TypeToken<@Ann(unresolved_reference) String>() {}
 
 interface A
 
-val case_2 = object: @<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) A {}
+val case_2 = object: @Ann(unresolved_reference) A {}
 
 fun box(): String? {
     val x = case_1

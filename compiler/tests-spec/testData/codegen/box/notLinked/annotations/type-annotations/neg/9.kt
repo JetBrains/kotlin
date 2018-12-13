@@ -13,7 +13,7 @@ annotation class Ann
 
 var <T> T.test
     get() = 11
-    set(value: @Ann(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) Int) {}
+    set(value: @Ann(unresolved_reference) Int) {}
 
 fun box(): String? {
     val x = 10.test
