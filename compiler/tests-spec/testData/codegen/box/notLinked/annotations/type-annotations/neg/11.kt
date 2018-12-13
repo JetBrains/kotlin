@@ -12,7 +12,7 @@
 @Target(AnnotationTarget.PROPERTY_GETTER)
 annotation class Ann(val x: Int)
 
-class Foo : @<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(10) Any()
+class Foo : @Ann(10) Any()
 
 class Bar<T : @Ann(10) Any>
 
@@ -22,10 +22,10 @@ fun case_3(a: Any): Int? {
 
 open class TypeToken<T>
 
-val case_4 = object : TypeToken<@<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(10) String>() {}
+val case_4 = object : TypeToken<@Ann(10) String>() {}
 
 fun case_5(a: Any): Any {
-    a as @<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(10) Int
+    a as @Ann(10) Int
 
     return a
 }

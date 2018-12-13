@@ -14,13 +14,13 @@
 annotation class Ann(val x: Int)
 
 fun case_1(): Any {
-    val x: (Int) -> @Ann(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) Unit = {} // OK, no error in IDE and in the compiler
+    val x: (Int) -> @Ann(unresolved_reference) Unit = {}
 
     return x
 }
 
 fun case_2(): Any {
-    val x: (@Ann(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) Int) -> Unit = { a: Int -> println(a) } // OK, no error in IDE and in the compiler
+    val x: (@Ann(unresolved_reference) Int) -> Unit = { a: Int -> println(a) }
 
     return x
 }

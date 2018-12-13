@@ -12,17 +12,17 @@
 annotation class Ann(val x: Int)
 
 fun case_1(a: Any): Int? {
-    return if (a is @Ann(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) String) 10 else null
+    return if (a is @Ann(unresolved_reference) String) 10 else null
 }
 
 fun case_2(a: Any): Any {
-    return a as @<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) String // OK, no error in IDE and in the compiler
+    return a as @Ann(unresolved_reference) String
 }
 
 fun case_3_1(a: Any) = 10
 
 fun case_3(a: Any): Any {
-    return case_3_1(a as @<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) String) // OK, no error in IDE and in the compiler
+    return case_3_1(a as @Ann(unresolved_reference) String)
 }
 
 fun box(): String? {
