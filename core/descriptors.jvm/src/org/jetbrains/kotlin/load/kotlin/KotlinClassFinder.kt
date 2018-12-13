@@ -25,12 +25,6 @@ interface KotlinClassFinder : KotlinMetadataFinder {
 
     fun findKotlinClassOrContent(javaClass: JavaClass): Result?
 
-    fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? =
-        findKotlinClassOrContent(classId)?.toKotlinJvmBinaryClass()
-
-    fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? =
-        findKotlinClassOrContent(javaClass)?.toKotlinJvmBinaryClass()
-
     sealed class Result {
         fun toKotlinJvmBinaryClass(): KotlinJvmBinaryClass? = (this as? KotlinClass)?.kotlinJvmBinaryClass
 
@@ -41,3 +35,9 @@ interface KotlinClassFinder : KotlinMetadataFinder {
         ) : Result()
     }
 }
+
+fun KotlinClassFinder.findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? =
+    findKotlinClassOrContent(classId)?.toKotlinJvmBinaryClass()
+
+fun KotlinClassFinder.findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? =
+    findKotlinClassOrContent(javaClass)?.toKotlinJvmBinaryClass()
