@@ -262,8 +262,8 @@ private fun mapLiteral(literal: String?, expectedType: Type = DynamicType, enums
 
 private fun specifyType(name: String, type: Type): Type {
     if ((type is SimpleType) && (type.type == "Event")) {
-        if (name in specifyEventMapper) {
-            return type.copy(type = specifyEventMapper.get(name) as String)
+        specifyEventMapper[name]?.let {
+            return type.copy(type = it)
         }
     }
 
