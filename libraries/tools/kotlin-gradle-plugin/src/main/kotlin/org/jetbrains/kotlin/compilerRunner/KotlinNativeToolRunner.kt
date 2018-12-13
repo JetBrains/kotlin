@@ -157,13 +157,12 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
                 project.file("${project.konanHome}/konan/konan.properties").inputStream().use(::load)
             }
             val toolchainDir = konanProperties.getProperty("targetToolchain.mingw_x64")
-
             if (toolchainDir != null) {
                 environment.put(
                     "PATH",
                     DependencyDirectories.defaultDependenciesRoot
-                        .resolve("\\$toolchainDir\\bin")
-                        .absolutePath + ";${environment.get("PATH")}"
+                        .resolve("$toolchainDir/bin")
+                        .absolutePath + ";${System.getenv("PATH")}"
                 )
             }
         }
