@@ -16,7 +16,7 @@ inline class T(val s: S) {
 
 fun box(): String {
     assertEquals(listOf(String::class.java, Int::class.java, String::class.java), S::foo.parameters.map { it.type.javaType })
-    assertEquals(S::class.java, S::foo.returnType.javaType)
+    assertEquals(String::class.java, S::foo.returnType.javaType)
 
 /*
     assertEquals(listOf(), T::bar.parameters.map { it.type.javaType })

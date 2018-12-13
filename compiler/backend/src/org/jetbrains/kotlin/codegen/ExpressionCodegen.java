@@ -3123,7 +3123,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS);
                 }
 
-                putJavaLangClassInstance(v, typeMapper.mapType(type));
+                putJavaLangClassInstance(v, typeMapper.mapType(type), type, state);
             }
 
             if (wrapIntoKClass) {
