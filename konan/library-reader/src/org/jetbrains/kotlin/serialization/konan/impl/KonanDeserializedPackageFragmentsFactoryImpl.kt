@@ -119,7 +119,7 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl : KonanDeserialized
             NullFlexibleTypeDeserializer,
             emptyList(),
             notFoundClasses,
-            ContractDeserializerImpl(configuration),
+            ContractDeserializerImpl(configuration, null),
             extensionRegistryLite = KonanSerializerProtocol.extensionRegistry
         )
 

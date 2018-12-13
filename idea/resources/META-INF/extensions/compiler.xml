@@ -53,5 +53,8 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.contractsExtension"
                         interface="org.jetbrains.kotlin.extensions.ContractsExtension"
                         area="IDEA_PROJECT"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.serialization.contractsExtension"
+                        interface="org.jetbrains.kotlin.serialization.ContractSerializerExtension"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>

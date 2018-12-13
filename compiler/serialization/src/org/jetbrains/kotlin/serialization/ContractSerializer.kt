@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescripto
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
 class ContractSerializer {
     companion object {
@@ -46,32 +48,42 @@ class ContractSerializer {
         val contractDescription = functionDescriptor.getUserData(ContractProviderKey)?.getContractDescription()
         if (contractDescription != null) {
             val worker = ContractSerializerWorker(parentSerializer)
-            proto.setContract(worker.contractProto(contractDescription))
+            val project = (functionDescriptor.source as? KotlinSourceElement)?.psi?.project
+
+            proto.setContract(worker.contractProto(contractDescription, project))
         }
     }
 
-    private class ContractSerializerWorker(private val parentSerializer: DescriptorSerializer) {
-        fun contractProto(contractDescription: ContractDescription): ProtoBuf.Contract.Builder {
+    class ContractSerializerWorker(private val parentSerializer: DescriptorSerializer) {
+        fun contractProto(
+            contractDescription: ContractDescription,
+            project: Project?
+        ): ProtoBuf.Contract.Builder {
             return ProtoBuf.Contract.newBuilder().apply {
-                contractDescription.effects.forEach { addEffect(effectProto(it, contractDescription)) }
+                contractDescription.effects.forEach { addEffect(effectProto(it, contractDescription, project)) }
             }
         }
 
-        private fun effectProto(effectDeclaration: EffectDeclaration, contractDescription: ContractDescription): ProtoBuf.Effect.Builder {
+        private fun effectProto(
+            effectDeclaration: EffectDeclaration,
+            contractDescription: ContractDescription,
+            project: Project?
+        ): ProtoBuf.Effect.Builder {
             return ProtoBuf.Effect.newBuilder().apply {
-                fillEffectProto(this, effectDeclaration, contractDescription)
+                fillEffectProto(this, effectDeclaration, contractDescription, project)
             }
         }
 
         private fun fillEffectProto(
             builder: ProtoBuf.Effect.Builder,
             effectDeclaration: EffectDeclaration,
-            contractDescription: ContractDescription
+            contractDescription: ContractDescription,
+            project: Project?
         ) {
             when (effectDeclaration) {
                 is ConditionalEffectDeclaration -> {
                     builder.setConclusionOfConditionalEffect(contractExpressionProto(effectDeclaration.condition, contractDescription))
-                    fillEffectProto(builder, effectDeclaration.effect, contractDescription)
+                    fillEffectProto(builder, effectDeclaration.effect, contractDescription, project)
                 }
 
                 is ReturnsEffectDeclaration -> {
@@ -96,11 +108,30 @@ class ContractSerializer {
                     }
                 }
 
+                is ExtensionEffectDeclaration -> {
+                    if (project == null) {
+                        // TODO: should report issue?
+                        return
+                    }
+                    val extensionSerializer = ContractSerializerExtension.getInstances(project).first() ?: return
+
+                    val status = extensionSerializer.serializeExtensionEffect(
+                        builder,
+                        effectDeclaration,
+                        contractDescription,
+                        project,
+                        this,
+                        parentSerializer
+                    )
+                    if (status) {
+                        builder.isExtensionEffect = 1
+                    }
+                }
                 // TODO: Add else and do something like reporting issue?
             }
         }
 
-        private fun contractExpressionProto(
+        fun contractExpressionProto(
             contractDescriptionElement: ContractDescriptionElement,
             contractDescription: ContractDescription
         ): ProtoBuf.Expression.Builder {

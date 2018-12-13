@@ -111,6 +111,7 @@ import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.serialization.ContractSerializerExtension
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.zip.ZipFile
@@ -187,6 +188,7 @@ class KotlinCoreEnvironment private constructor(
 
         if (configuration.languageVersionSettings.supportsFeature(LanguageFeature.ContextualEffects)) {
             ContractsExtension.registerExtensionPoint(project)
+            ContractSerializerExtension.registerExtensionPoint(project)
         }
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)

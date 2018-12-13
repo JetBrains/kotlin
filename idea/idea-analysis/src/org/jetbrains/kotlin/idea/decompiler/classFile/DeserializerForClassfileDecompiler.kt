@@ -73,11 +73,12 @@ class DeserializerForClassfileDecompiler(
                 get() = true
         }
 
+
         deserializationComponents = DeserializationComponents(
                 storageManager, moduleDescriptor, configuration, classDataFinder, annotationAndConstantLoader,
                 packageFragmentProvider, ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
                 LookupTracker.DO_NOTHING, JavaFlexibleTypeDeserializer, emptyList(), notFoundClasses,
-                ContractDeserializerImpl(configuration),
+                ContractDeserializerImpl(configuration, null),
                 extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY
         )
     }

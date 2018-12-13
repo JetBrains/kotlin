@@ -1105,6 +1105,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.kind != new.kind) return false
         }
 
+        if (old.hasIsExtensionEffect() != new.hasIsExtensionEffect()) return false
+        if (old.hasIsExtensionEffect()) {
+            if (old.isExtensionEffect != new.isExtensionEffect) return false
+        }
+
         return true
     }
 
@@ -2324,6 +2329,10 @@ fun ProtoBuf.Effect.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -
 
     if (hasKind()) {
         hashCode = 31 * hashCode + kind.hashCode()
+    }
+
+    if (hasIsExtensionEffect()) {
+        hashCode = 31 * hashCode + isExtensionEffect
     }
 
     return hashCode

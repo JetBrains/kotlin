@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.extensions
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
+import org.jetbrains.kotlin.contracts.description.ExtensionEffectDeclaration
 import org.jetbrains.kotlin.contracts.interpretation.ContractInterpretationDispatcher
 import org.jetbrains.kotlin.contracts.interpretation.EffectDeclarationInterpreter
 import org.jetbrains.kotlin.contracts.model.ExtensionEffect
@@ -15,7 +18,9 @@ import org.jetbrains.kotlin.contracts.parsing.ContractCallContext
 import org.jetbrains.kotlin.contracts.parsing.ContractParsingDiagnosticsCollector
 import org.jetbrains.kotlin.contracts.parsing.ExtensionParserDispatcher
 import org.jetbrains.kotlin.contracts.parsing.PsiContractParserDispatcher
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -55,6 +60,13 @@ interface ContractsExtension {
         bindingContext: BindingContext,
         diagnosticSink: DiagnosticSink
     )
+
+    fun deserializeExtensionEffect(
+        proto: ProtoBuf.Effect,
+        project: Project,
+        functionDescriptor: FunctionDescriptor,
+        contractDeserializationWorker: ContractDeserializerImpl.ContractDeserializationWorker
+    ): ExtensionEffectDeclaration?
 }
 
 data class ContractsInfoForInvocation(val expression: KtExpression, val data: ExtensionBindingContextData)

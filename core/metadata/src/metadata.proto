@@ -530,6 +530,11 @@ message Effect {
     AT_LEAST_ONCE = 2;
   }
   optional InvocationKind kind = 4;
+
+  // If present, then effect is extension
+  optional int32 isExtensionEffect = 5;
+
+  extensions 100 to 199;
 }
 
 // We use some trickery to optimize memory footprint of contract-expressions:
