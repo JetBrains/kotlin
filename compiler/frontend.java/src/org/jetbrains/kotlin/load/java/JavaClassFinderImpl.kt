@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
@@ -33,7 +32,7 @@ class JavaClassFinderImpl : AbstractJavaClassFinder() {
         super.initialize(trace, codeAnalyzer)
     }
 
-    override fun findClass(classId: ClassId): JavaClass? = javaFacade.findClass(classId, javaSearchScope)
+    override fun findClass(request: JavaClassFinder.Request): JavaClass? = javaFacade.findClass(request, javaSearchScope)
 
     override fun findPackage(fqName: FqName) = javaFacade.findPackage(fqName.asString(), javaSearchScope)?.let { JavaPackageImpl(it, javaSearchScope) }
 

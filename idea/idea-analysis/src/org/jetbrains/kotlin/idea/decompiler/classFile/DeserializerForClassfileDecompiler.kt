@@ -31,12 +31,16 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.ClassData
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import java.io.InputStream
 
@@ -109,16 +113,16 @@ class DirectoryBasedClassFinder(
         val packageDirectory: VirtualFile,
         val directoryPackageFqName: FqName
 ) : KotlinClassFinder {
-    override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.classId!!)
+    override fun findKotlinClassOrContent(javaClass: JavaClass) = findKotlinClassOrContent(javaClass.classId!!)
 
-    override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
+    override fun findKotlinClassOrContent(classId: ClassId): KotlinClassFinder.Result? {
         if (classId.packageFqName != directoryPackageFqName) {
             return null
         }
         val targetName = classId.relativeClassName.pathSegments().joinToString("$", postfix = ".class")
         val virtualFile = packageDirectory.findChild(targetName)
         if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile)) {
-            return IDEKotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)
+            return IDEKotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)?.let(::KotlinClass)
         }
         return null
     }
