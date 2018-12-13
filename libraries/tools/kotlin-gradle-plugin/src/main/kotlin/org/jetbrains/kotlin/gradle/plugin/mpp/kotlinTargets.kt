@@ -208,7 +208,7 @@ class KotlinNativeTarget(
     }
 
     override val artifactsTaskName: String
-        get() = disambiguateName("link")
+        get() = disambiguateName("binaries")
 
     override val publishable: Boolean
         get() = konanTarget.enabledOnCurrentHost
