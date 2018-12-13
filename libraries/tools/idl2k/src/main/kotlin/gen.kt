@@ -86,26 +86,26 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
     return listOf(realFunction, getterOrSetterFunction, functionWithCallbackOrNull).filterNotNull()
 }
 
-fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute, nullableAttributes: Boolean): GenerateAttribute =
-        GenerateAttribute(attribute.name,
-                type = mapType(repository, attribute.type).let { if (nullableAttributes) it.toNullable() else it },
-                initializer =
-                    if (putNoImpl && !attribute.static) {
-                        mapLiteral(attribute.defaultValue, mapType(repository, attribute.type), repository.enums)
-                    }
-                    else if (attribute.defaultValue != null) {
-                        "definedExternally"
-                    }
-                    else {
-                        null
-                    },
-                getterSetterNoImpl = putNoImpl,
-                kind = if (attribute.readOnly) AttributeKind.VAL else AttributeKind.VAR,
-                override = false,
-                vararg = attribute.vararg,
-                static = attribute.static,
-                required = attribute.required
-        )
+fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute, nullableAttributes: Boolean): GenerateAttribute {
+    val mappedType = mapType(repository, attribute.type).let { if (nullableAttributes) it.toNullable() else it }
+    return GenerateAttribute(attribute.name,
+                             type = generalizeType(attribute.name, mappedType),
+                             initializer =
+                             if (putNoImpl && !attribute.static) {
+                                 mapLiteral(attribute.defaultValue, mapType(repository, attribute.type), repository.enums)
+                             } else if (attribute.defaultValue != null) {
+                                 "definedExternally"
+                             } else {
+                                 null
+                             },
+                             getterSetterNoImpl = putNoImpl,
+                             kind = if (attribute.readOnly) AttributeKind.VAL else AttributeKind.VAR,
+                             override = false,
+                             vararg = attribute.vararg,
+                             static = attribute.static,
+                             required = attribute.required
+    )
+}
 
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
 private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefinition, constructors: List<ExtendedAttribute> = iface.findConstructors()): GenerateDefinitionKind =
@@ -259,6 +259,25 @@ private fun mapLiteral(literal: String?, expectedType: Type = DynamicType, enums
         }
     }
 
+
+private fun specifyType(name: String, type: Type): Type {
+    if ((type is SimpleType) && (type.type == "Event")) {
+        if (name in specifyEventMapper) {
+            return type.copy(type = specifyEventMapper.get(name) as String)
+        }
+    }
+
+    return type
+}
+
+private fun generalizeType(name: String, type: Type): Type {
+    if ((type is FunctionType) && (type.parameterTypes.size == 1)) {
+        val paramAttribute = type.parameterTypes[0]
+        return type.copy(parameterTypes = listOf(paramAttribute.copy(type = specifyType(name, paramAttribute.type))))
+    }
+    return type
+}
+
 fun implementInterfaces(declarations: List<GenerateTraitOrClass>) {
     val unimplementedMemberMap = getUnimplementedMembers(declarations)
     val nonAbstractDeclarations = declarations.filter { it.kind == GenerateDefinitionKind.CLASS }
@@ -266,7 +285,7 @@ fun implementInterfaces(declarations: List<GenerateTraitOrClass>) {
         val unimplementedMembers = unimplementedMemberMap[declaration.name] ?: continue
 
         for (attribute in unimplementedMembers.attributes) {
-            declaration.memberAttributes += attribute.copy(override = true)
+            declaration.memberAttributes += attribute.copy(override = true, type = generalizeType(attribute.name, attribute.type))
         }
         for (function in unimplementedMembers.functions) {
             declaration.memberFunctions += function.copy(override = true)

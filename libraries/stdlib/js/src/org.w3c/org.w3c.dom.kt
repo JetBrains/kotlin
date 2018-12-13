@@ -9,20 +9,25 @@
 @file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.dom
 
-import kotlin.js.*
 import org.khronos.webgl.*
-import org.w3c.dom.css.*
+import org.w3c.dom.css.CSSStyleDeclaration
+import org.w3c.dom.css.ElementCSSInlineStyle
+import org.w3c.dom.css.LinkStyle
+import org.w3c.dom.css.StyleSheetList
 import org.w3c.dom.events.*
-import org.w3c.dom.parsing.*
-import org.w3c.dom.pointerevents.*
-import org.w3c.dom.svg.*
-import org.w3c.dom.url.*
+import org.w3c.dom.pointerevents.PointerEvent
+import org.w3c.dom.svg.SVGSVGElement
 import org.w3c.fetch.*
-import org.w3c.files.*
-import org.w3c.notifications.*
-import org.w3c.performance.*
-import org.w3c.workers.*
-import org.w3c.xhr.*
+import org.w3c.files.Blob
+import org.w3c.files.File
+import org.w3c.files.FileList
+import org.w3c.performance.GlobalPerformance
+import org.w3c.performance.Performance
+import org.w3c.workers.CacheStorage
+import org.w3c.workers.ServiceWorkerContainer
+import org.w3c.workers.UnionClientOrMessagePortOrServiceWorker
+import org.w3c.xhr.ProgressEvent
+import kotlin.js.*
 
 /**
  * Exposes the JavaScript [Document](https://developer.mozilla.org/en/docs/Web/API/Document) to Kotlin
@@ -75,62 +80,62 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     open val documentElement: Element?
     open val scrollingElement: Element?
     open val styleSheets: StyleSheetList
-    override var ongotpointercapture: ((Event) -> dynamic)?
-    override var onlostpointercapture: ((Event) -> dynamic)?
-    override var onpointerdown: ((Event) -> dynamic)?
-    override var onpointermove: ((Event) -> dynamic)?
-    override var onpointerup: ((Event) -> dynamic)?
-    override var onpointercancel: ((Event) -> dynamic)?
-    override var onpointerover: ((Event) -> dynamic)?
-    override var onpointerout: ((Event) -> dynamic)?
-    override var onpointerenter: ((Event) -> dynamic)?
-    override var onpointerleave: ((Event) -> dynamic)?
+    override var ongotpointercapture: ((PointerEvent) -> dynamic)?
+    override var onlostpointercapture: ((PointerEvent) -> dynamic)?
+    override var onpointerdown: ((PointerEvent) -> dynamic)?
+    override var onpointermove: ((PointerEvent) -> dynamic)?
+    override var onpointerup: ((PointerEvent) -> dynamic)?
+    override var onpointercancel: ((PointerEvent) -> dynamic)?
+    override var onpointerover: ((PointerEvent) -> dynamic)?
+    override var onpointerout: ((PointerEvent) -> dynamic)?
+    override var onpointerenter: ((PointerEvent) -> dynamic)?
+    override var onpointerleave: ((PointerEvent) -> dynamic)?
     override var onabort: ((Event) -> dynamic)?
-    override var onblur: ((Event) -> dynamic)?
+    override var onblur: ((FocusEvent) -> dynamic)?
     override var oncancel: ((Event) -> dynamic)?
     override var oncanplay: ((Event) -> dynamic)?
     override var oncanplaythrough: ((Event) -> dynamic)?
     override var onchange: ((Event) -> dynamic)?
-    override var onclick: ((Event) -> dynamic)?
+    override var onclick: ((MouseEvent) -> dynamic)?
     override var onclose: ((Event) -> dynamic)?
-    override var oncontextmenu: ((Event) -> dynamic)?
+    override var oncontextmenu: ((MouseEvent) -> dynamic)?
     override var oncuechange: ((Event) -> dynamic)?
-    override var ondblclick: ((Event) -> dynamic)?
-    override var ondrag: ((Event) -> dynamic)?
-    override var ondragend: ((Event) -> dynamic)?
-    override var ondragenter: ((Event) -> dynamic)?
-    override var ondragexit: ((Event) -> dynamic)?
-    override var ondragleave: ((Event) -> dynamic)?
-    override var ondragover: ((Event) -> dynamic)?
-    override var ondragstart: ((Event) -> dynamic)?
-    override var ondrop: ((Event) -> dynamic)?
+    override var ondblclick: ((MouseEvent) -> dynamic)?
+    override var ondrag: ((DragEvent) -> dynamic)?
+    override var ondragend: ((DragEvent) -> dynamic)?
+    override var ondragenter: ((DragEvent) -> dynamic)?
+    override var ondragexit: ((DragEvent) -> dynamic)?
+    override var ondragleave: ((DragEvent) -> dynamic)?
+    override var ondragover: ((DragEvent) -> dynamic)?
+    override var ondragstart: ((DragEvent) -> dynamic)?
+    override var ondrop: ((DragEvent) -> dynamic)?
     override var ondurationchange: ((Event) -> dynamic)?
     override var onemptied: ((Event) -> dynamic)?
     override var onended: ((Event) -> dynamic)?
     override var onerror: ((dynamic, String, Int, Int, Any?) -> dynamic)?
-    override var onfocus: ((Event) -> dynamic)?
-    override var oninput: ((Event) -> dynamic)?
+    override var onfocus: ((FocusEvent) -> dynamic)?
+    override var oninput: ((InputEvent) -> dynamic)?
     override var oninvalid: ((Event) -> dynamic)?
-    override var onkeydown: ((Event) -> dynamic)?
-    override var onkeypress: ((Event) -> dynamic)?
-    override var onkeyup: ((Event) -> dynamic)?
+    override var onkeydown: ((KeyboardEvent) -> dynamic)?
+    override var onkeypress: ((KeyboardEvent) -> dynamic)?
+    override var onkeyup: ((KeyboardEvent) -> dynamic)?
     override var onload: ((Event) -> dynamic)?
     override var onloadeddata: ((Event) -> dynamic)?
     override var onloadedmetadata: ((Event) -> dynamic)?
     override var onloadend: ((Event) -> dynamic)?
-    override var onloadstart: ((Event) -> dynamic)?
-    override var onmousedown: ((Event) -> dynamic)?
-    override var onmouseenter: ((Event) -> dynamic)?
-    override var onmouseleave: ((Event) -> dynamic)?
-    override var onmousemove: ((Event) -> dynamic)?
-    override var onmouseout: ((Event) -> dynamic)?
-    override var onmouseover: ((Event) -> dynamic)?
-    override var onmouseup: ((Event) -> dynamic)?
-    override var onwheel: ((Event) -> dynamic)?
+    override var onloadstart: ((ProgressEvent) -> dynamic)?
+    override var onmousedown: ((MouseEvent) -> dynamic)?
+    override var onmouseenter: ((MouseEvent) -> dynamic)?
+    override var onmouseleave: ((MouseEvent) -> dynamic)?
+    override var onmousemove: ((MouseEvent) -> dynamic)?
+    override var onmouseout: ((MouseEvent) -> dynamic)?
+    override var onmouseover: ((MouseEvent) -> dynamic)?
+    override var onmouseup: ((MouseEvent) -> dynamic)?
+    override var onwheel: ((WheelEvent) -> dynamic)?
     override var onpause: ((Event) -> dynamic)?
     override var onplay: ((Event) -> dynamic)?
     override var onplaying: ((Event) -> dynamic)?
-    override var onprogress: ((Event) -> dynamic)?
+    override var onprogress: ((ProgressEvent) -> dynamic)?
     override var onratechange: ((Event) -> dynamic)?
     override var onreset: ((Event) -> dynamic)?
     override var onresize: ((Event) -> dynamic)?
@@ -2032,7 +2037,7 @@ public external abstract class ApplicationCache : EventTarget {
     open var onerror: ((Event) -> dynamic)?
     open var onnoupdate: ((Event) -> dynamic)?
     open var ondownloading: ((Event) -> dynamic)?
-    open var onprogress: ((Event) -> dynamic)?
+    open var onprogress: ((ProgressEvent) -> dynamic)?
     open var onupdateready: ((Event) -> dynamic)?
     open var oncached: ((Event) -> dynamic)?
     open var onobsolete: ((Event) -> dynamic)?
@@ -2136,62 +2141,62 @@ public inline fun PromiseRejectionEventInit(promise: Promise<Any?>?, reason: Any
  * Exposes the JavaScript [GlobalEventHandlers](https://developer.mozilla.org/en/docs/Web/API/GlobalEventHandlers) to Kotlin
  */
 public external interface GlobalEventHandlers {
-    var ongotpointercapture: ((Event) -> dynamic)?
-    var onlostpointercapture: ((Event) -> dynamic)?
-    var onpointerdown: ((Event) -> dynamic)?
-    var onpointermove: ((Event) -> dynamic)?
-    var onpointerup: ((Event) -> dynamic)?
-    var onpointercancel: ((Event) -> dynamic)?
-    var onpointerover: ((Event) -> dynamic)?
-    var onpointerout: ((Event) -> dynamic)?
-    var onpointerenter: ((Event) -> dynamic)?
-    var onpointerleave: ((Event) -> dynamic)?
+    var ongotpointercapture: ((PointerEvent) -> dynamic)?
+    var onlostpointercapture: ((PointerEvent) -> dynamic)?
+    var onpointerdown: ((PointerEvent) -> dynamic)?
+    var onpointermove: ((PointerEvent) -> dynamic)?
+    var onpointerup: ((PointerEvent) -> dynamic)?
+    var onpointercancel: ((PointerEvent) -> dynamic)?
+    var onpointerover: ((PointerEvent) -> dynamic)?
+    var onpointerout: ((PointerEvent) -> dynamic)?
+    var onpointerenter: ((PointerEvent) -> dynamic)?
+    var onpointerleave: ((PointerEvent) -> dynamic)?
     var onabort: ((Event) -> dynamic)?
-    var onblur: ((Event) -> dynamic)?
+    var onblur: ((FocusEvent) -> dynamic)?
     var oncancel: ((Event) -> dynamic)?
     var oncanplay: ((Event) -> dynamic)?
     var oncanplaythrough: ((Event) -> dynamic)?
     var onchange: ((Event) -> dynamic)?
-    var onclick: ((Event) -> dynamic)?
+    var onclick: ((MouseEvent) -> dynamic)?
     var onclose: ((Event) -> dynamic)?
-    var oncontextmenu: ((Event) -> dynamic)?
+    var oncontextmenu: ((MouseEvent) -> dynamic)?
     var oncuechange: ((Event) -> dynamic)?
-    var ondblclick: ((Event) -> dynamic)?
-    var ondrag: ((Event) -> dynamic)?
-    var ondragend: ((Event) -> dynamic)?
-    var ondragenter: ((Event) -> dynamic)?
-    var ondragexit: ((Event) -> dynamic)?
-    var ondragleave: ((Event) -> dynamic)?
-    var ondragover: ((Event) -> dynamic)?
-    var ondragstart: ((Event) -> dynamic)?
-    var ondrop: ((Event) -> dynamic)?
+    var ondblclick: ((MouseEvent) -> dynamic)?
+    var ondrag: ((DragEvent) -> dynamic)?
+    var ondragend: ((DragEvent) -> dynamic)?
+    var ondragenter: ((DragEvent) -> dynamic)?
+    var ondragexit: ((DragEvent) -> dynamic)?
+    var ondragleave: ((DragEvent) -> dynamic)?
+    var ondragover: ((DragEvent) -> dynamic)?
+    var ondragstart: ((DragEvent) -> dynamic)?
+    var ondrop: ((DragEvent) -> dynamic)?
     var ondurationchange: ((Event) -> dynamic)?
     var onemptied: ((Event) -> dynamic)?
     var onended: ((Event) -> dynamic)?
     var onerror: ((dynamic, String, Int, Int, Any?) -> dynamic)?
-    var onfocus: ((Event) -> dynamic)?
-    var oninput: ((Event) -> dynamic)?
+    var onfocus: ((FocusEvent) -> dynamic)?
+    var oninput: ((InputEvent) -> dynamic)?
     var oninvalid: ((Event) -> dynamic)?
-    var onkeydown: ((Event) -> dynamic)?
-    var onkeypress: ((Event) -> dynamic)?
-    var onkeyup: ((Event) -> dynamic)?
+    var onkeydown: ((KeyboardEvent) -> dynamic)?
+    var onkeypress: ((KeyboardEvent) -> dynamic)?
+    var onkeyup: ((KeyboardEvent) -> dynamic)?
     var onload: ((Event) -> dynamic)?
     var onloadeddata: ((Event) -> dynamic)?
     var onloadedmetadata: ((Event) -> dynamic)?
     var onloadend: ((Event) -> dynamic)?
-    var onloadstart: ((Event) -> dynamic)?
-    var onmousedown: ((Event) -> dynamic)?
-    var onmouseenter: ((Event) -> dynamic)?
-    var onmouseleave: ((Event) -> dynamic)?
-    var onmousemove: ((Event) -> dynamic)?
-    var onmouseout: ((Event) -> dynamic)?
-    var onmouseover: ((Event) -> dynamic)?
-    var onmouseup: ((Event) -> dynamic)?
-    var onwheel: ((Event) -> dynamic)?
+    var onloadstart: ((ProgressEvent) -> dynamic)?
+    var onmousedown: ((MouseEvent) -> dynamic)?
+    var onmouseenter: ((MouseEvent) -> dynamic)?
+    var onmouseleave: ((MouseEvent) -> dynamic)?
+    var onmousemove: ((MouseEvent) -> dynamic)?
+    var onmouseout: ((MouseEvent) -> dynamic)?
+    var onmouseover: ((MouseEvent) -> dynamic)?
+    var onmouseup: ((MouseEvent) -> dynamic)?
+    var onwheel: ((WheelEvent) -> dynamic)?
     var onpause: ((Event) -> dynamic)?
     var onplay: ((Event) -> dynamic)?
     var onplaying: ((Event) -> dynamic)?
-    var onprogress: ((Event) -> dynamic)?
+    var onprogress: ((ProgressEvent) -> dynamic)?
     var onratechange: ((Event) -> dynamic)?
     var onreset: ((Event) -> dynamic)?
     var onresize: ((Event) -> dynamic)?
@@ -2215,18 +2220,18 @@ public external interface GlobalEventHandlers {
 public external interface WindowEventHandlers {
     var onafterprint: ((Event) -> dynamic)?
     var onbeforeprint: ((Event) -> dynamic)?
-    var onbeforeunload: ((Event) -> String?)?
-    var onhashchange: ((Event) -> dynamic)?
+    var onbeforeunload: ((BeforeUnloadEvent) -> String?)?
+    var onhashchange: ((HashChangeEvent) -> dynamic)?
     var onlanguagechange: ((Event) -> dynamic)?
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     var onoffline: ((Event) -> dynamic)?
     var ononline: ((Event) -> dynamic)?
-    var onpagehide: ((Event) -> dynamic)?
-    var onpageshow: ((Event) -> dynamic)?
-    var onpopstate: ((Event) -> dynamic)?
+    var onpagehide: ((PageTransitionEvent) -> dynamic)?
+    var onpageshow: ((PageTransitionEvent) -> dynamic)?
+    var onpopstate: ((PopStateEvent) -> dynamic)?
     var onrejectionhandled: ((Event) -> dynamic)?
-    var onstorage: ((Event) -> dynamic)?
-    var onunhandledrejection: ((Event) -> dynamic)?
+    var onstorage: ((StorageEvent) -> dynamic)?
+    var onunhandledrejection: ((PromiseRejectionEvent) -> dynamic)?
     var onunload: ((Event) -> dynamic)?
 }
 
@@ -2454,7 +2459,7 @@ public external open class EventSource(url: String, eventSourceInitDict: EventSo
     open val withCredentials: Boolean
     open val readyState: Short
     var onopen: ((Event) -> dynamic)?
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     var onerror: ((Event) -> dynamic)?
     fun close(): Unit
 
@@ -2492,7 +2497,7 @@ public external open class WebSocket(url: String, protocols: dynamic = definedEx
     var onclose: ((Event) -> dynamic)?
     open val extensions: String
     open val protocol: String
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     var binaryType: BinaryType
     fun close(code: Short = definedExternally, reason: String = definedExternally): Unit
     fun send(data: String): Unit
@@ -2555,7 +2560,7 @@ public external open class MessageChannel {
  * Exposes the JavaScript [MessagePort](https://developer.mozilla.org/en/docs/Web/API/MessagePort) to Kotlin
  */
 public external abstract class MessagePort : EventTarget, UnionMessagePortOrWindow, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
-    open var onmessage: ((Event) -> dynamic)?
+    open var onmessage: ((MessageEvent) -> dynamic)?
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit
     fun start(): Unit
     fun close(): Unit
@@ -2566,7 +2571,7 @@ public external abstract class MessagePort : EventTarget, UnionMessagePortOrWind
  */
 public external open class BroadcastChannel(name: String) : EventTarget {
     open val name: String
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     fun postMessage(message: Any?): Unit
     fun close(): Unit
 }
@@ -2583,7 +2588,7 @@ public external abstract class WorkerGlobalScope : EventTarget, WindowOrWorkerGl
     open var onoffline: ((Event) -> dynamic)?
     open var ononline: ((Event) -> dynamic)?
     open var onrejectionhandled: ((Event) -> dynamic)?
-    open var onunhandledrejection: ((Event) -> dynamic)?
+    open var onunhandledrejection: ((PromiseRejectionEvent) -> dynamic)?
     fun importScripts(vararg urls: String): Unit
 }
 
@@ -2591,7 +2596,7 @@ public external abstract class WorkerGlobalScope : EventTarget, WindowOrWorkerGl
  * Exposes the JavaScript [DedicatedWorkerGlobalScope](https://developer.mozilla.org/en/docs/Web/API/DedicatedWorkerGlobalScope) to Kotlin
  */
 public external abstract class DedicatedWorkerGlobalScope : WorkerGlobalScope {
-    open var onmessage: ((Event) -> dynamic)?
+    open var onmessage: ((MessageEvent) -> dynamic)?
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit
     fun close(): Unit
 }
@@ -2617,7 +2622,7 @@ public external interface AbstractWorker {
  * Exposes the JavaScript [Worker](https://developer.mozilla.org/en/docs/Web/API/Worker) to Kotlin
  */
 public external open class Worker(scriptURL: String, options: WorkerOptions = definedExternally) : EventTarget, AbstractWorker {
-    var onmessage: ((Event) -> dynamic)?
+    var onmessage: ((MessageEvent) -> dynamic)?
     override var onerror: ((Event) -> dynamic)?
     fun terminate(): Unit
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit

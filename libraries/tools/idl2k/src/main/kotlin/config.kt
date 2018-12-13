@@ -92,3 +92,70 @@ val kotlinBuiltinInterfaces = mapOf(
                 secondaryConstructors = emptyList()
                 )
 )
+
+val specifyEventMapper = mapOf<String, String>(
+        "onbeforeunload" to "BeforeUnloadEvent",
+
+        "ondrag" to "DragEvent",
+        "ondragend" to "DragEvent",
+        "ondragenter" to "DragEvent",
+        "ondragexit" to "DragEvent",
+        "ondragleave" to "DragEvent",
+        "ondragover" to "DragEvent",
+        "ondragstart" to "DragEvent",
+        "ondrop" to "DragEvent",
+
+        "onfetch" to "FetchEvent",
+
+        "onblur" to "FocusEvent",
+        "onfocus" to "FocusEvent",
+
+        "onhashchange" to "HashChangeEvent",
+
+        "oninput" to "InputEvent",
+
+        "onkeydown" to "KeyboardEvent",
+        "onkeypress" to "KeyboardEvent",
+        "onkeyup" to "KeyboardEvent",
+
+        "onmessage" to "MessageEvent",
+
+        "onclick" to "MouseEvent",
+        "oncontextmenu" to "MouseEvent",
+        "ondblclick" to "MouseEvent",
+        "onmousedown" to "MouseEvent",
+        "onmouseenter" to "MouseEvent",
+        "onmouseleave" to "MouseEvent",
+        "onmousemove" to "MouseEvent",
+        "onmouseout" to "MouseEvent",
+        "onmouseover" to "MouseEvent",
+        "onmouseup" to "MouseEvent",
+
+        "onnotificationclick" to "NotificationEvent",
+        "onnotificationclose" to "NotificationEvent",
+
+        "onpagehide" to "PageTransitionEvent",
+        "onpageshow" to "PageTransitionEvent",
+
+        "ongotpointercapture" to "PointerEvent",
+        "onlostpointercapture" to "PointerEvent",
+        "onpointercancel" to "PointerEvent",
+        "onpointerdown" to "PointerEvent",
+        "onpointerenter" to "PointerEvent",
+        "onpointerleave" to "PointerEvent",
+        "onpointermove" to "PointerEvent",
+        "onpointerout" to "PointerEvent",
+        "onpointerover" to "PointerEvent",
+        "onpointerup" to "PointerEvent",
+
+        "onpopstate" to "PopStateEvent",
+
+        "onloadstart" to "ProgressEvent",
+        "onprogress" to "ProgressEvent",
+
+        "onunhandledrejection" to "PromiseRejectionEvent",
+
+        "onstorage" to "StorageEvent",
+
+        "onwheel" to "WheelEvent"
+)
