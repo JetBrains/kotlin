@@ -40,7 +40,6 @@ import com.intellij.util.ThreeState
 import com.intellij.xdebugger.frame.XStackFrame
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
-import com.sun.jdi.Method
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
@@ -92,7 +91,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
-        if (location.declaringType().containsKotlinStrata()) {
+        val declaringType = location.declaringType()
+        val fileExtension = declaringType.safeSourceName()?.toLowerCase()?.substringAfterLast('.') ?: ""
+        if (fileExtension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS || declaringType.containsKotlinStrata()) {
             return KotlinStackFrame(frame)
         }
         return null
