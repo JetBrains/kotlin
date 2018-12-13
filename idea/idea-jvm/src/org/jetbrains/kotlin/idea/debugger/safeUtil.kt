@@ -30,6 +30,14 @@ fun ReferenceType.safeAllLineLocations(): List<Location> {
     return DebuggerUtilsEx.allLineLocations(this) ?: emptyList()
 }
 
+fun ReferenceType.safeSourceName(): String? {
+    return try {
+        sourceName()
+    } catch (e: AbsentInformationException) {
+        null
+    }
+}
+
 fun Method.safeLocationsOfLine(line: Int): List<Location> {
     return try {
         locationsOfLine(line)

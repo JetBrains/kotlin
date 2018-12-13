@@ -600,6 +600,16 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/catchVariable.kt");
             }
 
+            @TestMetadata("coroutineContextFun.kt")
+            public void testCoroutineContextFun() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/coroutineContextFun.kt");
+            }
+
+            @TestMetadata("coroutineContextLambda.kt")
+            public void testCoroutineContextLambda() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/coroutineContextLambda.kt");
+            }
+
             @TestMetadata("delegatedPropertyInClass.kt")
             public void testDelegatedPropertyInClass() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClass.kt");

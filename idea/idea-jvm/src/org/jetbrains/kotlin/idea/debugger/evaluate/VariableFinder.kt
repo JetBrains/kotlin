@@ -21,16 +21,26 @@ import org.jetbrains.kotlin.codegen.topLevelClassAsmType
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
+import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_3_FQ_NAME
 import org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT
 import org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import kotlin.coroutines.Continuation
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 import com.sun.jdi.Type as JdiType
 
 class VariableFinder private constructor(private val context: EvaluationContextImpl, private val frameProxy: StackFrameProxyImpl) {
     companion object {
+        private val COROUTINE_CONTEXT_SIMPLE_NAME = COROUTINE_CONTEXT_1_3_FQ_NAME.shortName().asString()
+        private val CONTINUATION_TYPE = AsmType.getType(Continuation::class.java)
+
+        val SUSPEND_LAMBDA_CLASSES = listOf(
+            "kotlin.coroutines.jvm.internal.SuspendLambda",
+            "kotlin.coroutines.jvm.internal.RestrictedSuspendLambda"
+        )
+
         fun instance(context: EvaluationContextImpl): VariableFinder? {
             val frameProxy = context.frameProxy ?: return null
             return VariableFinder(context, frameProxy)
@@ -248,7 +258,58 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             .firstOrNull()
             ?.let { return Result(it.value()) }
 
+        if (name == COROUTINE_CONTEXT_SIMPLE_NAME) {
+            val coroutineContext = findCoroutineContext()?.takeIf { kind.typeMatches(it.type()) }
+            if (coroutineContext != null) {
+                return Result(coroutineContext)
+            }
+        }
+
         return null
+    }
+
+    private fun findCoroutineContext(): ObjectReference? {
+        val method = frameProxy.location().safeMethod() ?: return null
+        return findCoroutineContextForLambda(method) ?: findCoroutineContextForMethod(method)
+    }
+
+    private fun findCoroutineContextForLambda(method: Method): ObjectReference? {
+        if (method.name() != "invokeSuspend" || method.signature() != "(Ljava/lang/Object;)Ljava/lang/Object;") {
+            return null
+        }
+
+        val thisObject = frameProxy.thisObject() ?: return null
+        val thisType = thisObject.referenceType()
+
+        if (SUSPEND_LAMBDA_CLASSES.none { thisType.isSubtype(it) }) {
+            return null
+        }
+
+        return findCoroutineContextForContinuation(thisObject)
+    }
+
+    private fun findCoroutineContextForMethod(method: Method): ObjectReference? {
+        if (CONTINUATION_TYPE.descriptor + ")" !in method.signature()) {
+            return null
+        }
+
+        val continuationVariable = frameProxy.visibleVariableByName("\$continuation") ?: return null
+        val continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
+        return findCoroutineContextForContinuation(continuation)
+    }
+
+    private fun findCoroutineContextForContinuation(continuation: ObjectReference): ObjectReference? {
+        val continuationType = (continuation.referenceType() as? ClassType)
+            ?.allInterfaces()?.firstOrNull { it.name() == Continuation::class.java.name }
+            ?: return null
+
+        val getContextMethod = continuationType
+            .methodsByName("getContext", "()Lkotlin/coroutines/CoroutineContext;").firstOrNull()
+            ?: return null
+
+        val threadReference = frameProxy.threadProxy().threadReference.takeIf { it.isSuspended } ?: return null
+        val invokePolicy = context.suspendContext.getInvokePolicy()
+        return continuation.invokeMethod(threadReference, getContextMethod, emptyList(), invokePolicy) as? ObjectReference
     }
 
     private fun findCapturedVariableInReceiver(variables: List<LocalVariableProxyImpl>, kind: VariableKind): Result? {
