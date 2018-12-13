@@ -402,7 +402,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         if (container instanceof ClassDescriptor) {
             // TODO: would it work for arrays?
-            putJavaLangClassInstance(iv, state.getTypeMapper().mapClass((ClassDescriptor) container));
+            SimpleType containerKotlinType = ((ClassDescriptor) container).getDefaultType();
+            Type containerType = state.getTypeMapper().mapClass((ClassDescriptor) container);
+            putJavaLangClassInstance(iv, containerType, containerKotlinType, state);
         }
         else if (container instanceof PackageFragmentDescriptor) {
             iv.aconst(state.getTypeMapper().mapOwner(descriptor));
