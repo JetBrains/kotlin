@@ -25,7 +25,8 @@ import kotlin.reflect.jvm.internal.structure.ReflectJavaClass
 import kotlin.reflect.jvm.internal.structure.ReflectJavaPackage
 
 class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFinder {
-    override fun findClass(classId: ClassId): JavaClass? {
+    override fun findClass(request: JavaClassFinder.Request): JavaClass? {
+        val classId = request.classId
         val packageFqName = classId.packageFqName
         val relativeClassName = classId.relativeClassName.asString().replace('.', '$')
         val name =

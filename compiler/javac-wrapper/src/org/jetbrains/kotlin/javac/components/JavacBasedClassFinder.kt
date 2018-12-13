@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.javac.components
 
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
@@ -32,7 +32,9 @@ class JavacBasedClassFinder : AbstractJavaClassFinder() {
         super.initialize(trace, codeAnalyzer)
     }
 
-    override fun findClass(classId: ClassId) = javac.findClass(classId, javaSearchScope)
+    override fun findClass(request: JavaClassFinder.Request) =
+        // TODO: reuse previouslyFoundClassFileContent if it's possible in javac
+        javac.findClass(request.classId, javaSearchScope)
 
     override fun findPackage(fqName: FqName) = javac.findPackage(fqName, javaSearchScope)
 

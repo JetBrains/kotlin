@@ -22,10 +22,12 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.alwaysTrue
 import java.util.*
 
@@ -51,12 +54,14 @@ class LazyJavaPackageScope(
         c.storageManager.createMemoizedFunctionWithNullableValues<FindClassRequest, ClassDescriptor> classByRequest@{ request ->
             val requestClassId = ClassId(ownerDescriptor.fqName, request.name)
 
-            val kotlinBinaryClass =
+            val kotlinClassOrClassFileContent =
             // These branches should be semantically equal, but the first one could be faster
                 if (request.javaClass != null)
-                    c.components.kotlinClassFinder.findKotlinClass(request.javaClass)
+                    c.components.kotlinClassFinder.findKotlinClassOrContent(request.javaClass)
                 else
-                    c.components.kotlinClassFinder.findKotlinClass(requestClassId)
+                    c.components.kotlinClassFinder.findKotlinClassOrContent(requestClassId)
+
+            val kotlinBinaryClass = kotlinClassOrClassFileContent?.toKotlinJvmBinaryClass()
 
             val classId = kotlinBinaryClass?.classId
             // Nested/local classes can be found when running in CLI in case when request.name looks like 'Outer$Inner'
@@ -69,7 +74,14 @@ class LazyJavaPackageScope(
                 is KotlinClassLookupResult.Found -> kotlinResult.descriptor
                 is KotlinClassLookupResult.SyntheticClass -> null
                 is KotlinClassLookupResult.NotFound -> {
-                    val javaClass = request.javaClass ?: c.components.finder.findClass(requestClassId)
+                    val javaClass =
+                        request.javaClass ?: c.components.finder.findClass(
+                            JavaClassFinder.Request(
+                                requestClassId,
+                                kotlinClassOrClassFileContent?.safeAs<KotlinClassFinder.Result.ClassFileContent>()
+                                    ?.content
+                            )
+                        )
 
                     if (javaClass?.lightClassOriginKind == LightClassOriginKind.BINARY) {
                         throw IllegalStateException(

@@ -201,11 +201,16 @@ class BinaryJavaClass(
     override fun visitAnnotation(desc: String, visible: Boolean) =
         BinaryJavaAnnotation.addAnnotation(annotations, desc, context, signatureParser)
 
-    override fun findInnerClass(name: Name): JavaClass? {
+    override fun findInnerClass(name: Name): JavaClass? = findInnerClass(name, classFileContent = null)
+
+    fun findInnerClass(name: Name, classFileContent: ByteArray?): JavaClass? {
         val access = ownInnerClassNameToAccess[name] ?: return null
 
         return virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.class")?.let {
-            BinaryJavaClass(it, fqName.child(name), context.copyForMember(), signatureParser, access, this)
+            BinaryJavaClass(
+                it, fqName.child(name), context.copyForMember(), signatureParser, access, this,
+                classFileContent
+            )
         }
     }
 }
