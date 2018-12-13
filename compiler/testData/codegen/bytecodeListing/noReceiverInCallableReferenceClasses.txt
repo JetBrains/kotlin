@@ -7,7 +7,7 @@ public final class A {
 }
 
 @kotlin.Metadata
-final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
+synthetic final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
     public final static field INSTANCE: kotlin.reflect.KProperty1
     static method <clinit>(): void
     method <init>(): void
@@ -18,7 +18,7 @@ final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
 }
 
 @kotlin.Metadata
-final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
+synthetic final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
     public final static field INSTANCE: NoReceiverInCallableReferenceClassesKt$A_foo$1
     inner class NoReceiverInCallableReferenceClassesKt$A_foo$1
     static method <clinit>(): void
@@ -31,7 +31,7 @@ final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
 }
 
 @kotlin.Metadata
-final class NoReceiverInCallableReferenceClassesKt$aBar$1 {
+synthetic final class NoReceiverInCallableReferenceClassesKt$aBar$1 {
     method <init>(p0: A): void
     public @org.jetbrains.annotations.Nullable method get(): java.lang.Object
     public method getName(): java.lang.String
@@ -40,7 +40,7 @@ final class NoReceiverInCallableReferenceClassesKt$aBar$1 {
 }
 
 @kotlin.Metadata
-final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
+synthetic final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
     inner class NoReceiverInCallableReferenceClassesKt$aFoo$1
     method <init>(p0: A): void
     public final method getName(): java.lang.String

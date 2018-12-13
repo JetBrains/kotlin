@@ -142,13 +142,14 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             sw.writeInterfaceEnd();
         }
 
-        v.defineClass(element,
-                      state.getClassFileVersion(),
-                      ACC_FINAL | ACC_SUPER | visibilityFlag,
-                      asmType.getInternalName(),
-                      sw.makeJavaGenericSignature(),
-                      superClassAsmType.getInternalName(),
-                      superInterfaceAsmTypes
+        v.defineClass(
+                element,
+                state.getClassFileVersion(),
+                ACC_FINAL | ACC_SUPER | visibilityFlag | getSyntheticAccessFlagForLambdaClass(classDescriptor),
+                asmType.getInternalName(),
+                sw.makeJavaGenericSignature(),
+                superClassAsmType.getInternalName(),
+                superInterfaceAsmTypes
         );
 
         initDefaultSourceMappingIfNeeded(context, this, state);

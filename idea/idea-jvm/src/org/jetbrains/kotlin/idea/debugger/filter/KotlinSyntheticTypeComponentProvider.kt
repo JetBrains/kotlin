@@ -33,6 +33,7 @@ class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvider {
         val typeName = containingType.name()
         if (!FqNameUnsafe.isValid(typeName)) return false
 
+        // TODO: this is most likely not necessary since KT-28453 is fixed, but still can be useful when debugging old compiled code
         if (containingType.isCallableReferenceSyntheticClass()) {
             return true
         }

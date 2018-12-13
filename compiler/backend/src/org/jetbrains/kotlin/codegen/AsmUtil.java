@@ -435,6 +435,11 @@ public class AsmUtil {
         return InlineUtil.isInlineOrContainingInline(descriptor.getContainingDeclaration()) ? ACC_PUBLIC : NO_FLAG_PACKAGE_PRIVATE;
     }
 
+    public static int getSyntheticAccessFlagForLambdaClass(@NotNull ClassDescriptor descriptor) {
+        return descriptor instanceof SyntheticClassDescriptorForLambda &&
+               ((SyntheticClassDescriptorForLambda) descriptor).isCallableReference() ? ACC_SYNTHETIC : 0;
+    }
+
     public static int calculateInnerClassAccessFlags(@NotNull ClassDescriptor innerClass) {
         int visibility =
                 innerClass instanceof SyntheticClassDescriptorForLambda
@@ -443,6 +448,7 @@ public class AsmUtil {
                   ? ACC_PUBLIC
                   : getVisibilityAccessFlag(innerClass);
         return visibility |
+               getSyntheticAccessFlagForLambdaClass(innerClass) |
                innerAccessFlagsForModalityAndKind(innerClass) |
                (innerClass.isInner() ? 0 : ACC_STATIC);
     }
