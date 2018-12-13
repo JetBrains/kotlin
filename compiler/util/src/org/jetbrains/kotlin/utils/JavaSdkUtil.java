@@ -91,7 +91,7 @@ public class JavaSdkUtil {
       }
     }
 
-    String[] ibmJdkVmJarDirs = {"bin/default", "lib/i386/default", "lib/amd64/default"};
+    String[] ibmJdkVmJarDirs = {"bin/default", "lib/i386/default", "lib/amd64/default", "lib/s390x/default"};
     for (String relativePath : ibmJdkVmJarDirs) {
       File libDir = new File(home, isJre ? relativePath : "jre/" + relativePath);
       File[] vmJarDirs = notNull(libDir.listFiles(FileUtilRt.ALL_DIRECTORIES), ArrayUtil.EMPTY_FILE_ARRAY);
