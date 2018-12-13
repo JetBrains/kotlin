@@ -19,18 +19,17 @@ enum class TestsExceptionFilePostfix(val text: String) {
     INFRASTRUCTURE_ERROR("infrastructure")
 }
 
-sealed class TestsError(val postfix: TestsExceptionFilePostfix) : Error() {
-    abstract val original: Throwable
+sealed class TestsError(val original: Throwable, val postfix: TestsExceptionFilePostfix) : Error() {
     override fun toString() = original.toString()
     override fun getStackTrace() = original.stackTrace
-}
-
-class TestsCompilerError(override val original: Throwable) : TestsError(TestsExceptionFilePostfix.COMPILER_ERROR)
-class TestsInfrastructureError(override val original: Throwable) : TestsError(TestsExceptionFilePostfix.INFRASTRUCTURE_ERROR)
-class TestsCompiletimeError(override val original: Throwable) : TestsError(TestsExceptionFilePostfix.COMPILETIME_ERROR)
-class TestsRuntimeError(override val original: Throwable) : TestsError(TestsExceptionFilePostfix.RUNTIME_ERROR) {
+    override fun initCause(cause: Throwable?) = original.initCause(cause)
     override val cause = original.cause
 }
+
+class TestsCompilerError(original: Throwable) : TestsError(original, TestsExceptionFilePostfix.COMPILER_ERROR)
+class TestsInfrastructureError(original: Throwable) : TestsError(original, TestsExceptionFilePostfix.INFRASTRUCTURE_ERROR)
+class TestsCompiletimeError(original: Throwable) : TestsError(original, TestsExceptionFilePostfix.COMPILETIME_ERROR)
+class TestsRuntimeError(original: Throwable) : TestsError(original, TestsExceptionFilePostfix.RUNTIME_ERROR)
 
 private enum class ExceptionType {
     ANALYZING_EXPRESSION,
