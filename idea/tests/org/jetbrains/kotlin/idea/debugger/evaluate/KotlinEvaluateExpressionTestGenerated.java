@@ -694,6 +694,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             public void testFrameThis0This0() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameThis0This0.kt");
             }
+
+            @TestMetadata("suspendContinuation.kt")
+            public void testSuspendContinuation() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/suspendContinuation.kt");
+            }
         }
 
         @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext")
