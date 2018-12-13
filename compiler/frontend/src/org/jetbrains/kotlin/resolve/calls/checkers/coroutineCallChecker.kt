@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.isCallableReference
@@ -74,7 +76,20 @@ object CoroutineSuspendCallChecker : CallChecker {
                 val callElement = resolvedCall.call.callElement as KtExpression
 
                 if (!InlineUtil.checkNonLocalReturnUsage(enclosingSuspendFunction, callElement, context.resolutionContext)) {
-                    context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
+                    var shouldReport = true
+
+                    // Do not report for KtCodeFragment in a suspend function context
+                    val containingFile = callElement.containingFile
+                    if (containingFile is KtCodeFragment) {
+                        val c = containingFile.context?.getParentOfType<KtExpression>(false)
+                        if (c != null && InlineUtil.checkNonLocalReturnUsage(enclosingSuspendFunction, c, context.resolutionContext)) {
+                            shouldReport = false
+                        }
+                    }
+
+                    if (shouldReport) {
+                        context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
+                    }
                 } else if (context.scope.parentsWithSelf.any { it.isScopeForDefaultParameterValuesOf(enclosingSuspendFunction) }) {
                     context.trace.report(Errors.UNSUPPORTED.on(reportOn, "suspend function calls in a context of default parameter value"))
                 }
