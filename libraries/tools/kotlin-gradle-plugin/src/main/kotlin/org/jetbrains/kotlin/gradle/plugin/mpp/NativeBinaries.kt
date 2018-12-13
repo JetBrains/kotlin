@@ -16,14 +16,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
-// TODO: Extract API.
-
 // TODO: Should the baseName be a var?
 
 /**
  * A base class representing a final binary produced by the Kotlin/Native compiler
  * @param name - a name of the DSL entity.
  * @param baseName - a base name for the output binary file. E.g. for baseName foo we produce binaries foo.kexe, libfoo.so, foo.framework.
+ * @param buildType - type of a binary: debug (not optimized, debuggable) or release (optimized, not debuggable)
  * @param compilation - a compilation used to produce this binary.
  *
  */
