@@ -1,0 +1,58 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="kotlin-plugin.jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/kotlin_plugin_jar</output-path>
+    <root id="archive" name="kotlin-plugin.jar">
+      <element id="directory" name="kotlin">
+        <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.30-dev-991/c8630b665b3c96953b76821ff2e8ec4a5e2799ce/builtins-1.3.30-dev-991.jar" path-in-jar="/kotlin" />
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/prepare/idea-plugin/build/tmp/shadowJar/MANIFEST.MF" />
+      </element>
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/protobuf-relocated/2.6.1/512c19ed7e6f9b5ae47f7ee8d5b0e68a983e357b/protobuf-relocated-2.6.1.jar" path-in-jar="/" />
+      <element id="module-output" name="org.jetbrains.kotlin.annotation-based-compiler-plugins-ide-support.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.backend-common.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.backend.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.cli-common.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.container.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.daemon-common.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.descriptors.jvm.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.descriptors.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.deserialization.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.eval4j.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.fir-view.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.frontend.java.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.frontend.script.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.frontend.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.ide-common.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.idea-core.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.formatter.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.idea-gradle-native.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.idea-gradle.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.idea-native.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.idea.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.ir.backend.common.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.ir.psi2ir.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.ir.tree.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.js.ast.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.js.frontend.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.js.parser.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.js.serializer.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.js.translator.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.kotlin-build-common.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.kotlin-native-library-reader.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.kotlin-native-utils.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.kotlin-preloader.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.light-classes.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.metadata.jvm.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.metadata.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.plugin-api.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.psi.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.resolution.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.serialization.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.util.runtime.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.util.main" />
+      <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
+      <element id="module-output" name="org.jetbrains.kotlin.frontend.common.main" />
+    </root>
+  </artifact>
+</component>

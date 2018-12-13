@@ -29,7 +29,7 @@ build/
 !**/testData/**/*.iml
 .idea/libraries/Gradle*.xml
 .idea/libraries/Maven*.xml
-.idea/artifacts
+.idea/artifacts/PILL_*.xml
 .idea/modules
 .idea/runConfigurations/JPS_*.xml
 .idea/libraries
