@@ -74,12 +74,12 @@ open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
         editor.settings.isVariableInplaceRenameEnabled && element != null && isInplaceRenameAvailable(element)
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
-            getRenameHandler(dataContext)?.invoke(project, editor, file, dataContext)
-            KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        super.invoke(project, editor, file, dataContext)
+        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
-            getRenameHandler(dataContext)?.invoke(project, elements, dataContext)
-            KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        super.invoke(project, elements, dataContext)
+        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 }
