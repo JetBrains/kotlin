@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
+import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
@@ -66,7 +66,7 @@ abstract class AbstractReferenceSubstitutionRenameHandler(
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
         val elementToRename = getElementToRename(dataContext) ?: return
 
-        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
 
         val wrappingContext = DataContext { id ->
             if (CommonDataKeys.PSI_ELEMENT.`is`(id)) return@DataContext elementToRename
@@ -82,6 +82,6 @@ abstract class AbstractReferenceSubstitutionRenameHandler(
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         // Can't be invoked outside of a text editor
-        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 }

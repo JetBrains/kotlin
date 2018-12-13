@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
-import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
+import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 
 class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
     class FileRenamingPsiClassWrapper(
@@ -67,13 +67,13 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
     }
     override fun findReferences(element: PsiElement): MutableCollection<PsiReference> {
         return super.findReferences(element).also {
-            FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+            KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
         }
     }
 
     override fun findReferences(element: PsiElement, searchInCommentsAndStrings: Boolean): MutableCollection<PsiReference> {
         return super.findReferences(element, searchInCommentsAndStrings).also {
-            FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+            KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
         }
     }
 }

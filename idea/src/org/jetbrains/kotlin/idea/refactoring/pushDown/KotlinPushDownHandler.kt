@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.pushDown
 
-import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
+import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -91,11 +91,11 @@ class KotlinPushDownHandler : AbstractPullPushMembersHandler(
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
         super.invoke(project, elements, dataContext)
-        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         super.invoke(project, editor, file, dataContext)
-        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 }
