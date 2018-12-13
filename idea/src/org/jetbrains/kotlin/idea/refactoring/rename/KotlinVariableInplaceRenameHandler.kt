@@ -42,10 +42,10 @@ open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
     protected open class RenamerImpl : VariableInplaceRenamer {
         constructor(elementToRename: PsiNamedElement, editor: Editor): super(elementToRename, editor)
         constructor(
-            elementToRename: PsiNamedElement,
-            editor: Editor,
-            currentName: String,
-            oldName: String
+                elementToRename: PsiNamedElement,
+                editor: Editor,
+                currentName: String,
+                oldName: String
         ) : super(elementToRename, editor, editor.project!!, currentName, oldName)
 
         override fun acceptReference(reference: PsiReference): Boolean {
@@ -73,13 +73,13 @@ open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
     override public fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile) =
         editor.settings.isVariableInplaceRenameEnabled && element != null && isInplaceRenameAvailable(element)
 
-    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
-        super.invoke(project, elements, dataContext)
+    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
+        super.invoke(project, editor, file, dataContext)
         KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
-        super.invoke(project, editor, file, dataContext)
+    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
+        super.invoke(project, elements, dataContext)
         KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 }
