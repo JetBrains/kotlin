@@ -706,7 +706,12 @@ class LazyJavaClassMemberScope(
                 )
             } else null
         } else {
-            c.components.finder.findClass(ownerDescriptor.classId!!.createNestedClassId(name))?.let {
+            c.components.finder.findClass(
+                JavaClassFinder.Request(
+                    ownerDescriptor.classId!!.createNestedClassId(name),
+                    outerClass = jClass
+                )
+            )?.let {
                 LazyJavaClassDescriptor(c, ownerDescriptor, it)
                     .also(c.components.javaClassesTracker::reportClass)
             }
