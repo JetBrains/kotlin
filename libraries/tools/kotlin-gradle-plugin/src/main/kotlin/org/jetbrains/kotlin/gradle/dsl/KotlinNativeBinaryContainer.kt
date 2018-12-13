@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.*
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -44,6 +45,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
     private val nameToBinary = mutableMapOf<String, NativeBinary>()
+    internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = WrapUtil.toNamedDomainObjectSet(PrefixGroup::class.java)
 
     // region DSL getters.
     private fun generateName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
@@ -116,25 +118,32 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         buildTypes: Collection<NativeBuildType>,
         create: (name: String, baseName: String, buildType: NativeBuildType, compilation: KotlinNativeCompilation) -> T,
         configure: T.() -> Unit
-    ) = buildTypes.forEach { buildType ->
-        val name = generateName(namePrefix, buildType, outputKind.taskNameClassifier)
-
-        require(name !in nameToBinary) {
-            "Cannot create binary $name: binary with such a name already exists"
+    ) {
+        val prefixGroup = prefixGroups.findByName(namePrefix) ?: PrefixGroup(namePrefix).also {
+            prefixGroups.add(it)
         }
 
-        require(outputKind.availableFor(target.konanTarget)) {
-            "Cannot create binary $name: ${outputKind.taskNameClassifier.decapitalize()} binaries are not available for target ${target.name}"
-        }
+        buildTypes.forEach { buildType ->
+            val name = generateName(namePrefix, buildType, outputKind.taskNameClassifier)
 
-        val binary = create(name, baseName, buildType, defaultCompilation)
-        add(binary)
-        nameToBinary[binary.name] = binary
-        // Allow accessing binaries as properties of the container in Groovy DSL.
-        if (this is ExtensionAware) {
-            extensions.add(binary.name, binary)
+            require(name !in nameToBinary) {
+                "Cannot create binary $name: binary with such a name already exists"
+            }
+
+            require(outputKind.availableFor(target.konanTarget)) {
+                "Cannot create binary $name: ${outputKind.taskNameClassifier.decapitalize()} binaries are not available for target ${target.name}"
+            }
+
+            val binary = create(name, baseName, buildType, defaultCompilation)
+            add(binary)
+            prefixGroup.binaries.add(binary)
+            nameToBinary[binary.name] = binary
+            // Allow accessing binaries as properties of the container in Groovy DSL.
+            if (this is ExtensionAware) {
+                extensions.add(binary.name, binary)
+            }
+            binary.configure()
         }
-        binary.configure()
     }
 
     internal fun defaultTestExecutable(
@@ -150,4 +159,14 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         configure
     )
     // endregion.
+
+    internal inner class PrefixGroup(
+        private val name: String
+    ) : Named {
+        override fun getName(): String = name
+        val binaries: DomainObjectSet<NativeBinary> = WrapUtil.toDomainObjectSet(NativeBinary::class.java)
+
+        val linkTaskName: String
+            get() = lowerCamelCaseName("link", name, target.targetName)
+    }
 }

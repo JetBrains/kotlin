@@ -464,10 +464,7 @@ open class KotlinNativeTargetConfigurator(
     // endregion.
 
     // region Task creation.
-    private fun Project.createLinkTask(binary: NativeBinary) {
-        // TODO: drop compilation.linkAllTaskName
-        // TODO: drop compilation.binaryTasks
-        // TODO: Provide a link all task.
+    private fun Project.createLinkTask(target: KotlinNativeTarget, binary: NativeBinary) {
         tasks.create(
             binary.linkTaskName,
             KotlinNativeLink::class.java
@@ -479,6 +476,8 @@ open class KotlinNativeTargetConfigurator(
             enabled = target.konanTarget.enabledOnCurrentHost
             destinationDir = binary.outputDirectory
             addCompilerPlugins()
+
+            tasks.maybeCreate(target.artifactsTaskName).dependsOn(this)
         }
     }
 
@@ -531,11 +530,9 @@ open class KotlinNativeTargetConfigurator(
         if (compilation.compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) {
             project.tasks.getByName(compilation.target.artifactsTaskName).apply {
                 dependsOn(compileTask)
-                dependsOn(compilation.linkAllTaskName)
             }
             project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).apply {
                 dependsOn(compileTask)
-                dependsOn(compilation.linkAllTaskName)
             }
             createRegularKlibArtifact(compilation, compileTask)
         }
@@ -614,11 +611,18 @@ open class KotlinNativeTargetConfigurator(
     protected fun configureBinaries(target: KotlinNativeTarget) {
         val project = target.project
         target.binaries.all {
-            project.createLinkTask(it)
+            project.createLinkTask(target, it)
         }
 
         target.binaries.withType(Executable::class.java).all {
             project.createRunTask(it)
+        }
+
+        target.binaries.prefixGroups.all { prefixGroup ->
+            val linkGroupTask = project.tasks.maybeCreate(prefixGroup.linkTaskName)
+            prefixGroup.binaries.all {
+                linkGroupTask.dependsOn(it.linkTaskName)
+            }
         }
 
         // Create binaries for output kinds declared using the old DSL.
