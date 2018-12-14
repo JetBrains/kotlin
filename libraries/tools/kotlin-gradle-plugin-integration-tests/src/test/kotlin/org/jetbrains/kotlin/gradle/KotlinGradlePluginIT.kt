@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.CopyClassesToJavaOutputStatus
-import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
+import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
@@ -215,7 +215,7 @@ class KotlinGradleIT : BaseGradleIT() {
         localPropertyFile.writeText("kotlin.incremental=true")
 
         project.build("build") {
-            assertContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
+            assertContains(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
         }
     }
 
@@ -223,12 +223,12 @@ class KotlinGradleIT : BaseGradleIT() {
     fun testIncrementalCompilationLogLevel() {
         val infoProject = Project("kotlinProject", minLogLevel = LogLevel.INFO)
         infoProject.build("build") {
-            assertContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
+            assertContains(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
         }
 
         val lifecycleProject = Project("kotlinProject", minLogLevel = LogLevel.LIFECYCLE)
         lifecycleProject.build("build") {
-            assertNotContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
+            assertNotContains(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
         }
     }
 
