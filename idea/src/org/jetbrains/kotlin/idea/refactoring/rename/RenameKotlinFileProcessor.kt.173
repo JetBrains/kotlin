@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
