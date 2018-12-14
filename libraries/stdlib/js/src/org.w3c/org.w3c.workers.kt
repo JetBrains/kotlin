@@ -49,12 +49,12 @@ public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
     open val registration: ServiceWorkerRegistration
     open var oninstall: ((Event) -> dynamic)?
     open var onactivate: ((Event) -> dynamic)?
-    open var onfetch: ((Event) -> dynamic)?
+    open var onfetch: ((FetchEvent) -> dynamic)?
     open var onforeignfetch: ((Event) -> dynamic)?
-    open var onmessage: ((Event) -> dynamic)?
+    open var onmessage: ((MessageEvent) -> dynamic)?
     open var onfunctionalevent: ((Event) -> dynamic)?
-    open var onnotificationclick: ((Event) -> dynamic)?
-    open var onnotificationclose: ((Event) -> dynamic)?
+    open var onnotificationclick: ((NotificationEvent) -> dynamic)?
+    open var onnotificationclose: ((NotificationEvent) -> dynamic)?
     fun skipWaiting(): Promise<Unit>
 }
 
@@ -75,7 +75,7 @@ public external abstract class ServiceWorkerContainer : EventTarget {
     open val controller: ServiceWorker?
     open val ready: Promise<ServiceWorkerRegistration>
     open var oncontrollerchange: ((Event) -> dynamic)?
-    open var onmessage: ((Event) -> dynamic)?
+    open var onmessage: ((MessageEvent) -> dynamic)?
     fun register(scriptURL: String, options: RegistrationOptions = definedExternally): Promise<ServiceWorkerRegistration>
     fun getRegistration(clientURL: String = definedExternally): Promise<Any?>
     fun getRegistrations(): Promise<dynamic>
