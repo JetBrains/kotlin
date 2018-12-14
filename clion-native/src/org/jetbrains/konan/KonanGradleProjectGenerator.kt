@@ -30,7 +30,7 @@ class KonanGradleProjectGenerator : WebProjectTemplate<Any>() {
     }
 
     override fun getLogo(): Icon? {
-        return KotlinIcons.SMALL_LOGO
+        return KotlinIcons.NATIVE
     }
 
     private var template: KonanTemplate? = null
