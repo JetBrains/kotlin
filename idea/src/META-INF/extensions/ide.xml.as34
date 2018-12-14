@@ -34,6 +34,9 @@
                         interface="org.jetbrains.kotlin.platform.IdePlatformKind"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindTooling"
                         interface="org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.resolveScopeEnlarger"
+                        interface="org.jetbrains.kotlin.idea.caches.resolve.util.KotlinResolveScopeEnlarger"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
