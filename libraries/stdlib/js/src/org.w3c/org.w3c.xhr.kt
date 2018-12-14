@@ -28,8 +28,8 @@ import org.w3c.workers.*
  * Exposes the JavaScript [XMLHttpRequestEventTarget](https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequestEventTarget) to Kotlin
  */
 public external abstract class XMLHttpRequestEventTarget : EventTarget {
-    open var onloadstart: ((Event) -> dynamic)?
-    open var onprogress: ((Event) -> dynamic)?
+    open var onloadstart: ((ProgressEvent) -> dynamic)?
+    open var onprogress: ((ProgressEvent) -> dynamic)?
     open var onabort: ((Event) -> dynamic)?
     open var onerror: ((Event) -> dynamic)?
     open var onload: ((Event) -> dynamic)?

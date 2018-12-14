@@ -90,8 +90,8 @@ public external open class FileReader : EventTarget {
     open val readyState: Short
     open val result: dynamic
     open val error: dynamic
-    var onloadstart: ((Event) -> dynamic)?
-    var onprogress: ((Event) -> dynamic)?
+    var onloadstart: ((ProgressEvent) -> dynamic)?
+    var onprogress: ((ProgressEvent) -> dynamic)?
     var onload: ((Event) -> dynamic)?
     var onabort: ((Event) -> dynamic)?
     var onerror: ((Event) -> dynamic)?

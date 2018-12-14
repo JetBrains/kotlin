@@ -28,7 +28,7 @@ import org.w3c.xhr.*
  * Exposes the JavaScript [Notification](https://developer.mozilla.org/en/docs/Web/API/Notification) to Kotlin
  */
 public external open class Notification(title: String, options: NotificationOptions = definedExternally) : EventTarget {
-    var onclick: ((Event) -> dynamic)?
+    var onclick: ((MouseEvent) -> dynamic)?
     var onerror: ((Event) -> dynamic)?
     open val title: String
     open val dir: NotificationDirection
