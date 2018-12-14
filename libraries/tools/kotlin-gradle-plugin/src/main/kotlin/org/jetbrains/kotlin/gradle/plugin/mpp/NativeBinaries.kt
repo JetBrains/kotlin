@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Family
 import java.io.File
 
-// TODO: Should the baseName be a var?
-
 /**
  * A base class representing a final binary produced by the Kotlin/Native compiler
  * @param name - a name of the DSL entity.
@@ -29,7 +27,7 @@ import java.io.File
  */
 sealed class NativeBinary(
     private val name: String,
-    val baseName: String,
+    var baseName: String,
     val buildType: NativeBuildType,
     var compilation: KotlinNativeCompilation
 ) : Named {
