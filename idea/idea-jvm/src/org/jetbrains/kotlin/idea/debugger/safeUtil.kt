@@ -12,14 +12,7 @@ import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.sun.jdi.*
 
 fun StackFrameProxyImpl.safeVisibleVariables(): List<LocalVariableProxyImpl> {
-    return try {
-        visibleVariables()
-    } catch (e: AbsentInformationEvaluateException) {
-        // Current implementation of visibleVariables() wraps an AbsentInformationException into EvaluateException
-        emptyList()
-    } catch (e: AbsentInformationException) {
-        emptyList()
-    }
+    return wrapAbsentInformationException { visibleVariables() } ?: emptyList()
 }
 
 fun Method.safeAllLineLocations(): List<Location> {
@@ -31,35 +24,19 @@ fun ReferenceType.safeAllLineLocations(): List<Location> {
 }
 
 fun ReferenceType.safeSourceName(): String? {
-    return try {
-        sourceName()
-    } catch (e: AbsentInformationException) {
-        null
-    }
+    return wrapAbsentInformationException { sourceName() }
 }
 
 fun Method.safeLocationsOfLine(line: Int): List<Location> {
-    return try {
-        locationsOfLine(line)
-    } catch (e: AbsentInformationException) {
-        emptyList()
-    }
+    return wrapAbsentInformationException { locationsOfLine(line) } ?: emptyList()
 }
 
 fun Method.safeVariables(): List<LocalVariable>? {
-    return try {
-        variables()
-    } catch (e: AbsentInformationException) {
-        null
-    }
+    return wrapAbsentInformationException { variables() }
 }
 
 fun Method.safeArguments(): List<LocalVariable>? {
-    return try {
-        arguments()
-    } catch (e: AbsentInformationException) {
-        null
-    }
+    return wrapAbsentInformationException { arguments() }
 }
 
 fun Location.safeSourceName(): String? {
@@ -85,16 +62,26 @@ fun Location.safeMethod(): Method? {
 }
 
 fun LocalVariableProxyImpl.safeType(): Type? {
+    return wrapClassNotLoadedException { type }
+}
+
+fun Field.safeType(): Type? {
+    return wrapClassNotLoadedException { type() }
+}
+
+private inline fun <T> wrapAbsentInformationException(block: () -> T): T? {
     return try {
-        type
-    } catch (e: ClassNotLoadedException) {
+        block()
+    } catch (e: AbsentInformationException) {
+        null
+    } catch (e: AbsentInformationEvaluateException) {
         null
     }
 }
 
-fun Field.safeType(): Type? {
+private inline fun <T> wrapClassNotLoadedException(block: () -> T): T? {
     return try {
-        type()
+        block()
     } catch (e: ClassNotLoadedException) {
         null
     }
