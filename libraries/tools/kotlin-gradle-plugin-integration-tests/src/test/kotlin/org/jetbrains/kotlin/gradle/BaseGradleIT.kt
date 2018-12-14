@@ -168,6 +168,7 @@ abstract class BaseGradleIT {
         val withDaemon: Boolean = false,
         val daemonOptionSupported: Boolean = true,
         val incremental: Boolean? = null,
+        val incrementalJs: Boolean? = null,
         val androidHome: File? = null,
         val javaHome: File? = null,
         val androidGradlePluginVersion: String? = null,
@@ -561,8 +562,8 @@ abstract class BaseGradleIT {
             add("-Pkotlin_version=" + options.kotlinVersion)
             options.incremental?.let {
                 add("-Pkotlin.incremental=$it")
-                add("-Pkotlin.incremental.js=$it")
             }
+            options.incrementalJs?.let { add("-Pkotlin.incremental.js=$it") }
             options.usePreciseJavaTracking?.let { add("-Pkotlin.incremental.usePreciseJavaTracking=$it") }
             options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it") }
             if (options.debug) {

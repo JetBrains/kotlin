@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
+import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
 import org.junit.Test
@@ -139,7 +139,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project.build("build", options = defaultBuildOptions().copy(incremental = false)) {
             assertSuccessful()
             assertTasksExecuted(":kaptGenerateStubsKotlin")
-            assertNotContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
+            assertNotContains(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
         }
     }
 
