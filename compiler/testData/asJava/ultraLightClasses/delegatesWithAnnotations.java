@@ -33,8 +33,8 @@ public abstract interface Base /* Base*/ {
 }
 
 public final class Derived /* Derived*/ implements Base {
-  @Ann(x=1, y="134", z=String.class, e={Integer.class, Double.class}, depr=DeprecationLevel.WARNING, t={@SimpleAnn(value="243"), @SimpleAnn(value="4324")})
-  public void foo(@Ann(x=2, y="324", z=Ann.class, e={Byte.class, Base.class}, depr=DeprecationLevel.WARNING, t={@SimpleAnn(value="687"), @SimpleAnn(value="78")}) @org.jetbrains.annotations.NotNull() java.lang.String);
+  @Ann(x=1, y="134", z=java.lang.String.class, e={int.class, double.class}, depr=kotlin.DeprecationLevel.WARNING, t={@SimpleAnn(value="243"), @SimpleAnn(value="4324")})
+  public void foo(@Ann(x=2, y="324", z=Ann.class, e={byte.class, Base.class}, depr=kotlin.DeprecationLevel.WARNING, t={@SimpleAnn(value="687"), @SimpleAnn(value="78")}) @org.jetbrains.annotations.NotNull() java.lang.String);
 
   @null()
   public  Derived(@org.jetbrains.annotations.NotNull() Base);
