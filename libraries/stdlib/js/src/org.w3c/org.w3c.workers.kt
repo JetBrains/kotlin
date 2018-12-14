@@ -9,15 +9,20 @@
 @file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.workers
 
-import org.w3c.dom.*
-import org.w3c.dom.events.Event
-import org.w3c.dom.events.EventTarget
-import org.w3c.fetch.Request
-import org.w3c.fetch.Response
-import org.w3c.notifications.GetNotificationOptions
-import org.w3c.notifications.NotificationEvent
-import org.w3c.notifications.NotificationOptions
 import kotlin.js.*
+import org.khronos.webgl.*
+import org.w3c.dom.*
+import org.w3c.dom.css.*
+import org.w3c.dom.events.*
+import org.w3c.dom.parsing.*
+import org.w3c.dom.pointerevents.*
+import org.w3c.dom.svg.*
+import org.w3c.dom.url.*
+import org.w3c.fetch.*
+import org.w3c.files.*
+import org.w3c.notifications.*
+import org.w3c.performance.*
+import org.w3c.xhr.*
 
 /**
  * Exposes the JavaScript [ServiceWorkerRegistration](https://developer.mozilla.org/en/docs/Web/API/ServiceWorkerRegistration) to Kotlin

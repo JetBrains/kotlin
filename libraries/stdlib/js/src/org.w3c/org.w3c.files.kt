@@ -9,11 +9,20 @@
 @file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.files
 
-import org.khronos.webgl.ArrayBuffer
-import org.w3c.dom.ItemArrayLike
-import org.w3c.dom.events.Event
-import org.w3c.dom.events.EventTarget
-import org.w3c.xhr.ProgressEvent
+import kotlin.js.*
+import org.khronos.webgl.*
+import org.w3c.dom.*
+import org.w3c.dom.css.*
+import org.w3c.dom.events.*
+import org.w3c.dom.parsing.*
+import org.w3c.dom.pointerevents.*
+import org.w3c.dom.svg.*
+import org.w3c.dom.url.*
+import org.w3c.fetch.*
+import org.w3c.notifications.*
+import org.w3c.performance.*
+import org.w3c.workers.*
+import org.w3c.xhr.*
 
 /**
  * Exposes the JavaScript [Blob](https://developer.mozilla.org/en/docs/Web/API/Blob) to Kotlin
