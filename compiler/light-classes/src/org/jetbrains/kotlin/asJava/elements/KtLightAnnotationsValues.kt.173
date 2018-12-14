@@ -78,7 +78,7 @@ class KtLightPsiClassObjectAccessExpression(override val kotlinOrigin: KtClassLi
     override fun getOperand(): PsiTypeElement = LightTypeElement(kotlinOrigin.manager, type)
 }
 
-private fun psiType(kotlinFqName: String, context: PsiElement, boxPrimitiveType: Boolean = false): PsiType? {
+internal fun psiType(kotlinFqName: String, context: PsiElement, boxPrimitiveType: Boolean = false): PsiType {
     if (!boxPrimitiveType) {
         when (kotlinFqName) {
             "kotlin.Int" -> return PsiType.INT

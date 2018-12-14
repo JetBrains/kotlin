@@ -4,17 +4,16 @@ import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.light.LightIdentifier
-import com.intellij.psi.impl.light.LightTypeElement
-import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.meta.PsiMetaData
+import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
+import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.constants.*
@@ -127,12 +126,33 @@ private fun ConstantValue<*>.toAnnotationMemberValue(
             this.value.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent, ultraLightSupport) }
         }
 
-    is KClassValue -> KtUltraLightPsiClassObjectAccessExpression(this, ultraLightSupport, parent)
-
     is ErrorValue -> null
-
-    else -> KtUltraLightPsiLiteralForConstantValue(this, ultraLightSupport, parent)
+    else -> createPsiLiteral(parent)
 }
+
+private fun ConstantValue<*>.createPsiLiteral(parent: PsiElement): PsiExpression? {
+    val asString = asStringForPsiLiteral(parent)
+    val instance = PsiElementFactory.SERVICE.getInstance(parent.project)
+    return instance.createExpressionFromText(asString, parent)
+}
+
+private fun ConstantValue<*>.asStringForPsiLiteral(parent: PsiElement): String =
+    when (this) {
+        is NullValue -> "null"
+        is StringValue -> "\"$value\""
+        is KClassValue -> {
+            val arrayPart = "[]".repeat(value.arrayNestedness)
+            val fqName = value.classId.asSingleFqName()
+            val canonicalText = psiType(
+                fqName.asString(), parent, boxPrimitiveType = value.arrayNestedness > 0
+            ).let(TypeConversionUtil::erasure).getCanonicalText(false)
+
+            "$canonicalText$arrayPart.class"
+        }
+        is EnumValue -> "${enumClassId.asSingleFqName().asString()}.$enumEntryName"
+        else -> value.toString()
+    }
+
 
 private class KtUltraLightPsiArrayInitializerMemberValue(
     val lightParent: PsiElement,
@@ -147,39 +167,6 @@ private class KtUltraLightPsiArrayInitializerMemberValue(
     override fun isPhysical(): Boolean = false
 
     override fun getText(): String = "{" + initializers.joinToString { it.text } + "}"
-}
-
-private open class KtUltraLightPsiLiteralForConstantValue(
-    private val constantValue: ConstantValue<*>,
-    private val ultraLightSupport: UltraLightSupport,
-    lightParent: PsiElement
-) : KtLightElementBase(lightParent), PsiLiteralExpression {
-    override val kotlinOrigin: KtElement? get() = null
-
-    override fun getValue(): Any? = constantValue.value
-
-    override fun getType() =
-        constantValue.getType(ultraLightSupport.moduleDescriptor).asPsiType(ultraLightSupport, TypeMappingMode.DEFAULT, this)
-
-    override fun getText() = when (constantValue) {
-        is NullValue -> "<undefined value>"
-        is StringValue -> "\"${value.toString()}\""
-        is EnumValue -> constantValue.enumClassId.shortClassName.asString() + "." + constantValue.enumEntryName.asString()
-        else -> value.toString()
-    }
-}
-
-private class KtUltraLightPsiClassObjectAccessExpression(
-    kClassValue: KClassValue,
-    ultraLightSupport: UltraLightSupport,
-    parent: PsiElement
-) : KtUltraLightPsiLiteralForConstantValue(kClassValue, ultraLightSupport, parent), PsiClassObjectAccessExpression {
-    override fun getOperand(): PsiTypeElement {
-        val argument = (type as? PsiClassReferenceType)?.parameters?.getOrNull(0)
-        return LightTypeElement(parent.manager, argument ?: type)
-    }
-
-    override fun getText() = operand.text + ".class"
 }
 
 fun PsiModifierListOwner.isPrivateOrParameterInPrivateMethod(): Boolean {
