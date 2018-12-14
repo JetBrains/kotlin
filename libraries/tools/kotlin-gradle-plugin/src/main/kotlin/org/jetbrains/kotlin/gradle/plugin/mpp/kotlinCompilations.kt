@@ -421,11 +421,10 @@ class KotlinNativeCompilation(
         )
 
     override val compileAllTaskName: String
-        get() = lowerCamelCaseName(
-            target.disambiguationClassifier,
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
-            "klibrary"
-        )
+        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "klibrary")
+
+    val binariesTaskName: String
+        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "binaries")
 
     override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Boolean) {
         allSources.add(sourceSet.kotlin)
