@@ -25,11 +25,13 @@ abstract class ConvertDotQualifiedToScopeIntention(
     text: String
 ) : ConvertToScopeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, text) {
 
+    override val isParameterScopeFunction = false
+
     override fun isApplicableTo(element: KtDotQualifiedExpression, caretOffset: Int): Boolean {
         val receiverExpression = element.getLeftMostReceiverExpression()
         if (receiverExpression.mainReference?.resolve() is PsiClass) return false
         val receiverExpressionText = receiverExpression.text
-        if (receiverExpressionText in BLACKLIST_RECEIVER_NAME) return false
+        if (receiverExpressionText == scopeReceiverName) return false
         if (!isApplicableWithGivenReceiverText(element, receiverExpressionText)) return false
         val nextSibling = element.getDotQualifiedSiblingIfAny(forward = true)
         if (nextSibling != null && isApplicableWithGivenReceiverText(nextSibling, receiverExpressionText)) return true
