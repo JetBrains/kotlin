@@ -72,8 +72,8 @@ class DescriptorBasedFunctionHandle(
     override val isAbstract: Boolean =
         descriptor.modality == Modality.ABSTRACT || !areDeclarationAndDefinitionSame(descriptor)
 
-    override val isInterfaceDeclaration: Boolean
-        get() = DescriptorUtils.isInterface(descriptor.containingDeclaration)
+    override val mayBeUsedAsSuperImplementation: Boolean =
+        !DescriptorUtils.isInterface(descriptor.containingDeclaration)
 
     override fun getOverridden() = overridden
 

@@ -27,7 +27,7 @@ interface FunctionHandle {
     * class ones (see [findConcreteSuperDeclaration] method in bridges.kt).
     * Note that interface methods with body compiled to jvm 8 target are assumed to be non-abstract in bridges method calculation
     * (more details in [DescriptorBasedFunctionHandle.isBodyOwner] comment).*/
-    val isInterfaceDeclaration: Boolean
+    val mayBeUsedAsSuperImplementation: Boolean
 
     fun getOverridden(): Iterable<FunctionHandle>
 }
@@ -114,7 +114,7 @@ fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Function)
     }
     result.removeAll(toRemove)
 
-    val concreteRelevantDeclarations = result.filter { !it.isAbstract && !it.isInterfaceDeclaration }
+    val concreteRelevantDeclarations = result.filter { !it.isAbstract && it.mayBeUsedAsSuperImplementation }
     if (concreteRelevantDeclarations.size != 1) {
         error("Concrete fake override $function should have exactly one concrete super-declaration: $concreteRelevantDeclarations")
     }
