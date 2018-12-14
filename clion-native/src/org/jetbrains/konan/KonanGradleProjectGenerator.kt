@@ -81,7 +81,7 @@ class KonanGradleProjectGenerator : WebProjectTemplate<Any>() {
         }
 
         return panel {
-            row { Label("Project template:") }
+            row("Project template:") {}
             row { templateList.component(CCFlags.growX) }
             row { readme.component(CCFlags.growX, CCFlags.growY) }
         }/*.apply {
