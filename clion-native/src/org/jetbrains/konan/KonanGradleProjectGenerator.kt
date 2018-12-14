@@ -76,6 +76,7 @@ class KonanGradleProjectGenerator : WebProjectTemplate<Any>() {
                     template = selectedTemplate
                     readme.setHtml(template?.htmlDescription)
                 }
+                templateList.selectDefaultTemplate()
             }, modalityState)
         }
 
@@ -133,6 +134,10 @@ private class TemplateListPanel {
         templateList.addListSelectionListener {
             callback(templates.getOrNull(templateList.selectedIndex))
         }
+    }
+
+    fun selectDefaultTemplate() {
+        if (templates.isNotEmpty()) templateList.selectedIndex = 0
     }
 
     val component: JComponent get() = listWithFilter
