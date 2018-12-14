@@ -44,15 +44,21 @@ sealed class NativeBinary(
     var debuggable: Boolean = buildType.debuggable
     var optimized: Boolean = buildType.optimized
 
+    /** Additional options passed to the linker by the Kotlin/Native compiler. */
     var linkerOpts: MutableList<String> = mutableListOf()
 
+    /** Additional options passed to the linker by the Kotlin/Native compiler. */
     fun linkerOpts(vararg options: String) {
         linkerOpts.addAll(options.toList())
     }
 
+    /** Additional options passed to the linker by the Kotlin/Native compiler. */
     fun linkerOpts(options: Iterable<String>) {
         linkerOpts.addAll(options)
     }
+
+    /** Additional arguments passed to the Kotlin/Native compiler. */
+    var freeCompilerArgs: MutableList<String> = mutableListOf()
 
     // Link task access.
     val linkTaskName: String

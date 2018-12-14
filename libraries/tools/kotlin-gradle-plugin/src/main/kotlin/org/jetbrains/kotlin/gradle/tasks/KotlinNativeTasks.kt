@@ -374,6 +374,10 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
     val embedBitcode: Framework.BitcodeEmbeddingMode
         get() = (binary as? Framework)?.embedBitcode ?: Framework.BitcodeEmbeddingMode.DISABLE
 
+    @get:Input
+    val freeCompilerArgs: List<String>
+        get() = binary.freeCompilerArgs
+
     override fun buildArgs(defaultsOnly: Boolean): List<String> {
         val superArgs = super.buildArgs(defaultsOnly)
         return mutableListOf<String>().apply {
@@ -388,6 +392,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
             exportLibraries.files.filterExternalKlibs(project).forEach {
                 add("-Xexport-library=${it.absolutePath}")
             }
+            addAll(freeCompilerArgs)
         }
     }
 
