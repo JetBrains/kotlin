@@ -370,11 +370,20 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
             }
         }
 
+    @get:Input
+    val embedBitcode: Framework.BitcodeEmbeddingMode
+        get() = (binary as? Framework)?.embedBitcode ?: Framework.BitcodeEmbeddingMode.DISABLE
+
     override fun buildArgs(defaultsOnly: Boolean): List<String> {
         val superArgs = super.buildArgs(defaultsOnly)
         return mutableListOf<String>().apply {
             addAll(superArgs)
             addArgIfNotNull("-entry", entryPoint)
+            when (embedBitcode) {
+                Framework.BitcodeEmbeddingMode.MARKER -> add("-Xembed-bitcode-marker")
+                Framework.BitcodeEmbeddingMode.BITCODE -> add("-Xembed-bitcode")
+                else -> { /* Do nothing. */ }
+            }
             addListArg("-linker-options", linkerOpts)
             exportLibraries.files.filterExternalKlibs(project).forEach {
                 add("-Xexport-library=${it.absolutePath}")

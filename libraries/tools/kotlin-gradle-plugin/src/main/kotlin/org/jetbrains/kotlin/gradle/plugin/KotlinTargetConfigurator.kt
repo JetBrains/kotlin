@@ -492,7 +492,7 @@ open class KotlinNativeTargetConfigurator(
                 }
             } else {
                 group = RUN_GROUP
-                description = "Executes Kotlin/Native executable ${binary.baseName} for target ${binary.target.name}"
+                description = "Executes Kotlin/Native executable ${binary.name} for target ${binary.target.name}"
             }
 
             enabled = binary.target.konanTarget.isCurrentHost
