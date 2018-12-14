@@ -19,7 +19,7 @@ class ErrorDependenciesResolver : DependenciesResolver {
         scriptContents: ScriptContents,
         environment: Environment
     ): DependenciesResolver.ResolveResult {
-        return DependenciesResolver.ResolveResult.Failure(ScriptReport("Error"))
+        return DependenciesResolver.ResolveResult.Failure(ScriptReport("Error", severity = ScriptReport.Severity.FATAL))
     }
 }
 
