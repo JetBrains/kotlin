@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.util.*
 
 /** Copied from Kotlin/Native repository. */
 
@@ -151,12 +152,20 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
     KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project, additionalJvmArgs) {
     init {
         if (HostManager.host == KonanTarget.MINGW_X64) {
-            //TODO: Oh-ho-ho fix it in more convinient way.
-            environment.put(
-                "PATH", DependencyDirectories.defaultDependenciesRoot.absolutePath +
-                        "\\msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1" +
-                        "\\bin;${environment.get("PATH")}"
-            )
+            // TODO: Read it from KonanDistribution when it is accessible.
+            val konanProperties = Properties().apply {
+                project.file("${project.konanHome}/konan/konan.properties").inputStream().use(::load)
+            }
+            val toolchainDir = konanProperties.getProperty("targetToolchain.mingw_x64")
+
+            if (toolchainDir != null) {
+                environment.put(
+                    "PATH",
+                    DependencyDirectories.defaultDependenciesRoot
+                        .resolve("\\$toolchainDir\\bin;${environment.get("PATH")}")
+                        .absolutePath
+                )
+            }
         }
     }
 }
