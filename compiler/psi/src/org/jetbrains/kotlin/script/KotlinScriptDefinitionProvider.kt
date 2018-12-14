@@ -46,7 +46,7 @@ fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefin
     if (file.isDirectory ||
         file.extension == KotlinFileType.EXTENSION ||
         file.extension == JavaClassFileType.INSTANCE.defaultExtension ||
-        FileTypeRegistry.getInstance().getFileTypeByFileName(file.name) != KotlinFileType.INSTANCE
+        !isKotlinFileType(file)
     ) {
         return null
     }
@@ -65,6 +65,12 @@ fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefin
     }
 
     return scriptDefinitionProvider.findScriptDefinition(file.name)
+}
+
+private fun isKotlinFileType(file: VirtualFile): Boolean {
+    val typeRegistry = FileTypeRegistry.getInstance()
+    return typeRegistry.getFileTypeByFile(file) == KotlinFileType.INSTANCE ||
+            typeRegistry.getFileTypeByFileName(file.name) == KotlinFileType.INSTANCE
 }
 
 abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
