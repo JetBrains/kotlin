@@ -94,11 +94,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         LOG.debug("==========================================")
         LOG.info("is Kotlin incremental compilation enabled for JVM: ${IncrementalCompilation.isEnabledForJvm()}")
         LOG.info("is Kotlin incremental compilation enabled for JS: ${IncrementalCompilation.isEnabledForJs()}")
-        if (IncrementalCompilation.isEnabledForJs()) {
-            val messageCollector = MessageCollectorAdapter(context, null)
-            messageCollector.report(INFO, "Using experimental incremental compilation for Kotlin/JS")
-        }
-
         LOG.info("is Kotlin compiler daemon enabled: ${isDaemonEnabled()}")
 
         val historyLabel = context.getBuilderParameter("history label")

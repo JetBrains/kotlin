@@ -45,8 +45,8 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
-const val USING_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin incremental compilation"
-const val USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using experimental Kotlin/JS incremental compilation"
+const val USING_JVM_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JVM incremental compilation"
+const val USING_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JS incremental compilation"
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile(), CompilerArgumentAwareWithInput<T> {
     private fun useCompilerClasspathConfigurationMessage(propertyName: String) {
@@ -392,7 +392,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val compilerRunner = compilerRunner()
 
         val icEnv = if (incremental) {
-            logger.info(USING_INCREMENTAL_COMPILATION_MESSAGE)
+            logger.info(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
                 if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
                 taskBuildDirectory,
@@ -474,7 +474,12 @@ internal open class KotlinCompileCommonWithWorkers @Inject constructor(
 }
 
 @CacheableTask
-open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
+open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
+
+    init {
+        incremental = true
+    }
+
     private val kotlinOptionsImpl = KotlinJsOptionsImpl()
 
     override val kotlinOptions: KotlinJsOptions
@@ -546,7 +551,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         val compilerRunner = compilerRunner()
 
         val icEnv = if (incremental) {
-            logger.warn(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            logger.info(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
                 if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
                 taskBuildDirectory,
