@@ -5,9 +5,10 @@ class MyClass {
     fun foo2() = Unit
     fun foo3() = Unit
 
-    fun foo4(it: MyClass) {
-        it.foo1()<caret>
-        it.foo2()
-        it.foo3()
+    fun foo4() {
+        val a = MyClass()
+        a.foo1()<caret>
+        a.foo2()
+        a.foo3()
     }
 }
