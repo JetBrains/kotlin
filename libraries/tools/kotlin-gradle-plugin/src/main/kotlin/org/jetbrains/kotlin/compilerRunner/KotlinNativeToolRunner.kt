@@ -123,7 +123,7 @@ internal abstract class KonanCliRunner(
         if (classpath.isEmpty) {
             throw IllegalStateException(
                 "Classpath of the tool is empty: $toolName\n" +
-                        "Probably the '${KotlinNativeProjectProperty.KONAN_HOME_OVERRIDE}' project property contains an incorrect path.\n" +
+                        "Probably the '${KotlinNativeProjectProperty.KONAN_HOME_OVERRIDE.propertyName}' project property contains an incorrect path.\n" +
                         "Please change it to the compiler root directory and rerun the build."
             )
         }
