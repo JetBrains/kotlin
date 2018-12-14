@@ -34,7 +34,7 @@ import com.sun.jdi.Type as JdiType
 class VariableFinder private constructor(private val context: EvaluationContextImpl, private val frameProxy: StackFrameProxyImpl) {
     companion object {
         private val COROUTINE_CONTEXT_SIMPLE_NAME = COROUTINE_CONTEXT_1_3_FQ_NAME.shortName().asString()
-        private val CONTINUATION_TYPE = AsmType.getType(Continuation::class.java)
+        val CONTINUATION_TYPE: AsmType = AsmType.getType(Continuation::class.java)
 
         val SUSPEND_LAMBDA_CLASSES = listOf(
             "kotlin.coroutines.jvm.internal.SuspendLambda",
