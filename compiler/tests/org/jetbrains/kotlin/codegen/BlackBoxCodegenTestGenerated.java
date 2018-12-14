@@ -22905,6 +22905,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/specialBuiltins/irrelevantRemoveAtOverride.kt");
         }
 
+        @TestMetadata("mapGetOrDefault.kt")
+        public void testMapGetOrDefault() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/mapGetOrDefault.kt");
+        }
+
         @TestMetadata("maps.kt")
         public void testMaps() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/maps.kt");
