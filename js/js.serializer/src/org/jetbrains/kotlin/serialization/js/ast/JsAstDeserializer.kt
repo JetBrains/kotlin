@@ -106,6 +106,10 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             fragment.mainFunction = deserialize(proto.mainInvocation)
         }
 
+        proto.inlinedFunctionWrappersList.forEach {
+            fragment.inlinedFunctionWrappers[it.tag] = deserializeGlobalBlock(it.block)
+        }
+
         return fragment
     }
 

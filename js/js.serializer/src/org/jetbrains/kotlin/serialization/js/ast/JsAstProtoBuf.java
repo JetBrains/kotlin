@@ -30452,6 +30452,20 @@ public final class JsAstProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement getMainInvocation();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> 
+        getInlinedFunctionWrappersList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper getInlinedFunctionWrappers(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     */
+    int getInlinedFunctionWrappersCount();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Fragment}
@@ -30622,6 +30636,14 @@ public final class JsAstProtoBuf {
               bitField0_ |= 0x00000020;
               break;
             }
+            case 106: {
+              if (!((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
+                inlinedFunctionWrappers_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper>();
+                mutable_bitField0_ |= 0x00001000;
+              }
+              inlinedFunctionWrappers_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.PARSER, extensionRegistry));
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -30647,6 +30669,9 @@ public final class JsAstProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
           inlineModule_ = java.util.Collections.unmodifiableList(inlineModule_);
+        }
+        if (((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
+          inlinedFunctionWrappers_ = java.util.Collections.unmodifiableList(inlinedFunctionWrappers_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -31001,6 +31026,41 @@ public final class JsAstProtoBuf {
       return mainInvocation_;
     }
 
+    public static final int INLINED_FUNCTION_WRAPPERS_FIELD_NUMBER = 13;
+    private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> inlinedFunctionWrappers_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> getInlinedFunctionWrappersList() {
+      return inlinedFunctionWrappers_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapperOrBuilder> 
+        getInlinedFunctionWrappersOrBuilderList() {
+      return inlinedFunctionWrappers_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     */
+    public int getInlinedFunctionWrappersCount() {
+      return inlinedFunctionWrappers_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper getInlinedFunctionWrappers(int index) {
+      return inlinedFunctionWrappers_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapperOrBuilder getInlinedFunctionWrappersOrBuilder(
+        int index) {
+      return inlinedFunctionWrappers_.get(index);
+    }
+
     private void initFields() {
       importedModule_ = java.util.Collections.emptyList();
       importEntry_ = java.util.Collections.emptyList();
@@ -31014,6 +31074,7 @@ public final class JsAstProtoBuf {
       packageFqn_ = "";
       testsInvocation_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.getDefaultInstance();
       mainInvocation_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.getDefaultInstance();
+      inlinedFunctionWrappers_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -31087,6 +31148,12 @@ public final class JsAstProtoBuf {
           return false;
         }
       }
+      for (int i = 0; i < getInlinedFunctionWrappersCount(); i++) {
+        if (!getInlinedFunctionWrappers(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -31129,6 +31196,9 @@ public final class JsAstProtoBuf {
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         output.writeMessage(12, mainInvocation_);
+      }
+      for (int i = 0; i < inlinedFunctionWrappers_.size(); i++) {
+        output.writeMessage(13, inlinedFunctionWrappers_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -31186,6 +31256,10 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(12, mainInvocation_);
+      }
+      for (int i = 0; i < inlinedFunctionWrappers_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(13, inlinedFunctionWrappers_.get(i));
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -31305,6 +31379,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000400);
         mainInvocation_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000800);
+        inlinedFunctionWrappers_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00001000);
         return this;
       }
 
@@ -31382,6 +31458,11 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000020;
         }
         result.mainInvocation_ = mainInvocation_;
+        if (((bitField0_ & 0x00001000) == 0x00001000)) {
+          inlinedFunctionWrappers_ = java.util.Collections.unmodifiableList(inlinedFunctionWrappers_);
+          bitField0_ = (bitField0_ & ~0x00001000);
+        }
+        result.inlinedFunctionWrappers_ = inlinedFunctionWrappers_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -31468,6 +31549,16 @@ public final class JsAstProtoBuf {
         if (other.hasMainInvocation()) {
           mergeMainInvocation(other.getMainInvocation());
         }
+        if (!other.inlinedFunctionWrappers_.isEmpty()) {
+          if (inlinedFunctionWrappers_.isEmpty()) {
+            inlinedFunctionWrappers_ = other.inlinedFunctionWrappers_;
+            bitField0_ = (bitField0_ & ~0x00001000);
+          } else {
+            ensureInlinedFunctionWrappersIsMutable();
+            inlinedFunctionWrappers_.addAll(other.inlinedFunctionWrappers_);
+          }
+          
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -31536,6 +31627,12 @@ public final class JsAstProtoBuf {
         }
         if (hasMainInvocation()) {
           if (!getMainInvocation().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getInlinedFunctionWrappersCount(); i++) {
+          if (!getInlinedFunctionWrappers(i).isInitialized()) {
             
             return false;
           }
@@ -32688,6 +32785,131 @@ public final class JsAstProtoBuf {
         return this;
       }
 
+      private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> inlinedFunctionWrappers_ =
+        java.util.Collections.emptyList();
+      private void ensureInlinedFunctionWrappersIsMutable() {
+        if (!((bitField0_ & 0x00001000) == 0x00001000)) {
+          inlinedFunctionWrappers_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper>(inlinedFunctionWrappers_);
+          bitField0_ |= 0x00001000;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> getInlinedFunctionWrappersList() {
+        return java.util.Collections.unmodifiableList(inlinedFunctionWrappers_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public int getInlinedFunctionWrappersCount() {
+        return inlinedFunctionWrappers_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper getInlinedFunctionWrappers(int index) {
+        return inlinedFunctionWrappers_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public Builder setInlinedFunctionWrappers(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureInlinedFunctionWrappersIsMutable();
+        inlinedFunctionWrappers_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public Builder setInlinedFunctionWrappers(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.Builder builderForValue) {
+        ensureInlinedFunctionWrappersIsMutable();
+        inlinedFunctionWrappers_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public Builder addInlinedFunctionWrappers(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureInlinedFunctionWrappersIsMutable();
+        inlinedFunctionWrappers_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public Builder addInlinedFunctionWrappers(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureInlinedFunctionWrappersIsMutable();
+        inlinedFunctionWrappers_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public Builder addInlinedFunctionWrappers(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.Builder builderForValue) {
+        ensureInlinedFunctionWrappersIsMutable();
+        inlinedFunctionWrappers_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public Builder addInlinedFunctionWrappers(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.Builder builderForValue) {
+        ensureInlinedFunctionWrappersIsMutable();
+        inlinedFunctionWrappers_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public Builder addAllInlinedFunctionWrappers(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> values) {
+        ensureInlinedFunctionWrappersIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, inlinedFunctionWrappers_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public Builder clearInlinedFunctionWrappers() {
+        inlinedFunctionWrappers_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00001000);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       */
+      public Builder removeInlinedFunctionWrappers(int index) {
+        ensureInlinedFunctionWrappersIsMutable();
+        inlinedFunctionWrappers_.remove(index);
+
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.Fragment)
     }
 
@@ -32697,6 +32919,575 @@ public final class JsAstProtoBuf {
     }
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Fragment)
+  }
+
+  public interface InlinedWrapperOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required string tag = 1;</code>
+     */
+    boolean hasTag();
+    /**
+     * <code>required string tag = 1;</code>
+     */
+    java.lang.String getTag();
+    /**
+     * <code>required string tag = 1;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getTagBytes();
+
+    /**
+     * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+     */
+    boolean hasBlock();
+    /**
+     * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock getBlock();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper}
+   */
+  public static final class InlinedWrapper extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
+      InlinedWrapperOrBuilder {
+    // Use InlinedWrapper.newBuilder() to construct.
+    private InlinedWrapper(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private InlinedWrapper(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final InlinedWrapper defaultInstance;
+    public static InlinedWrapper getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public InlinedWrapper getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private InlinedWrapper(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              bitField0_ |= 0x00000001;
+              tag_ = bs;
+              break;
+            }
+            case 18: {
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = block_.toBuilder();
+              }
+              block_ = input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(block_);
+                block_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<InlinedWrapper> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<InlinedWrapper>() {
+      public InlinedWrapper parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new InlinedWrapper(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<InlinedWrapper> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int TAG_FIELD_NUMBER = 1;
+    private java.lang.Object tag_;
+    /**
+     * <code>required string tag = 1;</code>
+     */
+    public boolean hasTag() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required string tag = 1;</code>
+     */
+    public java.lang.String getTag() {
+      java.lang.Object ref = tag_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        org.jetbrains.kotlin.protobuf.ByteString bs = 
+            (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          tag_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string tag = 1;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getTagBytes() {
+      java.lang.Object ref = tag_;
+      if (ref instanceof java.lang.String) {
+        org.jetbrains.kotlin.protobuf.ByteString b = 
+            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        tag_ = b;
+        return b;
+      } else {
+        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BLOCK_FIELD_NUMBER = 2;
+    private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock block_;
+    /**
+     * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+     */
+    public boolean hasBlock() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock getBlock() {
+      return block_;
+    }
+
+    private void initFields() {
+      tag_ = "";
+      block_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasTag()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasBlock()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getBlock().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getTagBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, block_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBytesSize(1, getTagBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, block_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapperOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        tag_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        block_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper build() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper buildPartial() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.tag_ = tag_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.block_ = block_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper other) {
+        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.getDefaultInstance()) return this;
+        if (other.hasTag()) {
+          bitField0_ |= 0x00000001;
+          tag_ = other.tag_;
+          
+        }
+        if (other.hasBlock()) {
+          mergeBlock(other.getBlock());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasTag()) {
+          
+          return false;
+        }
+        if (!hasBlock()) {
+          
+          return false;
+        }
+        if (!getBlock().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object tag_ = "";
+      /**
+       * <code>required string tag = 1;</code>
+       */
+      public boolean hasTag() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required string tag = 1;</code>
+       */
+      public java.lang.String getTag() {
+        java.lang.Object ref = tag_;
+        if (!(ref instanceof java.lang.String)) {
+          org.jetbrains.kotlin.protobuf.ByteString bs =
+              (org.jetbrains.kotlin.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            tag_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string tag = 1;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getTagBytes() {
+        java.lang.Object ref = tag_;
+        if (ref instanceof String) {
+          org.jetbrains.kotlin.protobuf.ByteString b = 
+              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          tag_ = b;
+          return b;
+        } else {
+          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string tag = 1;</code>
+       */
+      public Builder setTag(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        tag_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required string tag = 1;</code>
+       */
+      public Builder clearTag() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        tag_ = getDefaultInstance().getTag();
+        
+        return this;
+      }
+      /**
+       * <code>required string tag = 1;</code>
+       */
+      public Builder setTagBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        tag_ = value;
+        
+        return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock block_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+       */
+      public boolean hasBlock() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock getBlock() {
+        return block_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+       */
+      public Builder setBlock(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        block_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+       */
+      public Builder setBlock(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.Builder builderForValue) {
+        block_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+       */
+      public Builder mergeBlock(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            block_ != org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance()) {
+          block_ =
+            org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.newBuilder(block_).mergeFrom(value).buildPartial();
+        } else {
+          block_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
+       */
+      public Builder clearBlock() {
+        block_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
+    }
+
+    static {
+      defaultInstance = new InlinedWrapper(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
   }
 
   public interface ImportedModuleOrBuilder extends

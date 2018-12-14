@@ -177,6 +177,7 @@ class Merger(
 
         fragment.tests?.let { rename(it) }
         fragment.mainFunction?.let { rename(it) }
+        fragment.inlinedFunctionWrappers.values.forEach { rename(it) }
     }
 
     private fun <T : JsNode> Map<JsName, JsName>.rename(rootNode: T): T {
@@ -210,6 +211,8 @@ class Merger(
         return rootNode
     }
 
+    private val importedFunctionWrappers = mutableMapOf<String, JsGlobalBlock>()
+
     private fun mergeNames() {
         for (fragment in fragments) {
             val nameMap = buildNameMap(fragment)
@@ -228,6 +231,10 @@ class Merger(
             fragment.tryUpdateMain()
             addExportStatements(fragment)
 
+            fragment.inlinedFunctionWrappers.forEach { (tag, imports) ->
+                importedFunctionWrappers.putIfAbsent(tag, imports)
+            }
+
             classes += fragment.classes
         }
     }
@@ -240,6 +247,12 @@ class Merger(
             addImportForInlineDeclarationIfNecessary()
             this += importBlock.statements
             addClassPrototypes(this)
+
+            // TODO better placing?
+            importedFunctionWrappers.values.forEach {
+                this += it.statements
+            }
+
             this += declarationBlock.statements
             this += exportBlock.statements
             addClassPostDeclarations(this)
