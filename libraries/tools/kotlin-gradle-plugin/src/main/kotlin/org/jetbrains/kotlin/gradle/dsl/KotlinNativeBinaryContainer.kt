@@ -14,22 +14,10 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
 /*
-Naming:
-
-executable('foo', [debug, release]) -> fooDebugExecutable + fooReleaseExecutable
-executable -> debugExecutable, releaseExecutable
-executable([debug]) -> debugExecutable
-
-// Tests:
-1. Cannot add a second binary with the same parameters.
-2. Can access a binary by name
-3. Access linkTask
-4. Access runTask
-5. Final binaries have correct names
-6. Old APIs work fine:
-    - creating binaries,
-    - getting binaries and link tasks,
-    - setting binary parameters using compilation DSL: linker opts and entry points
+Use the following naming scheme:
+    executable('foo', [debug, release]) -> fooDebugExecutable + fooReleaseExecutable
+    executable() -> debugExecutable, releaseExecutable
+    executable([debug]) -> debugExecutable
 */
 
 open class KotlinNativeBinaryContainer @Inject constructor(
@@ -131,7 +119,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
             }
 
             require(outputKind.availableFor(target.konanTarget)) {
-                "Cannot create binary $name: ${outputKind.taskNameClassifier.decapitalize()} binaries are not available for target ${target.name}"
+                "Cannot create ${outputKind.description}: $name. Binaries of this kind are not available for target ${target.name}"
             }
 
             val binary = create(name, baseName, buildType, defaultCompilation)
