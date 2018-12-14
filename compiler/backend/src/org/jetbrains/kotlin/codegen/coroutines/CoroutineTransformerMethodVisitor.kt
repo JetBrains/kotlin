@@ -299,7 +299,7 @@ class CoroutineTransformerMethodVisitor(
         methodNode.instructions.insert(methodNode.instructions.last, endLabel)
         methodNode.localVariables.add(
             LocalVariableNode(
-                "\$continuation",
+                CONTINUATION_VARIABLE_NAME,
                 languageVersionSettings.continuationAsmType().descriptor,
                 null,
                 startLabel,

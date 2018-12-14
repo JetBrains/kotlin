@@ -18,6 +18,7 @@ import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
 import com.intellij.xdebugger.frame.XNamedValue
 import com.sun.jdi.*
+import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
 import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
 import org.jetbrains.kotlin.idea.debugger.evaluate.VariableFinder.Companion.SUSPEND_LAMBDA_CLASSES
 import org.jetbrains.kotlin.idea.debugger.evaluate.getInvokePolicy
@@ -91,7 +92,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : AsyncStackTraceProvider {
             return null
         }
 
-        val continuationVariable = frameProxy.safeVisibleVariableByName("\$continuation") ?: return null
+        val continuationVariable = frameProxy.safeVisibleVariableByName(CONTINUATION_VARIABLE_NAME) ?: return null
         val continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
 
         return collectFrames(continuation)

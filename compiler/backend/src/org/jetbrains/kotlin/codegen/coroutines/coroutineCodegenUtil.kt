@@ -124,6 +124,8 @@ val INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME = object : CallableDescriptor.UserD
 
 val CONTINUATION_PARAMETER_NAME = Name.identifier("continuation")
 
+const val CONTINUATION_VARIABLE_NAME = "\$continuation"
+
 // Resolved calls to suspension function contain descriptors as they visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // See `createJvmSuspendFunctionView` and it's usages for clarification

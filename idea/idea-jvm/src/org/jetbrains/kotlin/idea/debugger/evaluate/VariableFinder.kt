@@ -14,7 +14,7 @@ import com.sun.jdi.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.getCapturedFieldName
 import org.jetbrains.kotlin.codegen.AsmUtil.getLabeledThisName
-import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
+import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.INLINE_TRANSFORMATION_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
@@ -261,7 +261,7 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             return null
         }
 
-        val continuationVariable = frameProxy.safeVisibleVariableByName("\$continuation") ?: return null
+        val continuationVariable = frameProxy.safeVisibleVariableByName(CONTINUATION_VARIABLE_NAME) ?: return null
         val continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
         return findCoroutineContextForContinuation(continuation)
     }
