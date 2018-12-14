@@ -149,7 +149,22 @@ class Framework(
     override val outputKind: NativeOutputKind
         get() = NativeOutputKind.FRAMEWORK
 
-    // TODO: Pack task configuration.
+    val exportConfigurationName: String
+        get() = target.disambiguateName(lowerCamelCaseName(name, "export"))
+
+    var transitiveExport: Boolean
+        get() = project.configurations.maybeCreate(exportConfigurationName).isTransitive
+        set(value) {
+            project.configurations.maybeCreate(exportConfigurationName).isTransitive = value
+        }
+
+    fun export(dependency: Any) {
+        project.dependencies.add(exportConfigurationName, dependency)
+    }
+
+    fun export(dependency: Any, configure: Closure<*>) {
+        project.dependencies.add(exportConfigurationName, dependency, configure)
+    }
 }
 
 

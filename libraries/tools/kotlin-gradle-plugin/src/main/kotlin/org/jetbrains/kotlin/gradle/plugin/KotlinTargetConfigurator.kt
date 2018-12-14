@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -29,6 +26,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
+import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
@@ -464,7 +462,7 @@ open class KotlinNativeTargetConfigurator(
     // endregion.
 
     // region Task creation.
-    private fun Project.createLinkTask(target: KotlinNativeTarget, binary: NativeBinary) {
+    private fun Project.createLinkTask(binary: NativeBinary) {
         tasks.create(
             binary.linkTaskName,
             KotlinNativeLink::class.java
@@ -569,6 +567,7 @@ open class KotlinNativeTargetConfigurator(
     override fun configureTarget(target: KotlinNativeTarget) {
         super.configureTarget(target)
         configureBinaries(target)
+        configureFrameworkExport(target)
         configureCInterops(target)
         warnAboutIncorrectDependencies(target)
     }
@@ -610,8 +609,9 @@ open class KotlinNativeTargetConfigurator(
 
     protected fun configureBinaries(target: KotlinNativeTarget) {
         val project = target.project
+        // Create link and run tasks.
         target.binaries.all {
-            project.createLinkTask(target, it)
+            project.createLinkTask(it)
         }
 
         target.binaries.withType(Executable::class.java).all {
@@ -651,6 +651,33 @@ open class KotlinNativeTargetConfigurator(
                         NativeOutputKind.FRAMEWORK -> binaries.framework(name, buildTypes, configure)
                     }
                 }
+            }
+        }
+    }
+
+    fun configureFrameworkExport(target: KotlinNativeTarget) {
+        val project = target.project
+
+        target.compilations.all {
+            // Allow resolving api configurations directly to be able to check that
+            // all exported dependency are also added in the corresponding api configurations.
+            // The check is performed during a link task execution.
+            project.configurations.maybeCreate(it.apiConfigurationName).apply {
+                isCanBeResolved = true
+                usesPlatformOf(target)
+                attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
+            }
+        }
+
+        target.binaries.withType(Framework::class.java).all { framework ->
+            val exportConfiguration = project.configurations.maybeCreate(framework.exportConfigurationName).apply {
+                isVisible = false
+                isTransitive = false
+                isCanBeConsumed = false
+                isCanBeResolved = true
+                usesPlatformOf(target)
+                attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
+                description = "Dependenceis to be exported in framework ${framework.name} for target ${target.targetName}"
             }
         }
     }
@@ -725,7 +752,7 @@ open class KotlinNativeTargetConfigurator(
                 usesPlatformOf(target)
                 isVisible = false
                 isCanBeConsumed = false
-                attributes.attribute(USAGE_ATTRIBUTE, compilation.target.project.usageByName(KotlinUsages.KOTLIN_API))
+                attributes.attribute(USAGE_ATTRIBUTE,  KotlinUsages.consumerApiUsage(target))
                 description = "Dependencies for cinterop '${cinterop.name}' (compilation '${compilation.name}')."
             }
         }

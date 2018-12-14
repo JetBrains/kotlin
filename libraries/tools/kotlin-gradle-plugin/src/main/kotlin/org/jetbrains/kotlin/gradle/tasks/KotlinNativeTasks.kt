@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.*
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
@@ -75,6 +76,11 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
     return filter { file ->
         !(file.name.contains("-cinterop-") && libDirectories.any { file.toPath().startsWith(it) })
     }
+}
+
+private fun Collection<File>.filterExternalKlibs(project: Project) = filter {
+    // Support only klib files for now.
+    it.extension == "klib" && !it.providedByCompiler(project)
 }
 
 // endregion
@@ -270,10 +276,7 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
             addArg("-o", outputFile.get().absolutePath)
 
             // Libraries.
-            libraries.files.filter {
-                // Support only klib files for now.
-                it.extension == "klib" && !it.providedByCompiler(project)
-            }.forEach { library ->
+            libraries.files.filterExternalKlibs(project).forEach { library ->
                 addArg("-l", library.absolutePath)
             }
         }
@@ -357,13 +360,63 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
     val linkerOpts: List<String>
         get() = binary.linkerOpts
 
+    @get:InputFiles
+    val exportLibraries: FileCollection
+        get() = binary.let {
+            if (it is Framework) {
+                project.configurations.getByName(it.exportConfigurationName)
+            } else {
+                project.files()
+            }
+        }
+
     override fun buildArgs(defaultsOnly: Boolean): List<String> {
         val superArgs = super.buildArgs(defaultsOnly)
         return mutableListOf<String>().apply {
             addAll(superArgs)
             addArgIfNotNull("-entry", entryPoint)
             addListArg("-linker-options", linkerOpts)
+            exportLibraries.files.filterExternalKlibs(project).forEach {
+                add("-Xexport-library=${it.absolutePath}")
+            }
         }
+    }
+
+    private fun validatedExportedLibraries() {
+        val exportConfiguration = exportLibraries as? Configuration ?: return
+        val apiFiles = project.configurations.getByName(compilation.apiConfigurationName).files.filterExternalKlibs(project)
+
+        val failed = mutableSetOf<Dependency>()
+        exportConfiguration.allDependencies.forEach {
+            val dependencyFiles = exportConfiguration.files(it).filterExternalKlibs(project)
+            if (!apiFiles.containsAll(dependencyFiles)) {
+                failed.add(it)
+            }
+        }
+
+        check(failed.isEmpty()) {
+            val failedDependenciesList = failed.joinToString(separator = "\n") {
+                when (it) {
+                    is FileCollectionDependency -> "|Files: ${it.files.files}"
+                    is ProjectDependency -> "|Project ${it.dependencyProject.path}"
+                    else -> "|${it.group}:${it.name}:${it.version}"
+                }
+            }
+
+            """
+                |Following dependencies exported in the ${binary.name} binary are not specified as API-dependencies of a corresponding source set:
+                |
+                $failedDependenciesList
+                |
+                |Please add them in the API-dependencies and rerun the build.
+            """.trimMargin()
+        }
+    }
+
+    @TaskAction
+    override fun compile() {
+        validatedExportedLibraries()
+        super.compile()
     }
 }
 
@@ -450,10 +503,7 @@ open class CInteropProcess : DefaultTask() {
                 addArg("-lopt", it)
             }
 
-            libraries.files.filter {
-                // Support only klib files for now.
-                it.extension == "klib" && !it.providedByCompiler(project)
-            }.forEach { library ->
+            libraries.files.filterExternalKlibs(project).forEach { library ->
                 addArg("-l", library.absolutePath)
             }
 
