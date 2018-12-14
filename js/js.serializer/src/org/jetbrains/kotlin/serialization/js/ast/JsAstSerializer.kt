@@ -471,7 +471,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
     private fun serialize(module: JsImportedModule): JsAstProtoBuf.JsImportedModule {
         val moduleBuilder = JsAstProtoBuf.JsImportedModule.newBuilder()
         moduleBuilder.externalName = module.externalName
-        moduleBuilder.internalName = serialize(module.externalName)
+        moduleBuilder.internalName = serialize(module.internalName)
         module.plainReference?.let {
             moduleBuilder.plainReference = serialize(it)
         }

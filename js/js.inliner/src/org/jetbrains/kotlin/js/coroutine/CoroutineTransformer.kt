@@ -70,6 +70,7 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
 fun transformCoroutines(fragments: List<JsProgramFragment>) {
     val coroutineTransformer = CoroutineTransformer()
     for (fragment in fragments) {
+        fragment.inlinedFunctionWrappers.values.forEach { coroutineTransformer.accept(it) }
         coroutineTransformer.accept(fragment.declarationBlock)
         coroutineTransformer.accept(fragment.initializerBlock)
     }

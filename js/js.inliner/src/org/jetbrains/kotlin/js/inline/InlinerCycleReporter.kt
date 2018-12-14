@@ -42,24 +42,32 @@ class InlinerCycleReporter(
         get() = if (namedFunctionsStack.empty()) null else namedFunctionsStack.peek()
 
 
-    fun startFunction(function: JsFunction) {
-        assert(!inProcessFunctions.contains(function)) { "Inliner has revisited function" }
-        inProcessFunctions.add(function)
-
+    fun <T> withFunction(function: JsFunction, body: () -> T): T {
         if (function in functionContext.functionsByFunctionNodes.keys) {
             namedFunctionsStack.push(function)
         }
-    }
 
-    fun endFunction(function: JsFunction) {
-        processedFunctions.add(function)
-
-        assert(inProcessFunctions.contains(function))
-        inProcessFunctions.remove(function)
+        val result = body()
 
         if (!namedFunctionsStack.empty() && namedFunctionsStack.peek() == function) {
             namedFunctionsStack.pop()
         }
+
+        return result
+    }
+
+    fun <T> withInlineFunctionDefinition(function: JsFunction, body: () -> T): T {
+        assert(!inProcessFunctions.contains(function)) { "Inliner has revisited function" }
+        inProcessFunctions.add(function)
+
+        val result = withFunction(function, body)
+
+        processedFunctions.add(function)
+
+        assert(function in inProcessFunctions)
+        inProcessFunctions.remove(function)
+
+        return result
     }
 
 

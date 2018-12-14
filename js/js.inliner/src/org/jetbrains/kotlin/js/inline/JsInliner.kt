@@ -7,15 +7,10 @@ package org.jetbrains.kotlin.js.inline
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.forcedReturnVariable
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
-import org.jetbrains.kotlin.js.inline.clean.removeUnusedLocalFunctionDeclarations
 import org.jetbrains.kotlin.js.inline.context.FunctionContext
 import org.jetbrains.kotlin.js.inline.context.InliningContext
-import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
-import org.jetbrains.kotlin.js.translate.declaration.transformSpecialFunctionsToCoroutineMetadata
 
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult
 
@@ -71,22 +66,15 @@ class JsInliner(
         if (cycleReporter.shouldProcess(inlineFn.fn, call)) {
             val (function, wrapperBody) = inlineFn.fn
 
-            cycleReporter.startFunction(function)
-
-            if (wrapperBody != null) {
-                val scope = PublicInlineFunctionInliningScope(function, wrapperBody, containingScope.fragment)
-                scope.process(wrapperBody)
-                scope.update()
-            } else {
-                containingScope.process(function)
+            cycleReporter.withInlineFunctionDefinition(function) {
+                if (wrapperBody != null) {
+                    val scope = PublicInlineFunctionInliningScope(function, wrapperBody, containingScope.fragment)
+                    scope.process(wrapperBody)
+                    scope.update()
+                } else {
+                    containingScope.process(function)
+                }
             }
-
-            // Cleanup
-            refreshLabelNames(function.body, function.scope)
-            removeUnusedLocalFunctionDeclarations(function)
-            FunctionPostProcessor(function).apply()
-
-            cycleReporter.endFunction(function)
         }
     }
 
@@ -109,25 +97,10 @@ class JsInliner(
             // body of inline function can contain call to lambdas that need to be inlined
             scope.process(inlineableBody)
 
-            patchReturnsFromSecondaryConstructor(inlineableBody)
-
             // TODO shouldn't we process the resultExpression qualifier along with the lambda inlining?
             resultExpression?.synthetic = true
 
             InlineableResult(JsBlock(inliningContext.previousStatements + inlineableBody), resultExpression)
-        }
-    }
-
-    private fun patchReturnsFromSecondaryConstructor(inlineableBody: JsStatement) {
-        // Support non-local return from secondary constructor
-        // Returns from secondary constructors should return `$this` object.
-        // TODO This seems brittle
-        cycleReporter.currentNamedFunction?.forcedReturnVariable?.let { returnVariable ->
-            inlineableBody.accept(object : RecursiveJsVisitor() {
-                override fun visitReturn(x: JsReturn) {
-                    x.expression = returnVariable.makeRef()
-                }
-            })
         }
     }
 }

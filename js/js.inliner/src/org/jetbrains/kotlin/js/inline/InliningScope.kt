@@ -25,7 +25,7 @@ sealed class InliningScope {
 
     abstract fun addInlinedDeclaration(tag: String?, declaration: JsStatement)
 
-    abstract fun hasImport(tag: String): JsName?
+    abstract fun hasImport(name: JsName, tag: String): JsName?
 
     abstract fun addImport(tag: String, vars: JsVars)
 
@@ -33,11 +33,11 @@ sealed class InliningScope {
 
     abstract fun update()
 
-    private val publicFunctionCache = mutableMapOf<String, Map<JsName, JsNameRef>>()
+    private val publicFunctionCache = mutableMapOf<String, JsFunction>()
 
-    private val localFunctionCache = mutableMapOf<JsFunction, Map<JsName, JsNameRef>>()
+    private val localFunctionCache = mutableMapOf<JsFunction, JsFunction>()
 
-    private fun computeIfAbsent(tag: String?, function: JsFunction, fn: () -> Map<JsName, JsNameRef>): Map<JsName, JsNameRef> {
+    private fun computeIfAbsent(tag: String?, function: JsFunction, fn: () -> JsFunction): JsFunction {
         if (tag == null) return localFunctionCache.computeIfAbsent(function) { fn() }
 
         return publicFunctionCache.computeIfAbsent(tag) { fn() }
@@ -46,7 +46,9 @@ sealed class InliningScope {
     fun importFunctionDefinition(definition: InlineFunctionDefinition): JsFunction {
         // Apparently we should avoid this trick when we implement fair support for crossinline
         // That's because crossinline lambdas inline into the declaration block and specialize those.
-        val replacements = computeIfAbsent(definition.tag, definition.fn.function) {
+
+        // TODO cache the function itself instead
+        val result = computeIfAbsent(definition.tag, definition.fn.function) {
             val newReplacements = HashMap<JsName, JsNameRef>()
 
             val copiedStatements = ArrayList<JsStatement>()
@@ -63,15 +65,18 @@ sealed class InliningScope {
                             val tag = getImportTag(statement)
                             if (tag != null) {
                                 val name = statement.vars[0].name
-                                val existingName = name.localAlias ?: hasImport(tag) ?: JsScope.declareTemporaryName(name.ident).also {
+                                val existingName = hasImport(name, tag) ?: JsScope.declareTemporaryName(name.ident).also {
                                     it.copyMetadataFrom(name)
                                     importStatements[statement] = tag
+                                    copiedStatements.add(statement)
                                 }
 
                                 if (name !== existingName) {
                                     val replacement = JsAstUtils.pureFqn(existingName, null)
                                     newReplacements[name] = replacement
                                 }
+
+                                return@forEach
                             }
                         }
 
@@ -109,21 +114,23 @@ sealed class InliningScope {
                 }
             }
 
-            newReplacements
-        }
+            val result = definition.fn.function.deepCopy()
 
-        val paramMap = definition.fn.function.parameters.associate {
+            replaceNames(result, newReplacements)
+
+            result.body = transformSpecialFunctionsToCoroutineMetadata(result.body)
+
+            result
+        }.deepCopy()
+
+        // Copy parameter JsName's
+        val paramMap = result.parameters.associate {
             val alias = JsScope.declareTemporaryName(it.name.ident)
             alias.copyMetadataFrom(it.name)
             it.name to JsAstUtils.pureFqn(alias, null)
         }
 
-        val result = definition.fn.function.deepCopy()
-
-        replaceNames(result, replacements)
         replaceNames(result, paramMap)
-
-        result.body = transformSpecialFunctionsToCoroutineMetadata(result.body)
 
         return result
     }
@@ -146,7 +153,7 @@ class ProgramFragmentInliningScope(
         fragment.declarationBlock.statements.addAll(0, additionalDeclarations)
 
         // post-processing
-        val block = JsBlock(fragment.declarationBlock, fragment.initializerBlock, fragment.exportBlock)
+        val block = JsBlock(JsBlock(fragment.inlinedFunctionWrappers.values.toList()), fragment.declarationBlock, fragment.initializerBlock, fragment.exportBlock)
         fragment.tests?.let { block.statements.add(it) }
         fragment.mainFunction?.let { block.statements.add(it) }
 
@@ -169,7 +176,8 @@ class ProgramFragmentInliningScope(
         }
     }
 
-    override fun hasImport(tag: String): JsName? = existingBindings[tag]
+    // TODO !!!!! This localAlias thing will get copied, inlined, and lost during IC =(
+    override fun hasImport(name: JsName, tag: String): JsName? = name.localAlias ?: existingBindings[tag]
 
     override fun addImport(tag: String, vars: JsVars) {
         val name = vars.vars[0].name
@@ -229,7 +237,7 @@ class PublicInlineFunctionInliningScope(
         additionalStatements.add(declaration)
     }
 
-    override fun hasImport(tag: String): JsName? {
+    override fun hasImport(name: JsName, tag: String): JsName? {
         return null // TODO
     }
 

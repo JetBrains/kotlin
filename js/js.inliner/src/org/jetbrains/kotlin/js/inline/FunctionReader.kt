@@ -176,8 +176,18 @@ class FunctionReader(
         return functionCache.get(descriptor).let {
             if (it === NotFoundMarker) null else {
                 val (fn, info) = it as Pair<*, *>
-                renameModules(descriptor, fn as FunctionWithWrapper, info as ModuleInfo, fragment)
+                renameModules(descriptor, (fn as FunctionWithWrapper).deepCopy(), info as ModuleInfo, fragment)
             }
+        }
+    }
+
+    private fun FunctionWithWrapper.deepCopy(): FunctionWithWrapper {
+        return if (wrapperBody == null) {
+            FunctionWithWrapper(function.deepCopy(), null)
+        } else {
+            val newWrapper = wrapperBody.deepCopy()
+            val newFunction = (newWrapper.statements.last() as JsReturn).expression as JsFunction
+            FunctionWithWrapper(newFunction, newWrapper)
         }
     }
 

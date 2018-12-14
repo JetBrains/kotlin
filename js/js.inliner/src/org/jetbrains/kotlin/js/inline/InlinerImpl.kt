@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.js.inline
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.forcedReturnVariable
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
-import org.jetbrains.kotlin.js.inline.context.FunctionContext
-import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
+import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
+import org.jetbrains.kotlin.js.inline.clean.removeUnusedLocalFunctionDeclarations
 import org.jetbrains.kotlin.js.inline.util.extractFunction
+import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -56,6 +58,20 @@ class InlinerImpl(
         return super.visit(x, ctx)
     }
 
+    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
+        return jsInliner.cycleReporter.withFunction(x) {
+            super.visit(x, ctx)
+        }
+    }
+
+    override fun endVisit(function: JsFunction, ctx: JsContext<*>) {
+        // Cleanup
+        patchReturnsFromSecondaryConstructor(function)
+        refreshLabelNames(function.body, function.scope)
+        removeUnusedLocalFunctionDeclarations(function)
+        FunctionPostProcessor(function).apply()
+    }
+
 
     override fun endVisit(call: JsInvocation, ctx: JsContext<JsNode>) {
         if (hasToBeInlined(call)) {
@@ -93,5 +109,18 @@ class InlinerImpl(
     private fun hasToBeInlined(call: JsInvocation): Boolean {
         val strategy = call.inlineStrategy
         return if (strategy == null || !strategy.isInline) false else jsInliner.functionContext.hasFunctionDefinition(call, scope)
+    }
+
+    private fun patchReturnsFromSecondaryConstructor(function: JsFunction) {
+        // Support non-local return from secondary constructor
+        // Returns from secondary constructors should return `$this` object.
+        // TODO This seems brittle
+        function.forcedReturnVariable?.let { returnVariable ->
+            function.body.accept(object : RecursiveJsVisitor() {
+                override fun visitReturn(x: JsReturn) {
+                    x.expression = returnVariable.makeRef()
+                }
+            })
+        }
     }
 }
