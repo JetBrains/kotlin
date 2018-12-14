@@ -141,7 +141,9 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     }
 
     override fun getDefaultScriptDefinition(): KotlinScriptDefinition {
-        return StandardIdeScriptDefinition(project)
+        val standardScriptDefinitionContributor = ScriptDefinitionContributor.find<StandardScriptDefinitionContributor>(project)
+            ?: error("StandardScriptDefinitionContributor should be registered is plugin.xml")
+        return standardScriptDefinitionContributor.getDefinitions().last()
     }
 
     private fun updateDefinitions() {
@@ -276,14 +278,16 @@ interface ScriptDefinitionContributor {
 
 }
 
-class StandardScriptDefinitionContributor(private val project: Project) : ScriptDefinitionContributor {
-    override fun getDefinitions() = listOf(StandardIdeScriptDefinition(project))
+class StandardScriptDefinitionContributor(project: Project) : ScriptDefinitionContributor {
+    private val standardIdeScriptDefinition = StandardIdeScriptDefinition(project)
+
+    override fun getDefinitions() = listOf(standardIdeScriptDefinition)
 
     override val id: String = "StandardKotlinScript"
 }
 
 
-class StandardIdeScriptDefinition(project: Project) : KotlinScriptDefinition(ScriptTemplateWithArgs::class) {
+class StandardIdeScriptDefinition internal constructor(project: Project) : KotlinScriptDefinition(ScriptTemplateWithArgs::class) {
     override val dependencyResolver = BundledKotlinScriptDependenciesResolver(project)
 }
 
