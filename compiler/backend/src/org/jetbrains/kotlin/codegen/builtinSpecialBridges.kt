@@ -37,13 +37,14 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 class BridgeForBuiltinSpecial<out Signature : Any>(
-        val from: Signature, val to: Signature,
-        val isSpecial: Boolean = false,
-        val isDelegateToSuper: Boolean = false
+    val from: Signature, val to: Signature,
+    val isSpecial: Boolean = false,
+    val isDelegateToSuper: Boolean = false
 )
 
 object BuiltinSpecialBridgesUtil {
-    @JvmStatic fun <Signature : Any> generateBridgesForBuiltinSpecial(
+    @JvmStatic
+    fun <Signature : Any> generateBridgesForBuiltinSpecial(
         function: FunctionDescriptor,
         signatureByDescriptor: (FunctionDescriptor) -> Signature,
         areDeclarationAndDefinitionSame: (CallableMemberDescriptor) -> Boolean
@@ -65,7 +66,7 @@ object BuiltinSpecialBridgesUtil {
             it.takeUnless { it === function }?.getSpecialBridgeSignatureIfExists(signatureByDescriptor)
         }
         val isTherePossibleClashWithSpecialBridge =
-                specialBridgeSignature in specialBridgesSignaturesInSuperClass
+            specialBridgeSignature in specialBridgesSignaturesInSuperClass
                     || reachableDeclarations.any { it.modality == Modality.FINAL && signatureByDescriptor(it) == specialBridgeSignature }
 
         val specialBridge = if (specialBridgeExists && !isTherePossibleClashWithSpecialBridge)
@@ -78,9 +79,12 @@ object BuiltinSpecialBridgesUtil {
         if (fake) {
             for (overridden in function.overriddenDescriptors.map { it.original }) {
                 if (!DescriptorBasedFunctionHandle(overridden, areDeclarationAndDefinitionSame).isAbstract) {
-                    commonBridges.removeAll(findAllReachableDeclarations(overridden,
-                                                                         areDeclarationAndDefinitionSame
-                    ).map(signatureByDescriptor))
+                    commonBridges.removeAll(
+                        findAllReachableDeclarations(
+                            overridden,
+                            areDeclarationAndDefinitionSame
+                        ).map(signatureByDescriptor)
+                    )
                 }
             }
         }
@@ -88,13 +92,19 @@ object BuiltinSpecialBridgesUtil {
         val bridges: MutableSet<BridgeForBuiltinSpecial<Signature>> = mutableSetOf()
 
         val superImplementationDescriptor =
-                if (specialBridge != null && fake && !functionHandle.isAbstract)
-                    findSuperImplementationForStubDelegation(function, areDeclarationAndDefinitionSame, signatureByDescriptor)
-                else
-                    null
+            if (specialBridge != null && fake && !functionHandle.isAbstract)
+                findSuperImplementationForStubDelegation(function, areDeclarationAndDefinitionSame, signatureByDescriptor)
+            else
+                null
 
         if (superImplementationDescriptor != null) {
-            bridges.add(BridgeForBuiltinSpecial(methodItself, signatureByDescriptor(superImplementationDescriptor), isDelegateToSuper = true))
+            bridges.add(
+                BridgeForBuiltinSpecial(
+                    methodItself,
+                    signatureByDescriptor(superImplementationDescriptor),
+                    isDelegateToSuper = true
+                )
+            )
         }
 
         if (commonBridges.remove(methodItself)) {
@@ -113,8 +123,9 @@ object BuiltinSpecialBridgesUtil {
         return bridges
     }
 
-    @JvmStatic fun <Signature : Any> FunctionDescriptor.shouldHaveTypeSafeBarrier(
-            signatureByDescriptor: (FunctionDescriptor) -> Signature
+    @JvmStatic
+    fun <Signature : Any> FunctionDescriptor.shouldHaveTypeSafeBarrier(
+        signatureByDescriptor: (FunctionDescriptor) -> Signature
     ): Boolean {
         if (BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(this) == null) return false
 
@@ -169,7 +180,7 @@ private fun findAllReachableDeclarations(
     ).map { it.descriptor }.toMutableSet()
 
 private fun <Signature> CallableMemberDescriptor.getSpecialBridgeSignatureIfExists(
-        signatureByDescriptor: (FunctionDescriptor) -> Signature
+    signatureByDescriptor: (FunctionDescriptor) -> Signature
 ): Signature? {
     // Only functions should be considered here (may be assertion)
     if (this !is FunctionDescriptor) return null
@@ -189,8 +200,8 @@ private fun <Signature> CallableMemberDescriptor.getSpecialBridgeSignatureIfExis
 }
 
 fun isValueArgumentForCallToMethodWithTypeCheckBarrier(
-        element: KtElement,
-        bindingContext: BindingContext
+    element: KtElement,
+    bindingContext: BindingContext
 ): Boolean {
 
     val parentCall = element.getParentCall(bindingContext, strict = true) ?: return false
@@ -198,7 +209,7 @@ fun isValueArgumentForCallToMethodWithTypeCheckBarrier(
     if (KtPsiUtil.deparenthesize(argumentExpression) !== element) return false
 
     val candidateDescriptor = parentCall.getResolvedCall(bindingContext)?.candidateDescriptor as CallableMemberDescriptor?
-                              ?: return false
+        ?: return false
 
     return candidateDescriptor.getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false
 }
