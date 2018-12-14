@@ -58,7 +58,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         } catch (ex: Exception) {
             messageCollector.report(
                 CompilerMessageSeverity.ERROR,
-                "Error processing script definition class $className: ${ex.message}"
+                "Error processing script definition class $className: ${ex.message}\nclasspath:\n${classpath.joinToString("\n", "    ")}"
             )
             InvalidScriptDefinition
         }
@@ -66,7 +66,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
 
     override val fileExtension: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args
-            ?.find { it.name == "extension" }?.value
+            ?.find { it.name == "fileExtension" }?.value
             ?: scriptCompilationConfiguration.let {
                 it[ScriptCompilationConfiguration.fileExtension] ?: super.fileExtension
             }
