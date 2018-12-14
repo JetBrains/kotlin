@@ -18,7 +18,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kotlinx-maven-serialization-plugin</artifactId>
+    <artifactId>kotlin-maven-serialization</artifactId>
     <packaging>jar</packaging>
 
     <description>Serialization plugin for Maven</description>
