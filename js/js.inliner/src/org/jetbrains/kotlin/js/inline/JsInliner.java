@@ -355,9 +355,12 @@ public class JsInliner extends JsVisitorWithContextImpl {
         if (e instanceof JsBinaryOperation) {
             JsBinaryOperation binOp = (JsBinaryOperation) e;
             if (binOp.getOperator() == JsBinaryOperator.ASG) {
-                JsFunction splitSuspendInlineFunction = splitExportedSuspendInlineFunctionDeclarations(binOp.getArg2());
-                if (splitSuspendInlineFunction != null) {
-                    binOp.setArg2(splitSuspendInlineFunction);
+                JsExpression argument2 = binOp.getArg2();
+                if (argument2 != null) {
+                    JsFunction splitSuspendInlineFunction = splitExportedSuspendInlineFunctionDeclarations(argument2);
+                    if (splitSuspendInlineFunction != null) {
+                        binOp.setArg2(splitSuspendInlineFunction);
+                    }
                 }
             }
         }
@@ -367,9 +370,12 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     @Override
     public void endVisit(@NotNull JsVars.JsVar x, @NotNull JsContext ctx) {
-        JsFunction splitSuspendInlineFunction = splitExportedSuspendInlineFunctionDeclarations(x.getInitExpression());
-        if (splitSuspendInlineFunction != null) {
-            x.setInitExpression(splitSuspendInlineFunction);
+        JsExpression initExpression = x.getInitExpression();
+        if (initExpression != null) {
+            JsFunction splitSuspendInlineFunction = splitExportedSuspendInlineFunctionDeclarations(initExpression);
+            if (splitSuspendInlineFunction != null) {
+                x.setInitExpression(splitSuspendInlineFunction);
+            }
         }
     }
 
