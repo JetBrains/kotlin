@@ -28,8 +28,9 @@ val remoteRunTests by task<Test> {
     val packagePrefix = "org.jetbrains.kotlin."
     val includeTests = setOf(
         "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Contracts*",
-        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Annotations*",
-        "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked\$Annotations*"
+        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Annotations\$Type_annotations*",
+        "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked\$Annotations\$Type_annotations*",
+        "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked\$Objects\$Inheritance*"
     )
 
     workingDir = rootDir
