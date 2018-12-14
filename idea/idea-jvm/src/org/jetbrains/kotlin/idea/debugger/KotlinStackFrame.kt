@@ -99,18 +99,26 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
         }
 
         fun remove() {
+            val (names, values) = getLists() ?: return
+            names.removeAt(index)
+            values.removeAt(index)
+        }
+
+        private fun getLists(): Lists? {
             if (children.size() != size) {
                 throw IllegalStateException("Children list was modified")
             }
 
-            var namesList: MutableList<*>? = null
-            var valuesList: MutableList<*>? = null
+            var namesList: MutableList<Any?>? = null
+            var valuesList: MutableList<Any?>? = null
 
             for (field in XValueChildrenList::class.java.declaredFields) {
                 val mods = field.modifiers
                 if (Modifier.isPrivate(mods) && Modifier.isFinal(mods) && !Modifier.isStatic(mods) && field.type == List::class.java) {
-                    val list = (field.getSafe(children) as? MutableList<*>)?.takeIf { it.size == size } ?: continue
-                    if (list[index] == name) {
+                    @Suppress("UNCHECKED_CAST")
+                    val list = (field.getSafe(children) as? MutableList<Any?>)?.takeIf { it.size == size } ?: continue
+
+                    if (list[index] == THIS_NAME) {
                         namesList = list
                     } else if (list[index] === value) {
                         valuesList = list
@@ -118,21 +126,19 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
                 }
 
                 if (namesList != null && valuesList != null) {
-                    break
+                    return Lists(namesList, valuesList)
                 }
             }
 
-            if (namesList == null || valuesList == null) {
-                org.jetbrains.kotlin.idea.debugger.evaluate.LOG.error(
-                    "Can't find name/value lists, existing fields: "
-                            + Arrays.toString(XValueChildrenList::class.java.declaredFields)
-                )
-                return
-            }
+            DebuggerLog.error(
+                "Can't find name/value lists, existing fields: "
+                        + Arrays.toString(XValueChildrenList::class.java.declaredFields)
+            )
 
-            namesList.removeAt(index)
-            valuesList.removeAt(index)
+            return null
         }
+
+        private data class Lists(val names: MutableList<Any?>, val values: MutableList<Any?>)
     }
 
     override fun getVisibleVariables(): List<LocalVariableProxyImpl> {
