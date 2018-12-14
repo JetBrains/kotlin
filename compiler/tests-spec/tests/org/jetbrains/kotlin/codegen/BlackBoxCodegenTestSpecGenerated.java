@@ -740,5 +740,162 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
             }
         }
+
+        @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/objects")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Objects extends AbstractBlackBoxCodegenTestSpec {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInObjects() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Inheritance extends AbstractBlackBoxCodegenTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInInheritance() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Neg extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
+                    @TestMetadata("1.kt")
+                    public void test1() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/1.kt");
+                    }
+
+                    @TestMetadata("10.kt")
+                    public void test10() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/10.kt");
+                    }
+
+                    @TestMetadata("11.kt")
+                    public void test11() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/11.kt");
+                    }
+
+                    @TestMetadata("12.kt")
+                    public void test12() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/12.kt");
+                    }
+
+                    @TestMetadata("13.kt")
+                    public void test13() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/13.kt");
+                    }
+
+                    @TestMetadata("14.kt")
+                    public void test14() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/14.kt");
+                    }
+
+                    @TestMetadata("15.kt")
+                    public void test15() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/15.kt");
+                    }
+
+                    @TestMetadata("16.kt")
+                    public void test16() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/16.kt");
+                    }
+
+                    @TestMetadata("17.kt")
+                    public void test17() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/17.kt");
+                    }
+
+                    @TestMetadata("18.kt")
+                    public void test18() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/18.kt");
+                    }
+
+                    @TestMetadata("19.kt")
+                    public void test19() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/19.kt");
+                    }
+
+                    @TestMetadata("2.kt")
+                    public void test2() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/2.kt");
+                    }
+
+                    @TestMetadata("3.kt")
+                    public void test3() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/3.kt");
+                    }
+
+                    @TestMetadata("4.kt")
+                    public void test4() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/4.kt");
+                    }
+
+                    @TestMetadata("5.kt")
+                    public void test5() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/5.kt");
+                    }
+
+                    @TestMetadata("6.kt")
+                    public void test6() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/6.kt");
+                    }
+
+                    @TestMetadata("7.kt")
+                    public void test7() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/7.kt");
+                    }
+
+                    @TestMetadata("8.kt")
+                    public void test8() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/8.kt");
+                    }
+
+                    @TestMetadata("9.kt")
+                    public void test9() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/9.kt");
+                    }
+
+                    public void testAllFilesPresentInNeg() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
+                    @TestMetadata("1.kt")
+                    public void test1() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos/1.kt");
+                    }
+
+                    @TestMetadata("2.kt")
+                    public void test2() throws Exception {
+                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos/2.kt");
+                    }
+
+                    public void testAllFilesPresentInPos() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+                }
+            }
+        }
     }
 }
