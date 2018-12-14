@@ -293,7 +293,7 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             return null
         }
 
-        val continuationVariable = frameProxy.safeVisibleVariableByName("\$continuation") ?: return null
+        val continuationVariable = frameProxy.safeVisibleVariableByName(CONTINUATION_VARIABLE_NAME) ?: return null
         val continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
         return findCoroutineContextForContinuation(continuation)
     }
