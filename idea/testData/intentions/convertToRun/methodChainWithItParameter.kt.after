@@ -7,8 +7,10 @@ class MyClass {
 
     fun foo4(a: MyClass) {
         listOf<MyClass>().forEach {
-            a.foo1(it).foo2().foo3()
-            a.foo2()<caret>
+            a.run {
+                foo1(it).foo2().foo3()
+                foo2()
+            }
         }
     }
 }
