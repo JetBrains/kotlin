@@ -23,6 +23,7 @@ import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.ui.impl.watch.MethodsTracker
 import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
+import com.intellij.debugger.ui.impl.watch.ThisDescriptorImpl
 import com.intellij.xdebugger.frame.XValue
 import com.intellij.xdebugger.frame.XValueChildrenList
 import com.sun.jdi.Value
@@ -47,55 +48,85 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
 
         val nodeManager = evaluationContext.debugProcess.xdebugProcess!!.nodeManager
 
-        removeThisObjectIfNeeded(evaluationContext, children)
-
         fun addItem(variable: LocalVariableProxyImpl) {
             val variableDescriptor = nodeManager.getLocalVariableDescriptor(null, variable)
             children.add(JavaValue.create(null, variableDescriptor, evaluationContext, nodeManager, false))
         }
 
         val (thisReferences, otherVariables) = visibleVariables
-            .partition { it.name() == THIS_NAME || it.name().startsWith("$THIS_NAME ") }
+            .partition { it.name() == AsmUtil.THIS || it is ThisLocalVariable }
+
+        if (!removeThisObjectForContinuation(evaluationContext, children) && thisReferences.isNotEmpty()) {
+            val thisLabels = thisReferences.asSequence()
+                .filterIsInstance<ThisLocalVariable>()
+                .mapNotNullTo(hashSetOf()) { it.label }
+
+            remapThisObjectForOuterThis(evaluationContext, children, thisLabels)
+        }
 
         thisReferences.forEach(::addItem)
         otherVariables.forEach(::addItem)
     }
 
-    private fun removeThisObjectIfNeeded(evaluationContext: EvaluationContextImpl, children: XValueChildrenList) {
-        val thisObject = evaluationContext.frameProxy?.thisObject() ?: return
+    private fun removeThisObjectForContinuation(evaluationContext: EvaluationContextImpl, children: XValueChildrenList): Boolean {
+        val thisObject = evaluationContext.frameProxy?.thisObject() ?: return false
         if (!thisObject.type().isSubtype(VariableFinder.CONTINUATION_TYPE)) {
+            return false
+        }
+
+        ExistingInstanceThis.find(children)?.remove()
+        return true
+    }
+
+    private fun remapThisObjectForOuterThis(
+        evaluationContext: EvaluationContextImpl,
+        children: XValueChildrenList,
+        existingThisLabels: Set<String>
+    ) {
+        val thisObject = evaluationContext.frameProxy?.thisObject() ?: return
+        val variable = ExistingInstanceThis.find(children) ?: return
+
+        val thisLabel = thisObject.referenceType().name().substringAfterLast('.').substringAfterLast('$')
+        if (thisLabel.isEmpty() || thisLabel in existingThisLabels || thisLabel.all { it.isDigit() }) {
+            variable.remove()
             return
         }
 
-        ExistingVariable.find(children, "this")?.remove()
+        variable.remapName(getThisName(thisLabel))
     }
 
     // Very Dirty Work-around.
     // Hopefully, there will be an API for that in 2019.1.
-    private class ExistingVariable(
+    private class ExistingInstanceThis(
         private val children: XValueChildrenList,
         private val index: Int,
-        private val name: String,
         private val value: XValue,
         private val size: Int
     ) {
         companion object {
-            fun find(children: XValueChildrenList, name: String): ExistingVariable? {
+            private const val THIS_NAME = "this"
+
+            fun find(children: XValueChildrenList): ExistingInstanceThis? {
                 val size = children.size()
                 for (i in 0 until size) {
-                    if (children.getName(i) == name) {
+                    if (children.getName(i) == THIS_NAME) {
                         val valueDescriptor = (children.getValue(i) as? JavaValue)?.descriptor
                         @Suppress("FoldInitializerAndIfToElvis")
                         if (valueDescriptor !is ThisDescriptorImpl) {
                             return null
                         }
 
-                        return ExistingInstanceThis(children, i, name, children.getValue(i), size)
+                        return ExistingInstanceThis(children, i, children.getValue(i), size)
                     }
                 }
 
                 return null
             }
+        }
+
+        fun remapName(newName: String) {
+            val (names, _) = getLists() ?: return
+            names[index] = newName
         }
 
         fun remove() {
@@ -150,11 +181,18 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
             }
         }
 
-        return allVisibleVariables.asSequence()
+        val (thisVariables, otherVariables) = allVisibleVariables.asSequence()
             .filter { !isHidden(it) }
-            .map { remapVariableName(it) }
-            .distinctBy { it.name() }
-            .toList()
+            .partition { it.name() == AsmUtil.THIS || it.name().startsWith(AsmUtil.LABELED_THIS_PARAMETER) }
+
+        val (mainThis, otherThis) = thisVariables
+            .sortedByDescending { it.variable }
+            .let { it.firstOrNull() to it.drop(1) }
+
+        val remappedMainThis = mainThis?.clone(AsmUtil.THIS, null)
+        val remappedOtherThis = otherThis.map { it.remapThisName() }
+
+        return (listOfNotNull(remappedMainThis) + remappedOtherThis + otherVariables)
             .sortedBy { it.variable }
     }
 
@@ -165,13 +203,25 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
                 || name == CONTINUATION_PARAMETER_NAME.asString()
     }
 
-    private fun remapVariableName(variable: LocalVariableProxyImpl) = with(variable) {
-        when {
+    private fun LocalVariableProxyImpl.remapThisName(): LocalVariableProxyImpl {
+        return when {
             isLabeledThisReference() -> {
-                val label = variable.name().drop(AsmUtil.LABELED_THIS_PARAMETER.length)
-                clone(withName = "$THIS_NAME (@$label)")
+                val label = this@remapThisName.name().drop(AsmUtil.LABELED_THIS_PARAMETER.length)
+                clone(getThisName(label), label)
             }
-            else -> variable
+            this@remapThisName.name() == AsmUtil.RECEIVER_PARAMETER_NAME -> clone(AsmUtil.THIS + " (receiver)", null)
+            else -> this@remapThisName
+        }
+    }
+
+    private fun getThisName(label: String): String {
+        return "$THIS_NAME (@$label)"
+    }
+
+    private fun LocalVariableProxyImpl.clone(name: String, label: String?): LocalVariableProxyImpl {
+        return object : LocalVariableProxyImpl(frame, variable), ThisLocalVariable {
+            override fun name() = name
+            override val label = label
         }
     }
 
@@ -181,10 +231,8 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
     }
 }
 
-private fun LocalVariableProxyImpl.clone(withName: String): LocalVariableProxyImpl {
-    return object : LocalVariableProxyImpl(frame, variable) {
-        override fun name() = withName
-    }
+private interface ThisLocalVariable {
+    val label: String?
 }
 
 private fun LocalVariableProxyImpl.wrapSyntheticInlineVariable(): LocalVariableProxyImpl {

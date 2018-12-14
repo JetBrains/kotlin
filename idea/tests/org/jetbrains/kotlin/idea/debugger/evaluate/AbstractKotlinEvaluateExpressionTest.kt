@@ -259,10 +259,10 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             }
         }
 
-        fun renderLabel(descriptor: NodeDescriptorImpl): String {
+        fun renderLabel(node: TreeNode, descriptor: NodeDescriptorImpl): String {
             return when {
                 descriptor is WatchItemDescriptor -> descriptor.calcValueName()
-                viewOptions.toString().contains("NAME") -> descriptor.name ?: descriptor.label
+                viewOptions.toString().contains("NAME") -> (node as? XValueNodeImpl)?.name ?: descriptor.name ?: descriptor.label
                 else -> descriptor.label
             }
         }
@@ -299,7 +299,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             if (descriptor is DefaultNodeDescriptor) return true
             if (config.variablesToSkipInPrintFrame.contains(descriptor.name)) return true
 
-            var label = config.renderLabel(descriptor)
+            var label = config.renderLabel(node, descriptor)
 
             // TODO: update presentation before calc label
             if (label == NodeDescriptorImpl.UNKNOWN_VALUE_MESSAGE && descriptor is StaticDescriptor) {
