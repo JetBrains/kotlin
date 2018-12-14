@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.target.Family
 import java.io.File
 
 // TODO: Should the baseName be a var?
@@ -42,8 +43,8 @@ sealed class NativeBinary(
     abstract val outputKind: NativeOutputKind
 
     // Configuration DSL.
-    var debuggable: Boolean = false
-    var optimized: Boolean = false
+    var debuggable: Boolean = buildType.debuggable
+    var optimized: Boolean = buildType.optimized
 
     var linkerOpts: MutableList<String> = mutableListOf()
 
@@ -149,21 +150,67 @@ class Framework(
     override val outputKind: NativeOutputKind
         get() = NativeOutputKind.FRAMEWORK
 
+    // Export symbols from klibraries.
     val exportConfigurationName: String
         get() = target.disambiguateName(lowerCamelCaseName(name, "export"))
 
+    /**
+     * If dependencies added by the [export] method are resolved transitively or not.
+     */
     var transitiveExport: Boolean
         get() = project.configurations.maybeCreate(exportConfigurationName).isTransitive
         set(value) {
             project.configurations.maybeCreate(exportConfigurationName).isTransitive = value
         }
 
+    /**
+     * Add a dependency to be exported in the framework.
+     */
     fun export(dependency: Any) {
         project.dependencies.add(exportConfigurationName, dependency)
     }
 
+    /**
+     * Add a dependency to be exported in the framework.
+     */
     fun export(dependency: Any, configure: Closure<*>) {
         project.dependencies.add(exportConfigurationName, dependency, configure)
+    }
+
+    // Embedding bitcode.
+    /**
+     * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
+     */
+    var embedBitcode: BitcodeEmbeddingMode = if (target.konanTarget.family == Family.IOS) {
+        buildType.iosEmbedBitcode
+    } else {
+        BitcodeEmbeddingMode.DISABLE
+    }
+
+    /**
+     * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].
+     */
+    fun embedBitcode(mode: BitcodeEmbeddingMode) {
+        embedBitcode = mode
+    }
+
+    /**
+     * Enable or disable embedding bitcode for the framework.
+     *
+     * @param mode - one of the following string constants:
+     *     disable - Don't embed LLVM IR bitcode.
+     *     bitcode - Embed LLVM IR bitcode as data. Has the same effect as the -Xembed-bitcode command line option.
+     *     marker - Embed placeholder LLVM IR data as a marker. Has the same effect as the -Xembed-bitcode-marker command line option.
+     */
+    fun embedBitcode(mode: String) = embedBitcode(BitcodeEmbeddingMode.valueOf(mode.toUpperCase()))
+
+    enum class BitcodeEmbeddingMode {
+        /** Don't embed LLVM IR bitcode. */
+        DISABLE,
+        /** Embed LLVM IR bitcode as data. */
+        BITCODE,
+        /** Embed placeholder LLVM IR data as a marker. */
+        MARKER,
     }
 }
 
