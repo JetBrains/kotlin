@@ -152,7 +152,7 @@ clean {
     }
 }
 
-def tasksOf(Closure<Task> filter) {
+TaskCollection<KonanTest> tasksOf(Closure<Boolean> filter) {
     String prefix = project.findProperty("prefix")
     project.tasks.withType(KonanTest)
             .matching { filter(it) && it.enabled && (prefix != null ? it.name.startsWith(prefix) : true) }
@@ -164,6 +164,12 @@ run {
 
     // Add framework tests
     dependsOn(project.tasks.withType(FrameworkTest))
+}
+
+task sanity {
+    dependsOn(tasksOf { it instanceof KonanTest && it.inDevelopersRun &&
+            !it.getDependsOn().contains(':distPlatformLibs') })
+    dependsOn(tasksOf { it instanceof RunStdlibTest })
 }
 
 // Collect results in one json.
@@ -226,6 +232,12 @@ def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfigurati
         } else {
             println("$taskDirectory is excluded")
         }
+    }
+}
+
+void dependsOnPlatformLibs(Task t) {
+    if (!useCustomDist) {
+        t.dependsOn(':distPlatformLibs')
     }
 }
 
@@ -1725,9 +1737,7 @@ task link_omit_unused(type: LinkKonanTest) {
 }
 
 task link_default_libs(type: RunStandaloneKonanTest) {
-    if (!useCustomDist) {
-        dependsOn ':distPlatformLibs'
-    }
+    dependsOnPlatformLibs(it)
     disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
     goldValue = "sizet = 0\n"
     source = "link/default/default.kt"
@@ -1746,9 +1756,7 @@ task link_testLib_explicitly(type: RunStandaloneKonanTest) {
 }
 
 task no_purge_for_dependencies(type: LinkKonanTest) {
-    if (!useCustomDist) {
-        dependsOn ':distPlatformLibs'
-    }
+    dependsOnPlatformLibs(it)
     disabled = (project.testTarget == 'wasm32') // there will be no posix.klib for wasm
     goldValue = "linked library\nand symbols from posix available: 17; 1.0\n"
     source = "link/purge1/prog.kt"
@@ -2925,6 +2933,7 @@ task interop4(type: RunInteropKonanTest) {
 }
 
 task interop5(type: RunStandaloneKonanTest) {
+    dependsOnPlatformLibs(it)
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     goldValue = "Hello!\n"
     source = "interop/basics/5.kt"
@@ -2982,9 +2991,7 @@ task interop_echo_server(type: RunInteropKonanTest) {
 
 if (isMac()) {
     task interop_opengl_teapot(type: RunStandaloneKonanTest) {
-        if (!useCustomDist) {
-            dependsOn ':distPlatformLibs'
-        }
+        dependsOnPlatformLibs(it as Task)
         disabled = (project.testTarget == 'wasm32') ||    // No interop for wasm yet.
                 (project.testTarget == 'ios_x64')         // No GLUT in iOS
         run = false
@@ -3033,12 +3040,14 @@ task jsinterop_math(type: RunStandaloneKonanTest) {
 }
 
 task interop_libiconv(type: RunStandaloneKonanTest) {
+    dependsOnPlatformLibs(it)
     disabled = (project.testTarget != null)
     source = "interop/libiconv.kt"
     goldValue = "72 72\n101 101\n108 108\n108 108\n111 111\n33 33\n"
 }
 
 task interop_zlib(type: RunStandaloneKonanTest) {
+    dependsOnPlatformLibs(it)
     disabled = (project.testTarget != null)
     source = "interop/platform_zlib.kt"
     goldValue = "Hello!\nHello!\n"
