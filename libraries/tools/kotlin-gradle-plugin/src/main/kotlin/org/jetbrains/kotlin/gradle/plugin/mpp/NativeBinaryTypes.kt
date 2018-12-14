@@ -5,14 +5,13 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-object KotlinNativeUsage {
-    const val KLIB = "kotlin-native-klib"
-    const val FRAMEWORK = "kotlin-native-framework"
-}
-
-enum class NativeBuildType(val optimized: Boolean, val debuggable: Boolean) : Named {
-    RELEASE(true, false),
-    DEBUG(false, true);
+enum class NativeBuildType(
+    val optimized: Boolean,
+    val debuggable: Boolean,
+    internal val iosEmbedBitcode: Framework.BitcodeEmbeddingMode
+) : Named {
+    RELEASE(true, false, Framework.BitcodeEmbeddingMode.BITCODE),
+    DEBUG(false, true, Framework.BitcodeEmbeddingMode.MARKER);
 
     override fun getName(): String = name.toLowerCase()
 
