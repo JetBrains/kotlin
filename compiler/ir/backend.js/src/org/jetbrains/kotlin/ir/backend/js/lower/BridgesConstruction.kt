@@ -171,8 +171,8 @@ data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandl
     override val isAbstract: Boolean =
         function.modality == Modality.ABSTRACT
 
-    override val isInterfaceDeclaration =
-        function.parentAsClass.isInterface
+    override val mayBeUsedAsSuperImplementation =
+        !function.parentAsClass.isInterface
 
     override fun getOverridden() =
         function.overriddenSymbols.map { IrBasedFunctionHandle(it.owner) }
