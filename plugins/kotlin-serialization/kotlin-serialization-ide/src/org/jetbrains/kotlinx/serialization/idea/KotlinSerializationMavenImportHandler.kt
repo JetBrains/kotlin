@@ -5,14 +5,20 @@
 
 package org.jetbrains.kotlinx.serialization.idea
 
-import org.jetbrains.idea.maven.project.MavenProject
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.idea.maven.MavenProjectImportHandler
+import org.jetbrains.kotlin.annotation.plugin.ide.AbstractMavenImportHandler
+import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedCompilerPluginSetup
+import java.io.File
 
-class KotlinSerializationMavenImportHandler: MavenProjectImportHandler {
-    override fun invoke(facet: KotlinFacet, mavenProject: MavenProject) {
-        KotlinSerializationImportHandler.modifyCompilerArguments(facet, PLUGIN_MAVEN_JAR)
-    }
+class KotlinSerializationMavenImportHandler : AbstractMavenImportHandler() {
+    override val compilerPluginId: String = "org.jetbrains.kotlinx.serialization"
+    override val pluginName: String = "serialization"
+    override val mavenPluginArtifactName: String = "kotlin-maven-serialization"
+    override val pluginJarFileFromIdea: File
+        get() = File(KotlinSerializationImportHandler.PLUGIN_JPS_JAR)
 
-    private val PLUGIN_MAVEN_JAR = "kotlinx-maven-serialization-plugin"
+    override fun getOptions(
+        enabledCompilerPlugins: List<String>,
+        compilerPluginOptions: List<String>
+    ): List<AnnotationBasedCompilerPluginSetup.PluginOption>? =
+        if ("kotlinx-serialization" in enabledCompilerPlugins) emptyList() else null
 }
