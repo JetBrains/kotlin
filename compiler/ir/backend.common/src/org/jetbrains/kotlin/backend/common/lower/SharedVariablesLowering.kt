@@ -18,12 +18,9 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
-import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
@@ -50,40 +47,33 @@ class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPas
         }
 
         private fun collectSharedVariables() {
-            irFunction.acceptVoid(object : IrElementVisitorVoid {
-                val declarationsStack = ArrayDeque<IrDeclaration>()
-                val currentDeclaration: IrDeclaration
-                    get() = declarationsStack.peek()
-
+            irFunction.accept(object : IrElementVisitor<Unit, IrDeclarationParent> {
                 val relevantVars = HashSet<IrVariable>()
 
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
+                override fun visitElement(element: IrElement, data: IrDeclarationParent) {
+                    element.acceptChildren(this, data)
                 }
 
-                override fun visitFunction(declaration: IrFunction) {
-                    declarationsStack.push(declaration)
-                    declaration.acceptChildrenVoid(this)
-                    declarationsStack.pop()
-                }
+                override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent) =
+                    super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 
-                override fun visitVariable(declaration: IrVariable) {
-                    declaration.acceptChildrenVoid(this)
+                override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent) {
+                    declaration.acceptChildren(this, data)
 
                     if (declaration.isVar) {
                         relevantVars.add(declaration)
                     }
                 }
 
-                override fun visitVariableAccess(expression: IrValueAccessExpression) {
-                    expression.acceptChildrenVoid(this)
+                override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclarationParent) {
+                    expression.acceptChildren(this, data)
 
                     val value = expression.symbol.owner
-                    if (value in relevantVars && (value as IrVariable).parent != currentDeclaration) {
+                    if (value in relevantVars && (value as IrVariable).parent != data) {
                         sharedVariables.add(value)
                     }
                 }
-            })
+            }, irFunction)
         }
 
         private fun rewriteSharedVariables() {
