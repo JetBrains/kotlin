@@ -91,7 +91,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : AsyncStackTraceProvider {
             return null
         }
 
-        val continuationVariable = frameProxy.visibleVariableByName("\$continuation") ?: return null
+        val continuationVariable = frameProxy.safeVisibleVariableByName("\$continuation") ?: return null
         val continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
 
         return collectFrames(continuation)

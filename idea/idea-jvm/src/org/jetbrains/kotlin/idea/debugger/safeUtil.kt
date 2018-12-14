@@ -15,6 +15,10 @@ fun StackFrameProxyImpl.safeVisibleVariables(): List<LocalVariableProxyImpl> {
     return wrapAbsentInformationException { visibleVariables() } ?: emptyList()
 }
 
+fun StackFrameProxyImpl.safeVisibleVariableByName(name: String): LocalVariableProxyImpl? {
+    return wrapAbsentInformationException { visibleVariableByName(name) }
+}
+
 fun Method.safeAllLineLocations(): List<Location> {
     return DebuggerUtilsEx.allLineLocations(this) ?: emptyList()
 }
