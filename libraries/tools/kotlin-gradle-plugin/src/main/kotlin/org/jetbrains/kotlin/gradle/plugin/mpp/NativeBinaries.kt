@@ -111,7 +111,6 @@ class Executable constructor(
             lowerCamelCaseName("run", name, compilation.target.targetName)
         }
 
-    // TODO: may make it lateinit (along with linkTasks)?
     val runTask: AbstractExecTask<*>
         get() = project.tasks.getByName(runTaskName) as AbstractExecTask<*>
 
