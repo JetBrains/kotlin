@@ -34,11 +34,13 @@ import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
+import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -56,6 +58,7 @@ import org.junit.ComparisonFailure
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.script.dependencies.Environment
+import kotlin.script.experimental.dependencies.ScriptReport
 
 
 abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfigurationTest() {
@@ -326,6 +329,11 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         VfsUtil.markDirtyAndRefresh(false, true, true, project.baseDir)
         // This is needed because updateScriptDependencies invalidates psiFile that was stored in myFile field
         myFile = psiManager.findFile(script)
+
+        val isFatalErrorPresent = myFile.virtualFile.getUserData(IdeScriptReportSink.Reports)?.any { it.severity == ScriptReport.Severity.FATAL } == true
+        assert(isFatalErrorPresent || KotlinHighlightingUtil.shouldHighlight(myFile)) {
+            "Highlighting is switched off for ${myFile.virtualFile.path}"
+        }
     }
 
     private fun compileLibToDir(srcDir: File, vararg classpath: String): File {
