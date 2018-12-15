@@ -73,7 +73,7 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
         val argsArray = serializedCompilerArguments.toTypedArray()
 
-        val log = GradleKotlinLogger(project.logger)
+        val log = GradleKotlinLogger(logger)
         val allArgs = argsArray + outputDirArgs + inputFiles
         val exitCode = runToolInSeparateProcess(
             allArgs, K2JSDce::class.java.name, computedCompilerClasspath,
