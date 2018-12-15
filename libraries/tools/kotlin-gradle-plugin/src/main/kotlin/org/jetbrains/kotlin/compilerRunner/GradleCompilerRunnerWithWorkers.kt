@@ -16,7 +16,7 @@ internal class GradleCompilerRunnerWithWorkers(
     private val workersExecutor: WorkerExecutor
 ) : GradleCompilerRunner(task) {
     override fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments) {
-        project.logger.kotlinDebug { "Starting Kotlin compiler work from task '${task.path}'" }
+        task.logger.kotlinDebug { "Starting Kotlin compiler work from task '${task.path}'" }
         // todo: write tests with Workers enabled;
         workersExecutor.submit(GradleKotlinCompilerWork::class.java) { config ->
             config.isolationMode = IsolationMode.NONE

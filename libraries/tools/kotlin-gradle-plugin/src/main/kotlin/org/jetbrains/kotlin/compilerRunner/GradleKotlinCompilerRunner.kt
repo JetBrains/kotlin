@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.gradle.plugin.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
@@ -121,7 +122,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
         buildFile: File? = null
     ) {
         if (compilerArgs.version) {
-            project.logger.lifecycle(
+            task.logger.lifecycle(
                 "Kotlin version " + loadCompilerVersion(environment.compilerClasspath) +
                         " (JRE " + System.getProperty("java.runtime.version") + ")"
             )
@@ -139,8 +140,10 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             incrementalCompilationEnvironment = incrementalCompilationEnvironment,
             incrementalModuleInfo = modulesInfo,
             buildFile = buildFile,
-            localStateDirectories = environment.localStateDirectories
+            localStateDirectories = environment.localStateDirectories,
+            taskPath = task.path
         )
+        TaskLoggers.put(task.path, task.logger)
         runCompilerAsync(workArgs)
     }
 
