@@ -91,14 +91,14 @@ open class DiscoverScriptExtensionsTask : DefaultTask() {
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(
                 scriptingClasspath.toList(), emptyMap(),
-                GradleMessageCollector(project.logger)
+                GradleMessageCollector(logger)
             ).definitions
         val extensions = definitions.mapTo(arrayListOf(), KotlinScriptDefinition::fileExtension)
         val kotlinSourceSet = sourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
         if (kotlinSourceSet == null) {
-            project.logger.warn("kotlin scripting plugin: kotlin source set not found: $project.$sourceSet")
+            logger.warn("kotlin scripting plugin: kotlin source set not found: $project.$sourceSet")
         } else if (extensions.isNotEmpty()) {
-            project.logger.info("kotlin scripting plugin: Add new extensions to the sourceset $project.$sourceSet: $extensions")
+            logger.info("kotlin scripting plugin: Add new extensions to the sourceset $project.$sourceSet: $extensions")
             kotlinSourceSet.kotlin.filter.include(extensions.map { "**/*.$it" })
         }
     }

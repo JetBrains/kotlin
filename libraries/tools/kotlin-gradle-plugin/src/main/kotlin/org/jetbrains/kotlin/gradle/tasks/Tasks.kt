@@ -50,7 +50,7 @@ const val USING_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JS incrementa
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile(), CompilerArgumentAwareWithInput<T> {
     private fun useCompilerClasspathConfigurationMessage(propertyName: String) {
-        project.logger.kotlinWarn(
+        logger.kotlinWarn(
             "'$path.$propertyName' is deprecated and will be removed soon. " +
                     "Use '$COMPILER_CLASSPATH_CONFIGURATION_NAME' " +
                     "configuration for customizing compiler classpath."
@@ -94,7 +94,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
                 try {
                     project.configurations.getByName(COMPILER_CLASSPATH_CONFIGURATION_NAME).resolve().toList()
                 } catch (e: Exception) {
-                    project.logger.error(
+                    logger.error(
                         "Could not resolve compiler classpath. " +
                                 "Check if Kotlin Gradle plugin repository is configured in $project."
                     )
@@ -296,7 +296,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
         logger.kotlinDebug { "args.coroutinesState=${args.coroutinesState}" }
 
-        if (project.logger.isDebugEnabled) {
+        if (logger.isDebugEnabled) {
             args.verbose = true
         }
 
@@ -428,7 +428,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }.firstOrNull() as? AbstractCompile
 
         if (illegalTask != null) {
-            project.logger.info(
+            logger.info(
                 "Kotlin inter-project IC is disabled: " +
                         "unknown task '$illegalTask' destination dir ${illegalTask.destinationDir} " +
                         "intersects with java destination dir $javaOutputDir"
@@ -577,7 +577,7 @@ private fun Task.getGradleVersion(): ParsedGradleVersion? {
     val gradleVersion = project.gradle.gradleVersion
     val result = ParsedGradleVersion.parse(gradleVersion)
     if (result == null) {
-        project.logger.kotlinDebug("Could not parse gradle version: $gradleVersion")
+        logger.kotlinDebug("Could not parse gradle version: $gradleVersion")
     }
     return result
 }
