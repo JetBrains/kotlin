@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.reportFromDaemon
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.logging.GradleBufferingMessageCollector
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.server.UnicastRemoteObject
 
 internal open class GradleCompilerServicesFacadeImpl(
     private val log: KotlinLogger,
-    private val compilerMessageCollector: MessageCollector,
+    // RMI messages are reported from RMI threads.
+    // Messages reported from non-Gradle threads are not grouped and not shown in build scans.
+    // To fix this, we store all messages in a buffer, then report them from a Gradle thread
+    private val compilerMessageCollector: GradleBufferingMessageCollector,
     port: Int = SOCKET_ANY_FREE_PORT
 ) : UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory),
     CompilerServicesFacadeBase,
@@ -44,7 +47,7 @@ internal open class GradleCompilerServicesFacadeImpl(
 
 internal class GradleIncrementalCompilerServicesFacadeImpl(
     log: KotlinLogger,
-    messageCollector: MessageCollector,
+    messageCollector: GradleBufferingMessageCollector,
     port: Int = SOCKET_ANY_FREE_PORT
 ) : GradleCompilerServicesFacadeImpl(log, messageCollector, port),
     IncrementalCompilerServicesFacade
