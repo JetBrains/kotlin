@@ -27,7 +27,7 @@ import java.io.File
  */
 sealed class NativeBinary(
     private val name: String,
-    var baseName: String,
+    open var baseName: String,
     val buildType: NativeBuildType,
     var compilation: KotlinNativeCompilation
 ) : Named {
@@ -97,6 +97,13 @@ class Executable constructor(
 
     override val outputKind: NativeOutputKind
         get() = NativeOutputKind.EXECUTABLE
+
+    override var baseName: String
+        get() = super.baseName
+        set(value) {
+            super.baseName = value
+            runTask.executable = outputFile.absolutePath
+        }
 
     var entryPoint: String? = null
 
