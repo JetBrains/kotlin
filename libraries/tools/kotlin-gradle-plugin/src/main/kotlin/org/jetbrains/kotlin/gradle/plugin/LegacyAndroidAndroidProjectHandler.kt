@@ -19,6 +19,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.internal.registerGeneratedJavaSource
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile

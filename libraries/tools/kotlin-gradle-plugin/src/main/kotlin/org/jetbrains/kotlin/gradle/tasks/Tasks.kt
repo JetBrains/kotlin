@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
-import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
@@ -21,15 +20,15 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
+import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.gradle.utils.isParentOf
@@ -387,7 +386,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     override fun callCompilerAsync(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.ForJvm
 
-        val messageCollector = GradleMessageCollector(logger)
+        val messageCollector = GradlePrintingMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner()
 
@@ -546,7 +545,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
-        val messageCollector = GradleMessageCollector(logger)
+        val messageCollector = GradlePrintingMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner()
 
@@ -582,50 +581,3 @@ private fun Task.getGradleVersion(): ParsedGradleVersion? {
     return result
 }
 
-internal class GradleMessageCollector(val logger: KotlinLogger) : MessageCollector {
-    constructor(logger: Logger) : this(GradleKotlinLogger(logger))
-
-    private var hasErrors = false
-
-    override fun hasErrors() = hasErrors
-
-    override fun clear() {
-        // Do nothing
-    }
-
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-        fun formatMsg(prefix: String) =
-            buildString {
-                append("$prefix: ")
-
-                location?.apply {
-                    append("$path: ")
-                    if (line > 0 && column > 0) {
-                        append("($line, $column): ")
-                    }
-                }
-
-                append(message)
-            }
-
-        when (severity) {
-            CompilerMessageSeverity.ERROR,
-            CompilerMessageSeverity.EXCEPTION -> {
-                hasErrors = true
-                logger.error(formatMsg("e"))
-            }
-
-            CompilerMessageSeverity.WARNING,
-            CompilerMessageSeverity.STRONG_WARNING -> {
-                logger.warn(formatMsg("w"))
-            }
-            CompilerMessageSeverity.INFO -> {
-                logger.info(formatMsg("i"))
-            }
-            CompilerMessageSeverity.LOGGING,
-            CompilerMessageSeverity.OUTPUT -> {
-                logger.debug(formatMsg("v"))
-            }
-        }!! // !! is used to force compile-time exhaustiveness
-    }
-}

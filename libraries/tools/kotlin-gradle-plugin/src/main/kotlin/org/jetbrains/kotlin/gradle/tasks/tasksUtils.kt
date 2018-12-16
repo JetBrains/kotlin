@@ -3,9 +3,9 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.compilerRunner.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.compilerRunner.KotlinLogger
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.utils.outputsCompatible
 import java.io.File
 

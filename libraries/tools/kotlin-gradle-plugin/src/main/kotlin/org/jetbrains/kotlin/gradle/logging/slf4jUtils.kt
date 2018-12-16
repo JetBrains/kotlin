@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.logging
 
 import org.slf4j.Logger
 

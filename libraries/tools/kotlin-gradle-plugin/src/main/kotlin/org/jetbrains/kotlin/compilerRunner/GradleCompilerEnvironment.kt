@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
+import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import java.io.File
 
 internal class GradleCompilerEnvironment(
     val compilerClasspath: List<File>,
-    messageCollector: GradleMessageCollector,
+    messageCollector: GradlePrintingMessageCollector,
     outputItemsCollector: OutputItemsCollector,
     val localStateDirectories: List<File>,
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment? = null

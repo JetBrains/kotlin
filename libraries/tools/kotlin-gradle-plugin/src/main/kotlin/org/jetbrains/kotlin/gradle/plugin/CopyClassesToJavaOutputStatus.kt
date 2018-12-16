@@ -5,6 +5,7 @@ import org.gradle.api.Task
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import java.util.*
 
