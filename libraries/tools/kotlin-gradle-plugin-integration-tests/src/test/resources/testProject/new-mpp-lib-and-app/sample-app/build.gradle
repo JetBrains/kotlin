@@ -66,6 +66,8 @@ kotlin {
         configure([wasm32, linux64, mingw64, macos64]) {
             compilations.main.outputKinds += org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind.EXECUTABLE
             compilations.main.entryPoint = "com.example.app.native.main"
+            // Check that linker options are correctly passed to the compiler.
+            compilations.main.linkerOpts = ['-L.']
         }
     }
 }
@@ -75,5 +77,12 @@ task resolveRuntimeDependencies(type: DefaultTask) {
         // KT-26301
         def configName = kotlin.targets.jvm6.compilations.main.runtimeDependencyConfigurationName
         configurations[configName].resolve()
+    }
+}
+
+task checkBinaryGetters {
+    doLast {
+        println("Wasm binary file: ${kotlin.targets.wasm32.compilations.main.getBinary("EXECUTABLE", "RELEASE").name}")
+        println("Wasm link task: ${kotlin.targets.wasm32.compilations.main.getLinkTask("EXECUTABLE", "RELEASE").name}")
     }
 }
