@@ -476,6 +476,7 @@ open class KotlinNativeTargetConfigurator(
             addCompilerPlugins()
 
             tasks.maybeCreate(target.artifactsTaskName).dependsOn(this)
+            tasks.maybeCreate(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(this)
         }
     }
 
