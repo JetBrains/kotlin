@@ -1,0 +1,1 @@
+fun exported() = 42
