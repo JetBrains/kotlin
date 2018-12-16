@@ -7,16 +7,10 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.gradle.plugin.TaskLoggers
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.gradle.logging.GradleBufferingMessageCollector
-import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
+import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.tasks.clearLocalStateDirectories
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
@@ -101,7 +95,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             clearLocalStateDirectories(log, localStateDirectories, "IC is disabled")
         }
 
-        val messageCollector = GradleMessageCollector(log)
+        val messageCollector = GradlePrintingMessageCollector(log)
         val exitCode = try {
             compileWithDaemonOrFallbackImpl(messageCollector)
         } catch (e: Throwable) {
@@ -263,7 +257,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     }
 
     private fun compileOutOfProcess(): ExitCode =
-        runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log, loggingMessageCollector)
+        runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log)
 
     private fun compileInProcess(messageCollector: MessageCollector): ExitCode {
         // in-process compiler should always be run in a different thread
@@ -322,32 +316,4 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         } else {
             ReportSeverity.DEBUG.code
         }
-
-    // used only for process launching so far, but implements unused proper contract
-    private val loggingMessageCollector: MessageCollector by lazy {
-        object : MessageCollector {
-            private var hasErrors = false
-            private val messageRenderer = MessageRenderer.PLAIN_FULL_PATHS
-
-            override fun clear() {
-                hasErrors = false
-            }
-
-            override fun hasErrors(): Boolean = hasErrors
-
-            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-                val locMessage = messageRenderer.render(severity, message, location)
-                when (severity) {
-                    CompilerMessageSeverity.EXCEPTION -> log.error(locMessage)
-                    CompilerMessageSeverity.ERROR,
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    CompilerMessageSeverity.WARNING,
-                    CompilerMessageSeverity.INFO -> log.info(locMessage)
-                    CompilerMessageSeverity.LOGGING -> log.debug(locMessage)
-                    CompilerMessageSeverity.OUTPUT -> {
-                    }
-                }
-            }
-        }
-    }
 }

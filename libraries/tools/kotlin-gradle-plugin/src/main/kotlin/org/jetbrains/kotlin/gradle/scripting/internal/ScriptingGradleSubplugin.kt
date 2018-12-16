@@ -15,7 +15,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
-import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
+import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
@@ -91,7 +91,7 @@ open class DiscoverScriptExtensionsTask : DefaultTask() {
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(
                 scriptingClasspath.toList(), emptyMap(),
-                GradleMessageCollector(logger)
+                GradlePrintingMessageCollector(logger)
             ).definitions
         val extensions = definitions.mapTo(arrayListOf(), KotlinScriptDefinition::fileExtension)
         val kotlinSourceSet = sourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
