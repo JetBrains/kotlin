@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind.EXECUTABLE
-
 plugins {
 	id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
 	id("maven-publish")
@@ -29,6 +27,8 @@ kotlin {
     	compilations.getByName("main") {
 	    	outputKinds.add(EXECUTABLE)
 	        entryPoint = "com.example.app.native.main"
+            // Check that linker options are correctly passed to the compiler.
+            linkerOpts = mutableListOf("-L.")
 	    }
     }
 
@@ -57,6 +57,13 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
             }
+        }
+    }
+
+    tasks.create("checkBinaryGetters") {
+        doLast {
+            println("Wasm binary file: ${wasm32.compilations.getByName("main").getBinary("EXECUTABLE", "RELEASE").name}")
+            println("Wasm link task: ${wasm32.compilations.getByName("main").getLinkTask("EXECUTABLE", "RELEASE").name}")
         }
     }
 }

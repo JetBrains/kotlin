@@ -199,11 +199,13 @@ class Framework(
 
     /**
      * Enable or disable embedding bitcode for the framework.
+     * The parameter [mode] is one of the following string constants:
      *
-     * @param mode - one of the following string constants:
      *     disable - Don't embed LLVM IR bitcode.
-     *     bitcode - Embed LLVM IR bitcode as data. Has the same effect as the -Xembed-bitcode command line option.
-     *     marker - Embed placeholder LLVM IR data as a marker. Has the same effect as the -Xembed-bitcode-marker command line option.
+     *     bitcode - Embed LLVM IR bitcode as data.
+     *               Has the same effect as the -Xembed-bitcode command line option.
+     *     marker - Embed placeholder LLVM IR data as a marker.
+     *              Has the same effect as the -Xembed-bitcode-marker command line option.
      */
     fun embedBitcode(mode: String) = embedBitcode(BitcodeEmbeddingMode.valueOf(mode.toUpperCase()))
 
