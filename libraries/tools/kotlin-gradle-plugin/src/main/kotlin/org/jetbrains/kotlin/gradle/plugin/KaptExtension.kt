@@ -37,7 +37,7 @@ open class KaptExtension {
 
     open var detectMemoryLeaks: String = "default"
 
-    open var includeCompileClasspath: Boolean = true
+    open var includeCompileClasspath: Boolean? = null
 
     @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
     open var processors: String = ""
