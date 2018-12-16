@@ -144,14 +144,14 @@ class NewMultiplatformIT : BaseGradleIT() {
                     Assert.assertTrue(resolve("sample-app.klib").exists())
                 }
 
-                assertFileExists("build/bin/wasm32/main/debug/executable/sample_app.wasm.js")
-                assertFileExists("build/bin/wasm32/main/debug/executable/sample_app.wasm")
-                assertFileExists("build/bin/wasm32/main/release/executable/sample_app.wasm.js")
-                assertFileExists("build/bin/wasm32/main/release/executable/sample_app.wasm")
+                assertFileExists("build/bin/wasm32/mainDebugExecutable/main.wasm.js")
+                assertFileExists("build/bin/wasm32/mainDebugExecutable/main.wasm")
+                assertFileExists("build/bin/wasm32/mainReleaseExecutable/main.wasm.js")
+                assertFileExists("build/bin/wasm32/mainReleaseExecutable/main.wasm")
 
-                val nativeExeName = if (isWindows) "sample-app.exe" else "sample-app.kexe"
-                assertFileExists("build/bin/$nativeHostTargetName/main/release/executable/$nativeExeName")
-                assertFileExists("build/bin/$nativeHostTargetName/main/debug/executable/$nativeExeName")
+                val nativeExeName = if (isWindows) "main.exe" else "main.kexe"
+                assertFileExists("build/bin/$nativeHostTargetName/mainReleaseExecutable/$nativeExeName")
+                assertFileExists("build/bin/$nativeHostTargetName/mainDebugExecutable/$nativeExeName")
             }
 
             build("assemble", "resolveRuntimeDependencies") {
@@ -745,27 +745,27 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testCanProduceNativeLibraries() = with(Project("new-mpp-native-libraries", gradleVersion)) {
-        val baseName = "native_lib"
+        val baseName = "main"
 
         val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
         val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
         val sharedPaths = listOf(
-            "build/bin/$nativeHostTargetName/main/debug/shared/$sharedPrefix$baseName$sharedSuffix",
-            "build/bin/$nativeHostTargetName/main/release/shared/$sharedPrefix$baseName$sharedSuffix"
+            "build/bin/$nativeHostTargetName/mainDebugShared/$sharedPrefix$baseName$sharedSuffix",
+            "build/bin/$nativeHostTargetName/mainReleaseShared/$sharedPrefix$baseName$sharedSuffix"
         )
 
         val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
         val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
         val staticPaths = listOf(
-            "build/bin/$nativeHostTargetName/main/debug/static/$staticPrefix$baseName$staticSuffix",
-            "build/bin/$nativeHostTargetName/main/release/static/$staticPrefix$baseName$staticSuffix"
+            "build/bin/$nativeHostTargetName/mainDebugStatic/$staticPrefix$baseName$staticSuffix",
+            "build/bin/$nativeHostTargetName/mainReleaseStatic/$staticPrefix$baseName$staticSuffix"
         )
 
         val headerPaths = listOf(
-            "build/bin/$nativeHostTargetName/main/debug/shared/$sharedPrefix${baseName}_api.h",
-            "build/bin/$nativeHostTargetName/main/release/shared/$sharedPrefix${baseName}_api.h",
-            "build/bin/$nativeHostTargetName/main/debug/static/$staticPrefix${baseName}_api.h",
-            "build/bin/$nativeHostTargetName/main/release/static/$staticPrefix${baseName}_api.h"
+            "build/bin/$nativeHostTargetName/mainDebugShared/$sharedPrefix${baseName}_api.h",
+            "build/bin/$nativeHostTargetName/mainReleaseShared/$sharedPrefix${baseName}_api.h",
+            "build/bin/$nativeHostTargetName/mainDebugStatic/$staticPrefix${baseName}_api.h",
+            "build/bin/$nativeHostTargetName/mainReleaseStatic/$staticPrefix${baseName}_api.h"
         )
 
         val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
@@ -775,24 +775,24 @@ class NewMultiplatformIT : BaseGradleIT() {
         val frameworkPrefix = CompilerOutputKind.FRAMEWORK.prefix(HostManager.host)
         val frameworkSuffix = CompilerOutputKind.FRAMEWORK.suffix(HostManager.host)
         val frameworkPaths = listOf(
-            "build/bin/$nativeHostTargetName/main/debug/framework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
-            "build/bin/$nativeHostTargetName/main/debug/framework/$frameworkPrefix$baseName$frameworkSuffix",
-            "build/bin/$nativeHostTargetName/main/release/framework/$frameworkPrefix$baseName$frameworkSuffix"
+            "build/bin/$nativeHostTargetName/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
+            "build/bin/$nativeHostTargetName/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
+            "build/bin/$nativeHostTargetName/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix"
         )
             .takeIf { HostManager.hostIsMac }
             .orEmpty()
 
         val taskSuffix = nativeHostTargetName.capitalize()
         val linkTasks = listOf(
-            ":linkDebugShared$taskSuffix",
-            ":linkReleaseShared$taskSuffix",
-            ":linkDebugStatic$taskSuffix",
-            ":linkReleaseStatic$taskSuffix"
+            ":linkMainDebugShared$taskSuffix",
+            ":linkMainReleaseShared$taskSuffix",
+            ":linkMainDebugStatic$taskSuffix",
+            ":linkMainReleaseStatic$taskSuffix"
         )
 
         val klibTask = ":compileKotlin$taskSuffix"
 
-        val frameworkTasks = listOf(":linkDebugFramework$taskSuffix", ":linkReleaseFramework$taskSuffix")
+        val frameworkTasks = listOf(":linkMainDebugFramework$taskSuffix", ":linkMainReleaseFramework$taskSuffix")
             .takeIf { HostManager.hostIsMac }
             .orEmpty()
 
