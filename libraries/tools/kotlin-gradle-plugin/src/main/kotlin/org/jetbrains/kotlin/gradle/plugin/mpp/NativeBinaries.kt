@@ -11,10 +11,10 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 /**
@@ -102,7 +102,7 @@ class Executable constructor(
         get() = super.baseName
         set(value) {
             super.baseName = value
-            runTask.executable = outputFile.absolutePath
+            runTask?.executable = outputFile.absolutePath
         }
 
     var entryPoint: String? = null
@@ -111,23 +111,29 @@ class Executable constructor(
         entryPoint = point
     }
 
-    val runTaskName: String
-        get() = if (isDefaultTestExecutable) {
-            lowerCamelCaseName(compilation.target.targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
-        } else {
-            lowerCamelCaseName("run", name, compilation.target.targetName)
+    /**
+     * A name of task running this executable.
+     * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
+     */
+    val runTaskName: String?
+        get() {
+            if (target.konanTarget !in listOf(KonanTarget.MACOS_X64, KonanTarget.LINUX_X64, KonanTarget.MINGW_X64)) {
+                return null
+            }
+
+            return if (isDefaultTestExecutable) {
+                lowerCamelCaseName(compilation.target.targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
+            } else {
+                lowerCamelCaseName("run", name, compilation.target.targetName)
+            }
         }
 
-    val runTask: AbstractExecTask<*>
-        get() = project.tasks.getByName(runTaskName) as AbstractExecTask<*>
-
-    fun runTask(configure: AbstractExecTask<*>.() -> Unit) {
-        runTask.configure()
-    }
-
-    fun runTask(configure: Closure<*>) {
-        ConfigureUtil.configure(configure, runTask)
-    }
+    /**
+     * A task running this executable.
+     * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
+     */
+    val runTask: AbstractExecTask<*>?
+        get() = runTaskName?.let { project.tasks.getByName(it) as AbstractExecTask<*> }
 }
 
 class StaticLibrary(

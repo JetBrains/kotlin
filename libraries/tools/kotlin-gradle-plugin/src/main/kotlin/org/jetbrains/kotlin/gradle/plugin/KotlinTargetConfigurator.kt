@@ -481,7 +481,7 @@ open class KotlinNativeTargetConfigurator(
     }
 
     private fun Project.createRunTask(binary: Executable) {
-        val taskName = binary.runTaskName
+        val taskName = binary.runTaskName ?: return
         // TODO provide a special exec task for tests.
         tasks.create(taskName, Exec::class.java).apply {
             if (binary.isDefaultTestExecutable) {
