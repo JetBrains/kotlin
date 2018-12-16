@@ -3,8 +3,9 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.compilerRunner
+package org.jetbrains.kotlin.gradle.logging
 
+import org.jetbrains.kotlin.compilerRunner.KotlinLogger
 import org.slf4j.Logger
 
 internal class SL4JKotlinLogger(private val log: Logger) : KotlinLogger {

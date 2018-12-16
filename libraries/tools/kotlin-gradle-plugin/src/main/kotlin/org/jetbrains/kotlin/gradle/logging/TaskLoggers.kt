@@ -3,14 +3,14 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.logging
 
 import org.gradle.api.logging.Logger
 import java.lang.ref.WeakReference
 import java.util.HashMap
 
 // todo: remove when https://github.com/gradle/gradle/issues/2678 is resolved
-object TaskLoggers {
+internal object TaskLoggers {
     private val taskLoggers = HashMap<String, WeakReference<Logger>>()
 
     @Synchronized

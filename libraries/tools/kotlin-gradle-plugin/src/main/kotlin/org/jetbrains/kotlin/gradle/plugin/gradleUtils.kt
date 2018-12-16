@@ -60,28 +60,3 @@ internal inline fun <reified T : Any> Any.addExtension(name: String, extension: 
 
 internal fun Any.getConvention(name: String): Any? =
     (this as HasConvention).convention.plugins[name]
-
-internal fun Logger.kotlinInfo(message: String) {
-    this.info("[KOTLIN] $message")
-}
-
-internal fun Logger.kotlinDebug(message: String) {
-    this.debug("[KOTLIN] $message")
-}
-
-internal fun Logger.kotlinWarn(message: String) {
-    this.warn("[KOTLIN] $message")
-}
-
-internal inline fun Logger.kotlinDebug(message: () -> String) {
-    if (isDebugEnabled) {
-        kotlinDebug(message())
-    }
-}
-
-internal inline fun KotlinLogger.kotlinDebug(fn: () -> String) {
-    if (isDebugEnabled) {
-        val msg = fn()
-        debug("[KOTLIN] $msg")
-    }
-}

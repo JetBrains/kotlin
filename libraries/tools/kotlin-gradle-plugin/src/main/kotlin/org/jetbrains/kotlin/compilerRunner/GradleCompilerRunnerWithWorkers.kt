@@ -9,7 +9,7 @@ import org.gradle.api.Task
 import org.gradle.workers.ForkMode
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 
 internal class GradleCompilerRunnerWithWorkers(
     task: Task,

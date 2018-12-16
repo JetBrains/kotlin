@@ -15,11 +15,11 @@ import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
-import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
+import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.localStateDirectories
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 
@@ -58,7 +58,7 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
 
         val args = prepareCompilerArguments()
 
-        val messageCollector = GradleMessageCollector(GradleKotlinLogger(logger))
+        val messageCollector = GradlePrintingMessageCollector(GradleKotlinLogger(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
         val environment = GradleCompilerEnvironment(
             compilerClasspath, messageCollector, outputItemCollector,
