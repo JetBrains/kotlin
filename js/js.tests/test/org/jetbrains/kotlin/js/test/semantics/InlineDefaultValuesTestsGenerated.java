@@ -181,14 +181,14 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/genericLambda.kt");
         }
 
-        @TestMetadata("instanceCapuredInClass.kt")
-        public void testInstanceCapuredInClass() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInClass.kt");
+        @TestMetadata("instanceCapturedInClass.kt")
+        public void testInstanceCapturedInClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapturedInClass.kt");
         }
 
-        @TestMetadata("instanceCapuredInInterface.kt")
-        public void testInstanceCapuredInInterface() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInInterface.kt");
+        @TestMetadata("instanceCapturedInInterface.kt")
+        public void testInstanceCapturedInInterface() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapturedInInterface.kt");
         }
 
         @TestMetadata("jvmStaticDefault.kt")
