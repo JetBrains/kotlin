@@ -61,7 +61,6 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
             val implementation = function.resolveFakeOverride() ?: continue
             if (!implementation.hasInterfaceParent() ||
                 Visibilities.isPrivate(implementation.visibility) ||
-                implementation.visibility === Visibilities.INVISIBLE_FAKE ||
                 implementation.isDefinitelyNotDefaultImplsMethod() || implementation.isMethodOfAny()
             ) {
                 continue

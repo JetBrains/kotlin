@@ -74,9 +74,6 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         )
 
         for ((from, to) in bridgesToGenerate) {
-            if (to.function.visibility == Visibilities.INVISIBLE_FAKE)
-                continue
-
             if (!from.function.parentAsClass.isInterface &&
                 from.function.isReal &&
                 from.function.modality != Modality.ABSTRACT &&
