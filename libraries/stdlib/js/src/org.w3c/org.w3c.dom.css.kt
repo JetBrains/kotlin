@@ -11,6 +11,7 @@ package org.w3c.dom.css
 
 import kotlin.js.*
 import org.khronos.webgl.*
+import org.w3c.css.masking.*
 import org.w3c.dom.*
 import org.w3c.dom.events.*
 import org.w3c.dom.parsing.*

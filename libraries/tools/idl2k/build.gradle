@@ -34,7 +34,7 @@ generateGrammarSource {
 compileKotlin.dependsOn generateGrammarSource
 compileTestKotlin.dependsOn generateTestGrammarSource
 
-task downloadAllIdls(type: JavaExec) {
+task downloadIDL(type: JavaExec) {
     main = "org.jetbrains.idl2k.dl.DownloadKt"
     classpath = sourceSets.main.runtimeClasspath
 }
