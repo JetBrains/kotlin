@@ -434,7 +434,7 @@ class GenericCandidateResolver(
                 expectedType?.isSuspendFunctionType == true
             )
         }
-        if (expectedType == null || !expectedType.isBuiltinFunctionalTypeOrSubtype || hasUnknownFunctionParameter(expectedType)) {
+        if (expectedType == null || !expectedType.isBuiltinFunctionalType || hasUnknownFunctionParameter(expectedType)) {
             return
         }
         val dataFlowInfoForArguments = context.candidateCall.dataFlowInfoForArguments
@@ -491,7 +491,7 @@ class GenericCandidateResolver(
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument, context)
         val expectedType = getExpectedTypeForCallableReference(callableReference, constraintSystem, context, effectiveExpectedType)
                 ?: return
-        if (!ReflectionTypes.isCallableType(expectedType)) return
+        if (!expectedType.isApplicableExpectedTypeForCallableReference()) return
         val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument) ?: return
         val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
         constraintSystem.addSubtypeConstraint(
@@ -554,4 +554,11 @@ fun makeConstantSubstitutor(typeParameterDescriptors: Collection<TypeParameterDe
 
         override fun isEmpty() = false
     })
+}
+
+private fun KotlinType.isApplicableExpectedTypeForCallableReference(): Boolean {
+    return this.isFunctionType ||
+            ReflectionTypes.isBaseTypeForNumberedReferenceTypes(this) ||
+            ReflectionTypes.isNumberedKFunctionOrKSuspendFunction(this) ||
+            ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(this)
 }

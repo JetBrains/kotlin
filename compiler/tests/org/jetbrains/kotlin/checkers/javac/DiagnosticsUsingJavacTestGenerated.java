@@ -1651,6 +1651,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/emptyLhs.kt");
             }
 
+            @TestMetadata("expectedTypeAsSubtypeOfFunctionType.kt")
+            public void testExpectedTypeAsSubtypeOfFunctionType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/expectedTypeAsSubtypeOfFunctionType.kt");
+            }
+
             @TestMetadata("kt15439_completeCall.kt")
             public void testKt15439_completeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt15439_completeCall.kt");

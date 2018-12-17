@@ -350,7 +350,7 @@ fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedType: Unwra
         expectedType.isFunctionType ->
             extractInputOutputTypesFromFunctionType(expectedType)
 
-        expectedType.isBaseTypeForNumberedReferenceTypes() ->
+        ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->
             InputOutputTypes(emptyList(), expectedType.arguments.single().type.unwrap())
 
         ReflectionTypes.isNumberedKFunctionOrKSuspendFunction(expectedType) -> {
@@ -366,11 +366,6 @@ fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedType: Unwra
         else -> null
     }
 }
-
-private fun UnwrappedType.isBaseTypeForNumberedReferenceTypes(): Boolean =
-    ReflectionTypes.hasKPropertyTypeFqName(this) ||
-            ReflectionTypes.hasKMutablePropertyTypeFqName(this) ||
-            ReflectionTypes.hasKCallableTypeFqName(this)
 
 private fun extractInputOutputTypesFromFunctionType(functionType: UnwrappedType): InputOutputTypes {
     val receiver = functionType.getReceiverTypeFromFunctionType()?.unwrap()

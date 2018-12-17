@@ -97,6 +97,11 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         fun isCallableType(type: KotlinType): Boolean =
             type.isFunctionTypeOrSubtype || type.isSuspendFunctionTypeOrSubtype || isKCallableType(type)
 
+        fun isBaseTypeForNumberedReferenceTypes(type: KotlinType): Boolean =
+            ReflectionTypes.hasKPropertyTypeFqName(type) ||
+                    ReflectionTypes.hasKMutablePropertyTypeFqName(type) ||
+                    ReflectionTypes.hasKCallableTypeFqName(type)
+
         @JvmStatic
         fun isNumberedKPropertyOrKMutablePropertyType(type: KotlinType): Boolean =
                 isNumberedKPropertyType(type) || isNumberedKMutablePropertyType(type)
