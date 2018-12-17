@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.0
+// !LANGUAGE: -InlineConstVals
 // FILE: Foo.kt
 
 private const val OUTER_PRIVATE = 20
