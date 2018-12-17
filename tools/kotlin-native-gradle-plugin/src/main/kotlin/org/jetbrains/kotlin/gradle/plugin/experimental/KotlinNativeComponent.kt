@@ -20,6 +20,7 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPom
@@ -37,6 +38,12 @@ interface KotlinNativeDependencies: ComponentDependencies {
     fun cinterop(name: String, action: CInterop.() -> Unit)
     fun cinterop(name: String, action: Closure<Unit>)
     fun cinterop(name: String, action: Action<CInterop>)
+
+    fun export(notation: Any)
+    fun export(notation: Any, configure: Closure<*>)
+    fun export(notation: Any, configure: Action<in Dependency>)
+
+    var transitiveExport: Boolean
 }
 
 interface TargetSettings {

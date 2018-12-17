@@ -29,7 +29,7 @@ import javax.inject.Inject
 open class KotlinNativeDynamicImpl @Inject constructor(
     name: String,
     baseName: Provider<String>,
-    componentImplementation: Configuration,
+    componentDependencies: KotlinNativeDependenciesImpl,
     component: KotlinNativeMainComponent,
     identity: KotlinNativeVariantIdentity,
     projectLayout: ProjectLayout,
@@ -44,7 +44,7 @@ open class KotlinNativeDynamicImpl @Inject constructor(
     projectLayout,
     CompilerOutputKind.DYNAMIC,
     objects,
-    componentImplementation,
+    componentDependencies,
     configurations,
     fileOperations
 ), KotlinNativeDynamic {

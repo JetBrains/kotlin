@@ -107,7 +107,12 @@ interface KotlinNativeLibrary : KotlinNativeBinary,
 /**
  * Represents an Objective C framework compiled from Kotlin/Native sources.
  */
-interface KotlinNativeFramework : KotlinNativeBinary
+interface KotlinNativeFramework : KotlinNativeBinary {
+    /**
+     * Klibs exported in the framework.
+     */
+    val export: FileCollection
+}
 
 /**
  * A shared library compiled from Kotlin/Native sources.

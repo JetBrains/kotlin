@@ -75,7 +75,7 @@ open class KotlinNativeMainComponent @Inject constructor(
                     type,
                     "$name${identity.name.capitalize()}",
                     baseName,
-                    getImplementationDependencies(),
+                    dependencies,
                     this,
                     identity
             ).apply {

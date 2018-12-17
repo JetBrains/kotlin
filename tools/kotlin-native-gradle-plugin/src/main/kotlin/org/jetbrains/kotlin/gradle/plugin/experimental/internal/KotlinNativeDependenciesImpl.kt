@@ -20,6 +20,7 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.Dependency
 import org.gradle.language.internal.DefaultComponentDependencies
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInterop
@@ -30,9 +31,39 @@ import javax.inject.Inject
 open class KotlinNativeDependenciesImpl @Inject constructor(
     private val project: Project,
     configurations: ConfigurationContainer,
-    implementationName: String
+    implementationName: String,
+    exportName: String
 ) : DefaultComponentDependencies(configurations, implementationName),
     KotlinNativeDependencies {
+
+    internal val exportDependencies = configurations.create(exportName).apply {
+        isCanBeConsumed = false
+        isCanBeResolved = false
+        isTransitive = false
+        implementationDependencies.extendsFrom(this)
+    }
+
+    override var transitiveExport: Boolean
+        get() = exportDependencies.isTransitive
+        set(value) {
+            exportDependencies.isTransitive = value
+        }
+
+    override fun export(notation: Any) {
+        exportDependencies.dependencies.add(dependencyHandler.create(notation))
+    }
+
+    override fun export(notation: Any, configure: Closure<*>) {
+        val dependency = dependencyHandler.create(notation)
+        ConfigureUtil.configure(configure, dependency)
+        exportDependencies.dependencies.add(dependency)
+    }
+
+    override fun export(notation: Any, configure: Action<in Dependency>) {
+        val dependency = dependencyHandler.create(notation)
+        configure.execute(dependency)
+        exportDependencies.dependencies.add(dependency)
+    }
 
     override val cinterops = project.container(CInteropImpl::class.java) { name ->
         CInteropImpl(project, name).apply {

@@ -56,7 +56,7 @@ open class KotlinNativeTestSuite @Inject constructor(
                     KotlinNativeTestExecutableImpl::class.java,
                     "$name${identity.name.capitalize()}",
                     getBaseName(),
-                    getImplementationDependencies(),
+                    dependencies,
                     this,
                     testedComponent.sources,
                     identity

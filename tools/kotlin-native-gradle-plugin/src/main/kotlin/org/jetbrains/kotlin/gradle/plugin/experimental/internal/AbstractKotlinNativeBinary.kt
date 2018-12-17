@@ -64,7 +64,7 @@ abstract class AbstractKotlinNativeBinary(
         val projectLayout: ProjectLayout,
         override val kind: CompilerOutputKind,
         objects: ObjectFactory,
-        componentImplementation: Configuration,
+        componentDependencies: KotlinNativeDependenciesImpl,
         configurations: ConfigurationContainer,
         val fileOperations: FileOperations
 ) : KotlinNativeBinary,
@@ -101,7 +101,7 @@ abstract class AbstractKotlinNativeBinary(
         DefaultComponentDependencies::class.java,
         name + "Implementation"
     ).apply {
-        implementationDependencies.extendsFrom(componentImplementation)
+        implementationDependencies.extendsFrom(componentDependencies.implementationDependencies)
     }
 
     override fun getDependencies(): ComponentDependencies = dependencies

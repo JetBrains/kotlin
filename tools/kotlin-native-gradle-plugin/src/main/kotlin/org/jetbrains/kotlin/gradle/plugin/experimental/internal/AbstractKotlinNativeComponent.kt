@@ -80,7 +80,9 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
     private val dependencies: KotlinNativeDependenciesImpl = objectFactory.newInstance(
         KotlinNativeDependenciesImpl::class.java,
         project,
-        names.withSuffix("implementation"))
+        names.withSuffix("implementation"),
+        names.withSuffix("export")
+    )
     internal val poms = mutableListOf<Action<MavenPom>>()
 
     override fun getDependencies() = dependencies

@@ -26,6 +26,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeFramework
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
@@ -53,6 +54,14 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
 
     val libraries: Configuration
         @InputFiles get() = binary.klibs
+
+    @get:InputFiles
+    val exportLibraries: FileCollection
+        get() = if (binary is KotlinNativeFramework) {
+            binary.export
+        } else {
+            project.files()
+        }
 
     override fun getClasspath(): FileCollection = libraries
 
@@ -158,10 +167,18 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
 
             addAll(additionalCompilerOptions)
 
-            libraries.files.filter {
+            fun Set<File>.filterKlibs() = filter {
                 it.extension == "klib"
-            }.forEach {
+            }
+
+            libraries.files.filterKlibs().forEach {
                 addArg("-l", it.absolutePath)
+            }
+
+            // There is no need to check that all exported dependencies are passed with -l option
+            // because export configuration extends the libraries one.
+            exportLibraries.files.filterKlibs().forEach {
+                add("-Xexport-library=${it.absolutePath}")
             }
 
             addListArg("-linker-options", linkerOpts)

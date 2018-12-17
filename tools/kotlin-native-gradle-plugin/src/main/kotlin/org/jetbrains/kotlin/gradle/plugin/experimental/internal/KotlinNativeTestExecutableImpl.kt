@@ -34,7 +34,7 @@ import javax.inject.Inject
 open class KotlinNativeTestExecutableImpl @Inject constructor(
         name: String,
         baseName: Provider<String>,
-        componentImplementation: Configuration,
+        componentDependencies: KotlinNativeDependenciesImpl,
         val testComponent: KotlinNativeTestSuite,
         val mainSources: KotlinNativeSourceSet,
         identity: KotlinNativeVariantIdentity,
@@ -49,7 +49,7 @@ open class KotlinNativeTestExecutableImpl @Inject constructor(
         projectLayout,
         CompilerOutputKind.PROGRAM,
         objects,
-        componentImplementation,
+        componentDependencies,
         configurations,
         fileOperations),
     KotlinNativeTestExecutable {

@@ -38,7 +38,7 @@ import javax.inject.Inject
 open class KotlinNativeLibraryImpl @Inject constructor(
         name: String,
         baseName: Provider<String>,
-        componentImplementation: Configuration,
+        componentDependencies: KotlinNativeDependenciesImpl,
         component: KotlinNativeMainComponent,
         identity: KotlinNativeVariantIdentity,
         projectLayout: ProjectLayout,
@@ -52,7 +52,7 @@ open class KotlinNativeLibraryImpl @Inject constructor(
         projectLayout,
         CompilerOutputKind.LIBRARY,
         objects,
-        componentImplementation,
+        componentDependencies,
         configurations,
         fileOperations),
     KotlinNativeLibrary,

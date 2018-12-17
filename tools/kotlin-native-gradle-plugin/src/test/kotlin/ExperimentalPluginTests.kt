@@ -1131,4 +1131,43 @@ class ExperimentalPluginTests {
         val result = project.createRunner().withArguments("build").build()
         assertTrue(result.output.contains("A.a"))
     }
+
+    @Test
+    fun `Plugin should support symbol exporting for frameworks`() {
+        assumeTrue(HostManager.hostIsMac)
+        val libraryDir = tmpFolder.newFolder("library")
+        val libraryProject = KonanProject.createEmpty(libraryDir).apply {
+            buildFile.writeText("""
+                plugins { id 'kotlin-native' }
+            """.trimIndent())
+            generateSrcFile("library.kt", "fun foo() = 42")
+        }
+
+        val project = KonanProject.createEmpty(projectDirectory).apply {
+            settingsFile.writeText("""
+                include ':library'
+                rootProject.name = 'test'
+            """.trimIndent())
+            buildFile.writeText("""
+                plugins { id 'kotlin-native' }
+
+                dependencies {
+                    export project(':library')
+                }
+
+                sourceSets.main.component {
+                    outputKinds = [ FRAMEWORK ]
+                }
+            """.trimIndent())
+            generateSrcFile("main.kt", "fun main(args: Array<String>) { println(foo()) }")
+        }
+
+        val compileDebugResult = project.createRunner().withArguments("compileDebugKotlinNative").build()
+        assertEquals(TaskOutcome.SUCCESS, compileDebugResult.task(":compileDebugKotlinNative")?.outcome)
+        assertEquals(TaskOutcome.SUCCESS, compileDebugResult.task(":library:compileDebugKotlinNative")?.outcome)
+        assertTrue(projectDirectory.resolve("build/lib/main/debug/test.framework").exists())
+        val header = projectDirectory.resolve("build/lib/main/debug/test.framework/Headers/test.h")
+        assertTrue(header.exists())
+        assertTrue(header.readText().contains("+ (int32_t)foo "))
+    }
 }

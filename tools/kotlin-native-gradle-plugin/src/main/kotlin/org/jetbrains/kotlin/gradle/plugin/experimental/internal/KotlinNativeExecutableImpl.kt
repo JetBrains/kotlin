@@ -38,7 +38,7 @@ import javax.inject.Inject
 open class KotlinNativeExecutableImpl @Inject constructor(
         name: String,
         baseName: Provider<String>,
-        componentImplementation: Configuration,
+        componentDependencies: KotlinNativeDependenciesImpl,
         component: KotlinNativeMainComponent,
         identity: KotlinNativeVariantIdentity,
         objects: ObjectFactory,
@@ -52,7 +52,7 @@ open class KotlinNativeExecutableImpl @Inject constructor(
         projectLayout,
         CompilerOutputKind.PROGRAM,
         objects,
-        componentImplementation,
+        componentDependencies,
         configurations,
         fileOperations),
     KotlinNativeExecutable,

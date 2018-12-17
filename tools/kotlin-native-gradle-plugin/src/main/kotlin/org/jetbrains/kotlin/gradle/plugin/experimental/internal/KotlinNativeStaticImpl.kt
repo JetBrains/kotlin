@@ -30,7 +30,7 @@ import javax.inject.Inject
 open class KotlinNativeStaticImpl @Inject constructor(
     name: String,
     baseName: Provider<String>,
-    componentImplementation: Configuration,
+    componentDependencies: KotlinNativeDependenciesImpl,
     component: KotlinNativeMainComponent,
     identity: KotlinNativeVariantIdentity,
     projectLayout: ProjectLayout,
@@ -45,7 +45,7 @@ open class KotlinNativeStaticImpl @Inject constructor(
     projectLayout,
     CompilerOutputKind.STATIC,
     objects,
-    componentImplementation,
+    componentDependencies,
     configurations,
     fileOperations
 ), KotlinNativeStatic {

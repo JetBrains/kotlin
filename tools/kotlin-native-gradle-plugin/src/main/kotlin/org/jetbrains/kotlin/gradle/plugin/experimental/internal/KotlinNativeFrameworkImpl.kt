@@ -16,13 +16,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.language.cpp.CppBinary
+import org.gradle.nativeplatform.OperatingSystemFamily
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeFramework
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import javax.inject.Inject
 
@@ -30,7 +35,7 @@ import javax.inject.Inject
 open class KotlinNativeFrameworkImpl @Inject constructor(
     name: String,
     baseName: Provider<String>,
-    componentImplementation: Configuration,
+    componentDependencies: KotlinNativeDependenciesImpl,
     component: KotlinNativeMainComponent,
     identity: KotlinNativeVariantIdentity,
     projectLayout: ProjectLayout,
@@ -45,9 +50,23 @@ open class KotlinNativeFrameworkImpl @Inject constructor(
     projectLayout,
     CompilerOutputKind.FRAMEWORK,
     objects,
-    componentImplementation,
+    componentDependencies,
     configurations,
     fileOperations
 ), KotlinNativeFramework {
     override val outputRootName: String = "lib"
+
+    // A configuration containing exported klibs.
+    override val export = configurations.create(names.withPrefix("export")).apply {
+        isCanBeConsumed = false
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+        attributes.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, debuggable)
+        attributes.attribute(CppBinary.OPTIMIZED_ATTRIBUTE, optimized)
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attributes.attribute(KotlinNativeBinary.KONAN_TARGET_ATTRIBUTE, konanTarget.name)
+        attributes.attribute(KotlinNativeBinary.OLD_KONAN_TARGET_ATTRIBUTE, konanTarget.name)
+        attributes.attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, konanTarget.getGradleOSFamily(objects))
+        extendsFrom(componentDependencies.exportDependencies)
+        getImplementationDependencies().extendsFrom(this)
+    }
 }
