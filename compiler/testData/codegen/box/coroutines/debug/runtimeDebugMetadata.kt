@@ -1,5 +1,3 @@
-// !LANGUAGE: +ReleaseCoroutines
-
 // IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
@@ -49,14 +47,14 @@ fun box(): String {
     builder {
         res = named()
     }
-    if (res != Pair("runtimeDebugMetadata.kt", 35)) {
+    if (res != Pair("runtimeDebugMetadata.kt", 33)) {
         return "" + res
     }
     builder {
         dummy()
         res = getSourceFileAndLineNumberFromContinuation()
     }
-    if (res != Pair("runtimeDebugMetadata.kt", 57)) {
+    if (res != Pair("runtimeDebugMetadata.kt", 55)) {
         return "" + res
     }
 
@@ -64,7 +62,7 @@ fun box(): String {
         suspended()
     }
     res = (continuation!! as BaseContinuationImpl).getSourceFileAndLineNumber()
-    if (res != Pair("runtimeDebugMetadata.kt", 40)) {
+    if (res != Pair("runtimeDebugMetadata.kt", 38)) {
         return "" + res
     }
     return "OK"

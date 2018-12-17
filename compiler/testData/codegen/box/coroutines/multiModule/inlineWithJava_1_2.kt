@@ -1,10 +1,11 @@
-// LANGUAGE_VERSION: 1.2
+// !LANGUAGE: -ReleaseCoroutines
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: NATIVE, JS, JS_IR
 // WITH_COROUTINES
 // WITH_RUNTIME
 // MODULE: lib
 // FILE: lib.kt
+
 interface I {}
 
 suspend inline fun foo() = object : I {}

@@ -1,10 +1,12 @@
-// LANGUAGE_VERSION: 1.2
+// !LANGUAGE: -ReleaseCoroutines
 // WITH_RUNTIME
 // WITH_COROUTINES
-import helpers.*
 // TREAT_AS_ONE_FILE
+
+import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
+
 suspend fun suspendHere() = ""
 
 fun builder(c: suspend () -> Unit) {

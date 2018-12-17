@@ -1,10 +1,6 @@
-// !LANGUAGE: +ReleaseCoroutines
-// !API_VERSION: 1.3
 // IGNORE_BACKEND: JS, NATIVE
 // IGNORE_BACKEND: JVM_IR
-
 // WITH_REFLECT
-// WITH_RUNTIME
 // WITH_COROUTINES
 
 import kotlin.test.assertEquals
