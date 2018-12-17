@@ -43,11 +43,8 @@ import java.io.IOException
 import java.util.ArrayList
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
-import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
-import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
 import org.jetbrains.kotlin.js.coroutine.transformCoroutines
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult
-import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
 

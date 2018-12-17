@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.js.inline
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.imported
 import org.jetbrains.kotlin.js.backend.ast.metadata.localAlias
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.inline.clean.removeUnusedFunctionDefinitions
@@ -159,21 +158,7 @@ class ProgramFragmentInliningScope(
 
         simplifyWrappedFunctions(block)
         removeUnusedFunctionDefinitions(block, collectNamedFunctions(block))
-
-        // TODO simplify
-        val usedImports = removeUnusedImports(block)
-        fragment.nameBindings.filter {
-            !it.name.imported || it.name in usedImports
-        }.let {
-            fragment.nameBindings.clear()
-            fragment.nameBindings.addAll(it)
-        }
-        val existingTags = fragment.nameBindings.map { it.key }.toSet()
-        val newImports = fragment.imports.filter { (k, _) -> k in existingTags }
-        fragment.imports.clear()
-        for ((k, v) in newImports) {
-            fragment.imports[k] = v
-        }
+        removeUnusedImports(fragment)
     }
 
     // TODO !!!!! This localAlias thing will get copied, inlined, and lost during IC =(

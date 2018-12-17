@@ -395,6 +395,12 @@ fun extractImportTag(jsVar: JsVars.JsVar): String? {
     return if (extractImportTagImpl(initExpression, sb)) sb.toString() else null
 }
 
+// Note! Doesn't handle Long's
+fun extractImportTag(initExpression: JsExpression): String? {
+    val sb = StringBuilder()
+    return if (extractImportTagImpl(initExpression, sb)) sb.toString() else null
+}
+
 private fun extractImportTagImpl(expression: JsExpression, sb: StringBuilder): Boolean {
     when (expression) {
         is JsNameRef -> {

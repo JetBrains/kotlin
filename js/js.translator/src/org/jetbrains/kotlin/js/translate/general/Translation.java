@@ -339,6 +339,7 @@ public final class Translation {
                 for (String tag : staticContext.getInlineFunctionTags()) {
                     inlineFunctionTagMap.put(tag, unit);
                 }
+                NormalizeImportTagsKt.normalizeImportTags(fragment);
 
                 fragment.setTests(mayBeGenerateTests(context, file, fileMemberScope));
                 fragment.setMainFunction(maybeGenerateCallToMain(context, config, moduleDescriptor, fileMemberScope, mainCallParameters));
