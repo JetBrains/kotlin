@@ -128,7 +128,7 @@ class ClassGenerator(
             }
             .sortedWith(StableDescriptorsComparator)
             .forEach { fakeOverride ->
-                irClass.addMember(declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject))
+                declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject)?.let { irClass.declarations.add(it) }
             }
     }
 

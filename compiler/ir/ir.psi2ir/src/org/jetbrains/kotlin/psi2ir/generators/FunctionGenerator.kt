@@ -57,10 +57,13 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             generateLambdaBody(ktFunction)
         }
 
-    fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction =
-        declareSimpleFunctionInner(functionDescriptor, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE).buildWithScope { irFunction ->
-            generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
-        }
+    fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction? =
+        functionDescriptor.takeIf { it.visibility != Visibilities.INVISIBLE_FAKE }
+            ?.let {
+                declareSimpleFunctionInner(it, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE).buildWithScope { irFunction ->
+                    generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
+                }
+            }
 
     private inline fun declareSimpleFunction(
         ktFunction: KtFunction,
