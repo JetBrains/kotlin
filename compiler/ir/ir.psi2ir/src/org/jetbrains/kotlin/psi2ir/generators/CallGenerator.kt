@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -40,6 +42,8 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         val descriptor = call.descriptor
 
         return when (descriptor) {
+            is SamConstructorDescriptor ->
+                generateSamConstructorCall(descriptor, startOffset, endOffset, call)
             is PropertyDescriptor ->
                 generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
             is FunctionDescriptor ->
@@ -49,6 +53,24 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                     generateValueReference(startOffset, endOffset, descriptor, call.original, origin)
                 }
         }
+    }
+
+    private fun generateSamConstructorCall(
+        descriptor: SamConstructorDescriptor,
+        startOffset: Int,
+        endOffset: Int,
+        call: CallBuilder
+    ): IrExpression {
+        val targetType = descriptor.returnType!!.toIrType()
+
+        return IrTypeOperatorCallImpl(
+            startOffset, endOffset,
+            targetType,
+            IrTypeOperator.SAM_CONVERSION,
+            targetType,
+            targetType.classifierOrFail,
+            call.irValueArgumentsByIndex[0]!!
+        )
     }
 
     fun generateValueReference(

@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.isTypeParameter
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
@@ -80,6 +77,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                     IrTypeOperator.NOT_INSTANCEOF -> lowerInstanceOf(expression, data, true)
                     IrTypeOperator.CAST -> lowerCast(expression, data, false)
                     IrTypeOperator.SAFE_CAST -> lowerCast(expression, data, true)
+                    IrTypeOperator.SAM_CONVERSION -> TODO("SAM conversion: ${expression.render()}")
                 }
             }
 
