@@ -14,6 +14,7 @@ import org.khronos.webgl.*
 import org.w3c.css.masking.*
 import org.w3c.dom.css.*
 import org.w3c.dom.events.*
+import org.w3c.dom.mediacapture.*
 import org.w3c.dom.parsing.*
 import org.w3c.dom.pointerevents.*
 import org.w3c.dom.svg.*
@@ -823,8 +824,8 @@ public external abstract class MediaError {
 public external abstract class AudioTrackList : EventTarget {
     open val length: Int
     open var onchange: ((Event) -> dynamic)?
-    open var onaddtrack: ((Event) -> dynamic)?
-    open var onremovetrack: ((Event) -> dynamic)?
+    open var onaddtrack: ((TrackEvent) -> dynamic)?
+    open var onremovetrack: ((TrackEvent) -> dynamic)?
     fun getTrackById(id: String): AudioTrack?
 }
 @kotlin.internal.InlineOnly inline operator fun AudioTrackList.get(index: Int): AudioTrack? = asDynamic()[index]
@@ -847,8 +848,8 @@ public external abstract class VideoTrackList : EventTarget {
     open val length: Int
     open val selectedIndex: Int
     open var onchange: ((Event) -> dynamic)?
-    open var onaddtrack: ((Event) -> dynamic)?
-    open var onremovetrack: ((Event) -> dynamic)?
+    open var onaddtrack: ((TrackEvent) -> dynamic)?
+    open var onremovetrack: ((TrackEvent) -> dynamic)?
     fun getTrackById(id: String): VideoTrack?
 }
 @kotlin.internal.InlineOnly inline operator fun VideoTrackList.get(index: Int): VideoTrack? = asDynamic()[index]
@@ -867,8 +868,8 @@ public external abstract class VideoTrack : UnionAudioTrackOrTextTrackOrVideoTra
 public external abstract class TextTrackList : EventTarget {
     open val length: Int
     open var onchange: ((Event) -> dynamic)?
-    open var onaddtrack: ((Event) -> dynamic)?
-    open var onremovetrack: ((Event) -> dynamic)?
+    open var onaddtrack: ((TrackEvent) -> dynamic)?
+    open var onremovetrack: ((TrackEvent) -> dynamic)?
     fun getTrackById(id: String): TextTrack?
 }
 @kotlin.internal.InlineOnly inline operator fun TextTrackList.get(index: Int): TextTrack? = asDynamic()[index]
@@ -2260,7 +2261,9 @@ public external interface WindowOrWorkerGlobalScope {
 public external abstract class Navigator : NavigatorID, NavigatorLanguage, NavigatorOnLine, NavigatorContentUtils, NavigatorCookies, NavigatorPlugins, NavigatorConcurrentHardware {
     open val serviceWorker: ServiceWorkerContainer
     open val maxTouchPoints: Int
+    open val mediaDevices: MediaDevices
     fun vibrate(pattern: dynamic): Boolean
+    fun getUserMedia(constraints: MediaStreamConstraints, successCallback: (MediaStream) -> Unit, errorCallback: (dynamic) -> Unit): Unit
 }
 
 /**

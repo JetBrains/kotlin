@@ -29,6 +29,7 @@ val urls = listOf(
         "https://drafts.csswg.org/cssom/" to "org.w3c.dom.css",
         "https://www.w3.org/TR/css-masking-1/" to "org.w3c.css.masking",
 
+        "https://w3c.github.io/mediacapture-main/" to "org.w3c.dom.mediacapture",
         "http://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
         "https://raw.githubusercontent.com/whatwg/url/master/url.html" to "org.w3c.dom.url",
 
@@ -95,69 +96,85 @@ val kotlinBuiltinInterfaces = mapOf(
                 )
 )
 
-val specifyEventMapper = mapOf<String, String>(
-        "onbeforeunload" to "BeforeUnloadEvent",
+val eventSpecifierMapper = mapOf<String, String>(
+    "onbeforeunload" to "BeforeUnloadEvent",
 
-        "ondrag" to "DragEvent",
-        "ondragend" to "DragEvent",
-        "ondragenter" to "DragEvent",
-        "ondragexit" to "DragEvent",
-        "ondragleave" to "DragEvent",
-        "ondragover" to "DragEvent",
-        "ondragstart" to "DragEvent",
-        "ondrop" to "DragEvent",
+    "ondrag" to "DragEvent",
+    "ondragend" to "DragEvent",
+    "ondragenter" to "DragEvent",
+    "ondragexit" to "DragEvent",
+    "ondragleave" to "DragEvent",
+    "ondragover" to "DragEvent",
+    "ondragstart" to "DragEvent",
+    "ondrop" to "DragEvent",
 
-        "onfetch" to "FetchEvent",
+    "onfetch" to "FetchEvent",
 
-        "onblur" to "FocusEvent",
-        "onfocus" to "FocusEvent",
+    "onblur" to "FocusEvent",
+    "onfocus" to "FocusEvent",
 
-        "onhashchange" to "HashChangeEvent",
+    "onhashchange" to "HashChangeEvent",
 
-        "oninput" to "InputEvent",
+    "oninput" to "InputEvent",
 
-        "onkeydown" to "KeyboardEvent",
-        "onkeypress" to "KeyboardEvent",
-        "onkeyup" to "KeyboardEvent",
+    "onkeydown" to "KeyboardEvent",
+    "onkeypress" to "KeyboardEvent",
+    "onkeyup" to "KeyboardEvent",
 
-        "onmessage" to "MessageEvent",
+    "onmessage" to "MessageEvent",
 
-        "onclick" to "MouseEvent",
-        "oncontextmenu" to "MouseEvent",
-        "ondblclick" to "MouseEvent",
-        "onmousedown" to "MouseEvent",
-        "onmouseenter" to "MouseEvent",
-        "onmouseleave" to "MouseEvent",
-        "onmousemove" to "MouseEvent",
-        "onmouseout" to "MouseEvent",
-        "onmouseover" to "MouseEvent",
-        "onmouseup" to "MouseEvent",
+    "onclick" to "MouseEvent",
+    "oncontextmenu" to "MouseEvent",
+    "ondblclick" to "MouseEvent",
+    "onmousedown" to "MouseEvent",
+    "onmouseenter" to "MouseEvent",
+    "onmouseleave" to "MouseEvent",
+    "onmousemove" to "MouseEvent",
+    "onmouseout" to "MouseEvent",
+    "onmouseover" to "MouseEvent",
+    "onmouseup" to "MouseEvent",
 
-        "onnotificationclick" to "NotificationEvent",
-        "onnotificationclose" to "NotificationEvent",
+    "onnotificationclick" to "NotificationEvent",
+    "onnotificationclose" to "NotificationEvent",
 
-        "onpagehide" to "PageTransitionEvent",
-        "onpageshow" to "PageTransitionEvent",
+    "onpagehide" to "PageTransitionEvent",
+    "onpageshow" to "PageTransitionEvent",
 
-        "ongotpointercapture" to "PointerEvent",
-        "onlostpointercapture" to "PointerEvent",
-        "onpointercancel" to "PointerEvent",
-        "onpointerdown" to "PointerEvent",
-        "onpointerenter" to "PointerEvent",
-        "onpointerleave" to "PointerEvent",
-        "onpointermove" to "PointerEvent",
-        "onpointerout" to "PointerEvent",
-        "onpointerover" to "PointerEvent",
-        "onpointerup" to "PointerEvent",
+    "ongotpointercapture" to "PointerEvent",
+    "onlostpointercapture" to "PointerEvent",
+    "onpointercancel" to "PointerEvent",
+    "onpointerdown" to "PointerEvent",
+    "onpointerenter" to "PointerEvent",
+    "onpointerleave" to "PointerEvent",
+    "onpointermove" to "PointerEvent",
+    "onpointerout" to "PointerEvent",
+    "onpointerover" to "PointerEvent",
+    "onpointerup" to "PointerEvent",
 
-        "onpopstate" to "PopStateEvent",
+    "onpopstate" to "PopStateEvent",
 
-        "onloadstart" to "ProgressEvent",
-        "onprogress" to "ProgressEvent",
+    "onloadstart" to "ProgressEvent",
+    "onprogress" to "ProgressEvent",
 
-        "onunhandledrejection" to "PromiseRejectionEvent",
+    "onunhandledrejection" to "PromiseRejectionEvent",
 
-        "onstorage" to "StorageEvent",
+    "onstorage" to "StorageEvent",
 
-        "onwheel" to "WheelEvent"
+    "onwheel" to "WheelEvent"
+)
+
+
+data class EventMapKey(val name: String, val context: String)
+private fun String.asEventMapKey(context: String) = EventMapKey(this, context)
+
+val eventSpecifierMapperWithContext = mapOf<EventMapKey, String>(
+    "onaddtrack".asEventMapKey("MediaStream") to "MediaStreamTrackEvent",
+    "onremovetrack".asEventMapKey("MediaStream") to "MediaStreamTrackEvent",
+
+    "onaddtrack".asEventMapKey("AudioTrackList") to "TrackEvent",
+    "onaddtrack".asEventMapKey("TextTrackList") to "TrackEvent",
+    "onaddtrack".asEventMapKey("VideoTrackList") to "TrackEvent",
+    "onremovetrack".asEventMapKey("AudioTrackList") to "TrackEvent",
+    "onremovetrack".asEventMapKey("TextTrackList") to "TrackEvent",
+    "onremovetrack".asEventMapKey("VideoTrackList") to "TrackEvent"
 )
