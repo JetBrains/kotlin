@@ -327,19 +327,17 @@ class VariableFinder private constructor(private val context: EvaluationContextI
         }
 
         return variables.namedEntitySequence()
-            .filter { isReceiverOrPassedThis(it.name) && it.type is ReferenceType? }
+            .filter { isReceiverOrPassedThis(it.name) }
             .mapNotNull { findCapturedVariable(kind, it.value()) }
             .firstOrNull()
     }
 
     private fun findCapturedVariable(kind: VariableKind, parent: Value?): Result? {
-        if (parent !is ObjectReference) return null
-
-        if (kind is VariableKind.UnlabeledThis && kind.typeMatches(parent.type())) {
+        if (parent != null && kind is VariableKind.UnlabeledThis && kind.typeMatches(parent.type())) {
             return Result(parent)
         }
 
-        val fields = parent.referenceType().fields()
+        val fields = (parent as? ObjectReference)?.referenceType()?.fields() ?: return null
 
         // Captured variables - direct search
         fields.namedEntitySequence(parent)
@@ -349,7 +347,7 @@ class VariableFinder private constructor(private val context: EvaluationContextI
 
         // Recursive search in captured receivers
         fields.namedEntitySequence(parent)
-            .filter { isCapturedReceiverFieldName(it.name) && it.type is ReferenceType? }
+            .filter { isCapturedReceiverFieldName(it.name) }
             .mapNotNull { findCapturedVariable(kind, it.value()) }
             .firstOrNull()
             ?.let { return it }
@@ -357,7 +355,6 @@ class VariableFinder private constructor(private val context: EvaluationContextI
         // Recursive search in outer and captured this
         fields.namedEntitySequence(parent)
             .filter { it.name == AsmUtil.getCapturedFieldName(AsmUtil.THIS) || it.name == AsmUtil.CAPTURED_THIS_FIELD }
-            .filter { it.type is ReferenceType? }
             .firstOrNull()
             ?.let { return findCapturedVariable(kind, it.value()) }
 
