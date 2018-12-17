@@ -11,11 +11,8 @@ package org.w3c.dom
 
 import kotlin.js.*
 import org.khronos.webgl.*
-<<<<<<< HEAD
 import org.w3c.css.masking.*
-=======
 import org.w3c.dom.clipboard.*
->>>>>>> Support ClipboardEvent in definitions generated from idl
 import org.w3c.dom.css.*
 import org.w3c.dom.events.*
 import org.w3c.dom.parsing.*
