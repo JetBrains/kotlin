@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
 import org.jetbrains.kotlin.load.java.structure.MapBasedJavaAnnotationOwner
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-internal val ASM_API_VERSION_FOR_CLASS_READING = Opcodes.ASM5
+internal const val ASM_API_VERSION_FOR_CLASS_READING = Opcodes.API_VERSION
 
 internal interface BinaryJavaModifierListOwner : JavaModifierListOwner, MapBasedJavaAnnotationOwner {
     val access: Int
