@@ -67,6 +67,11 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
         super.visitParameter(parameter)
     }
 
+    override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) {
+        visitVariableDeclaration(multiDeclarationEntry)
+        super.visitDestructuringDeclarationEntry(multiDeclarationEntry)
+    }
+
     private fun getSmartCastTarget(expression: KtExpression): PsiElement {
         var target: PsiElement = expression
         if (target is KtParenthesizedExpression) {

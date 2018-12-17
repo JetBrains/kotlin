@@ -34,6 +34,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         runTest("idea/testData/highlighter/Annotations.kt");
     }
 
+    @TestMetadata("Destructuring.kt")
+    public void testDestructuring() throws Exception {
+        runTest("idea/testData/highlighter/Destructuring.kt");
+    }
+
     @TestMetadata("Dynamic.kt")
     public void testDynamic() throws Exception {
         runTest("idea/testData/highlighter/Dynamic.kt");
