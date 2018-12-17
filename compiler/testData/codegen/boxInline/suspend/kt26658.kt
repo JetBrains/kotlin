@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
 // FILE: inlined.kt
-// LANGUAGE_VERSION: 1.3
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
 import kotlin.coroutines.*
