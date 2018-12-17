@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.isExported
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
@@ -78,7 +79,7 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
         val dispatchReceiver = dispatchReceiverParameter ?: return false
         assert(!dispatchReceiver.type.isKFunctionType)
 
-        return dispatchReceiver.type.isFunctionType &&
+        return (dispatchReceiver.type.isFunctionType || dispatchReceiver.type.isSuspendFunctionType) &&
                 this.isOperator && this.name == OperatorNameConventions.INVOKE
     }
 
