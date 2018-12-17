@@ -126,6 +126,7 @@ internal fun ExtractionData.inferParametersInfo(
             NewDeclarationNameValidator.Target.VARIABLES
     )
 
+    val existingParameterNames = hashSetOf<String>()
     for ((descriptorToExtract, parameter) in extractedDescriptorToParameter) {
         if (!parameter
                 .getParameterType(options.allowSpecialClassNames)
@@ -135,8 +136,20 @@ internal fun ExtractionData.inferParametersInfo(
             if (currentName == null) {
                 currentName = KotlinNameSuggester.suggestNamesByType(getParameterType(options.allowSpecialClassNames), varNameValidator, "p").first()
             }
+
+            require(currentName != null)
+
+            if ("$currentName" in existingParameterNames) {
+                var index = 0
+                while ("$currentName$index" in existingParameterNames) {
+                    index++
+                }
+                currentName = "$currentName$index"
+            }
+
             mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) KotlinNameSuggester.suggestNameByName(name, varNameValidator) else null
             info.parameters.add(this)
+            currentName?.let { existingParameterNames += it }
         }
     }
 

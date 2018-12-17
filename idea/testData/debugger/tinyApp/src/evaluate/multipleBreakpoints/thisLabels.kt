@@ -27,5 +27,5 @@ fun <T> T.inlineBlock(t: T, block: T.() -> Unit) {
 // EXPRESSION: this
 // RESULT: 2: I
 
-// EXPRESSION: this@c
-// RESULT: 3: I
+// EXPRESSION: this + this@a + this@b + this@c
+// RESULT: 12: I

@@ -996,6 +996,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 runTest("idea/testData/refactoring/extractFunction/basic/refInReturn.kt");
             }
 
+            @TestMetadata("sameParameterNames.kt")
+            public void testSameParameterNames() throws Exception {
+                runTest("idea/testData/refactoring/extractFunction/basic/sameParameterNames.kt");
+            }
+
             @TestMetadata("selectedConstructor.kt")
             public void testSelectedConstructor() throws Exception {
                 runTest("idea/testData/refactoring/extractFunction/basic/selectedConstructor.kt");
