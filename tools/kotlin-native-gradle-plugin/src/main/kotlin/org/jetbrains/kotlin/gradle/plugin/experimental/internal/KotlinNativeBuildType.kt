@@ -22,14 +22,24 @@ import java.util.*
 class KotlinNativeBuildType(
         private val name: String,
         val debuggable: Boolean,
-        val optimized: Boolean
+        val optimized: Boolean,
+        internal val iosEmbedBitcode: BitcodeEmbeddingMode
 ) : Named {
 
     override fun getName() = name
 
     companion object {
-        val DEBUG = KotlinNativeBuildType("debug", true, false)
-        val RELEASE = KotlinNativeBuildType("release", false, true)
+        val DEBUG = KotlinNativeBuildType("debug", true, false, BitcodeEmbeddingMode.MARKER)
+        val RELEASE = KotlinNativeBuildType("release", false, true, BitcodeEmbeddingMode.BITCODE)
         val DEFAULT_BUILD_TYPES: Collection<KotlinNativeBuildType> = Arrays.asList(DEBUG, RELEASE)
     }
+}
+
+enum class BitcodeEmbeddingMode {
+    /** Don't embed LLVM IR bitcode. */
+    DISABLE,
+    /** Embed LLVM IR bitcode as data. */
+    BITCODE,
+    /** Embed placeholder LLVM IR data as a marker. */
+    MARKER,
 }

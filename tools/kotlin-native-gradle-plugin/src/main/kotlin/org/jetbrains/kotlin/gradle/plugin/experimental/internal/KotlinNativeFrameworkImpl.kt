@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeFramework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
 import javax.inject.Inject
-
 
 open class KotlinNativeFrameworkImpl @Inject constructor(
     name: String,
@@ -54,6 +54,7 @@ open class KotlinNativeFrameworkImpl @Inject constructor(
     configurations,
     fileOperations
 ), KotlinNativeFramework {
+
     override val outputRootName: String = "lib"
 
     // A configuration containing exported klibs.
@@ -68,5 +69,11 @@ open class KotlinNativeFrameworkImpl @Inject constructor(
         attributes.attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, konanTarget.getGradleOSFamily(objects))
         extendsFrom(componentDependencies.exportDependencies)
         getImplementationDependencies().extendsFrom(this)
+    }
+
+    override var embedBitcode: BitcodeEmbeddingMode = if (konanTarget.family == Family.IOS) {
+        buildType.iosEmbedBitcode
+    } else {
+        BitcodeEmbeddingMode.DISABLE
     }
 }

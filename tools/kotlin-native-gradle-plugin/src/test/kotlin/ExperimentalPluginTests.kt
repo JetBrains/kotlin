@@ -1132,6 +1132,14 @@ class ExperimentalPluginTests {
         assertTrue(result.output.contains("A.a"))
     }
 
+    private fun BuildResult.checkFrameworkCompilationCommandLine(check: (String) -> Unit) {
+        output.lineSequence().filter {
+            it.contains("Run tool: konanc") && it.contains("-p framework")
+        }.toList().also {
+            assertTrue(it.isNotEmpty())
+        }.forEach(check)
+    }
+
     @Test
     fun `Plugin should support symbol exporting for frameworks`() {
         assumeTrue(HostManager.hostIsMac)
@@ -1139,6 +1147,7 @@ class ExperimentalPluginTests {
         val libraryProject = KonanProject.createEmpty(libraryDir).apply {
             buildFile.writeText("""
                 plugins { id 'kotlin-native' }
+                components.main.targets = [ 'ios_x64' ]
             """.trimIndent())
             generateSrcFile("library.kt", "fun foo() = 42")
         }
@@ -1156,18 +1165,32 @@ class ExperimentalPluginTests {
                 }
 
                 sourceSets.main.component {
+                    targets = [ 'ios_x64' ]
                     outputKinds = [ FRAMEWORK ]
                 }
             """.trimIndent())
             generateSrcFile("main.kt", "fun main(args: Array<String>) { println(foo()) }")
         }
 
-        val compileDebugResult = project.createRunner().withArguments("compileDebugKotlinNative").build()
-        assertEquals(TaskOutcome.SUCCESS, compileDebugResult.task(":compileDebugKotlinNative")?.outcome)
-        assertEquals(TaskOutcome.SUCCESS, compileDebugResult.task(":library:compileDebugKotlinNative")?.outcome)
-        assertTrue(projectDirectory.resolve("build/lib/main/debug/test.framework").exists())
-        val header = projectDirectory.resolve("build/lib/main/debug/test.framework/Headers/test.h")
-        assertTrue(header.exists())
-        assertTrue(header.readText().contains("+ (int32_t)foo "))
+        with(project.createRunner().withArguments("compileDebugKotlinNative", "--info").build()) {
+            assertEquals(TaskOutcome.SUCCESS, task(":compileDebugKotlinNative")?.outcome)
+            assertEquals(TaskOutcome.SUCCESS, task(":library:compileDebugKotlinNative")?.outcome)
+            assertTrue(projectDirectory.resolve("build/lib/main/debug/test.framework").exists())
+            val header = projectDirectory.resolve("build/lib/main/debug/test.framework/Headers/test.h")
+            assertTrue(header.exists())
+            assertTrue(header.readText().contains("+ (int32_t)foo "))
+            checkFrameworkCompilationCommandLine {
+                assertTrue(it.contains("-Xembed-bitcode-marker"))
+                assertTrue(it.contains("-g"))
+            }
+        }
+
+        with(project.createRunner().withArguments("compileReleaseKotlinNative", "--info").build()) {
+            assertEquals(TaskOutcome.SUCCESS, task(":compileReleaseKotlinNative")?.outcome)
+            checkFrameworkCompilationCommandLine {
+                assertTrue(it.contains("-Xembed-bitcode"))
+                assertTrue(it.contains("-opt"))
+            }
+        }
     }
 }

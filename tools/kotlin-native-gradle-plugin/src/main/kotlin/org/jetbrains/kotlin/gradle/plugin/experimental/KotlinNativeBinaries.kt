@@ -26,6 +26,7 @@ import org.gradle.language.ComponentWithOutputs
 import org.gradle.language.nativeplatform.internal.ConfigurableComponentWithLinkUsage
 import org.gradle.language.nativeplatform.internal.ConfigurableComponentWithRuntimeUsage
 import org.gradle.nativeplatform.test.TestComponent
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativePlatform
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -108,10 +109,11 @@ interface KotlinNativeLibrary : KotlinNativeBinary,
  * Represents an Objective C framework compiled from Kotlin/Native sources.
  */
 interface KotlinNativeFramework : KotlinNativeBinary {
-    /**
-     * Klibs exported in the framework.
-     */
+    /** Klibs exported in the framework. */
     val export: FileCollection
+
+    /** Mode of bitcode embedding: disabled, enabled or marker. */
+    var embedBitcode: BitcodeEmbeddingMode
 }
 
 /**
