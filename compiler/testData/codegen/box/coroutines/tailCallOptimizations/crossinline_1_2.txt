@@ -36,7 +36,7 @@ public final class CrossinlineKt$box$1$doResume$$inlined$filter$1$2$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$doResume$$inlined$filter$1$2 {
-    synthetic final field receiver$0$inlined: Sink
+    synthetic final field $this_source$inlined: Sink
     synthetic final field this$0: CrossinlineKt$box$1$doResume$$inlined$filter$1
     inner class CrossinlineKt$box$1$doResume$$inlined$filter$1$2
     inner class CrossinlineKt$box$1$doResume$$inlined$filter$1$2$1
@@ -47,7 +47,7 @@ public final class CrossinlineKt$box$1$doResume$$inlined$filter$1$2 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$doResume$$inlined$filter$1 {
-    synthetic final field receiver$0$inlined: SourceCrossinline
+    synthetic final field $this_filter$inlined: SourceCrossinline
     inner class CrossinlineKt$box$1$doResume$$inlined$filter$1
     inner class CrossinlineKt$box$1$doResume$$inlined$filter$1$1
     public method <init>(p0: SourceCrossinline): void
@@ -102,7 +102,7 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1 {
-    synthetic final field receiver$0$inlined: Sink
+    synthetic final field $this_source$inlined: Sink
     synthetic final field this$0: CrossinlineKt$box$1$filter$$inlined$source$1
     inner class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1
     inner class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1$1
@@ -114,7 +114,7 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1 {
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$filter$$inlined$source$1 {
     synthetic final field $predicate$inlined: kotlin.jvm.functions.Function1
-    synthetic final field receiver$0$inlined: SourceCrossinline
+    synthetic final field $this_filter$inlined: SourceCrossinline
     inner class CrossinlineKt$box$1$filter$$inlined$source$1
     inner class CrossinlineKt$box$1$filter$$inlined$source$1$1
     public method <init>(p0: SourceCrossinline, p1: kotlin.jvm.functions.Function1): void
@@ -221,7 +221,7 @@ public final class CrossinlineKt$filter$$inlined$source$1$lambda$1$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$filter$$inlined$source$1$lambda$1 {
-    synthetic final field receiver$0$inlined: Sink
+    synthetic final field $this_source$inlined: Sink
     synthetic final field this$0: CrossinlineKt$filter$$inlined$source$1
     inner class CrossinlineKt$filter$$inlined$source$1$lambda$1
     inner class CrossinlineKt$filter$$inlined$source$1$lambda$1$1
@@ -233,7 +233,7 @@ public final class CrossinlineKt$filter$$inlined$source$1$lambda$1 {
 @kotlin.Metadata
 public final class CrossinlineKt$filter$$inlined$source$1 {
     synthetic final field $predicate$inlined: kotlin.jvm.functions.Function1
-    synthetic final field receiver$0$inlined: SourceCrossinline
+    synthetic final field $this_filter$inlined: SourceCrossinline
     inner class CrossinlineKt$filter$$inlined$source$1
     inner class CrossinlineKt$filter$$inlined$source$1$1
     public method <init>(p0: SourceCrossinline, p1: kotlin.jvm.functions.Function1): void
