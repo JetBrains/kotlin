@@ -1,4 +1,6 @@
 // COMMON_COROUTINES_TEST
+// WITH_RUNTIME
+
 suspend fun catchException(): String {
     try {
         return suspendWithException()

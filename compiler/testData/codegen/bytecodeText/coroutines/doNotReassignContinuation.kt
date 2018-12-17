@@ -1,6 +1,5 @@
-// LANGUAGE_VERSION: 1.3
-// WITH_RUNTIME
 // TREAT_AS_ONE_FILE
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->

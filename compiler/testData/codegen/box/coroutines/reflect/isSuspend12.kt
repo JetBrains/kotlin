@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.2
+// !LANGUAGE: -ReleaseCoroutines
 // WITH_COROUTINES
 // WITH_REFLECT
 

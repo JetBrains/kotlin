@@ -1,6 +1,5 @@
-// WITH_RUNTIME
-// LANGUAGE_VERSION: 1.3
 // WITH_COROUTINES
+
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

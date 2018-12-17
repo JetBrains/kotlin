@@ -1,6 +1,6 @@
-// LANGUAGE_VERSION: 1.2
-// WITH_RUNTIME
+// !LANGUAGE: -ReleaseCoroutines
 // WITH_COROUTINES
+
 import helpers.*
 // TREAT_AS_ONE_FILE
 import kotlin.coroutines.experimental.*

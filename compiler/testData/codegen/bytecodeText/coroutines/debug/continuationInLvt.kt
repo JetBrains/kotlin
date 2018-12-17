@@ -1,5 +1,3 @@
-// LANGUAGE_VERSION: 1.3
-
 suspend fun dummy() {}
 
 suspend fun tailCall() {

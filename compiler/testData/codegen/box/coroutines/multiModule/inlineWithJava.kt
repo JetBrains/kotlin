@@ -1,6 +1,6 @@
-// LANGUAGE_VERSION: 1.3
 // IGNORE_BACKEND: NATIVE, JS, JS_IR, JVM_IR
 // WITH_COROUTINES
+// WITH_RUNTIME
 // MODULE: lib
 // FILE: lib.kt
 interface I {}

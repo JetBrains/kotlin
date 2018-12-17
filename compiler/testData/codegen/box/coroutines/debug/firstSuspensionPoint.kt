@@ -1,5 +1,3 @@
-// !LANGUAGE: +ReleaseCoroutines
-
 // IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
@@ -49,14 +47,14 @@ fun box(): String {
     builder {
         foo()
     }
-    if (!"$continuation".contains("21")) return "$continuation"
+    if (!"$continuation".contains("19")) return "$continuation"
     continuation!!.resumeWith(Result.success(Unit))
-    if (!"$continuation".contains("22")) return "$continuation"
+    if (!"$continuation".contains("20")) return "$continuation"
     builder {
         lambda()
     }
-    if (!"$continuation".contains("33")) return "$continuation"
+    if (!"$continuation".contains("31")) return "$continuation"
     continuation!!.resumeWith(Result.success(Unit))
-    if (!"$continuation".contains("34")) return "$continuation"
+    if (!"$continuation".contains("32")) return "$continuation"
     return "OK"
 }

@@ -1,10 +1,10 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM, JVM_IR
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
+
 import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
-
 
 class Controller {
     var result = ""

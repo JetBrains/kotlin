@@ -1,7 +1,6 @@
-// WITH_RUNTIME
-// LANGUAGE_VERSION: 1.2
-// IGNORE_BACKEND: JVM
+// !LANGUAGE: -ReleaseCoroutines
 // WITH_COROUTINES
+
 import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*

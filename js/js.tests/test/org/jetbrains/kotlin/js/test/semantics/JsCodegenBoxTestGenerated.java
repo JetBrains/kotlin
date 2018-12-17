@@ -6411,11 +6411,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                         runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
                     }
 
-                    @TestMetadata("getArityViaFunctionImpl.kt")
-                    public void testGetArityViaFunctionImpl() throws Exception {
-                        runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/getArityViaFunctionImpl.kt");
-                    }
-
                     @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)
@@ -7184,16 +7179,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
             public void testAllFilesPresentInReflect() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/reflect"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
-            }
-
-            @TestMetadata("callSuspend.kt")
-            public void testCallSuspend() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/reflect/callSuspend.kt");
-            }
-
-            @TestMetadata("callSuspendBy.kt")
-            public void testCallSuspendBy() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/reflect/callSuspendBy.kt");
             }
 
             @TestMetadata("isSuspend12.kt")

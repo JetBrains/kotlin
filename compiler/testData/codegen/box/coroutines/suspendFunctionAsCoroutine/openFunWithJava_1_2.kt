@@ -1,15 +1,14 @@
-// LANGUAGE_VERSION: 1.2
+// !LANGUAGE: -ReleaseCoroutines
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // FILE: main.kt
 // TARGET_BACKEND: JVM
+
 import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
-
-
 
 open class A(val v: String) {
     suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
