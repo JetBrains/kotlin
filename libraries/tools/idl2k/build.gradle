@@ -37,10 +37,6 @@ compileTestKotlin.dependsOn generateTestGrammarSource
 task downloadIDL(type: JavaExec) {
     main = "org.jetbrains.idl2k.dl.DownloadKt"
     classpath = sourceSets.main.runtimeClasspath
-
-    if (project.hasProperty("pkg")) {
-        args = ["--pkg", pkg]
-    }
 }
 
 task idl2k(type: JavaExec) {
