@@ -1,6 +1,6 @@
+// !LANGUAGE: -NoDelegationToJavaDefaultInterfaceMembers
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
-// LANGUAGE_VERSION: 1.0
 // FILE: Base.java
 
 public interface Base {

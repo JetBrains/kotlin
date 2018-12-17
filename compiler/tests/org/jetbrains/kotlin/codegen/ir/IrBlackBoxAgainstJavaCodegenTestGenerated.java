@@ -322,9 +322,9 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
             runTest("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCall.kt");
         }
 
-        @TestMetadata("explicitEqualsCall_lv12.kt")
-        public void testExplicitEqualsCall_lv12() throws Exception {
-            runTest("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCall_lv12.kt");
+        @TestMetadata("explicitEqualsCallNull.kt")
+        public void testExplicitEqualsCallNull() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCallNull.kt");
         }
 
         @TestMetadata("float.kt")

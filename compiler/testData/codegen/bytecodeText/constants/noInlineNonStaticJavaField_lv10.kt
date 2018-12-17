@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.0
+// !LANGUAGE: -InlineConstVals
 // FILE: test.kt
 fun test1(a: A) = a.X
 fun test2(a: A) = 1 + a.X

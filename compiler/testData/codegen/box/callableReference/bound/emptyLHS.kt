@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// LANGUAGE_VERSION: 1.2
 
 var result = ""
 

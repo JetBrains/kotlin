@@ -1,5 +1,3 @@
-// LANGUAGE_VERSION: 1.2
-
 fun almostAlwaysTrue() = true
 
 fun runNoInline(f: () -> Unit) = f()

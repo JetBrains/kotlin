@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: NATIVE
 // FILE: A.kt
-// LANGUAGE_VERSION: 1.2
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:JvmPackageName("bar")
@@ -12,7 +11,6 @@ fun f() = "OK"
 var v: Int = 1
 
 // FILE: B.kt
-// LANGUAGE_VERSION: 1.2
 
 import foo.*
 

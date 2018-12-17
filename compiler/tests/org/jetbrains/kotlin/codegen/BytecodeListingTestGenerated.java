@@ -108,21 +108,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/InlineOnlyPropertyMultifile.kt");
     }
 
-    @TestMetadata("invisibleCompanionObject.kt")
-    public void testInvisibleCompanionObject() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/invisibleCompanionObject.kt");
-    }
-
-    @TestMetadata("invisibleCompanionObject_lv11.kt")
-    public void testInvisibleCompanionObject_lv11() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/invisibleCompanionObject_lv11.kt");
-    }
-
-    @TestMetadata("invisibleCompanionObject_lv12.kt")
-    public void testInvisibleCompanionObject_lv12() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/invisibleCompanionObject_lv12.kt");
-    }
-
     @TestMetadata("jvmOverloadsAndParametersAnnotations.kt")
     public void testJvmOverloadsAndParametersAnnotations() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/jvmOverloadsAndParametersAnnotations.kt");

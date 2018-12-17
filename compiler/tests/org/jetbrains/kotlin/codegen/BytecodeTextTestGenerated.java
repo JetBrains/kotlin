@@ -1030,11 +1030,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/constants/noInlineNonStaticJavaField_lv10.kt");
         }
 
-        @TestMetadata("noInlineNonStaticJavaField_lv11.kt")
-        public void testNoInlineNonStaticJavaField_lv11() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/constants/noInlineNonStaticJavaField_lv11.kt");
-        }
-
         @TestMetadata("nullableByteAndShort.kt")
         public void testNullableByteAndShort() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constants/nullableByteAndShort.kt");
