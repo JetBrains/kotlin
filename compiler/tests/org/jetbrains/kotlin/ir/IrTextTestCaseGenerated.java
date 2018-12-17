@@ -1284,6 +1284,34 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/expressions/floatingPointComparisons/whenByFloatingPoint.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/ir/irText/expressions/sam")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Sam extends AbstractIrTextTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSam() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("samConstructors.kt")
+            public void testSamConstructors() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/samConstructors.kt");
+            }
+
+            @TestMetadata("samConversions.kt")
+            public void testSamConversions() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/samConversions.kt");
+            }
+
+            @TestMetadata("samConversionsWithSmartCasts.kt")
+            public void testSamConversionsWithSmartCasts() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/samConversionsWithSmartCasts.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/ir/irText/lambdas")

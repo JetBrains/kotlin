@@ -1,0 +1,63 @@
+FILE fqName:<root> fileName:/samConversions.kt
+  FUN name:test0 visibility:public modality:FINAL <> ($receiver:J, a:java.lang.Runnable) returnType:kotlin.Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:J flags:
+    VALUE_PARAMETER name:a index:0 type:java.lang.Runnable flags:
+    BLOCK_BODY
+      CALL 'runStatic(Runnable!): Unit' type=kotlin.Unit origin=null
+        r: GET_VAR 'value-parameter a: Runnable' type=java.lang.Runnable origin=null
+      CALL 'runIt(Runnable!): Unit' type=kotlin.Unit origin=null
+        $this: GET_VAR 'this@test0: J' type=J origin=null
+        r: GET_VAR 'value-parameter a: Runnable' type=java.lang.Runnable origin=null
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    BLOCK_BODY
+      CALL 'runStatic(Runnable!): Unit' type=kotlin.Unit origin=null
+        r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                  CALL 'test1(): Unit' type=kotlin.Unit origin=null
+            FUNCTION_REFERENCE '<anonymous>(): Unit' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+  FUN name:test2 visibility:public modality:FINAL <> ($receiver:J) returnType:kotlin.Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:J flags:
+    BLOCK_BODY
+      CALL 'runIt(Runnable!): Unit' type=kotlin.Unit origin=null
+        $this: GET_VAR 'this@test2: J' type=J origin=null
+        r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                  CALL 'test1(): Unit' type=kotlin.Unit origin=null
+            FUNCTION_REFERENCE '<anonymous>(): Unit' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+  FUN name:test3 visibility:public modality:FINAL <> ($receiver:J, a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:J flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> flags:
+    BLOCK_BODY
+      CALL 'run2(Runnable!, Runnable!): Unit' type=kotlin.Unit origin=null
+        $this: GET_VAR 'this@test3: J' type=J origin=null
+        r1: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          GET_VAR 'value-parameter a: () -> Unit' type=kotlin.Function0<kotlin.Unit> origin=null
+        r2: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          GET_VAR 'value-parameter a: () -> Unit' type=kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:test4 visibility:public modality:FINAL <> ($receiver:J, a:kotlin.Function0<kotlin.Unit>, b:kotlin.Function0<kotlin.Unit>, flag:kotlin.Boolean) returnType:kotlin.Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:J flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> flags:
+    VALUE_PARAMETER name:b index:1 type:kotlin.Function0<kotlin.Unit> flags:
+    VALUE_PARAMETER name:flag index:2 type:kotlin.Boolean flags:
+    BLOCK_BODY
+      CALL 'runIt(Runnable!): Unit' type=kotlin.Unit origin=null
+        $this: GET_VAR 'this@test4: J' type=J origin=null
+        r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          WHEN type=kotlin.Function0<kotlin.Unit> origin=null
+            BRANCH
+              if: GET_VAR 'value-parameter flag: Boolean' type=kotlin.Boolean origin=null
+              then: GET_VAR 'value-parameter a: () -> Unit' type=kotlin.Function0<kotlin.Unit> origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: GET_VAR 'value-parameter b: () -> Unit' type=kotlin.Function0<kotlin.Unit> origin=null

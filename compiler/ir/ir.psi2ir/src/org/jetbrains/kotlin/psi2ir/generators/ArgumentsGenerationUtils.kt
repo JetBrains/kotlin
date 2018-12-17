@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -24,7 +25,11 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
+import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -37,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpressio
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -158,13 +164,15 @@ fun StatementGenerator.generateCallReceiver(
 ): CallReceiver {
     val dispatchReceiverValue: IntermediateValue?
     val extensionReceiverValue: IntermediateValue?
+    val startOffset = ktDefaultElement.startOffsetSkippingComments
+    val endOffset = ktDefaultElement.endOffset
     when (calleeDescriptor) {
         is ImportedFromObjectCallableDescriptor<*> -> {
             assert(dispatchReceiver == null) {
                 "Call for member imported from object $calleeDescriptor has non-null dispatch receiver $dispatchReceiver"
             }
             dispatchReceiverValue =
-                    generateReceiverForCalleeImportedFromObject(ktDefaultElement.startOffsetSkippingComments, ktDefaultElement.endOffset, calleeDescriptor)
+                    generateReceiverForCalleeImportedFromObject(startOffset, endOffset, calleeDescriptor)
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
         }
         is TypeAliasConstructorDescriptor -> {
@@ -186,7 +194,7 @@ fun StatementGenerator.generateCallReceiver(
             SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue)
         extensionReceiverValue != null || dispatchReceiverValue != null ->
             SafeCallReceiver(
-                this, ktDefaultElement.startOffsetSkippingComments, ktDefaultElement.endOffset,
+                this, startOffset, endOffset,
                 extensionReceiverValue, dispatchReceiverValue, isAssignmentReceiver
             )
         else ->
@@ -250,7 +258,7 @@ fun StatementGenerator.generateVarargExpressionUsing(
     return irVararg
 }
 
-private fun StatementGenerator.generateValueArgument(
+fun StatementGenerator.generateValueArgument(
     valueArgument: ResolvedValueArgument,
     valueParameter: ValueParameterDescriptor
 ) = generateValueArgumentUsing(valueArgument, valueParameter) { generateExpression(it) }
@@ -369,6 +377,51 @@ private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, reso
     pregenerateValueArgumentsUsing(call, resolvedCall) {
         generateExpression(it)
     }
+
+    generateSamConversionForValueArgumentsIfRequired(call, resolvedCall.resultingDescriptor)
+}
+
+private fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: CallBuilder, originalDescriptor: CallableDescriptor) {
+    val underlyingDescriptor = when (originalDescriptor) {
+        is SamAdapterDescriptor<*> -> originalDescriptor.baseDescriptorForSynthetic
+        is SamAdapterExtensionFunctionDescriptor -> originalDescriptor.baseDescriptorForSynthetic
+        else -> return
+    }
+
+    val originalValueParameters = originalDescriptor.valueParameters
+    val underlyingValueParameters = underlyingDescriptor.valueParameters
+
+    assert(originalValueParameters.size == underlyingValueParameters.size) {
+        "Mismatching value parameters, $originalDescriptor vs $underlyingDescriptor: " +
+                "${originalValueParameters.size} != ${underlyingValueParameters.size}"
+    }
+    assert(originalValueParameters.size == call.argumentsCount) {
+        "Mismatching value parameters, $originalDescriptor vs call: " +
+                "${originalValueParameters.size} != ${call.argumentsCount}"
+    }
+
+    for (i in underlyingValueParameters.indices) {
+        val originalParameterType = originalValueParameters[i].type
+        val underlyingParameterType = underlyingValueParameters[i].type
+
+        if (!SingleAbstractMethodUtils.isSamType(underlyingParameterType)) continue
+        if (!originalParameterType.isFunctionTypeOrSubtype) continue
+
+        val originalArgument = call.irValueArgumentsByIndex[i] ?: continue
+
+        val targetType = underlyingParameterType.toIrType()
+        val targetClassifier = targetType.classifierOrFail
+
+        call.irValueArgumentsByIndex[i] =
+                IrTypeOperatorCallImpl(
+                    originalArgument.startOffset, originalArgument.endOffset,
+                    targetType,
+                    IrTypeOperator.SAM_CONVERSION,
+                    targetType,
+                    targetClassifier,
+                    originalArgument
+                )
+    }
 }
 
 fun StatementGenerator.pregenerateValueArgumentsUsing(
@@ -398,15 +451,20 @@ fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): 
     return call
 }
 
+private fun unwrapSpecialDescriptor(originalDescriptor: CallableDescriptor): CallableDescriptor =
+    when (originalDescriptor) {
+        is ImportedFromObjectCallableDescriptor<*> -> unwrapSpecialDescriptor(originalDescriptor.callableFromObject)
+        is TypeAliasConstructorDescriptor -> originalDescriptor.underlyingConstructorDescriptor
+        is SamAdapterDescriptor<*> -> unwrapSpecialDescriptor(originalDescriptor.baseDescriptorForSynthetic)
+        is SamAdapterExtensionFunctionDescriptor -> unwrapSpecialDescriptor(originalDescriptor.baseDescriptorForSynthetic)
+        else -> originalDescriptor
+    }
+
 fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): CallBuilder {
     val originalDescriptor = resolvedCall.resultingDescriptor
     val candidateDescriptor = resolvedCall.candidateDescriptor
 
-    val unwrappedDescriptor = when (originalDescriptor) {
-        is ImportedFromObjectCallableDescriptor<*> -> originalDescriptor.callableFromObject
-        is TypeAliasConstructorDescriptor -> originalDescriptor.underlyingConstructorDescriptor
-        else -> originalDescriptor
-    }
+    val unwrappedDescriptor = unwrapSpecialDescriptor(originalDescriptor)
 
     val originalTypeArguments = resolvedCall.typeArguments
     val unsubstitutedUnwrappedDescriptor = unwrappedDescriptor.original

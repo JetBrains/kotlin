@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
@@ -166,7 +166,8 @@ class CheckIrElementVisitor(
             IrTypeOperator.IMPLICIT_CAST,
             IrTypeOperator.IMPLICIT_NOTNULL,
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> typeOperand.toKotlinType()
+            IrTypeOperator.IMPLICIT_INTEGER_COERCION,
+            IrTypeOperator.SAM_CONVERSION -> typeOperand.toKotlinType()
 
             IrTypeOperator.SAFE_CAST -> typeOperand.makeNullable().toKotlinType()
 

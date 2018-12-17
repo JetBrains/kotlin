@@ -27,7 +27,8 @@ enum class IrTypeOperator {
     IMPLICIT_INTEGER_COERCION,
     SAFE_CAST,
     INSTANCEOF,
-    NOT_INSTANCEOF;
+    NOT_INSTANCEOF,
+    SAM_CONVERSION;
 }
 
 interface IrTypeOperatorCall : IrExpression {

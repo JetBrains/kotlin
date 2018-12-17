@@ -2,8 +2,9 @@ FILE fqName:<root> fileName:/samAdapter.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       VAR name:hello type:java.lang.Runnable flags:val
-        CALL 'Runnable(() -> Unit): Runnable' type=java.lang.Runnable origin=null
-          function: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+        TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='<anonymous>(): Unit'

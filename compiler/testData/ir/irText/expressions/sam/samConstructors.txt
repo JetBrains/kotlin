@@ -1,0 +1,27 @@
+FILE fqName:<root> fileName:/samConstructors.kt
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:java.lang.Runnable flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1(): Runnable'
+        TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                  GET_OBJECT 'Unit' type=kotlin.Unit
+            FUNCTION_REFERENCE '<anonymous>(): Unit' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:java.lang.Runnable flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2(() -> Unit): Runnable'
+        TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          GET_VAR 'value-parameter a: () -> Unit' type=kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    BLOCK_BODY
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:java.lang.Runnable flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test3(): Runnable'
+        TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null

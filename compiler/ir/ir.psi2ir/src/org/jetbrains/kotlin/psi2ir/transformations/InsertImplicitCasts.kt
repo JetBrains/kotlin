@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.types.KotlinType
@@ -166,6 +169,26 @@ open class InsertImplicitCasts(
 
             finallyExpression = finallyExpression?.coerceToUnit()
         }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression =
+        if (expression.operator == IrTypeOperator.SAM_CONVERSION)
+            expression.coerceArgumentToFunctionalType()
+        else
+            super.visitTypeOperator(expression)
+
+    private fun IrTypeOperatorCall.coerceArgumentToFunctionalType(): IrExpression {
+        val targetClassDescriptor = typeOperandClassifier.descriptor as? JavaClassDescriptor
+            ?: throw AssertionError("Target type of $operator should be a Java class: ${render()}")
+
+        val singleAbstractMethod = SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(targetClassDescriptor)
+            ?: throw AssertionError("$targetClassDescriptor should have a single abstract method")
+
+        val functionalType = SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(singleAbstractMethod, false)
+
+        argument = argument.cast(functionalType)
+
+        return this
+    }
 
     override fun visitVararg(expression: IrVararg): IrExpression =
         expression.transformPostfix {

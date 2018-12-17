@@ -832,7 +832,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                 IrTypeOperator.IMPLICIT_CAST,
                 IrTypeOperator.IMPLICIT_NOTNULL,
                 IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-                IrTypeOperator.IMPLICIT_INTEGER_COERCION    -> type
+                IrTypeOperator.IMPLICIT_INTEGER_COERCION,
+                IrTypeOperator.SAM_CONVERSION               -> type
                 IrTypeOperator.SAFE_CAST                    -> type.makeNullable()
                 IrTypeOperator.INSTANCEOF,
                 IrTypeOperator.NOT_INSTANCEOF               -> context.irBuiltIns.booleanType
