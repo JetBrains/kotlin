@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -79,7 +78,7 @@ private class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: Java
         val containingFile = element.containingFile?.takeIf { it.isValid } as? KtFile ?: return false
 
         val platform = containingFile.platform
-        if (platform !is JvmPlatform && platform !is CommonPlatform) {
+        if (platform !is JvmPlatform && platform !is TargetPlatform.Common) {
             return false
         }
 
