@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
-val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflection"))
+val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
 
 fun IrType.isFunction(): Boolean {
     val classifier = classifierOrNull ?: return false
