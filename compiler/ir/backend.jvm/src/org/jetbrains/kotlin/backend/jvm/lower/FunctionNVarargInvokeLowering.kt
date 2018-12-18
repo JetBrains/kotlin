@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDesc
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -52,7 +52,7 @@ class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLower
         val descriptor = WrappedSimpleFunctionDescriptor()
         return IrFunctionImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            origin = CallableReferenceLowering.DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+            origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
             symbol = IrSimpleFunctionSymbolImpl(descriptor),
             name = Name.identifier("invoke"),
             visibility = Visibilities.PUBLIC,
@@ -68,7 +68,7 @@ class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLower
             val varargParameterDescriptor = WrappedValueParameterDescriptor()
             val varargParam = IrValueParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                origin = CallableReferenceLowering.DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
                 symbol = IrValueParameterSymbolImpl(varargParameterDescriptor),
                 name = Name.identifier("args"),
                 index = 0,
