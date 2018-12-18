@@ -312,7 +312,8 @@ class JKThisExpressionImpl(qualifierLabel: JKLabel) : JKThisExpression, JKBranch
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitThisExpression(this, data)
 }
 
-class JKSuperExpressionImpl : JKSuperExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
+class JKSuperExpressionImpl(qualifierLabel: JKLabel = JKLabelEmptyImpl()) : JKSuperExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var qualifierLabel: JKLabel by child(qualifierLabel)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSuperExpression(this, data)
 }
 

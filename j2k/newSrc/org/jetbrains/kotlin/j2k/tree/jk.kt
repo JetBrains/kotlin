@@ -304,7 +304,9 @@ interface JKThisExpression : JKExpression {
     var qualifierLabel: JKLabel
 }
 
-interface JKSuperExpression : JKExpression
+interface JKSuperExpression : JKExpression {
+    var qualifierLabel: JKLabel
+}
 
 interface JKWhileStatement : JKLoopStatement {
     var condition: JKExpression

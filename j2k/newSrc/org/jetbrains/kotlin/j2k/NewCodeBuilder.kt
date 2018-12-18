@@ -428,6 +428,7 @@ class NewCodeBuilder {
 
         override fun visitSuperExpression(superExpression: JKSuperExpression) {
             printer.printWithNoIndent("super")
+            superExpression.qualifierLabel.accept(this)
         }
 
         override fun visitContinueStatement(continueStatement: JKContinueStatement) {

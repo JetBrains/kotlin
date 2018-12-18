@@ -69,9 +69,13 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiAssignmentExpression -> toJK()
                 is PsiInstanceOfExpression -> toJK()
                 is PsiThisExpression ->
-                    JKThisExpressionImpl(qualifier?.referenceName?.let { JKLabelTextImpl(JKNameIdentifierImpl(it)) }
-                                             ?: JKLabelEmptyImpl())
-                is PsiSuperExpression -> JKSuperExpressionImpl()
+                    JKThisExpressionImpl(
+                        qualifier?.referenceName?.let { JKLabelTextImpl(JKNameIdentifierImpl(it)) } ?: JKLabelEmptyImpl()
+                    )
+                is PsiSuperExpression ->
+                    JKSuperExpressionImpl(
+                        qualifier?.referenceName?.let { JKLabelTextImpl(JKNameIdentifierImpl(it)) } ?: JKLabelEmptyImpl()
+                    )
                 is PsiConditionalExpression -> JKIfElseExpressionImpl(
                     condition.toJK(), thenExpression.toJK(), elseExpression.toJK()
                 )
