@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.conversions.RecursiveApplicableConversionBase
 import org.jetbrains.kotlin.j2k.conversions.multiResolveFqName
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
@@ -220,3 +221,41 @@ fun throwAnnotation(throws: List<JKType>, symbolProvider: JKSymbolProvider) =
             }
         )
     )
+
+fun JKVariable.findUsages(scope: JKTreeElement, context: ConversionContext): List<JKFieldAccessExpression> {
+    val symbol = context.symbolProvider.provideUniverseSymbol(this)
+    val usages = mutableListOf<JKFieldAccessExpression>()
+    val searcher = object : RecursiveApplicableConversionBase() {
+        override fun applyToElement(element: JKTreeElement): JKTreeElement {
+            if (element is JKExpression) {
+                element.unboxFieldReference()?.also {
+                    if (it.identifier == symbol) {
+                        usages += it
+                    }
+                }
+            }
+            return recurse(element)
+        }
+    }
+    searcher.runConversion(scope, context)
+    return usages
+}
+
+fun JKExpression.unboxFieldReference(): JKFieldAccessExpression? = when {
+    this is JKFieldAccessExpression -> this
+    this is JKQualifiedExpression && receiver is JKThisExpression -> selector as? JKFieldAccessExpression
+    else -> null
+}
+
+fun JKFieldAccessExpression.asAssignmentFromTarget(): JKKtAssignmentStatement? =
+    (parent as? JKKtAssignmentStatement)
+        ?.takeIf { it.field == this }
+
+fun JKFieldAccessExpression.isInDecrementOrIncrement(): Boolean =
+    (parent as? JKUnaryExpression)?.operator?.token?.text in listOf("++", "--")
+
+fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: ConversionContext): Boolean =
+    findUsages(scope, context).any {
+        it.asAssignmentFromTarget() != null
+                || it.isInDecrementOrIncrement()
+    }
