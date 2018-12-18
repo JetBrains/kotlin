@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
 import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
 import org.jetbrains.kotlin.descriptors.*
@@ -52,8 +53,6 @@ class CrIrType(val type: Type) : IrType {
 
 //Originally was copied from K/Native
 class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPass {
-
-    object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
     private var functionReferenceCount = 0
 
@@ -218,7 +217,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val functionReferenceClassDescriptor = WrappedClassDescriptor()
             functionReferenceClass = IrClassImpl(
                 startOffset, endOffset,
-                DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
                 IrClassSymbolImpl(functionReferenceClassDescriptor),
                 name = "${callee.name}\$${functionReferenceCount++}".synthesizedName,
                 kind = ClassKind.CLASS,
@@ -274,7 +273,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val descriptor = WrappedClassConstructorDescriptor()
             return IrConstructorImpl(
                 irFunctionReference.startOffset, irFunctionReference.endOffset,
-                DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
                 IrConstructorSymbolImpl(descriptor),
                 name = Name.special("<init>"),
                 visibility = Visibilities.PUBLIC,
@@ -341,7 +340,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val descriptor = WrappedSimpleFunctionDescriptor()
             return IrFunctionImpl(
                 irFunctionReference.startOffset, irFunctionReference.endOffset,
-                DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
                 IrSimpleFunctionSymbolImpl(descriptor),
                 Name.identifier("invoke"),
                 Visibilities.PUBLIC,
@@ -450,7 +449,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val field = IrFieldImpl(
                 irFunctionReference.startOffset,
                 irFunctionReference.endOffset,
-                DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
                 IrFieldSymbolImpl(descriptor),
                 name,
                 type,
@@ -470,7 +469,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val descriptor = WrappedSimpleFunctionDescriptor()
             return IrFunctionImpl(
                 irFunctionReference.startOffset, irFunctionReference.endOffset,
-                DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
                 IrSimpleFunctionSymbolImpl(descriptor),
                 Name.identifier("getSignature"),
                 superFunction.visibility,
@@ -506,7 +505,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val descriptor = WrappedSimpleFunctionDescriptor()
             return IrFunctionImpl(
                 irFunctionReference.startOffset, irFunctionReference.endOffset,
-                DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
                 IrSimpleFunctionSymbolImpl(descriptor),
                 Name.identifier("getName"),
                 superGetter.visibility,
@@ -536,7 +535,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val descriptor = WrappedSimpleFunctionDescriptor()
             return IrFunctionImpl(
                 functionReferenceClass.startOffset, functionReferenceClass.endOffset,
-                DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
                 IrSimpleFunctionSymbolImpl(descriptor),
                 Name.identifier("getOwner"),
                 superFunction.visibility,
