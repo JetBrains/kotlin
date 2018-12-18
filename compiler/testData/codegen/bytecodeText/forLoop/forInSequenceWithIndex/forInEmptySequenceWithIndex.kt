@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 val xs = listOf<Any>().asSequence()
 
 fun box(): String {

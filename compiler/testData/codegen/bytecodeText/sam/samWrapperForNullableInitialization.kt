@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 // FILE: JFoo.java
 
 import org.jetbrains.annotations.Nullable;

@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 import kotlin.test.*
 
 fun intRange() = 1 .. 4

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun test() {
     var s = ""
     for (c in "testString") {

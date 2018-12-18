@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun uint(vararg us: UInt): UIntArray = us
 
 // FILE: NoBoxing.kt

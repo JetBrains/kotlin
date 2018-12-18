@@ -60,8 +60,8 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTes
     val skipMetadataVersionCheck = AnalysisFlags.skipMetadataVersionCheck to directiveMap.containsKey(SKIP_METADATA_VERSION_CHECK)
     val allowResultReturnType = AnalysisFlags.allowResultReturnType to directiveMap.containsKey(ALLOW_RESULT_RETURN_TYPE)
 
-    if (apiVersionString == null && languageFeaturesString == null && experimental == null &&
-        useExperimental == null && !ignoreDataFlowInAssert.second && !allowResultReturnType.second
+    if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null &&
+        !ignoreDataFlowInAssert.second && enableJvmDefault == null && !skipMetadataVersionCheck.second && !allowResultReturnType.second
     ) {
         return null
     }

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 val xs = "abcd"
 
 fun useAny(x: Any) {}

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun test() {
     var x = 0
     run {

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun Collection<Int>.sumIndices(): Int {
     var sum = 0
     for (i in indices) {

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun inInt(x: Long): Boolean {
     return x in 1..2
 }
