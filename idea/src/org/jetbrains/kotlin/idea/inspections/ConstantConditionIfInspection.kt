@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -116,10 +119,45 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
 private fun KtIfExpression.branch(thenBranch: Boolean) = if (thenBranch) then else `else`
 
 private fun KtExpression.constantBooleanValue(context: BindingContext): Boolean? {
+    val enumEntriesComparison = enumEntriesComparison()
+    if (enumEntriesComparison != null) {
+        return enumEntriesComparison
+    }
     val type = getType(context) ?: return null
-
     val constantValue = ConstantExpressionEvaluator.getConstant(this, context)?.toConstantValue(type)
     return constantValue?.value as? Boolean
+}
+
+private fun KtExpression.enumEntriesComparison(): Boolean? {
+    if (this !is KtBinaryExpression) return null
+    val left = this.left as? KtDotQualifiedExpression ?: return null
+    val right = this.right as? KtDotQualifiedExpression ?: return null
+
+    val leftEnum = left.enumClass() ?: return null
+    val rightEnum = right.enumClass() ?: return null
+    if (leftEnum != rightEnum) return null
+
+    val enumEntries = leftEnum.body?.getChildrenOfType<KtEnumEntry>() ?: return null
+    val leftIndex = left.enumEntryIndex(enumEntries) ?: return null
+    val rightIndex = right.enumEntryIndex(enumEntries) ?: return null
+    return when (this.operationToken) {
+        KtTokens.EQEQ -> leftIndex == rightIndex
+        KtTokens.GT -> leftIndex > rightIndex
+        KtTokens.GTEQ -> leftIndex >= rightIndex
+        KtTokens.LT -> leftIndex < rightIndex
+        KtTokens.LTEQ -> leftIndex <= rightIndex
+        KtTokens.EXCLEQ -> leftIndex != rightIndex
+        else -> null
+    }
+}
+
+private fun KtDotQualifiedExpression.enumClass(): KtClass? {
+    return (receiverExpression.mainReference?.resolve() as? KtClass)?.takeIf { it.isEnum() }
+}
+
+private fun KtDotQualifiedExpression.enumEntryIndex(entries: Array<KtEnumEntry>): Int? {
+    val entry = selectorExpression?.mainReference?.resolve() as? KtEnumEntry ?: return null
+    return entries.indexOf(entry).takeIf { it != -1 }
 }
 
 fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boolean, keepBraces: Boolean = false) {
