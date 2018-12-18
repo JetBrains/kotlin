@@ -383,6 +383,7 @@ interface JKTypeParameterListOwner : JKTreeElement {
 
 interface JKEnumConstant : JKVariable {
     val arguments: JKExpressionList
+    val body: JKClassBody
 }
 
 interface JKForInStatement : JKStatement {

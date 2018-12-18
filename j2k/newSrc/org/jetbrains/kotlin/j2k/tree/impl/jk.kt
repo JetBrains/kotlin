@@ -460,10 +460,12 @@ class JKTypeParameterTypeImpl(
 class JKEnumConstantImpl(
     name: JKNameIdentifier,
     arguments: JKExpressionList,
+    body: JKClassBody,
     type: JKTypeElement
 ) : JKEnumConstant, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var name: JKNameIdentifier by child(name)
     override val arguments: JKExpressionList by child(arguments)
+    override val body: JKClassBody by child(body)
     override var type: JKTypeElement by child(type)
     override var initializer: JKExpression by child(JKStubExpressionImpl())
 

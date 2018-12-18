@@ -253,6 +253,9 @@ class NewCodeBuilder {
                     enumConstant.arguments.accept(this)
                 }
             }
+            if (enumConstant.body !is JKEmptyClassBody) {
+                enumConstant.body.accept(this)
+            }
         }
 
         override fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration) {

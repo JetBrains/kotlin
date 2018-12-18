@@ -321,6 +321,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             JKEnumConstantImpl(
                 JKNameIdentifierImpl(name),
                 with(expressionTreeMapper) { argumentList.toJK() },
+                initializingClass?.createClassBody() ?: JKEmptyClassBodyImpl(),
                 JKTypeElementImpl(JKClassTypeImpl(symbolProvider.provideDirectSymbol(containingClass!!) as JKClassSymbol, emptyList()))
             )
 
