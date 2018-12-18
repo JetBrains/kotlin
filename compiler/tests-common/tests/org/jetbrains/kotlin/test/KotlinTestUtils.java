@@ -842,16 +842,11 @@ public class KotlinTestUtils {
     public static Map<String, String> parseDirectives(String expectedText) {
         Map<String, String> directives = new HashMap<>();
         Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
-        int start = 0;
         while (directiveMatcher.find()) {
-            if (directiveMatcher.start() != start) {
-                Assert.fail("Directives should only occur at the beginning of a file: " + directiveMatcher.group());
-            }
             String name = directiveMatcher.group(1);
             String value = directiveMatcher.group(3);
             String oldValue = directives.put(name, value);
             Assert.assertNull("Directive overwritten: " + name + " old value: " + oldValue + " new value: " + value, oldValue);
-            start = directiveMatcher.end() + 1;
         }
         return directives;
     }

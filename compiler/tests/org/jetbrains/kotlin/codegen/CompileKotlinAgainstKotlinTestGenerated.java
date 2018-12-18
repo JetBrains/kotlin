@@ -320,11 +320,6 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
             runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/builder.kt");
         }
 
-        @TestMetadata("lambda.kt")
-        public void testLambda() throws Exception {
-            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/lambda.kt");
-        }
-
         @TestMetadata("receiver.kt")
         public void testReceiver() throws Exception {
             runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/receiver.kt");
