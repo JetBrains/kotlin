@@ -8577,6 +8577,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/declarations/split"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("anonymousFunction.kt")
+            public void testAnonymousFunction() throws Exception {
+                runTest("idea/testData/intentions/declarations/split/anonymousFunction.kt");
+            }
+
             @TestMetadata("longInit.kt")
             public void testLongInit() throws Exception {
                 runTest("idea/testData/intentions/declarations/split/longInit.kt");
