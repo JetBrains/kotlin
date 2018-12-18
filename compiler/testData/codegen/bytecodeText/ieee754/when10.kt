@@ -1,4 +1,5 @@
-// LANGUAGE_VERSION: 1.0
+// !API_VERSION: 1.0
+
 fun box(): String {
     val plusZero: Any = 0.0
     val minusZero: Any = -0.0
