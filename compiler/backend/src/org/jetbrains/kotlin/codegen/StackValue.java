@@ -885,6 +885,7 @@ public abstract class StackValue {
         // 2) call using callable reference: in this case it is not local, but rather captured value
         // 3) recursive call: we are in the middle of defining it, but, thankfully, we can simply call `this.invoke` to
         // create new coroutine
+        // 4) Normal call, but the value is captured
 
         // First, check whether this is a normal call
         int index = codegen.lookupLocalIndex(callee);
@@ -898,24 +899,27 @@ public abstract class StackValue {
         Type calleeType = CodegenBinding.asmTypeForAnonymousClass(bindingContext, callee);
         if (codegen.context.hasThisDescriptor()) {
             ClassDescriptor thisDescriptor = codegen.context.getThisDescriptor();
+            ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_CALLABLE, callee);
             if (thisDescriptor instanceof SyntheticClassDescriptorForLambda &&
                 ((SyntheticClassDescriptorForLambda) thisDescriptor).isCallableReference()) {
                 // Call is inside a callable reference
                 // if it is call to recursive local, just return this$0
                 Boolean isRecursive = bindingContext.get(RECURSIVE_SUSPEND_CALLABLE_REFERENCE, thisDescriptor);
                 if (isRecursive != null && isRecursive) {
-                    ClassDescriptor classDescriptor =
-                            bindingContext.get(CLASS_FOR_CALLABLE, callee);
                     assert classDescriptor != null : "No CLASS_FOR_CALLABLE" + callee;
                     return thisOrOuter(codegen, classDescriptor, false, false);
                 }
                 // Otherwise, just call constructor of the closure
                 return codegen.findCapturedValue(callee);
             }
+            if (classDescriptor == thisDescriptor) {
+                // Recursive suspend local function, just call invoke on this, it will create new coroutine automatically
+                codegen.v.visitVarInsn(ALOAD, 0);
+                return onStack(calleeType);
+            }
         }
-        // Recursive suspend local function, just call invoke on this, it will create new coroutine automatically
-        codegen.v.visitVarInsn(ALOAD, 0);
-        return onStack(calleeType);
+        // Otherwise, this is captured value
+        return codegen.findCapturedValue(callee);
     }
 
     private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {
