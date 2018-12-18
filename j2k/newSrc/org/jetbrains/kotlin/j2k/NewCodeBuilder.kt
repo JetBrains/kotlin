@@ -615,8 +615,18 @@ class NewCodeBuilder {
         override fun visitClassBody(classBody: JKClassBody) {
             val declarationsToPrint = classBody.declarations.filterNot { it is JKKtPrimaryConstructor }
             printer.block(multiline = true) {
-                renderEnumConstants(declarationsToPrint.filterIsInstance())
-                renderNonEnumClassDeclarations(declarationsToPrint.filterNot { it is JKEnumConstant })
+                val enumConstants = declarationsToPrint.filterIsInstance<JKEnumConstant>()
+                val otherDeclarations = declarationsToPrint.filterNot { it is JKEnumConstant }
+                renderEnumConstants(enumConstants)
+                if ((classBody.parent as? JKClass)?.classKind == JKClass.ClassKind.ENUM
+                    && otherDeclarations.isNotEmpty()
+                ) {
+                    printer.printlnWithNoIndent(";")
+                }
+                if (enumConstants.isNotEmpty() && otherDeclarations.isNotEmpty()) {
+                    printer.println()
+                }
+                renderNonEnumClassDeclarations(otherDeclarations)
             }
         }
 
