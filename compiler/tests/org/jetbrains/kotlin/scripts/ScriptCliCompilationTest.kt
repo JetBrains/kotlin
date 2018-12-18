@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
-import org.junit.Test
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
@@ -118,12 +117,12 @@ abstract class TestScriptWithRequire
 
 object TestScriptWithRequireConfiguration : ScriptCompilationConfiguration(
     {
-        defaultImports(Import::class)
+        defaultImports(Import::class, DependsOn::class)
         jvm {
             dependenciesFromCurrentContext(wholeClasspath = true)
         }
         refineConfiguration {
-            onAnnotations(Import::class) { context: ScriptConfigurationRefinementContext ->
+            onAnnotations(Import::class, DependsOn::class) { context: ScriptConfigurationRefinementContext ->
                 val scriptBaseDir = (context.script as? FileScriptSource)?.file?.parentFile
                 val sources = context.collectedData?.get(ScriptCollectedData.foundAnnotations)
                     ?.flatMap {
@@ -131,10 +130,13 @@ object TestScriptWithRequireConfiguration : ScriptCompilationConfiguration(
                             FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))
                         } ?: emptyList()
                     }
-                    ?.takeIf { it.isNotEmpty() }
-                    ?: return@onAnnotations context.compilationConfiguration.asSuccess()
+                val deps = context.collectedData?.get(ScriptCollectedData.foundAnnotations)
+                    ?.mapNotNull {
+                        (it as? DependsOn)?.path?.let(::File)
+                    }
                 ScriptCompilationConfiguration(context.compilationConfiguration) {
-                    importScripts.append(sources)
+                    if (sources?.isNotEmpty() == true) importScripts.append(sources)
+                    if (deps?.isNotEmpty() == true) dependencies.append(JvmDependency(deps))
                 }.asSuccess()
             }
         }
