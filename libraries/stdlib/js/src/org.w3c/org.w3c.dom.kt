@@ -21,6 +21,7 @@ import org.w3c.dom.svg.*
 import org.w3c.dom.url.*
 import org.w3c.fetch.*
 import org.w3c.files.*
+import org.w3c.geolocation.*
 import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
@@ -2260,6 +2261,7 @@ public external interface WindowOrWorkerGlobalScope {
  */
 public external abstract class Navigator : NavigatorID, NavigatorLanguage, NavigatorOnLine, NavigatorContentUtils, NavigatorCookies, NavigatorPlugins, NavigatorConcurrentHardware {
     open val serviceWorker: ServiceWorkerContainer
+    open val geolocation: Geolocation
     open val maxTouchPoints: Int
     open val mediaDevices: MediaDevices
     fun vibrate(pattern: dynamic): Boolean

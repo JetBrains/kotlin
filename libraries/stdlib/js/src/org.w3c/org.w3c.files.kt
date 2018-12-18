@@ -21,6 +21,7 @@ import org.w3c.dom.pointerevents.*
 import org.w3c.dom.svg.*
 import org.w3c.dom.url.*
 import org.w3c.fetch.*
+import org.w3c.geolocation.*
 import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
