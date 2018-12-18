@@ -222,15 +222,15 @@ fun Appendable.render(allTypes: Map<String, GenerateClass>, enums: List<EnumDefi
                     && attribute.kindNotChanged(superAttributesByName)
                     && (iface.kind == GenerateDefinitionKind.INTERFACE || attribute.hasSuperImplementation(allSuperTypes))
 
-            if (skipAttributeDeclaration) {
-                // then don't generate
-            } else if (attribute.name in superAttributesByName && attribute.signature !in superSignatures) {
+            if (attribute.name in superAttributesByName && attribute.signature !in superSignatures) {
                 System.err.println("Property ${iface.name}.${attribute.name} has different type in super type(s) so will not be generated: ")
                 for ((superTypeName, attributes) in allSuperTypes.map { it.name to it.memberAttributes.filter { it.name == attribute.name }.distinct() }) {
                     for (superAttribute in attributes) {
                         System.err.println("  $superTypeName.${attribute.name}: ${superAttribute.type.render()}")
                     }
                 }
+            } else if (skipAttributeDeclaration) {
+                // then don't generate
             } else {
                 renderAttributeDeclarationAsProperty(attribute,
                         modality = modality,
