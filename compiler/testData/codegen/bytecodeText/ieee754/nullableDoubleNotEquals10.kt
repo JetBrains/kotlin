@@ -25,4 +25,4 @@ fun box(): String {
     return "OK"
 }
 
-// 0 areEquals
+// 0 areEqual
