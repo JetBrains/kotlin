@@ -146,7 +146,7 @@ fun JKClassSymbol.toKtType(symbolProvider: JKSymbolProvider): KotlinType {
     return classDescriptor.defaultType
 }
 
-fun JKType.updateNullability(newNullability: Nullability): JKType =
+inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability): T =
     if (nullability == newNullability) this
     else when (this) {
         is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(name, newNullability)
@@ -157,7 +157,7 @@ fun JKType.updateNullability(newNullability: Nullability): JKType =
         is JKJavaPrimitiveType -> this
         is JKJavaArrayType -> JKJavaArrayTypeImpl(type, newNullability)
         else -> TODO(this::class.toString())
-    }
+    } as T
 
 fun JKJavaMethod.returnTypeNullability(context: ConversionContext): Nullability =
     context.typeFlavorCalculator.methodNullability(psi()!!)

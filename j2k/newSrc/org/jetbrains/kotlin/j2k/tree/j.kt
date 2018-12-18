@@ -35,7 +35,7 @@ interface JKClassBody : JKTreeElement, JKBranchElement {
 
 interface JKEmptyClassBody : JKClassBody
 
-interface JKJavaNewExpression : JKExpression, JKTypeArgumentListOwner {
+interface JKJavaNewExpression : JKExpression, JKTypeArgumentListOwner, PsiOwner {
     val classSymbol: JKClassSymbol
     var arguments: JKExpressionList
     var classBody: JKClassBody
