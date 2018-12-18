@@ -88,7 +88,7 @@ interface JKMethod : JKDeclaration, JKVisibilityOwner, JKModalityOwner, JKExtraM
     JKAnnotationListOwner {
     val name: JKNameIdentifier
     var parameters: List<JKParameter>
-    val returnType: JKTypeElement
+    var returnType: JKTypeElement
     var block: JKBlock
 }
 

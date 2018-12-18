@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.throwAnnotation
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
@@ -35,9 +36,11 @@ class JavaMethodToKotlinFunctionConversion(private val context: ConversionContex
                 declaration.invalidate()
 
                 JKKtFunctionImpl(
-                    JKTypeElementImpl(
-                        declaration.returnType.type.updateNullability(declaration.returnTypeNullability(context))
-                    ),
+                    if (declaration.returnType.type.nullability != Nullability.NotNull)
+                        JKTypeElementImpl(
+                            declaration.returnType.type
+                                .updateNullability(declaration.returnTypeNullability(context))
+                        ) else declaration.returnType,
                     declaration.name,
                     declaration.parameters,
                     declaration.block,
