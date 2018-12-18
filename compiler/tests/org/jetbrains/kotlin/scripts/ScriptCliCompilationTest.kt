@@ -36,28 +36,24 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 
-private const val testDataPath = "compiler/testData/script/"
+private const val testDataPath = "compiler/testData/script/cliCompilation"
 
 class ScriptCliCompilationTest : KtUsefulTestCase() {
 
-    @Test
     fun testPrerequisites() {
         Assert.assertTrue(thisClasspath.isNotEmpty())
     }
 
-    @Test
     fun testSimpleScript() {
         val out = checkRun("hello.kts")
         Assert.assertEquals("Hello from basic script!", out)
     }
 
-    @Test
     fun testSimpleScriptWithArgs() {
         val out = checkRun("hello_args.kts", listOf("kotlin"))
         Assert.assertEquals("Hello, kotlin!", out)
     }
 
-    @Test
     fun testScriptWithRequire() {
         val out = checkRun("hello.req1.kts", scriptDef = TestScriptWithRequire::class)
         Assert.assertEquals("Hello from required!", out)
@@ -128,9 +124,12 @@ object TestScriptWithRequireConfiguration : ScriptCompilationConfiguration(
         }
         refineConfiguration {
             onAnnotations(Import::class) { context: ScriptConfigurationRefinementContext ->
+                val scriptBaseDir = (context.script as? FileScriptSource)?.file?.parentFile
                 val sources = context.collectedData?.get(ScriptCollectedData.foundAnnotations)
                     ?.flatMap {
-                        (it as? Import)?.sources?.map { sourceName -> FileScriptSource(File(testDataPath, sourceName)) } ?: emptyList()
+                        (it as? Import)?.sources?.map { sourceName ->
+                            FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))
+                        } ?: emptyList()
                     }
                     ?.takeIf { it.isNotEmpty() }
                     ?: return@onAnnotations context.compilationConfiguration.asSuccess()
