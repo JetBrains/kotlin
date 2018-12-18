@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClass
@@ -14,10 +15,10 @@ import org.jetbrains.kotlin.psi.KtClass
 class InstanceOfConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaInstanceOfExpression) return recurse(element)
-        val checkingType = element.type.type
+        val checkingType = element.type.type.updateNullability(Nullability.NotNull)
         val type =
             if (checkingType is JKClassType && checkingType.parameters.isEmpty()) {
-                val resolvedClass = checkingType.classReference?.target
+                val resolvedClass = checkingType.classReference.target
                 val parametersCount =
                     when (resolvedClass) {
                         is PsiClass -> resolvedClass.typeParameters.size
@@ -26,7 +27,7 @@ class InstanceOfConversion : RecursiveApplicableConversionBase() {
                     }
                 val typeParameters = List(parametersCount) { JKStarProjectionTypeImpl() }
                 JKClassTypeImpl(
-                    checkingType.classReference as JKClassSymbol,
+                    checkingType.classReference,
                     typeParameters,
                     checkingType.nullability
                 )
