@@ -315,11 +315,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                         is PsiClass -> it.toJK()
                         is PsiMethod -> it.toJK()
                         is PsiField -> it.toJK()
+                        is PsiClassInitializer -> it.toJK()
                         else -> null
                     }
                 }
             )
 
+        fun PsiClassInitializer.toJK() =
+            JKKtInitDeclarationImpl(body.toJK())
 
         fun PsiEnumConstant.toJK(): JKEnumConstant =
             JKEnumConstantImpl(
