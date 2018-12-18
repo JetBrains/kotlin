@@ -495,6 +495,14 @@ public class KtPsiUtil {
             return false;
         }
 
+        // 'x = fun {}' case
+        if (parentElement instanceof KtBinaryExpression &&
+            parentOperation == KtTokens.EQ &&
+            innerExpression instanceof KtNamedFunction &&
+            currentInner == ((KtBinaryExpression) parentElement).getRight()) {
+            return false;
+        }
+
         if (innerExpression instanceof KtBinaryExpression) {
             // '(x operator return [...]) operator ...' case
             if (parentElement instanceof KtBinaryExpression) {
