@@ -1,8 +1,8 @@
-// !API_VERSION: 1.3
 // !JVM_DEFAULT_MODE: compatibility
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
 // FULL_JDK
+
 interface KInterface {
     @JvmDefault
     fun test(s: String ="OK"): String {
