@@ -148,7 +148,12 @@ class ProgramFragmentInliningScope(
         fragment.declarationBlock.statements.addAll(0, additionalDeclarations)
 
         // post-processing
-        val block = JsBlock(JsBlock(fragment.inlinedFunctionWrappers.values.toList()), fragment.declarationBlock, fragment.initializerBlock, fragment.exportBlock)
+        val block = JsBlock(
+            JsBlock(fragment.inlinedFunctionWrappers.values.toList()),
+            fragment.declarationBlock,
+            fragment.initializerBlock,
+            fragment.exportBlock
+        )
         fragment.tests?.let { block.statements.add(it) }
         fragment.mainFunction?.let { block.statements.add(it) }
 
@@ -158,7 +163,7 @@ class ProgramFragmentInliningScope(
     }
 
     override fun hasImport(name: JsName, tag: String): JsName? {
-        return name.localAlias?.let {(name, tag) ->
+        return name.localAlias?.let { (name, tag) ->
             if (tag != null) {
                 if (tag !in existingBindings) {
                     addNameBinding(name, tag)
@@ -224,18 +229,27 @@ class PublicInlineFunctionInliningScope(
     val wrapperBody: JsBlock,
     override val fragment: JsProgramFragment
 ) : InliningScope() {
+    val existingImports = mutableMapOf<String, JsName>().also { map ->
+        for (s in wrapperBody.statements) {
+            if (s !is JsVars) continue
+
+            val tag = getImportTag(s) ?: continue
+
+            map[tag] = s.vars[0].name
+        }
+    }
+
     val additionalStatements = mutableListOf<JsStatement>()
 
     override fun addInlinedDeclaration(tag: String?, declaration: JsStatement) {
         additionalStatements.add(declaration)
     }
 
-    override fun hasImport(name: JsName, tag: String): JsName? {
-        return null // TODO
-    }
+    override fun hasImport(name: JsName, tag: String): JsName? = existingImports[tag]
 
     override fun addImport(tag: String, vars: JsVars) {
-        additionalStatements.add(vars) // TODO
+        existingImports[tag] = vars.vars[0].name
+        additionalStatements.add(vars)
     }
 
     override fun update() {
