@@ -116,7 +116,7 @@ public final class Translation {
                         }
 
                         String name = NameSuggestion.sanitizeName("L" + compileTimeValue.getValue(type).toString());
-                        return context.declareConstantValue(name, "constant:" + name, constantResult);
+                        return context.declareConstantValue(name, "constant:" + name, constantResult, null);
                     }
 
                     if (KotlinBuiltIns.isInt(type)) {

@@ -909,11 +909,16 @@ public class TranslationContext {
         String tag = Objects.requireNonNull(staticContext.getTag(descriptor));
         String suggestedName = StaticContext.getSuggestedName(descriptor);
 
-        return declareConstantValue(suggestedName, tag, value);
+        return declareConstantValue(suggestedName, tag, value, descriptor);
     }
 
     @NotNull
-    public JsExpression declareConstantValue(@NotNull String suggestedName, @NotNull String tag, @NotNull JsExpression value) {
+    public JsExpression declareConstantValue(
+            @NotNull String suggestedName,
+            @NotNull String tag,
+            @NotNull JsExpression value,
+            @Nullable DeclarationDescriptor descriptor
+    ) {
         if (inlineFunctionContext == null || !isPublicInlineFunction()) {
             return staticContext.importDeclaration(suggestedName, tag, value).makeRef();
         }
@@ -921,6 +926,9 @@ public class TranslationContext {
             return inlineFunctionContext.getImports().computeIfAbsent(tag, t -> {
                 JsName result = JsScope.declareTemporaryName(suggestedName);
                 MetadataProperties.setImported(result, true);
+                if (descriptor != null && isFromCurrentModule(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
+                    MetadataProperties.setLocalAlias(result, new LocalAlias(getInnerNameForDescriptor(descriptor), tag));
+                }
                 inlineFunctionContext.getImportBlock().getStatements().add(JsAstUtils.newVar(result, value));
                 return result;
             }).makeRef();

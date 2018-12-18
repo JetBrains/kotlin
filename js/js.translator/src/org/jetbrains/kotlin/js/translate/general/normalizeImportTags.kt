@@ -5,32 +5,28 @@
 
 package org.jetbrains.kotlin.js.translate.general
 
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsNameBinding
 import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
+import org.jetbrains.kotlin.js.backend.ast.JsVars
 import org.jetbrains.kotlin.js.inline.util.extractImportTag
 
-// TODO this is a hack for `intrinsic:` tags
+// TODO this is a hack for `intrinsic:` and `constant:` tags
 fun JsProgramFragment.normalizeImportTags() {
 
-    val newImports = mutableMapOf<String, JsExpression>()
-    val replacements = mutableMapOf<String, String>()
-
-    imports.entries.retainAll { (tag, statement) ->
-        extractImportTag(statement)?.let { newTag ->
-            if (newTag != tag) {
-                newImports[newTag] = statement
-                replacements[tag] = newTag
-            }
-            newTag == tag
-        } ?: true
-    }
-
-    imports += newImports
-
     nameBindings.replaceAll { binding ->
-        replacements[binding.key]?.let {
-            JsNameBinding(it, binding.name)
+        val (tag, name) = binding
+
+        imports[tag]?.let { import ->
+            extractImportTag(JsVars.JsVar(name, imports[tag]))?.let { newtag ->
+                if (tag != newtag) {
+                    imports[newtag] = import
+                    JsNameBinding(newtag, name)
+                } else null
+            }
         } ?: binding
     }
+
+    val tagSet = nameBindings.asSequence().map { it.key }.toSet()
+
+    imports.entries.retainAll { (tag, _) -> tag in tagSet }
 }
