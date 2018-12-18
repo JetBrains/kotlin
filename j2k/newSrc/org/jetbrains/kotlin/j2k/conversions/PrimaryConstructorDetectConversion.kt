@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKKtPrimaryConstructorImpl
 
 class PrimaryConstructorDetectConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element is JKClass && element.classKind == JKClass.ClassKind.CLASS) {
+        if (element is JKClass &&
+            (element.classKind == JKClass.ClassKind.CLASS || element.classKind == JKClass.ClassKind.ENUM)
+        ) {
             processClass(element)
         }
         return recurse(element)
