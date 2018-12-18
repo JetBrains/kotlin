@@ -30,6 +30,8 @@ fun removeUnusedImports(fragment: JsProgramFragment) {
         }
         collectUsedImports(declarationBlock, usedImports)
         collectUsedImports(initializerBlock, usedImports)
+        tests?.let { collectUsedImports(it, usedImports) }
+        mainFunction?.let { collectUsedImports(it, usedImports) }
         collectUsedImports(exportBlock, usedImports)
     }
 
@@ -45,6 +47,7 @@ private fun collectUsedImports(root: JsNode, to: MutableSet<JsName>): Set<JsName
     root.accept(collector)
 
     // See StaticContext.getVariableForPropertyMetadata
+    // TODO Find a better way
     val removedPseudoImports = mutableSetOf<JsName>()
     NodeRemover(JsVars::class.java) { statement ->
         if (statement.vars.size == 1) {
@@ -56,7 +59,6 @@ private fun collectUsedImports(root: JsNode, to: MutableSet<JsName>): Set<JsName
             false
         }
     }.accept(root)
-
     collector.pseudoImports.forEach {
         if (it.name !in removedPseudoImports) {
             it.initExpression.accept(collector)
