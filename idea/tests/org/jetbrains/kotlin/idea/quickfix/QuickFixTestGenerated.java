@@ -12531,6 +12531,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testMultiFakeOverride() throws Exception {
                 runTest("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/multiFakeOverride.kt");
             }
+
+            @TestMetadata("unsigned.kt")
+            public void testUnsigned() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/unsigned.kt");
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression")
