@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.tasks.AbstractExecTask
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -191,6 +192,15 @@ class Framework(
      */
     fun export(dependency: Any, configure: Closure<*>) {
         project.dependencies.add(exportConfigurationName, dependency, configure)
+    }
+
+    /**
+     * Add a dependency to be exported in the framework.
+     */
+    fun export(dependency: Any, configure: Action<in Dependency>) {
+        project.dependencies.add(exportConfigurationName, dependency)?.let {
+            configure.execute(it)
+        }
     }
 
     // Embedding bitcode.
