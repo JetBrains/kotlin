@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.js.ast
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
@@ -462,7 +463,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
                 JsDynamicScope.declareName(identifier)
             }
             if (nameProto.hasLocalNameId()) {
-                name.localAlias = deserializeName(nameProto.localNameId)
+                name.localAlias = deserializeLocalAlias(nameProto.localNameId)
             }
             if (nameProto.hasImported()) {
                 name.imported = nameProto.imported
@@ -474,6 +475,12 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             name
         }
     }
+
+    private fun deserializeLocalAlias(localNameId: JsAstProtoBuf.LocalAlias): LocalAlias {
+        return LocalAlias(deserializeName(localNameId.localNameId),
+                          if (localNameId.hasTag()) deserializeString(localNameId.tag) else null)
+    }
+
 
     private fun deserializeString(id: Int): String = stringTable[id]
 

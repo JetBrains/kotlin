@@ -37133,13 +37133,13 @@ public final class JsAstProtoBuf {
     int getIdentifier();
 
     /**
-     * <code>optional int32 local_name_id = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
      */
     boolean hasLocalNameId();
     /**
-     * <code>optional int32 local_name_id = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
      */
-    int getLocalNameId();
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias getLocalNameId();
 
     /**
      * <code>optional bool imported = 4 [default = false];</code>
@@ -37219,9 +37219,17 @@ public final class JsAstProtoBuf {
               identifier_ = input.readInt32();
               break;
             }
-            case 24: {
+            case 26: {
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = localNameId_.toBuilder();
+              }
+              localNameId_ = input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(localNameId_);
+                localNameId_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000004;
-              localNameId_ = input.readInt32();
               break;
             }
             case 32: {
@@ -37306,17 +37314,17 @@ public final class JsAstProtoBuf {
     }
 
     public static final int LOCAL_NAME_ID_FIELD_NUMBER = 3;
-    private int localNameId_;
+    private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias localNameId_;
     /**
-     * <code>optional int32 local_name_id = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
      */
     public boolean hasLocalNameId() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional int32 local_name_id = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
      */
-    public int getLocalNameId() {
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias getLocalNameId() {
       return localNameId_;
     }
 
@@ -37353,7 +37361,7 @@ public final class JsAstProtoBuf {
     private void initFields() {
       temporary_ = false;
       identifier_ = 0;
-      localNameId_ = 0;
+      localNameId_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.getDefaultInstance();
       imported_ = false;
       specialFunction_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION;
     }
@@ -37366,6 +37374,12 @@ public final class JsAstProtoBuf {
       if (!hasTemporary()) {
         memoizedIsInitialized = 0;
         return false;
+      }
+      if (hasLocalNameId()) {
+        if (!getLocalNameId().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -37381,7 +37395,7 @@ public final class JsAstProtoBuf {
         output.writeInt32(2, identifier_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(3, localNameId_);
+        output.writeMessage(3, localNameId_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeBool(4, imported_);
@@ -37408,7 +37422,7 @@ public final class JsAstProtoBuf {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(3, localNameId_);
+          .computeMessageSize(3, localNameId_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -37516,7 +37530,7 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         identifier_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        localNameId_ = 0;
+        localNameId_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
         imported_ = false;
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -37578,7 +37592,7 @@ public final class JsAstProtoBuf {
           setIdentifier(other.getIdentifier());
         }
         if (other.hasLocalNameId()) {
-          setLocalNameId(other.getLocalNameId());
+          mergeLocalNameId(other.getLocalNameId());
         }
         if (other.hasImported()) {
           setImported(other.getImported());
@@ -37595,6 +37609,12 @@ public final class JsAstProtoBuf {
         if (!hasTemporary()) {
           
           return false;
+        }
+        if (hasLocalNameId()) {
+          if (!getLocalNameId().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -37682,35 +37702,63 @@ public final class JsAstProtoBuf {
         return this;
       }
 
-      private int localNameId_ ;
+      private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias localNameId_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.getDefaultInstance();
       /**
-       * <code>optional int32 local_name_id = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
        */
       public boolean hasLocalNameId() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>optional int32 local_name_id = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
        */
-      public int getLocalNameId() {
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias getLocalNameId() {
         return localNameId_;
       }
       /**
-       * <code>optional int32 local_name_id = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
        */
-      public Builder setLocalNameId(int value) {
-        bitField0_ |= 0x00000004;
+      public Builder setLocalNameId(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
         localNameId_ = value;
-        
+
+        bitField0_ |= 0x00000004;
         return this;
       }
       /**
-       * <code>optional int32 local_name_id = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
+       */
+      public Builder setLocalNameId(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.Builder builderForValue) {
+        localNameId_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
+       */
+      public Builder mergeLocalNameId(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            localNameId_ != org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.getDefaultInstance()) {
+          localNameId_ =
+            org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.newBuilder(localNameId_).mergeFrom(value).buildPartial();
+        } else {
+          localNameId_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.LocalAlias local_name_id = 3;</code>
        */
       public Builder clearLocalNameId() {
+        localNameId_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000004);
-        localNameId_ = 0;
-        
         return this;
       }
 
@@ -37790,6 +37838,444 @@ public final class JsAstProtoBuf {
     }
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Name)
+  }
+
+  public interface LocalAliasOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.LocalAlias)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required int32 local_name_id = 1;</code>
+     */
+    boolean hasLocalNameId();
+    /**
+     * <code>required int32 local_name_id = 1;</code>
+     */
+    int getLocalNameId();
+
+    /**
+     * <code>optional int32 tag = 2;</code>
+     */
+    boolean hasTag();
+    /**
+     * <code>optional int32 tag = 2;</code>
+     */
+    int getTag();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.LocalAlias}
+   */
+  public static final class LocalAlias extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.LocalAlias)
+      LocalAliasOrBuilder {
+    // Use LocalAlias.newBuilder() to construct.
+    private LocalAlias(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private LocalAlias(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final LocalAlias defaultInstance;
+    public static LocalAlias getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public LocalAlias getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private LocalAlias(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              localNameId_ = input.readInt32();
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              tag_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<LocalAlias> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<LocalAlias>() {
+      public LocalAlias parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new LocalAlias(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<LocalAlias> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int LOCAL_NAME_ID_FIELD_NUMBER = 1;
+    private int localNameId_;
+    /**
+     * <code>required int32 local_name_id = 1;</code>
+     */
+    public boolean hasLocalNameId() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required int32 local_name_id = 1;</code>
+     */
+    public int getLocalNameId() {
+      return localNameId_;
+    }
+
+    public static final int TAG_FIELD_NUMBER = 2;
+    private int tag_;
+    /**
+     * <code>optional int32 tag = 2;</code>
+     */
+    public boolean hasTag() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int32 tag = 2;</code>
+     */
+    public int getTag() {
+      return tag_;
+    }
+
+    private void initFields() {
+      localNameId_ = 0;
+      tag_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasLocalNameId()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, localNameId_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, tag_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(1, localNameId_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(2, tag_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.LocalAlias}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.LocalAlias)
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAliasOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        localNameId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        tag_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias build() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias buildPartial() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.localNameId_ = localNameId_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.tag_ = tag_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias other) {
+        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias.getDefaultInstance()) return this;
+        if (other.hasLocalNameId()) {
+          setLocalNameId(other.getLocalNameId());
+        }
+        if (other.hasTag()) {
+          setTag(other.getTag());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasLocalNameId()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.LocalAlias) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private int localNameId_ ;
+      /**
+       * <code>required int32 local_name_id = 1;</code>
+       */
+      public boolean hasLocalNameId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 local_name_id = 1;</code>
+       */
+      public int getLocalNameId() {
+        return localNameId_;
+      }
+      /**
+       * <code>required int32 local_name_id = 1;</code>
+       */
+      public Builder setLocalNameId(int value) {
+        bitField0_ |= 0x00000001;
+        localNameId_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required int32 local_name_id = 1;</code>
+       */
+      public Builder clearLocalNameId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        localNameId_ = 0;
+        
+        return this;
+      }
+
+      private int tag_ ;
+      /**
+       * <code>optional int32 tag = 2;</code>
+       */
+      public boolean hasTag() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional int32 tag = 2;</code>
+       */
+      public int getTag() {
+        return tag_;
+      }
+      /**
+       * <code>optional int32 tag = 2;</code>
+       */
+      public Builder setTag(int value) {
+        bitField0_ |= 0x00000002;
+        tag_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 tag = 2;</code>
+       */
+      public Builder clearTag() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        tag_ = 0;
+        
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.LocalAlias)
+    }
+
+    static {
+      defaultInstance = new LocalAlias(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.LocalAlias)
   }
 
   public interface ChunkOrBuilder extends

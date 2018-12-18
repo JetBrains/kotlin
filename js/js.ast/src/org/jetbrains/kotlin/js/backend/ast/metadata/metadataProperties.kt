@@ -30,7 +30,9 @@ var JsName.staticRef: JsNode? by MetadataProperty(default = null)
 
 var JsName.descriptor: DeclarationDescriptor? by MetadataProperty(default = null)
 
-var JsName.localAlias: JsName? by MetadataProperty(default = null)
+var JsName.localAlias: LocalAlias? by MetadataProperty(default = null)
+
+data class LocalAlias(val name: JsName, val tag: String?)
 
 var JsName.specialFunction: SpecialFunction? by MetadataProperty(default = null)
 

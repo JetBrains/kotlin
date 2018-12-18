@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.BinaryOperation.Type.*
@@ -616,6 +617,15 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         val result = nameTableBuilder.entryCount
         nameTableBuilder.addEntry(builder)
         result
+    }
+
+    private fun serialize(alias: LocalAlias): JsAstProtoBuf.LocalAlias {
+        val builder = JsAstProtoBuf.LocalAlias.newBuilder()
+        builder.localNameId = serialize(alias.name)
+        alias.tag?.let {
+            builder.tag = serialize(it)
+        }
+        return builder.build()
     }
 
     private fun serialize(string: String) = stringMap.getOrPut(string) {

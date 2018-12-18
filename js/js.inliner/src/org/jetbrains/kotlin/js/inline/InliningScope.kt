@@ -162,14 +162,28 @@ class ProgramFragmentInliningScope(
     }
 
     // TODO !!!!! This localAlias thing will get copied, inlined, and lost during IC =(
-    override fun hasImport(name: JsName, tag: String): JsName? = name.localAlias ?: existingBindings[tag]
+    override fun hasImport(name: JsName, tag: String): JsName? {
+        return name.localAlias?.let {(name, tag) ->
+            if (tag != null) {
+                if (tag !in existingBindings) {
+                    addNameBinding(name, tag)
+                }
+                existingBindings[tag]
+            } else name
+        } ?: existingBindings[tag]
+    }
+
+    private fun addNameBinding(name: JsName, tag: String) {
+        fragment.nameBindings.add(JsNameBinding(tag, name))
+        existingBindings[tag] = name
+    }
+
 
     override fun addImport(tag: String, vars: JsVars) {
         val name = vars.vars[0].name
         val expr = vars.vars[0].initExpression
         fragment.imports[tag] = expr
-        fragment.nameBindings.add(JsNameBinding(tag, name))
-        existingBindings[tag] = name
+        addNameBinding(name, tag)
     }
 
     override fun addInlinedDeclaration(tag: String?, declaration: JsStatement) {

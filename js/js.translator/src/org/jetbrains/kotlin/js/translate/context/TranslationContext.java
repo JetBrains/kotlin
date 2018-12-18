@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.config.JsConfig;
@@ -315,7 +316,7 @@ public class TranslationContext {
 
         JsName result = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor));
         if (isFromCurrentModule(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
-            MetadataProperties.setLocalAlias(result, getInnerNameForDescriptor(descriptor));
+            MetadataProperties.setLocalAlias(result, new LocalAlias(getInnerNameForDescriptor(descriptor), staticContext.getTag(descriptor)));
         }
         MetadataProperties.setDescriptor(result, descriptor);
         MetadataProperties.setStaticRef(result, imported);
