@@ -7042,142 +7042,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/convertToAlso")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertToAlso extends AbstractIntentionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInConvertToAlso() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToAlso"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("itParameter.kt")
-        public void testItParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/itParameter.kt");
-        }
-
-        @TestMetadata("itParameter2.kt")
-        public void testItParameter2() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/itParameter2.kt");
-        }
-
-        @TestMetadata("methodChain.kt")
-        public void testMethodChain() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/methodChain.kt");
-        }
-
-        @TestMetadata("methodChainWithItParameter.kt")
-        public void testMethodChainWithItParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/methodChainWithItParameter.kt");
-        }
-
-        @TestMetadata("methodChainWithThisParameter.kt")
-        public void testMethodChainWithThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/methodChainWithThisParameter.kt");
-        }
-
-        @TestMetadata("normal.kt")
-        public void testNormal() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/normal.kt");
-        }
-
-        @TestMetadata("normal2.kt")
-        public void testNormal2() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/normal2.kt");
-        }
-
-        @TestMetadata("normal3.kt")
-        public void testNormal3() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/normal3.kt");
-        }
-
-        @TestMetadata("untilItParameter.kt")
-        public void testUntilItParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/untilItParameter.kt");
-        }
-
-        @TestMetadata("var.kt")
-        public void testVar() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/var.kt");
-        }
-
-        @TestMetadata("withCommentAndSpaces.kt")
-        public void testWithCommentAndSpaces() throws Exception {
-            runTest("idea/testData/intentions/convertToAlso/withCommentAndSpaces.kt");
-        }
-    }
-
-    @TestMetadata("idea/testData/intentions/convertToApply")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertToApply extends AbstractIntentionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInConvertToApply() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToApply"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("methodChain.kt")
-        public void testMethodChain() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/methodChain.kt");
-        }
-
-        @TestMetadata("methodChainWithItParameter.kt")
-        public void testMethodChainWithItParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/methodChainWithItParameter.kt");
-        }
-
-        @TestMetadata("methodChainWithThisParameter.kt")
-        public void testMethodChainWithThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/methodChainWithThisParameter.kt");
-        }
-
-        @TestMetadata("normal.kt")
-        public void testNormal() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/normal.kt");
-        }
-
-        @TestMetadata("normal2.kt")
-        public void testNormal2() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/normal2.kt");
-        }
-
-        @TestMetadata("normal3.kt")
-        public void testNormal3() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/normal3.kt");
-        }
-
-        @TestMetadata("thisParameter.kt")
-        public void testThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/thisParameter.kt");
-        }
-
-        @TestMetadata("thisParameter2.kt")
-        public void testThisParameter2() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/thisParameter2.kt");
-        }
-
-        @TestMetadata("untilThisParameter.kt")
-        public void testUntilThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/untilThisParameter.kt");
-        }
-
-        @TestMetadata("var.kt")
-        public void testVar() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/var.kt");
-        }
-
-        @TestMetadata("withCommentAndSpaces.kt")
-        public void testWithCommentAndSpaces() throws Exception {
-            runTest("idea/testData/intentions/convertToApply/withCommentAndSpaces.kt");
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/convertToBlockBody")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -7570,81 +7434,338 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/convertToRun")
+    @TestMetadata("idea/testData/intentions/convertToScope")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertToRun extends AbstractIntentionTest {
+    public static class ConvertToScope extends AbstractIntentionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
-        public void testAllFilesPresentInConvertToRun() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToRun"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        public void testAllFilesPresentInConvertToScope() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToScope"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("itReceiver.kt")
-        public void testItReceiver() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/itReceiver.kt");
+        @TestMetadata("idea/testData/intentions/convertToScope/convertToAlso")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConvertToAlso extends AbstractIntentionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInConvertToAlso() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToScope/convertToAlso"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("itParameter.kt")
+            public void testItParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/itParameter.kt");
+            }
+
+            @TestMetadata("itParameter2.kt")
+            public void testItParameter2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/itParameter2.kt");
+            }
+
+            @TestMetadata("methodChain.kt")
+            public void testMethodChain() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/methodChain.kt");
+            }
+
+            @TestMetadata("methodChainWithItParameter.kt")
+            public void testMethodChainWithItParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/methodChainWithItParameter.kt");
+            }
+
+            @TestMetadata("methodChainWithThisParameter.kt")
+            public void testMethodChainWithThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/methodChainWithThisParameter.kt");
+            }
+
+            @TestMetadata("normal.kt")
+            public void testNormal() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/normal.kt");
+            }
+
+            @TestMetadata("normal2.kt")
+            public void testNormal2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/normal2.kt");
+            }
+
+            @TestMetadata("normal3.kt")
+            public void testNormal3() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/normal3.kt");
+            }
+
+            @TestMetadata("onProperty.kt")
+            public void testOnProperty() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/onProperty.kt");
+            }
+
+            @TestMetadata("untilItParameter.kt")
+            public void testUntilItParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/untilItParameter.kt");
+            }
+
+            @TestMetadata("var.kt")
+            public void testVar() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/var.kt");
+            }
+
+            @TestMetadata("withCommentAndSpaces.kt")
+            public void testWithCommentAndSpaces() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/withCommentAndSpaces.kt");
+            }
         }
 
-        @TestMetadata("javaMethod.kt")
-        public void testJavaMethod() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/javaMethod.kt");
+        @TestMetadata("idea/testData/intentions/convertToScope/convertToApply")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConvertToApply extends AbstractIntentionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInConvertToApply() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToScope/convertToApply"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("methodChain.kt")
+            public void testMethodChain() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/methodChain.kt");
+            }
+
+            @TestMetadata("methodChainWithItParameter.kt")
+            public void testMethodChainWithItParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/methodChainWithItParameter.kt");
+            }
+
+            @TestMetadata("methodChainWithThisParameter.kt")
+            public void testMethodChainWithThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/methodChainWithThisParameter.kt");
+            }
+
+            @TestMetadata("normal.kt")
+            public void testNormal() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/normal.kt");
+            }
+
+            @TestMetadata("normal2.kt")
+            public void testNormal2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/normal2.kt");
+            }
+
+            @TestMetadata("normal3.kt")
+            public void testNormal3() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/normal3.kt");
+            }
+
+            @TestMetadata("onProperty.kt")
+            public void testOnProperty() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/onProperty.kt");
+            }
+
+            @TestMetadata("thisParameter.kt")
+            public void testThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/thisParameter.kt");
+            }
+
+            @TestMetadata("thisParameter2.kt")
+            public void testThisParameter2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/thisParameter2.kt");
+            }
+
+            @TestMetadata("untilThisParameter.kt")
+            public void testUntilThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/untilThisParameter.kt");
+            }
+
+            @TestMetadata("var.kt")
+            public void testVar() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/var.kt");
+            }
+
+            @TestMetadata("withCommentAndSpaces.kt")
+            public void testWithCommentAndSpaces() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/withCommentAndSpaces.kt");
+            }
         }
 
-        @TestMetadata("javaStaticMethod.kt")
-        public void testJavaStaticMethod() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/javaStaticMethod.kt");
+        @TestMetadata("idea/testData/intentions/convertToScope/convertToRun")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConvertToRun extends AbstractIntentionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInConvertToRun() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToScope/convertToRun"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("itReceiver.kt")
+            public void testItReceiver() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/itReceiver.kt");
+            }
+
+            @TestMetadata("javaMethod.kt")
+            public void testJavaMethod() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/javaMethod.kt");
+            }
+
+            @TestMetadata("javaStaticMethod.kt")
+            public void testJavaStaticMethod() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/javaStaticMethod.kt");
+            }
+
+            @TestMetadata("methodChain.kt")
+            public void testMethodChain() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/methodChain.kt");
+            }
+
+            @TestMetadata("methodChainWithItParameter.kt")
+            public void testMethodChainWithItParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/methodChainWithItParameter.kt");
+            }
+
+            @TestMetadata("methodChainWithThisParameter.kt")
+            public void testMethodChainWithThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/methodChainWithThisParameter.kt");
+            }
+
+            @TestMetadata("normal.kt")
+            public void testNormal() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/normal.kt");
+            }
+
+            @TestMetadata("normal2.kt")
+            public void testNormal2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/normal2.kt");
+            }
+
+            @TestMetadata("normal3.kt")
+            public void testNormal3() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/normal3.kt");
+            }
+
+            @TestMetadata("normal4.kt")
+            public void testNormal4() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/normal4.kt");
+            }
+
+            @TestMetadata("onProperty.kt")
+            public void testOnProperty() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/onProperty.kt");
+            }
+
+            @TestMetadata("thisParameter.kt")
+            public void testThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/thisParameter.kt");
+            }
+
+            @TestMetadata("thisReceiver.kt")
+            public void testThisReceiver() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/thisReceiver.kt");
+            }
+
+            @TestMetadata("untilThisParameter.kt")
+            public void testUntilThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/untilThisParameter.kt");
+            }
+
+            @TestMetadata("withCommentAndSpaces.kt")
+            public void testWithCommentAndSpaces() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/withCommentAndSpaces.kt");
+            }
         }
 
-        @TestMetadata("methodChain.kt")
-        public void testMethodChain() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/methodChain.kt");
-        }
+        @TestMetadata("idea/testData/intentions/convertToScope/convertToWith")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConvertToWith extends AbstractIntentionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
 
-        @TestMetadata("methodChainWithItParameter.kt")
-        public void testMethodChainWithItParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/methodChainWithItParameter.kt");
-        }
+            public void testAllFilesPresentInConvertToWith() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToScope/convertToWith"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
 
-        @TestMetadata("methodChainWithThisParameter.kt")
-        public void testMethodChainWithThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/methodChainWithThisParameter.kt");
-        }
+            @TestMetadata("itReceiver.kt")
+            public void testItReceiver() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/itReceiver.kt");
+            }
 
-        @TestMetadata("normal.kt")
-        public void testNormal() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/normal.kt");
-        }
+            @TestMetadata("javaMethod.kt")
+            public void testJavaMethod() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/javaMethod.kt");
+            }
 
-        @TestMetadata("normal2.kt")
-        public void testNormal2() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/normal2.kt");
-        }
+            @TestMetadata("javaStaticMethod.kt")
+            public void testJavaStaticMethod() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/javaStaticMethod.kt");
+            }
 
-        @TestMetadata("normal3.kt")
-        public void testNormal3() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/normal3.kt");
-        }
+            @TestMetadata("methodChain.kt")
+            public void testMethodChain() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/methodChain.kt");
+            }
 
-        @TestMetadata("thisParameter.kt")
-        public void testThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/thisParameter.kt");
-        }
+            @TestMetadata("methodChainWithItParameter.kt")
+            public void testMethodChainWithItParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/methodChainWithItParameter.kt");
+            }
 
-        @TestMetadata("thisReceiver.kt")
-        public void testThisReceiver() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/thisReceiver.kt");
-        }
+            @TestMetadata("methodChainWithThisParameter.kt")
+            public void testMethodChainWithThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/methodChainWithThisParameter.kt");
+            }
 
-        @TestMetadata("untilThisParameter.kt")
-        public void testUntilThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/untilThisParameter.kt");
-        }
+            @TestMetadata("normal.kt")
+            public void testNormal() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/normal.kt");
+            }
 
-        @TestMetadata("withCommentAndSpaces.kt")
-        public void testWithCommentAndSpaces() throws Exception {
-            runTest("idea/testData/intentions/convertToRun/withCommentAndSpaces.kt");
+            @TestMetadata("normal2.kt")
+            public void testNormal2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/normal2.kt");
+            }
+
+            @TestMetadata("normal3.kt")
+            public void testNormal3() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/normal3.kt");
+            }
+
+            @TestMetadata("normal4.kt")
+            public void testNormal4() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/normal4.kt");
+            }
+
+            @TestMetadata("onProperty.kt")
+            public void testOnProperty() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/onProperty.kt");
+            }
+
+            @TestMetadata("thisParameter.kt")
+            public void testThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/thisParameter.kt");
+            }
+
+            @TestMetadata("thisReceiver.kt")
+            public void testThisReceiver() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/thisReceiver.kt");
+            }
+
+            @TestMetadata("untilThisParameter.kt")
+            public void testUntilThisParameter() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/untilThisParameter.kt");
+            }
+
+            @TestMetadata("withCommentAndSpaces.kt")
+            public void testWithCommentAndSpaces() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/withCommentAndSpaces.kt");
+            }
         }
     }
 
@@ -7906,84 +8027,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             public void testAllFilesPresentInInspectionData() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToStringTemplate/inspectionData"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
-        }
-    }
-
-    @TestMetadata("idea/testData/intentions/convertToWith")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertToWith extends AbstractIntentionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInConvertToWith() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToWith"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("itReceiver.kt")
-        public void testItReceiver() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/itReceiver.kt");
-        }
-
-        @TestMetadata("javaMethod.kt")
-        public void testJavaMethod() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/javaMethod.kt");
-        }
-
-        @TestMetadata("javaStaticMethod.kt")
-        public void testJavaStaticMethod() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/javaStaticMethod.kt");
-        }
-
-        @TestMetadata("methodChain.kt")
-        public void testMethodChain() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/methodChain.kt");
-        }
-
-        @TestMetadata("methodChainWithItParameter.kt")
-        public void testMethodChainWithItParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/methodChainWithItParameter.kt");
-        }
-
-        @TestMetadata("methodChainWithThisParameter.kt")
-        public void testMethodChainWithThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/methodChainWithThisParameter.kt");
-        }
-
-        @TestMetadata("normal.kt")
-        public void testNormal() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/normal.kt");
-        }
-
-        @TestMetadata("normal2.kt")
-        public void testNormal2() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/normal2.kt");
-        }
-
-        @TestMetadata("normal3.kt")
-        public void testNormal3() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/normal3.kt");
-        }
-
-        @TestMetadata("thisParameter.kt")
-        public void testThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/thisParameter.kt");
-        }
-
-        @TestMetadata("thisReceiver.kt")
-        public void testThisReceiver() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/thisReceiver.kt");
-        }
-
-        @TestMetadata("untilThisParameter.kt")
-        public void testUntilThisParameter() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/untilThisParameter.kt");
-        }
-
-        @TestMetadata("withCommentAndSpaces.kt")
-        public void testWithCommentAndSpaces() throws Exception {
-            runTest("idea/testData/intentions/convertToWith/withCommentAndSpaces.kt");
         }
     }
 
