@@ -147,8 +147,11 @@ class JKKtAlsoCallExpressionImpl(
 }
 
 class JKKtAssignmentStatementImpl(
-    override var field: JKAssignableExpression, expression: JKExpression, override var operator: JKOperator
+    field: JKAssignableExpression,
+    expression: JKExpression,
+    override var operator: JKOperator
 ) : JKKtAssignmentStatement, JKBranchElementBase() {
+    override var field: JKAssignableExpression by child(field)
     override var expression by child(expression)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAssignmentStatement(this, data)
 
