@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IS_APPLICABLE: false
 
 class MyClass {
     fun foo1(a: MyClass): MyClass = this

@@ -26,7 +26,10 @@ abstract class ConvertToScopeIntention<TExpression : KtExpression>(
         text: String
 ) : SelfTargetingIntention<TExpression>(elementType, text) {
 
-    protected val BLACKLIST_RECEIVER_NAME = listOf("this", "it")
+    abstract val isParameterScopeFunction: Boolean
+
+    protected val scopeReceiverName: String
+        get() = if (isParameterScopeFunction) "it" else "this"
 
     protected abstract fun createScopeExpression(factory: KtPsiFactory, element: TExpression): KtExpression?
 
@@ -54,7 +57,7 @@ abstract class ConvertToScopeIntention<TExpression : KtExpression>(
                 if (expression is KtProperty) expression
                 else findFirstExpressionToMove(receiverExpressionText, expression)
         val firstExpressionToMove = if (expression is KtProperty) expression.nextSibling else firstTargetExpression
-        blockExpression.moveRangeInto(firstExpressionToMove, lastExpressionToMove)
+        blockExpression.moveRangeInto(firstExpressionToMove, lastExpressionToMove, factory)
 
         parent.addBefore(scopeBlockExpression, firstTargetExpression)
         parent.deleteChildRange(firstTargetExpression, lastExpressionToMove)
@@ -71,14 +74,19 @@ abstract class ConvertToScopeIntention<TExpression : KtExpression>(
             lambdaArguments.firstOrNull()?.getLambdaExpression()?.bodyExpression
 
     private fun KtBlockExpression.moveRangeInto(
-            firstElement: PsiElement, lastElement: PsiElement
+            firstElement: PsiElement, lastElement: PsiElement, psiFactory: KtPsiFactory
     ) {
         addRange(firstElement, lastElement)
         children.filterIsInstance(KtDotQualifiedExpression::class.java)
-                .forEach { it.deleteFirstReceiver() }
+                .forEach {
+                    val replaced = it.deleteFirstReceiver()
+                    if (isParameterScopeFunction) {
+                        replaced.replace(psiFactory.createExpressionByPattern("$scopeReceiverName.$0", replaced))
+                    }
+                }
     }
 
-    private fun KtCallExpression.isApplicable() = lambdaArguments.isEmpty() && valueArguments.all { it.text !in BLACKLIST_RECEIVER_NAME }
+    private fun KtCallExpression.isApplicable() = lambdaArguments.isEmpty() && valueArguments.all { it.text != scopeReceiverName }
 
     private fun findFirstExpressionToMove(receiverExpressionText: String, expression: KtExpression) =
             findBoundaryExpression(receiverExpressionText, expression, forward = false)

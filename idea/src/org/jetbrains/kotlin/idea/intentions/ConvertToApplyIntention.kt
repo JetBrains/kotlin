@@ -20,9 +20,16 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 
-class ConvertToApplyIntention : ConvertToScopeIntention<KtExpression>(
-        KtExpression::class.java, "Convert to apply"
+sealed class ConvertToApplyOrAlsoIntention(isAlso: Boolean) : ConvertToScopeIntention<KtExpression>(
+        KtExpression::class.java, "Convert to ${scopeFunctionName(isAlso)}"
 ) {
+
+    companion object {
+        fun scopeFunctionName(isParameterScopeFunction: Boolean) = if (isParameterScopeFunction) "also" else "apply"
+    }
+
+    override val isParameterScopeFunction = isAlso
+
     override fun findCallExpressionFrom(scopeExpression: KtExpression) =
             ((scopeExpression as? KtProperty)?.initializer as? KtQualifiedExpression)?.callExpression
 
@@ -79,6 +86,10 @@ class ConvertToApplyIntention : ConvertToScopeIntention<KtExpression>(
         if (element !is KtProperty) return null
         val receiverExpressionText = element.name ?: return null
         return factory.createProperty(receiverExpressionText, element.typeReference?.text, element.isVar,
-                                      "${element.initializer?.text}.apply{}")
+                                      "${element.initializer?.text}.${scopeFunctionName(isParameterScopeFunction)}{}")
     }
 }
+
+class ConvertToApplyIntention : ConvertToApplyOrAlsoIntention(isAlso = false)
+
+class ConvertToAlsoIntention : ConvertToApplyOrAlsoIntention(isAlso = true)

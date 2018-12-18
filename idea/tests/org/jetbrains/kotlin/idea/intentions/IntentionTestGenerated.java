@@ -7004,6 +7004,74 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertToAlso")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertToAlso extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInConvertToAlso() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToAlso"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("itParameter.kt")
+        public void testItParameter() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/itParameter.kt");
+        }
+
+        @TestMetadata("itParameter2.kt")
+        public void testItParameter2() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/itParameter2.kt");
+        }
+
+        @TestMetadata("methodChain.kt")
+        public void testMethodChain() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/methodChain.kt");
+        }
+
+        @TestMetadata("methodChainWithItParameter.kt")
+        public void testMethodChainWithItParameter() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/methodChainWithItParameter.kt");
+        }
+
+        @TestMetadata("methodChainWithThisParameter.kt")
+        public void testMethodChainWithThisParameter() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/methodChainWithThisParameter.kt");
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/normal.kt");
+        }
+
+        @TestMetadata("normal2.kt")
+        public void testNormal2() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/normal2.kt");
+        }
+
+        @TestMetadata("normal3.kt")
+        public void testNormal3() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/normal3.kt");
+        }
+
+        @TestMetadata("untilItParameter.kt")
+        public void testUntilItParameter() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/untilItParameter.kt");
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/var.kt");
+        }
+
+        @TestMetadata("withCommentAndSpaces.kt")
+        public void testWithCommentAndSpaces() throws Exception {
+            runTest("idea/testData/intentions/convertToAlso/withCommentAndSpaces.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertToApply")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
