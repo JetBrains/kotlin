@@ -45,8 +45,13 @@ interface IrDeclarationOrigin {
     object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
     object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES")
     object FIELD_FOR_OBJECT_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
+
+    val isSynthetic: Boolean get() = false
 }
 
-abstract class IrDeclarationOriginImpl(val name: String) : IrDeclarationOrigin {
+abstract class IrDeclarationOriginImpl(
+    val name: String,
+    override val isSynthetic: Boolean = false
+) : IrDeclarationOrigin {
     override fun toString(): String = name
 }
