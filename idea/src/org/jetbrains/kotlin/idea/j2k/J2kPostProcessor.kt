@@ -59,12 +59,28 @@ class J2kPostProcessor(
         PROCESS
     }
 
-    override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) =
-            runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
+
+    override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) {
+        fun Processing.flattenToGroups(): List<List<J2kPostProcessing>> =
+            when (this) {
+                is SingleProcessing -> listOf(listOf(this.processing))
+                is ProcessingGroup ->
+                    if (processings.all { it is SingleProcessing }) {
+                        listOf(processings.map { (it as SingleProcessing).processing })
+                    } else {
+                        processings.flatMap { it.flattenToGroups() }
+                    }
+                else -> error("Processing tree is corrupted")
+            }
+
+        val groupsOfProcessings = postProcessingRegistrar.mainProcessings.flattenToGroups()
+
+        runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
+            for (processings in groupsOfProcessings) {
                 do {
                     var modificationStamp: Long? = file.modificationStamp
                     val elementToActions = runReadAction {
-                        collectAvailableActions(file, rangeMarker)
+                        collectAvailableActions(processings, file, rangeMarker)
                     }
 
                     withContext(EDT) {
@@ -74,44 +90,45 @@ class J2kPostProcessor(
                                     runWriteAction {
                                         action()
                                     }
-                                }
-                                else {
+                                } else {
                                     action()
                                 }
-                            }
-                            else {
+                            } else {
                                 modificationStamp = null
                             }
                         }
                     }
 
                     if (modificationStamp == file.modificationStamp) break
-                }
-                while (elementToActions.isNotEmpty())
+                } while (elementToActions.isNotEmpty())
+            }
 
-
-                if (formatCode) {
-                    withContext(EDT) {
-                        runWriteAction {
-                            val codeStyleManager = CodeStyleManager.getInstance(file.project)
-                            if (rangeMarker != null) {
-                                if (rangeMarker.isValid) {
-                                    codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
-                                }
+            if (formatCode) {
+                withContext(EDT) {
+                    runWriteAction {
+                        val codeStyleManager = CodeStyleManager.getInstance(file.project)
+                        if (rangeMarker != null) {
+                            if (rangeMarker.isValid) {
+                                codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
                             }
-                            else {
-                                codeStyleManager.reformat(file)
-                            }
-                            Unit
+                        } else {
+                            codeStyleManager.reformat(file)
                         }
+                        Unit
                     }
                 }
             }
+        }
+    }
 
 
     private data class ActionData(val element: KtElement, val action: () -> Unit, val priority: Int, val writeActionNeeded: Boolean)
 
-    private fun collectAvailableActions(file: KtFile, rangeMarker: RangeMarker?): List<ActionData> {
+    private fun collectAvailableActions(
+        processings: Collection<J2kPostProcessing>,
+        file: KtFile,
+        rangeMarker: RangeMarker?
+    ): List<ActionData> {
         val diagnostics = analyzeFileRange(file, rangeMarker)
 
         val availableActions = ArrayList<ActionData>()
@@ -125,12 +142,16 @@ class J2kPostProcessor(
                     super.visitElement(element)
 
                     if (rangeResult == RangeFilterResult.PROCESS) {
-                        postProcessingRegistrar.processings.forEach { processing ->
+                        processings.forEach { processing ->
                             val action = processing.createAction(element, diagnostics)
                             if (action != null) {
-                                availableActions.add(ActionData(element, action,
-                                                                postProcessingRegistrar.priority(processing),
-                                                                processing.writeActionNeeded))
+                                availableActions.add(
+                                    ActionData(
+                                        element, action,
+                                        postProcessingRegistrar.priority(processing),
+                                        processing.writeActionNeeded
+                                    )
+                                )
                             }
                         }
                     }
