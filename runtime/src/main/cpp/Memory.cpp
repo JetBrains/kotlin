@@ -23,6 +23,7 @@
 #include "KAssert.h"
 #include "Atomic.h"
 #include "Exceptions.h"
+#include "KString.h"
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
 #include "Natives.h"
@@ -226,7 +227,7 @@ public:
       keys[index++] = it.first;
     }
     std::sort(keys.begin(), keys.end());
-    for (auto& it : keys) {
+    for (auto* it : keys) {
       konan::consolePrintf(
           "%d bytes -> %d times\n", it, (*allocationHistogram)[it]);
     }
@@ -611,7 +612,7 @@ inline void DecrementRC(ContainerHeader* container) {
   } else if (UseCycleCollector) { // Possible root.
     RuntimeAssert(!Atomic, "Cycle collector shalln't be used with shared objects yet");
     RuntimeAssert(container->objectCount() == 1,
-        "Cycle collector shall only work with single object containers");
+        "cycle collector shall only work with single object containers");
     // We do not use cycle collector for frozen objects, as we already detected
     // possible cycles during freezing.
     // Also do not use cycle collector for provable acyclic objects.
@@ -639,11 +640,47 @@ inline void initThreshold(MemoryState* state, uint32_t gcThreshold) {
 }
 #endif // USE_GC
 
-#if TRACE_MEMORY || USE_GC
+#if TRACE_MEMORY && USE_GC
+
+const char* colorNames[] = {"BLACK", "GRAY", "WHITE", "PURPLE", "GREEN", "ORANGE", "RED"};
+
+void dumpObject(ObjHeader* ref, int indent) {
+  for (int i = 0; i < indent; i++) MEMORY_LOG(" ");
+  auto* typeInfo = ref->type_info();
+  auto* packageName =
+    typeInfo->packageName_ != nullptr ? CreateCStringFromString(typeInfo->packageName_) : nullptr;
+  auto* relativeName =
+    typeInfo->relativeName_ != nullptr ? CreateCStringFromString(typeInfo->relativeName_) : nullptr;
+  MEMORY_LOG("%p %s.%s\n", ref,
+    packageName ? packageName : "<unknown>", relativeName ? relativeName : "<unknown>");
+  if (packageName) konan::free(packageName);
+  if (relativeName) konan::free(relativeName);
+}
+
+void dumpContainerContent(ContainerHeader* container) {
+  if (isAggregatingFrozenContainer(container)) {
+    MEMORY_LOG("%s aggregating container %p with %d objects rc=%d\n",
+               colorNames[container->color()], container, container->objectCount(), container->refCount());
+    ContainerHeader** subContainer = reinterpret_cast<ContainerHeader**>(container + 1);
+    for (int i = 0; i < container->objectCount(); ++i) {
+      ObjHeader* obj = reinterpret_cast<ObjHeader*>(subContainer + 1);
+      MEMORY_LOG("    object %p of type %p: ", obj, obj->type_info());
+      dumpObject(obj, 4);
+    }
+  } else {
+    MEMORY_LOG("%s regular %s%scontainer %p with %d objects rc=%d\n",
+               colorNames[container->color()],
+               container->frozen() ? "frozen " : "",
+               container->stack() ? "stack " : "",
+               container, container->objectCount(),
+               container->refCount());
+    ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
+    dumpObject(obj, 4);
+  }
+}
 
 void dumpWorker(const char* prefix, ContainerHeader* header, ContainerHeaderSet* seen) {
-  MEMORY_LOG("%s: %p (%08x): %d refs\n", prefix, header, header->refCount_,
-             header->refCount_ >> CONTAINER_TAG_SHIFT)
+  dumpContainerContent(header);
   seen->insert(header);
   traverseContainerReferredObjects(header, [prefix, seen](ObjHeader* ref) {
     auto* child = ref->container();
@@ -656,10 +693,7 @@ void dumpWorker(const char* prefix, ContainerHeader* header, ContainerHeaderSet*
 
 void dumpReachable(const char* prefix, const ContainerHeaderSet* roots) {
   ContainerHeaderSet seen;
-  for (auto container : *roots) {
-    MEMORY_LOG("%p: %s%s\n", container,
-        container->frozen() ? "frozen " : "",
-        container->stack() ? "stack " : "")
+  for (auto* container : *roots) {
     dumpWorker(prefix, container, &seen);
   }
 }
@@ -672,10 +706,6 @@ void MarkRoots(MemoryState*);
 void ScanRoots(MemoryState*);
 void CollectRoots(MemoryState*);
 void Scan(ContainerHeader* container);
-
-#if TRACE_MEMORY
-const char* colorNames[] = {"BLACK", "GRAY", "WHITE", "PURPLE", "GREEN", "ORANGE", "RED"};
-#endif
 
 template<bool useColor>
 void MarkGray(ContainerHeader* start) {
@@ -699,8 +729,9 @@ void MarkGray(ContainerHeader* start) {
       if (container->marked()) continue;
       container->mark();
     }
+
     traverseContainerReferredObjects(container, [&toVisit](ObjHeader* ref) {
-      auto childContainer = ref->container();
+      auto* childContainer = ref->container();
       RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
       if (!Shareable(childContainer)) {
         childContainer->decRefCount<false>();
@@ -714,15 +745,16 @@ template<bool useColor>
 void ScanBlack(ContainerHeader* start) {
   ContainerHeaderDeque toVisit;
   toVisit.push_front(start);
-
   while (!toVisit.empty()) {
     auto* container = toVisit.front();
     MEMORY_LOG("ScanBlack visit %p [%s]\n", container, colorNames[container->color()]);
     toVisit.pop_front();
     if (useColor) {
-      if (container->color() == CONTAINER_TAG_GC_GREEN) continue;
+      auto color = container->color();
+      if (color == CONTAINER_TAG_GC_GREEN || color == CONTAINER_TAG_GC_BLACK) continue;
       container->setColorAssertIfGreen(CONTAINER_TAG_GC_BLACK);
     } else {
+      if (container->marked()) continue;
       container->unMark();
     }
     traverseContainerReferredObjects(container, [&toVisit](ObjHeader* ref) {
@@ -775,7 +807,7 @@ void MarkRoots(MemoryState* state) {
 }
 
 void ScanRoots(MemoryState* state) {
-  for (auto container : *(state->roots)) {
+  for (auto* container : *(state->roots)) {
     Scan(container);
   }
 }
