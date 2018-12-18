@@ -479,6 +479,61 @@ class KotlinCoreEnvironment private constructor(
         // used in the daemon for jar cache cleanup
         val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
+        internal fun report(configuration: CompilerConfiguration, severity: CompilerMessageSeverity, message: String) {
+            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(severity, message)
+        }
+
+        internal fun createSourceFilesFromSourceRoots(
+            configuration: CompilerConfiguration,
+            project: Project,
+            sourceRoots: List<KotlinSourceRoot>
+        ): MutableList<KtFile> {
+            val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+            val psiManager = PsiManager.getInstance(project)
+
+            val processedFiles = hashSetOf<VirtualFile>()
+            val result = mutableListOf<KtFile>()
+
+            val virtualFileCreator = PreprocessedFileCreator(project)
+
+            for ((sourceRootPath, isCommon) in sourceRoots) {
+                val vFile = localFileSystem.findFileByPath(sourceRootPath)
+                if (vFile == null) {
+                    val message = "Source file or directory not found: $sourceRootPath"
+
+                    val buildFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE)
+                    if (buildFilePath != null && Logger.isInitialized()) {
+                        KotlinCoreEnvironment.LOG.warn("$message\n\nbuild file path: $buildFilePath\ncontent:\n${buildFilePath.readText()}")
+                    }
+
+                    report(configuration, ERROR, message)
+                    continue
+                }
+
+                if (!vFile.isDirectory && vFile.fileType != KotlinFileType.INSTANCE) {
+                    report(configuration, ERROR, "Source entry is not a Kotlin file: $sourceRootPath")
+                    continue
+                }
+
+                for (file in File(sourceRootPath).walkTopDown()) {
+                    if (!file.isFile) continue
+
+                    val virtualFile = localFileSystem.findFileByPath(file.absolutePath)?.let(virtualFileCreator::create)
+                    if (virtualFile != null && processedFiles.add(virtualFile)) {
+                        val psiFile = psiManager.findFile(virtualFile)
+                        if (psiFile is KtFile) {
+                            result.add(psiFile)
+                            if (isCommon) {
+                                psiFile.isCommonSource = true
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result
+        }
+
         private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration): JavaCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment != null)
@@ -650,113 +705,3 @@ class KotlinCoreEnvironment private constructor(
     }
 }
 
-private fun report(configuration: CompilerConfiguration, severity: CompilerMessageSeverity, message: String) {
-    configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(severity, message)
-}
-
-private fun createSourceFilesFromSourceRoots(
-    configuration: CompilerConfiguration,
-    project: Project,
-    sourceRoots: List<KotlinSourceRoot>
-): MutableList<KtFile> {
-    val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-    val psiManager = PsiManager.getInstance(project)
-
-    val processedFiles = hashSetOf<VirtualFile>()
-    val result = mutableListOf<KtFile>()
-
-    val virtualFileCreator = PreprocessedFileCreator(project)
-
-    for ((sourceRootPath, isCommon) in sourceRoots) {
-        val vFile = localFileSystem.findFileByPath(sourceRootPath)
-        if (vFile == null) {
-            val message = "Source file or directory not found: $sourceRootPath"
-
-            val buildFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE)
-            if (buildFilePath != null && Logger.isInitialized()) {
-                KotlinCoreEnvironment.LOG.warn("$message\n\nbuild file path: $buildFilePath\ncontent:\n${buildFilePath.readText()}")
-            }
-
-            report(configuration, ERROR, message)
-            continue
-        }
-
-        if (!vFile.isDirectory && vFile.fileType != KotlinFileType.INSTANCE) {
-            report(configuration, ERROR, "Source entry is not a Kotlin file: $sourceRootPath")
-            continue
-        }
-
-        for (file in File(sourceRootPath).walkTopDown()) {
-            if (!file.isFile) continue
-
-            val virtualFile = localFileSystem.findFileByPath(file.absolutePath)?.let(virtualFileCreator::create)
-            if (virtualFile != null && processedFiles.add(virtualFile)) {
-                val psiFile = psiManager.findFile(virtualFile)
-                if (psiFile is KtFile) {
-                    result.add(psiFile)
-                    if (isCommon) {
-                        psiFile.isCommonSource = true
-                    }
-                }
-            }
-        }
-    }
-
-    return result
-}
-
-data class ScriptsCompilationDependencies(
-    val classpath: List<File>,
-    val sources: List<KtFile>,
-    val sourceDependencies: List<SourceDependencies>
-) {
-    data class SourceDependencies(
-        val scriptFile: KtFile,
-        val sourceDependencies: List<KtFile>
-    )
-}
-
-// recursively collect dependencies from initial and imported scripts
-fun collectScriptsCompilationDependencies(
-    configuration: CompilerConfiguration,
-    project: Project,
-    initialSources: Iterable<KtFile>
-): ScriptsCompilationDependencies {
-    val collectedClassPath = ArrayList<File>()
-    val collectedSources = ArrayList<KtFile>()
-    val collectedSourceDependencies = ArrayList<ScriptsCompilationDependencies.SourceDependencies>()
-    var remainingSources = initialSources
-    val knownSourcePaths = HashSet<String>()
-    val importsProvider = ScriptDependenciesProvider.getInstance(project)
-    while (true) {
-        val newRemainingSources = ArrayList<KtFile>()
-        for (source in remainingSources) {
-            val dependencies = importsProvider.getScriptDependencies(source)
-            if (dependencies != null) {
-                collectedClassPath.addAll(dependencies.classpath)
-
-                val sourceDependenciesRoots = dependencies.scripts.map { KotlinSourceRoot(it.path, false) }
-                val sourceDependencies = createSourceFilesFromSourceRoots(configuration, project, sourceDependenciesRoots)
-                if (sourceDependencies.isNotEmpty()) {
-                    collectedSourceDependencies.add(ScriptsCompilationDependencies.SourceDependencies(source, sourceDependencies))
-
-                    val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.virtualFile.path) }
-                    for (newSource in newSources) {
-                        collectedSources.add(newSource)
-                        newRemainingSources.add(newSource)
-                        knownSourcePaths.add(newSource.virtualFile.path)
-                    }
-                }
-            }
-        }
-        if (newRemainingSources.isEmpty()) break
-        else {
-            remainingSources = newRemainingSources
-        }
-    }
-    return ScriptsCompilationDependencies(
-        collectedClassPath.distinctBy { it.absolutePath },
-        collectedSources,
-        collectedSourceDependencies
-    )
-}
