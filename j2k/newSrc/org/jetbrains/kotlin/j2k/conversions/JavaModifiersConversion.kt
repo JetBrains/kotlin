@@ -33,6 +33,10 @@ class JavaModifiersConversion(private val context: ConversionContext) : Recursiv
                 element.extraModifiers -= ExtraModifier.SYNCHRONIZED
                 element.annotationList.annotations += jvmAnnotation("Synchronized", context.symbolProvider)
             }
+            if (ExtraModifier.NATIVE in element.extraModifiers) {
+                element.extraModifiers -= ExtraModifier.NATIVE
+                element.extraModifiers += ExtraModifier.EXTERNAL
+            }
         }
         return recurse(element)
     }
