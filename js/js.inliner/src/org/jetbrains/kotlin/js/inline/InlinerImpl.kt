@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-// TODO stateless?
 class InlinerImpl(
     val jsInliner: JsInliner,
     val scope: InliningScope
@@ -89,8 +88,6 @@ class InlinerImpl(
         }
     }
 
-    // TODO This could be extracted into a separate pass.
-    // TODO Don't forget to run it on the freshly inlined code!
     override fun doAcceptStatementList(statements: MutableList<JsStatement>) {
         var i = 0
 
@@ -114,7 +111,6 @@ class InlinerImpl(
     private fun patchReturnsFromSecondaryConstructor(function: JsFunction) {
         // Support non-local return from secondary constructor
         // Returns from secondary constructors should return `$this` object.
-        // TODO This seems brittle
         function.forcedReturnVariable?.let { returnVariable ->
             function.body.accept(object : RecursiveJsVisitor() {
                 override fun visitReturn(x: JsReturn) {

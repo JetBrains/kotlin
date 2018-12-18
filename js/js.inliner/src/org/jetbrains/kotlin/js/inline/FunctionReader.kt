@@ -83,8 +83,8 @@ class FunctionReader(
         val offsetToSourceMapping by lazy(offsetToSourceMappingProvider)
 
         val wrapFunctionRegex = specialFunctions.entries
-            .filter { (_, v) -> v == SpecialFunction.WRAP_FUNCTION } // TODO This is a hack! Investigate duplicates!
-            .map { Regex("\\s*${it.key}\\s*\\(\\s*").toPattern() }
+            .singleOrNull { (_, v) -> v == SpecialFunction.WRAP_FUNCTION }?.key
+            ?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
     }
 
     private val moduleNameToInfo by lazy {
@@ -224,11 +224,9 @@ class FunctionReader(
         return null
     }
 
-    // TODO move renamings to a proper place
     private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): FunctionWithWrapper? {
         val source = info.fileContent
         var tag = Namer.getFunctionTag(descriptor, config)
-//        val tagForModule = tag
         var index = source.indexOf(tag)
 
         // Hack for compatibility with old versions of stdlib
@@ -247,30 +245,21 @@ class FunctionReader(
         }
 
         val sourcePart = ShallowSubSequence(source, offset, source.length)
-        var isWrapped = false
-        for (regex in info.wrapFunctionRegex) {
-            val wrapFunctionMatcher = regex.matcher(sourcePart)
-            isWrapped = wrapFunctionMatcher.lookingAt() == true
-            if (isWrapped) {
-                offset += wrapFunctionMatcher!!.end()
-                break
-            }
+        val wrapFunctionMatcher = info.wrapFunctionRegex?.matcher(sourcePart)
+        val isWrapped = wrapFunctionMatcher?.lookingAt() == true
+        if (isWrapped) {
+            offset += wrapFunctionMatcher!!.end()
         }
 
         val position = info.offsetToSourceMapping[offset]
         val jsScope = JsRootScope(JsProgram())
-        val functionExpr = try {
-            parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, jsScope) ?: return null
-        } catch (t: Throwable) {
-            throw Error("Exception while reading function '$tag' from ${info.filePath}", t)
-        }
+        val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, jsScope) ?: return null
         functionExpr.fixForwardNameReferences()
         val (function, wrapper) = if (isWrapped) {
             InlineMetadata.decomposeWrapper(functionExpr) ?: return null
         } else {
             FunctionWithWrapper(functionExpr, null)
         }
-//        val moduleReference = moduleNameMap[tagForModule]?.deepCopy() ?: currentModuleName.makeRef()
         val wrapperStatements = wrapper?.statements?.filter { it !is JsReturn }
 
         val sourceMap = info.sourceMap
@@ -283,14 +272,9 @@ class FunctionReader(
         }
 
         val allDefinedNames = collectDefinedNamesInAllScopes(function)
-//        val replacements = hashMapOf(info.moduleVariable to moduleReference,
-//                                     info.kotlinVariable to Namer.kotlinObject())
-//        replaceExternalNames(function, replacements, allDefinedNames)
-//        wrapperStatements?.forEach { replaceExternalNames(it, replacements, allDefinedNames) }
 
         function.markInlineArguments(descriptor)
         markDefaultParams(function)
-        // TODO maybe move elsewhere?
         markSpecialFunctions(function, allDefinedNames, info, jsScope)
 
         val namesWithoutSideEffects = wrapperStatements.orEmpty().asSequence()

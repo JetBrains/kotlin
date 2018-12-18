@@ -45,8 +45,6 @@ sealed class InliningScope {
     fun importFunctionDefinition(definition: InlineFunctionDefinition): JsFunction {
         // Apparently we should avoid this trick when we implement fair support for crossinline
         // That's because crossinline lambdas inline into the declaration block and specialize those.
-
-        // TODO cache the function itself instead
         val result = computeIfAbsent(definition.tag, definition.fn.function) {
             val newReplacements = HashMap<JsName, JsNameRef>()
 
@@ -146,9 +144,7 @@ class ProgramFragmentInliningScope(
     private val additionalDeclarations = mutableListOf<JsStatement>()
 
     override fun update() {
-        // TODO fix the order
-        // TODO this probably will be replaced with a special tag -> block map for the imported stuff, so that we can merge same imports.
-        // TODO in that case this method will become obsolete
+        // TODO fix the order?
         fragment.declarationBlock.statements.addAll(0, additionalDeclarations)
 
         // post-processing
@@ -161,7 +157,6 @@ class ProgramFragmentInliningScope(
         removeUnusedImports(fragment)
     }
 
-    // TODO !!!!! This localAlias thing will get copied, inlined, and lost during IC =(
     override fun hasImport(name: JsName, tag: String): JsName? {
         return name.localAlias?.let {(name, tag) ->
             if (tag != null) {
@@ -217,7 +212,6 @@ class ProgramFragmentInliningScope(
     private fun addInlinedModule(module: JsImportedModule): JsName {
         return existingModules.computeIfAbsent(module.key) {
             // Copy so that the Merger.kt doesn't operate on the same instance in different fragments.
-            // TODO What about nameBindings?
             JsImportedModule(module.externalName, module.internalName, module.plainReference).also {
                 fragment.importedModules.add(it)
             }

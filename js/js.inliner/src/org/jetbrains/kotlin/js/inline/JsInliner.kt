@@ -82,7 +82,6 @@ class JsInliner(
         InlinerImpl(this@JsInliner, this).accept(node)
     }
 
-    // TODO a lot of code... Probably a bad sign
     fun inline(scope: InliningScope, call: JsInvocation, currentStatement: JsStatement?): InlineableResult {
         val definition = functionContext.getFunctionDefinition(call, scope)
 
