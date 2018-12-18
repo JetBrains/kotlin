@@ -1,6 +1,8 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !LANGUAGE: -ReleaseCoroutines
+// !DIAGNOSTICS: -UNUSED_PARAMETER -EXPERIMENTAL_FEATURE_WARNING
 // !CHECK_TYPE
 // SKIP_TXT
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 

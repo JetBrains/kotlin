@@ -1,8 +1,7 @@
-// !API_VERSION: 1.3
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
-// LANGUAGE_VERSION: 1.3
 // SKIP_TXT
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
