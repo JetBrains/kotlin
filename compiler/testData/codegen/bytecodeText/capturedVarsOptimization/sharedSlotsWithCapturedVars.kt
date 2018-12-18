@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun box(): String {
     run {
         run {

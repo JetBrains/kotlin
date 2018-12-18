@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun box(): String {
     for (i in (4 .. 1).reversed()) {
         throw AssertionError("Loop should not be executed")

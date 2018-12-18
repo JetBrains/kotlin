@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 val xs = "abcd"
 
 fun box(): String {

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 val cs: CharSequence = "abcd"
 
 fun box(): String {

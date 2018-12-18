@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 class A {
 }
 

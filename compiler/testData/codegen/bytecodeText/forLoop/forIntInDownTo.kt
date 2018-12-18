@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun test(): Int {
     var sum = 0
     for (i in 4 downTo 1) {

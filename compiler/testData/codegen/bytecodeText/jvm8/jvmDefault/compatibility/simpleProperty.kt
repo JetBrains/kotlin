@@ -1,6 +1,5 @@
 // !JVM_DEFAULT_MODE: compatibility
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
 
 interface KInterface {
 

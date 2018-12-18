@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 val arr = intArrayOf(10, 20, 30, 40)
 
 fun box(): String {

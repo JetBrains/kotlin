@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun test() {
     var sum = 0
     for (i in arrayOf("", "", "", "").indices) {

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun test(s: CharSequence): Int {
     var result = 0
     for (i in s.indices) {

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun add(x: Int, y: Int) = x + y
 
 fun test() {

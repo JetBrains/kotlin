@@ -1,9 +1,10 @@
-// WITH_RUNTIME
 // FILE: list.kt
+
 val intList = listOf(1, 2, 3)
 val longList = listOf(1L, 2L, 3L)
 
 // FILE: box.kt
+
 fun box(): String {
     val intListMin = intList.minBy { it } ?: -1
     if (intListMin != 1) return "Fail intListMin=$intListMin"

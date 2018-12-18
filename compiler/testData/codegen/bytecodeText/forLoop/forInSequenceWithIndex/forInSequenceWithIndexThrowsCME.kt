@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
 // FULL_JDK
-// WITH_RUNTIME
 
 val xsl = arrayListOf("a", "b", "c", "d")
 val xs = xsl.asSequence()

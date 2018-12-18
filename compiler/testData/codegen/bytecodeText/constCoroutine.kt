@@ -1,5 +1,4 @@
 // !LANGUAGE: -ReleaseCoroutines
-// WITH_RUNTIME
 // WITH_COROUTINES
 // TREAT_AS_ONE_FILE
 

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 val xs = listOf("a", "b", "c", "d")
 
 fun useAny(x: Any) {}

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 val arr = arrayOf("a", "b", "c", "d")
 
 fun box(): String {

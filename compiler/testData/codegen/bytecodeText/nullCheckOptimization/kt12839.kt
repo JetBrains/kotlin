@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun test() {
     val value = System.getProperty("key")
     if (value != null) {

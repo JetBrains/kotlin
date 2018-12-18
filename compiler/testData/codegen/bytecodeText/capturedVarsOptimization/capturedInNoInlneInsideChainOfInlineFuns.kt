@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun runNoInline(f: () -> Unit) = f()
 
 fun test() {
