@@ -31,6 +31,7 @@ val urls = listOf(
 
         "https://w3c.github.io/mediacapture-main/" to "org.w3c.dom.mediacapture",
         "http://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
+        "https://w3c.github.io/clipboard-apis" to "org.w3c.dom.clipboard",
         "https://raw.githubusercontent.com/whatwg/url/master/url.html" to "org.w3c.dom.url",
 
         "https://www.w3.org/TR/SVG2/single-page.html" to "org.w3c.dom.svg",
@@ -107,6 +108,11 @@ val eventSpecifierMapper = mapOf<String, String>(
     "ondragover" to "DragEvent",
     "ondragstart" to "DragEvent",
     "ondrop" to "DragEvent",
+
+    "oncopy" to "ClipboardEvent",
+    "oncut" to "ClipboardEvent",
+    "onpaste" to "ClipboardEvent",
+
 
     "onfetch" to "FetchEvent",
 
