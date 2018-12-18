@@ -418,9 +418,8 @@ public class TranslationContext {
         SuggestedName suggested = staticContext.suggestName(descriptor);
         if (suggested != null && getConfig().getModuleKind() != ModuleKind.PLAIN && isPublicInlineFunction()) {
             String moduleId = AnnotationsUtils.getModuleName(suggested.getDescriptor());
-            JsImportedModule importedModule = staticContext.getJsImportedModuleModule(suggested.getDescriptor());
-            if (moduleId != null && importedModule != null) {
-                JsExpression replacement = staticContext.exportModuleForInline(moduleId, importedModule);
+            if (moduleId != null) {
+                JsExpression replacement = staticContext.exportModuleForInline(moduleId, new JsImportedModule(moduleId, name, null));
                 result = replaceModuleReference(result, name, replacement);
             }
             else if (isNativeObject(suggested.getDescriptor()) && DescriptorUtils.isTopLevelDeclaration(suggested.getDescriptor())) {
