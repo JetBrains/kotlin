@@ -137,6 +137,17 @@ class ProgramFragmentInliningScope(
     override val fragment: JsProgramFragment
 ) : InliningScope() {
 
+    val allCode: JsBlock
+        get() = JsBlock(
+            JsBlock(fragment.inlinedFunctionWrappers.values.toList()),
+            fragment.declarationBlock,
+            fragment.exportBlock,
+            JsExpressionStatement(JsFunction(JsDynamicScope, fragment.initializerBlock, ""))
+        ).also { block ->
+            fragment.tests?.let { block.statements.add(it) }
+            fragment.mainFunction?.let { block.statements.add(it) }
+        }
+
     private val existingModules = fragment.importedModules.associateTo(mutableMapOf()) { it.key to it }
 
     private val existingBindings = fragment.nameBindings.associateTo(mutableMapOf()) { it.key to it.name }
@@ -148,18 +159,9 @@ class ProgramFragmentInliningScope(
         fragment.declarationBlock.statements.addAll(0, additionalDeclarations)
 
         // post-processing
-        val block = JsBlock(
-            JsBlock(fragment.inlinedFunctionWrappers.values.toList()),
-            fragment.declarationBlock,
-            fragment.initializerBlock,
-            fragment.exportBlock
-        )
-        fragment.tests?.let { block.statements.add(it) }
-        fragment.mainFunction?.let { block.statements.add(it) }
-
-        simplifyWrappedFunctions(block)
-        removeUnusedFunctionDefinitions(block, collectNamedFunctions(block))
-        removeUnusedImports(fragment)
+        simplifyWrappedFunctions(allCode)
+        removeUnusedFunctionDefinitions(allCode, collectNamedFunctions(allCode))
+        removeUnusedImports(fragment, allCode)
     }
 
     override fun hasImport(name: JsName, tag: String): JsName? {

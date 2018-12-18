@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.backend.ast.metadata.psiElement
 import org.jetbrains.kotlin.js.inline.context.FunctionContext
 import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
-import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import java.util.*
 
@@ -30,18 +29,19 @@ class InlinerCycleReporter(
     private val functionContext: FunctionContext
 ) {
 
-    private val processedFunctions = IdentitySet<JsFunction>()
-    private val inProcessFunctions = IdentitySet<JsFunction>()
+    private enum class VisitedState { IN_PROCESS, PROCESSED }
+
+    private val functionVisitingState = mutableMapOf<JsFunction, VisitedState>()
+
     // these are needed for error reporting, when inliner detects cycle
     private val namedFunctionsStack = Stack<JsFunction>()
 
-    private val inlineCallInfos = LinkedList<JsCallInfo>()
-
-    // TODO This looks like a hack
-    val currentNamedFunction: JsFunction?
+    private val currentNamedFunction: JsFunction?
         get() = if (namedFunctionsStack.empty()) null else namedFunctionsStack.peek()
 
+    private val inlineCallInfos = LinkedList<JsCallInfo>()
 
+    // Puts `function` on the `namedFunctionsStack` for inline call cycles reporting
     fun <T> withFunction(function: JsFunction, body: () -> T): T {
         if (function in functionContext.functionsByFunctionNodes.keys) {
             namedFunctionsStack.push(function)
@@ -49,34 +49,41 @@ class InlinerCycleReporter(
 
         val result = body()
 
-        if (!namedFunctionsStack.empty() && namedFunctionsStack.peek() == function) {
+        if (currentNamedFunction == function) {
             namedFunctionsStack.pop()
         }
 
         return result
     }
 
-    fun <T> withInlineFunctionDefinition(function: JsFunction, body: () -> T): T {
-        assert(!inProcessFunctions.contains(function)) { "Inliner has revisited function" }
-        inProcessFunctions.add(function)
+    fun processInlineFunction(definition: FunctionWithWrapper, call: JsInvocation?, doProcess: () -> Unit) {
 
-        val result = withFunction(function, body)
+        when (functionVisitingState[definition.function]) {
+            VisitedState.IN_PROCESS -> {
+                reportInlineCycle(call, definition.function)
+                return
+            }
+            VisitedState.PROCESSED -> return
+        }
 
-        processedFunctions.add(function)
+        val function = definition.function
 
-        assert(function in inProcessFunctions)
-        inProcessFunctions.remove(function)
+        functionVisitingState[function] = VisitedState.IN_PROCESS
+
+        val result = withFunction(function, doProcess)
+
+        functionVisitingState[function] = VisitedState.PROCESSED
 
         return result
     }
 
 
-    fun <T> withInlining(call: JsInvocation, body: () -> T): T {
+    fun <T> inlineCall(call: JsInvocation, doInline: () -> T): T {
         currentNamedFunction?.let {
             inlineCallInfos.add(JsCallInfo(call, it))
         }
 
-        val result = body()
+        val result = doInline()
 
         if (!inlineCallInfos.isEmpty()) {
             if (inlineCallInfos.last.call == call) {
@@ -85,17 +92,6 @@ class InlinerCycleReporter(
         }
 
         return result
-    }
-
-    // Return true iff the definition should be visited by the inliner
-    fun shouldProcess(definition: FunctionWithWrapper, call: JsInvocation?): Boolean {
-        if (definition.function in inProcessFunctions) {
-            reportInlineCycle(call, definition.function)
-        } else if (definition.function !in processedFunctions) {
-            return true
-        }
-
-        return false
     }
 
     private fun reportInlineCycle(call: JsInvocation?, calledFunction: JsFunction) {

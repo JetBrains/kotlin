@@ -27,20 +27,6 @@ import java.util.HashMap
 class FunctionContext(
     val inliner: JsInliner
 ) {
-    private val functionReader = FunctionReader(inliner.reporter, inliner.config, inliner.translationResult.innerModuleName)
-
-    private data class FunctionsAndAccessors(
-        val functions: Map<JsName, FunctionWithWrapper>,
-        val accessors: Map<String, FunctionWithWrapper>)
-
-    private val fragmentInfo = mutableMapOf<JsProgramFragment, FunctionsAndAccessors>()
-
-    private fun lookUpStaticFunction(functionName: JsName?, fragment: JsProgramFragment): FunctionWithWrapper? =
-        fragmentInfo[fragment]?.run { functions[functionName] }
-
-    private fun lookUpStaticFunctionByTag(functionTag: String, fragment: JsProgramFragment): FunctionWithWrapper? =
-        fragmentInfo[fragment]?.run { accessors[functionTag] }
-
     fun getFunctionDefinition(call: JsInvocation, scope: InliningScope): InlineFunctionDefinition {
         return getFunctionDefinitionImpl(call, scope)!!
     }
@@ -50,6 +36,12 @@ class FunctionContext(
     }
 
     val functionsByFunctionNodes = HashMap<JsFunction, FunctionWithWrapper>()
+
+    fun scopeForFragment(fragment: JsProgramFragment) = if (fragment in newFragments) {
+        inliningScopeCache.computeIfAbsent(fragment) {
+            ProgramFragmentInliningScope(fragment)
+        }
+    } else null
 
     /**
      * Gets function definition by invocation.
@@ -89,6 +81,21 @@ class FunctionContext(
         return lookUpFunctionDirect(call) ?: lookUpFunctionIndirect(call, scope) ?: lookUpFunctionExternal(call, scope.fragment)
     }
 
+    private val functionReader = FunctionReader(inliner.reporter, inliner.config, inliner.translationResult.innerModuleName)
+
+    private data class FunctionsAndAccessors(
+        val functions: Map<JsName, FunctionWithWrapper>,
+        val accessors: Map<String, FunctionWithWrapper>)
+
+    private val fragmentInfo = mutableMapOf<JsProgramFragment, FunctionsAndAccessors>()
+
+    private fun lookUpStaticFunction(functionName: JsName?, fragment: JsProgramFragment): FunctionWithWrapper? =
+        fragmentInfo[fragment]?.run { functions[functionName] }
+
+    private fun lookUpStaticFunctionByTag(functionTag: String, fragment: JsProgramFragment): FunctionWithWrapper? =
+        fragmentInfo[fragment]?.run { accessors[functionTag] }
+
+
     private fun lookUpFunctionIndirect(call: JsInvocation, scope: InliningScope): InlineFunctionDefinition? {
         /** remove ending `()` */
         val callQualifier: JsExpression = if (isCallInvocation(call)) {
@@ -124,11 +131,6 @@ class FunctionContext(
 
     private val newFragments = inliner.translationResult.newFragments.toIdentitySet()
 
-    fun scopeForFragment(fragment: JsProgramFragment) = if (fragment in newFragments) {
-        inliningScopeCache.computeIfAbsent(fragment) {
-            ProgramFragmentInliningScope(fragment)
-        }
-    } else null
 
     private fun loadFragment(fragment: JsProgramFragment) {
         fragmentInfo.computeIfAbsent(fragment) {
@@ -143,26 +145,31 @@ class FunctionContext(
         }
     }
 
-    fun fragmentByTag(tag: String): JsProgramFragment? {
+    private fun fragmentByTag(tag: String): JsProgramFragment? {
         return inliner.translationResult.inlineFunctionTagMap[tag]?.let { unit ->
             inliner.translationResult.translate(unit).fragment.also { loadFragment(it) }
         }
     }
 
-    private fun lookUpFunctionDirect(call: JsInvocation): InlineFunctionDefinition? =
-        call.descriptor?.let { descriptor ->
-            Namer.getFunctionTag(descriptor, inliner.config).let { tag ->
-                fragmentByTag(tag)?.let { definitionFragment ->
-                    return lookUpStaticFunctionByTag(tag, definitionFragment)?.let { fn ->
-                        InlineFunctionDefinition(fn, tag).also { definition ->
-                            scopeForFragment(definitionFragment)?.let { definitionScope ->
-                                inliner.process(definition, call, definitionScope)
-                            }
-                        }
-                    }
-                }
-            }
+    private fun lookUpFunctionDirect(call: JsInvocation): InlineFunctionDefinition? {
+        val descriptor = call.descriptor ?: return null
+
+        val tag = Namer.getFunctionTag(descriptor, inliner.config)
+
+        val definitionFragment = fragmentByTag(tag) ?: return null
+
+        val fn = lookUpStaticFunctionByTag(tag, definitionFragment) ?: return null
+
+        val definition = InlineFunctionDefinition(fn, tag)
+
+        // Process definition if it is in the new fragments
+        scopeForFragment(definitionFragment)?.let { definitionScope ->
+            inliner.process(definition, call, definitionScope)
         }
+
+        return definition
+    }
+
 
     private fun lookUpFunctionExternal(call: JsInvocation, fragment: JsProgramFragment): InlineFunctionDefinition? =
         call.descriptor?.let { descriptor ->

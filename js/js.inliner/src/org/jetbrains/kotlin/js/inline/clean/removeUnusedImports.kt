@@ -21,19 +21,10 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.imported
 
 
-fun removeUnusedImports(fragment: JsProgramFragment) {
+fun removeUnusedImports(fragment: JsProgramFragment, code: JsBlock) {
     val usedImports = mutableSetOf<JsName>()
 
-    with(fragment) {
-        inlinedFunctionWrappers.values.forEach {
-            collectUsedImports(it, usedImports)
-        }
-        collectUsedImports(declarationBlock, usedImports)
-        collectUsedImports(initializerBlock, usedImports)
-        tests?.let { collectUsedImports(it, usedImports) }
-        mainFunction?.let { collectUsedImports(it, usedImports) }
-        collectUsedImports(exportBlock, usedImports)
-    }
+    collectUsedImports(code, usedImports)
 
     fragment.nameBindings.retainAll { !it.name.imported || it.name in usedImports }
 

@@ -21,16 +21,6 @@ class JsInliner(
     val translationResult: AstGenerationResult
 ) {
 
-    init {
-        // TODO Isn't there a better way to achieve this? Also there is a bug with private inline properties
-        DummyAccessorInvocationTransformer().let {
-            for (fragment in translationResult.newFragments) {
-                it.accept<JsGlobalBlock>(fragment.declarationBlock)
-                it.accept<JsGlobalBlock>(fragment.initializerBlock)
-            }
-        }
-    }
-
     val functionContext = FunctionContext(this)
 
     val cycleReporter = InlinerCycleReporter(trace, functionContext)
@@ -44,36 +34,21 @@ class JsInliner(
     fun process(fragment: JsProgramFragment) {
         val fragmentScope = functionContext.scopeForFragment(fragment) ?: return
 
-        // TODO any way and/or need to visit everything inside the fragment?
-        fragmentScope.process(fragment.declarationBlock)
-
-        // TODO Atm it's placed after inliner in order not to perform the body inlining twice. Is that OK?
-        // Ideally it could be moved to the coroutine transformers. The info regarding which inline function wrappers have been imported
-        // on top level should be persisted for that sake. Also it going to be needed in order to avoid duplicate code.
-        InlineSuspendFunctionSplitter(fragmentScope).accept(fragment.declarationBlock)
-
-        // Mostly for the sake of post-processor
-        // TODO are inline function marked with @Test possible?
-        fragment.tests?.let { fragmentScope.process(it) }
-
-        // TODO wrap in a function in order to do the post-processing
-        fragmentScope.process(fragment.initializerBlock)
+        fragmentScope.process(fragmentScope.allCode)
 
         fragmentScope.update()
     }
 
     fun process(inlineFn: InlineFunctionDefinition, call: JsInvocation?, containingScope: InliningScope) {
-        if (cycleReporter.shouldProcess(inlineFn.fn, call)) {
+        cycleReporter.processInlineFunction(inlineFn.fn, call) {
             val (function, wrapperBody) = inlineFn.fn
 
-            cycleReporter.withInlineFunctionDefinition(function) {
-                if (wrapperBody != null) {
-                    val scope = PublicInlineFunctionInliningScope(function, wrapperBody, containingScope.fragment)
-                    scope.process(wrapperBody)
-                    scope.update()
-                } else {
-                    containingScope.process(function)
-                }
+            if (wrapperBody != null) {
+                val scope = PublicInlineFunctionInliningScope(function, wrapperBody, containingScope.fragment)
+                scope.process(wrapperBody)
+                scope.update()
+            } else {
+                containingScope.process(function)
             }
         }
     }
@@ -85,7 +60,7 @@ class JsInliner(
     fun inline(scope: InliningScope, call: JsInvocation, currentStatement: JsStatement?): InlineableResult {
         val definition = functionContext.getFunctionDefinition(call, scope)
 
-        return cycleReporter.withInlining(call) {
+        return cycleReporter.inlineCall(call) {
 
             val function = scope.importFunctionDefinition(definition)
 
