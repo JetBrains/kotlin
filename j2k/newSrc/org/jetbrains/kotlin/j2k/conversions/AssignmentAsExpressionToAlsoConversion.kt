@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaAssignmentExpression) return recurse(element)
+        element.invalidate()
 
         val alsoExpression = JKKtAlsoCallExpressionImpl(
             JKBlockStatementImpl(
@@ -22,7 +23,6 @@ class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : R
             it.statement.cast<JKBlockStatement>().block.statements.first().cast<JKKtAssignmentStatement>().expression =
                     JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it.parameter))
         }
-        element.invalidate()
 
         return recurse(
             JKQualifiedExpressionImpl(
