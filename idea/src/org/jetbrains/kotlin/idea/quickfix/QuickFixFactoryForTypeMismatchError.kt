@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunction
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
@@ -41,10 +43,12 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
@@ -90,15 +94,27 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                 val diagnosticWithParameters = Errors.CONSTANT_EXPECTED_TYPE_MISMATCH.cast(diagnostic)
                 expectedType = diagnosticWithParameters.b
                 expressionType = context.getType(diagnosticElement)
-                if (expressionType == null) {
-                    LOG.error("No type inferred: " + diagnosticElement.text)
-                    return emptyList()
-                }
+            }
+            Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED -> {
+                val constantValue = context[BindingContext.COMPILE_TIME_VALUE, diagnosticElement]
+                if (constantValue is IntegerValueTypeConstant) {
+                    // Here we have unsigned type (despite really constant is signed)
+                    expectedType = constantValue.getType(NO_EXPECTED_TYPE)
+                    val signedConstantValue = with(IntegerValueTypeConstant) {
+                        constantValue.convertToSignedConstant(diagnosticElement.findModuleDescriptor())
+                    }
+                    // And here we have signed type
+                    expressionType = signedConstantValue.getType(NO_EXPECTED_TYPE)
+                } else return emptyList()
             }
             else -> {
                 LOG.error("Unexpected diagnostic: " + DefaultErrorMessages.render(diagnostic))
                 return emptyList()
             }
+        }
+        if (expressionType == null) {
+            LOG.error("No type inferred: " + diagnosticElement.text)
+            return emptyList()
         }
 
         if (expressionType.isPrimitiveNumberType() && expectedType.isPrimitiveNumberType()) {
@@ -240,10 +256,10 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                 val correspondingParameterDescriptor = resolvedCall.getParameterForArgument(valueArgument)
                 val correspondingParameter = QuickFixUtil.safeGetDeclaration(correspondingParameterDescriptor) as? KtParameter
                 val expressionFromArgument = valueArgument.getArgumentExpression()
-                val valueArgumentType = if (diagnostic.factory === Errors.NULL_FOR_NONNULL_TYPE)
-                    expressionType
-                else
-                    expressionFromArgument?.let { context.getType(it) }
+                val valueArgumentType = when (diagnostic.factory) {
+                    Errors.NULL_FOR_NONNULL_TYPE, Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED -> expressionType
+                    else -> expressionFromArgument?.let { context.getType(it) }
+                }
                 if (valueArgumentType != null) {
                     if (correspondingParameter != null) {
                         val callable = PsiTreeUtil.getParentOfType(correspondingParameter, KtCallableDeclaration::class.java, true)
