@@ -19,7 +19,6 @@ class InsertDefaultPrimaryConstructorConversion(private val context: ConversionC
         val constructor = JKKtPrimaryConstructorImpl(
             JKNameIdentifierImpl(element.name.value),
             emptyList(),
-            JKBodyStub,
             JKStubExpressionImpl(),
             emptyList(),
             Visibility.PUBLIC,

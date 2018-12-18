@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.impl.JKKtInitDeclarationImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtPrimaryConstructorImpl
 
 class PrimaryConstructorDetectConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -17,6 +18,13 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
         return recurse(element)
     }
 
+    private fun <T> List<T>.replace(element: T, replacer: T): List<T> {
+        val mutableList = toMutableList()
+        val index = indexOf(element)
+        mutableList[index] = replacer
+        return mutableList
+    }
+
     private fun processClass(element: JKClass) {
         val constructors = element.declarationList.filterIsInstance<JKKtConstructor>()
         if (constructors.any { it is JKKtPrimaryConstructor }) return
@@ -24,15 +32,20 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
         val delegationCall = primaryConstructorCandidate.delegationCall as? JKDelegationConstructorCall
         if (delegationCall?.expression is JKThisExpression) return
 
-        element.classBody.declarations -= primaryConstructorCandidate
 
         primaryConstructorCandidate.invalidate()
+        if (primaryConstructorCandidate.block.statements.isNotEmpty()) {
+            val initDeclaration = JKKtInitDeclarationImpl(primaryConstructorCandidate.block)
+            element.classBody.declarations =
+                    element.classBody.declarations.replace(primaryConstructorCandidate, initDeclaration)
+        } else {
+            element.classBody.declarations -= primaryConstructorCandidate
+        }
 
         val primaryConstructor =
             JKKtPrimaryConstructorImpl(
                 primaryConstructorCandidate.name,
                 primaryConstructorCandidate.parameters,
-                primaryConstructorCandidate.block,
                 primaryConstructorCandidate.delegationCall,
                 primaryConstructorCandidate.extraModifiers,
                 primaryConstructorCandidate.visibility,
