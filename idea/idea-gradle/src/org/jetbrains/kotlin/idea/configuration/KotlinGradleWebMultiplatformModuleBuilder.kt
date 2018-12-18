@@ -309,7 +309,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
             task run(type: JavaExec, dependsOn: [jvmMainClasses, jsJar]) {
                 main = "sample.Sample${jvmTargetName.capitalize()}Kt"
                 classpath { [
-                        kotlin.targets.jvm.compilations.main.output.files,
+                        kotlin.targets.jvm.compilations.main.output.allOutputs.files,
                         configurations.jvmRuntimeClasspath,
                 ] }
                 args = []
