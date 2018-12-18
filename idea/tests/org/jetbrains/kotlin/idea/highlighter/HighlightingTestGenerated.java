@@ -114,6 +114,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         runTest("idea/testData/highlighter/Todo.kt");
     }
 
+    @TestMetadata("TopLevelDestructuring.kt")
+    public void testTopLevelDestructuring() throws Exception {
+        runTest("idea/testData/highlighter/TopLevelDestructuring.kt");
+    }
+
     @TestMetadata("TopLevelOpenSuspendFun.kt")
     public void testTopLevelOpenSuspendFun() throws Exception {
         runTest("idea/testData/highlighter/TopLevelOpenSuspendFun.kt");
