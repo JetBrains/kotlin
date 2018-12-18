@@ -165,16 +165,15 @@ val eventSpecifierMapper = mapOf<String, String>(
 
 
 data class EventMapKey(val name: String, val context: String)
-private fun String.asEventMapKey(context: String) = EventMapKey(this, context)
 
 val eventSpecifierMapperWithContext = mapOf<EventMapKey, String>(
-    "onaddtrack".asEventMapKey("MediaStream") to "MediaStreamTrackEvent",
-    "onremovetrack".asEventMapKey("MediaStream") to "MediaStreamTrackEvent",
+    EventMapKey("onaddtrack", "MediaStream") to "MediaStreamTrackEvent",
+    EventMapKey("onremovetrack", "MediaStream") to "MediaStreamTrackEvent",
 
-    "onaddtrack".asEventMapKey("AudioTrackList") to "TrackEvent",
-    "onaddtrack".asEventMapKey("TextTrackList") to "TrackEvent",
-    "onaddtrack".asEventMapKey("VideoTrackList") to "TrackEvent",
-    "onremovetrack".asEventMapKey("AudioTrackList") to "TrackEvent",
-    "onremovetrack".asEventMapKey("TextTrackList") to "TrackEvent",
-    "onremovetrack".asEventMapKey("VideoTrackList") to "TrackEvent"
+    EventMapKey("onaddtrack", "AudioTrackList") to "TrackEvent",
+    EventMapKey("onaddtrack", "TextTrackList") to "TrackEvent",
+    EventMapKey("onaddtrack", "VideoTrackList") to "TrackEvent",
+    EventMapKey("onremovetrack", "AudioTrackList") to "TrackEvent",
+    EventMapKey("onremovetrack", "TextTrackList") to "TrackEvent",
+    EventMapKey("onremovetrack", "VideoTrackList") to "TrackEvent"
 )
