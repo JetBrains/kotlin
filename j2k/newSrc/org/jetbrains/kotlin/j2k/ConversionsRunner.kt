@@ -49,7 +49,7 @@ object ConversionsRunner {
             +PrimaryConstructorDetectConversion(context)
             +InsertDefaultPrimaryConstructorConversion(context)
             +FieldToPropertyConversion()
-            +JavaStandartMethodsConversion()
+            +JavaStandartMethodsConversion(context)
             +JavaMethodToKotlinFunctionConversion(context)
             +MainFunctionConversion(context)
             +LiteralConversion()

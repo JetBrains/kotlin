@@ -171,7 +171,7 @@ class JKKtConstructorImpl(
     override var visibility: Visibility,
     override var modality: Modality
 ) : JKBranchElementBase(), JKKtConstructor {
-    override val returnType: JKTypeElement get() = TODO("!")
+    override var returnType: JKTypeElement by child(JKTypeElementImpl(JKNoTypeImpl))
 
     override var name: JKNameIdentifier by child(name)
     override var parameters: List<JKParameter> by children(parameters)
@@ -191,7 +191,7 @@ class JKKtPrimaryConstructorImpl(
     override var visibility: Visibility,
     override var modality: Modality
 ) : JKBranchElementBase(), JKKtPrimaryConstructor {
-    override val returnType: JKTypeElement get() = TODO("!")
+    override var returnType: JKTypeElement by child(JKTypeElementImpl(JKNoTypeImpl))
 
     override var name: JKNameIdentifier by child(name)
     override var parameters: List<JKParameter> by children(parameters)

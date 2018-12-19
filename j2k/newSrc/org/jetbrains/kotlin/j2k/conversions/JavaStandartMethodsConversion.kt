@@ -5,16 +5,28 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaMethodImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKJavaVoidType
 import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKUnresolvedClassType
 
-class JavaStandartMethodsConversion : RecursiveApplicableConversionBase() {
+class JavaStandartMethodsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaMethodImpl) return recurse(element)
-        if (fixToStringMethod(element)) {
-            return recurse(element)
+        if (element !is JKClass) return recurse(element)
+        for (declaration in element.classBody.declarations) {
+            if (declaration !is JKJavaMethodImpl) continue
+            if (fixToStringMethod(declaration)) continue
+            if (fixFinalizeMethod(declaration, element)) continue
+            if (fixCloneMethod(declaration)) {
+                element.inheritance.implements +=
+                        JKTypeElementImpl(
+                            JKUnresolvedClassType("Cloneable", emptyList(), Nullability.NotNull)
+                        )
+                continue
+            }
         }
         return recurse(element)
     }
@@ -26,6 +38,28 @@ class JavaStandartMethodsConversion : RecursiveApplicableConversionBase() {
             ?.takeIf { it.classReference.name == "String" }
             ?.updateNullability(Nullability.NotNull) ?: return false
         method.returnType = JKTypeElementImpl(type)
+        return true
+    }
+
+    private fun fixCloneMethod(method: JKJavaMethodImpl): Boolean {
+        if (method.name.value != "clone") return false
+        if (method.parameters.isNotEmpty()) return false
+        val type = (method.returnType.type as? JKClassType)
+            ?.takeIf { it.classReference.name == "Object" }
+            ?.updateNullability(Nullability.NotNull) ?: return false
+        method.returnType = JKTypeElementImpl(type)
+        return true
+    }
+
+    private fun fixFinalizeMethod(method: JKJavaMethodImpl, containingClass: JKClass): Boolean {
+        if (method.name.value != "finalize") return false
+        if (method.parameters.isNotEmpty()) return false
+        if (method.returnType.type != JKJavaVoidType) return false
+        if (method.modality == Modality.OVERRIDE) {
+            method.modality =
+                    if (containingClass.modality == Modality.OPEN) Modality.OPEN
+                    else Modality.FINAL
+        }
         return true
     }
 }
