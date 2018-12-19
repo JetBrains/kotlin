@@ -27,8 +27,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 
-const val OPTIMIZATION_ASM_API_VERSION = Opcodes.API_VERSION
-
 val AbstractInsnNode.isMeaningful: Boolean
     get() =
         when (this.type) {
