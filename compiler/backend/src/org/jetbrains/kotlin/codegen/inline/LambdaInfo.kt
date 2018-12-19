@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
@@ -106,7 +107,7 @@ class DefaultLambda(
         val classReader = buildClassReaderByInternalName(sourceCompiler.state, lambdaClassType.internalName)
         var isPropertyReference = false
         var isFunctionReference = false
-        classReader.accept(object : ClassVisitor(API) {
+        classReader.accept(object : ClassVisitor(Opcodes.API_VERSION) {
             override fun visit(
                 version: Int,
                 access: Int,
@@ -187,7 +188,7 @@ abstract class ExpressionLambda(protected val typeMapper: KotlinTypeMapper, isCr
         val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
         val asmMethod = jvmMethodSignature.asmMethod
         val methodNode = MethodNode(
-            API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, sourceCompiler.state),
+            Opcodes.API_VERSION, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, sourceCompiler.state),
             asmMethod.name, asmMethod.descriptor, null, null
         )
 

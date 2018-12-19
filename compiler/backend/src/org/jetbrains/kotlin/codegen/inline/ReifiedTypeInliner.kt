@@ -167,7 +167,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, 
     ) = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
         if (stubCheckcast !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(API)
+        val newMethodNode = MethodNode(Opcodes.API_VERSION)
         generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, isReleaseCoroutines)
 
         instructions.insert(insn, newMethodNode.instructions)
@@ -187,7 +187,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, 
     ) = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
         if (stubInstanceOf !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(API)
+        val newMethodNode = MethodNode(Opcodes.API_VERSION)
         generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType, isReleaseCoroutines)
 
         instructions.insert(insn, newMethodNode.instructions)

@@ -107,8 +107,8 @@ class MethodInliner(
         transformedNode.instructions.resetLabels()
 
         val resultNode = MethodNode(
-                API, transformedNode.access, transformedNode.name, transformedNode.desc,
-                transformedNode.signature, transformedNode.exceptions?.toTypedArray()
+            Opcodes.API_VERSION, transformedNode.access, transformedNode.name, transformedNode.desc,
+            transformedNode.signature, transformedNode.exceptions?.toTypedArray()
         )
 
         val visitor = RemapVisitor(resultNode, remapper, nodeRemapper)
@@ -407,7 +407,7 @@ class MethodInliner(
         val capturedParamsSize = parameters.capturedParametersSizeOnStack
         val realParametersSize = parameters.realParametersSizeOnStack
         val transformedNode = MethodNode(
-            API, node.access, node.name,
+            Opcodes.API_VERSION, node.access, node.name,
             Type.getMethodDescriptor(Type.getReturnType(node.desc), *(Type.getArgumentTypes(node.desc) + parameters.capturedTypes)),
             node.signature, node.exceptions?.toTypedArray()
         )

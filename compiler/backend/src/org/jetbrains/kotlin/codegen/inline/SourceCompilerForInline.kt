@@ -273,7 +273,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         val inliningFunction = element as KtDeclarationWithBody?
 
         val node = MethodNode(
-            API,
+            Opcodes.API_VERSION,
             AsmUtil.getMethodAsmFlags(callableDescriptor, context.contextKind, state) or if (callDefault) Opcodes.ACC_STATIC else 0,
             asmMethod.name,
             asmMethod.descriptor, null, null
