@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.j2k.tree.impl
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import com.intellij.util.reverse
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.JKSymbolProvider
 import org.jetbrains.kotlin.j2k.conversions.parentOfType
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -142,7 +141,7 @@ class JKMultiverseFunctionSymbol(override val target: KtNamedFunction, private v
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String
-        get() = target.name!! // TODO("Fix this")
+        get() = target.fqName!!.asString()
 }
 
 class JKUniverseFieldSymbol : JKFieldSymbol, JKUniverseSymbol<JKVariable> {
@@ -165,10 +164,10 @@ class JKMultiverseFieldSymbol(override val target: PsiVariable, private val symb
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String
-        get() = target.name!! // TODO("Fix this")
+        get() = target.getKotlinFqName()?.asString() ?: target.name!!
 }
 
-class JKMultiversePropertySymbol(override val target: KtProperty, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
+class JKMultiversePropertySymbol(override val target: KtCallableDeclaration, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
     override val fieldType: JKType
         get() = target.typeReference!!.typeElement!!.toJK(symbolProvider)
     override val name: String
@@ -176,7 +175,7 @@ class JKMultiversePropertySymbol(override val target: KtProperty, private val sy
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String
-        get() = target.name!! // TODO("Fix this")
+        get() = target.fqName!!.asString()
 }
 
 class JKUnresolvedField(override val target: PsiReference, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
@@ -214,7 +213,6 @@ class JKUnresolvedMethod(
 }
 
 class JKUnresolvedClassSymbol(override val target: String) : JKClassSymbol {
-
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String?
