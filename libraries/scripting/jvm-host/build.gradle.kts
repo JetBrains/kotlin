@@ -13,10 +13,13 @@ dependencies {
     compile(project(":kotlin-scripting-jvm"))
     compile(project(":kotlin-script-util"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep())
     runtime(projectRuntimeJar(":kotlin-compiler"))
+    runtime(project(":kotlin-reflect"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit"))
+    testRuntime(project(":kotlin-reflect"))
 }
 
 sourceSets {
