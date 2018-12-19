@@ -25,6 +25,11 @@ public class KotlinGotoImplementationMultiModuleTestGenerated extends AbstractKo
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    @TestMetadata("actualTypeAliasWithAnonymousSubclass")
+    public void testActualTypeAliasWithAnonymousSubclass() throws Exception {
+        runTest("idea/testData/navigation/implementations/multiModule/actualTypeAliasWithAnonymousSubclass/");
+    }
+
     public void testAllFilesPresentInMultiModule() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/implementations/multiModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
