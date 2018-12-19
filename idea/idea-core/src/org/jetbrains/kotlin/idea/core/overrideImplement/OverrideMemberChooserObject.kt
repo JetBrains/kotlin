@@ -119,30 +119,37 @@ interface OverrideMemberChooserObject : ClassMember {
     }
 }
 
+enum class MemberGenerateMode {
+    OVERRIDE,
+    ACTUAL,
+    EXPECT
+}
+
 fun OverrideMemberChooserObject.generateMember(
     targetClass: KtClassOrObject,
     copyDoc: Boolean
-) = generateMember(targetClass, copyDoc, targetClass.project, forceActual = false, forceExpect = false)
+) = generateMember(targetClass, copyDoc, targetClass.project, mode = MemberGenerateMode.OVERRIDE)
 
 fun OverrideMemberChooserObject.generateMember(
     targetClass: KtClassOrObject?,
     copyDoc: Boolean,
     project: Project,
-    forceActual: Boolean,
-    forceExpect: Boolean
+    mode: MemberGenerateMode
 ): KtCallableDeclaration {
     val descriptor = immediateSuper
 
     val bodyType = when {
         targetClass?.hasExpectModifier() == true -> NO_BODY
-        descriptor.extensionReceiverParameter != null && !forceActual && !forceExpect -> FROM_TEMPLATE
+        descriptor.extensionReceiverParameter != null && mode == MemberGenerateMode.OVERRIDE -> FROM_TEMPLATE
         else -> bodyType
     }
 
-    val renderer = if (!forceActual && !forceExpect) OVERRIDE_RENDERER else when {
-        forceActual -> ACTUAL_RENDERER
-        else -> EXPECT_RENDERER
-    }.withOptions {
+    val baseRenderer = when (mode) {
+        MemberGenerateMode.OVERRIDE -> OVERRIDE_RENDERER
+        MemberGenerateMode.ACTUAL -> ACTUAL_RENDERER
+        MemberGenerateMode.EXPECT -> EXPECT_RENDERER
+    }
+    val renderer = baseRenderer.withOptions {
         if (descriptor is ClassConstructorDescriptor && descriptor.isPrimary) {
             val containingClass = descriptor.containingDeclaration
             if (containingClass.kind == ClassKind.ANNOTATION_CLASS || containingClass.isInline) {
@@ -152,29 +159,31 @@ fun OverrideMemberChooserObject.generateMember(
     }
 
     if (preferConstructorParameter && descriptor is PropertyDescriptor) {
-        return generateConstructorParameter(project, descriptor, renderer)
+        return generateConstructorParameter(project, descriptor, renderer, mode == MemberGenerateMode.OVERRIDE)
     }
 
     val newMember: KtCallableDeclaration = when (descriptor) {
-        is FunctionDescriptor -> generateFunction(project, descriptor, renderer, bodyType)
-        is PropertyDescriptor -> generateProperty(project, descriptor, renderer, bodyType)
+        is FunctionDescriptor -> generateFunction(project, descriptor, renderer, bodyType, mode == MemberGenerateMode.OVERRIDE)
+        is PropertyDescriptor -> generateProperty(project, descriptor, renderer, bodyType, mode == MemberGenerateMode.OVERRIDE)
         else -> error("Unknown member to override: $descriptor")
     }
 
-    when {
-        forceActual -> newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
-        forceExpect -> if (targetClass == null) {
+    when (mode) {
+        MemberGenerateMode.ACTUAL -> newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
+        MemberGenerateMode.EXPECT -> if (targetClass == null) {
             newMember.addModifier(KtTokens.EXPECT_KEYWORD)
         }
-        targetClass?.hasActualModifier() == true -> {
-            val expectClassDescriptors =
-                targetClass.resolveToDescriptorIfAny()?.expectedDescriptors()?.filterIsInstance<ClassDescriptor>().orEmpty()
-            if (expectClassDescriptors.any { expectClassDescriptor ->
-                    val expectMemberDescriptor = expectClassDescriptor.findCallableMemberBySignature(immediateSuper)
-                    expectMemberDescriptor?.isExpect == true && expectMemberDescriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+        MemberGenerateMode.OVERRIDE -> {
+            if (targetClass?.hasActualModifier() == true) {
+                val expectClassDescriptors =
+                    targetClass.resolveToDescriptorIfAny()?.expectedDescriptors()?.filterIsInstance<ClassDescriptor>().orEmpty()
+                if (expectClassDescriptors.any { expectClassDescriptor ->
+                        val expectMemberDescriptor = expectClassDescriptor.findCallableMemberBySignature(immediateSuper)
+                        expectMemberDescriptor?.isExpect == true && expectMemberDescriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+                    }
+                ) {
+                    newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
                 }
-            ) {
-                newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
             }
         }
     }
@@ -268,9 +277,10 @@ private fun generateProperty(
     project: Project,
     descriptor: PropertyDescriptor,
     renderer: DescriptorRenderer,
-    bodyType: OverrideMemberChooserObject.BodyType
+    bodyType: OverrideMemberChooserObject.BodyType,
+    forceOverride: Boolean
 ): KtProperty {
-    val newDescriptor = descriptor.wrap(forceOverride = renderer === OVERRIDE_RENDERER)
+    val newDescriptor = descriptor.wrap(forceOverride)
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
@@ -289,8 +299,13 @@ private fun generateProperty(
     return KtPsiFactory(project).createProperty(renderer.render(newDescriptor) + body)
 }
 
-private fun generateConstructorParameter(project: Project, descriptor: PropertyDescriptor, renderer: DescriptorRenderer): KtParameter {
-    val newDescriptor = descriptor.wrap(forceOverride = renderer === OVERRIDE_RENDERER)
+private fun generateConstructorParameter(
+    project: Project,
+    descriptor: PropertyDescriptor,
+    renderer: DescriptorRenderer,
+    forceOverride: Boolean
+): KtParameter {
+    val newDescriptor = descriptor.wrap(forceOverride)
     newDescriptor.setSingleOverridden(descriptor)
     return KtPsiFactory(project).createParameter(renderer.render(newDescriptor))
 }
@@ -299,9 +314,10 @@ private fun generateFunction(
     project: Project,
     descriptor: FunctionDescriptor,
     renderer: DescriptorRenderer,
-    bodyType: OverrideMemberChooserObject.BodyType
+    bodyType: OverrideMemberChooserObject.BodyType,
+    forceOverride: Boolean
 ): KtFunction {
-    val newDescriptor = descriptor.wrap(forceOverride = renderer === OVERRIDE_RENDERER)
+    val newDescriptor = descriptor.wrap(forceOverride)
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)

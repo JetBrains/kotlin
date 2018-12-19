@@ -244,8 +244,7 @@ internal fun generateFunction(
         targetClass = generatedClass,
         copyDoc = true,
         project = project,
-        forceActual = !generateExpect,
-        forceExpect = generateExpect
+        mode = if (generateExpect) MemberGenerateMode.EXPECT else MemberGenerateMode.ACTUAL
     ) as KtFunction
 }
 
@@ -270,8 +269,7 @@ internal fun generateProperty(
         targetClass = generatedClass,
         copyDoc = true,
         project = project,
-        forceActual = !generateExpect,
-        forceExpect = generateExpect
+        mode = if (generateExpect) MemberGenerateMode.EXPECT else MemberGenerateMode.ACTUAL
     ) as KtProperty
 }
 
