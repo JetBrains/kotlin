@@ -97,4 +97,9 @@ public class ObservableBindingTrace implements BindingTrace {
     public boolean wantsDiagnostics() {
         return originalTrace.wantsDiagnostics();
     }
+
+    @Override
+    public String toString() {
+        return "ObservableTrace over " + originalTrace.toString();
+    }
 }
