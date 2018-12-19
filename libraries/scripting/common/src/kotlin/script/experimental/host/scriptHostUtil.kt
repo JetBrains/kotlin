@@ -45,6 +45,8 @@ fun getMergedScriptText(script: SourceCode, configuration: ScriptCompilationConf
 open class FileScriptSource(val file: File, private val preloadedText: String? = null) : ExternalSourceCode {
     override val externalLocation: URL get() = file.toURI().toURL()
     override val text: String by lazy { preloadedText ?: file.readText() }
+    override val name: String? get() = file.name
+    override val locationId: String? get() = file.path
 }
 
 /**
@@ -52,6 +54,8 @@ open class FileScriptSource(val file: File, private val preloadedText: String? =
  */
 open class UrlScriptSource(override val externalLocation: URL) : ExternalSourceCode {
     override val text: String by lazy { externalLocation.readText() }
+    override val name: String? get() = externalLocation.file
+    override val locationId: String? get() = externalLocation.toString()
 }
 
 /**
@@ -63,7 +67,11 @@ fun File.toScriptSource(): SourceCode = FileScriptSource(this)
  * The implementation of the ScriptSource for a script in a String
  */
 open class StringScriptSource(val source: String) : SourceCode {
+
     override val text: String get() = source
+
+    override val name: String? = null
+    override val locationId: String? = null
 }
 
 /**
