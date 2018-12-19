@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.j2k
 import org.jetbrains.kotlin.j2k.NewCodeBuilder.ParenthesisKind.*
 import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.conversions.parentOfType
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
@@ -503,7 +504,7 @@ class NewCodeBuilder {
         }
 
         override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
-            printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString())
+            printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString().escaped())
             methodCallExpression.typeArgumentList.accept(this)
             printer.par {
                 methodCallExpression.arguments.accept(this)
@@ -623,7 +624,7 @@ class NewCodeBuilder {
             }
             printer.printWithNoIndent(javaNewExpression.classSymbol.displayName())
             javaNewExpression.typeArgumentList.accept(this)
-            if (javaNewExpression.constructorIsPresent()) {
+            if (javaNewExpression.constructorIsPresent() || !javaNewExpression.isAnonymousClass()) {
                 printer.par(ROUND) {
                     javaNewExpression.arguments.accept(this)
                 }
@@ -732,7 +733,8 @@ class NewCodeBuilder {
         }
 
         private inline fun Printer.block(multiline: Boolean = false, crossinline body: () -> Unit) {
-            par(if (multiline) CURVED_MULTILINE else CURVED) {
+            par(CURVED) {
+                if (multiline) printer.printWithNoIndent("\n")
                 indented(body)
             }
         }
@@ -848,7 +850,6 @@ class NewCodeBuilder {
 }
 
 
-
 private inline fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
     val head = this.firstOrNull()
     val tail = if (size <= 1) null else subList(1, size)
@@ -871,6 +872,7 @@ private inline fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKTyp
         else -> false
     }
 }
+
 private val KEYWORDS = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).value }.toSet()
 
 private fun String.escaped() =
