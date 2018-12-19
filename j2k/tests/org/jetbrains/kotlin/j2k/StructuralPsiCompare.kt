@@ -20,7 +20,7 @@ internal fun KtFile.dumpStructureText(): String {
                 return
             }
             if (element is PsiWhiteSpace) {
-                if (sb.lastOrNull() != ' ') {
+                if (sb.lastOrNull() !in listOf(' ', '{', '}', '(', ')')) {
                     sb.append(" ")
                 }
                 return
@@ -34,5 +34,5 @@ internal fun KtFile.dumpStructureText(): String {
         }
     })
 
-    return sb.toString()
+    return sb.toString().trim()
 }
