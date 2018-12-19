@@ -21,6 +21,16 @@ interface SourceCode {
     val text: String
 
     /**
+     * The script file or display name
+     */
+    val name: String?
+
+    /**
+     * The path or other script location identifier
+     */
+    val locationId: String?
+
+    /**
      * The source code position
      * @param line source code position line
      * @param col source code position column

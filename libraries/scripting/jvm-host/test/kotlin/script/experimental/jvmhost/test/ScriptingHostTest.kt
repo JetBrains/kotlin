@@ -75,6 +75,25 @@ class ScriptingHostTest : TestCase() {
         Assert.assertEquals(greeting, output)
     }
 
+    @Test
+    fun testImportError() {
+        val script = "println(\"Hello from imported \$helloScriptName script!\")"
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                        importScripts(File(TEST_DATA_DIR, "missing_script.kts").toScriptSource())
+                    }.asSuccess()
+                }
+            }
+        }
+        val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
+        assertTrue(res is ResultWithDiagnostics.Failure)
+        val report = res.reports.find { it.message.startsWith("Source file or directory not found") }
+        assertNotNull(report)
+        assertEquals("/script.kts", report?.sourcePath)
+    }
+
 
     @Test
     fun testMemoryCache() {

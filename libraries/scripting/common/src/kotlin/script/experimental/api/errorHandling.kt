@@ -17,6 +17,7 @@ package kotlin.script.experimental.api
 data class ScriptDiagnostic(
     val message: String,
     val severity: Severity = Severity.ERROR,
+    val sourcePath: String? = null,
     val location: SourceCode.Location? = null,
     val exception: Throwable? = null
 ) {
@@ -92,21 +93,25 @@ fun <R> R.asSuccess(reports: List<ScriptDiagnostic> = listOf()): ResultWithDiagn
     ResultWithDiagnostics.Success(this, reports)
 
 /**
- * Converts the receiver Throwable to the Failure results wrapper with optional [message] and [location]
+ * Converts the receiver Throwable to the Failure results wrapper with optional [customMessage], [path] and [location]
  */
-fun Throwable.asDiagnostics(customMessage: String? = null, location: SourceCode.Location? = null): ScriptDiagnostic =
-    ScriptDiagnostic(customMessage ?: message ?: "$this", ScriptDiagnostic.Severity.ERROR, location, this)
+fun Throwable.asDiagnostics(
+    customMessage: String? = null,
+    path: String? = null,
+    location: SourceCode.Location? = null
+): ScriptDiagnostic =
+    ScriptDiagnostic(customMessage ?: message ?: "$this", ScriptDiagnostic.Severity.ERROR, path, location, this)
 
 /**
- * Converts the receiver String to error diagnostic report with optional [location]
+ * Converts the receiver String to error diagnostic report with optional [path] and [location]
  */
-fun String.asErrorDiagnostics(location: SourceCode.Location? = null): ScriptDiagnostic =
-    ScriptDiagnostic(this, ScriptDiagnostic.Severity.ERROR, location)
+fun String.asErrorDiagnostics(path: String? = null, location: SourceCode.Location? = null): ScriptDiagnostic =
+    ScriptDiagnostic(this, ScriptDiagnostic.Severity.ERROR, path, location)
 
 /**
  * Extracts the result value from the receiver wrapper or null if receiver represents a Failure
  */
-fun<R> ResultWithDiagnostics<R>.resultOrNull(): R? = when (this) {
+fun <R> ResultWithDiagnostics<R>.resultOrNull(): R? = when (this) {
     is ResultWithDiagnostics.Success<R> -> value
     else -> null
 }

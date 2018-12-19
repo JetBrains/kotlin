@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PRO
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
@@ -429,7 +430,7 @@ class KotlinCoreEnvironment private constructor(
     internal fun report(severity: CompilerMessageSeverity, message: String) = report(configuration, severity, message)
 
     companion object {
-        internal val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
+        private val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
 
         private val APPLICATION_LOCK = Object()
         private var ourApplicationEnvironment: JavaCoreApplicationEnvironment? = null
@@ -479,14 +480,20 @@ class KotlinCoreEnvironment private constructor(
         // used in the daemon for jar cache cleanup
         val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
-        internal fun report(configuration: CompilerConfiguration, severity: CompilerMessageSeverity, message: String) {
-            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(severity, message)
+        internal fun report(
+            configuration: CompilerConfiguration,
+            severity: CompilerMessageSeverity,
+            message: String,
+            location: CompilerMessageLocation? = null
+        ) {
+            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(severity, message, location)
         }
 
         internal fun createSourceFilesFromSourceRoots(
             configuration: CompilerConfiguration,
             project: Project,
-            sourceRoots: List<KotlinSourceRoot>
+            sourceRoots: List<KotlinSourceRoot>,
+            reportLocation: CompilerMessageLocation? = null
         ): MutableList<KtFile> {
             val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
             val psiManager = PsiManager.getInstance(project)
@@ -506,12 +513,12 @@ class KotlinCoreEnvironment private constructor(
                         KotlinCoreEnvironment.LOG.warn("$message\n\nbuild file path: $buildFilePath\ncontent:\n${buildFilePath.readText()}")
                     }
 
-                    report(configuration, ERROR, message)
+                    report(configuration, ERROR, message, reportLocation)
                     continue
                 }
 
                 if (!vFile.isDirectory && vFile.fileType != KotlinFileType.INSTANCE) {
-                    report(configuration, ERROR, "Source entry is not a Kotlin file: $sourceRootPath")
+                    report(configuration, ERROR, "Source entry is not a Kotlin file: $sourceRootPath", reportLocation)
                     continue
                 }
 
