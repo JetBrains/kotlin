@@ -17,13 +17,13 @@ internal class BinAnnData(
     val args: ArrayList<BinAnnArgData> = arrayListOf()
 )
 
-private class TemplateAnnotationVisitor(val anns: ArrayList<BinAnnData> = arrayListOf()) : AnnotationVisitor(Opcodes.ASM5) {
+private class TemplateAnnotationVisitor(val anns: ArrayList<BinAnnData> = arrayListOf()) : AnnotationVisitor(Opcodes.API_VERSION) {
     override fun visit(name: String?, value: Any?) {
         anns.last().args.add(BinAnnArgData(name, value.toString()))
     }
 }
 
-private class TemplateClassVisitor(val annVisitor: TemplateAnnotationVisitor) : ClassVisitor(Opcodes.ASM5) {
+private class TemplateClassVisitor(val annVisitor: TemplateAnnotationVisitor) : ClassVisitor(Opcodes.API_VERSION) {
     override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
         val shortName = Type.getType(desc).internalName.substringAfterLast("/")
         if (shortName.startsWith("KotlinScript") || shortName.startsWith("ScriptTemplate")) {

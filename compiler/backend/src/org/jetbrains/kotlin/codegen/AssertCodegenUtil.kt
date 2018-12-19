@@ -53,7 +53,7 @@ fun createMethodNodeForAlwaysEnabledAssert(
 
     val node =
         org.jetbrains.org.objectweb.asm.tree.MethodNode(
-            Opcodes.ASM5,
+            Opcodes.API_VERSION,
             Opcodes.ACC_STATIC,
             "fake",
             typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null

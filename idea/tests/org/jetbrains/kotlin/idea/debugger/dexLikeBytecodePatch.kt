@@ -46,7 +46,7 @@ private fun applyDexLikePatch(file: File) {
 }
 
 private fun ClassVisitor.withRemoveSourceDebugExtensionVisitor(): ClassVisitor {
-    return object : ClassVisitor(Opcodes.ASM5, this) {
+    return object : ClassVisitor(Opcodes.API_VERSION, this) {
         override fun visitSource(source: String?, debug: String?) {
             super.visitSource(source, null)
         }
@@ -54,11 +54,11 @@ private fun ClassVisitor.withRemoveSourceDebugExtensionVisitor(): ClassVisitor {
 }
 
 private fun ClassVisitor.withRemoveSameLinesInLineTableVisitor(): ClassVisitor {
-    return object : ClassVisitor(Opcodes.ASM5, this) {
+    return object : ClassVisitor(Opcodes.API_VERSION, this) {
         override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
             val methodVisitor = super.visitMethod(access, name, desc, signature, exceptions) ?: return null
 
-            return object : MethodVisitor(Opcodes.ASM5, methodVisitor) {
+            return object : MethodVisitor(Opcodes.API_VERSION, methodVisitor) {
                 val labels = HashSet<String>()
 
                 override fun visitLineNumber(line: Int, start: Label?) {

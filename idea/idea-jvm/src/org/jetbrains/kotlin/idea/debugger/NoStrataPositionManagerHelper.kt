@@ -214,7 +214,7 @@ private fun readLineNumberTableMapping(bytes: ByteArray): Map<BytecodeMethodKey,
             val methodLinesMapping = HashMap<String, MutableSet<Int>>()
             lineNumberMapping[methodKey] = methodLinesMapping
 
-            return object : MethodVisitor(Opcodes.ASM5, null) {
+            return object : MethodVisitor(Opcodes.API_VERSION, null) {
                 override fun visitLineNumber(line: Int, start: Label?) {
                     if (start != null) {
                         methodLinesMapping.getOrPutNullable(start.toString(), { LinkedHashSet<Int>() }).add(line)

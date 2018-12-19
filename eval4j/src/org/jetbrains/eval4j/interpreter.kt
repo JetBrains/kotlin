@@ -46,7 +46,7 @@ interface Eval {
     fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean = false): Value
 }
 
-class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(ASM5) {
+class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(API_VERSION) {
     override fun newValue(type: Type?): Value? {
         if (type == null) {
             return NOT_A_VALUE

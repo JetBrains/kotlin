@@ -251,7 +251,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
         castWithType: Pair<AbstractInsnNode, Type>
     ) {
         val castInsn = castWithType.getFirst()
-        val castInsnsListener = MethodNode(Opcodes.ASM5)
+        val castInsnsListener = MethodNode(Opcodes.API_VERSION)
         InstructionAdapter(castInsnsListener).cast(value.unboxedType, castWithType.getSecond())
 
         for (insn in castInsnsListener.instructions.toArray()) {

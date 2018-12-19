@@ -25,7 +25,7 @@ import org.jetbrains.eval4j.ValueReturned
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
+import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.lang.reflect.Modifier
@@ -38,9 +38,9 @@ fun buildTestSuite(
 
     val ownerClass = TestData::class.java
     ownerClass.classLoader!!.getResourceAsStream(ownerClass.getInternalName() + ".class")!!.use { inputStream ->
-        ClassReader(inputStream).accept(object : ClassVisitor(ASM5) {
+        ClassReader(inputStream).accept(object : ClassVisitor(API_VERSION) {
             override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-                return object : MethodNode(ASM5, access, name, desc, signature, exceptions) {
+                return object : MethodNode(API_VERSION, access, name, desc, signature, exceptions) {
                     override fun visitEnd() {
                         val testCase = buildTestCase(ownerClass, this, create)
                         if (testCase != null) {
