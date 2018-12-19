@@ -1,7 +1,7 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
 import org.gradle.api.logging.Logger
-import org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.*
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -23,7 +23,7 @@ fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFil
 
         var changed = false
         val classWriter = ClassWriter(0)
-        val classVisitor = object : ClassVisitor(Opcodes.ASM5, classWriter) {
+        val classVisitor = object : ClassVisitor(Opcodes.API_VERSION, classWriter) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                 if (Type.getType(desc).internalName == "kotlin/Metadata") {
                     changed = true

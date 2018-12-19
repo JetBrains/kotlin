@@ -28,7 +28,7 @@ internal fun File.readKotlinClassHeader(): KotlinClassHeader? {
 }
 
 private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): AnnotationVisitor =
-    object : AnnotationVisitor(Opcodes.ASM7) {
+    object : AnnotationVisitor(Opcodes.API_VERSION) {
         var kind: Int? = null
         var metadataVersion: IntArray? = null
         var bytecodeVersion: IntArray? = null
@@ -57,7 +57,7 @@ private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): Annotation
             }
 
         private fun stringArrayVisitor(output: (Array<String>) -> Unit): AnnotationVisitor {
-            return object : AnnotationVisitor(Opcodes.ASM7) {
+            return object : AnnotationVisitor(Opcodes.API_VERSION) {
                 val strings = mutableListOf<String>()
 
                 override fun visit(name: String?, value: Any?) {
