@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.Nullability
@@ -42,36 +43,50 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
     rightType: JKType,
     symbolProvider: JKSymbolProvider
 ): JKMethodSymbol {
-    val operatorNames =
-        if (operatorName == "equals") listOf("equals", "compareTo")
-        else listOf(operatorName)
-
     fun PsiClass.methodSymbol() =
         allMethods
-            .filter { it.name in operatorNames }
+            .filter { it.name == operatorName }
             .firstOrNull {
-                it.parameterList.parameters.singleOrNull()?.takeIf {
-                    rightType.isSubtypeOf(
-                        it.type.toJK(symbolProvider),
-                        symbolProvider
-                    )
+                it.parameterList.parameters.singleOrNull()?.takeIf { parameter ->
+                    val type = parameter.type.toJK(symbolProvider)
+                    if (type !is JKTypeParameterType) rightType.isSubtypeOf(type, symbolProvider)
+                    else true//TODO check for type bounds
                 } != null
             }?.let { symbolProvider.provideDirectSymbol(it) as JKMethodSymbol }
 
 
-    val classSymbol = leftType.classSymbol(symbolProvider)
+    val classSymbol =
+        if (leftType.isStringType()) symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.string.toSafe())
+        else leftType.classSymbol(symbolProvider)
+
+
+    val defaultClassSymbol by lazy {
+        when (text) {
+            "<", ">", "<=", ">=", "==", "!=", "&&", "||" ->
+                JKUnresolvedMethod(
+                    text,
+                    kotlinTypeByName(
+                        KotlinBuiltIns.FQ_NAMES._boolean.toSafe().asString(),
+                        symbolProvider,
+                        Nullability.NotNull
+                    )
+                )
+            "+", "-", "*", "/" -> JKUnresolvedMethod(text, leftType)//TODO fix that
+            else -> TODO()
+        }
+    }
     return when (classSymbol) {
         is JKMultiverseKtClassSymbol ->
             classSymbol.target.declarations
                 .asSequence()
                 .filterIsInstance<KtNamedFunction>()
-                .filter { it.name in operatorNames }
+                .filter { it.name == operatorName }
                 .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
-                .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }!!
-        is JKUniverseClassSymbol -> classSymbol.target.psi<PsiClass>()?.methodSymbol()!!
-        is JKMultiverseClassSymbol -> classSymbol.target.methodSymbol()!!
-
-        else -> TODO(classSymbol::class.toString())
+                .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }
+                ?: defaultClassSymbol
+        is JKUniverseClassSymbol -> classSymbol.target.psi<PsiClass>()?.methodSymbol() ?: defaultClassSymbol
+        is JKMultiverseClassSymbol -> classSymbol.target.methodSymbol() ?: defaultClassSymbol
+        else -> defaultClassSymbol
     }
 }
 
@@ -123,8 +138,6 @@ fun kotlinPostfixExpression(
     val methodSymbol = token.unaryExpressionMethodSymbol(operandType, context.symbolProvider)
     return JKPostfixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
 }
-
-
 
 fun untilToExpression(
     from: JKExpression,
@@ -207,6 +220,7 @@ fun kotlinAssert(assertion: JKExpression, message: JKExpression?, symbolProvider
         ),
         JKExpressionListImpl(listOfNotNull(assertion, message))
     )
+
 fun jvmAnnotation(name: String, symbolProvider: JKSymbolProvider) =
     JKAnnotationImpl(
         symbolProvider.provideByFqName("kotlin.annotation.AnnotationTarget.$name")

@@ -46,6 +46,8 @@ fun JKExpression.type(context: ConversionContext): JKType? =
         is JKJavaInstanceOfExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES._boolean.asString(), context.symbolProvider)
         is JKParenthesizedExpression -> expression.type(context)
         is JKTypeCastExpression -> type.type
+        is JKThisExpression -> null// TODO return actual type
+        is JKSuperExpression -> null// TODO return actual type
         else -> TODO(this::class.java.toString())
     }
 
@@ -101,7 +103,9 @@ fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nu
 }
 
 fun JKType.isSubtypeOf(other: JKType, symbolProvider: JKSymbolProvider): Boolean =
-    toKtType(symbolProvider).isSubtypeOf(other.toKtType(symbolProvider))
+    other.toKtType(symbolProvider)
+        ?.let { otherType -> this.toKtType(symbolProvider)?.isSubtypeOf(otherType) } == true
+
 
 fun KtTypeElement.toJK(symbolProvider: JKSymbolProvider): JKType =
     when (this) {
@@ -119,31 +123,32 @@ fun KtTypeElement.toJK(symbolProvider: JKSymbolProvider): JKType =
         else -> TODO(this::class.java.toString())
     }
 
-fun JKType.toKtType(symbolProvider: JKSymbolProvider): KotlinType =
+fun JKType.toKtType(symbolProvider: JKSymbolProvider): KotlinType? =
     when (this) {
-        is JKClassType -> classReference!!.toKtType(symbolProvider)
+        is JKClassType -> classReference.toKtType()
         is JKJavaPrimitiveType ->
             kotlinTypeByName(
                 jvmPrimitiveType.primitiveType.typeFqName.asString(),
                 symbolProvider
             ).toKtType(symbolProvider)
-        else -> TODO(this::class.java.toString())
+        else -> null
+//        else -> TODO(this::class.java.toString())
     }
 
 
-fun JKClassSymbol.toKtType(symbolProvider: JKSymbolProvider): KotlinType {
+fun JKClassSymbol.toKtType(): KotlinType? {
     val classDescriptor = when (this) {
         is JKMultiverseKtClassSymbol -> {
             val bindingContext = target.analyze()
             bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, target] as ClassDescriptor
         }
         is JKMultiverseClassSymbol ->
-            target.getJavaClassDescriptor()!!
+            target.getJavaClassDescriptor()
         is JKUniverseClassSymbol ->
-            target.psi<PsiClass>()?.getJavaClassDescriptor()!!
+            target.psi<PsiClass>()?.getJavaClassDescriptor()//TODO null in case of a fake package
         else -> TODO(this::class.java.toString())
     }
-    return classDescriptor.defaultType
+    return classDescriptor?.defaultType
 }
 
 inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability): T =
