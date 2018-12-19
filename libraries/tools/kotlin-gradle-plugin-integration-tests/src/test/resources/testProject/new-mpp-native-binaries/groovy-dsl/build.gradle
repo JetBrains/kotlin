@@ -39,7 +39,7 @@ kotlin {
     targets {
         macosX64("macos64")
         linuxX64("linux64")
-        mingwX64("windows64")
+        mingwX64("mingw64")
 
         configure([macos64, linux64, windows64]) {
             binaries {
