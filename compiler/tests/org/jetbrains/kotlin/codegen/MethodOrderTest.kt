@@ -168,7 +168,7 @@ class MethodOrderTest: CodegenTestCase() {
 
         val methodNames = ArrayList<String>()
 
-        classReader.accept(object : ClassVisitor(Opcodes.ASM4) {
+        classReader.accept(object : ClassVisitor(Opcodes.API_VERSION) {
             override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
                 methodNames.add(name + desc)
                 return null

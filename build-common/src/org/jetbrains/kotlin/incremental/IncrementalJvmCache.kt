@@ -350,7 +350,7 @@ open class IncrementalJvmCache(
         private fun getConstantsMap(bytes: ByteArray): Map<String, Any> {
             val result = HashMap<String, Any>()
 
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
+            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
                 override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
                     val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL or Opcodes.ACC_PRIVATE
                     if (value != null && access and staticFinal == Opcodes.ACC_STATIC or Opcodes.ACC_FINAL) {
@@ -470,7 +470,7 @@ open class IncrementalJvmCache(
 
             val result = HashMap<String, Long>()
 
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
+            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
                 override fun visitMethod(
                     access: Int,
                     name: String,
@@ -478,9 +478,9 @@ open class IncrementalJvmCache(
                     signature: String?,
                     exceptions: Array<out String>?
                 ): MethodVisitor? {
-                    val dummyClassWriter = ClassWriter(Opcodes.ASM5)
+                    val dummyClassWriter = ClassWriter(Opcodes.API_VERSION)
 
-                    return object : MethodVisitor(Opcodes.ASM5, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
+                    return object : MethodVisitor(Opcodes.API_VERSION, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
                         override fun visitEnd() {
                             val jvmName = name + desc
                             if (jvmName !in inlineFunctions) return

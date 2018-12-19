@@ -340,7 +340,7 @@ fun createMethodNodeForIntercepted(
 
     val node =
         MethodNode(
-            Opcodes.ASM5,
+            Opcodes.API_VERSION,
             Opcodes.ACC_STATIC,
             "fake",
             typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
@@ -366,7 +366,7 @@ fun createMethodNodeForCoroutineContext(
 
     val node =
         MethodNode(
-            Opcodes.ASM5,
+            Opcodes.API_VERSION,
             Opcodes.ACC_STATIC,
             "fake",
             Type.getMethodDescriptor(languageVersionSettings.coroutineContextAsmType()),
@@ -395,7 +395,7 @@ fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
 
     val node =
         MethodNode(
-            Opcodes.ASM5,
+            Opcodes.API_VERSION,
             Opcodes.ACC_STATIC,
             "fake",
             typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null

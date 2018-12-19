@@ -67,11 +67,11 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
     companion object {
         fun transformMetadataInClassFile(bytes: ByteArray, transform: (fieldName: String, value: Any?) -> Any?): ByteArray {
             val writer = ClassWriter(0)
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5, writer) {
+            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION, writer) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
                     val superVisitor = super.visitAnnotation(desc, visible)
                     if (desc == JvmAnnotationNames.METADATA_DESC) {
-                        return object : AnnotationVisitor(Opcodes.ASM5, superVisitor) {
+                        return object : AnnotationVisitor(Opcodes.API_VERSION, superVisitor) {
                             override fun visit(name: String, value: Any) {
                                 super.visit(name, transform(name, value) ?: value)
                             }
@@ -79,7 +79,7 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
                             override fun visitArray(name: String): AnnotationVisitor {
                                 val entries = arrayListOf<String>()
                                 val arrayVisitor = { super.visitArray(name) }
-                                return object : AnnotationVisitor(Opcodes.ASM5) {
+                                return object : AnnotationVisitor(Opcodes.API_VERSION) {
                                     override fun visit(name: String?, value: Any) {
                                         entries.add(value as String)
                                     }

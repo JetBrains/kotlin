@@ -72,7 +72,7 @@ public abstract class AnnotationCodegen {
             new JvmFlagAnnotation(JvmAnnotationUtilKt.SYNCHRONIZED_ANNOTATION_FQ_NAME.asString(), Opcodes.ACC_SYNCHRONIZED)
     );
 
-    private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM5) {
+    private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.API_VERSION) {
         @Override
         public AnnotationVisitor visitAnnotation(String name, @NotNull String desc) {
             return safe(super.visitAnnotation(name, desc));

@@ -314,7 +314,7 @@ private fun SignatureNode.split(
     }
 }
 
-private class SignatureParserVisitor : SignatureVisitor(Opcodes.ASM5) {
+private class SignatureParserVisitor : SignatureVisitor(Opcodes.API_VERSION) {
     val root = SignatureNode(Root)
     private val stack = ArrayDeque<SignatureNode>(5).apply { add(root) }
 

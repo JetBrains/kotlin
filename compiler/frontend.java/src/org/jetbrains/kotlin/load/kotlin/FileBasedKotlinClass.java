@@ -34,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.*;
 import java.util.*;
 
 import static org.jetbrains.org.objectweb.asm.ClassReader.*;
-import static org.jetbrains.org.objectweb.asm.Opcodes.ASM5;
+import static org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION;
 
 public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     private final ClassId classId;
@@ -93,7 +93,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         Ref<String> classNameRef = Ref.create();
         Ref<Integer> classVersion = Ref.create();
         InnerClassesInfo innerClasses = new InnerClassesInfo();
-        new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {
+        new ClassReader(fileContents).accept(new ClassVisitor(API_VERSION) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                 classNameRef.set(name);
@@ -145,7 +145,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     @Override
     public void loadClassAnnotations(@NotNull AnnotationVisitor annotationVisitor, @Nullable byte[] cachedContents) {
         byte[] fileContents = cachedContents != null ? cachedContents : getFileContents();
-        new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {
+        new ClassReader(fileContents).accept(new ClassVisitor(API_VERSION) {
             @Override
             public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
                 return convertAnnotationVisitor(annotationVisitor, desc, innerClasses);
@@ -170,7 +170,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     private static org.jetbrains.org.objectweb.asm.AnnotationVisitor convertAnnotationVisitor(
             @NotNull AnnotationArgumentVisitor v, @NotNull InnerClassesInfo innerClasses
     ) {
-        return new org.jetbrains.org.objectweb.asm.AnnotationVisitor(ASM5) {
+        return new org.jetbrains.org.objectweb.asm.AnnotationVisitor(API_VERSION) {
             @Override
             public void visit(String name, @NotNull Object value) {
                 if (value instanceof Type) {
@@ -184,7 +184,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
             @Override
             public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitArray(String name) {
                 AnnotationArrayArgumentVisitor arv = v.visitArray(Name.identifier(name));
-                return arv == null ? null : new org.jetbrains.org.objectweb.asm.AnnotationVisitor(ASM5) {
+                return arv == null ? null : new org.jetbrains.org.objectweb.asm.AnnotationVisitor(API_VERSION) {
                     @Override
                     public void visit(String name, @NotNull Object value) {
                         if (value instanceof Type) {
@@ -228,13 +228,13 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     @Override
     public void visitMembers(@NotNull MemberVisitor memberVisitor, @Nullable byte[] cachedContents) {
         byte[] fileContents = cachedContents != null ? cachedContents : getFileContents();
-        new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {
+        new ClassReader(fileContents).accept(new ClassVisitor(API_VERSION) {
             @Override
             public FieldVisitor visitField(int access, @NotNull String name, @NotNull String desc, String signature, Object value) {
                 AnnotationVisitor v = memberVisitor.visitField(Name.identifier(name), desc, value);
                 if (v == null) return null;
 
-                return new FieldVisitor(ASM5) {
+                return new FieldVisitor(API_VERSION) {
                     @Override
                     public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
                         return convertAnnotationVisitor(v, desc, innerClasses);
@@ -253,7 +253,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
                 if (v == null) return null;
 
                 int methodParamCount = Type.getArgumentTypes(desc).length;
-                return new MethodVisitor(ASM5) {
+                return new MethodVisitor(API_VERSION) {
 
                     private int visibleAnnotableParameterCount = methodParamCount;
                     private int invisibleAnnotableParameterCount = methodParamCount;

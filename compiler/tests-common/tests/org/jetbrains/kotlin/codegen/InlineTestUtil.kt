@@ -114,7 +114,7 @@ object InlineTestUtil {
 
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                     if (desc == JvmAnnotationNames.METADATA_DESC) {
-                        return object : AnnotationVisitor(Opcodes.ASM5) {
+                        return object : AnnotationVisitor(Opcodes.API_VERSION) {
                             override fun visit(name: String?, value: Any) {
                                 if (name == JvmAnnotationNames.KIND_FIELD_NAME && value == KotlinClassHeader.Kind.MULTIFILE_CLASS.id) {
                                     skipMethodsOfThisClass = true
@@ -139,7 +139,7 @@ object InlineTestUtil {
                         return null
                     }
 
-                    return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
+                    return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
                         override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
                             val methodCall = MethodInfo(owner, name, desc)
                             if (inlinedMethods.contains(methodCall)) {
@@ -233,7 +233,7 @@ object InlineTestUtil {
 
     private data class MethodInfo(val owner: String, val name: String, val desc: String)
 
-    private open class ClassVisitorWithName : ClassVisitor(Opcodes.ASM5) {
+    private open class ClassVisitorWithName : ClassVisitor(Opcodes.API_VERSION) {
         lateinit var className: String
 
         override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<String>?) {
@@ -242,7 +242,7 @@ object InlineTestUtil {
         }
     }
 
-    private abstract class MethodNodeWithAnonymousObjectCheck(val inlineInfo: InlineInfo, access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?) : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
+    private abstract class MethodNodeWithAnonymousObjectCheck(val inlineInfo: InlineInfo, access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?) : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
         private fun isInlineParameterLikeOwner(owner: String) =
                 "$" in owner && !isTopLevelOrInnerOrPackageClass(owner, inlineInfo)
 

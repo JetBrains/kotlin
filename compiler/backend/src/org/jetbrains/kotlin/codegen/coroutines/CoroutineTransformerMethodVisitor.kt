@@ -354,8 +354,8 @@ class CoroutineTransformerMethodVisitor(
         methodNode.instructions.resetLabels()
         methodNode.accept(
             MaxStackFrameSizeAndLocalsCalculator(
-                Opcodes.ASM5, methodNode.access, methodNode.desc,
-                object : MethodVisitor(Opcodes.ASM5) {
+                Opcodes.API_VERSION, methodNode.access, methodNode.desc,
+                object : MethodVisitor(Opcodes.API_VERSION) {
                     override fun visitMaxs(maxStack: Int, maxLocals: Int) {
                         methodNode.maxStack = maxStack
                     }
