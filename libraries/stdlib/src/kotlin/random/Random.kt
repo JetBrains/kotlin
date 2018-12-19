@@ -10,7 +10,7 @@ import kotlin.math.nextDown
 /**
  * An abstract class that is implemented by random number generator algorithms.
  *
- * The companion object [Random.Companion] is the default instance of [Random].
+ * The companion object [Random.Default] is the default instance of [Random].
  *
  * To get a seeded instance of random generator use [Random] function.
  *
