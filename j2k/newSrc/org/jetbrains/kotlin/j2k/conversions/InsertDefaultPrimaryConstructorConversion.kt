@@ -28,15 +28,15 @@ class InsertDefaultPrimaryConstructorConversion(private val context: ConversionC
 
         element.classBody.declarations += constructor
 
-        val superClassSymbol = element.inheritance.inherit.map { it.type }
-            .filterIsInstance<JKClassType>()
-            .mapNotNull { (it.classReference as? JKClassSymbol) }
-            .firstOrNull { it.kind == JKClass.ClassKind.CLASS }
+        val superClassSymbol =
+            (element.inheritance.extends.singleOrNull() as? JKClassType)?.classReference
 
         if (superClassSymbol is JKUniverseClassSymbol) {
             val superClass = recurse(superClassSymbol.target)
             val superConstructor = context.symbolProvider.provideUniverseSymbol(
-                superClass.declarationList.single { it is JKKtConstructor && it.parameters.isEmpty() } as JKMethod
+                superClass.declarationList.singleOrNull { it is JKKtConstructor && it.parameters.isEmpty() } as? JKMethod ?: return recurse(
+                    element
+                )
             )
             constructor.delegationCall = JKDelegationConstructorCallImpl(superConstructor, JKSuperExpressionImpl(), JKExpressionListImpl())
         }

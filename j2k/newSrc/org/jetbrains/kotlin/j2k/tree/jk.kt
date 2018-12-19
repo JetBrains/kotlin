@@ -68,8 +68,12 @@ val JKClass.declarationList: List<JKDeclaration>
 
 
 interface JKInheritanceInfo : JKTreeElement, JKBranchElement {
-    val inherit: List<JKTypeElement>
+    var extends: List<JKTypeElement>
+    var implements: List<JKTypeElement>
 }
+
+fun JKInheritanceInfo.present(): Boolean =
+    extends.isNotEmpty() || implements.isNotEmpty()
 
 interface JKAnnotationList : JKTreeElement {
     var annotations: List<JKAnnotation>

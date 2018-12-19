@@ -185,18 +185,10 @@ class NewCodeBuilder {
             val primaryConstructor = klass.primaryConstructor()
             primaryConstructor?.accept(this)
 
-            if (klass.inheritance.inherit.isNotEmpty()) {
-                printer.printWithNoIndent(" : ")
 
-                val delegationCall = primaryConstructor?.delegationCall as? JKDelegationConstructorCall
-                renderList(klass.inheritance.inherit) {
-                    it.accept(this)
-                    if (delegationCall != null && delegationCall.isCallOfConstructorOf(it.type)) {
-                        printer.par {
-                            delegationCall.arguments.accept(this)
-                        }
-                    }
-                }
+            if (klass.inheritance.present()) {
+                printer.printWithNoIndent(" : ")
+                klass.inheritance.accept(this)
             }
 
             //TODO should it be here?
@@ -204,6 +196,36 @@ class NewCodeBuilder {
 
             klass.classBody.accept(this)
         }
+
+        override fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo) {
+            val parentClass = inheritanceInfo.parentOfType<JKClass>()!!
+            val isInInterface = parentClass.classKind == JKClass.ClassKind.INTERFACE
+            val extendTypes = inheritanceInfo.extends.map { it.type.updateNullability(Nullability.NotNull) }
+            val implementTypes = inheritanceInfo.implements.map { it.type.updateNullability(Nullability.NotNull) }
+            if (isInInterface) {
+                renderList(extendTypes) { renderType(it) }
+            } else {
+                extendTypes.singleOrNull()?.also {
+                    renderType(it)
+                    val delegationCall =
+                        parentClass
+                            .primaryConstructor()
+                            ?.delegationCall
+                            ?.let { it as? JKDelegationConstructorCall }
+                    if (delegationCall != null) {
+                        printer.par { delegationCall.arguments.accept(this) }
+                    } else {
+                        printer.printWithNoIndent("()")
+                    }
+                }
+            }
+
+            if (implementTypes.isNotEmpty() && extendTypes.size == 1) {
+                printer.printWithNoIndent(", ")
+            }
+            renderList(implementTypes) { renderType(it) }
+        }
+
 
         private fun renderEnumConstants(enumConstants: List<JKEnumConstant>) {
             renderList(enumConstants) {

@@ -40,7 +40,7 @@ class StaticsToCompanionExtractConversion : RecursiveApplicableConversionBase() 
 
         return JKClassImpl(
             JKNameIdentifierImpl(""),
-            JKInheritanceInfoImpl(emptyList()),
+            JKInheritanceInfoImpl(emptyList(), emptyList()),
             JKClass.ClassKind.COMPANION,
             JKTypeParameterListImpl(),
             JKClassBodyImpl(),

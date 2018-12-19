@@ -377,8 +377,12 @@ class JKLambdaExpressionImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLambdaExpression(this, data)
 }
 
-class JKInheritanceInfoImpl(implements: List<JKTypeElement>) : JKInheritanceInfo, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
-    override val inherit: List<JKTypeElement> by children(implements)
+class JKInheritanceInfoImpl(
+    extends: List<JKTypeElement>,
+    implements: List<JKTypeElement>
+) : JKInheritanceInfo, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var extends: List<JKTypeElement> by children(extends)
+    override var implements: List<JKTypeElement> by children(implements)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitInheritanceInfo(this, data)
 }
