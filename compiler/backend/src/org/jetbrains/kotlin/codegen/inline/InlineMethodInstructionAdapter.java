@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 public class InlineMethodInstructionAdapter extends InstructionAdapter {
 
     InlineMethodInstructionAdapter(MethodVisitor methodVisitor) {
-        super(InlineCodegenUtilsKt.API, methodVisitor);
+        super(Opcodes.API_VERSION, methodVisitor);
     }
 
     public void visitAnnotableParameterCount(int parameterCount, boolean visible) {

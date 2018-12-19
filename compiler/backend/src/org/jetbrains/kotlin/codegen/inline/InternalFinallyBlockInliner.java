@@ -105,7 +105,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
     private int initAndGetVarIndexForNonLocalReturnValue() {
         MaxLocalsCalculator tempCalcNode = new MaxLocalsCalculator(
-                API,
+                Opcodes.API_VERSION,
                 inlineFun.access, inlineFun.desc, null
         );
         inlineFun.accept(tempCalcNode);

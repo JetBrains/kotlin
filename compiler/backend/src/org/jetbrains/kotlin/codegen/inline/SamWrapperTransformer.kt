@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 
 class SamWrapperTransformationInfo(override val oldClassName: String, private val inliningContext: InliningContext, private val alreadyRegenerated: Boolean): TransformationInfo {
     override val nameGenerator: NameGenerator
@@ -54,7 +55,7 @@ class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, pr
         val classReader = createClassReader()
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
 
-        classReader.accept(object : ClassVisitor(API, classBuilder.visitor) {
+        classReader.accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
             }

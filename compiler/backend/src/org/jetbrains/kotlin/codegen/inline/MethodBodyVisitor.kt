@@ -16,19 +16,16 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
-import org.jetbrains.org.objectweb.asm.Attribute
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.TypePath
+import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-open class SkipMaxAndEndVisitor(mv: MethodVisitor) : InstructionAdapter(API, mv) {
+open class SkipMaxAndEndVisitor(mv: MethodVisitor) : InstructionAdapter(Opcodes.API_VERSION, mv) {
     override fun visitMaxs(maxStack: Int, maxLocals: Int) {}
 
     override fun visitEnd() {}
 }
 
-open class MethodBodyVisitor(mv: MethodVisitor) : MethodVisitor(API, mv) {
+open class MethodBodyVisitor(mv: MethodVisitor) : MethodVisitor(Opcodes.API_VERSION, mv) {
 
     @Suppress("NOTHING_TO_OVERRIDE")
     override fun visitAnnotableParameterCount(parameterCount: Int, visible: Boolean) {

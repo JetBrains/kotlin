@@ -56,7 +56,6 @@ import java.io.PrintWriter
 import java.io.StringWriter
 
 const val GENERATE_SMAP = true
-const val API = Opcodes.API_VERSION
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
 const val INLINE_FUN_VAR_SUFFIX = "\$iv"
 
@@ -98,7 +97,7 @@ internal fun getMethodNode(
     lines[0] = Integer.MAX_VALUE
     lines[1] = Integer.MIN_VALUE
 
-    cr.accept(object : ClassVisitor(API) {
+    cr.accept(object : ClassVisitor(Opcodes.API_VERSION) {
 
         override fun visitSource(source: String?, debug: String?) {
             super.visitSource(source, debug)
@@ -114,7 +113,7 @@ internal fun getMethodNode(
             exceptions: Array<String>?
         ): MethodVisitor? {
             if (methodName == name && methodDescriptor == desc) {
-                node = object : MethodNode(API, access, name, desc, signature, exceptions) {
+                node = object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
                     override fun visitLineNumber(line: Int, start: Label) {
                         super.visitLineNumber(line, start)
                         lines[0] = Math.min(lines[0], line)
@@ -240,7 +239,7 @@ internal fun isAnonymousClass(internalName: String) =
             internalName.substringAfterLast('/').substringAfterLast("$", "").isInteger()
 
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =
-    MaxStackFrameSizeAndLocalsCalculator(API, methodNode.access, methodNode.desc, methodNode)
+    MaxStackFrameSizeAndLocalsCalculator(Opcodes.API_VERSION, methodNode.access, methodNode.desc, methodNode)
 
 private fun String.isInteger(radix: Int = 10) = toIntOrNull(radix) != null
 
@@ -292,7 +291,7 @@ internal fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: Abst
     }
 }
 
-internal fun createEmptyMethodNode() = MethodNode(API, 0, "fake", "()V", null, null)
+internal fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
 
 internal fun createFakeContinuationMethodNodeForInline(): MethodNode {
     val methodNode = createEmptyMethodNode()
@@ -543,7 +542,7 @@ internal fun createSpecialEnumMethodBody(
     val isValueOf = "enumValueOf" == name
     val invokeType = typeMapper.mapType(type)
     val desc = getSpecialEnumFunDescriptor(invokeType, isValueOf)
-    val node = MethodNode(API, Opcodes.ACC_STATIC, "fake", desc, null, null)
+    val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", desc, null, null)
     ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(
         type,
         ReifiedTypeInliner.OperationKind.ENUM_REIFIED,

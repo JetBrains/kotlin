@@ -29,7 +29,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
-import org.jetbrains.kotlin.codegen.inline.API
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
@@ -204,7 +203,7 @@ private fun findClassFileByPath(packageName: String, className: String, outputDi
 private fun readLineNumberTableMapping(bytes: ByteArray): Map<BytecodeMethodKey, Map<String, Set<Int>>> {
     val lineNumberMapping = HashMap<BytecodeMethodKey, Map<String, Set<Int>>>()
 
-    ClassReader(bytes).accept(object : ClassVisitor(API) {
+    ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
         override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
             if (name == null || desc == null) {
                 return null

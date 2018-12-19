@@ -52,7 +52,7 @@ class AnonymousObjectTransformer(
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
         lateinit var superClassName: String
 
-        createClassReader().accept(object : ClassVisitor(API, classBuilder.visitor) {
+        createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
                 if (languageVersionSettings.isCoroutineSuperClass(superName)) {
