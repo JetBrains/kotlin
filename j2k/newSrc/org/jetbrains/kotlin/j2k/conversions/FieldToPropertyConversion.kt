@@ -27,7 +27,9 @@ class FieldToPropertyConversion : RecursiveApplicableConversionBase() {
                 element.visibility,
                 Modality.FINAL,
                 mutability
-            )
+            ).also {
+                it.psi = element.psi
+            }
         )
     }
 }

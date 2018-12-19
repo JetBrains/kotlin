@@ -36,7 +36,7 @@ class JKKtPropertyImpl(
     override var visibility: Visibility,
     override var modality: Modality,
     override var mutability: Mutability
-) : JKBranchElementBase(), JKKtProperty {
+) : JKBranchElementBase(), JKKtProperty, PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtProperty(this, data)
 
     override var annotationList: JKAnnotationList by child(annotationList)
@@ -57,7 +57,7 @@ class JKKtFunctionImpl(
     override var extraModifiers: List<ExtraModifier>,
     override var visibility: Visibility,
     override var modality: Modality
-) : JKBranchElementBase(), JKKtFunction {
+) : JKBranchElementBase(), JKKtFunction, PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtFunction(this, data)
 
     override var returnType: JKTypeElement by child(returnType)

@@ -29,14 +29,13 @@ interface JKKtGetterOrSetter : JKTreeElement, JKVisibilityOwner, JKBranchElement
 
 interface JKKtEmptyGetterOrSetter : JKKtGetterOrSetter
 
-interface JKKtProperty : JKField {
+interface JKKtProperty : JKField, PsiOwner {
     var getter: JKKtGetterOrSetter
     var setter: JKKtGetterOrSetter
 }
 
 
-
-interface JKKtFunction : JKMethod {
+interface JKKtFunction : JKMethod, PsiOwner {
 }
 
 interface JKKtConstructor : JKDeclaration, JKExtraModifiersOwner, JKMethod, JKBranchElement {

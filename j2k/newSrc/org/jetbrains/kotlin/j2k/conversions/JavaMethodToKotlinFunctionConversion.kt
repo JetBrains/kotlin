@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.j2k.throwAnnotation
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
+import org.jetbrains.kotlin.j2k.tree.impl.psi
 
 class JavaMethodToKotlinFunctionConversion(private val context: ConversionContext) : TransformerBasedConversion() {
     override fun visitTreeElement(element: JKTreeElement) {
@@ -57,7 +58,9 @@ class JavaMethodToKotlinFunctionConversion(private val context: ConversionContex
                     declaration.extraModifiers,
                     declaration.visibility,
                     declaration.modality
-                )
+                ).also {
+                    it.psi = declaration.psi
+                }
             } else {
                 declaration
             }
