@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.jvm.abi
 import com.intellij.openapi.util.io.systemIndependentPath
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
 import org.jetbrains.kotlin.incremental.isClassFile
-import org.jetbrains.kotlin.jvm.abi.asm.ABI_EXTENSION_ASM_API_VERSION
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
@@ -22,7 +21,7 @@ abstract class AbstractJvmAbiContentTest : BaseJvmAbiTest() {
             val visitor = BytecodeListingTextCollectingVisitor(
                 filter = BytecodeListingTextCollectingVisitor.Filter.EMPTY,
                 withSignatures = false,
-                api = ABI_EXTENSION_ASM_API_VERSION
+                api = Opcodes.API_VERSION
             )
             reader.accept(visitor, 0)
             classToBytecode[classFile] = visitor.text
