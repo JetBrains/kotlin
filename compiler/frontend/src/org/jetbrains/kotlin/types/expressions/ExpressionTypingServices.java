@@ -258,12 +258,7 @@ public class ExpressionTypingServices {
         boolean isFirstStatement = true;
         for (Iterator<? extends KtElement> iterator = block.iterator(); iterator.hasNext(); ) {
             // Use filtering trace to keep effect system cache only for one statement
-            AbstractFilteringTrace traceForSingleStatement = new AbstractFilteringTrace(context.trace, "trace for single statement") {
-                @Override
-                protected <K, V> boolean shouldBeHiddenFromParent(@NotNull WritableSlice<K, V> slice, K key) {
-                    return slice == BindingContext.EXPRESSION_EFFECTS;
-                }
-            };
+            AbstractFilteringTrace traceForSingleStatement = new EffectsFilteringTrace(context.trace);
 
             newContext = newContext.replaceBindingTrace(traceForSingleStatement);
 
@@ -375,4 +370,14 @@ public class ExpressionTypingServices {
         return result;
     }
 
+    private static class EffectsFilteringTrace extends AbstractFilteringTrace {
+        public EffectsFilteringTrace(BindingTrace parentTrace) {
+            super(parentTrace, "Effects filtering trace");
+        }
+
+        @Override
+        protected <K, V> boolean shouldBeHiddenFromParent(@NotNull WritableSlice<K, V> slice, K key) {
+            return slice == BindingContext.EXPRESSION_EFFECTS;
+        }
+    }
 }
