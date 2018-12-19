@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.psi.KtProperty
 
@@ -35,6 +37,7 @@ class JKSymbolProvider {
                 is PsiField -> JKMultiverseFieldSymbol(psi, this)
                 is KtNamedFunction -> JKMultiverseFunctionSymbol(psi, this)
                 is KtProperty -> JKMultiversePropertySymbol(psi, this)
+                is KtParameter -> JKMultiversePropertySymbol(psi, this)
                 is PsiLocalVariable -> JKMultiverseFieldSymbol(psi, this)
                 else -> TODO(psi::class.toString())
             }
@@ -93,6 +96,10 @@ class JKSymbolProvider {
 
     internal inline fun <reified T : JKSymbol> provideByFqName(fqName: String, context: PsiElement = symbolsByPsi.keys.first()): T =
         provideByFqName(ClassId.fromString(fqName), context)
+
+    internal inline fun <reified T : JKSymbol> provideByFqName(fqName: FqName, context: PsiElement = symbolsByPsi.keys.first()): T =
+        provideByFqName(fqName.asString(), context)
+
 
     private inner class ElementVisitor : JavaElementVisitor() {
         override fun visitClass(aClass: PsiClass) {

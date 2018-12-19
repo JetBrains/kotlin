@@ -93,7 +93,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
         return when (parent) {
             is JKJavaMethod -> typeFlavorCalculator.methodNullability(parent.psi as PsiMethod)
             is JKJavaField -> typeFlavorCalculator.variableNullability(parent.psi as PsiVariable)
-            is JKLocalVariable -> typeFlavorCalculator.variableNullability(parent.psi as PsiVariable)
+            is JKVariable -> typeFlavorCalculator.variableNullability(parent.psi as PsiVariable)
             else -> Nullability.Default
         }
     }
