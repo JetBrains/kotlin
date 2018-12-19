@@ -11,7 +11,7 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
 import com.jetbrains.cidr.execution.debugger.evaluation.ValueRendererFactory
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer
-import org.jetbrains.kotlin.cidr.konan.KotlinNativePathProvider
+import org.jetbrains.konan.util.getKotlinNativePath
 import java.nio.file.Paths
 
 class KonanValueRendererFactory : ValueRendererFactory {
@@ -33,7 +33,7 @@ class KonanValueRendererFactory : ValueRendererFactory {
 }
 
 private fun initLLDBDriver(project: Project, driver: LLDBDriver) {
-    KotlinNativePathProvider.getInstance(project).getKotlinNativePath()?.let { path ->
+    getKotlinNativePath(project)?.let { path ->
         // Apply custom formatting for Kotlin/Native structs:
         val lldbPrettyPrinters = Paths.get(path, "tools", "konan_lldb.py")
         driver.executeConsoleCommand("command script import \"$lldbPrettyPrinters\"")

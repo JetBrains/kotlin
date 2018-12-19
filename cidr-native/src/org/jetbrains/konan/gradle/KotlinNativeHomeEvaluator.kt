@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan
+package org.jetbrains.konan.gradle
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.getMethodOrNull
@@ -15,8 +15,7 @@ internal object KotlinNativeHomeEvaluator {
     private const val FALLBACK_ACCESSOR_METHOD = "getKonanHome"
 
     internal fun getKotlinNativeHome(project: Project): String? =
-        getKotlinNativeHomePrimary(project)
-            ?: getKotlinNativeHomeFallback(project)
+        getKotlinNativeHomePrimary(project) ?: getKotlinNativeHomeFallback(project)
 
     // Read Kotlin/Native home from the predefined property in Gradle plugin.
     // Should work for Gradle plugin with version > 1.3.10.
