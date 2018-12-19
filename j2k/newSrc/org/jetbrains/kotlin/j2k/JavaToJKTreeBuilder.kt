@@ -21,10 +21,17 @@ import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.*
-import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.j2k.ast.LiteralExpression.NullLiteral.isNullable
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
+import org.jetbrains.kotlin.j2k.tree.Mutability
 import org.jetbrains.kotlin.j2k.tree.impl.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
@@ -44,12 +51,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
    private fun PsiPackageStatement.toJK(): JKPackageDeclaration =
         JKPackageDeclarationImpl(JKNameIdentifierImpl(packageName))
 
-    private fun PsiImportStatement.toJK() =
-        JKImportStatementImpl(
-            JKNameIdentifierImpl(
-                text.substringAfter("import").substringBeforeLast(";").trim()
-            )
-        )
+    private fun PsiImportStatement.toJK(): JKImportStatementImpl {
+        val target = resolve()
+        val rawName = text.substringAfter("import").substringBeforeLast(";").trim()
+        val name =
+            if (target is KtLightClassForFacade) rawName.replaceAfterLast('.', "*")
+            else rawName
+        return JKImportStatementImpl(JKNameIdentifierImpl(name))
+    }
 
 
     private inner class ExpressionTreeMapper {
@@ -165,24 +174,92 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 })
         }
 
+        private fun JKExpression.qualified(qualifier: JKExpression?) =
+            if (qualifier != null) {
+                JKQualifiedExpressionImpl(qualifier, JKJavaQualifierImpl.DOT, this)
+            } else this
+
+        //TODO mostly copied from old j2k, refactor
         fun PsiMethodCallExpression.toJK(): JKExpression {
-            val method = methodExpression as PsiReferenceExpressionImpl
-            val referenceNameElement = methodExpression.referenceNameElement
-            val symbol = symbolProvider.provideSymbol<JKMethodSymbol>(method)
-            return if (referenceNameElement is PsiKeyword) {
-                val callee = when (referenceNameElement.tokenType) {
-                    SUPER_KEYWORD -> JKSuperExpressionImpl()
-                    THIS_KEYWORD -> JKThisExpressionImpl(JKLabelEmptyImpl())
-                    else -> error("Unknown keyword in callee position")
+            val arguments = argumentList.toJK()
+            val typeArguments = typeArgumentList.toJK()
+            val qualifier = methodExpression.qualifierExpression?.toJK()
+            val target = methodExpression.resolve()
+            val symbol = symbolProvider.provideSymbol<JKMethodSymbol>(methodExpression as PsiReferenceExpressionImpl)
+
+            return when {
+                methodExpression.referenceNameElement is PsiKeyword -> {
+                    val callee = when ((methodExpression.referenceNameElement as PsiKeyword).tokenType) {
+                        SUPER_KEYWORD -> JKSuperExpressionImpl()
+                        THIS_KEYWORD -> JKThisExpressionImpl(JKLabelEmptyImpl())
+                        else -> error("Unknown keyword in callee position")
+                    }
+                    JKDelegationConstructorCallImpl(symbol, callee, arguments)
                 }
-                JKDelegationConstructorCallImpl(symbol, callee, argumentList.toJK())
-            } else {
-                val call = JKJavaMethodCallExpressionImpl(symbol, argumentList.toJK(), typeArgumentList.toJK())
-                if (method.findChildByRole(ChildRole.DOT) != null) {
-                    JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, call)
-                } else {
-                    call
+
+                target is KtLightMethod -> {
+                    val origin = target.kotlinOrigin
+                    when (origin) {
+                        is KtNamedFunction -> {
+                            if (origin.isExtensionDeclaration()) {
+                                val receiver = arguments.expressions.firstOrNull()
+                                JKJavaMethodCallExpressionImpl(
+                                    symbolProvider.provideDirectSymbol(origin) as JKMethodSymbol,
+                                    arguments.also { it.expressions = it.expressions.drop(1) },
+                                    typeArguments
+                                ).qualified(receiver)
+                            } else {
+                                JKJavaMethodCallExpressionImpl(
+                                    symbolProvider.provideDirectSymbol(origin) as JKMethodSymbol,
+                                    arguments,
+                                    typeArguments
+                                ).qualified(qualifier)
+                            }
+                        }
+                        is KtProperty, is KtPropertyAccessor, is KtParameter -> {
+                            val property =
+                                if (origin is KtPropertyAccessor) origin.parent as KtProperty
+                                else origin as KtNamedDeclaration
+                            val parameterCount = target.parameterList.parameters.size
+                            val propertyAccessExpression =
+                                JKFieldAccessExpressionImpl(symbolProvider.provideDirectSymbol(property) as JKFieldSymbol)
+                            val isExtension = property.isExtensionDeclaration()
+                            val isTopLevel = origin.getStrictParentOfType<KtClassOrObject>() == null
+                            val propertyAccess = if (isTopLevel) {
+                                if (isExtension) JKQualifiedExpressionImpl(
+                                    arguments.expressions.first().detached(arguments),
+                                    JKJavaQualifierImpl.DOT,
+                                    propertyAccessExpression
+                                )
+                                else propertyAccessExpression
+                            } else propertyAccessExpression.qualified(qualifier) as JKAssignableExpression
+
+                            when (if (isExtension) parameterCount - 1 else parameterCount) {
+                                0 /* getter */ ->
+                                    propertyAccess
+
+                                1 /* setter */ -> {
+                                    val argument = (arguments.expressions[if (isExtension) 1 else 0]).detached(arguments)
+                                    JKJavaAssignmentExpressionImpl(
+                                        propertyAccess,
+                                        argument,
+                                        JKJavaOperatorImpl.tokenToOperator[JavaTokenType.EQ]!!
+                                    )
+                                }
+                                else -> TODO()
+                            }
+                        }
+
+                        else -> TODO()
+                    }
                 }
+
+                target is PsiMethod ->
+                    JKJavaMethodCallExpressionImpl(symbol, arguments, typeArguments)
+                        .qualified(qualifier)
+                else ->
+                    JKJavaMethodCallExpressionImpl(symbol, arguments, typeArguments)
+                        .qualified(qualifier)
             }
         }
 

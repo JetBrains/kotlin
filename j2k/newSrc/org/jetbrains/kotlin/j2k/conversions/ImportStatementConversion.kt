@@ -90,6 +90,14 @@ class ImportStatementConversion : RecursiveApplicableConversionBase() {
             unfilteredCollectedFqNames += classType.classReference.fqName!!
         }
 
+        override fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) {
+            unfilteredCollectedFqNames += fieldAccessExpression.identifier.fqName
+        }
+
+        override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
+            unfilteredCollectedFqNames += methodCallExpression.identifier.fqName
+        }
+
         override fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) {
             val type = classLiteralExpression.classType.type
             if (type is JKClassType) {
