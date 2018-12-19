@@ -172,10 +172,6 @@ messages/**)
     void dispose();
 }
 
--keepclassmembers class org.jetbrains.org.objectweb.asm.Opcodes {
-    *** ASM5;
-}
-
 -keep class org.jetbrains.org.objectweb.asm.tree.AnnotationNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.ClassNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.LocalVariableNode { *; }
