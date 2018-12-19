@@ -72,6 +72,7 @@ class KotlinTargetJarImpl(
 
 class KotlinTargetImpl(
     override val name: String,
+    override val presetName: String?,
     override val disambiguationClassifier: String?,
     override val platform: KotlinPlatform,
     override val compilations: Collection<KotlinCompilation>,
