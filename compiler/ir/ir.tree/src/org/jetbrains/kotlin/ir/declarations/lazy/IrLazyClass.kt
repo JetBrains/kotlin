@@ -72,7 +72,7 @@ class IrLazyClass(
 
     override var thisReceiver: IrValueParameter? by lazyVar {
         typeTranslator.buildWithScope(this) {
-            descriptor.thisAsReceiverParameter.generateReceiverParameterStub()
+            descriptor.thisAsReceiverParameter.generateReceiverParameterStub().apply { parent = this@IrLazyClass }
         }
     }
 
