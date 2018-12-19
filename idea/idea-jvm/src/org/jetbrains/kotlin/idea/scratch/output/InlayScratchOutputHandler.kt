@@ -38,12 +38,12 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
         createInlay(file, expression, output)
 
         if (output.type == ScratchOutputType.ERROR) {
-            ToolWindowScratchOutputHandler.handle(file, expression, output)
+            getToolwindowHandler().handle(file, expression, output)
         }
     }
 
     override fun error(file: ScratchFile, message: String) {
-        ToolWindowScratchOutputHandler.error(file, message)
+        getToolwindowHandler().error(file, message)
     }
 
     override fun onFinish(file: ScratchFile) {
@@ -52,7 +52,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
     override fun clear(file: ScratchFile) {
         clearInlays(file.editor)
-        ToolWindowScratchOutputHandler.clear(file)
+        getToolwindowHandler().clear(file)
     }
 
     private fun createInlay(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
@@ -91,7 +91,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
     private fun printToToolWindow(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         if (output.type != ScratchOutputType.ERROR) {
-            ToolWindowScratchOutputHandler.handle(file, expression, output)
+            getToolwindowHandler().handle(file, expression, output)
         }
     }
 
