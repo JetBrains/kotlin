@@ -35,13 +35,18 @@ import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
+
+fun getToolwindowHandler(): ScratchOutputHandler {
+    return if (ApplicationManager.getApplication().isUnitTestMode) {
+        TestOutputHandler
+    } else {
+        ToolWindowScratchOutputHandler
+    }
+}
+
+private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            return testPrint(file, output.text, expression)
-        }
-
         printToConsole(file.project) {
             val psiFile = file.getPsiFile()
             if (psiFile != null) {
@@ -60,10 +65,6 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
     }
 
     override fun error(file: ScratchFile, message: String) {
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            return testPrint(file, message)
-        }
-
         printToConsole(file.project) {
             print(message, ConsoleViewContentType.ERROR_OUTPUT)
         }
@@ -86,8 +87,6 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
     }
 
     override fun clear(file: ScratchFile) {
-        if (ApplicationManager.getApplication().isUnitTestMode) return
-
         ApplicationManager.getApplication().invokeLater {
             val toolWindow = getToolWindow(file.project) ?: return@invokeLater
             val contents = toolWindow.contentManager.contents
@@ -101,9 +100,6 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
             toolWindow.hide(null)
         }
     }
-
-    private fun getLineInfo(psiFile: PsiFile, expression: ScratchExpression) =
-        "${psiFile.name}:${expression.lineStart + 1}"
 
     private fun ScratchOutputType.convert() = when (this) {
         ScratchOutputType.OUTPUT -> ConsoleViewContentType.SYSTEM_OUTPUT
@@ -123,22 +119,10 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
         ScratchToolWindowFactory().createToolWindowContent(project, window)
         return window
     }
-
-    @TestOnly
-    private fun testPrint(file: ScratchFile, output: String, expression: ScratchExpression? = null) {
-        ApplicationManager.getApplication().invokeLater {
-            WriteCommandAction.runWriteCommandAction(file.project) {
-                val psiFile = file.getPsiFile()!!
-                psiFile.addAfter(
-                    KtPsiFactory(file.project).createComment(
-                        "/** ${expression?.let { getLineInfo(psiFile, expression) + " " } ?: ""}$output */"
-                    ),
-                    psiFile.lastChild
-                )
-            }
-        }
-    }
 }
+
+private fun getLineInfo(psiFile: PsiFile, expression: ScratchExpression) =
+    "${psiFile.name}:${expression.lineStart + 1}"
 
 private class ScratchToolWindowFactory : ToolWindowFactory {
     companion object {
@@ -159,5 +143,30 @@ private class ScratchToolWindowFactory : ToolWindowFactory {
         }
 
         Disposer.register(project, consoleView)
+    }
+}
+
+@TestOnly
+private object TestOutputHandler : ScratchOutputHandlerAdapter() {
+    override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
+        testPrint(file, output.text, expression)
+    }
+
+    override fun error(file: ScratchFile, message: String) {
+        testPrint(file, message)
+    }
+
+    private fun testPrint(file: ScratchFile, output: String, expression: ScratchExpression? = null) {
+        ApplicationManager.getApplication().invokeLater {
+            WriteCommandAction.runWriteCommandAction(file.project) {
+                val psiFile = file.getPsiFile()!!
+                psiFile.addAfter(
+                    KtPsiFactory(file.project).createComment(
+                        "/** ${expression?.let { getLineInfo(psiFile, expression) + " " } ?: ""}$output */"
+                    ),
+                    psiFile.lastChild
+                )
+            }
+        }
     }
 }
