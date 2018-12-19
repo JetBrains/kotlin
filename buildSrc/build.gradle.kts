@@ -78,6 +78,7 @@ extra["customDepsOrg"] = "kotlin.build.custom.deps"
 repositories {
     if (cacheRedirectorEnabled) {
         maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
+        maven("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-third-party-dependencies/")
     }
 
     extra["buildSrcKotlinRepo"]?.let {
@@ -85,6 +86,7 @@ repositories {
     }
 
     jcenter()
+    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
 }
 
 dependencies {
@@ -94,7 +96,7 @@ dependencies {
     compile("com.jakewharton.dex:dex-method-list:3.0.0")
 
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    compile("org.ow2.asm:asm-all:6.0_BETA")
+    compile("org.jetbrains.intellij.deps:asm-all:7.0")
 }
 
 samWithReceiver {
