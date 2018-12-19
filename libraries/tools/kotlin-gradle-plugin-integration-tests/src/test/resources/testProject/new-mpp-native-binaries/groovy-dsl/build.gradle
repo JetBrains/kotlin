@@ -41,7 +41,7 @@ kotlin {
         linuxX64("linux64")
         mingwX64("mingw64")
 
-        configure([macos64, linux64, windows64]) {
+        configure([macos64, linux64, mingw64]) {
             binaries {
 
                 executable()                  // Executable with default name.
