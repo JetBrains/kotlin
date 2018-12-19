@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.caches.lightClasses
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.util.IncorrectOperationException
@@ -68,6 +69,8 @@ class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
         else
             DescriptorUtils.isDirectSubclass(thisDescriptor, baseDescriptor)
     }
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean = PsiClassImplUtil.isClassEquivalentTo(this, another)
 }
 
 class KtFakeLightMethod private constructor(
