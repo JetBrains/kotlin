@@ -87,7 +87,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
+import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -353,14 +353,14 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             // assert [0] with some context
             val mainClassBytecode = compiledData.mainClass.bytes
 
-            ClassReader(mainClassBytecode).accept(object : ClassVisitor(ASM5) {
+            ClassReader(mainClassBytecode).accept(object : ClassVisitor(API_VERSION) {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
                     // Maybe just take the single method from the class, as it is done in 'evaluateWithCompilation'
                     if (name == GENERATED_FUNCTION_NAME || name.startsWith(GENERATED_FUNCTION_NAME + "-")) {
                         val argumentTypes = Type.getArgumentTypes(desc)
                         val args = context.getArgumentsForEval4j(compiledData.parameters, argumentTypes)
 
-                        return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
+                        return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
                                 virtualMachine.executeWithBreakpointsDisabled {
                                     val eval = JDIEval(virtualMachine,

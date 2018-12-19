@@ -101,7 +101,7 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
                 signature: String?,
                 exceptions: Array<out String>?
         ): MethodVisitor {
-            return object : MethodVisitor(Opcodes.ASM5, super.newMethod(origin, access, name, desc, signature, exceptions)) {
+            return object : MethodVisitor(Opcodes.API_VERSION, super.newMethod(origin, access, name, desc, signature, exceptions)) {
                 override fun visitInsn(opcode: Int) {
                     if (opcode == Opcodes.RETURN) {
                         generateClearCacheMethodCall()

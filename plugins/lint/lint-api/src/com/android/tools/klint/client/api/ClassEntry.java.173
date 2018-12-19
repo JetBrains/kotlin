@@ -18,7 +18,7 @@ package com.android.tools.klint.client.api;
 
 import static com.android.SdkConstants.DOT_CLASS;
 import static com.android.SdkConstants.DOT_JAR;
-import static org.jetbrains.org.objectweb.asm.Opcodes.ASM5;
+import static org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
@@ -319,7 +319,7 @@ class ClassEntry implements Comparable<ClassEntry> {
         private final Map<String, String> mMap;
 
         public SuperclassVisitor(Map<String, String> map) {
-            super(ASM5);
+            super(API_VERSION);
             mMap = map;
         }
 

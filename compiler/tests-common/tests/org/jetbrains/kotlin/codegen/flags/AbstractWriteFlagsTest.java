@@ -161,7 +161,7 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
         protected boolean isExists;
 
         public TestClassVisitor() {
-            super(Opcodes.ASM5);
+            super(Opcodes.API_VERSION);
         }
 
         abstract public int getAccess();

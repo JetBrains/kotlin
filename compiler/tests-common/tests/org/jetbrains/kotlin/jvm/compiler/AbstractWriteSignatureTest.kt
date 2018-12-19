@@ -118,7 +118,7 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
             )
         }
 
-        private inner class Checker : ClassVisitor(Opcodes.ASM5) {
+        private inner class Checker : ClassVisitor(Opcodes.API_VERSION) {
             override fun visit(
                 version: Int,
                 access: Int,

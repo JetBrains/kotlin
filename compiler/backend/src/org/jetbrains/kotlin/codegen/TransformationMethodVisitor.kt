@@ -34,7 +34,7 @@ abstract class TransformationMethodVisitor(
     desc: String,
     signature: String?,
     exceptions: Array<out String>?,
-    api: Int = Opcodes.ASM5
+    api: Int = Opcodes.API_VERSION
 ) : MethodVisitor(api) {
 
     private val methodNode = MethodNode(access, name, desc, signature, exceptions).apply {
@@ -70,7 +70,7 @@ abstract class TransformationMethodVisitor(
                 performTransformations(methodNode)
             }
 
-            methodNode.accept(EndIgnoringMethodVisitorDecorator(Opcodes.ASM5, delegate))
+            methodNode.accept(EndIgnoringMethodVisitorDecorator(Opcodes.API_VERSION, delegate))
 
 
             // In case of empty instructions list MethodNode.accept doesn't call visitLocalVariables of delegate

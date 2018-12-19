@@ -47,7 +47,7 @@ abstract class AbstractIrLineNumberTest : AbstractLineNumberTest() {
         labels: ArrayList<Label>,
         labels2LineNumbers: java.util.HashMap<Label, String>
     ): MethodVisitor {
-        return object : MethodVisitor(Opcodes.ASM5) {
+        return object : MethodVisitor(Opcodes.API_VERSION) {
             private var lastLabel: Label? = null
             private var lastLine = -1
 

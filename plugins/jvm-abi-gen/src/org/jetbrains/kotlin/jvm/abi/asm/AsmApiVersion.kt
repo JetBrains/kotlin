@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.jvm.abi.asm
 
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-internal const val ABI_EXTENSION_ASM_API_VERSION = Opcodes.ASM6
+internal const val ABI_EXTENSION_ASM_API_VERSION = Opcodes.API_VERSION

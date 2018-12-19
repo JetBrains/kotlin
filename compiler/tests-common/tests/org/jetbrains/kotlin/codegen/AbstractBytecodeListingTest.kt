@@ -41,7 +41,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     }
 }
 
-class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignatures: Boolean, api: Int = ASM5) : ClassVisitor(api) {
+class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignatures: Boolean, api: Int = API_VERSION) : ClassVisitor(api) {
     companion object {
         @JvmOverloads
         fun getText(
@@ -162,7 +162,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         handleModifiers(access, methodAnnotations)
         val methodParamCount = Type.getArgumentTypes(desc).size
 
-        return object : MethodVisitor(ASM5) {
+        return object : MethodVisitor(API_VERSION) {
             private var visibleAnnotableParameterCount = methodParamCount
             private var invisibleAnnotableParameterCount = methodParamCount
 
@@ -215,7 +215,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         handleModifiers(access)
         if (access and ACC_VOLATILE != 0) addModifier("volatile", fieldDeclaration.annotations)
 
-        return object : FieldVisitor(ASM5) {
+        return object : FieldVisitor(API_VERSION) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                 addAnnotation(desc)
                 return super.visitAnnotation(desc, visible)

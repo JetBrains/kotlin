@@ -34,7 +34,7 @@ import static org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue.
 
 public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implements Opcodes {
     public OptimizationBasicInterpreter() {
-        super(ASM5);
+        super(API_VERSION);
     }
 
     @Override

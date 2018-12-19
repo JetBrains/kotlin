@@ -230,12 +230,12 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         }
         ClassReader reader = new ClassReader(file.asByteArray());
 
-        reader.accept(new ClassVisitor(Opcodes.ASM5) {
+        reader.accept(new ClassVisitor(Opcodes.API_VERSION) {
             @Override
             public MethodVisitor visitMethod(
                     int access, @NotNull String callerName, @NotNull String callerDesc, String signature, String[] exceptions
             ) {
-                return new MethodVisitor(Opcodes.ASM5) {
+                return new MethodVisitor(Opcodes.API_VERSION) {
                     @Override
                     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
                         assertFalse(
