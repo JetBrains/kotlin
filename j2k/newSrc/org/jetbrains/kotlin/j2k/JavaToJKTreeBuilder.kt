@@ -407,7 +407,10 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 with(expressionTreeMapper) { argumentList.toJK() },
                 initializingClass?.createClassBody() ?: JKEmptyClassBodyImpl(),
                 JKTypeElementImpl(JKClassTypeImpl(symbolProvider.provideDirectSymbol(containingClass!!) as JKClassSymbol, emptyList()))
-            )
+            ).also {
+                symbolProvider.provideUniverseSymbol(this, it)
+                it.psi = this
+            }
 
         fun PsiMember.modality() =
             when {

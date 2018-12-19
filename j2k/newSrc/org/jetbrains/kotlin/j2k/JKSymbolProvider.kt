@@ -115,6 +115,10 @@ class JKSymbolProvider {
             provideUniverseSymbol(method)
         }
 
+        override fun visitEnumConstant(enumConstant: PsiEnumConstant) {
+            provideUniverseSymbol(enumConstant)
+        }
+
         override fun visitFile(file: PsiFile) {
             file.acceptChildren(this)
         }
