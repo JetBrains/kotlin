@@ -159,7 +159,10 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         }
 
         // We don't want to cast a cast or type-asserted expression:
-        if (diagnosticElement !is KtBinaryExpressionWithTypeRHS && diagnosticElement.parent !is KtBinaryExpressionWithTypeRHS) {
+        if (diagnostic.factory != Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED &&
+            diagnosticElement !is KtBinaryExpressionWithTypeRHS &&
+            diagnosticElement.parent !is KtBinaryExpressionWithTypeRHS
+        ) {
             actions.add(CastExpressionFix(diagnosticElement.getTopMostQualifiedForSelectorIfAny(), expectedType))
         }
 

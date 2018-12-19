@@ -12308,6 +12308,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testTypeMismatchLongNameRuntime() throws Exception {
                 runTest("idea/testData/quickfix/typeMismatch/casts/typeMismatchLongNameRuntime.kt");
             }
+
+            @TestMetadata("unsigned.kt")
+            public void testUnsigned() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/casts/unsigned.kt");
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch")
