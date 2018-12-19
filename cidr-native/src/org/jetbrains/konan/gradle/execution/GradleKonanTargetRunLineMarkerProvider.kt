@@ -18,24 +18,24 @@ import com.jetbrains.cidr.execution.CidrTargetRunLineMarkerProvider
 
 class GradleKonanTargetRunLineMarkerProvider : CidrTargetRunLineMarkerProvider() {
 
-  override fun getInfo(e: PsiElement): RunLineMarkerContributor.Info? {
-    return if (ourHasExeTarget.getValue(e.containingFile).value) {
-      getInfo(e, true)
+    override fun getInfo(e: PsiElement): RunLineMarkerContributor.Info? {
+        return if (ourHasExeTarget.getValue(e.containingFile).value) {
+            getInfo(e, true)
+        }
+        else null
     }
-    else null
-  }
 
-  companion object {
-    private val ourHasExeTarget = NotNullLazyKey.create<CachedValue<Boolean>, PsiFile>(
-      "HasExeTarget") { file ->
-      CachedValuesManager.getManager(file.project).createCachedValue(
-        {
-          val instance = GradleKonanTargetRunConfigurationProducer.getGradleKonanInstance(file.project)
-          CachedValueProvider.Result(
-            instance != null && !instance.getExecutableTargetsForFile(file).isEmpty(),
-            ModificationTracker.NEVER_CHANGED)
-        },
-        false)
+    companion object {
+        private val ourHasExeTarget = NotNullLazyKey.create<CachedValue<Boolean>, PsiFile>(
+            "HasExeTarget") { file ->
+            CachedValuesManager.getManager(file.project).createCachedValue(
+                {
+                    val instance = GradleKonanTargetRunConfigurationProducer.getGradleKonanInstance(file.project)
+                    CachedValueProvider.Result(
+                        instance != null && !instance.getExecutableTargetsForFile(file).isEmpty(),
+                        ModificationTracker.NEVER_CHANGED)
+                },
+                false)
+        }
     }
-  }
 }

@@ -10,5 +10,5 @@ import com.jetbrains.cidr.execution.debugger.breakpoints.CidrLineBreakpointFileT
 import org.jetbrains.kotlin.idea.KotlinFileType
 
 class KonanLineBreakpointFileTypesProvider : CidrLineBreakpointFileTypesProvider {
-  override fun getFileTypes() = setOf(KotlinFileType.INSTANCE as FileType)
+    override fun getFileTypes() = setOf(KotlinFileType.INSTANCE as FileType)
 }

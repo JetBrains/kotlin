@@ -13,7 +13,13 @@
   <change-notes/>
 
   <depends>com.intellij.modules.clion</depends>
-  <depends>org.jetbrains.plugins.gradle</depends>
+
+  <application-components>
+    <component>
+      <interface-class>org.jetbrains.konan.CidrNativeIconProvider</interface-class>
+      <implementation-class>org.jetbrains.konan.CLionNativeIconProvider</implementation-class>
+    </component>
+  </application-components>
 
   <project-components>
     <component>
@@ -21,26 +27,11 @@
       <implementation-class>org.jetbrains.kotlin.clion.konan.CLionKotlinNativePathProvider</implementation-class>
     </component>
   </project-components>
-  <application-components>
-    <component>
-      <implementation-class>org.jetbrains.konan.gradle.internal.KotlinNativeIdeInitializer</implementation-class>
-    </component>
-  </application-components>
 
-  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
-    <projectResolve implementation="org.jetbrains.konan.gradle.KonanProjectResolver"/>
+  <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
+    <gradleLauncherProvider implementation="org.jetbrains.konan.gradle.execution.CLionGradleKonanLauncherProvider"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
-    <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"/>
-    <projectService serviceImplementation="org.jetbrains.konan.gradle.GradleKonanWorkspace"/>
-
-    <configurationType implementation="org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType"/>
-    <runConfigurationProducer implementation="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer"/>
-    <executionTargetProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanExecutionTargetProvider"/>
-    <runLineMarkerContributor language="ObjectiveC"
-                              implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
-
-    <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanBuildBeforeRunTaskProvider"/>
     <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>
   </extensions>
 

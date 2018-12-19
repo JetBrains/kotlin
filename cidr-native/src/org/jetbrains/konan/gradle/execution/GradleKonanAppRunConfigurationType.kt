@@ -22,38 +22,38 @@ class GradleKonanAppRunConfigurationType protected constructor() : Configuration
                                                                                          "Kotlin/Native Application",
                                                                                          "Kotlin/Native application configuration",
                                                                                          AllIcons.RunConfigurations.Application) {
-  private val myDefaultFactoryId: String = "Application"
+    private val myDefaultFactoryId: String = "Application"
 
-  val factory: ConfigurationFactory
-    get() = object : ConfigurationFactoryEx<GradleKonanAppRunConfiguration>(this) {
-      override fun createTemplateConfiguration(project: Project): RunConfiguration {
-        return createRunConfiguration(project, this)
-      }
+    val factory: ConfigurationFactory
+        get() = object : ConfigurationFactoryEx<GradleKonanAppRunConfiguration>(this) {
+            override fun createTemplateConfiguration(project: Project): RunConfiguration {
+                return createRunConfiguration(project, this)
+            }
 
-      @NonNls
-      override fun getId(): String {
-        return myDefaultFactoryId
-      }
+            @NonNls
+            override fun getId(): String {
+                return myDefaultFactoryId
+            }
+        }
+
+    init {
+        addFactory(factory)
     }
 
-  init {
-    addFactory(factory)
-  }
-
-  protected fun createRunConfiguration(project: Project, factory: ConfigurationFactory): GradleKonanAppRunConfiguration {
-    return GradleKonanAppRunConfiguration(project, factory, "")
-  }
-
-  fun createEditor(project: Project): SettingsEditor<out GradleKonanAppRunConfiguration> {
-    return GradleKonanAppRunConfigurationSettingsEditor(project, getHelper(project))
-  }
-
-  companion object {
-    fun getHelper(project: Project): GradleKonanBuildConfigurationHelper {
-      return GradleKonanBuildConfigurationHelper(project)
+    protected fun createRunConfiguration(project: Project, factory: ConfigurationFactory): GradleKonanAppRunConfiguration {
+        return GradleKonanAppRunConfiguration(project, factory, "")
     }
 
-    val instance: GradleKonanAppRunConfigurationType
-      get() = ConfigurationTypeUtil.findConfigurationType(GradleKonanAppRunConfigurationType::class.java)
-  }
+    fun createEditor(project: Project): SettingsEditor<out GradleKonanAppRunConfiguration> {
+        return GradleKonanAppRunConfigurationSettingsEditor(project, getHelper(project))
+    }
+
+    companion object {
+        fun getHelper(project: Project): GradleKonanBuildConfigurationHelper {
+            return GradleKonanBuildConfigurationHelper(project)
+        }
+
+        val instance: GradleKonanAppRunConfigurationType
+            get() = ConfigurationTypeUtil.findConfigurationType(GradleKonanAppRunConfigurationType::class.java)
+    }
 }

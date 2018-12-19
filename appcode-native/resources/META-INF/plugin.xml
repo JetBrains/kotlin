@@ -3,9 +3,10 @@
 
   <id>org.jetbrains.kotlin.native.appcode</id>
   <name>Kotlin/Native for AppCode</name>
+  <!--version_placeholder-->
   <vendor>JetBrains</vendor>
 
-  <idea-version since-build="183.3" until-build="183.*"/> <!--TODO restrict compatibility -->
+  <!--idea_version_placeholder-->
 
   <description>Kotlin/Native support</description>
 
@@ -13,25 +14,32 @@
 
   <depends>com.intellij.modules.appcode</depends>
 
+  <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
+    <gradleLauncherProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeGradleKonanLauncherProvider"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>
 
     <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
+    <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeKonanBuildBeforeRunTaskProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="appcode">
     <xcodeTemplatePathsProvider implementation="org.jetbrains.konan.AppCodeKonanTemplatesProvider"/>
   </extensions>
 
+  <application-components>
+    <component>
+      <interface-class>org.jetbrains.konan.CidrNativeIconProvider</interface-class>
+      <implementation-class>org.jetbrains.konan.AppCodeNativeIconProvider</implementation-class>
+    </component>
+  </application-components>
+
   <project-components>
     <component>
-      <interface-class>org.jetbrains.konan.settings.KonanProjectComponent</interface-class>
-      <implementation-class>org.jetbrains.konan.settings.AppCodeKonanProjectComponent</implementation-class>
+      <implementation-class>org.jetbrains.konan.internal.AppCodeGradleKonanProjectAttacher</implementation-class>
     </component>
-    <!--<component>-->
-      <!--<interface-class>org.jetbrains.konan.settings.KonanPaths</interface-class>-->
-      <!--<implementation-class>org.jetbrains.konan.settings.AppCodeKonanPaths</implementation-class>-->
-    <!--</component>-->
   </project-components>
 
 </idea-plugin>

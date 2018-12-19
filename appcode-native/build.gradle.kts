@@ -21,6 +21,7 @@ val appcodeVersionRepo = rootProject.extra["versions.appcode.repo"] as String
 
 dependencies {
     compile(project(":kotlin-ultimate:cidr-native"))
+    compile(project(":idea:idea-gradle-native"))
     compileOnly(tc("$appcodeVersionRepo:$appcodeVersion:unscrambled/appcode.jar"))
 }
 

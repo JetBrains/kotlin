@@ -22,12 +22,12 @@ class GradleKonanConfiguration(val id: String,
                                val compileTaskName: String?,
                                val projectPath: String,
                                val isTests: Boolean) : Serializable, CidrBuildConfiguration {
-  private val myName: String = "$name [$profileName]"
+    private val myName: String = "$name [$profileName]"
 
-  val isExecutable: Boolean
-    get() = targetType == CompilerOutputKind.PROGRAM
+    val isExecutable: Boolean
+        get() = targetType == CompilerOutputKind.PROGRAM
 
-  override fun getName(): String {
-    return myName
-  }
+    override fun getName(): String {
+        return myName
+    }
 }

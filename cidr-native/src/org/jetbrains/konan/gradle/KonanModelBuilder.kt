@@ -9,7 +9,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.clion.konan.KotlinNativeHomeEvaluator.getKotlinNativeHome
+import org.jetbrains.konan.KotlinNativeHomeEvaluator.getKotlinNativeHome
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
 import org.jetbrains.kotlin.gradle.getMethodOrNull
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind

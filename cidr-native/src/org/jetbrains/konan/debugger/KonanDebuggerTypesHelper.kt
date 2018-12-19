@@ -29,11 +29,8 @@ class KonanDebuggerTypesHelper(process: CidrDebugProcess) : CidrDebuggerTypesHel
     override fun resolveToDeclaration(position: XSourcePosition, value: LLValue): PsiElement? {
         val blockExpression = findBlockAtPosition(position, myProcess.project) ?: return null
         val referenceText = if (value.name == "<this>") "this" else value.name
-
-        val codeFragment = KtPsiFactory(myProcess.project, false)
-            .createExpressionCodeFragment(referenceText, blockExpression)
-            .getContentElement()
-
+        val codeFragment =
+            KtPsiFactory(myProcess.project, false).createExpressionCodeFragment(referenceText, blockExpression).getContentElement()
         val referenceExpression = if (referenceText == "this") {
             (codeFragment as? KtThisExpression)?.instanceReference
         } else {
