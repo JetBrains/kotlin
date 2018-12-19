@@ -59,7 +59,7 @@ object GradleKonanBuild {
         settings.externalProjectPath = projectPath
         settings.taskNames = ContainerUtil.list(taskName)
         settings.externalSystemIdString = GradleConstants.SYSTEM_ID.id
-        settings.scriptParameters = "-Pkonan.debugging.symbols=true -Pkonan.optimizations.enable=false"
+        settings.scriptParameters = ""
 
         val userData = UserDataHolderBase()
         userData.putUserData(PROGRESS_LISTENER_KEY, BuildViewManager::class.java)
