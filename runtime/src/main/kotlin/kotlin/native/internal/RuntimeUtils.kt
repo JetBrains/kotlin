@@ -117,7 +117,7 @@ fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     return result as Array<T>
 }
 
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.CREATE_UNINITIALIZED_INSTANCE)
 internal external fun <T> createUninitializedInstance(): T
 
 @Intrinsic
@@ -150,7 +150,7 @@ fun KonanObjectToUtf8Array(value: Any?): ByteArray {
     return string.toUtf8()
 }
 
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.LIST_OF_INTERNAL)
 @PublishedApi
 internal fun <T> listOfInternal(vararg elements: T): List<T> {
     val result = ArrayList<T>(elements.size)

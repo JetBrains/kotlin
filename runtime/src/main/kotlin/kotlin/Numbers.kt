@@ -71,7 +71,7 @@ public actual inline fun Double.toRawBits(): Long = bits()
 public actual inline fun Double.Companion.fromBits(bits: Long): Double = kotlin.fromBits(bits)
 
 @PublishedApi
-@TypedIntrinsic(IntrinsicType.FROM_BITS)
+@TypedIntrinsic(IntrinsicType.REINTERPRET)
 external internal fun fromBits(bits: Long): Double
 
 /**
@@ -99,5 +99,5 @@ public actual inline fun Float.toRawBits(): Int = bits()
 public actual inline fun Float.Companion.fromBits(bits: Int): Float = kotlin.fromBits(bits)
 
 @PublishedApi
-@TypedIntrinsic(IntrinsicType.FROM_BITS)
+@TypedIntrinsic(IntrinsicType.REINTERPRET)
 external internal fun fromBits(bits: Int): Float

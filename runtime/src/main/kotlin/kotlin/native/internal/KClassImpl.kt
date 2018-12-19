@@ -62,7 +62,7 @@ internal class KClassUnsupportedImpl(private val message: String) : KClass<Any> 
 internal external fun getObjectTypeInfo(obj: Any): NativePtr
 
 @ExportForCompiler
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.GET_CLASS_TYPE_INFO)
 internal external inline fun <reified T : Any> getClassTypeInfo(): NativePtr
 
 @SymbolName("Kotlin_TypeInfo_getPackageName")

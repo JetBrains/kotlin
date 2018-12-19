@@ -18,37 +18,40 @@ package kotlinx.cinterop
 
 import kotlin.native.*
 import kotlin.native.internal.Intrinsic
+import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.IntrinsicType
 
 @PublishedApi
 internal inline val pointerSize: Int
     get() = getPointerSize()
 
 @PublishedApi
-@Intrinsic internal external fun getPointerSize(): Int
+@TypedIntrinsic(IntrinsicType.GET_POINTER_SIZE)
+internal external fun getPointerSize(): Int
 
 // TODO: do not use singleton because it leads to init-check on any access.
 @PublishedApi
 internal object nativeMemUtils {
-    @Intrinsic external fun getByte(mem: NativePointed): Byte
-    @Intrinsic external fun putByte(mem: NativePointed, value: Byte)
+    @TypedIntrinsic(IntrinsicType.READ_PRIMITIVE) external fun getByte(mem: NativePointed): Byte
+    @TypedIntrinsic(IntrinsicType.WRITE_PRIMITIVE) external fun putByte(mem: NativePointed, value: Byte)
 
-    @Intrinsic external fun getShort(mem: NativePointed): Short
-    @Intrinsic external fun putShort(mem: NativePointed, value: Short)
+    @TypedIntrinsic(IntrinsicType.READ_PRIMITIVE) external fun getShort(mem: NativePointed): Short
+    @TypedIntrinsic(IntrinsicType.WRITE_PRIMITIVE) external fun putShort(mem: NativePointed, value: Short)
 
-    @Intrinsic external fun getInt(mem: NativePointed): Int
-    @Intrinsic external fun putInt(mem: NativePointed, value: Int)
+    @TypedIntrinsic(IntrinsicType.READ_PRIMITIVE) external fun getInt(mem: NativePointed): Int
+    @TypedIntrinsic(IntrinsicType.WRITE_PRIMITIVE) external fun putInt(mem: NativePointed, value: Int)
 
-    @Intrinsic external fun getLong(mem: NativePointed): Long
-    @Intrinsic external fun putLong(mem: NativePointed, value: Long)
+    @TypedIntrinsic(IntrinsicType.READ_PRIMITIVE) external fun getLong(mem: NativePointed): Long
+    @TypedIntrinsic(IntrinsicType.WRITE_PRIMITIVE) external fun putLong(mem: NativePointed, value: Long)
 
-    @Intrinsic external fun getFloat(mem: NativePointed): Float
-    @Intrinsic external fun putFloat(mem: NativePointed, value: Float)
+    @TypedIntrinsic(IntrinsicType.READ_PRIMITIVE) external fun getFloat(mem: NativePointed): Float
+    @TypedIntrinsic(IntrinsicType.WRITE_PRIMITIVE) external fun putFloat(mem: NativePointed, value: Float)
 
-    @Intrinsic external fun getDouble(mem: NativePointed): Double
-    @Intrinsic external fun putDouble(mem: NativePointed, value: Double)
+    @TypedIntrinsic(IntrinsicType.READ_PRIMITIVE) external fun getDouble(mem: NativePointed): Double
+    @TypedIntrinsic(IntrinsicType.WRITE_PRIMITIVE) external fun putDouble(mem: NativePointed, value: Double)
 
-    @Intrinsic external fun getNativePtr(mem: NativePointed): NativePtr
-    @Intrinsic external fun putNativePtr(mem: NativePointed, value: NativePtr)
+    @TypedIntrinsic(IntrinsicType.READ_PRIMITIVE) external fun getNativePtr(mem: NativePointed): NativePtr
+    @TypedIntrinsic(IntrinsicType.WRITE_PRIMITIVE) external fun putNativePtr(mem: NativePointed, value: NativePtr)
 
     // TODO: optimize
     fun getByteArray(source: NativePointed, dest: ByteArray, length: Int) {
@@ -151,5 +154,7 @@ private external fun malloc(size: Long, align: Int): NativePtr
 @SymbolName("Kotlin_interop_free")
 private external fun cfree(ptr: NativePtr)
 
-@Intrinsic external fun readBits(ptr: NativePtr, offset: Long, size: Int, signed: Boolean): Long
-@Intrinsic external fun writeBits(ptr: NativePtr, offset: Long, size: Int, value: Long)
+@TypedIntrinsic(IntrinsicType.READ_BITS)
+external fun readBits(ptr: NativePtr, offset: Long, size: Int, signed: Boolean): Long
+@TypedIntrinsic(IntrinsicType.WRITE_BITS)
+external fun writeBits(ptr: NativePtr, offset: Long, size: Int, value: Long)

@@ -291,12 +291,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     val codegen = CodeGenerator(context)
 
-    val intrinsicGenerator = IntrinsicGenerator(codegen)
-
-    //-------------------------------------------------------------------------//
-
     // TODO: consider eliminating mutable state
     private var currentCodeContext: CodeContext = TopLevelCodeContext
+
+    private val intrinsicGenerator = IntrinsicGenerator(codegen,
+            ::resultLifetime, ::getContinuation, { currentCodeContext.exceptionHandler })
 
 
     /**
@@ -1799,8 +1798,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return codegen.theUnitInstanceRef.llvm
     }
 
-    //-------------------------------------------------------------------------//
-
+    // TODO: should be unified with other intrinsics
     private fun evaluateSpecialIntrinsicCall(expression: IrFunctionAccessExpression): LLVMValueRef? {
         val function = expression.symbol.owner
 
@@ -2097,8 +2095,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                                args + getContinuation()
                                            else args
         return when {
-            function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args, functionGenerationContext, currentCodeContext.exceptionHandler)
-            function.isIntrinsic -> evaluateIntrinsicCall(callee, argsWithContinuationIfNeeded)
+            function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args, functionGenerationContext)
+            function.isIntrinsic -> context.reportCompilationError("Unexpected @Intrinsic function: ${function.name.asString()}")
             function.origin == IrDeclarationOrigin.IR_BUILTINS_STUB -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
             function is ConstructorDescriptor -> evaluateConstructorCall(callee, argsWithContinuationIfNeeded)
             else -> evaluateSimpleFunctionCall(function, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifierSymbol?.owner)
@@ -2198,233 +2196,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
     }
 
-    //-------------------------------------------------------------------------//
-
-    // TODO: Move to [IntrinsicsGenerator]
-    private fun evaluateIntrinsicCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
-        val descriptor = callee.descriptor.original
-        val function = callee.symbol.owner
-        val name = descriptor.fqNameUnsafe.asString()
-
-        when (name) {
-            "kotlin.native.internal.areEqualByValue" -> {
-                val arg0 = args[0]
-                val arg1 = args[1]
-                assert (arg0.type == arg1.type,
-                        { "Types are different: '${llvmtype2string(arg0.type)}' and '${llvmtype2string(arg1.type)}'" })
-
-                val typeKind = LLVMGetTypeKind(arg0.type)
-                with (functionGenerationContext) {
-                    return when (typeKind) {
-                        LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind -> {
-                            val numBits = LLVMSizeOfTypeInBits(codegen.llvmTargetData, arg0.type).toInt()
-                            val integerType = LLVMIntType(numBits)!!
-                            icmpEq(bitcast(integerType, arg0), bitcast(integerType, arg1))
-                        }
-
-                        LLVMTypeKind.LLVMIntegerTypeKind, LLVMTypeKind.LLVMPointerTypeKind -> icmpEq(arg0, arg1)
-
-                        else -> error(typeKind)
-                    }
-                }
-            }
-            "kotlin.native.internal.ieee754Equals" -> {
-                val arg0 = args[0]
-                val arg1 = args[1]
-                assert (arg0.type == arg1.type,
-                        { "Types are different: '${llvmtype2string(arg0.type)}' and '${llvmtype2string(arg1.type)}'" })
-                val type = LLVMGetTypeKind(arg0.type)
-                assert (type == LLVMTypeKind.LLVMFloatTypeKind || type == LLVMTypeKind.LLVMDoubleTypeKind,
-                        { "Should be of floating point kind, not: '${llvmtype2string(arg0.type)}'"})
-                return functionGenerationContext.fcmpEq(arg0, arg1)
-
-            }
-            "kotlin.native.internal.getContinuation" -> return getContinuation()
-        }
-
-        val interop = context.interopBuiltIns
-
-        return when (descriptor) {
-            interop.interpretNullablePointed, interop.interpretCPointer,
-            interop.nativePointedGetRawPointer, interop.cPointerGetRawValue, // TODO: implement through `reinterpret`
-            context.ir.symbols.reinterpret.descriptor -> args.single()
-
-            in interop.readPrimitive -> {
-                val pointerType = pointerType(codegen.getLLVMType(function.returnType))
-                val rawPointer = args.last()
-                val pointer = functionGenerationContext.bitcast(pointerType, rawPointer)
-                functionGenerationContext.load(pointer)
-            }
-            in interop.writePrimitive -> {
-                val pointerType = pointerType(codegen.getLLVMType(function.valueParameters.last().type))
-                val rawPointer = args[1]
-                val pointer = functionGenerationContext.bitcast(pointerType, rawPointer)
-                functionGenerationContext.store(args[2], pointer)
-                codegen.theUnitInstanceRef.llvm
-            }
-            context.nativePtrPlusLong -> functionGenerationContext.gep(args[0], args[1])
-            context.getNativeNullPtr -> kNullInt8Ptr
-            interop.getPointerSize -> Int32(LLVMPointerSize(codegen.llvmTargetData)).llvm
-            context.nativePtrToLong -> {
-                val intPtrValue = functionGenerationContext.ptrToInt(args.single(), codegen.intPtrType)
-                val resultType = functionGenerationContext.getLLVMType(function.returnType)
-
-                if (resultType == intPtrValue.type) {
-                    intPtrValue
-                } else {
-                    LLVMBuildSExt(functionGenerationContext.builder, intPtrValue, resultType, "")!!
-                }
-            }
-
-            interop.getObjCReceiverOrSuper -> {
-                genGetObjCReceiverOrSuper(args)
-            }
-
-            interop.getObjCClass -> {
-                val typeArgument = callee.getTypeArgument(descriptor.typeParameters.single())
-                val irClass = typeArgument!!.getClass()!!
-                genGetObjCClass(irClass)
-            }
-
-            interop.getObjCMessenger -> {
-                genGetObjCMessenger(args, isStret = false)
-            }
-            interop.getObjCMessengerStret -> {
-                genGetObjCMessenger(args, isStret = true)
-            }
-
-            interop.readBits -> genReadBits(args)
-            interop.writeBits -> genWriteBits(args)
-
-            context.ir.symbols.getClassTypeInfo.descriptor -> {
-                val typeArgument = callee.getTypeArgument(0)!!
-                val typeArgumentClass = typeArgument.getClass()
-                if (typeArgumentClass == null) {
-                    // Should not happen anymore, but it is safer to handle this case.
-                    functionGenerationContext.unreachable()
-                    kNullInt8Ptr
-                } else {
-                    val typeInfo = codegen.typeInfoValue(typeArgumentClass)
-                    LLVMConstBitCast(typeInfo, kInt8Ptr)!!
-                }
-            }
-
-            context.ir.symbols.createUninitializedInstance.descriptor -> {
-                val typeParameterT = context.ir.symbols.createUninitializedInstance.descriptor.typeParameters[0]
-                val enumClass = callee.getTypeArgument(typeParameterT)!!
-                val enumIrClass = enumClass.getClass()!!
-                functionGenerationContext.allocInstance(enumIrClass, resultLifetime(callee))
-            }
-
-            context.ir.symbols.listOfInternal.descriptor -> {
-                val varargExpression = callee.getValueArgument(0) as IrVararg
-                val vararg = args.single()
-
-                val length = varargExpression.elements.size
-                // TODO: store length in `vararg` itself when more abstract types will be used for values.
-
-                val array = constPointer(vararg)
-                // Note: dirty hack here: `vararg` has type `Array<out E>`, but `createConstArrayList` expects `Array<E>`;
-                // however `vararg` is immutable, and in current implementation it has type `Array<E>`,
-                // so let's ignore this mismatch currently for simplicity.
-
-                return context.llvm.staticData.createConstArrayList(array, length).llvm
-            }
-
-            else -> TODO(callee.descriptor.original.toString())
-        }
-    }
-
-    private fun genReadBits(args: List<LLVMValueRef>): LLVMValueRef {
-        val ptr = args[0]
-        assert(ptr.type == int8TypePtr)
-
-        val offset = extractConstUnsignedInt(args[1])
-        val size = extractConstUnsignedInt(args[2]).toInt()
-        val signed = extractConstUnsignedInt(args[3]) != 0L
-
-        val prefixBitsNum = (offset % 8).toInt()
-        val suffixBitsNum = (8 - ((size + offset) % 8).toInt()) % 8
-
-        // Note: LLVM allows to read without padding tail up to byte boundary, but the result seems to be incorrect.
-
-        val bitsWithPaddingNum = prefixBitsNum + size + suffixBitsNum
-        val bitsWithPaddingType = LLVMIntType(bitsWithPaddingNum)!!
-
-        with (functionGenerationContext) {
-            val bitsWithPaddingPtr = bitcast(pointerType(bitsWithPaddingType), gep(ptr, Int64(offset / 8).llvm))
-            val bitsWithPadding = load(bitsWithPaddingPtr).setUnaligned()
-
-            val bits = shr(
-                    shl(bitsWithPadding, suffixBitsNum),
-                    prefixBitsNum + suffixBitsNum, signed
-            )
-
-            return if (bitsWithPaddingNum == 64) {
-                bits
-            } else if (bitsWithPaddingNum > 64) {
-                trunc(bits, int64Type)
-            } else {
-                ext(bits, int64Type, signed)
-            }
-        }
-    }
-
-    private fun genWriteBits(args: List<LLVMValueRef>): LLVMValueRef {
-        val ptr = args[0]
-        assert(ptr.type == int8TypePtr)
-
-        val offset = extractConstUnsignedInt(args[1])
-        val size = extractConstUnsignedInt(args[2]).toInt()
-
-        val value = args[3]
-        assert(value.type == int64Type)
-
-        val bitsType = LLVMIntType(size)!!
-
-        val prefixBitsNum = (offset % 8).toInt()
-        val suffixBitsNum = (8 - ((size + offset) % 8).toInt()) % 8
-
-        val bitsWithPaddingNum = prefixBitsNum + size + suffixBitsNum
-        val bitsWithPaddingType = LLVMIntType(bitsWithPaddingNum)!!
-
-        // 0011111000:
-        val discardBitsMask = LLVMConstShl(
-                LLVMConstZExt(
-                        LLVMConstAllOnes(bitsType), // 11111
-                        bitsWithPaddingType
-                ), // 1111100000
-                LLVMConstInt(bitsWithPaddingType, prefixBitsNum.toLong(), 0)
-        )
-
-        val preservedBitsMask = LLVMConstNot(discardBitsMask)!!
-
-        with (functionGenerationContext) {
-            val bitsWithPaddingPtr = bitcast(pointerType(bitsWithPaddingType), gep(ptr, Int64(offset / 8).llvm))
-
-            val bits = trunc(value, bitsType)
-
-            val bitsToStore = if (prefixBitsNum == 0 && suffixBitsNum == 0) {
-                bits
-            } else {
-                val previousValue = load(bitsWithPaddingPtr).setUnaligned()
-                val preservedBits = and(previousValue, preservedBitsMask)
-                val bitsWithPadding = shl(zext(bits, bitsWithPaddingType), prefixBitsNum)
-
-                or(bitsWithPadding, preservedBits)
-            }
-
-            LLVMBuildStore(builder, bitsToStore, bitsWithPaddingPtr)!!.setUnaligned()
-        }
-
-        return codegen.theUnitInstanceRef.llvm
-    }
-
-    private fun extractConstUnsignedInt(value: LLVMValueRef): Long {
-        assert(LLVMIsConstant(value) != 0)
-        return LLVMConstIntGetZExtValue(value)
-    }
-
     private fun genGetObjCClass(classDescriptor: ClassDescriptor): LLVMValueRef {
         return functionGenerationContext.getObjCClass(classDescriptor, currentCodeContext.exceptionHandler)
     }
@@ -2446,64 +2217,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return call(protocolGetter, emptyList())
     }
 
-    private fun genGetObjCMessenger(args: List<LLVMValueRef>, isStret: Boolean): LLVMValueRef {
-        val gen = functionGenerationContext
-
-        val messengerNameSuffix = if (isStret) "_stret" else ""
-
-        val functionType = functionType(int8TypePtr, true, int8TypePtr, int8TypePtr)
-
-        val libobjc = context.standardLlvmSymbolsOrigin
-        val normalMessenger = context.llvm.externalFunction(
-                "objc_msgSend$messengerNameSuffix",
-                functionType,
-                origin = libobjc
-        )
-        val superMessenger = context.llvm.externalFunction(
-                "objc_msgSendSuper$messengerNameSuffix",
-                functionType,
-                origin = libobjc
-        )
-
-        val superClass = args.single()
-        val messenger = LLVMBuildSelect(gen.builder,
-                If = gen.icmpEq(superClass, kNullInt8Ptr),
-                Then = normalMessenger,
-                Else = superMessenger,
-                Name = ""
-        )!!
-
-        return gen.bitcast(int8TypePtr, messenger)
-    }
-
-    private fun genGetObjCReceiverOrSuper(args: List<LLVMValueRef>): LLVMValueRef {
-        val gen = functionGenerationContext
-
-        assert(args.size == 2)
-        val receiver = args[0]
-        val superClass = args[1]
-
-        val superClassIsNull = gen.icmpEq(superClass, kNullInt8Ptr)
-
-        return gen.ifThenElse(superClassIsNull, receiver) {
-            val structType = structType(kInt8Ptr, kInt8Ptr)
-            val ptr = gen.alloca(structType)
-            gen.store(receiver,
-                    LLVMBuildGEP(gen.builder, ptr, cValuesOf(kImmZero, kImmZero), 2, "")!!)
-
-            gen.store(superClass,
-                    LLVMBuildGEP(gen.builder, ptr, cValuesOf(kImmZero, kImmOne), 2, "")!!)
-
-            gen.bitcast(int8TypePtr, ptr)
-        }
-    }
-
     //-------------------------------------------------------------------------//
     private val kImmZero     = LLVMConstInt(LLVMInt32Type(),  0, 1)!!
     private val kImmOne      = LLVMConstInt(LLVMInt32Type(),  1, 1)!!
     private val kTrue        = LLVMConstInt(LLVMInt1Type(),   1, 1)!!
     private val kFalse       = LLVMConstInt(LLVMInt1Type(),   0, 1)!!
 
+    // TODO: Intrinsify?
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         context.log{"evaluateOperatorCall           : origin:${ir2string(callee)}"}
         val descriptor = callee.symbol.owner

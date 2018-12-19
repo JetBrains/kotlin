@@ -1174,7 +1174,7 @@ public final class Float private constructor(private val value: kotlin.native.in
         return bits()
     }
 
-    @TypedIntrinsic(IntrinsicType.TO_BITS)
+    @TypedIntrinsic(IntrinsicType.REINTERPRET)
     @PublishedApi
     external internal fun bits(): Int
 }
@@ -1396,7 +1396,7 @@ public final class Double private constructor(private val value: kotlin.native.i
 
     public override fun hashCode(): Int = bits().hashCode()
 
-    @TypedIntrinsic(IntrinsicType.TO_BITS)
+    @TypedIntrinsic(IntrinsicType.REINTERPRET)
     @PublishedApi
     external internal fun bits(): Long
 }

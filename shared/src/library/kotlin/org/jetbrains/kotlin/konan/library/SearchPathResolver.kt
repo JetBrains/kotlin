@@ -203,7 +203,7 @@ internal fun SearchPathResolverWithTarget.libraryMatch(candidate: KonanLibraryIm
     val candidateAbiVersion = candidate.versions.abiVersion
     val candidateLibraryVersion = candidate.versions.libraryVersion
 
-    if (resolverTarget != null && !candidate.targetList.contains(resolverTarget.visibleName)) {
+    if (!candidate.targetList.contains(resolverTarget.visibleName)) {
         logger("skipping $candidatePath. The target doesn't match. Expected '$resolverTarget', found ${candidate.targetList}")
         return false
     }

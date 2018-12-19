@@ -20,6 +20,8 @@ import kotlin.native.internal.getNativeNullPtr
 import kotlin.native.internal.reinterpret
 import kotlin.native.internal.Intrinsic
 import kotlin.native.internal.VolatileLambda
+import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.IntrinsicType
 
 typealias NativePtr = kotlin.native.internal.NativePtr
 internal typealias NonNullNativePtr = kotlin.native.internal.NonNullNativePtr
@@ -37,16 +39,20 @@ fun <T : CVariable> typeOf(): CVariable.Type = throw Error("typeOf() is called w
  *
  * @param T must not be abstract
  */
-@Intrinsic external fun <T : NativePointed> interpretNullablePointed(ptr: NativePtr): T?
+@TypedIntrinsic(IntrinsicType.IDENTITY)
+external fun <T : NativePointed> interpretNullablePointed(ptr: NativePtr): T?
 
 /**
  *  Performs type cast of the [CPointer] from the given raw pointer.
  */
-@Intrinsic external fun <T : CPointed> interpretCPointer(rawValue: NativePtr): CPointer<T>?
+@TypedIntrinsic(IntrinsicType.IDENTITY)
+external fun <T : CPointed> interpretCPointer(rawValue: NativePtr): CPointer<T>?
 
-@Intrinsic external fun NativePointed.getRawPointer(): NativePtr
+@TypedIntrinsic(IntrinsicType.IDENTITY)
+external fun NativePointed.getRawPointer(): NativePtr
 
-@Intrinsic external fun CPointer<*>.getRawValue(): NativePtr
+@TypedIntrinsic(IntrinsicType.IDENTITY)
+external fun CPointer<*>.getRawValue(): NativePtr
 
 internal fun CPointer<*>.cPointerToString() = "CPointer(raw=$rawValue)"
 

@@ -13,7 +13,7 @@ import kotlin.coroutines.intrinsics.*
 internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
         returnIfSuspended<T>(block(getContinuation<T>()))
 
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.GET_CONTINUATION)
 @PublishedApi
 internal external fun <T> getContinuation(): Continuation<T>
 
