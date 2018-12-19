@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.kotlinp
 
 import kotlinx.metadata.jvm.KotlinClassHeader
-import org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.io.FileInputStream
 
@@ -15,7 +15,7 @@ internal fun File.readKotlinClassHeader(): KotlinClassHeader? {
 
     try {
         val metadataDesc = Type.getDescriptor(Metadata::class.java)
-        ClassReader(FileInputStream(this)).accept(object : ClassVisitor(Opcodes.ASM4) {
+        ClassReader(FileInputStream(this)).accept(object : ClassVisitor(Opcodes.API_VERSION) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
                 if (desc == metadataDesc) readMetadataVisitor { header = it }
                 else null
@@ -28,7 +28,7 @@ internal fun File.readKotlinClassHeader(): KotlinClassHeader? {
 }
 
 private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): AnnotationVisitor =
-    object : AnnotationVisitor(Opcodes.ASM4) {
+    object : AnnotationVisitor(Opcodes.ASM7) {
         var kind: Int? = null
         var metadataVersion: IntArray? = null
         var bytecodeVersion: IntArray? = null
@@ -57,7 +57,7 @@ private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): Annotation
             }
 
         private fun stringArrayVisitor(output: (Array<String>) -> Unit): AnnotationVisitor {
-            return object : AnnotationVisitor(Opcodes.ASM4) {
+            return object : AnnotationVisitor(Opcodes.ASM7) {
                 val strings = mutableListOf<String>()
 
                 override fun visit(name: String?, value: Any?) {
