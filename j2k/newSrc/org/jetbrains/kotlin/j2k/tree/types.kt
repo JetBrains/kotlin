@@ -168,6 +168,9 @@ fun JKType.isCollectionType(symbolProvider: JKSymbolProvider): Boolean {
     return this.isSubtypeOf(collectionType, symbolProvider)
 }
 
+fun JKType.isStringType(): Boolean =
+    (this as? JKClassType)?.classReference?.name == "String"
+
 fun JKLiteralExpression.LiteralType.toPrimitiveType(): JKJavaPrimitiveType? =
     when (this) {
         JKLiteralExpression.LiteralType.CHAR -> JKJavaPrimitiveTypeImpl.CHAR

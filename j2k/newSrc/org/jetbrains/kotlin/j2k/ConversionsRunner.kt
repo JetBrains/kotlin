@@ -62,6 +62,7 @@ object ConversionsRunner {
             +CollectionOperationsConversion(context)
             +ArrayOperationsConversion(context)
             +TypeMappingConversion(context)
+            +StringMethodsConversion(context)
 
             //Kotlin --> Kotlin conversions
             +InnerClassConversion()
