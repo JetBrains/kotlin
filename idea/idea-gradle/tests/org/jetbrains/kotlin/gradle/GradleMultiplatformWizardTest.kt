@@ -45,6 +45,14 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
     }
 
     @Test
+    fun testSharedWithQualifiedName() {
+        val builder = KotlinGradleSharedMultiplatformModuleBuilder()
+        val project = testImportFromBuilder(builder, "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true, useQualifiedModuleNames = true)
+        runTaskInProject(project, builder.nativeTestName)
+    }
+
+
+    @Test
     fun testWeb() {
         testImportFromBuilder(KotlinGradleWebMultiplatformModuleBuilder(), "SampleTests", "SampleTestsJVM")
     }

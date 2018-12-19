@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
+import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.vfs.VfsUtil
@@ -21,6 +25,7 @@ import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
 import org.jetbrains.plugins.gradle.settings.DistributionType
+import com.intellij.openapi.externalSystem.model.project.ProjectData
 import javax.swing.Icon
 
 abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
@@ -106,6 +111,23 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
             }
 
             if (notImportedCommonSourceSets) GradlePropertiesFileFacade.forProject(module.project).addNotImportedCommonSourceSetsProperty()
+            // Ensure project root path is set
+            val propertyManager = ExternalSystemModulePropertyManager.getInstance(module)
+            val path = externalProjectSettings.externalProjectPath
+            val externalSystemId = propertyManager.getExternalSystemId()
+            if (ExternalSystemApiUtil.getExternalRootProjectPath(module) == null && externalSystemId != null) {
+                val projectSystemId = ProjectSystemId(externalSystemId)
+                val projectData = ProjectData(projectSystemId, module.name, path, path)
+                val moduleData = ModuleData(
+                    propertyManager.getLinkedProjectId() ?: "",
+                    projectSystemId,
+                    propertyManager.getExternalModuleType() ?: "",
+                    module.name,
+                    path,
+                    path
+                )
+                propertyManager.setExternalOptions(projectSystemId, moduleData, projectData)
+            }
         } finally {
             flushSettingsGradleCopy(module)
         }

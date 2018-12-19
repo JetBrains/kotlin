@@ -83,7 +83,8 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         builder: KotlinGradleAbstractMultiplatformModuleBuilder,
         vararg testClassNames: String,
         metadataInside: Boolean = false,
-        performImport: Boolean = true
+        performImport: Boolean = true,
+        useQualifiedModuleNames: Boolean = false
     ): Project {
         // TODO: check whether it's necessary to have templates in sources
         // Temporary workaround for duplicated bundled template
@@ -133,7 +134,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         println(buildScriptText)
 
         if (!performImport) return project
-        doImportProject(project)
+        doImportProject(project, useQualifiedModuleNames)
         if (testClassNames.isNotEmpty()) {
             doTestProject(project, *testClassNames)
         }
@@ -175,7 +176,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         }.execute()
     }
 
-    private fun doImportProject(project: Project) {
+    private fun doImportProject(project: Project, useQualifiedModuleNames: Boolean = false) {
         ExternalSystemApiUtil.subscribe(
             project,
             GradleConstants.SYSTEM_ID,
@@ -199,6 +200,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             distributionType = DistributionType.DEFAULT_WRAPPED
             externalProjectPath = project.basePath!!
             gradleJvm = DEFAULT_SDK
+            isUseQualifiedModuleNames = useQualifiedModuleNames
         }
 
         val error = Ref.create<Couple<String>>()
