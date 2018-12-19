@@ -84,6 +84,7 @@ interface KotlinTargetJar : Serializable {
 
 interface KotlinTarget : Serializable {
     val name: String
+    val presetName: String?
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val compilations: Collection<KotlinCompilation>
