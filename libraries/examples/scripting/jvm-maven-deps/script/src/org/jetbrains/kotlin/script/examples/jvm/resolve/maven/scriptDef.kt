@@ -52,7 +52,14 @@ fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContex
     }
     val diagnostics = arrayListOf<ScriptDiagnostic>()
     fun report(severity: ScriptDependenciesResolver.ReportSeverity, message: String, position: ScriptContents.Position?) {
-        diagnostics.add(ScriptDiagnostic(message, mapLegacyDiagnosticSeverity(severity), mapLegacyScriptPosition(position)))
+        diagnostics.add(
+            ScriptDiagnostic(
+                message,
+                mapLegacyDiagnosticSeverity(severity),
+                context.script.locationId,
+                mapLegacyScriptPosition(position)
+            )
+        )
     }
     return try {
         val newDepsFromResolver = resolver.resolve(scriptContents, emptyMap(), ::report, null).get()
@@ -63,7 +70,7 @@ fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContex
             dependencies.append(JvmDependency(resolvedClasspath))
         }.asSuccess(diagnostics)
     } catch (e: Throwable) {
-        ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())
+        ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics(path = context.script.locationId))
     }
 }
 

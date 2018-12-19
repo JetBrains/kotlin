@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
@@ -46,7 +47,11 @@ fun collectScriptsCompilationDependencies(
                     KotlinSourceRoot(it.path, false)
                 }
                 val sourceDependencies =
-                    KotlinCoreEnvironment.createSourceFilesFromSourceRoots(configuration, project, sourceDependenciesRoots)
+                    KotlinCoreEnvironment.createSourceFilesFromSourceRoots(
+                        configuration, project, sourceDependenciesRoots,
+                        // TODO: consider receiving and using precise location from the resolver in the future
+                        source.virtualFile?.path?.let { CompilerMessageLocation.create(it) }
+                    )
                 if (sourceDependencies.isNotEmpty()) {
                     collectedSourceDependencies.add(ScriptsCompilationDependencies.SourceDependencies(source, sourceDependencies))
 

@@ -92,6 +92,6 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                 }
             }
         } catch (e: Throwable) {
-            ResultWithDiagnostics.Failure(e.asDiagnostics("Error evaluating script"))
+            ResultWithDiagnostics.Failure(e.asDiagnostics("Error evaluating script", path = compiledScript.sourceLocationId))
         }
 }

@@ -223,6 +223,12 @@ interface ScriptCompiler {
 interface CompiledScript<out ScriptBase : Any> {
 
     /**
+     * The location identifier for the script source, taken from SourceCode.locationId
+     */
+    val sourceLocationId: String?
+        get() = null
+
+    /**
      * The compilation configuration used for script compilation
      */
     val compilationConfiguration: ScriptCompilationConfiguration

@@ -31,22 +31,33 @@ class KJvmCompiledModule(
 }
 
 class KJvmCompiledScript<out ScriptBase : Any>(
+    sourceLocationId: String?,
     compilationConfiguration: ScriptCompilationConfiguration,
     private var scriptClassFQName: String,
-    override val otherScripts: List<CompiledScript<*>> = emptyList(),
+    otherScripts: List<CompiledScript<*>> = emptyList(),
     private var compiledModule: KJvmCompiledModule? = null
 ) : CompiledScript<ScriptBase>, Serializable {
+
+    private var _sourceLocationId: String? = sourceLocationId
+
+    override val sourceLocationId: String?
+        get() = _sourceLocationId
 
     private var _compilationConfiguration: ScriptCompilationConfiguration? = compilationConfiguration
 
     override val compilationConfiguration: ScriptCompilationConfiguration
         get() = _compilationConfiguration!!
 
+    private var _otherScripts: List<CompiledScript<*>> = otherScripts
+
+    override val otherScripts: List<CompiledScript<*>>
+        get() = _otherScripts
+
     override suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>> = try {
         val classLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationConfiguration.actualClassLoader)
             ?: run {
                 if (compiledModule == null)
-                    return ResultWithDiagnostics.Failure("Unable to load class $scriptClassFQName: no compiled module is provided".asErrorDiagnostics())
+                    return ResultWithDiagnostics.Failure("Unable to load class $scriptClassFQName: no compiled module is provided".asErrorDiagnostics(path = sourceLocationId))
                 val baseClassLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationConfiguration.baseClassLoader)
                     ?: Thread.currentThread().contextClassLoader
                 val dependencies = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
@@ -64,6 +75,7 @@ class KJvmCompiledScript<out ScriptBase : Any>(
         ResultWithDiagnostics.Failure(
             ScriptDiagnostic(
                 "Unable to instantiate class $scriptClassFQName",
+                sourcePath = sourceLocationId,
                 exception = e
             )
         )
@@ -77,18 +89,23 @@ class KJvmCompiledScript<out ScriptBase : Any>(
     }
 
     private fun writeObject(outputStream: ObjectOutputStream) {
+        outputStream.writeObject(sourceLocationId)
+        outputStream.writeObject(otherScripts)
         outputStream.writeObject(compiledModule)
         outputStream.writeObject(scriptClassFQName)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun readObject(inputStream: ObjectInputStream) {
         _compilationConfiguration = null
+        _sourceLocationId = inputStream.readObject() as String?
+        _otherScripts = inputStream.readObject() as List<CompiledScript<*>>
         compiledModule = inputStream.readObject() as KJvmCompiledModule
         scriptClassFQName = inputStream.readObject() as String
     }
 
     companion object {
         @JvmStatic
-        private val serialVersionUID = 0L
+        private val serialVersionUID = 1L
     }
 }
