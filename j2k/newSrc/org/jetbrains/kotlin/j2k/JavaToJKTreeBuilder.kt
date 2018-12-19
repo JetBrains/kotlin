@@ -502,16 +502,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             }
         }
 
-        fun PsiMember.toJK(): JKDeclaration? = when (this) {
-            is PsiEnumConstant -> this.toJK()
-            is PsiField -> this.toJK()
-            is PsiMethod -> this.toJK()
-            else -> null
-        }
-
         fun PsiParameter.toJK(): JKParameter {
             return JKParameterImpl(
-                with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
+                with(expressionTreeMapper) { typeElement?.toJK() } ?: JKTypeElementImpl(JKNoTypeImpl),
                 JKNameIdentifierImpl(name!!)
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
@@ -521,14 +514,6 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiCodeBlock.toJK(): JKBlock {
             return JKBlockImpl(statements.map { it.toJK() })
-        }
-
-        fun Array<out PsiElement>.toJK(): List<JKDeclaration> {
-            return this.map {
-                if (it is PsiLocalVariable) {
-                    it.toJK()
-                } else TODO()
-            }
         }
 
         fun PsiLocalVariable.toJK(): JKLocalVariable =
@@ -547,7 +532,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 null -> JKExpressionStatementImpl(JKStubExpressionImpl())
                 is PsiExpressionStatement -> JKExpressionStatementImpl(with(expressionTreeMapper) { expression.toJK() })
                 is PsiReturnStatement -> JKReturnStatementImpl(with(expressionTreeMapper) { returnValue.toJK() })
-                is PsiDeclarationStatement -> JKDeclarationStatementImpl(declaredElements.toJK())
+                is PsiDeclarationStatement ->
+                    JKDeclarationStatementImpl(declaredElements.map {
+                        when (it) {
+                            is PsiClass -> it.toJK()
+                            is PsiLocalVariable -> it.toJK()
+                            else -> TODO(it::class.java.toString())
+                        }
+                    })
                 is PsiAssertStatement ->
                     JKJavaAssertStatementImpl(
                         with(expressionTreeMapper) { assertCondition.toJK() },
