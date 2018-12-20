@@ -57,41 +57,36 @@ class InlinerCycleReporter(
     }
 
     fun processInlineFunction(definition: FunctionWithWrapper, call: JsInvocation?, doProcess: () -> Unit) {
-
-        when (functionVisitingState[definition.function]) {
-            VisitedState.IN_PROCESS -> {
-                reportInlineCycle(call, definition.function)
-                return
-            }
-            VisitedState.PROCESSED -> return
-        }
-
         val function = definition.function
 
-        functionVisitingState[function] = VisitedState.IN_PROCESS
-
-        val result = withFunction(function, doProcess)
-
-        functionVisitingState[function] = VisitedState.PROCESSED
-
-        return result
-    }
-
-
-    fun <T> inlineCall(call: JsInvocation, doInline: () -> T): T {
-        currentNamedFunction?.let {
-            inlineCallInfos.add(JsCallInfo(call, it))
-        }
-
-        val result = doInline()
-
-        if (!inlineCallInfos.isEmpty()) {
-            if (inlineCallInfos.last.call == call) {
-                inlineCallInfos.removeLast()
+        if (call != null) {
+            currentNamedFunction?.let {
+                inlineCallInfos.add(JsCallInfo(call, it))
             }
         }
 
-        return result
+        try {
+            when (functionVisitingState[definition.function]) {
+                VisitedState.IN_PROCESS -> {
+                    reportInlineCycle(call, definition.function)
+                    return
+                }
+                VisitedState.PROCESSED -> return
+            }
+
+            functionVisitingState[function] = VisitedState.IN_PROCESS
+
+            withFunction(function, doProcess)
+
+            functionVisitingState[function] = VisitedState.PROCESSED
+
+        } finally {
+            if (!inlineCallInfos.isEmpty()) {
+                if (inlineCallInfos.last.call == call) {
+                    inlineCallInfos.removeLast()
+                }
+            }
+        }
     }
 
     private fun reportInlineCycle(call: JsInvocation?, calledFunction: JsFunction) {

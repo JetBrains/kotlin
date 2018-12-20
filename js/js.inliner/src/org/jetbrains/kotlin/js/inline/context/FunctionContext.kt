@@ -39,6 +39,7 @@ class FunctionContext(
 
     fun scopeForFragment(fragment: JsProgramFragment) = if (fragment in newFragments) {
         inliningScopeCache.computeIfAbsent(fragment) {
+            loadFragment(fragment)
             ProgramFragmentInliningScope(fragment)
         }
     } else null
@@ -75,8 +76,7 @@ class FunctionContext(
      */
     private fun getFunctionDefinitionImpl(call: JsInvocation, scope: InliningScope): InlineFunctionDefinition? {
         // Ensure we have the local function information
-        // TODO is this necessary?
-        loadFragment(scope.fragment)
+        assert(scope.fragment in inliningScopeCache)
 
         return lookUpFunctionDirect(call) ?: lookUpFunctionIndirect(call, scope) ?: lookUpFunctionExternal(call, scope.fragment)
     }

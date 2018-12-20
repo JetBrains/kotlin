@@ -60,21 +60,18 @@ class JsInliner(
     fun inline(scope: InliningScope, call: JsInvocation, currentStatement: JsStatement?): InlineableResult {
         val definition = functionContext.getFunctionDefinition(call, scope)
 
-        return cycleReporter.inlineCall(call) {
+        val function = scope.importFunctionDefinition(definition)
 
-            val function = scope.importFunctionDefinition(definition)
+        val inliningContext = InliningContext(currentStatement)
 
-            val inliningContext = InliningContext(currentStatement)
+        val (inlineableBody, resultExpression) = FunctionInlineMutator.getInlineableCallReplacement(call, function, inliningContext)
 
-            val (inlineableBody, resultExpression) = FunctionInlineMutator.getInlineableCallReplacement(call, function, inliningContext)
+        // body of inline function can contain call to lambdas that need to be inlined
+        scope.process(inlineableBody)
 
-            // body of inline function can contain call to lambdas that need to be inlined
-            scope.process(inlineableBody)
+        // TODO shouldn't we process the resultExpression qualifier along with the lambda inlining?
+        resultExpression?.synthetic = true
 
-            // TODO shouldn't we process the resultExpression qualifier along with the lambda inlining?
-            resultExpression?.synthetic = true
-
-            InlineableResult(JsBlock(inliningContext.previousStatements + inlineableBody), resultExpression)
-        }
+        return InlineableResult(JsBlock(inliningContext.previousStatements + inlineableBody), resultExpression)
     }
 }
