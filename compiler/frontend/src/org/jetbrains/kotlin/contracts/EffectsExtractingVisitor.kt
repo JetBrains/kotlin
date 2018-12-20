@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.contracts
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.contracts.interpretation.ContractInterpretationDispatcher
 import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
@@ -168,11 +169,8 @@ class EffectsExtractingVisitor(
     }
 
     private fun FunctionDescriptor.getFunctor(): Functor? {
-        trace[BindingContext.FUNCTOR, this]?.let { return it }
-
-        val functor = ContractInterpretationDispatcher().resolveFunctor(this) ?: return null
-        trace.record(BindingContext.FUNCTOR, this, functor)
-        return functor
+        val contractDescription = getUserData(ContractProviderKey)?.getContractDescription() ?: return null
+        return contractDescription.functor
     }
 
     private fun ResolvedCall<*>.isCallWithUnsupportedReceiver(): Boolean =

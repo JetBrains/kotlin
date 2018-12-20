@@ -32,8 +32,9 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
+import org.jetbrains.kotlin.storage.StorageManager
 
-class ContractParsingServices(val languageVersionSettings: LanguageVersionSettings) {
+class ContractParsingServices(val languageVersionSettings: LanguageVersionSettings, private val storageManager: StorageManager) {
     /**
      * ! IMPORTANT NOTICE !
      *
@@ -77,7 +78,7 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
             // Small optimization: do not even try to parse contract if we already have errors
             if (collector.hasErrors()) return null
 
-            val parsedContract = PsiContractParserDispatcher(collector, callContext).parseContract()
+            val parsedContract = PsiContractParserDispatcher(collector, callContext, storageManager).parseContract()
 
             // Make sure that at least generic error will be reported if we couldn't parse contract
             // (null returned => at least one error was reported)
