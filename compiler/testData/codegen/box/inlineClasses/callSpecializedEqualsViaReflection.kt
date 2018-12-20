@@ -1,6 +1,7 @@
 // WITH_REFLECT
 // FULL_JDK
-// IGNORE_BACKEND: JVM_IR, JS_IR, JS, NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 import java.lang.reflect.InvocationTargetException
 
