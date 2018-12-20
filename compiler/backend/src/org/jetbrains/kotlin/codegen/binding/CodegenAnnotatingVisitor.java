@@ -144,7 +144,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @NotNull
-    @SuppressWarnings("ConstantConditions")
     private DeclarationDescriptor correctContainerForLambda(@NotNull CallableDescriptor descriptor) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
 

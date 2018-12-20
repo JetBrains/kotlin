@@ -635,7 +635,6 @@ public class AsmUtil {
     }
 
     public static void genClosureFields(List<Pair<String, Type>> allFields, ClassBuilder builder) {
-        //noinspection PointlessBitwiseExpression
         int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
         for (Pair<String, Type> field : allFields) {
             builder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, field.first, field.second.getDescriptor(), null, null);

@@ -711,13 +711,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (stackElement instanceof FinallyBlockStackElement) {
             FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
-            //noinspection ConstantConditions
             genFinallyBlockOrGoto(finallyBlockStackElement, null, afterBreakContinueLabel);
         }
         else if (stackElement instanceof LoopBlockStackElement) {
             LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
             KtSimpleNameExpression labelElement = expression.getTargetLabel();
-            //noinspection ConstantConditions
             if (labelElement == null ||
                 loopBlockStackElement.targetLabel != null &&
                 labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
