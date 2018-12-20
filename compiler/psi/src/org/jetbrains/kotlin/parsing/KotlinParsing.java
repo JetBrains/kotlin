@@ -1121,7 +1121,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private IElementType parseMemberDeclarationRest(@NotNull ModifierDetector modifierDetector) {
         IElementType declType = parseCommonDeclaration(
                 modifierDetector,
-                modifierDetector.isDefaultDetected() ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED,
+                modifierDetector.isCompanionDetected() ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED,
                 PropertyParsingMode.MEMBER_OR_TOPLEVEL
         );
 
@@ -2340,7 +2340,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*package*/ static class ModifierDetector implements Consumer<IElementType> {
         private boolean enumDetected = false;
-        private boolean defaultDetected = false;
+        private boolean companionDetected = false;
 
         @Override
         public void consume(IElementType item) {
@@ -2348,7 +2348,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 enumDetected = true;
             }
             else if (item == KtTokens.COMPANION_KEYWORD) {
-                defaultDetected = true;
+                companionDetected = true;
             }
         }
 
@@ -2356,8 +2356,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             return enumDetected;
         }
 
-        public boolean isDefaultDetected() {
-            return defaultDetected;
+        public boolean isCompanionDetected() {
+            return companionDetected;
         }
     }
 
