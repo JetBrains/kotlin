@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
@@ -38,6 +40,16 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class Scope(val scopeOwnerSymbol: IrSymbol) {
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
+
+    private fun getVariableParent(): IrDeclarationParent {
+        if (!scopeOwnerSymbol.isBound) throw AssertionError("Unbound symbol: $scopeOwner")
+        val scopeOwnerElement = scopeOwnerSymbol.owner
+        return when (scopeOwnerElement) {
+            is IrDeclarationParent -> scopeOwnerElement
+            !is IrDeclaration -> throw AssertionError("Not a declaration: $scopeOwnerElement")
+            else -> scopeOwnerElement.parent
+        }
+    }
 
     @Deprecated("Creates unbound symbol")
     constructor(descriptor: DeclarationDescriptor) : this(createSymbolForScopeOwner(descriptor))
@@ -74,7 +86,9 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
             ),
             irType ?: irExpression.type,
             irExpression
-        )
+        ).apply {
+            parent = getVariableParent()
+        }
     }
 }
 

@@ -1117,6 +1117,16 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/stringTemplates.kt");
         }
 
+        @TestMetadata("temporaryInEnumEntryInitializer.kt")
+        public void testTemporaryInEnumEntryInitializer() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/temporaryInEnumEntryInitializer.kt");
+        }
+
+        @TestMetadata("temporaryInInitBlock.kt")
+        public void testTemporaryInInitBlock() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/temporaryInInitBlock.kt");
+        }
+
         @TestMetadata("thisOfGenericOuterClass.kt")
         public void testThisOfGenericOuterClass() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/thisOfGenericOuterClass.kt");
