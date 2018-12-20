@@ -852,7 +852,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             PsiBuilder.Marker atWhenStart = mark();
             myKotlinParsing.parseAnnotationsList(DEFAULT, TokenSet.create(EQ, RPAR));
             if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
-                IElementType declType = myKotlinParsing.parseProperty(KotlinParsing.PropertyParsingMode.LOCAL);
+                IElementType declType = myKotlinParsing.parseProperty(KotlinParsing.DeclarationParsingMode.LOCAL);
 
                 atWhenStart.done(declType);
                 atWhenStart.setCustomEdgeTokenBinders(PrecedingDocCommentsBinder.INSTANCE, TrailingCommentsBinder.INSTANCE);
@@ -1376,7 +1376,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         return myKotlinParsing.parseCommonDeclaration(
                 modifierDetector, NameParsingMode.REQUIRED,
-                isScriptTopLevel ? KotlinParsing.PropertyParsingMode.SCRIPT_TOPLEVEL : KotlinParsing.PropertyParsingMode.LOCAL
+                isScriptTopLevel ? KotlinParsing.DeclarationParsingMode.SCRIPT_TOPLEVEL : KotlinParsing.DeclarationParsingMode.LOCAL
         );
     }
 

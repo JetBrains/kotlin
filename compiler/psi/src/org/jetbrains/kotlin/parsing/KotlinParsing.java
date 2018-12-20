@@ -416,7 +416,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         ModifierDetector detector = new ModifierDetector();
         parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
-        IElementType declType = parseCommonDeclaration(detector, NameParsingMode.REQUIRED, PropertyParsingMode.MEMBER_OR_TOPLEVEL);
+        IElementType declType = parseCommonDeclaration(detector, NameParsingMode.REQUIRED, DeclarationParsingMode.MEMBER_OR_TOPLEVEL);
 
         if (declType == null && at(LBRACE)) {
             error("Expecting a top level declaration");
@@ -436,7 +436,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     public IElementType parseCommonDeclaration(
             @NotNull ModifierDetector detector,
             @NotNull NameParsingMode nameParsingModeForObject,
-            @NotNull PropertyParsingMode propertyParsingMode
+            @NotNull DeclarationParsingMode declarationParsingMode
     ) {
         IElementType keywordToken = tt();
 
@@ -447,7 +447,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             return parseFunction();
         }
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-            return parseProperty(propertyParsingMode);
+            return parseProperty(declarationParsingMode);
         }
         else if (keywordToken == TYPE_ALIAS_KEYWORD) {
             return parseTypeAlias();
@@ -803,12 +803,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PROHIBITED
     }
 
-    public enum DeclarationParsingMode {
-        TOP_LEVEL,
-        CLASS_MEMBER,
-        LOCAL
-    }
-
     /*
      * class
      *   : modifiers ("class" | "interface") SimpleName
@@ -1122,7 +1116,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         IElementType declType = parseCommonDeclaration(
                 modifierDetector,
                 modifierDetector.isCompanionDetected() ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED,
-                PropertyParsingMode.MEMBER_OR_TOPLEVEL
+                DeclarationParsingMode.MEMBER_OR_TOPLEVEL
         );
 
         if (declType != null) return declType;
@@ -1249,7 +1243,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return TYPEALIAS;
     }
 
-    enum PropertyParsingMode {
+    enum DeclarationParsingMode {
         MEMBER_OR_TOPLEVEL(false, true),
         LOCAL(true, false),
         SCRIPT_TOPLEVEL(true, true);
@@ -1257,7 +1251,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         public final boolean destructuringAllowed;
         public final boolean accessorsAllowed;
 
-        PropertyParsingMode(boolean destructuringAllowed, boolean accessorsAllowed) {
+        DeclarationParsingMode(boolean destructuringAllowed, boolean accessorsAllowed) {
             this.destructuringAllowed = destructuringAllowed;
             this.accessorsAllowed = accessorsAllowed;
         }
@@ -1278,7 +1272,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
-    public IElementType parseProperty(PropertyParsingMode mode) {
+    public IElementType parseProperty(DeclarationParsingMode mode) {
         assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
         advance();
 
