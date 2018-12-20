@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.operators.OperatorReference
 
 class KotlinConventionMethodReferencesSearcher : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: ExecutorProcessor<PsiReference>) {
+        val method = queryParameters.method
+        if (method.originalElement.containingFile == null) return
+
         val operatorSearcher = OperatorReferenceSearcher.create(
             queryParameters.method,
             queryParameters.effectiveSearchScope,
