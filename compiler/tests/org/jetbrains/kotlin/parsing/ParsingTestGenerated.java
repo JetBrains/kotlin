@@ -1933,6 +1933,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 runTest("compiler/testData/psi/recovery/DoWhileWithoutLPar.kt");
             }
 
+            @TestMetadata("enumWthoutClass.kt")
+            public void testEnumWthoutClass() throws Exception {
+                runTest("compiler/testData/psi/recovery/enumWthoutClass.kt");
+            }
+
             @TestMetadata("ForEmptyParentheses.kt")
             public void testForEmptyParentheses() throws Exception {
                 runTest("compiler/testData/psi/recovery/ForEmptyParentheses.kt");

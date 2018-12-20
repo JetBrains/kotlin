@@ -119,7 +119,7 @@ class IllegalModifiers7() {
 // Secondary constructors
 class IllegalModifiers8 {
     <!WRONG_MODIFIER_TARGET!>abstract<!>
-    <!WRONG_MODIFIER_TARGET!>enum<!>
+    enum
     <!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET!>open<!>
     <!WRONG_MODIFIER_TARGET!>inner<!>
     <!WRONG_MODIFIER_TARGET!>annotation<!>
@@ -129,7 +129,7 @@ class IllegalModifiers8 {
     <!INCOMPATIBLE_MODIFIERS!>final<!>
     <!WRONG_MODIFIER_TARGET!>vararg<!>
     <!WRONG_MODIFIER_TARGET!>reified<!>
-    <!INCOMPATIBLE_MODIFIERS!>const<!>
+    <!INCOMPATIBLE_MODIFIERS!>const<!><!SYNTAX!><!>
     constructor() {}
 
     constructor(<!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!UNUSED_PARAMETER!>x<!>: Int) {}

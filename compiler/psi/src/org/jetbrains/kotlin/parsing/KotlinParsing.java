@@ -441,7 +441,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         IElementType keywordToken = tt();
 
         if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
-            return parseClass(detector.isEnumDetected());
+            return parseClass(detector.isEnumDetected(), true);
         }
         else if (keywordToken == FUN_KEYWORD) {
             return parseFunction();
@@ -455,6 +455,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else if (keywordToken == OBJECT_KEYWORD) {
             parseObject(nameParsingModeForObject, true);
             return OBJECT_DECLARATION;
+        } else if (keywordToken == IDENTIFIER && detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
+            return parseClass(true, false);
         }
 
         return null;
@@ -825,15 +827,22 @@ public class KotlinParsing extends AbstractKotlinParsing {
             boolean object,
             NameParsingMode nameParsingMode,
             boolean optionalBody,
-            boolean enumClass
+            boolean enumClass,
+            boolean expectKindKeyword
     ) {
-        if (object) {
-            assert _at(OBJECT_KEYWORD);
+        if (expectKindKeyword) {
+            if (object) {
+                assert _at(OBJECT_KEYWORD);
+            }
+            else {
+                assert _atSet(CLASS_KEYWORD, INTERFACE_KEYWORD);
+            }
+            advance(); // CLASS_KEYWORD, INTERFACE_KEYWORD or OBJECT_KEYWORD
         }
         else {
-            assert _atSet(CLASS_KEYWORD, INTERFACE_KEYWORD);
+            assert enumClass : "Currently classifiers without class/interface/object are only allowed for enums";
+            error("'class' keyword is expected after 'enum'");
         }
-        advance(); // CLASS_KEYWORD, INTERFACE_KEYWORD or OBJECT_KEYWORD
 
         if (nameParsingMode == NameParsingMode.REQUIRED) {
             expect(IDENTIFIER, "Name expected", CLASS_NAME_RECOVERY_SET);
@@ -918,12 +927,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return object ? OBJECT_DECLARATION : CLASS;
     }
 
-    private IElementType parseClass(boolean enumClass) {
-        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass);
+    private IElementType parseClass(boolean enumClass, boolean expectKindKeyword) {
+        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass, expectKindKeyword);
     }
 
     void parseObject(NameParsingMode nameParsingMode, boolean optionalBody) {
-        parseClassOrObject(true, nameParsingMode, optionalBody, false);
+        parseClassOrObject(true, nameParsingMode, optionalBody, false, true);
     }
 
     /*
@@ -1244,16 +1253,18 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     enum DeclarationParsingMode {
-        MEMBER_OR_TOPLEVEL(false, true),
-        LOCAL(true, false),
-        SCRIPT_TOPLEVEL(true, true);
+        MEMBER_OR_TOPLEVEL(false, true, true),
+        LOCAL(true, false, false),
+        SCRIPT_TOPLEVEL(true, true, false);
 
         public final boolean destructuringAllowed;
         public final boolean accessorsAllowed;
+        public final boolean canBeEnumUsedAsSoftKeyword;
 
-        DeclarationParsingMode(boolean destructuringAllowed, boolean accessorsAllowed) {
+        DeclarationParsingMode(boolean destructuringAllowed, boolean accessorsAllowed, boolean canBeEnumUsedAsSoftKeyword) {
             this.destructuringAllowed = destructuringAllowed;
             this.accessorsAllowed = accessorsAllowed;
+            this.canBeEnumUsedAsSoftKeyword = canBeEnumUsedAsSoftKeyword;
         }
     }
 
