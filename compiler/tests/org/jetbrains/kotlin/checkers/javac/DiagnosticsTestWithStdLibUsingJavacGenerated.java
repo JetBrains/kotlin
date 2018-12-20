@@ -1137,6 +1137,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/callUsualContractFunction.kt");
             }
 
+            @TestMetadata("rewriteAtSliceFunctor.kt")
+            public void testRewriteAtSliceFunctor() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/rewriteAtSliceFunctor.kt");
+            }
+
             @TestMetadata("useBeforeDeclaration.kt")
             public void testUseBeforeDeclaration() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/useBeforeDeclaration.kt");
