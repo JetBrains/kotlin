@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
 import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 
-typealias ImmutableMap<K, V> = javaslang.collection.Map<K, V>
-typealias ImmutableHashMap<K, V> = javaslang.collection.HashMap<K, V>
-
 interface ReadOnlyControlFlowInfo<D : Any> {
     fun getOrNull(variableDescriptor: VariableDescriptor): D?
     // Only used in tests

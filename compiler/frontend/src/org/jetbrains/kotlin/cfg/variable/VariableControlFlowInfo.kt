@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.cfg.variable
 
 import org.jetbrains.kotlin.cfg.ControlFlowInfo
-import org.jetbrains.kotlin.cfg.ImmutableHashMap
-import org.jetbrains.kotlin.cfg.ImmutableMap
 import org.jetbrains.kotlin.cfg.ReadOnlyControlFlowInfo
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.util.javaslang.component1
-import org.jetbrains.kotlin.util.javaslang.component2
+import org.jetbrains.kotlin.util.javaslang.*
 
 interface ReadOnlyInitControlFlowInfo : ReadOnlyControlFlowInfo<VariableControlFlowState> {
     fun checkDefiniteInitializationInWhen(merge: ReadOnlyInitControlFlowInfo): Boolean
