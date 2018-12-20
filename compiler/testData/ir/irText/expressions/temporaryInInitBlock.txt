@@ -1,0 +1,47 @@
+FILE fqName:<root> fileName:/temporaryInInitBlock.kt
+  CLASS CLASS name:C modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Any?) returnType:C flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C'
+    PROPERTY name:s visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:public flags:final
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:C) returnType:kotlin.String? flags:
+        correspondingProperty: PROPERTY name:s visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-s>(): String?'
+            GET_FIELD 's: String?' type=kotlin.String? origin=null
+              receiver: GET_VAR 'this@C: C' type=C origin=null
+    ANONYMOUS_INITIALIZER C
+      BLOCK_BODY
+        SET_FIELD 's: String?' type=kotlin.Unit origin=null
+          receiver: GET_VAR 'this@C: C' type=C origin=null
+          value: BLOCK type=kotlin.String? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
+              GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+            WHEN type=kotlin.String? origin=null
+              BRANCH
+                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                  arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+                  arg1: CONST Null type=kotlin.Nothing? value=null
+                then: CONST Null type=kotlin.Nothing? value=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CALL 'toString(): String' type=kotlin.String origin=null
+                  $this: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:

@@ -1,0 +1,91 @@
+FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
+  PROPERTY name:n visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:n type:kotlin.Any? visibility:public flags:final,static
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-n> visibility:public modality:FINAL <> () returnType:kotlin.Any? flags:
+      correspondingProperty: PROPERTY name:n visibility:public modality:FINAL flags:val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-n>(): Any?'
+          GET_FIELD 'n: Any?' type=kotlin.Any? origin=null
+  CLASS ENUM_CLASS name:En modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<En>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:En flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.String?) returnType:En flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: En
+        INSTANCE_INITIALIZER_CALL classDescriptor='En'
+    PROPERTY name:x visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String? visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:En) returnType:kotlin.String? flags:
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:En flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): String?'
+            GET_FIELD 'x: String?' type=kotlin.String? origin=null
+              receiver: GET_VAR 'this@En: En' type=En origin=null
+    ENUM_ENTRY name:ENTRY
+      init: ENUM_CONSTRUCTOR_CALL 'constructor En(String?)'
+        x: BLOCK type=kotlin.String? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
+            CALL '<get-n>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
+          WHEN type=kotlin.String? origin=null
+            BRANCH
+              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'toString(): String' type=kotlin.String origin=null
+                $this: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<En>) returnType:kotlin.Any flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Any flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<En>) returnType:kotlin.Unit flags:
+      overridden:
+        FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<En>) returnType:java.lang.Class<En?>? flags:
+      overridden:
+        FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E?>? flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<En>, other:En) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<E>, other:E) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+      VALUE_PARAMETER name:other index:0 type:En flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<En>, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<E>, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<En>) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<En>) returnType:kotlin.String flags:
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL flags:val
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<En>) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL flags:val
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<En>) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<E>) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<En> flags:
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<En> flags:
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:En flags:
+      VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
+      SYNTHETIC_BODY kind=ENUM_VALUEOF

@@ -365,9 +365,9 @@ class ClassGenerator(
 
     private fun generateMembersDeclaredInClassBody(irClass: IrClass, ktClassOrObject: KtPureClassOrObject) {
         // generate real body declarations
-        ktClassOrObject.getBody()?.let { ktClassBody ->
+        ktClassOrObject.body?.let { ktClassBody ->
             ktClassBody.declarations.mapTo(irClass.declarations) { ktDeclaration ->
-                declarationGenerator.generateClassMemberDeclaration(ktDeclaration, irClass.descriptor)
+                declarationGenerator.generateClassMemberDeclaration(ktDeclaration, irClass)
             }
         }
 
@@ -384,12 +384,20 @@ class ClassGenerator(
 
     fun generateEnumEntry(ktEnumEntry: KtEnumEntry): IrEnumEntry {
         val enumEntryDescriptor = getOrFail(BindingContext.CLASS, ktEnumEntry)
+
+        // TODO this is a hack, pass declaration parent through generator chain instead
+        val enumClassDescriptor = enumEntryDescriptor.containingDeclaration as ClassDescriptor
+        val enumClassSymbol = context.symbolTable.referenceClass(enumClassDescriptor)
+        val irEnumClass = enumClassSymbol.owner
+
         return context.symbolTable.declareEnumEntry(
             ktEnumEntry.startOffsetSkippingComments,
             ktEnumEntry.endOffset,
             IrDeclarationOrigin.DEFINED,
             enumEntryDescriptor
         ).buildWithScope { irEnumEntry ->
+            irEnumEntry.parent = irEnumClass
+
             if (!enumEntryDescriptor.isExpect) {
                 irEnumEntry.initializerExpression =
                         createBodyGenerator(irEnumEntry.symbol)
