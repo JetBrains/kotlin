@@ -9,14 +9,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.bridges.Bridge
 import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
-import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irNot
-import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmFunctionDescriptorImpl
 import org.jetbrains.kotlin.codegen.AsmUtil.isAbstractMethod
 import org.jetbrains.kotlin.codegen.BuiltinSpecialBridgesUtil
@@ -24,9 +21,9 @@ import org.jetbrains.kotlin.codegen.FunctionCodegen.isMethodOfAny
 import org.jetbrains.kotlin.codegen.FunctionCodegen.isThereOverriddenInKotlinClass
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember
 import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.generateBridgesForFunctionDescriptorForJvm
 import org.jetbrains.kotlin.codegen.isToArrayFromCollection
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -44,7 +41,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
@@ -53,10 +49,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getSuperClassDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -67,9 +60,6 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val state = context.state
 
     private val typeMapper = state.typeMapper
-
-    private val DECLARATION_AND_DEFINITION_CHECKER = fun(descriptor: CallableMemberDescriptor): Boolean =
-        !isInterface(descriptor.containingDeclaration) || state.target !== JvmTarget.JVM_1_6 && descriptor.hasJvmDefaultAnnotation()
 
     override fun lower(irClass: IrClass) {
         val classDescriptor = irClass.descriptor
@@ -122,10 +112,10 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
         val bridgesToGenerate: Set<Bridge<SignatureAndDescriptor>>
         if (!isSpecial) {
-            bridgesToGenerate = generateBridgesForFunctionDescriptor(
+            bridgesToGenerate = generateBridgesForFunctionDescriptorForJvm(
                 descriptor,
                 getSignatureMapper(typeMapper),
-                DECLARATION_AND_DEFINITION_CHECKER
+                state.target
             )
             if (!bridgesToGenerate.isEmpty()) {
                 val origin = if (descriptor.kind == DECLARATION) getSourceFromDescriptor(descriptor) else null
@@ -140,7 +130,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             val specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
                 descriptor,
                 getSignatureMapper(typeMapper),
-                DECLARATION_AND_DEFINITION_CHECKER
+                state.target
             )
 
             if (!specials.isEmpty()) {

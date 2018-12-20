@@ -9,13 +9,11 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
-import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
@@ -25,7 +23,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
-import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
@@ -91,15 +88,6 @@ public class FunctionCodegen {
     private final CodegenContext owner;
     private final ClassBuilder v;
     private final MemberCodegen<?> memberCodegen;
-
-    private final Function1<CallableMemberDescriptor, Boolean> DECLARATION_AND_DEFINITION_CHECKER = new Function1<CallableMemberDescriptor, Boolean>() {
-        @Override
-        public Boolean invoke(CallableMemberDescriptor descriptor) {
-            return !isInterface(descriptor.getContainingDeclaration()) ||
-                   (state.getTarget() != JvmTarget.JVM_1_6 &&
-                   hasJvmDefaultAnnotation(descriptor));
-        }
-    };
 
     public FunctionCodegen(
             @NotNull CodegenContext owner,
@@ -1069,14 +1057,14 @@ public class FunctionCodegen {
     private boolean hasSpecialBridgeMethod(@NotNull FunctionDescriptor descriptor) {
         if (SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor) == null) return false;
         return !BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
-                descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER
+                descriptor, typeMapper::mapAsmMethod, state.getTarget()
         ).isEmpty();
     }
 
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
-        if (!DECLARATION_AND_DEFINITION_CHECKER.invoke(descriptor)) return;
+        if (JvmBridgesImplKt.isAbstractOnJvmIgnoringActualModality(state.getTarget(), descriptor)) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;
@@ -1086,7 +1074,7 @@ public class FunctionCodegen {
         Set<Bridge<Method>> bridgesToGenerate;
         if (!isSpecial) {
             bridgesToGenerate =
-                    ImplKt.generateBridgesForFunctionDescriptor(descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER);
+                    JvmBridgesImplKt.generateBridgesForFunctionDescriptorForJvm(descriptor, typeMapper::mapAsmMethod, state.getTarget());
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
                 boolean isSpecialBridge =
@@ -1099,7 +1087,7 @@ public class FunctionCodegen {
         }
         else {
             Set<BridgeForBuiltinSpecial<Method>> specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
-                    descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER
+                    descriptor, typeMapper::mapAsmMethod, state.getTarget()
             );
 
             if (!specials.isEmpty()) {
