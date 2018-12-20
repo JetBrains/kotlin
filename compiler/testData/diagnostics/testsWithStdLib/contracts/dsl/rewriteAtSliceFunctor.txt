@@ -1,0 +1,11 @@
+package
+
+public final class Foo {
+    public constructor Foo()
+    private final val foo: Foo.foo.<no name provided>
+    public final var property: kotlin.String?
+    public final inline fun </*0*/ T> equalVetoingObservable(/*0*/ initialValue: T, /*1*/ crossinline onChange: (newValue: T) -> kotlin.Unit): kotlin.properties.ObservableProperty<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
