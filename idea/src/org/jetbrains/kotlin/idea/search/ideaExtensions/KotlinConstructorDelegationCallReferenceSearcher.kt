@@ -27,6 +27,7 @@ class KotlinConstructorDelegationCallReferenceSearcher : QueryExecutorBase<PsiRe
     override fun processQuery(queryParameters: SearchParameters, consumer: ExecutorProcessor<PsiReference>) {
         val method = queryParameters.method
         if (!method.isConstructor) return
+        if (method.originalElement.containingFile == null) return
 
         method.processDelegationCallConstructorUsages(method.useScope.intersectWith(queryParameters.effectiveSearchScope)) {
             it.calleeExpression?.mainReference?.let { consumer.process(it) } ?: true
