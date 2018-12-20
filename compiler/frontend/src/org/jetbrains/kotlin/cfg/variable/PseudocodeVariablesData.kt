@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cfg.variable
 
-import org.jetbrains.kotlin.cfg.*
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -22,14 +21,8 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescriptorForDeclaration
-import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
-import org.jetbrains.kotlin.util.javaslang.component1
-import org.jetbrains.kotlin.util.javaslang.component2
+import org.jetbrains.kotlin.util.javaslang.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-private typealias ImmutableSet<T> = javaslang.collection.Set<T>
-private typealias ImmutableHashSet<T> = javaslang.collection.HashSet<T>
 
 class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
     private val containsDoWhile = pseudocode.rootPseudocode.containsDoWhile
@@ -52,7 +45,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         getAllDeclaredVariables(pseudocode, includeInsideLocalDeclarations = true)
     }
 
-    val variableInitializers: Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>> by lazy {
+    val variableInitializers: Map<Instruction, Edges<ReadOnlyInitVariableControlFlowInfo>> by lazy {
         computeVariableInitializers()
     }
 
@@ -140,7 +133,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     // variable initializers
 
-    private fun computeVariableInitializers(): Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>> {
+    private fun computeVariableInitializers(): Map<Instruction, Edges<ReadOnlyInitVariableControlFlowInfo>> {
 
         val blockScopeVariableInfo = pseudocodeVariableDataCollector.blockScopeVariableInfo
 
@@ -150,8 +143,8 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
         return pseudocodeVariableDataCollector.collectData(
             TraversalOrder.FORWARD,
-            InitControlFlowInfo()
-        ) { instruction: Instruction, incomingEdgesData: Collection<InitControlFlowInfo> ->
+            InitVariableControlFlowInfo()
+        ) { instruction: Instruction, incomingEdgesData: Collection<InitVariableControlFlowInfo> ->
 
             val enterInstructionData =
                 mergeIncomingEdgesDataForInitializers(
@@ -169,12 +162,12 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         }
     }
 
-    private fun computeInitInfoForTrivialVals(): Map<Instruction, Edges<ReadOnlyInitControlFlowInfoImpl>> {
-        val result = hashMapOf<Instruction, Edges<ReadOnlyInitControlFlowInfoImpl>>()
+    private fun computeInitInfoForTrivialVals(): Map<Instruction, Edges<ReadOnlyInitVariableControlFlowInfoImpl>> {
+        val result = hashMapOf<Instruction, Edges<ReadOnlyInitVariableControlFlowInfoImpl>>()
         var declaredSet = ImmutableHashSet.empty<VariableDescriptor>()
         var initSet = ImmutableHashSet.empty<VariableDescriptor>()
         pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
-            val enterState = ReadOnlyInitControlFlowInfoImpl(declaredSet, initSet, null)
+            val enterState = ReadOnlyInitVariableControlFlowInfoImpl(declaredSet, initSet, null)
             when (instruction) {
                 is VariableDeclarationInstruction ->
                     extractValWithTrivialInitializer(instruction)?.let { variableDescriptor ->
@@ -188,7 +181,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                 }
             }
 
-            val afterState = ReadOnlyInitControlFlowInfoImpl(declaredSet, initSet, null)
+            val afterState = ReadOnlyInitVariableControlFlowInfoImpl(declaredSet, initSet, null)
 
             result[instruction] = Edges(enterState, afterState)
         }
@@ -201,26 +194,23 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     // the variable (common variable/parameter/object) has been declared
         element is KtDeclaration
 
-    private inner class ReadOnlyInitControlFlowInfoImpl(
+    private inner class ReadOnlyInitVariableControlFlowInfoImpl(
         val declaredSet: ImmutableSet<VariableDescriptor>,
         val initSet: ImmutableSet<VariableDescriptor>,
-        private val delegate: ReadOnlyInitControlFlowInfo?
-    ) : ReadOnlyInitControlFlowInfo {
-        override fun getOrNull(variableDescriptor: VariableDescriptor): VariableControlFlowState? {
-            if (variableDescriptor in declaredSet) {
-                return VariableControlFlowState.create(
-                    isInitialized = variableDescriptor in initSet,
-                    isDeclared = true
-                )
+        private val delegate: ReadOnlyInitVariableControlFlowInfo?
+    ) : ReadOnlyInitVariableControlFlowInfo {
+        override fun getOrNull(key: VariableDescriptor): VariableControlFlowState? {
+            if (key in declaredSet) {
+                return VariableControlFlowState.create(isInitialized = key in initSet, isDeclared = true)
             }
-            return delegate?.getOrNull(variableDescriptor)
+            return delegate?.getOrNull(key)
         }
 
-        override fun checkDefiniteInitializationInWhen(merge: ReadOnlyInitControlFlowInfo): Boolean =
+        override fun checkDefiniteInitializationInWhen(merge: ReadOnlyInitVariableControlFlowInfo): Boolean =
             delegate?.checkDefiniteInitializationInWhen(merge) ?: false
 
-        fun replaceDelegate(newDelegate: ReadOnlyInitControlFlowInfo): ReadOnlyInitControlFlowInfo =
-            ReadOnlyInitControlFlowInfoImpl(declaredSet, initSet, newDelegate)
+        fun replaceDelegate(newDelegate: ReadOnlyInitVariableControlFlowInfo): ReadOnlyInitVariableControlFlowInfo =
+            ReadOnlyInitVariableControlFlowInfoImpl(declaredSet, initSet, newDelegate)
 
         override fun asMap(): ImmutableMap<VariableDescriptor, VariableControlFlowState> {
             val initial = delegate?.asMap() ?: ImmutableHashMap.empty()
@@ -234,7 +224,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
 
-            other as ReadOnlyInitControlFlowInfoImpl
+            other as ReadOnlyInitVariableControlFlowInfoImpl
 
             if (declaredSet != other.declaredSet) return false
             if (initSet != other.initSet) return false
@@ -253,9 +243,9 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     private fun addVariableInitStateFromCurrentInstructionIfAny(
         instruction: Instruction,
-        enterInstructionData: InitControlFlowInfo,
+        enterInstructionData: InitVariableControlFlowInfo,
         blockScopeVariableInfo: BlockScopeVariableInfo
-    ): InitControlFlowInfo {
+    ): InitVariableControlFlowInfo {
         if (instruction is MagicInstruction) {
             if (instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
                 return enterInstructionData.iterator().fold(enterInstructionData) { result, (key, value) ->
@@ -307,11 +297,11 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     // variable use
 
-    val variableUseStatusData: Map<Instruction, Edges<ReadOnlyUseControlFlowInfo>>
+    val variableUseStatusData: Map<Instruction, Edges<ReadOnlyUseVariableControlFlowInfo>>
         get() {
             val edgesForTrivialVals = computeUseInfoForTrivialVals()
             if (rootVariables.nonTrivialVariables.isEmpty()) {
-                return hashMapOf<Instruction, Edges<ReadOnlyUseControlFlowInfo>>().apply {
+                return hashMapOf<Instruction, Edges<ReadOnlyUseVariableControlFlowInfo>>().apply {
                     pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
                         put(instruction, edgesForTrivialVals)
                     }
@@ -320,13 +310,13 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
             return pseudocodeVariableDataCollector.collectData(
                 TraversalOrder.BACKWARD,
-                UseControlFlowInfo()
-            ) { instruction: Instruction, incomingEdgesData: Collection<UseControlFlowInfo> ->
+                UseVariableControlFlowInfo()
+            ) { instruction: Instruction, incomingEdgesData: Collection<UseVariableControlFlowInfo> ->
 
-                val enterResult: UseControlFlowInfo = if (incomingEdgesData.size == 1) {
+                val enterResult: UseVariableControlFlowInfo = if (incomingEdgesData.size == 1) {
                     incomingEdgesData.single()
                 } else {
-                    incomingEdgesData.fold(UseControlFlowInfo()) { result, edgeData ->
+                    incomingEdgesData.fold(UseVariableControlFlowInfo()) { result, edgeData ->
                         edgeData.iterator().fold(result) { subResult, (variableDescriptor, variableUseState) ->
                             subResult.put(variableDescriptor, variableUseState.merge(subResult.getOrNull(variableDescriptor)))
                         }
@@ -387,14 +377,14 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     private inner class ReadOnlyUseControlFlowInfoImpl(
         val used: Set<VariableDescriptor>,
-        val delegate: ReadOnlyUseControlFlowInfo?
-    ) : ReadOnlyUseControlFlowInfo {
-        override fun getOrNull(variableDescriptor: VariableDescriptor): VariableUseState? {
-            if (variableDescriptor in used) return VariableUseState.READ
-            return delegate?.getOrNull(variableDescriptor)
+        val delegate: ReadOnlyUseVariableControlFlowInfo?
+    ) : ReadOnlyUseVariableControlFlowInfo {
+        override fun getOrNull(key: VariableDescriptor): VariableUseState? {
+            if (key in used) return VariableUseState.READ
+            return delegate?.getOrNull(key)
         }
 
-        fun replaceDelegate(newDelegate: ReadOnlyUseControlFlowInfo): ReadOnlyUseControlFlowInfo =
+        fun replaceDelegate(newDelegate: ReadOnlyUseVariableControlFlowInfo): ReadOnlyUseVariableControlFlowInfo =
             ReadOnlyUseControlFlowInfoImpl(used, newDelegate)
 
         override fun asMap(): ImmutableMap<VariableDescriptor, VariableUseState> {
@@ -441,13 +431,13 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             return VariableControlFlowState.create(isInitialized = declaredOutsideThisDeclaration)
         }
 
-        private val EMPTY_INIT_CONTROL_FLOW_INFO = InitControlFlowInfo()
+        private val EMPTY_INIT_CONTROL_FLOW_INFO = InitVariableControlFlowInfo()
 
         private fun mergeIncomingEdgesDataForInitializers(
             instruction: Instruction,
-            incomingEdgesData: Collection<InitControlFlowInfo>,
+            incomingEdgesData: Collection<InitVariableControlFlowInfo>,
             blockScopeVariableInfo: BlockScopeVariableInfo
-        ): InitControlFlowInfo {
+        ): InitVariableControlFlowInfo {
             if (incomingEdgesData.size == 1) return incomingEdgesData.single()
             if (incomingEdgesData.isEmpty()) return EMPTY_INIT_CONTROL_FLOW_INFO
             val variablesInScope = linkedSetOf<VariableDescriptor>()
