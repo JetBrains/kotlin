@@ -39,12 +39,7 @@ class ContractInterpretationDispatcher {
         CallsEffectInterpreter(this)
     )
 
-    fun resolveFunctor(functionDescriptor: FunctionDescriptor): Functor? {
-        val contractDescriptor = functionDescriptor.getUserData(ContractProviderKey)?.getContractDescription() ?: return null
-        return convertContractDescriptorToFunctor(contractDescriptor)
-    }
-
-    private fun convertContractDescriptorToFunctor(contractDescription: ContractDescription): Functor? {
+    fun convertContractDescriptorToFunctor(contractDescription: ContractDescription): Functor? {
         val resultingClauses = contractDescription.effects.map { effect ->
             if (effect is ConditionalEffectDeclaration) {
                 conditionalEffectInterpreter.interpret(effect) ?: return null
