@@ -1,7 +1,5 @@
-// IGNORE_BACKEND: JS_IR
 //WITH_RUNTIME
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM
 
 object A {
     @JvmStatic fun main(args: Array<String>) {

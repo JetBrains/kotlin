@@ -1,8 +1,6 @@
 // !LANGUAGE: +JvmFieldInInterface
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_REFLECT
 
 import kotlin.reflect.KProperty1
