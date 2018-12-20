@@ -416,26 +416,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
         ModifierDetector detector = new ModifierDetector();
         parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
-        IElementType keywordToken = tt();
-        IElementType declType = null;
+        IElementType declType = parseCommonDeclaration(detector, NameParsingMode.REQUIRED, PropertyParsingMode.MEMBER_OR_TOPLEVEL);
 
-        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
-            declType = parseClass(detector.isEnumDetected());
-        }
-        else if (keywordToken == FUN_KEYWORD) {
-            declType = parseFunction();
-        }
-        else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-            declType = parseProperty();
-        }
-        else if (keywordToken == TYPE_ALIAS_KEYWORD) {
-            declType = parseTypeAlias();
-        }
-        else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(NameParsingMode.REQUIRED, true);
-            declType = OBJECT_DECLARATION;
-        }
-        else if (at(LBRACE)) {
+        if (declType == null && at(LBRACE)) {
             error("Expecting a top level declaration");
             parseBlock();
             declType = FUN;
@@ -448,6 +431,33 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else {
             closeDeclarationWithCommentBinders(decl, declType, true);
         }
+    }
+
+    public IElementType parseCommonDeclaration(
+            @NotNull ModifierDetector detector,
+            @NotNull NameParsingMode nameParsingModeForObject,
+            @NotNull PropertyParsingMode propertyParsingMode
+    ) {
+        IElementType keywordToken = tt();
+
+        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
+            return parseClass(detector.isEnumDetected());
+        }
+        else if (keywordToken == FUN_KEYWORD) {
+            return parseFunction();
+        }
+        else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
+            return parseProperty(propertyParsingMode);
+        }
+        else if (keywordToken == TYPE_ALIAS_KEYWORD) {
+            return parseTypeAlias();
+        }
+        else if (keywordToken == OBJECT_KEYWORD) {
+            parseObject(nameParsingModeForObject, true);
+            return OBJECT_DECLARATION;
+        }
+
+        return null;
     }
 
     /*
@@ -914,7 +924,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return object ? OBJECT_DECLARATION : CLASS;
     }
 
-    IElementType parseClass(boolean enumClass) {
+    private IElementType parseClass(boolean enumClass) {
         return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass);
     }
 
@@ -1097,7 +1107,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         ModifierDetector detector = new ModifierDetector();
         parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
-        IElementType declType = parseMemberDeclarationRest(detector.isEnumDetected(), detector.isDefaultDetected());
+        IElementType declType = parseMemberDeclarationRest(detector);
 
         if (declType == null) {
             errorWithRecovery("Expecting member declaration", TokenSet.EMPTY);
@@ -1108,26 +1118,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
     }
 
-    private IElementType parseMemberDeclarationRest(boolean isEnum, boolean isDefault) {
-        IElementType keywordToken = tt();
-        IElementType declType = null;
-        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
-            declType = parseClass(isEnum);
-        }
-        else if (keywordToken == FUN_KEYWORD) {
-                declType = parseFunction();
-        }
-        else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-            declType = parseProperty();
-        }
-        else if (keywordToken == TYPE_ALIAS_KEYWORD) {
-            declType = parseTypeAlias();
-        }
-        else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(isDefault ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED, true);
-            declType = OBJECT_DECLARATION;
-        }
-        else if (at(INIT_KEYWORD)) {
+    private IElementType parseMemberDeclarationRest(@NotNull ModifierDetector modifierDetector) {
+        IElementType declType = parseCommonDeclaration(
+                modifierDetector,
+                modifierDetector.isDefaultDetected() ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED,
+                PropertyParsingMode.MEMBER_OR_TOPLEVEL
+        );
+
+        if (declType != null) return declType;
+
+        if (at(INIT_KEYWORD)) {
             advance(); // init
             if (at(LBRACE)) {
                 parseBlock();
@@ -1225,7 +1225,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : modifiers "typealias" SimpleName typeParameters? "=" type
      *   ;
      */
-    IElementType parseTypeAlias() {
+    private IElementType parseTypeAlias() {
         assert _at(TYPE_ALIAS_KEYWORD);
 
         advance(); // TYPE_ALIAS_KEYWORD
@@ -1249,6 +1249,20 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return TYPEALIAS;
     }
 
+    enum PropertyParsingMode {
+        MEMBER_OR_TOPLEVEL(false, true),
+        LOCAL(true, false),
+        SCRIPT_TOPLEVEL(true, true);
+
+        public final boolean destructuringAllowed;
+        public final boolean accessorsAllowed;
+
+        PropertyParsingMode(boolean destructuringAllowed, boolean accessorsAllowed) {
+            this.destructuringAllowed = destructuringAllowed;
+            this.accessorsAllowed = accessorsAllowed;
+        }
+    }
+
     /*
      * variableDeclarationEntry
      *   : SimpleName (":" type)?
@@ -1264,28 +1278,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
-    private IElementType parseProperty() {
-        return parseProperty(PropertyParsingMode.MEMBER_OR_TOPLEVEL);
-    }
-
-    public IElementType parseLocalProperty(boolean isScriptTopLevel) {
-        return parseProperty(isScriptTopLevel ? PropertyParsingMode.SCRIPT_TOPLEVEL : PropertyParsingMode.LOCAL);
-    }
-
-    enum PropertyParsingMode {
-        MEMBER_OR_TOPLEVEL(false, true),
-        LOCAL(true, false),
-        SCRIPT_TOPLEVEL(true, true);
-
-        public final boolean destructuringAllowed;
-        public final boolean accessorsAllowed;
-
-        PropertyParsingMode(boolean destructuringAllowed, boolean accessorsAllowed) {
-            this.destructuringAllowed = destructuringAllowed;
-            this.accessorsAllowed = accessorsAllowed;
-        }
-    }
-
     public IElementType parseProperty(PropertyParsingMode mode) {
         assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
         advance();

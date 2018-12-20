@@ -1068,7 +1068,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         KotlinParsing.ModifierDetector detector = new KotlinParsing.ModifierDetector();
         myKotlinParsing.parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
-        IElementType declType = parseLocalDeclarationRest(detector.isEnumDetected(), rollbackIfDefinitelyNotExpression, isScriptTopLevel);
+        IElementType declType = parseLocalDeclarationRest(detector, rollbackIfDefinitelyNotExpression, isScriptTopLevel);
 
         if (declType != null) {
             // we do not attach preceding comments (non-doc) to local variables because they are likely commenting a few statements below
@@ -1348,29 +1348,19 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   ;
      */
     @Nullable
-    private IElementType parseLocalDeclarationRest(boolean isEnum, boolean failIfDefinitelyNotExpression, boolean isScriptTopLevel) {
+    private IElementType parseLocalDeclarationRest(
+            @NotNull KotlinParsing.ModifierDetector modifierDetector,
+            boolean failIfDefinitelyNotExpression,
+            boolean isScriptTopLevel
+    ) {
         IElementType keywordToken = tt();
-        IElementType declType = null;
-
         if (failIfDefinitelyNotExpression) {
             if (keywordToken != FUN_KEYWORD) return null;
 
             return myKotlinParsing.parseFunction(/* failIfIdentifierExists = */ true);
         }
 
-        if (keywordToken == CLASS_KEYWORD ||  keywordToken == INTERFACE_KEYWORD) {
-            declType = myKotlinParsing.parseClass(isEnum);
-        }
-        else if (keywordToken == FUN_KEYWORD) {
-            declType = myKotlinParsing.parseFunction();
-        }
-        else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-            declType = myKotlinParsing.parseLocalProperty(isScriptTopLevel);
-        }
-        else if (keywordToken == TYPE_ALIAS_KEYWORD) {
-            declType = myKotlinParsing.parseTypeAlias();
-        }
-        else if (keywordToken == OBJECT_KEYWORD) {
+        if (keywordToken == OBJECT_KEYWORD) {
             // Object expression may appear at the statement position: should parse it
             // as expression instead of object declaration
             // sample:
@@ -1382,11 +1372,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             if (lookahead == COLON || lookahead == LBRACE) {
                 return null;
             }
-
-            myKotlinParsing.parseObject(NameParsingMode.REQUIRED, true);
-            declType = OBJECT_DECLARATION;
         }
-        return declType;
+
+        return myKotlinParsing.parseCommonDeclaration(
+                modifierDetector, NameParsingMode.REQUIRED,
+                isScriptTopLevel ? KotlinParsing.PropertyParsingMode.SCRIPT_TOPLEVEL : KotlinParsing.PropertyParsingMode.LOCAL
+        );
     }
 
     /*
