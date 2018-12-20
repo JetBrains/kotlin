@@ -40,10 +40,12 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.storage.StorageManager
 
 internal class PsiContractParserDispatcher(
     private val collector: ContractParsingDiagnosticsCollector,
-    private val callContext: ContractCallContext
+    private val callContext: ContractCallContext,
+    private val storageManager: StorageManager
 ) {
     private val conditionParser = PsiConditionParser(collector, callContext, this)
     private val constantParser = PsiConstantParser(callContext)
@@ -71,7 +73,7 @@ internal class PsiContractParserDispatcher(
 
         if (effects.isEmpty()) return null
 
-        return ContractDescription(effects, callContext.functionDescriptor)
+        return ContractDescription(effects, callContext.functionDescriptor, storageManager)
     }
 
     fun parseCondition(expression: KtExpression?): BooleanExpression? = expression?.accept(conditionParser, Unit)
