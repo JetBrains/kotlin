@@ -191,11 +191,6 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapturedInInterface.kt");
         }
 
-        @TestMetadata("jvmStaticDefault.kt")
-        public void testJvmStaticDefault() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/jvmStaticDefault.kt");
-        }
-
         @TestMetadata("kt21827.kt")
         public void testKt21827() throws Exception {
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt21827.kt");
