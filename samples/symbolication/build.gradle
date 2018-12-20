@@ -1,0 +1,23 @@
+plugins {
+    id 'kotlin-multiplatform'
+}
+
+// Determine host preset.
+def hostPreset = MPPTools.defaultHostPreset(project)
+
+kotlin {
+    targets {
+        fromPreset(hostPreset, 'symbolication') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'symbolication.main'
+            compilations.main.cinterops {
+                coreSymbolication {
+                }
+            }
+        }
+    }
+}
+
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.symbolication) {
+    //args "./test.kexe.dSYM/Contents/Resources/DWARF/test.kexe"
+}

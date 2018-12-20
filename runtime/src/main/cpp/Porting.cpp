@@ -112,7 +112,6 @@ extern "C" int rpl_vsnprintf(char *, size_t, const char *, va_list);
 #define vsnprintf_impl ::vsnprintf
 #endif
 
-
 void consolePrintf(const char* format, ...) {
   char buffer[1024];
   va_list args;
@@ -121,7 +120,6 @@ void consolePrintf(const char* format, ...) {
   va_end(args);
   consoleWriteUtf8(buffer, rv);
 }
-
 
 // Thread execution.
 #if !KONAN_NO_THREADS
@@ -325,7 +323,7 @@ void* moreCore(int32_t delta) {
   return (void *) top;
 }
 
-// dlmalloc wants to know the page size.
+// dlmalloc() wants to know the page size.
 long getpagesize() {
     return WASM_PAGESIZE;
 }
@@ -455,4 +453,5 @@ extern "C" {
         while(1) {}
     }
 #endif // KONAN_ZEPHYR
-}
+
+}  // extern "C"

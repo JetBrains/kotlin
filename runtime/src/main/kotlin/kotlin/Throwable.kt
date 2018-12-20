@@ -29,13 +29,13 @@ public open class Throwable(open val message: String?, open val cause: Throwable
         getStackTraceStrings(stackTrace)
     }
 
-    fun getStackTrace(): Array<String> = stackTraceStrings
+    public fun getStackTrace(): Array<String> = stackTraceStrings
 
-    fun printStackTrace() {
+    public fun printStackTrace() {
         println(this.toString())
 
         for (element in stackTraceStrings) {
-            println("        at " + element)
+            println("        at $element")
         }
 
         this.cause?.printEnclosedStackTrace(this)
@@ -48,7 +48,7 @@ public open class Throwable(open val message: String?, open val cause: Throwable
         this.printStackTrace()
     }
 
-    override fun toString(): String {
+    override public fun toString(): String {
         val kClass = this::class
         val s = kClass.qualifiedName ?: kClass.simpleName ?: "Throwable"
         return if (message != null) s + ": " + message.toString() else s

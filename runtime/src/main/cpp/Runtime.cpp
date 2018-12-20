@@ -85,6 +85,7 @@ RuntimeState* initRuntime() {
   if (firstRuntime) {
     isMainThread = 1;
     konan::consoleInit();
+
     InitOrDeinitGlobalVariables(INIT_GLOBALS);
   }
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS);
