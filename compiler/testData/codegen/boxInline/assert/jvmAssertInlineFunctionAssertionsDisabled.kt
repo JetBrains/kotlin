@@ -1,9 +1,9 @@
-// IGNORE_BACKEND: NATIVE
 // FILE: inline.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
 // FULL_JDK
 // IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 inline fun inlineMe() {
     assert(false) { "FROM INLINED" }

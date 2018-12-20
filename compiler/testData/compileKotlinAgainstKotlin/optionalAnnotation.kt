@@ -1,6 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM
 // FULL_JDK
 // FILE: A.kt
 package a
