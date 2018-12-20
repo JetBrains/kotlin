@@ -93,15 +93,18 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             val project = context.project
             val chars = document.charsSequence
 
-            val insertLambda = lambdaInfo != null && completionChar != '(' && !(completionChar == '\t' && chars.isCharAt(offset, '('))
+            val isSmartEnterCompletion = completionChar == Lookup.COMPLETE_STATEMENT_SELECT_CHAR
+            val isReplaceCompletion = completionChar == Lookup.REPLACE_SELECT_CHAR
+            val isNormalCompletion = completionChar == Lookup.NORMAL_SELECT_CHAR
+
+            val insertLambda = lambdaInfo != null && completionChar != '(' && !(isReplaceCompletion && chars.isCharAt(offset, '('))
 
             val openingBracket = if (insertLambda) '{' else '('
             val closingBracket = if (insertLambda) '}' else ')'
 
-            var insertTypeArguments =
-                inputTypeArguments && (completionChar == '\n' || completionChar == '\r' || completionChar == Lookup.REPLACE_SELECT_CHAR)
+            var insertTypeArguments = inputTypeArguments && (isNormalCompletion || isReplaceCompletion || isSmartEnterCompletion)
 
-            if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
+            if (isReplaceCompletion) {
                 val offset1 = chars.skipSpaces(offset)
                 if (offset1 < chars.length) {
                     if (chars[offset1] == '<') {
@@ -149,12 +152,16 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
                         document.insertString(offset, " {}")
                     }
                 } else {
-                    document.insertString(offset, "()")
+                    if (isSmartEnterCompletion) {
+                        document.insertString(offset, "(")
+                    } else {
+                        document.insertString(offset, "()")
+                    }
                 }
                 PsiDocumentManager.getInstance(project).commitDocument(document)
 
                 openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
-                closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)!!
+                closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)
             }
 
             if (insertLambda && lambdaInfo!!.explicitParameters) {
