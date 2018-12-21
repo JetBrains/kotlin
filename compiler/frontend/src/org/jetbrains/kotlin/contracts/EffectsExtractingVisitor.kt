@@ -125,7 +125,7 @@ class EffectsExtractingVisitor(
         // null bypassing function's contract, so we have to filter them out
 
         fun ESEffect.containsReturnsNull(): Boolean =
-            this == ESReturns(ESConstant.NULL) || this is ConditionalEffect && this.simpleEffect.containsReturnsNull()
+            isReturns { value == ESConstant.NULL } || this is ConditionalEffect && this.simpleEffect.containsReturnsNull()
 
         val effectsWithoutReturnsNull = computation.effects.filter { !it.containsReturnsNull() }
         return CallComputation(computation.type, effectsWithoutReturnsNull)

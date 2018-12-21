@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.contracts.model.structure.ESReturns
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
+import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.structure.ESConstant
+import org.jetbrains.kotlin.contracts.model.structure.isReturns
 
 abstract class AbstractBinaryFunctor : AbstractReducingFunctor() {
     override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
-        assert(arguments.size == 2, { "Wrong size of arguments list for Binary functor: expected 2, got ${arguments.size}" })
+        assert(arguments.size == 2) { "Wrong size of arguments list for Binary functor: expected 2, got ${arguments.size}" }
         return invokeWithArguments(arguments[0], arguments[1])
     }
 
@@ -32,23 +32,13 @@ abstract class AbstractBinaryFunctor : AbstractReducingFunctor() {
         if (left is ESConstant) return invokeWithConstant(right, left)
         if (right is ESConstant) return invokeWithConstant(left, right)
 
-        val nonInterestingEffects = mutableListOf<ESEffect>()
-        val leftValueReturning = mutableListOf<ConditionalEffect>()
-        val rightValueReturning = mutableListOf<ConditionalEffect>()
+        val leftValueReturning =
+            left.effects.filterIsInstance<ConditionalEffect>().filter { it.simpleEffect.isReturns { value != ESConstant.WILDCARD } }
+        val rightValueReturning =
+            right.effects.filterIsInstance<ConditionalEffect>().filter { it.simpleEffect.isReturns { value != ESConstant.WILDCARD } }
 
-        left.effects.forEach {
-            if (it !is ConditionalEffect || it.simpleEffect !is ESReturns || it.simpleEffect.value == ESConstant.WILDCARD)
-                nonInterestingEffects += it
-            else
-                leftValueReturning += it
-        }
-
-        right.effects.forEach {
-            if (it !is ConditionalEffect || it.simpleEffect !is ESReturns || it.simpleEffect.value == ESConstant.WILDCARD)
-                nonInterestingEffects += it
-            else
-                rightValueReturning += it
-        }
+        val nonInterestingEffects =
+            left.effects - leftValueReturning + right.effects - rightValueReturning
 
         val evaluatedByFunctor = invokeWithReturningEffects(leftValueReturning, rightValueReturning)
 

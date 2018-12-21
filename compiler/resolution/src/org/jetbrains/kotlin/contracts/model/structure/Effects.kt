@@ -45,3 +45,6 @@ data class ESReturns(val value: ESValue) : SimpleEffect() {
         return value == other.value
     }
 }
+
+inline fun ESEffect.isReturns(block: ESReturns.() -> Boolean): Boolean =
+    this is ESReturns && block()
