@@ -141,23 +141,25 @@ public abstract class AbstractFormatterTest extends LightIdeaTestCase {
         String testFileName = expectedFileNameWithExtension.substring(0, expectedFileNameWithExtension.indexOf("."));
         String testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."));
         String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
+
         CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings();
+        try {
+            Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
+            if (rightMargin != null) {
+                codeStyleSettings.setRightMargin(KotlinLanguage.INSTANCE, rightMargin);
+            }
 
-        Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
-        if (rightMargin != null) {
-            codeStyleSettings.setRightMargin(KotlinLanguage.INSTANCE, rightMargin);
+            SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);
+            if (!inverted) {
+                configurator.configureSettings();
+            }
+            else {
+                configurator.configureInvertedSettings();
+            }
+
+            doTextTest(originalFileText, new File(expectedFileNameWithExtension), testFileExtension);
+        } finally {
+            codeStyleSettings.clearCodeStyleSettings();
         }
-
-        SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);
-        if (!inverted) {
-            configurator.configureSettings();
-        }
-        else {
-            configurator.configureInvertedSettings();
-        }
-
-        doTextTest(originalFileText, new File(expectedFileNameWithExtension), testFileExtension);
-
-        codeStyleSettings.clearCodeStyleSettings();
     }
 }
