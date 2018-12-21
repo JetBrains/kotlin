@@ -2183,6 +2183,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/casts/functions/asFunKBig.kt");
             }
 
+            @TestMetadata("asFunKSmall.kt")
+            public void testAsFunKSmall() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/functions/asFunKSmall.kt");
+            }
+
             @TestMetadata("isFunKBig.kt")
             public void testIsFunKBig() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/functions/isFunKBig.kt");
@@ -2196,6 +2201,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("reifiedAsFunKBig.kt")
             public void testReifiedAsFunKBig() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/functions/reifiedAsFunKBig.kt");
+            }
+
+            @TestMetadata("reifiedAsFunKSmall.kt")
+            public void testReifiedAsFunKSmall() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/functions/reifiedAsFunKSmall.kt");
             }
 
             @TestMetadata("reifiedIsFunKBig.kt")
@@ -2312,6 +2322,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("safeAsWithMutable.kt")
             public void testSafeAsWithMutable() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/mutableCollections/safeAsWithMutable.kt");
+            }
+
+            @TestMetadata("weirdMutableCasts.kt")
+            public void testWeirdMutableCasts() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/mutableCollections/weirdMutableCasts.kt");
             }
         }
     }
