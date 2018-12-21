@@ -996,6 +996,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/multipleBreakpointsAtLine.kt");
         }
 
+        @TestMetadata("nonCapturedVariables.kt")
+        public void testNonCapturedVariables() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/nonCapturedVariables.kt");
+        }
+
         @TestMetadata("privateMembersPriority.kt")
         public void testPrivateMembersPriority() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/privateMembersPriority.kt");

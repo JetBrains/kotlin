@@ -15,4 +15,4 @@ fun foo(f: () -> Unit) {
 // PRINT_FRAME
 
 // EXPRESSION: val1
-// RESULT: java.lang.AssertionError : Cannot find local variable: name = 'val1', type = int
+// RESULT: 'val1' is not captured

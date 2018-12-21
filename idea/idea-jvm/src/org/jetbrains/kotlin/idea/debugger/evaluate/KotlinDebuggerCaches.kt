@@ -223,7 +223,8 @@ class KotlinDebuggerCaches(project: Project) {
     data class CompiledDataDescriptor(
         val classes: List<ClassToLoad>,
         val sourcePosition: SourcePosition,
-        val parameters: List<Parameter>
+        val parameters: List<Parameter>,
+        val variablesCrossingInlineBounds: Set<String>
     )
 
     data class Parameter(val callText: String, val type: KotlinType, val value: Value? = null, val error: EvaluateException? = null)

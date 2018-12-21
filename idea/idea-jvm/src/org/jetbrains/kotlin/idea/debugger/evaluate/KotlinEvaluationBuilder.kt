@@ -224,12 +224,14 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
     companion object {
         private fun extractAndCompile(codeFragment: KtCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
-            val (bindingContext) = codeFragment.checkForErrors()
+            var bindingContext = codeFragment.checkForErrors().bindingContext
 
             if (codeFragment.wrapToStringIfNeeded(bindingContext)) {
                 // Repeat analysis with toString() added
-                codeFragment.checkForErrors()
+                bindingContext = codeFragment.checkForErrors().bindingContext
             }
+
+            val variablesCrossingInlineBounds = ScopeCheckerForEvaluator.checkScopes(bindingContext, codeFragment)
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
                                    ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
@@ -259,9 +261,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val additionalFiles = outputFiles.map { ClassToLoad(getClassName(it.relativePath), it.relativePath, it.asByteArray()) }
 
             return CompiledDataDescriptor(
-                    additionalFiles,
-                    sourcePosition,
-                    parametersDescriptor)
+                additionalFiles,
+                sourcePosition,
+                parametersDescriptor,
+                variablesCrossingInlineBounds
+            )
         }
 
         private fun KtCodeFragment.wrapToStringIfNeeded(bindingContext: BindingContext): Boolean {
@@ -326,7 +330,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     // Prepare the main class
 
                     val argumentTypes = Type.getArgumentTypes(methodToInvoke.desc)
-                    val args = context.getArgumentsForEvaluation(compiledData.parameters, argumentTypes)
+                    val args = context.getArgumentsForEvaluation(compiledData.parameters, argumentTypes, compiledData)
                             .zip(argumentTypes)
                             .map { (value, type) ->
                                 // Make argument type classes prepared for sure
@@ -359,7 +363,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     // Maybe just take the single method from the class, as it is done in 'evaluateWithCompilation'
                     if (name == GENERATED_FUNCTION_NAME || name.startsWith(GENERATED_FUNCTION_NAME + "-")) {
                         val argumentTypes = Type.getArgumentTypes(desc)
-                        val args = context.getArgumentsForEvaluation(compiledData.parameters, argumentTypes)
+                        val args = context.getArgumentsForEvaluation(compiledData.parameters, argumentTypes, compiledData)
 
                         return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
@@ -507,18 +511,28 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         private fun EvaluationContextImpl.getArgumentsForEvaluation(
             parameters: List<Parameter>,
-            parameterTypes: Array<Type>
+            parameterTypes: Array<Type>,
+            compiledData: CompiledDataDescriptor
         ): List<Value> {
             val variableFinder = VariableFinder.instance(this) ?: error("No stack frame available")
             return parameters.zip(parameterTypes).map { (parameter, type) ->
                 parameter.error?.let { throw it }
+                parameter.value?.let { return@map it }
 
-                val result = parameter.value ?: variableFinder.get(parameter.callText, type).asValue()
+                val name = parameter.callText
+                val result = variableFinder.find(name, type)
 
-                if (LOG.isDebugEnabled) {
-                    LOG.debug("Parameter for eval4j: name = ${parameter.callText}, type = $type, value = $result")
+                if (result == null) {
+                    if (name in compiledData.variablesCrossingInlineBounds) {
+                        throw EvaluateExceptionUtil.createEvaluateException("'$name' is not captured")
+                    } else {
+                        throw VariableFinder.variableNotFound(this, buildString {
+                            append("Cannot find local variable: name = '").append(name).append("', type = ").append(type.className)
+                        })
+                    }
+                } else {
+                    return@map result.value.asValue()
                 }
-                result
             }
         }
 

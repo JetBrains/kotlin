@@ -14,6 +14,7 @@ import com.sun.jdi.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.getCapturedFieldName
 import org.jetbrains.kotlin.codegen.AsmUtil.getLabeledThisName
+import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.INLINE_TRANSFORMATION_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
@@ -50,7 +51,40 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             return NamedEntity("<nameForUnwrapOnly>", value.type()) { value }.unwrap().value()
         }
 
-        private val inlinedThisRegex = getLocalVariableNameRegexInlineAware(AsmUtil.THIS + "_")
+        fun variableNotFound(context: EvaluationContextImpl, message: String): Exception {
+            val frameProxy = context.frameProxy
+            val location = frameProxy?.location()
+            val scope = context.debugProcess.searchScope
+
+            val locationText = location?.run { "Location: ${sourceName()}:${lineNumber()}" } ?: "No location available"
+
+            val sourceName = location?.sourceName()
+            val declaringTypeName = location?.declaringType()?.name()?.replace('.', '/')?.let { JvmClassName.byInternalName(it) }
+
+            val sourceFile = if (sourceName != null && declaringTypeName != null) {
+                DebuggerUtils.findSourceFileForClassIncludeLibrarySources(context.project, scope, declaringTypeName, sourceName, location)
+            } else {
+                null
+            }
+
+            val sourceFileText = runReadAction { sourceFile?.text }
+
+            if (sourceName != null && sourceFileText != null) {
+                val attachments = mergeAttachments(
+                    Attachment(sourceName, sourceFileText),
+                    Attachment("location.txt", locationText)
+                )
+
+                LOG.error(message, attachments)
+            }
+
+            return EvaluateExceptionUtil.createEvaluateException(message)
+        }
+
+        // org.jetbrains.kotlin.codegen.inline.MethodInliner.prepareNode
+        private const val OUTER_THIS_FOR_INLINE = AsmUtil.THIS + '_'
+
+        val inlinedThisRegex = getLocalVariableNameRegexInlineAware(OUTER_THIS_FOR_INLINE)
 
         private fun getCapturedVariableNameRegex(capturedName: String): Regex {
             val escapedName = Regex.escape(capturedName)
@@ -166,17 +200,6 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             val unwrappedType = if (field.type() is PrimitiveType) field.type() else unwrappedValue?.type()
             return NamedEntity(name, unwrappedType) { unwrappedValue }
         }
-    }
-
-    fun get(name: String, type: AsmType?): Value? {
-        val result = find(name, type) ?: throw variableNotFound(buildString {
-            append("Cannot find local variable: name = '").append(name).append("'")
-            if (type != null) {
-                append(", type = " + type.className)
-            }
-        })
-
-        return result.value
     }
 
     fun find(name: String, type: AsmType?): Result? {
@@ -317,7 +340,7 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             name.startsWith(AsmUtil.LABELED_THIS_PARAMETER)
                     || name == AsmUtil.RECEIVER_PARAMETER_NAME
                     || name == AsmUtil.getCapturedFieldName(AsmUtil.THIS)
-                    || inlinedThisRegex.matches(name) // org.jetbrains.kotlin.codegen.inline.MethodInliner.prepareNode
+                    || inlinedThisRegex.matches(name)
 
         if (kind is VariableKind.LabeledThis) {
             variables.namedEntitySequence()
@@ -364,35 +387,6 @@ class VariableFinder private constructor(private val context: EvaluationContextI
     private fun isCapturedReceiverFieldName(name: String): Boolean {
         return name.startsWith(getCapturedFieldName(AsmUtil.LABELED_THIS_FIELD))
                 || name == AsmUtil.CAPTURED_RECEIVER_FIELD
-    }
-
-    private fun variableNotFound(message: String): Exception {
-        val location = frameProxy.location()
-        val scope = context.debugProcess.searchScope
-
-        val locationText = location?.run { "Location: ${sourceName()}:${lineNumber()}" } ?: "No location available"
-
-        val sourceName = location?.sourceName()
-        val declaringTypeName = location?.declaringType()?.name()?.replace('.', '/')?.let { JvmClassName.byInternalName(it) }
-
-        val sourceFile = if (sourceName != null && declaringTypeName != null) {
-            DebuggerUtils.findSourceFileForClassIncludeLibrarySources(context.project, scope, declaringTypeName, sourceName, location)
-        } else {
-            null
-        }
-
-        val sourceFileText = runReadAction { sourceFile?.text }
-
-        if (sourceName != null && sourceFileText != null) {
-            val attachments = mergeAttachments(
-                Attachment(sourceName, sourceFileText),
-                Attachment("location.txt", locationText)
-            )
-
-            LOG.error(message, attachments)
-        }
-
-        return EvaluateExceptionUtil.createEvaluateException(message)
     }
 
     private fun List<Field>.namedEntitySequence(owner: ObjectReference) = asSequence().map { NamedEntity.of(it, owner) }
