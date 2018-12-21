@@ -34,6 +34,9 @@ class DescriptorBasedFunctionHandleForJvm(
 
     override val isDeclaration: Boolean =
         descriptor.kind.isReal || needToGenerateDelegationToDefaultImpls(descriptor)
+
+    override val mightBeIncorrectCode: Boolean
+        get() = state.classBuilderMode.mightBeIncorrectCode
 }
 
 private fun CallableMemberDescriptor.isJvmDefaultOrPlatformDependent() =
