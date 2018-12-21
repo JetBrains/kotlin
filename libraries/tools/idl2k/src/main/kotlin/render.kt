@@ -100,8 +100,6 @@ private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>,
             StringBuilder().apply { renderAttributeDeclaration(it, if (it.override) MemberModality.OVERRIDE else MemberModality.FINAL, omitDefaults) }
         }
 
-private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.joinToString(separator = ", ", transform = String::replaceKeywords)})"
-
 private fun Appendable.renderFunctionDeclaration(owner: String, f: GenerateFunction, override: Boolean, commented: Boolean, level: Int = 1) {
     indent(commented, level)
 
@@ -147,7 +145,8 @@ private fun GenerateFunction.isCommented(parent: String) =
 private fun GenerateAttribute.isRequiredFunctionArgument(owner: String, functionName: String) = "$owner.$functionName.$name" in requiredArguments
 private fun GenerateFunction.fixRequiredArguments(parent: String) = copy(arguments = arguments.map { arg -> arg.copy(initializer = if (arg.isRequiredFunctionArgument(parent, name)) null else arg.initializer) })
 
-fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<EnumDefinition>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false, mdnCache: MDNDocumentationCache? = null) {
+fun Appendable.render(allTypes: Map<String, GenerateClass>, enums: List<EnumDefinition>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateClass, markerAnnotation: Boolean = false, mdnCache: MDNDocumentationCache? = null) {
+
     val url = "https://developer.mozilla.org/en/docs/Web/API/${iface.name}"
     if (mdnCache?.checkInCache(url) == true) {
         appendln("/**")
@@ -181,6 +180,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
                     iface.superTypes.filter { it in allSuperTypesNames }.filter { it !in superTypesExclude } +
                     (typeNamesToUnions[iface.name] ?: emptyList()) +
                     (iface.superTypes.filter { it.substringBefore("<") in kotlinBuiltinInterfaces }) // TODO in theory we have to parse type but for now it is the only place needs it so let's just cut string
+
 
     if (superTypesWithCalls.isNotEmpty()) {
         superTypesWithCalls.joinTo(this, ", ", " : ")
@@ -218,6 +218,10 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
                 else -> MemberModality.FINAL
             }
 
+            val skipAttributeDeclaration = modality == MemberModality.OVERRIDE
+                    && attribute.kindNotChanged(superAttributesByName)
+                    && (iface.kind == GenerateDefinitionKind.INTERFACE || attribute.hasSuperImplementation(allSuperTypes))
+
             if (attribute.name in superAttributesByName && attribute.signature !in superSignatures) {
                 System.err.println("Property ${iface.name}.${attribute.name} has different type in super type(s) so will not be generated: ")
                 for ((superTypeName, attributes) in allSuperTypes.map { it.name to it.memberAttributes.filter { it.name == attribute.name }.distinct() }) {
@@ -225,10 +229,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
                         System.err.println("  $superTypeName.${attribute.name}: ${superAttribute.type.render()}")
                     }
                 }
-            } else if (modality == MemberModality.OVERRIDE
-                    && attribute.kindNotChanged(superAttributesByName)
-                    && (iface.kind == GenerateDefinitionKind.INTERFACE || attribute.hasSuperImplementation(allSuperTypes))
-            ) {
+            } else if (skipAttributeDeclaration) {
                 // then don't generate
             } else {
                 renderAttributeDeclarationAsProperty(attribute,
@@ -239,8 +240,9 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
                 )
             }
     }
-    val memberFunctions = iface.memberFunctions.filter { (it !in superFunctions || it.override) && !it.static }
-            .map { it.dynamicIfUnknownType(allTypesAndEnums) }.groupBy { it.signature }.reduceValues(::betterFunction).values
+    val memberFunctions= iface.memberFunctions.filter {
+        (it !in superFunctions || it.override) && !it.static
+    }.map { it.dynamicIfUnknownType(allTypesAndEnums) }.groupBy { it.signature }.reduceValues(::betterFunction).values
 
     fun doRenderFunction(function: GenerateFunction, level: Int = 1) {
         renderFunctionDeclaration(
@@ -284,12 +286,12 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
 
 private fun GenerateAttribute.kindNotChanged(superAttributesByName: Map<String, List<GenerateAttribute>>) = superAttributesByName[name].orEmpty().all { it.kind == kind }
 
-private fun GenerateAttribute.hasSuperImplementation(allSuperTypes: List<GenerateTraitOrClass>) = allSuperTypes.any { st -> st.kind != GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == signature } }
+private fun GenerateAttribute.hasSuperImplementation(allSuperTypes: List<GenerateClass>) = allSuperTypes.any { st -> st.kind != GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == signature } }
 
 private fun GenerateAttribute.hasNoDefaultValue() =
      this.initializer == null && (this.type.nullable || this.type == DynamicType) && !this.required
 
-fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperTypes: List<GenerateTraitOrClass>, allTypes: Set<String>) {
+fun Appendable.renderBuilderFunction(dictionary: GenerateClass, allSuperTypes: List<GenerateClass>, allTypes: Set<String>) {
     val fields = (dictionary.memberAttributes + allSuperTypes.flatMap { it.memberAttributes })
             .distinctBy { it.signature }
             .map { it.copy(kind = AttributeKind.ARGUMENT) }
@@ -397,10 +399,11 @@ fun Appendable.render(enumDefinition: EnumDefinition) {
     appendln()
 }
 
-fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, unions: GenerateUnionTypes, enums: List<EnumDefinition>, mdnCache: MDNDocumentationCache) {
+fun Appendable.render(namespace: String, ifaces: List<GenerateClass>, unions: GenerateUnionTypes, enums: List<EnumDefinition>, mdnCache: MDNDocumentationCache) {
     val declaredTypes = ifaces.associateBy { it.name }
 
     val allTypes = declaredTypes + unions.anonymousUnionsMap + unions.typedefsMarkersMap
+
     declaredTypes.values.filter { it.namespace == namespace }.forEach {
         render(allTypes, enums, unions.typeNamesToUnionsMap, it, mdnCache = mdnCache)
     }
