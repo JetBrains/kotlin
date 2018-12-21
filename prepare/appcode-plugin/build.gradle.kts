@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
 import org.gradle.kotlin.dsl.support.zipTo
+import org.jetbrains.kotlin.cidr.includePatchedJavaXmls
 
 apply {
     plugin("kotlin")
@@ -78,6 +79,7 @@ val platformDepsJar by task<Zip> {
     val platformDepsJar = zipTree(platformDepsZip.singleFile).matching { include("**/$platformDepsJarName") }.singleFile
     from(zipTree(platformDepsJar)) {
         exclude(pluginXmlPath)
+        includePatchedJavaXmls()
     }
 }
 
