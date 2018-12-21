@@ -477,7 +477,7 @@ public abstract class StackValue {
 
         Type resultType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(targetInlineClassType);
 
-        if (TypeUtils.isNullableType(targetInlineClassType) && !isPrimitive(type)) {
+        if (TypeUtils.isNullableType(targetInlineClassType) && !isPrimitive(resultType)) {
             boxOrUnboxWithNullCheck(v, vv -> invokeUnboxMethod(vv, owner, resultType));
         }
         else {
