@@ -46,14 +46,9 @@ private val typeMapper = mapOf(
 )
 
 
-fun GenerateTraitOrClass.allSuperTypes(all: Map<String, GenerateTraitOrClass>) =
-    LinkedHashSet<GenerateTraitOrClass>().let { result -> allSuperTypesImpl(listOf(this), all, result); result.toList() }
+fun GenerateClass.allSuperTypes(all: Map<String, GenerateClass>) = LinkedHashSet<GenerateClass>().let { result -> allSuperTypesImpl(listOf(this), all, result); result.toList() }
 
-tailrec fun allSuperTypesImpl(
-    roots: List<GenerateTraitOrClass>,
-    all: Map<String, GenerateTraitOrClass>,
-    result: MutableSet<GenerateTraitOrClass>
-) {
+tailrec fun allSuperTypesImpl(roots: List<GenerateClass>, all: Map<String, GenerateClass>, result: MutableSet<GenerateClass>) {
     if (roots.isNotEmpty()) {
         allSuperTypesImpl(roots.flatMap { it.superTypes }.map {
             all[it] ?: all[it.substringBefore("<")]
@@ -132,27 +127,22 @@ private fun mapTypedef(repository: Repository, type: SimpleType): Type {
 private fun GenerateFunction?.allTypes() =
     if (this != null) sequenceOf(returnType) + arguments.asSequence().map { it.type } else emptySequence()
 
-internal fun collectUnionTypes(allTypes: Map<String, GenerateTraitOrClass>) =
-    allTypes.values.asSequence()
-        .flatMap {
-            it.secondaryConstructors.asSequence().flatMap { it.constructor.allTypes() } +
+internal fun collectUnionTypes(allTypes: Map<String, GenerateClass>) =
+        allTypes.values.asSequence()
+                .flatMap {
+                    it.secondaryConstructors.asSequence().flatMap { it.constructor.allTypes() } +
                     sequenceOf(it.primaryConstructor).filterNotNull().flatMap { it.constructor.allTypes() } +
-                    it.memberAttributes.asSequence().map { it.type } +
-                    it.memberFunctions.asSequence().flatMap { it.allTypes() }
-        }
-        .filterIsInstance<UnionType>()
-        .map { it.dropNullable() }
-        .filter { it.memberTypes.all { unionMember -> unionMember is SimpleType && unionMember.type in allTypes } }
-        .distinct()
-        .map {
-            it.copy(
-                namespace = guessPackage(it.memberTypes.filterIsInstance<SimpleType>().map { it.type }, allTypes),
-                types = it.memberTypes
-            )
-        }
+                            it.memberAttributes.asSequence().map { it.type } +
+                            it.memberFunctions.asSequence().flatMap { it.allTypes() }
+                }
+                .filterIsInstance<UnionType>()
+                .map { it.dropNullable() }
+                .filter { it.memberTypes.all { unionMember -> unionMember is SimpleType && unionMember.type in allTypes } }
+                .distinct()
+                .map { it.copy(namespace = guessPackage(it.memberTypes.filterIsInstance<SimpleType>().map { it.type }, allTypes), types = it.memberTypes) }
 
-private fun guessPackage(types: List<String>, allTypes: Map<String, GenerateTraitOrClass>) =
-    types.map { allTypes[it] }
+private fun guessPackage(types : List<String>, allTypes: Map<String, GenerateClass>) =
+        types.map { allTypes[it] }
         .map { it?.namespace }
         .filterNotNull()
         .filter { it.isNotEmpty() }
