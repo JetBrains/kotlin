@@ -162,8 +162,8 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
                 environment.put(
                     "PATH",
                     DependencyDirectories.defaultDependenciesRoot
-                        .resolve("\\$toolchainDir\\bin;${environment.get("PATH")}")
-                        .absolutePath
+                        .resolve("\\$toolchainDir\\bin")
+                        .absolutePath + ";${environment.get("PATH")}"
                 )
             }
         }
