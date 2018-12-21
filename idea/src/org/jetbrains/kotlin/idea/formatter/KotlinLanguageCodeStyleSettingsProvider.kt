@@ -369,6 +369,9 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     CodeStyleSettingsCustomizable.BLANK_LINES
                 )
             }
+            LanguageCodeStyleSettingsProvider.SettingsType.COMMENTER_SETTINGS -> {
+                consumer.showAllStandardOptions();
+            }
             else -> consumer.showStandardOptions()
         }
     }
