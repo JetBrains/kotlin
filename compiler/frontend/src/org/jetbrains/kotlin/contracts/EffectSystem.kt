@@ -18,15 +18,11 @@ package org.jetbrains.kotlin.contracts
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.contracts.model.structure.ESCalls
-import org.jetbrains.kotlin.contracts.model.structure.ESReturns
-import org.jetbrains.kotlin.contracts.model.functors.EqualsFunctor
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.structure.UNKNOWN_COMPUTATION
-import org.jetbrains.kotlin.contracts.model.structure.lift
-import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.MutableContextInfo
+import org.jetbrains.kotlin.contracts.model.functors.EqualsFunctor
+import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.model.visitors.InfoCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -54,7 +50,7 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings, val dat
 
         val resultContextInfo = getContextInfoWhen(ESReturns(ESConstant.WILDCARD), callExpression, bindingTrace, moduleDescriptor)
 
-        return resultContextInfo.toDataFlowInfo(languageVersionSettings)
+        return resultContextInfo.toDataFlowInfo(languageVersionSettings, moduleDescriptor.builtIns)
     }
 
     fun getDataFlowInfoWhenEquals(
@@ -73,12 +69,13 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings, val dat
 
         val effects = EqualsFunctor(false).invokeWithArguments(leftComputation, rightComputation)
 
+        val builtIns = moduleDescriptor.builtIns
         val equalsContextInfo = InfoCollector(ESReturns(true.lift())).collectFromSchema(effects)
         val notEqualsContextInfo = InfoCollector(ESReturns(false.lift())).collectFromSchema(effects)
 
         return ConditionalDataFlowInfo(
-            equalsContextInfo.toDataFlowInfo(languageVersionSettings),
-            notEqualsContextInfo.toDataFlowInfo(languageVersionSettings)
+            equalsContextInfo.toDataFlowInfo(languageVersionSettings, builtIns),
+            notEqualsContextInfo.toDataFlowInfo(languageVersionSettings, builtIns)
         )
     }
 
@@ -107,7 +104,7 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings, val dat
         if (condition == null) return DataFlowInfo.EMPTY
 
         return getContextInfoWhen(ESReturns(value.lift()), condition, bindingTrace, moduleDescriptor)
-            .toDataFlowInfo(languageVersionSettings)
+            .toDataFlowInfo(languageVersionSettings, moduleDescriptor.builtIns)
     }
 
     private fun getContextInfoWhen(
