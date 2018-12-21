@@ -1,6 +1,6 @@
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
-import java.util.regex.Pattern
+import org.jetbrains.kotlin.cidr.includePatchedJavaXmls
 
 apply {
     plugin("kotlin")
@@ -31,8 +31,6 @@ val cidrPlugin by configurations.creating
 val platformDepsZip by configurations.creating
 
 val pluginXmlPath = "META-INF/plugin.xml"
-val javaPsiXmlPath = "META-INF/JavaPsiPlugin.xml"
-val javaPluginXmlPath = "META-INF/JavaPlugin.xml"
 
 val platformDepsJarName = "kotlinNative-platformDeps.jar"
 val pluginXmlLocation = File(buildDir, "pluginXml")
@@ -106,46 +104,12 @@ val jar = runtimeJar {
     from(pluginXmlLocation) { include(pluginXmlPath) }
 }
 
-fun Zip.includePatched(fileToMarkers: Map<String, List<String>>) {
-
-    val notDone = mutableSetOf<Pair<String, String>>()
-    fileToMarkers.forEach { (path, markers) ->
-        for (marker in markers) {
-            notDone += path to marker
-        }
-    }
-
-    eachFile {
-        val markers = fileToMarkers[this.sourcePath] ?: return@eachFile
-        this.filter {
-            var data = it
-            for (marker in markers) {
-                val newData = data.replace(("^(.*" + Pattern.quote(marker) + ".*)$").toRegex(), "<!-- $1 -->")
-                data = newData
-                notDone -= path to marker
-            }
-            data
-        }
-    }
-    doLast {
-        check(notDone.size == 0) {
-            "Filtering failed for: " +
-                    notDone.joinToString(separator = "\n") { (file, marker) -> "file=$file, marker=`$marker`" }
-        }
-    }
-}
-
 val platformDepsJar by task<Zip> {
     archiveName = platformDepsJarName
     val platformDepsJar = zipTree(platformDepsZip.singleFile).matching { include("**/$platformDepsJarName") }.singleFile
     from(zipTree(platformDepsJar)) {
         exclude(pluginXmlPath)
-        includePatched(
-            mapOf(
-                javaPsiXmlPath to listOf("implementation=\"org.jetbrains.uast.java.JavaUastLanguagePlugin\""),
-                javaPluginXmlPath to listOf("implementation=\"com.intellij.spi.SPIFileTypeFactory\"")
-            )
-        )
+        includePatchedJavaXmls()
     }
 }
 
