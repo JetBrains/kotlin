@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.structure.ESConstant
 import org.jetbrains.kotlin.contracts.model.structure.isReturns
+import org.jetbrains.kotlin.contracts.model.structure.isWildcard
 
 abstract class AbstractBinaryFunctor : AbstractReducingFunctor() {
     override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
@@ -33,9 +34,9 @@ abstract class AbstractBinaryFunctor : AbstractReducingFunctor() {
         if (right is ESConstant) return invokeWithConstant(left, right)
 
         val leftValueReturning =
-            left.effects.filterIsInstance<ConditionalEffect>().filter { it.simpleEffect.isReturns { value != ESConstant.WILDCARD } }
+            left.effects.filterIsInstance<ConditionalEffect>().filter { it.simpleEffect.isReturns { !value.isWildcard } }
         val rightValueReturning =
-            right.effects.filterIsInstance<ConditionalEffect>().filter { it.simpleEffect.isReturns { value != ESConstant.WILDCARD } }
+            right.effects.filterIsInstance<ConditionalEffect>().filter { it.simpleEffect.isReturns { !value.isWildcard } }
 
         val nonInterestingEffects =
             left.effects - leftValueReturning + right.effects - rightValueReturning

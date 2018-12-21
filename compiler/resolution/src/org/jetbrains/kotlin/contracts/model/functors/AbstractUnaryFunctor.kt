@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.contracts.model.functors
 import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
 import org.jetbrains.kotlin.contracts.model.structure.isReturns
+import org.jetbrains.kotlin.contracts.model.structure.isWildcard
 
 /**
  * Unary functor that has sequential semantics, i.e. it won't apply to
@@ -37,7 +37,7 @@ abstract class AbstractUnaryFunctor : AbstractReducingFunctor() {
 
     fun invokeWithArguments(arg: Computation): List<ESEffect> {
         val returning =
-            arg.effects.filterIsInstance<ConditionalEffect>().filter { it.simpleEffect.isReturns { value != ESConstant.WILDCARD } }
+            arg.effects.filterIsInstance<ConditionalEffect>().filter { it.simpleEffect.isReturns { !value.isWildcard } }
         val rest = arg.effects - returning
 
         val evaluatedByFunctor = invokeWithReturningEffects(returning)

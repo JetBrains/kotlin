@@ -16,15 +16,8 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.contracts.model.structure.ESCalls
-import org.jetbrains.kotlin.contracts.model.structure.ESReturns
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.ESValue
-import org.jetbrains.kotlin.contracts.model.structure.ESVariable
-import org.jetbrains.kotlin.contracts.model.ConditionalEffect
-import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.SimpleEffect
-import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.*
+import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.model.visitors.Substitutor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
@@ -54,8 +47,8 @@ class SubstitutingFunctor(private val basicEffects: List<ESEffect>, private val 
                 }
 
                 is ESCalls -> {
-                    val subsitutionForCallable = substitutions[effect.callable] as? ESValue ?: continue@effectsLoop
-                    substitutedClauses += ESCalls(subsitutionForCallable, effect.kind)
+                    val substitutionForCallable = substitutions[effect.callable] as? ESValue ?: continue@effectsLoop
+                    substitutedClauses += ESCalls(substitutionForCallable, effect.kind)
                 }
 
                 else -> substitutedClauses += effect
@@ -69,9 +62,9 @@ class SubstitutingFunctor(private val basicEffects: List<ESEffect>, private val 
         if (substitutedCondition !is ConditionalEffect) return null
 
         val effectFromCondition = substitutedCondition.simpleEffect
-        if (effectFromCondition !is ESReturns || effectFromCondition.value == ESConstant.WILDCARD) return substitutedCondition
+        if (effectFromCondition !is ESReturns || effectFromCondition.value.isWildcard) return substitutedCondition
 
-        if (effectFromCondition.value != ESConstant.TRUE) return null
+        if (!effectFromCondition.value.isTrue) return null
 
         return ConditionalEffect(substitutedCondition.condition, effect)
     }

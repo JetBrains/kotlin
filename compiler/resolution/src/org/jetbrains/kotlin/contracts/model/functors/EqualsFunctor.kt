@@ -16,15 +16,12 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.contracts.model.structure.ESReturns
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.structure.ESEqual
-import org.jetbrains.kotlin.contracts.model.ESValue
-import org.jetbrains.kotlin.contracts.model.structure.lift
-import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.ConditionalEffect
+import org.jetbrains.kotlin.contracts.model.ESEffect
+import org.jetbrains.kotlin.contracts.model.ESValue
+import org.jetbrains.kotlin.contracts.model.structure.*
 
 class EqualsFunctor(val isNegated: Boolean) : AbstractReducingFunctor() {
     /*
@@ -74,7 +71,7 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractReducingFunctor() {
         val resultingClauses = mutableListOf<ESEffect>()
 
         for (effect in call.effects) {
-            if (effect !is ConditionalEffect || effect.simpleEffect !is ESReturns || effect.simpleEffect.value == ESConstant.WILDCARD) {
+            if (effect !is ConditionalEffect || effect.simpleEffect !is ESReturns || effect.simpleEffect.value.isWildcard) {
                 resultingClauses += effect
                 continue
             }

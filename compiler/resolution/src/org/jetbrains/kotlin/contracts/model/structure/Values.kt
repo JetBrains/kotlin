@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.contracts.model.structure
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
-import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.description.expressions.BooleanConstantReference
+import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
+import org.jetbrains.kotlin.contracts.model.ESExpression
 import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
 import org.jetbrains.kotlin.contracts.model.ESValue
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.*
@@ -75,3 +76,12 @@ open class ESConstant private constructor(open val constantReference: ConstantRe
 }
 
 fun Boolean.lift(): ESConstant = if (this) ESConstant.TRUE else ESConstant.FALSE
+
+internal val ESExpression.isTrue: Boolean
+    get() = this is ESConstant && constantReference == BooleanConstantReference.TRUE
+
+internal val ESExpression.isFalse: Boolean
+    get() = this is ESConstant && constantReference == BooleanConstantReference.FALSE
+
+internal val ESValue.isWildcard: Boolean
+    get() = this is ESConstant && constantReference == ConstantReference.WILDCARD
