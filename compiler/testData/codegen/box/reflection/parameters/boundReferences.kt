@@ -6,7 +6,6 @@
 // WITH_REFLECT
 
 import kotlin.reflect.*
-import kotlin.reflect.jvm.*
 import kotlin.test.*
 
 class C {
