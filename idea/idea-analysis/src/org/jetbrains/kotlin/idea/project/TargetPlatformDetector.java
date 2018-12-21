@@ -24,11 +24,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider;
+import org.jetbrains.kotlin.platform.IdePlatform;
+import org.jetbrains.kotlin.platform.IdePlatformKind;
 import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.script.KotlinScriptDefinition;
+
+import static org.jetbrains.kotlin.script.KotlinScriptDefinitionProviderKt.findScriptDefinition;
 
 public class TargetPlatformDetector {
     public static final TargetPlatformDetector INSTANCE = new TargetPlatformDetector();
@@ -53,6 +58,19 @@ public class TargetPlatformDetector {
         if (context != null) {
             PsiFile contextFile = context.getContainingFile();
             return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : JvmPlatform.INSTANCE;
+        }
+
+        if (file.isScript()) {
+            KotlinScriptDefinition scriptDefinition = findScriptDefinition(file);
+            if (scriptDefinition != null) {
+                String platformNameFromScriptDefinition = scriptDefinition.getPlatform();
+                for (IdePlatform platform : IdePlatformKind.Companion.getAll_PLATFORMS()) {
+                    TargetPlatform compilerPlatform = platform.getKind().getCompilerPlatform();
+                    if (compilerPlatform.getPlatformName().equals(platformNameFromScriptDefinition)) {
+                        return compilerPlatform;
+                    }
+                }
+            }
         }
 
         VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();

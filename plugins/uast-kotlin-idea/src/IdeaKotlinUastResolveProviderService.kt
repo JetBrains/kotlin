@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -49,6 +50,11 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
     }
 
     override fun isJvmElement(psiElement: PsiElement): Boolean {
+        val containingFile = psiElement.containingFile
+        if (containingFile is KtFile) {
+            return TargetPlatformDetector.getPlatform(containingFile) is JvmPlatform
+        }
+
         val module = psiElement.module
         return module == null || TargetPlatformDetector.getPlatform(module) is JvmPlatform
     }
