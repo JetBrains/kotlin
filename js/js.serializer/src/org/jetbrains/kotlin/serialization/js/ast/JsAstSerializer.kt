@@ -30,7 +30,8 @@ import java.io.OutputStream
 import java.util.*
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy as KotlinInlineStrategy
 
-class JsAstSerializer(private val pathResolver: (File) -> String) {
+class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsName>) -> Unit)?,
+                      private val pathResolver: (File) -> String) {
     private val nameTableBuilder = NameTable.newBuilder()
     private val stringTableBuilder = StringTable.newBuilder()
     private val nameMap = mutableMapOf<JsName, Int>()
@@ -122,6 +123,8 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
 
             fragmentBuilder.addInlinedFunctionWrappers(builder.build())
         }
+
+        jsAstValidator?.let { it(fragment, nameMap.keys) }
 
         return fragmentBuilder.build()
     }

@@ -107,6 +107,11 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
             super.visitExpressionStatement(x)
         }
 
+        override fun visitBreak(x: JsBreak) {
+            x.label?.name?.let { names += it }
+            super.visitBreak(x)
+        }
+
         override fun visitCatch(x: JsCatch) {
             names += x.parameter.name
             super.visitCatch(x)
@@ -133,6 +138,16 @@ fun collectDefinedNamesInAllScopes(scope: JsNode): Set<JsName> {
             super.visitFunction(x)
             x.name?.let { names += it }
             names += x.parameters.map { it.name }
+        }
+
+        override fun visitBreak(x: JsBreak) {
+            x.label?.name?.let { names += it }
+            super.visitBreak(x)
+        }
+
+        override fun visitCatch(x: JsCatch) {
+            names += x.parameter.name
+            super.visitCatch(x)
         }
     }.accept(scope)
 
@@ -236,26 +251,6 @@ fun collectAccessors(fragments: Iterable<JsProgramFragment>): Map<String, Functi
 fun extractFunction(expression: JsExpression) = when (expression) {
     is JsFunction -> FunctionWithWrapper(expression, null)
     else -> InlineMetadata.decompose(expression)?.function ?: InlineMetadata.tryExtractFunction(expression)
-}
-
-fun collectInlineFunctionTags(config: JsConfig, fragments: List<JsProgramFragment>): Set<String> {
-    val result = mutableSetOf<String>()
-    for (fragment in fragments) {
-        collectInlineFunctionTags(config, fragment.declarationBlock, result)
-        collectInlineFunctionTags(config, fragment.initializerBlock, result)
-    }
-    return result
-}
-
-private fun collectInlineFunctionTags(config: JsConfig, scope: JsNode, result: MutableSet<String>) {
-    scope.accept(object : RecursiveJsVisitor() {
-        override fun visitInvocation(invocation: JsInvocation) {
-            invocation.descriptor?.let {
-                result.add(Namer.getFunctionTag(it, config))
-            }
-            super.visitInvocation(invocation)
-        }
-    })
 }
 
 fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode): List<T> {

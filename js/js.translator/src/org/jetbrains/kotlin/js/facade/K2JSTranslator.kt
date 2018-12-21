@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.coroutine.CoroutineTransformer
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException
 import org.jetbrains.kotlin.js.inline.JsInliner
-import org.jetbrains.kotlin.js.inline.clean.LabeledBlockToDoWhileTransformation
 import org.jetbrains.kotlin.js.inline.clean.*
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.translate.general.Translation
@@ -43,7 +41,12 @@ import java.io.IOException
 import java.util.ArrayList
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
+import org.jetbrains.kotlin.js.backend.ast.JsBlock
+import org.jetbrains.kotlin.js.backend.ast.JsName
+import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
+import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.coroutine.transformCoroutines
+import org.jetbrains.kotlin.js.inline.util.collectDefinedNamesInAllScopes
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
@@ -51,7 +54,10 @@ import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
 /**
  * An entry point of translator.
  */
-class K2JSTranslator(private val config: JsConfig) {
+class K2JSTranslator @JvmOverloads constructor(
+    private val config: JsConfig,
+    private val shouldValidateJsAst: Boolean = false
+) {
 
     private val incrementalResults = config.configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
 
@@ -165,7 +171,7 @@ class K2JSTranslator(private val config: JsConfig) {
     ) {
         if (incrementalResults == null) return
 
-        val serializer = JsAstSerializer { file ->
+        val serializer = JsAstSerializer(if (shouldValidateJsAst) ::validateJsAst else null) { file ->
             try {
                 pathResolver.getPathRelativeToSourceRoots(file)
             } catch (e: IOException) {
@@ -204,5 +210,27 @@ class K2JSTranslator(private val config: JsConfig) {
         headerBuilder.addAllInlineFunctionTags(importedTags)
         headerBuilder.build().writeTo(output)
         return output.toByteArray()
+    }
+
+    private fun validateJsAst(fragment: JsProgramFragment, serializedNames: Set<JsName>) {
+        val knownNames = mutableSetOf<JsName>().apply {
+            fragment.nameBindings.mapTo(this) { it.name }
+            fragment.importedModules.mapTo(this) { it.internalName }
+        }
+
+        val allCode = JsBlock(mutableListOf<JsStatement>().apply {
+            add(fragment.declarationBlock)
+            add(fragment.exportBlock)
+            add(fragment.initializerBlock)
+            fragment.tests?.let { add(it) }
+            fragment.mainFunction?.let { add(it) }
+            addAll(fragment.inlinedFunctionWrappers.values)
+        })
+
+        val definedNames = collectDefinedNamesInAllScopes(allCode)
+
+        serializedNames.forEach {
+            assert(!it.isTemporary || it in definedNames || it in knownNames) { "JsName ${it.ident} is unbound" }
+        }
     }
 }
