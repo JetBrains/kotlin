@@ -99,7 +99,7 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
 
     /**
      * `true` if this class is `sealed`.
-     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/classes.html#sealed-classes)
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/sealed-classes.html)
      * for more information.
      */
     @SinceKotlin("1.1")
