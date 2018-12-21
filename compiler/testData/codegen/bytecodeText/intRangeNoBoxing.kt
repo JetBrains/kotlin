@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun Int.until(other: Int) = this..other - 1
 fun foo() {
     val range = 1 until 2

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test(): Int {
     val intArray = intArrayOf(1, 2, 3)
     var sum = 0

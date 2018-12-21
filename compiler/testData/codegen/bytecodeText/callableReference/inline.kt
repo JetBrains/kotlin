@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     return if (call(10, ::calc) == 5) "OK" else "fail"
 }

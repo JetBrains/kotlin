@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // TREAT_AS_ONE_FILE
 
 import kotlin.coroutines.intrinsics.*

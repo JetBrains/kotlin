@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun f(a: Int, b: Int) {
     for (i in a..b) {
     }

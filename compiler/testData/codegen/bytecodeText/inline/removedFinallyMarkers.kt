@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun test(s: ()->Int){
     var i = 0;
     try {

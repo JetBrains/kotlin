@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 object A {
     private const val a = "$"
     private const val b = "1234$a"

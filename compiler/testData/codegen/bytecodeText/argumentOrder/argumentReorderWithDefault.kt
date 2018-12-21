@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A {
     fun test(x: String? = "x", a: String?, b: String?, y: String? = "y") {
 

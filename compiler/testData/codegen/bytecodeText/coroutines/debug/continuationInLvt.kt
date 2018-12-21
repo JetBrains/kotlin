@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 suspend fun dummy() {}
 
 suspend fun tailCall() {

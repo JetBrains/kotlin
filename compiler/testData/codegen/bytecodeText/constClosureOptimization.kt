@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test() {
 
     fun local(){

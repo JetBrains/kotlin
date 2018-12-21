@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 
 fun box(): String {

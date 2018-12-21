@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun returningBoxed() : Int? = 1
 fun acceptingBoxed(x : Int?) : Int ? = x
 

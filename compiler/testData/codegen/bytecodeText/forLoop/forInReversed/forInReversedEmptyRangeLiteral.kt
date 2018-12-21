@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     for (i in (4 .. 1).reversed()) {
         throw AssertionError("Loop should not be executed")

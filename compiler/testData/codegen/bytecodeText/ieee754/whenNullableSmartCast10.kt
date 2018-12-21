@@ -1,4 +1,5 @@
 // !API_VERSION: 1.0
+// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     val nullValue: Any? = null

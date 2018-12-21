@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 
 private fun Any?.doTheThing(): String {
     when (this) {

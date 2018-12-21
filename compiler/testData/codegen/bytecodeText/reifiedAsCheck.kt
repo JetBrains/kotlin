@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun <reified T> Any?.foo() = this as T
 
 inline fun <reified Y> Any?.foo2() = foo<Y?>()

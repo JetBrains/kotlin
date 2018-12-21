@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 // https://youtrack.jetbrains.com/issue/KT-15871
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun main(p: String?) {
     if (p == null) {
         "then"

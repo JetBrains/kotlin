@@ -1,4 +1,5 @@
 // !LANGUAGE: +NoConstantValueAttributeForNonConstVals +JvmFieldInInterface
+// IGNORE_BACKEND: JVM_IR
 
 class C {
     val testClassVal = 100
