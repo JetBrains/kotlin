@@ -441,6 +441,7 @@
     <additionalTextAttributes scheme="Default" file="colorScheme/Default_Kotlin.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorScheme/Darcula_Kotlin.xml"/>
 
+    <codeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinGenerationSettingsProvider"/>
     <codeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinLanguageCodeStyleSettingsProvider"/>
     <predefinedCodeStyle implementation="org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle"/>

@@ -20,6 +20,7 @@ import com.intellij.lang.Language;
 import org.jetbrains.annotations.NotNull;
 
 public class KotlinLanguage extends Language {
+    @NotNull
     public static final KotlinLanguage INSTANCE = new KotlinLanguage();
     public static final String NAME = "Kotlin";
 

@@ -17,9 +17,13 @@
 package org.jetbrains.kotlin.idea.editor;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import org.jetbrains.kotlin.formatter.FormatSettingsUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.SettingsConfigurator;
 
 import java.io.File;
 
@@ -39,9 +43,35 @@ public class KotlinCommenterTest extends LightCodeInsightTestCase {
         doNewLineTypingTest();
     }
 
+    public void testNotFirstColumnWithSpace() throws Exception {
+        doLineCommentTest();
+    }
+
+    public void testNotFirstColumnWithoutSpace() throws Exception {
+        doLineCommentTest();
+    }
+
     private void doNewLineTypingTest() throws Exception {
         configure();
         EditorTestUtil.performTypingAction(getEditor(), '\n');
+        check();
+    }
+
+    private void doLineCommentTest() throws Exception {
+        configure();
+
+        CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings();
+        try {
+            String text = myFile.getText();
+
+            SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(text, codeStyleSettings);
+            configurator.configureSettings();
+
+            executeAction("CommentByLineComment");
+        } finally {
+            codeStyleSettings.clearCodeStyleSettings();
+        }
+
         check();
     }
 
@@ -49,11 +79,17 @@ public class KotlinCommenterTest extends LightCodeInsightTestCase {
         configureFromFileText("a.kt", loadFile(getTestName(true) + ".kt"));
     }
 
-    private void check() throws Exception {
-        checkResultByText(loadFile(getTestName(true) + "_after.kt"));
+    private void check() {
+        File afterFile = getTestFile(getTestName(true) + "_after.kt");
+        KotlinTestUtils.assertEqualsToFile(afterFile, getEditor(), false);
     }
 
-    protected static String loadFile(String name) throws Exception {
-        return FileUtil.loadFile(new File(BASE_PATH, name), true);
+    private static File getTestFile(String name) {
+        return new File(BASE_PATH, name);
+    }
+
+    private static String loadFile(String name) throws Exception {
+        File file = getTestFile(name);
+        return FileUtil.loadFile(file, true);
     }
 }
