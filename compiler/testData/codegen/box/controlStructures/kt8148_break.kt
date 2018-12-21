@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM
-
 class A(var value: String)
 
 fun box(): String {
@@ -7,7 +5,7 @@ fun box(): String {
 
     try {
         test(a)
-    } catch(e: java.lang.RuntimeException) {
+    } catch(e: RuntimeException) {
 
     }
 
