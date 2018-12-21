@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
-import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.common.lower.DEFAULT_DISPATCH_CALL
+import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -51,7 +51,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
     private fun resolveInvoke(paramCount: Int): IrSimpleFunction {
         assert(paramCount > 0)
         val fqn = FqName.fromSegments(listOf("kotlin", "Function$paramCount"))
-        val functionKlass = context.run { symbolTable.referenceClass(getClass(fqn)) }.owner
+        val functionKlass = context.run { symbolTable.lazyWrapper.referenceClass(getClass(fqn)) }.owner
         return functionKlass.declarations.filterIsInstance<IrSimpleFunction>().first { it.name == Name.identifier("invoke") }
     }
 }
