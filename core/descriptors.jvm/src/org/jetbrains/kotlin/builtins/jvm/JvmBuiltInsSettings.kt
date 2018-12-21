@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.builtins.jvm
 
-import org.jetbrains.kotlin.builtins.BuiltInsInitializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -500,13 +499,9 @@ private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedS
     }
 
     companion object {
-        private val initializer = BuiltInsInitializer {
-            FallbackBuiltIns()
-        }
-
         @JvmStatic
-        val Instance: KotlinBuiltIns
-            get() = initializer.get()
+        val Instance: KotlinBuiltIns =
+            FallbackBuiltIns()
     }
 
     override fun getPlatformDependentDeclarationFilter() = PlatformDependentDeclarationFilter.All

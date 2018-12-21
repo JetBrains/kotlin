@@ -24,12 +24,8 @@ class DefaultBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageMan
     }
 
     companion object {
-        private val initializer = BuiltInsInitializer {
-            DefaultBuiltIns()
-        }
-
         @JvmStatic
-        val Instance: DefaultBuiltIns
-            get() = initializer.get()
+        val Instance: DefaultBuiltIns =
+            DefaultBuiltIns()
     }
 }
