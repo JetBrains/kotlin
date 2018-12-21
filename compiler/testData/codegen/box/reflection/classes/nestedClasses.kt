@@ -6,7 +6,6 @@
 // FULL_JDK
 
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
 class A {

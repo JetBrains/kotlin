@@ -2,7 +2,6 @@
 // WITH_REFLECT
 
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
 // --
