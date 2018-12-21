@@ -424,7 +424,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
             declType = FUN;
         }
 
-        if (declType == null) {
+        if (declType == null && at(IMPORT_KEYWORD)) {
+            error("imports are only allowed in the beginning of file");
+            parseImportDirectives();
+            decl.drop();
+        }
+        else if (declType == null) {
             errorAndAdvance("Expecting a top level declaration");
             decl.drop();
         }
