@@ -41,3 +41,5 @@ class KotlinIdeIntentionTrigger : KotlinIdeActionTrigger("intention")
 class KotlinIdeInspectionTrigger : KotlinIdeActionTrigger("inspection")
 
 class KotlinIdeExceptionTrigger : KotlinIdeStatisticsTrigger("exception")
+
+class KotlinIdeNewFileTemplateTrigger : KotlinIdeStatisticsTrigger("newFileTempl")

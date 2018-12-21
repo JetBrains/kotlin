@@ -3244,6 +3244,7 @@
     <!--FUS triggers-->
     <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinTargetTrigger"/>
     <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger"/>
+    <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinIdeNewFileTemplateTrigger"/>
 
   </extensions>
 </idea-plugin>
