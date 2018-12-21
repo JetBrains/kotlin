@@ -837,6 +837,11 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/js"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("inlineFunctionLocalDeclarationChanges")
+        public void testInlineFunctionLocalDeclarationChanges() throws Exception {
+            runTest("jps-plugin/testData/incremental/js/inlineFunctionLocalDeclarationChanges/");
+        }
+
         @TestMetadata("jps-plugin/testData/incremental/js/friendsModuleDisabled")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -865,6 +870,19 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
                 public void testAllFilesPresentInInternalInlineFunctionIsChanged() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/js/friendsModuleDisabled/internalInlineFunctionIsChanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
                 }
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/js/inlineFunctionLocalDeclarationChanges")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineFunctionLocalDeclarationChanges extends AbstractIncrementalJsCompilerRunnerTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInlineFunctionLocalDeclarationChanges() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/js/inlineFunctionLocalDeclarationChanges"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
     }
