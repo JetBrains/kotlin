@@ -21,6 +21,32 @@ fun archToCpuName(arch: String): cpu_type_t = when (arch) {
     else -> TODO("unsupported $arch")
 }
 
+fun sourceInfoString(owner: CValue<CSSymbolOwnerRef>, address: ULong): String? {
+    var sourceInfo: CValue<CSTypeRef>? = CSSymbolOwnerGetSourceInfoWithAddress(owner, address)
+    if (CSIsNull(sourceInfo!!)) return null
+    var lineNumber = CSSourceInfoGetLineNumber(sourceInfo)
+    var maybe = false
+    if (lineNumber == 0u) {
+        // Workaround compiler bug.
+        sourceInfo = null
+        for (maybeAddress in address - 10u .. address + 10u) {
+            val maybeSourceInfo = CSSymbolOwnerGetSourceInfoWithAddress(owner, maybeAddress)
+            if (CSIsNull(maybeSourceInfo)) continue
+            var maybeLineNumber = CSSourceInfoGetLineNumber(maybeSourceInfo)
+            if (maybeLineNumber  != 0u) {
+                lineNumber = maybeLineNumber
+                sourceInfo = maybeSourceInfo
+                maybe = true
+                break
+            }
+        }
+    }
+    if (sourceInfo == null) return null
+    val filePath = CSSourceInfoGetPath(sourceInfo)?.toKString() ?: return null
+    val columnNumber = CSSourceInfoGetColumn(sourceInfo)
+    return "$filePath:${if (maybe) "~" else ""}$lineNumber:$columnNumber"
+}
+
 fun analyzeTrace(program: String, arch: String, input: Sequence<String>) {
     val symbolicator = CSSymbolicatorCreateWithPathAndArchitecture(program, archToCpuName(arch))
     if (CSIsNull(symbolicator)) throw Error("Cannot create \"$arch\" symbolicator for $program")
@@ -39,15 +65,9 @@ fun analyzeTrace(program: String, arch: String, input: Sequence<String>) {
             if (!CSIsNull(symbol)) {
                 CSSymbolGetRange(symbol).useContents {
                     val address = this.location + offsetInFunction
-                    val sourceInfo = CSSymbolOwnerGetSourceInfoWithAddress(owner, address)
-                    if (!CSIsNull(sourceInfo)) {
-                        val filePath = CSSourceInfoGetPath(sourceInfo)?.toKString()
-                        // or val fileName = CSSourceInfoGetFilename(sourceInfo)?.toKString()
-                        val lineNumber = CSSourceInfoGetLineNumber(sourceInfo)
-                        val lineNumberString = if (lineNumber != 0u) lineNumber.toString() else "<unknown>"
-                        if (filePath != null)
-                            result = matcher.replaceFirst(line,
-                                    "$atPart$functionName $filePath:$lineNumberString")
+                    val sourceInfo = sourceInfoString(owner, address)
+                    if (sourceInfo != null) {
+                        result = matcher.replaceFirst(line, "$atPart$functionName $sourceInfo")
                     }
                 }
             }

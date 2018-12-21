@@ -89,7 +89,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
 
     fun generateLocationInfo(locationInfo: LocationInfo): DILocationRef? {
-        return LLVMCreateLocation(LLVMGetModuleContext(context.llvmModule), locationInfo.line, locationInfo.line, locationInfo.scope)
+        return LLVMCreateLocation(LLVMGetModuleContext(context.llvmModule), locationInfo.line, locationInfo.column, locationInfo.scope)
     }
 
     val objCDataGenerator = when (context.config.target.family) {

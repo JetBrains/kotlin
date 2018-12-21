@@ -60,6 +60,7 @@ const char* CSSourceInfoGetPath(CSSourceInfoRef info);
 const char* CSSourceInfoGetFilename(CSSourceInfoRef info);
 
 uint32_t CSSourceInfoGetLineNumber(CSSourceInfoRef info);
+uint32_t CSSourceInfoGetColumn(CSSourceInfoRef info);
 
 CSTypeRef CSRetain(CSTypeRef);
 

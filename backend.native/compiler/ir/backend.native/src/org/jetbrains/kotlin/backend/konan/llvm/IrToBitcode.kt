@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -728,8 +729,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (body == null)                                         return
 
         generateFunction(codegen, declaration,
-                declaration.location(declaration.startLine(), declaration.startColumn()),
-                declaration.location(declaration.endLine(), declaration.endColumn())) {
+                declaration.location(start = true),
+                declaration.location(start = false)) {
             using(FunctionScope(declaration, it)) {
                 val parameterScope = ParameterScope(declaration, functionGenerationContext)
                 using(parameterScope) {
@@ -755,11 +756,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 "${declaration.descriptor.containingDeclaration}::${ir2string(declaration)}")
     }
 
-    private fun IrFunction.location(line: Int, column:Int) =
-            if (context.shouldContainDebugInfo()) LocationInfo(
+    private fun IrFunction.location(start: Boolean) =
+            if (context.shouldContainDebugInfo() && startOffset != UNDEFINED_OFFSET) LocationInfo(
                 scope = scope()!!,
-                line = line,
-                column = column)
+                line = if (start) startLine() else endLine(),
+                column = if (start) startColumn() else endColumn())
             else null
 
     //-------------------------------------------------------------------------//
@@ -920,8 +921,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      * Creates new [ContinuationBlock] that receives the value of given Kotlin type
      * and generates [code] starting from its beginning.
      */
-    private fun continuationBlock(type: IrType,
-                                  locationInfo: LocationInfo?, code: (ContinuationBlock) -> Unit = {}): ContinuationBlock {
+    private fun continuationBlock(
+            type: IrType, locationInfo: LocationInfo?, code: (ContinuationBlock) -> Unit = {}): ContinuationBlock {
+
         val entry = functionGenerationContext.basicBlock("continuation_block", locationInfo)
 
         functionGenerationContext.appendingTo(entry) {
@@ -1697,7 +1699,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private open inner class FileScope(val file:IrFile) : InnerScopeImpl() {
+    private open inner class FileScope(val file: IrFile) : InnerScopeImpl() {
         override fun fileScope(): CodeContext? = this
 
         override fun location(line: Int, column: Int) = scope()?.let {LocationInfo(it, line, column) }
@@ -1856,17 +1858,19 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun file() = (currentCodeContext.fileScope() as FileScope).file
 
     //-------------------------------------------------------------------------//
-    private fun updateBuilderDebugLocation(element: IrElement):DILocationRef? {
+    private fun updateBuilderDebugLocation(element: IrElement): DILocationRef? {
         if (!context.shouldContainDebugInfo() || currentCodeContext.functionScope() == null) return null
         @Suppress("UNCHECKED_CAST")
-        return element.startLocation?.let{functionGenerationContext.debugLocation(it)}
+        return element.startLocation?.let{ functionGenerationContext.debugLocation(it) }
     }
 
     private val IrElement.startLocation: LocationInfo?
-        get() = currentCodeContext.location(startLine(), startColumn())
+        get() = if (startOffset == UNDEFINED_OFFSET)  null
+            else currentCodeContext.location(startLine(), startColumn())
 
     private val IrElement.endLocation: LocationInfo?
-        get() = currentCodeContext.location(endLine(), endColumn())
+        get() = if (startOffset == UNDEFINED_OFFSET) null
+            else currentCodeContext.location(endLine(), endColumn())
 
     //-------------------------------------------------------------------------//
     private fun IrElement.startLine() = file().fileEntry.line(this.startOffset)
@@ -2497,6 +2501,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 }
 
-internal data class LocationInfo(val scope:DIScopeOpaqueRef,
-                                 val line:Int,
-                                 val column:Int)
+internal data class LocationInfo(val scope: DIScopeOpaqueRef,
+                                 val line: Int,
+                                 val column: Int) {
+    init {
+        assert(line != 0)
+    }
+}
