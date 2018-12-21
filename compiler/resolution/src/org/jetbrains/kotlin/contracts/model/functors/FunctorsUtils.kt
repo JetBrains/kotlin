@@ -16,10 +16,6 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.contracts.model.ConditionalEffect
-import org.jetbrains.kotlin.contracts.model.ESExpression
-import org.jetbrains.kotlin.contracts.model.structure.ESOr
-
 /**
  * Applies [operation] to [first] and [second] if both not-null, otherwise returns null
  */
@@ -37,9 +33,3 @@ internal fun <F : R, S : R, R> applyWithDefault(first: F?, second: S?, operation
     second == null -> first
     else -> operation(first, second)
 }
-
-internal fun foldConditionsWithOr(list: List<ConditionalEffect>): ESExpression? =
-    if (list.isEmpty())
-        null
-    else
-        list.map { it.condition }.reduce { acc, condition -> ESOr(acc, condition) }

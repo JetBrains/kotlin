@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.ESValue
 import org.jetbrains.kotlin.contracts.model.structure.*
 
-class EqualsFunctor(val isNegated: Boolean) : AbstractReducingFunctor() {
+class EqualsFunctor(constants: ESConstants, val isNegated: Boolean) : AbstractReducingFunctor(constants) {
     /*
         Equals is a bit tricky case to produce clauses, because e.g. if we want to emit "Returns(true)"-clause,
         then we have to guarantee that we know *all* cases when 'true' could've been returned, and join
@@ -77,7 +77,7 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractReducingFunctor() {
             }
 
             if (effect.simpleEffect.value == constant) {
-                val trueClause = ConditionalEffect(effect.condition, ESReturns(isNegated.not().lift()))
+                val trueClause = ConditionalEffect(effect.condition, ESReturns(constants.booleanValue(isNegated.not())))
                 resultingClauses.add(trueClause)
             }
 
@@ -86,7 +86,7 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractReducingFunctor() {
                     effect.simpleEffect.value,
                     constant
                 )) {
-                val falseClause = ConditionalEffect(effect.condition, ESReturns(isNegated.lift()))
+                val falseClause = ConditionalEffect(effect.condition, ESReturns(constants.booleanValue(isNegated)))
                 resultingClauses.add(falseClause)
             }
         }
@@ -108,8 +108,8 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractReducingFunctor() {
 
     private fun equateValues(left: ESValue, right: ESValue): List<ESEffect> {
         return listOf(
-            ConditionalEffect(ESEqual(left, right, isNegated), ESReturns(true.lift())),
-            ConditionalEffect(ESEqual(left, right, isNegated.not()), ESReturns(false.lift()))
+            ConditionalEffect(ESEqual(constants, left, right, isNegated), ESReturns(constants.trueValue)),
+            ConditionalEffect(ESEqual(constants, left, right, isNegated.not()), ESReturns(constants.falseValue))
         )
     }
 }

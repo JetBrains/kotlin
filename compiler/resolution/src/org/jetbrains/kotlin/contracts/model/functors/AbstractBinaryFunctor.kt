@@ -19,11 +19,10 @@ package org.jetbrains.kotlin.contracts.model.functors
 import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.structure.isReturns
-import org.jetbrains.kotlin.contracts.model.structure.isWildcard
+import org.jetbrains.kotlin.contracts.model.ESExpression
+import org.jetbrains.kotlin.contracts.model.structure.*
 
-abstract class AbstractBinaryFunctor : AbstractReducingFunctor() {
+abstract class AbstractBinaryFunctor(constants: ESConstants) : AbstractReducingFunctor(constants) {
     override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
         assert(arguments.size == 2) { "Wrong size of arguments list for Binary functor: expected 2, got ${arguments.size}" }
         return invokeWithArguments(arguments[0], arguments[1])
@@ -46,7 +45,14 @@ abstract class AbstractBinaryFunctor : AbstractReducingFunctor() {
         return nonInterestingEffects + evaluatedByFunctor
     }
 
+    protected fun foldConditionsWithOr(list: List<ConditionalEffect>): ESExpression? =
+        if (list.isEmpty())
+            null
+        else
+            list.map { it.condition }.reduce { acc, condition -> ESOr(constants, acc, condition) }
+
     protected abstract fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect>
+
     protected abstract fun invokeWithReturningEffects(
         left: List<ConditionalEffect>,
         right: List<ConditionalEffect>

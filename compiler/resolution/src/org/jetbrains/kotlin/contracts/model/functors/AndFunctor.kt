@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.structure.*
 
-class AndFunctor : AbstractBinaryFunctor() {
-    override fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect> = when (constant) {
-        ESConstant.TRUE -> computation.effects
-        ESConstant.FALSE -> emptyList()
+class AndFunctor(constants: ESConstants) : AbstractBinaryFunctor(constants) {
+    override fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect> = when {
+        constant.isTrue -> computation.effects
+        constant.isFalse -> emptyList()
 
-    // This means that expression isn't typechecked properly
+        // This means that expression isn't typechecked properly
         else -> computation.effects
     }
 
@@ -48,20 +48,20 @@ class AndFunctor : AbstractBinaryFunctor() {
 
         // Even if one of 'Returns(true)' is missing, we still can argue that other condition
         // *must* be true when whole functor returns true
-        val conditionWhenTrue = applyWithDefault(whenLeftReturnsTrue, whenRightReturnsTrue, { l, r -> ESAnd(l, r) })
+        val conditionWhenTrue = applyWithDefault(whenLeftReturnsTrue, whenRightReturnsTrue) { l, r -> ESAnd(constants, l, r) }
 
         // When whole And-functor returns false, we can only argue that one of arguments was false, and to do so we
         // have to know *both* 'Returns(false)'-conditions
-        val conditionWhenFalse = applyIfBothNotNull(whenLeftReturnsFalse, whenRightReturnsFalse, { l, r -> ESOr(l, r) })
+        val conditionWhenFalse = applyIfBothNotNull(whenLeftReturnsFalse, whenRightReturnsFalse) { l, r -> ESOr(constants, l, r) }
 
         val result = mutableListOf<ConditionalEffect>()
 
         if (conditionWhenTrue != null) {
-            result.add(ConditionalEffect(conditionWhenTrue, ESReturns(true.lift())))
+            result.add(ConditionalEffect(conditionWhenTrue, ESReturns(constants.trueValue)))
         }
 
         if (conditionWhenFalse != null) {
-            result.add(ConditionalEffect(conditionWhenFalse, ESReturns(false.lift())))
+            result.add(ConditionalEffect(conditionWhenFalse, ESReturns(constants.falseValue)))
         }
 
         return result

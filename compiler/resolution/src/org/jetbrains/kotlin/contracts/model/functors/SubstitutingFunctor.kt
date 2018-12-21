@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.model.visitors.Substitutor
@@ -25,10 +24,10 @@ import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class SubstitutingFunctor(
+    private val components: ESComponents,
     private val basicEffects: List<ESEffect>,
-    private val ownerFunction: FunctionDescriptor,
-    private val builtIns: KotlinBuiltIns
-) : AbstractReducingFunctor() {
+    private val ownerFunction: FunctionDescriptor
+) : AbstractReducingFunctor(components.constants) {
     override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
         if (basicEffects.isEmpty()) return emptyList()
 
@@ -41,7 +40,7 @@ class SubstitutingFunctor(
         }
 
         val substitutions = parameters.zip(arguments).toMap()
-        val substitutor = Substitutor(substitutions, builtIns)
+        val substitutor = Substitutor(substitutions, components.builtIns)
         val substitutedClauses = mutableListOf<ESEffect>()
 
         effectsLoop@ for (effect in basicEffects) {

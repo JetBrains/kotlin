@@ -22,18 +22,18 @@ import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.EffectDeclaration
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.description.expressions.VariableReference
+import org.jetbrains.kotlin.contracts.model.ESComponents
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.ESExpression
 import org.jetbrains.kotlin.contracts.model.Functor
 import org.jetbrains.kotlin.contracts.model.functors.SubstitutingFunctor
 import org.jetbrains.kotlin.contracts.model.structure.ESConstant
 import org.jetbrains.kotlin.contracts.model.structure.ESVariable
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 /**
  * This class manages conversion of [ContractDescription] to [Functor]
  */
-class ContractInterpretationDispatcher(internal val module: ModuleDescriptor) {
+class ContractInterpretationDispatcher(val components: ESComponents) {
     private val constantsInterpreter = ConstantValuesInterpreter()
     private val conditionInterpreter = ConditionInterpreter(this)
     private val conditionalEffectInterpreter = ConditionalEffectInterpreter(this)
@@ -51,7 +51,7 @@ class ContractInterpretationDispatcher(internal val module: ModuleDescriptor) {
             }
         }
 
-        return SubstitutingFunctor(resultingClauses, contractDescription.ownerFunction, module.builtIns)
+        return SubstitutingFunctor(components, resultingClauses, contractDescription.ownerFunction)
     }
 
     internal fun interpretEffect(effectDeclaration: EffectDeclaration): ESEffect? {
@@ -60,7 +60,7 @@ class ContractInterpretationDispatcher(internal val module: ModuleDescriptor) {
     }
 
     internal fun interpretConstant(constantReference: ConstantReference): ESConstant? =
-        constantsInterpreter.interpretConstant(constantReference)
+        constantsInterpreter.interpretConstant(constantReference, components.constants)
 
     internal fun interpretCondition(booleanExpression: BooleanExpression): ESExpression? =
         booleanExpression.accept(conditionInterpreter, Unit)
