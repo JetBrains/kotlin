@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.TypeParameterMappings
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
+import org.jetbrains.kotlin.codegen.intrinsics.Not
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
@@ -638,13 +639,26 @@ class ExpressionCodegen(
 
     private fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: KotlinType, otherBranches: List<IrBranch>): StackValue {
         val elseLabel = Label()
-        val condition = branch.condition
+        var condition = branch.condition
         val thenBranch = branch.result
         //TODO don't generate condition for else branch - java verifier fails with empty stack
         val elseBranch = branch is IrElseBranch
         if (!elseBranch) {
-            gen(condition, data)
-            BranchedValue.condJump(StackValue.onStack(condition.asmType), elseLabel, true, mv)
+            var jumpIfFalse = true
+            // TODO: there should be only one representation of the 'not' operator.
+            if (condition is IrCall && (
+                        condition.symbol == classCodegen.context.irBuiltIns.booleanNotSymbol ||
+                                classCodegen.state.intrinsics.getIntrinsic(condition.symbol.descriptor) is Not
+                        )
+            ) {
+                // Instead of materializing a negated value when used for control flow, flip the branch
+                // targets instead. This significantly cuts down the amount of branches and loads of
+                // const_0 and const_1 in the generated java bytecode.
+                condition = condition.dispatchReceiver ?: condition.getValueArgument(0)!!
+                jumpIfFalse = false
+            }
+            gen(condition, data).put(condition.asmType, mv)
+            BranchedValue.condJump(StackValue.onStack(condition.asmType), elseLabel, jumpIfFalse, mv)
         }
 
         val end = Label()
