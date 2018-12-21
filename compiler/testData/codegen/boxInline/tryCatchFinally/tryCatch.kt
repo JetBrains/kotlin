@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM
 // FILE: 1.kt
+// WITH_RUNTIME
 
 class My(val value: Int)
 
@@ -7,7 +7,7 @@ inline fun <T, R> T.perform(job: (T)-> R) : R {
     return job(this)
 }
 
-public inline fun String.toInt2() : Int = java.lang.Integer.parseInt(this)
+public inline fun String.toInt2() : Int = this.toInt()
 
 // FILE: 2.kt
 
