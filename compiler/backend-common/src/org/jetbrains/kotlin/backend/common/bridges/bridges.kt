@@ -30,6 +30,8 @@ interface FunctionHandle {
     val mayBeUsedAsSuperImplementation: Boolean
 
     fun getOverridden(): Iterable<FunctionHandle>
+
+    val mightBeIncorrectCode: Boolean get() = false
 }
 
 data class Bridge<out Signature>(
