@@ -455,6 +455,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
+    public Type mapTypeAsDeclaration(@NotNull KotlinType type) {
+        return typeMapper.mapTypeAsDeclaration(type);
+    }
+
+    @NotNull
     public Type expressionType(@Nullable KtExpression expression) {
         return CodegenUtilKt.asmType(expression, typeMapper, bindingContext);
     }

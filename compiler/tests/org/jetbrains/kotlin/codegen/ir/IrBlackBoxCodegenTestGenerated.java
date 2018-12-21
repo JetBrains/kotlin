@@ -12165,6 +12165,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inlineClasses/kt28879.kt");
         }
 
+        @TestMetadata("kt28920_javaObjectType.kt")
+        public void testKt28920_javaObjectType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt28920_javaObjectType.kt");
+        }
+
+        @TestMetadata("kt28920_javaPrimitiveType.kt")
+        public void testKt28920_javaPrimitiveType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt28920_javaPrimitiveType.kt");
+        }
+
         @TestMetadata("mapInlineClassesWithSuppressWildcardsMode.kt")
         public void testMapInlineClassesWithSuppressWildcardsMode() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mapInlineClassesWithSuppressWildcardsMode.kt");
