@@ -49,7 +49,7 @@ class KClassJavaObjectTypeProperty : IntrinsicPropertyGetter() {
                     }
                     codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(lhs.type, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
                 }
-                iv.aconst(AsmUtil.boxType(codegen.asmType(lhs.type)))
+                iv.aconst(AsmUtil.boxType(codegen.mapTypeAsDeclaration(lhs.type)))
             }
         }
     }
