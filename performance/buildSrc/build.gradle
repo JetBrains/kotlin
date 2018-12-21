@@ -1,0 +1,35 @@
+buildscript {
+    repositories {
+        maven {
+            url 'https://cache-redirector.jetbrains.com/maven-central'
+        }
+        maven {
+            url kotlinCompilerRepo
+        }
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    maven {
+        url kotlinCompilerRepo
+    }
+    maven {
+        url buildKotlinCompilerRepo
+    }
+    jcenter()
+}
+
+dependencies {
+    compileOnly gradleApi()
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+}
+
+sourceSets.main.kotlin.srcDirs = ["src", "$projectDir/../../tools/benchmarks/shared/src"]

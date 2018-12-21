@@ -28,7 +28,7 @@ include ':common'
 include ':backend.native:tests'
 include ':backend.native:debugger-tests'
 include ':utilities'
-include ':performance'
+//include ':performance'    TODO: return when there is one HostManager class version
 include ':platformLibs'
 
 includeBuild 'shared'

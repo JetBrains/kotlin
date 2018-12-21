@@ -1,3 +1,3 @@
 package org.jetbrains.ring
 
-actual fun cleanup() { }
+expect fun cleanup()

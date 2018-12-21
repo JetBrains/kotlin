@@ -1,6 +1,9 @@
 /**
  * Created by semoro on 07.07.17.
  */
+
+import org.jetbrains.ring.assert
+
 fun octoTest() {
     val tree = OctoTree<Boolean>(4)
     val to = (2 shl tree.depth)

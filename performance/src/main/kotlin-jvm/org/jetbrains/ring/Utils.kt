@@ -16,12 +16,14 @@
 
 package org.jetbrains.ring
 
+import java.io.File
+
 //-----------------------------------------------------------------------------//
 
-class Blackhole {
-    companion object {
-        var consumer = 0
-        fun consume(value: Any) {
+actual class Blackhole {
+    actual companion object {
+        actual var consumer = 0
+        actual fun consume(value: Any) {
             consumer += value.hashCode()
         }
     }
@@ -29,18 +31,37 @@ class Blackhole {
 
 //-----------------------------------------------------------------------------//
 
-class Random() {
-    companion object {
-        var seedInt = 0
-        fun nextInt(boundary: Int = 100): Int {
+actual class Random actual constructor() {
+    actual companion object {
+        actual var seedInt = 0
+        actual fun nextInt(boundary: Int): Int {
             seedInt = (3 * seedInt + 11) % boundary
             return seedInt
         }
 
-        var seedDouble: Double = 0.1
-        fun nextDouble(boundary: Double = 100.0): Double {
+        actual var seedDouble: Double = 0.1
+        actual fun nextDouble(boundary: Double): Double {
             seedDouble = (7.0 * seedDouble + 7.0) % boundary
             return seedDouble
         }
     }
 }
+
+//-----------------------------------------------------------------------------//
+
+actual fun writeToFile(fileName: String, text: String) {
+    File(fileName).printWriter().use { out ->
+        out.println(text)
+    }
+}
+
+// Wrapper for assert funtion in stdlib
+actual fun assert(value: Boolean) {
+    kotlin.assert(value)
+}
+
+// Wrapper for measureNanoTime funtion in stdlib
+actual inline fun measureNanoTime(block: () -> Unit): Long {
+    return kotlin.system.measureNanoTime(block)
+}
+

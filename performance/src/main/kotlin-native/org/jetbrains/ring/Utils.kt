@@ -16,13 +16,15 @@
 
 package org.jetbrains.ring
 
+import platform.posix.*
+
 //-----------------------------------------------------------------------------//
 
-class Blackhole {
+actual class Blackhole {
     @kotlin.native.ThreadLocal
-    companion object {
-        var consumer = 0
-        fun consume(value: Any) {
+    actual companion object {
+        actual var consumer = 0
+        actual fun consume(value: Any) {
             consumer += value.hashCode()
         }
     }
@@ -30,19 +32,41 @@ class Blackhole {
 
 //-----------------------------------------------------------------------------//
 
-class Random() {
+actual class Random actual constructor() {
     @kotlin.native.ThreadLocal
-    companion object {
-        var seedInt = 0
-        fun nextInt(boundary: Int = 100): Int {
+    actual companion object {
+        actual var seedInt = 0
+        actual fun nextInt(boundary: Int): Int {
             seedInt = (3 * seedInt + 11) % boundary
             return seedInt
         }
 
-        var seedDouble: Double = 0.1
-        fun nextDouble(boundary: Double = 100.0): Double {
+        actual var seedDouble: Double = 0.1
+        actual fun nextDouble(boundary: Double): Double {
             seedDouble = (7.0 * seedDouble + 7.0) % boundary
             return seedDouble
         }
     }
+}
+
+//-----------------------------------------------------------------------------//
+
+
+actual fun writeToFile(fileName: String, text: String) {
+    val file = fopen(fileName, "wt") ?: error("Cannot write file '$fileName'")
+    try {
+        if (fputs(text, file) == EOF) throw Error("File write error")
+    } finally {
+        fclose(file)
+    }
+}
+
+// Wrapper for assert funtion in stdlib
+actual fun assert(value: Boolean) {
+    kotlin.assert(value)
+}
+
+// Wrapper for measureNanoTime funtion in stdlib
+actual inline fun measureNanoTime(block: () -> Unit): Long {
+    return kotlin.system.measureNanoTime(block)
 }

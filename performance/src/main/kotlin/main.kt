@@ -15,10 +15,12 @@
  */
 
 import org.jetbrains.ring.Launcher
+import org.jetbrains.ring.JsonReportCreator
 
 fun main(args: Array<String>) {
     var numWarmIterations = 0       // Should be 100000 for jdk based run
     var numberOfAttempts = 10
+    var jsonReport: String? = null
 
     when (args.size) {
         0 -> { }
@@ -27,13 +29,20 @@ fun main(args: Array<String>) {
             numWarmIterations = args[0].toInt()
             numberOfAttempts = args[1].toInt()
         }
+        3 -> {
+            numWarmIterations = args[0].toInt()
+            numberOfAttempts = args[1].toInt()
+            jsonReport = args[2].toString()
+        }
         else -> {
-            println("Usage: perf [# warmup iterations] [# attempts]")
+            println("Usage: perf [# warmup iterations] [# attempts] [# path of json report]")
             return
         }
     }
 
     println("Ring starting")
     println("  warmup  iterations count: $numWarmIterations")
-    Launcher(numWarmIterations, numberOfAttempts).runBenchmarks()
+    val results = Launcher(numWarmIterations, numberOfAttempts).runBenchmarks()
+    if (jsonReport != null)
+        JsonReportCreator(results).printJsonReport(jsonReport)
 }

@@ -18,7 +18,7 @@ package org.jetbrains.ring
 
 import octoTest
 import kotlin.math.sqrt
-import kotlin.system.measureNanoTime
+import org.jetbrains.report.BenchmarkResult
 
 val BENCHMARK_SIZE = 100
 
@@ -28,8 +28,9 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     class Results(val mean: Double, val variance: Double)
 
     val results = mutableMapOf<String, Results>()
+    val benchmarkResults = mutableListOf<BenchmarkResult>()
 
-    fun launch(benchmark: () -> Any?): Results {                          // If benchmark runs too long - use coeff to speed it up.
+    fun launch(benchmark: () -> Any?, name: String) {                          // If benchmark runs too long - use coeff to speed it up.
         var i = numWarmIterations
 
         while (i-- > 0) benchmark()
@@ -58,17 +59,22 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
                 }
                 cleanup()
             }
-            samples[k] = time * 1.0 / autoEvaluatedNumberOfMeasureIteration
+            val scaledTime = time * 1.0 / autoEvaluatedNumberOfMeasureIteration
+            samples[k] = scaledTime
+            // Save benchmark object
+            benchmarkResults.add(BenchmarkResult(name, BenchmarkResult.Status.PASSED,
+                                scaledTime / 1000, scaledTime / 1000,
+                                k + 1, numWarmIterations))
         }
         val mean = samples.sum() / numberOfAttempts
         val variance = samples.indices.sumByDouble { (samples[it] - mean) * (samples[it] - mean) } / numberOfAttempts
 
-        return Results(mean, variance)
+        results[name] = Results(mean, variance)
     }
 
     //-------------------------------------------------------------------------//
 
-    fun runBenchmarks() {
+    fun runBenchmarks(): List<BenchmarkResult> {
         runAbstractMethodBenchmark()
         runClassArrayBenchmark()
         runClassBaselineBenchmark()
@@ -96,6 +102,7 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         runOctoTest()
 
         printResultsNormalized()
+        return benchmarkResults
     }
 
     //-------------------------------------------------------------------------//
@@ -135,8 +142,8 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     fun runAbstractMethodBenchmark() {
         val benchmark = AbstractMethodBenchmark()
 
-        results["AbstractMethod.sortStrings"]               = launch(benchmark::sortStrings)
-        results["AbstractMethod.sortStringsWithComparator"] = launch(benchmark::sortStringsWithComparator)
+        launch(benchmark::sortStrings, "AbstractMethod.sortStrings")
+        launch(benchmark::sortStringsWithComparator, "AbstractMethod.sortStringsWithComparator")
     }
 
     //-------------------------------------------------------------------------//
@@ -145,16 +152,16 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = ClassArrayBenchmark()
         benchmark.setup()
 
-        results["ClassArray.copy"]                = launch(benchmark::copy)
-        results["ClassArray.copyManual"]          = launch(benchmark::copyManual)
-        results["ClassArray.filterAndCount"]      = launch(benchmark::filterAndCount)
-        results["ClassArray.filterAndMap"]        = launch(benchmark::filterAndMap)
-        results["ClassArray.filterAndMapManual"]  = launch(benchmark::filterAndMapManual)
-        results["ClassArray.filter"]              = launch(benchmark::filter)
-        results["ClassArray.filterManual"]        = launch(benchmark::filterManual)
-        results["ClassArray.countFilteredManual"] = launch(benchmark::countFilteredManual)
-        results["ClassArray.countFiltered"]       = launch(benchmark::countFiltered)
-        results["ClassArray.countFilteredLocal"]  = launch(benchmark::countFilteredLocal)
+        launch(benchmark::copy,"ClassArray.copy")
+        launch(benchmark::copyManual, "ClassArray.copyManual")
+        launch(benchmark::filterAndCount, "ClassArray.filterAndCount")
+        launch(benchmark::filterAndMap, "ClassArray.filterAndMap")
+        launch(benchmark::filterAndMapManual, "ClassArray.filterAndMapManual")
+        launch(benchmark::filter, "ClassArray.filter")
+        launch(benchmark::filterManual, "ClassArray.filterManual")
+        launch(benchmark::countFilteredManual, "ClassArray.countFilteredManual")
+        launch(benchmark::countFiltered, "ClassArray.countFiltered")
+        launch(benchmark::countFilteredLocal, "ClassArray.countFilteredLocal")
     }
 
     //-------------------------------------------------------------------------//
@@ -162,13 +169,13 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     fun runClassBaselineBenchmark() {
         val benchmark = ClassBaselineBenchmark()
 
-        results["ClassBaseline.consume"]              = launch(benchmark::consume)
-        results["ClassBaseline.consumeField"]         = launch(benchmark::consumeField)
-        results["ClassBaseline.allocateList"]         = launch(benchmark::allocateList)
-        results["ClassBaseline.allocateArray"]        = launch(benchmark::allocateArray)
-        results["ClassBaseline.allocateListAndFill"]  = launch(benchmark::allocateListAndFill)
-        results["ClassBaseline.allocateListAndWrite"] = launch(benchmark::allocateListAndWrite)
-        results["ClassBaseline.allocateArrayAndFill"] = launch(benchmark::allocateArrayAndFill)
+        launch(benchmark::consume, "ClassBaseline.consume")
+        launch(benchmark::consumeField, "ClassBaseline.consumeField")
+        launch(benchmark::allocateList, "ClassBaseline.allocateList")
+        launch(benchmark::allocateArray, "ClassBaseline.allocateArray")
+        launch(benchmark::allocateListAndFill, "ClassBaseline.allocateListAndFill")
+        launch(benchmark::allocateListAndWrite, "ClassBaseline.allocateListAndWrite")
+        launch(benchmark::allocateArrayAndFill, "ClassBaseline.allocateArrayAndFill")
     }
 
     //-------------------------------------------------------------------------//
@@ -177,22 +184,22 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = ClassListBenchmark()
         benchmark.setup()
 
-        results["ClassList.copy"]                             = launch(benchmark::copy)
-        results["ClassList.copyManual"]                       = launch(benchmark::copyManual)
-        results["ClassList.filterAndCount"]                   = launch(benchmark::filterAndCount)
-        results["ClassList.filterAndCountWithLambda"]         = launch(benchmark::filterAndCountWithLambda)
-        results["ClassList.filterWithLambda"]                 = launch(benchmark::filterWithLambda)
-        results["ClassList.mapWithLambda"]                    = launch(benchmark::mapWithLambda)
-        results["ClassList.countWithLambda"]                  = launch(benchmark::countWithLambda)
-        results["ClassList.filterAndMapWithLambda"]           = launch(benchmark::filterAndMapWithLambda)
-        results["ClassList.filterAndMapWithLambdaAsSequence"] = launch(benchmark::filterAndMapWithLambdaAsSequence)
-        results["ClassList.filterAndMap"]                     = launch(benchmark::filterAndMap)
-        results["ClassList.filterAndMapManual"]               = launch(benchmark::filterAndMapManual)
-        results["ClassList.filter"]                           = launch(benchmark::filter)
-        results["ClassList.filterManual"]                     = launch(benchmark::filterManual)
-        results["ClassList.countFilteredManual"]              = launch(benchmark::countFilteredManual)
-        results["ClassList.countFiltered"]                    = launch(benchmark::countFiltered)
-        results["ClassList.reduce"]                           = launch(benchmark::reduce)
+        launch(benchmark::copy, "ClassList.copy")
+        launch(benchmark::copyManual, "ClassList.copyManual")
+        launch(benchmark::filterAndCount, "ClassList.filterAndCount")
+        launch(benchmark::filterAndCountWithLambda, "ClassList.filterAndCountWithLambda")
+        launch(benchmark::filterWithLambda, "ClassList.filterWithLambda")
+        launch(benchmark::mapWithLambda, "ClassList.mapWithLambda")
+        launch(benchmark::countWithLambda, "ClassList.countWithLambda")
+        launch(benchmark::filterAndMapWithLambda, "ClassList.filterAndMapWithLambda")
+        launch(benchmark::filterAndMapWithLambdaAsSequence, "ClassList.filterAndMapWithLambdaAsSequence")
+        launch(benchmark::filterAndMap, "ClassList.filterAndMap")
+        launch(benchmark::filterAndMapManual, "ClassList.filterAndMapManual")
+        launch(benchmark::filter, "ClassList.filter")
+        launch(benchmark::filterManual, "ClassList.filterManual")
+        launch(benchmark::countFilteredManual, "ClassList.countFilteredManual")
+        launch(benchmark::countFiltered, "ClassList.countFiltered")
+        launch(benchmark::reduce, "ClassList.reduce")
     }
 
     //-------------------------------------------------------------------------//
@@ -201,16 +208,16 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = ClassStreamBenchmark()
         benchmark.setup()
 
-        results["ClassStream.copy"]                = launch(benchmark::copy)
-        results["ClassStream.copyManual"]          = launch(benchmark::copyManual)
-        results["ClassStream.filterAndCount"]      = launch(benchmark::filterAndCount)
-        results["ClassStream.filterAndMap"]        = launch(benchmark::filterAndMap)
-        results["ClassStream.filterAndMapManual"]  = launch(benchmark::filterAndMapManual)
-        results["ClassStream.filter"]              = launch(benchmark::filter)
-        results["ClassStream.filterManual"]        = launch(benchmark::filterManual)
-        results["ClassStream.countFilteredManual"] = launch(benchmark::countFilteredManual)
-        results["ClassStream.countFiltered"]       = launch(benchmark::countFiltered)
-        results["ClassStream.reduce"]              = launch(benchmark::reduce)
+        launch(benchmark::copy, "ClassStream.copy")
+        launch(benchmark::copyManual, "ClassStream.copyManual")
+        launch(benchmark::filterAndCount, "ClassStream.filterAndCount")
+        launch(benchmark::filterAndMap, "ClassStream.filterAndMap")
+        launch(benchmark::filterAndMapManual, "ClassStream.filterAndMapManual")
+        launch(benchmark::filter, "ClassStream.filter")
+        launch(benchmark::filterManual, "ClassStream.filterManual")
+        launch(benchmark::countFilteredManual, "ClassStream.countFilteredManual")
+        launch(benchmark::countFiltered, "ClassStream.countFiltered")
+        launch(benchmark::reduce, "ClassStream.reduce")
     }
 
     //-------------------------------------------------------------------------//
@@ -218,8 +225,8 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     fun runCompanionObjectBenchmark() {
         val benchmark = CompanionObjectBenchmark()
 
-        results["CompanionObject.invokeRegularFunction"]   = launch(benchmark::invokeRegularFunction)
-        results["CompanionObject.invokeJvmStaticFunction"] = launch(benchmark::invokeJvmStaticFunction)
+        launch(benchmark::invokeRegularFunction, "CompanionObject.invokeRegularFunction")
+        launch(benchmark::invokeJvmStaticFunction, "CompanionObject.invokeJvmStaticFunction")
     }
 
     //-------------------------------------------------------------------------//
@@ -228,12 +235,12 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = DefaultArgumentBenchmark()
         benchmark.setup()
 
-        results["DefaultArgument.testOneOfTwo"]     = launch(benchmark::testOneOfTwo)
-        results["DefaultArgument.testTwoOfTwo"]     = launch(benchmark::testTwoOfTwo)
-        results["DefaultArgument.testOneOfFour"]    = launch(benchmark::testOneOfFour)
-        results["DefaultArgument.testFourOfFour"]   = launch(benchmark::testFourOfFour)
-        results["DefaultArgument.testOneOfEight"]   = launch(benchmark::testOneOfEight)
-        results["DefaultArgument.testEightOfEight"] = launch(benchmark::testEightOfEight)
+        launch(benchmark::testOneOfTwo, "DefaultArgument.testOneOfTwo")
+        launch(benchmark::testTwoOfTwo, "DefaultArgument.testTwoOfTwo")
+        launch(benchmark::testOneOfFour, "DefaultArgument.testOneOfFour")
+        launch(benchmark::testFourOfFour, "DefaultArgument.testFourOfFour")
+        launch(benchmark::testOneOfEight, "DefaultArgument.testOneOfEight")
+        launch(benchmark::testEightOfEight, "DefaultArgument.testEightOfEight")
     }
 
     //-------------------------------------------------------------------------//
@@ -242,7 +249,7 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = ElvisBenchmark()
         benchmark.setup()
 
-        results["Elvis.testElvis"] = launch(benchmark::testElvis)
+        launch(benchmark::testElvis, "Elvis.testElvis")
     }
 
     //-------------------------------------------------------------------------//
@@ -250,14 +257,14 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     fun runEulerBenchmark() {
         val benchmark = EulerBenchmark()
 
-        results["Euler.problem1bySequence"] = launch(benchmark::problem1bySequence)
-        results["Euler.problem1"]           = launch(benchmark::problem1)
-        results["Euler.problem2"]           = launch(benchmark::problem2)
-        results["Euler.problem4"]           = launch(benchmark::problem4)
-        results["Euler.problem8"]           = launch(benchmark::problem8)
-        results["Euler.problem9"]           = launch(benchmark::problem9)
-        results["Euler.problem14"]          = launch(benchmark::problem14)
-        results["Euler.problem14full"]      = launch(benchmark::problem14full)
+        launch(benchmark::problem1bySequence, "Euler.problem1bySequence")
+        launch(benchmark::problem1, "Euler.problem1")
+        launch(benchmark::problem2, "Euler.problem2")
+        launch(benchmark::problem4, "Euler.problem4")
+        launch(benchmark::problem8, "Euler.problem8")
+        launch(benchmark::problem9, "Euler.problem9")
+        launch(benchmark::problem14, "Euler.problem14")
+        launch(benchmark::problem14full, "Euler.problem14full")
     }
 
 
@@ -265,10 +272,10 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
 
     fun runFibonacciBenchmark() {
         val benchmark = FibonacciBenchmark()
-        results["Fibonacci.calcClassic"]         = launch(benchmark::calcClassic)
-        results["Fibonacci.calc"]                = launch(benchmark::calc)
-        results["Fibonacci.calcWithProgression"] = launch(benchmark::calcWithProgression)
-        results["Fibonacci.calcSquare"]          = launch(benchmark::calcSquare)
+        launch(benchmark::calcClassic, "Fibonacci.calcClassic")
+        launch(benchmark::calc, "Fibonacci.calc")
+        launch(benchmark::calcWithProgression, "Fibonacci.calcWithProgression")
+        launch(benchmark::calcSquare, "Fibonacci.calcSquare")
     }
 
     //-------------------------------------------------------------------------//
@@ -276,27 +283,27 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     fun runForLoopBenchmark() {
         val benchmark = ForLoopsBenchmark()
 
-        results["ForLoops.arrayLoop"] = launch(benchmark::arrayLoop)
-        results["ForLoops.intArrayLoop"] = launch(benchmark::intArrayLoop)
-        results["ForLoops.floatArrayLoop"] = launch(benchmark::floatArrayLoop)
-        results["ForLoops.charArrayLoop"] = launch(benchmark::charArrayLoop)
-        results["ForLoops.stringLoop"] = launch(benchmark::stringLoop)
+        launch(benchmark::arrayLoop, "ForLoops.arrayLoop")
+        launch(benchmark::intArrayLoop, "ForLoops.intArrayLoop")
+        launch(benchmark::floatArrayLoop, "ForLoops.floatArrayLoop")
+        launch(benchmark::charArrayLoop, "ForLoops.charArrayLoop")
+        launch(benchmark::stringLoop, "ForLoops.stringLoop")
 
-        results["ForLoops.arrayIndicesLoop"] = launch(benchmark::arrayIndicesLoop)
-        results["ForLoops.intArrayIndicesLoop"] = launch(benchmark::intArrayIndicesLoop)
-        results["ForLoops.floatArrayIndicesLoop"] = launch(benchmark::floatArrayIndicesLoop)
-        results["ForLoops.charArrayIndicesLoop"] = launch(benchmark::charArrayIndicesLoop)
-        results["ForLoops.stringIndicesLoop"] = launch(benchmark::stringIndicesLoop)
+        launch(benchmark::arrayIndicesLoop, "ForLoops.arrayIndicesLoop")
+        launch(benchmark::intArrayIndicesLoop, "ForLoops.intArrayIndicesLoop")
+        launch(benchmark::floatArrayIndicesLoop, "ForLoops.floatArrayIndicesLoop")
+        launch(benchmark::charArrayIndicesLoop, "ForLoops.charArrayIndicesLoop")
+        launch(benchmark::stringIndicesLoop, "ForLoops.stringIndicesLoop")
     }
 
     //-------------------------------------------------------------------------//
 
     fun runInlineBenchmark() {
         val benchmark = InlineBenchmark()
-        results["Inline.calculate"]              = launch(benchmark::calculate)
-        results["Inline.calculateInline"]        = launch(benchmark::calculateInline)
-        results["Inline.calculateGeneric"]       = launch(benchmark::calculateGeneric)
-        results["Inline.calculateGenericInline"] = launch(benchmark::calculateGenericInline)
+        launch(benchmark::calculate, "Inline.calculate")
+        launch(benchmark::calculateInline, "Inline.calculateInline")
+        launch(benchmark::calculateGeneric, "Inline.calculateGeneric")
+        launch(benchmark::calculateGenericInline, "Inline.calculateGenericInline")
     }
 
     //-------------------------------------------------------------------------//
@@ -305,26 +312,26 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = IntArrayBenchmark()
         benchmark.setup()
 
-        results["IntArray.copy"]                     = launch(benchmark::copy)
-        results["IntArray.copyManual"]               = launch(benchmark::copyManual)
-        results["IntArray.filterAndCount"]           = launch(benchmark::filterAndCount)
-        results["IntArray.filterSomeAndCount"]       = launch(benchmark::filterSomeAndCount)
-        results["IntArray.filterAndMap"]             = launch(benchmark::filterAndMap)
-        results["IntArray.filterAndMapManual"]       = launch(benchmark::filterAndMapManual)
-        results["IntArray.filter"]                   = launch(benchmark::filter)
-        results["IntArray.filterSome"]               = launch(benchmark::filterSome)
-        results["IntArray.filterPrime"]              = launch(benchmark::filterPrime)
-        results["IntArray.filterManual"]             = launch(benchmark::filterManual)
-        results["IntArray.filterSomeManual"]         = launch(benchmark::filterSomeManual)
-        results["IntArray.countFilteredManual"]      = launch(benchmark::countFilteredManual)
-        results["IntArray.countFilteredSomeManual"]  = launch(benchmark::countFilteredSomeManual)
-        results["IntArray.countFilteredPrimeManual"] = launch(benchmark::countFilteredPrimeManual)
-        results["IntArray.countFiltered"]            = launch(benchmark::countFiltered)
-        results["IntArray.countFilteredSome"]        = launch(benchmark::countFilteredSome)
-        results["IntArray.countFilteredPrime"]       = launch(benchmark::countFilteredPrime)
-        results["IntArray.countFilteredLocal"]       = launch(benchmark::countFilteredLocal)
-        results["IntArray.countFilteredSomeLocal"]   = launch(benchmark::countFilteredSomeLocal)
-        results["IntArray.reduce"]                   = launch(benchmark::reduce)
+        launch(benchmark::copy, "IntArray.copy")
+        launch(benchmark::copyManual, "IntArray.copyManual")
+        launch(benchmark::filterAndCount, "IntArray.filterAndCount")
+        launch(benchmark::filterSomeAndCount, "IntArray.filterSomeAndCount")
+        launch(benchmark::filterAndMap, "IntArray.filterAndMap")
+        launch(benchmark::filterAndMapManual, "IntArray.filterAndMapManual")
+        launch(benchmark::filter, "IntArray.filter")
+        launch(benchmark::filterSome, "IntArray.filterSome")
+        launch(benchmark::filterPrime, "IntArray.filterPrime")
+        launch(benchmark::filterManual, "IntArray.filterManual")
+        launch(benchmark::filterSomeManual, "IntArray.filterSomeManual")
+        launch(benchmark::countFilteredManual, "IntArray.countFilteredManual")
+        launch(benchmark::countFilteredSomeManual, "IntArray.countFilteredSomeManual")
+        launch(benchmark::countFilteredPrimeManual, "IntArray.countFilteredPrimeManual")
+        launch(benchmark::countFiltered, "IntArray.countFiltered")
+        launch(benchmark::countFilteredSome, "IntArray.countFilteredSome")
+        launch(benchmark::countFilteredPrime, "IntArray.countFilteredPrime")
+        launch(benchmark::countFilteredLocal, "IntArray.countFilteredLocal")
+        launch(benchmark::countFilteredSomeLocal, "IntArray.countFilteredSomeLocal")
+        launch(benchmark::reduce, "IntArray.reduce")
     }
 
     //-------------------------------------------------------------------------//
@@ -332,11 +339,11 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     fun runIntBaselineBenchmark() {
         val benchmark = IntBaselineBenchmark()
 
-        results["IntBaseline.consume"]              = launch(benchmark::consume)
-        results["IntBaseline.allocateList"]         = launch(benchmark::allocateList)
-        results["IntBaseline.allocateArray"]        = launch(benchmark::allocateArray)
-        results["IntBaseline.allocateListAndFill"]  = launch(benchmark::allocateListAndFill)
-        results["IntBaseline.allocateArrayAndFill"] = launch(benchmark::allocateArrayAndFill)
+        launch(benchmark::consume, "IntBaseline.consume")
+        launch(benchmark::allocateList, "IntBaseline.allocateList")
+        launch(benchmark::allocateArray, "IntBaseline.allocateArray")
+        launch(benchmark::allocateListAndFill, "IntBaseline.allocateListAndFill")
+        launch(benchmark::allocateArrayAndFill, "IntBaseline.allocateArrayAndFill")
     }
 
     //-------------------------------------------------------------------------//
@@ -345,17 +352,17 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = IntListBenchmark()
         benchmark.setup()
 
-        results["IntList.copy"]                = launch(benchmark::copy)
-        results["IntList.copyManual"]          = launch(benchmark::copyManual)
-        results["IntList.filterAndCount"]      = launch(benchmark::filterAndCount)
-        results["IntList.filterAndMap"]        = launch(benchmark::filterAndMap)
-        results["IntList.filterAndMapManual"]  = launch(benchmark::filterAndMapManual)
-        results["IntList.filter"]              = launch(benchmark::filter)
-        results["IntList.filterManual"]        = launch(benchmark::filterManual)
-        results["IntList.countFilteredManual"] = launch(benchmark::countFilteredManual)
-        results["IntList.countFiltered"]       = launch(benchmark::countFiltered)
-        results["IntList.countFilteredLocal"]  = launch(benchmark::countFilteredLocal)
-        results["IntList.reduce"]              = launch(benchmark::reduce)
+        launch(benchmark::copy, "IntList.copy")
+        launch(benchmark::copyManual, "IntList.copyManual")
+        launch(benchmark::filterAndCount, "IntList.filterAndCount")
+        launch(benchmark::filterAndMap, "IntList.filterAndMap")
+        launch(benchmark::filterAndMapManual, "IntList.filterAndMapManual")
+        launch(benchmark::filter, "IntList.filter")
+        launch(benchmark::filterManual, "IntList.filterManual")
+        launch(benchmark::countFilteredManual, "IntList.countFilteredManual")
+        launch(benchmark::countFiltered, "IntList.countFiltered")
+        launch(benchmark::countFilteredLocal, "IntList.countFilteredLocal")
+        launch(benchmark::reduce, "IntList.reduce")
     }
 
     //-------------------------------------------------------------------------//
@@ -364,17 +371,17 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = IntStreamBenchmark()
         benchmark.setup()
 
-        results["IntStream.copy"]                = launch(benchmark::copy)
-        results["IntStream.copyManual"]          = launch(benchmark::copyManual)
-        results["IntStream.filterAndCount"]      = launch(benchmark::filterAndCount)
-        results["IntStream.filterAndMap"]        = launch(benchmark::filterAndMap)
-        results["IntStream.filterAndMapManual"]  = launch(benchmark::filterAndMapManual)
-        results["IntStream.filter"]              = launch(benchmark::filter)
-        results["IntStream.filterManual"]        = launch(benchmark::filterManual)
-        results["IntStream.countFilteredManual"] = launch(benchmark::countFilteredManual)
-        results["IntStream.countFiltered"]       = launch(benchmark::countFiltered)
-        results["IntStream.countFilteredLocal"]  = launch(benchmark::countFilteredLocal)
-        results["IntStream.reduce"]              = launch(benchmark::reduce)
+        launch(benchmark::copy, "IntStream.copy")
+        launch(benchmark::copyManual, "IntStream.copyManual")
+        launch(benchmark::filterAndCount, "IntStream.filterAndCount")
+        launch(benchmark::filterAndMap, "IntStream.filterAndMap")
+        launch(benchmark::filterAndMapManual, "IntStream.filterAndMapManual")
+        launch(benchmark::filter, "IntStream.filter")
+        launch(benchmark::filterManual, "IntStream.filterManual")
+        launch(benchmark::countFilteredManual, "IntStream.countFilteredManual")
+        launch(benchmark::countFiltered, "IntStream.countFiltered")
+        launch(benchmark::countFilteredLocal, "IntStream.countFilteredLocal")
+        launch(benchmark::reduce, "IntStream.reduce")
     }
 
     //-------------------------------------------------------------------------//
@@ -383,14 +390,14 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = LambdaBenchmark()
         benchmark.setup()
 
-        results["Lambda.noncapturingLambda"]         = launch(benchmark::noncapturingLambda)
-        results["Lambda.noncapturingLambdaNoInline"] = launch(benchmark::noncapturingLambdaNoInline)
-        results["Lambda.capturingLambda"]            = launch(benchmark::capturingLambda)
-        results["Lambda.capturingLambdaNoInline"]    = launch(benchmark::capturingLambdaNoInline)
-        results["Lambda.mutatingLambda"]             = launch(benchmark::mutatingLambda)
-        results["Lambda.mutatingLambdaNoInline"]     = launch(benchmark::mutatingLambdaNoInline)
-        results["Lambda.methodReference"]            = launch(benchmark::methodReference)
-        results["Lambda.methodReferenceNoInline"]    = launch(benchmark::methodReferenceNoInline)
+        launch(benchmark::noncapturingLambda, "Lambda.noncapturingLambda")
+        launch(benchmark::noncapturingLambdaNoInline, "Lambda.noncapturingLambdaNoInline")
+        launch(benchmark::capturingLambda, "Lambda.capturingLambda")
+        launch(benchmark::capturingLambdaNoInline, "Lambda.capturingLambdaNoInline")
+        launch(benchmark::mutatingLambda, "Lambda.mutatingLambda")
+        launch(benchmark::mutatingLambdaNoInline, "Lambda.mutatingLambdaNoInline")
+        launch(benchmark::methodReference, "Lambda.methodReference")
+        launch(benchmark::methodReferenceNoInline, "Lambda.methodReferenceNoInline")
     }
 
     //-------------------------------------------------------------------------//
@@ -399,13 +406,13 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = LoopBenchmark()
         benchmark.setup()
 
-        results["Loop.arrayLoop"]            = launch(benchmark::arrayLoop)
-        results["Loop.arrayIndexLoop"]       = launch(benchmark::arrayIndexLoop)
-        results["Loop.rangeLoop"]            = launch(benchmark::rangeLoop)
-        results["Loop.arrayListLoop"]        = launch(benchmark::arrayListLoop)
-        results["Loop.arrayWhileLoop"]       = launch(benchmark::arrayWhileLoop)
-        results["Loop.arrayForeachLoop"]     = launch(benchmark::arrayForeachLoop)
-        results["Loop.arrayListForeachLoop"] = launch(benchmark::arrayListForeachLoop)
+        launch(benchmark::arrayLoop, "Loop.arrayLoop")
+        launch(benchmark::arrayIndexLoop, "Loop.arrayIndexLoop")
+        launch(benchmark::rangeLoop, "Loop.rangeLoop")
+        launch(benchmark::arrayListLoop, "Loop.arrayListLoop")
+        launch(benchmark::arrayWhileLoop, "Loop.arrayWhileLoop")
+        launch(benchmark::arrayForeachLoop, "Loop.arrayForeachLoop")
+        launch(benchmark::arrayListForeachLoop, "Loop.arrayListForeachLoop")
     }
 
     //-------------------------------------------------------------------------//
@@ -413,7 +420,7 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     fun runMatrixMapBenchmark() {
         val benchmark = MatrixMapBenchmark()
 
-        results["MatrixMap.add"] = launch(benchmark::add)
+        launch(benchmark::add, "MatrixMap.add")
     }
 
     //-------------------------------------------------------------------------//
@@ -421,12 +428,12 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     fun runParameterNotNullAssertionBenchmark() {
         val benchmark = ParameterNotNullAssertionBenchmark()
 
-        results["ParameterNotNull.invokeOneArgWithNullCheck"]       = launch(benchmark::invokeOneArgWithNullCheck)
-        results["ParameterNotNull.invokeOneArgWithoutNullCheck"]    = launch(benchmark::invokeOneArgWithoutNullCheck)
-        results["ParameterNotNull.invokeTwoArgsWithNullCheck"]      = launch(benchmark::invokeTwoArgsWithNullCheck)
-        results["ParameterNotNull.invokeTwoArgsWithoutNullCheck"]   = launch(benchmark::invokeTwoArgsWithoutNullCheck)
-        results["ParameterNotNull.invokeEightArgsWithNullCheck"]    = launch(benchmark::invokeEightArgsWithNullCheck)
-        results["ParameterNotNull.invokeEightArgsWithoutNullCheck"] = launch(benchmark::invokeEightArgsWithoutNullCheck)
+        launch(benchmark::invokeOneArgWithNullCheck, "ParameterNotNull.invokeOneArgWithNullCheck")
+        launch(benchmark::invokeOneArgWithoutNullCheck, "ParameterNotNull.invokeOneArgWithoutNullCheck")
+        launch(benchmark::invokeTwoArgsWithNullCheck, "ParameterNotNull.invokeTwoArgsWithNullCheck")
+        launch(benchmark::invokeTwoArgsWithoutNullCheck, "ParameterNotNull.invokeTwoArgsWithoutNullCheck")
+        launch(benchmark::invokeEightArgsWithNullCheck, "ParameterNotNull.invokeEightArgsWithNullCheck")
+        launch(benchmark::invokeEightArgsWithoutNullCheck, "ParameterNotNull.invokeEightArgsWithoutNullCheck")
     }
 
     //-------------------------------------------------------------------------//
@@ -434,8 +441,8 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     fun runPrimeListBenchmark() {
         val benchmark = PrimeListBenchmark()
 
-        results["PrimeList.calcDirect"]       = launch(benchmark::calcDirect)
-        results["PrimeList.calcEratosthenes"] = launch(benchmark::calcEratosthenes)
+        launch(benchmark::calcDirect, "PrimeList.calcDirect")
+        launch(benchmark::calcEratosthenes, "PrimeList.calcEratosthenes")
     }
 
     //-------------------------------------------------------------------------//
@@ -444,11 +451,11 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = StringBenchmark()
         benchmark.setup()
 
-        results["String.stringConcat"]                = launch(benchmark::stringConcat)
-        results["String.stringConcatNullable"]        = launch(benchmark::stringConcatNullable)
-        results["String.stringBuilderConcat"]         = launch(benchmark::stringBuilderConcat)
-        results["String.stringBuilderConcatNullable"] = launch(benchmark::stringBuilderConcatNullable)
-        results["String.summarizeSplittedCsv"]        = launch(benchmark::summarizeSplittedCsv)
+        launch(benchmark::stringConcat, "String.stringConcat")
+        launch(benchmark::stringConcatNullable, "String.stringConcatNullable")
+        launch(benchmark::stringBuilderConcat, "String.stringBuilderConcat")
+        launch(benchmark::stringBuilderConcatNullable, "String.stringBuilderConcatNullable")
+        launch(benchmark::summarizeSplittedCsv, "String.summarizeSplittedCsv")
     }
 
     //-------------------------------------------------------------------------//
@@ -460,15 +467,15 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         benchmark.setupEnums()
         benchmark.setupSealedClassses()
 
-        results["Switch.testSparseIntSwitch"]  = launch(benchmark::testSparseIntSwitch)
-        results["Switch.testDenseIntSwitch"]   = launch(benchmark::testDenseIntSwitch)
-        results["Switch.testConstSwitch"]      = launch(benchmark::testConstSwitch)
-        results["Switch.testObjConstSwitch"]   = launch(benchmark::testObjConstSwitch)
-        results["Switch.testVarSwitch"]        = launch(benchmark::testVarSwitch)
-        results["Switch.testStringsSwitch"]    = launch(benchmark::testStringsSwitch)
-        results["Switch.testEnumsSwitch"]      = launch(benchmark::testEnumsSwitch)
-        results["Switch.testDenseEnumsSwitch"] = launch(benchmark::testDenseEnumsSwitch)
-        results["Switch.testSealedWhenSwitch"] = launch(benchmark::testSealedWhenSwitch)
+        launch(benchmark::testSparseIntSwitch, "Switch.testSparseIntSwitch")
+        launch(benchmark::testDenseIntSwitch, "Switch.testDenseIntSwitch")
+        launch(benchmark::testConstSwitch, "Switch.testConstSwitch")
+        launch(benchmark::testObjConstSwitch, "Switch.testObjConstSwitch")
+        launch(benchmark::testVarSwitch, "Switch.testVarSwitch")
+        launch(benchmark::testStringsSwitch, "Switch.testStringsSwitch")
+        launch(benchmark::testEnumsSwitch, "Switch.testEnumsSwitch")
+        launch(benchmark::testDenseEnumsSwitch, "Switch.testDenseEnumsSwitch")
+        launch(benchmark::testSealedWhenSwitch, "Switch.testSealedWhenSwitch")
     }
 
     //-------------------------------------------------------------------------//
@@ -477,14 +484,14 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         val benchmark = WithIndiciesBenchmark()
         benchmark.setup()
 
-        results["WithIndicies.withIndicies"]       = launch(benchmark::withIndicies)
-        results["WithIndicies.withIndiciesManual"] = launch(benchmark::withIndiciesManual)
+        launch(benchmark::withIndicies, "WithIndicies.withIndicies")
+        launch(benchmark::withIndiciesManual, "WithIndicies.withIndiciesManual")
     }
 
     //-------------------------------------------------------------------------//
 
     fun runOctoTest() {
-        results["OctoTest"] = launch(::octoTest)
+        launch(::octoTest, "OctoTest")
     }
 
     //-------------------------------------------------------------------------//
