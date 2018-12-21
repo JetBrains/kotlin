@@ -16,14 +16,10 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.contracts.model.structure.ESReturns
-import org.jetbrains.kotlin.contracts.model.structure.ESAnd
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.structure.ESOr
-import org.jetbrains.kotlin.contracts.model.structure.lift
+import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.structure.*
 
 class AndFunctor : AbstractBinaryFunctor() {
     override fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect> = when (constant) {
@@ -40,8 +36,10 @@ class AndFunctor : AbstractBinaryFunctor() {
          with Returns(1) (note that they still *return* as guaranteed by AbstractSequentialBinaryFunctor).
          We will just ignore such clauses in order to make smartcasting robust while typing */
 
-        val (leftTrue, leftFalse) = left.strictPartition(ESReturns(true.lift()), ESReturns(false.lift()))
-        val (rightTrue, rightFalse) = right.strictPartition(ESReturns(true.lift()), ESReturns(false.lift()))
+        val leftTrue = left.filter { it.simpleEffect.isReturns { value.isTrue } }
+        val leftFalse = left.filter { it.simpleEffect.isReturns { value.isFalse } }
+        val rightTrue = right.filter { it.simpleEffect.isReturns { value.isTrue } }
+        val rightFalse = right.filter { it.simpleEffect.isReturns { value.isFalse } }
 
         val whenLeftReturnsTrue = foldConditionsWithOr(leftTrue)
         val whenRightReturnsTrue = foldConditionsWithOr(rightTrue)
