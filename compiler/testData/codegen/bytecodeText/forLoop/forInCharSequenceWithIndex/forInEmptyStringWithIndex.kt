@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     for ((index, x) in "".withIndex()) {
         return "Loop over empty String should not be executed"

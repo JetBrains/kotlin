@@ -1,4 +1,5 @@
 // !LANGUAGE: +ReleaseCoroutines
+// IGNORE_BACKEND: JVM_IR
 
 inline suspend fun inlineMe() = 1000
 

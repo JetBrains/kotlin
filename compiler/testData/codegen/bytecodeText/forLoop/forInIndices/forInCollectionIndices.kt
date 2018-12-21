@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test() {
     var sum = 0
     for (i in listOf(0, 0, 0, 0).indices) {

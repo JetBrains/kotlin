@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 val a = false
 val b = false
 val c = false

@@ -382,5 +382,9 @@ fun main(args: Array<String>) {
         testClass<AbstractIrBlackBoxInlineCodegenTest> {
             model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
         }
+
+        testClass<AbstractIrBytecodeTextTest> {
+            model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR)
+        }
     }
 }

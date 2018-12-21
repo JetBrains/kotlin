@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun findUserId(username: String): Long? = null
 
 fun main(args: Array<String>) {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Foo {
     private companion object {
         lateinit var x: String

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun box() {
     val x: Any? = "abc"
     val y: Any? = if (1 == 1) x else "cde"

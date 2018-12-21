@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)

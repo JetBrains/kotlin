@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_COROUTINES
 // FILE: test.kt
 fun test() {

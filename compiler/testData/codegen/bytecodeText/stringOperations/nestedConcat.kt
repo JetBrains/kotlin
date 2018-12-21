@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test1(s1: String, s2: String, s3: String) =
         (s1 + s2) + s3
 
