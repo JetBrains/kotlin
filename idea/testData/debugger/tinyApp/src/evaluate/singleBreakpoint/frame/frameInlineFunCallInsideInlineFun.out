@@ -1,9 +1,9 @@
-LineBreakpoint created at frameInlineFunCallInsideInlineFun.kt:20
+LineBreakpoint created at frameInlineFunCallInsideInlineFun.kt:19
 Run Java
 Connected to the target VM
-frameInlineFunCallInsideInlineFun.kt:20
+frameInlineFunCallInsideInlineFun.kt:19
 frameInlineFunCallInsideInlineFun.kt:5
-frameInlineFunCallInsideInlineFun.kt:7
+frameInlineFunCallInsideInlineFun.kt:6
 Compile bytecode for element
 Compile bytecode for this.prop
 package frameInlineFunCallInsideInlineFun
@@ -11,7 +11,6 @@ package frameInlineFunCallInsideInlineFun
 class A {
     inline fun inlineFun(s: (Int) -> Unit) {
         val element = 1.0
-        //TODO breakpoint here doesn't work (not only in tests)
         s(1)
     }
 
@@ -54,7 +53,7 @@ fun main(args: Array<String>) {
 // RESULT: 1: I
 
 
- frame    = bar:7, C {frameInlineFunCallInsideInlineFun}
+ frame    = bar:6, C {frameInlineFunCallInsideInlineFun}
    this     = this = {frameInlineFunCallInsideInlineFun.C@uniqueID}
               - Class has no fields
    local    = element: float = 1.0 (sp = frameInlineFunCallInsideInlineFun.kt, 5)
@@ -63,9 +62,9 @@ fun main(args: Array<String>) {
    local    = $i$f$foo: int = undefined (sp = null)
    local    = element$iv: int = 2 (sp = frameInlineFunCallInsideInlineFun.kt, 5)
    local    = a$iv: frameInlineFunCallInsideInlineFun.A = {frameInlineFunCallInsideInlineFun.A@uniqueID} (sp = null)
-     field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFun.kt, 10)
+     field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFun.kt, 9)
    local    = this_$iv$iv: frameInlineFunCallInsideInlineFun.A = {frameInlineFunCallInsideInlineFun.A@uniqueID} (sp = null)
-     field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFun.kt, 10)
+     field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFun.kt, 9)
    local    = $i$f$inlineFun: int = undefined (sp = null)
    local    = element$iv$iv: double = 1.0 (sp = frameInlineFunCallInsideInlineFun.kt, 5)
 Disconnected from the target VM

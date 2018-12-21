@@ -1,9 +1,9 @@
-LineBreakpoint created at frameInlineFunCallInsideInlineFunKotlinVariables.kt:22
+LineBreakpoint created at frameInlineFunCallInsideInlineFunKotlinVariables.kt:21
 Run Java
 Connected to the target VM
-frameInlineFunCallInsideInlineFunKotlinVariables.kt:22
+frameInlineFunCallInsideInlineFunKotlinVariables.kt:21
 frameInlineFunCallInsideInlineFunKotlinVariables.kt:7
-frameInlineFunCallInsideInlineFunKotlinVariables.kt:9
+frameInlineFunCallInsideInlineFunKotlinVariables.kt:8
 Compile bytecode for element
 Compile bytecode for this.prop
 // SHOW_KOTLIN_VARIABLES
@@ -13,7 +13,6 @@ package frameInlineFunCallInsideInlineFunKotlinVariables
 class A {
     inline fun inlineFun(s: (Int) -> Unit) {
         val element = 1.0
-        //TODO breakpoint here doesn't work (not only in tests)
         s(1)
     }
 
@@ -56,10 +55,12 @@ fun main(args: Array<String>) {
 // RESULT: 1: I
 
 
- frame    = bar:9, C {frameInlineFunCallInsideInlineFunKotlinVariables}
+ frame    = bar:8, C {frameInlineFunCallInsideInlineFunKotlinVariables}
    this     = this = {frameInlineFunCallInsideInlineFunKotlinVariables.C@uniqueID}
               - Class has no fields
-   local    = element: float = 1.0 (sp = frameInlineFunCallInsideInlineFunKotlinVariables.kt, 7)
+   local    = this: frameInlineFunCallInsideInlineFunKotlinVariables.A = {frameInlineFunCallInsideInlineFunKotlinVariables.A@uniqueID} (sp = null)
+     field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFunKotlinVariables.kt, 11)
+   local    = element: double = 1.0 (sp = frameInlineFunCallInsideInlineFunKotlinVariables.kt, 7)
 Disconnected from the target VM
 
 Process finished with exit code 0
