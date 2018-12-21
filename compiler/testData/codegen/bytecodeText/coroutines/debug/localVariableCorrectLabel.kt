@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 import kotlin.sequences.*
 import kotlin.experimental.*
 
@@ -17,3 +16,6 @@ suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
 // 1 LOCALVARIABLE a I L19 L23 3
 // 1 LINENUMBER 8 L19
+// Adding ignore flags below the test since the test relies on line numbers.
+// IGNORE_BACKEND: JVM_IR
+
