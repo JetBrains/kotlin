@@ -2252,6 +2252,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 if (at(COMMA)) {
                     advance(); // COMMA
                 }
+                else if (at(COLON)) {
+                    // recovery for the case "fun bar(x: Array<Int> : Int)" when we've just parsed "x: Array<Int>"
+                    // error should be reported in the `parseValueParameter` call
+                    //noinspection UnnecessaryContinue
+                    continue;
+                }
                 else {
                     if (!at(RPAR)) error("Expecting comma or ')'");
                     if (!atSet(isFunctionTypeContents ? LAMBDA_VALUE_PARAMETER_FIRST : VALUE_PARAMETER_FIRST)) break;
@@ -2322,6 +2328,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
             if (at(COLON)) {
                 advance(); // COLON
+
+                if (at(IDENTIFIER) && lookahead(1) == COLON) {
+                    // recovery for the case "fun foo(x: y: Int)" when we're at "y: " it's likely that this is a name of the next parameter,
+                    // not a type reference of the current one
+                    error("Type reference expected");
+                    return false;
+                }
+
                 parseTypeRef();
             }
             else if (typeRequired) {

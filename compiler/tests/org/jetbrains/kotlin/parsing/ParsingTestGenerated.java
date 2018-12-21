@@ -2148,6 +2148,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 runTest("compiler/testData/psi/recovery/NoArrowInWhen.kt");
             }
 
+            @TestMetadata("NoGTInTypeArguments.kt")
+            public void testNoGTInTypeArguments() throws Exception {
+                runTest("compiler/testData/psi/recovery/NoGTInTypeArguments.kt");
+            }
+
             @TestMetadata("PackageNewLineRecovery.kt")
             public void testPackageNewLineRecovery() throws Exception {
                 runTest("compiler/testData/psi/recovery/PackageNewLineRecovery.kt");
@@ -2181,6 +2186,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("ValueParameterNoTypeRecovery.kt")
             public void testValueParameterNoTypeRecovery() throws Exception {
                 runTest("compiler/testData/psi/recovery/ValueParameterNoTypeRecovery.kt");
+            }
+
+            @TestMetadata("valueParameterRecovery.kt")
+            public void testValueParameterRecovery() throws Exception {
+                runTest("compiler/testData/psi/recovery/valueParameterRecovery.kt");
+            }
+
+            @TestMetadata("valueParameterRecoveryWithTypes.kt")
+            public void testValueParameterRecoveryWithTypes() throws Exception {
+                runTest("compiler/testData/psi/recovery/valueParameterRecoveryWithTypes.kt");
             }
 
             @TestMetadata("WhenWithoutBraces.kt")
