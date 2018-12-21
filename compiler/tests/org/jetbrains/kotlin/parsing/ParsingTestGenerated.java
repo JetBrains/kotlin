@@ -2013,6 +2013,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 runTest("compiler/testData/psi/recovery/ImportRecovery.kt");
             }
 
+            @TestMetadata("importsWithConflict.kt")
+            public void testImportsWithConflict() throws Exception {
+                runTest("compiler/testData/psi/recovery/importsWithConflict.kt");
+            }
+
             @TestMetadata("IncompleteAccessor1.kt")
             public void testIncompleteAccessor1() throws Exception {
                 runTest("compiler/testData/psi/recovery/IncompleteAccessor1.kt");
