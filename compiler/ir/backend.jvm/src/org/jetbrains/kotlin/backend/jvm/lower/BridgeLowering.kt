@@ -115,7 +115,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             bridgesToGenerate = generateBridgesForFunctionDescriptorForJvm(
                 descriptor,
                 getSignatureMapper(typeMapper),
-                state.target
+                state
             )
             if (!bridgesToGenerate.isEmpty()) {
                 val origin = if (descriptor.kind == DECLARATION) getSourceFromDescriptor(descriptor) else null
@@ -130,7 +130,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             val specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
                 descriptor,
                 getSignatureMapper(typeMapper),
-                state.target
+                state
             )
 
             if (!specials.isEmpty()) {
