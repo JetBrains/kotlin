@@ -8,9 +8,9 @@ set TOOLCHAIN=gcc-arm-none-eabi-7-2017-q4-major-win32
 set DIR=%~dp0
 if "%KONAN_DATA_DIR%"=="" (set KONAN_DATA_DIR=%userprofile%\.konan)
 set KONAN_DEPS=%KONAN_DATA_DIR%/dependencies
-set GCC_ARM=%KONAN_DEPS%/%TOOLCHAIN%
-set ZEPHYR_TOOLCHAIN_VARIANT=gccarmemb
-set GCCARMEMB_TOOLCHAIN_PATH=%GCC_ARM%
+set GNU_ARM=%KONAN_DEPS%/%TOOLCHAIN%
+set ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
+set GNUARMEMB_TOOLCHAIN_PATH=%GNU_ARM%
 
 if defined KONAN_HOME (
     set "PATH=%KONAN_HOME%\bin;%PATH%"

@@ -5,6 +5,6 @@
 
 # Keep this one board independent.
 
-headers = autoconf.h zephyr.h board.h device.h gpio.h
+headers = autoconf.h zephyr.h generated_dts_board.h device.h gpio.h
 compilerOpts = -DKERNEL -DUSE_FULL_LL_DRIVER -DUSE_HAL_DRIVER -D_FORTIFY_SOURCE=2 -D__ZEPHYR__=1 -ffreestanding -std=c99 -nostdinc
 
