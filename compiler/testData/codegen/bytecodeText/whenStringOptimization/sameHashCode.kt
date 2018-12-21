@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun foo(x : String) : String {
     assert("abz]".hashCode() == "aby|".hashCode())
 

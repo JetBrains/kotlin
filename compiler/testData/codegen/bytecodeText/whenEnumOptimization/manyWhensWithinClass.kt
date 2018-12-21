@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 package abc.foo
 
 enum class Season {

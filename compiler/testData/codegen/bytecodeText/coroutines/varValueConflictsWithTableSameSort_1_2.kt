@@ -1,4 +1,5 @@
 // !LANGUAGE: -ReleaseCoroutines
+// IGNORE_BACKEND: JVM_IR
 // WITH_COROUTINES
 
 import helpers.*

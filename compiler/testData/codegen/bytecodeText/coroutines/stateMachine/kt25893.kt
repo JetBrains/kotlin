@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Handler(val func: suspend (Any) -> Unit)
 
 inline fun createHandler(crossinline handler: suspend (Any) -> Unit): Handler {

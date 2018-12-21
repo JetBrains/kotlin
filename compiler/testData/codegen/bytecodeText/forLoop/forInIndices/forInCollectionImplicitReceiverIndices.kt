@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun Collection<Int>.sumIndices(): Int {
     var sum = 0
     for (i in indices) {

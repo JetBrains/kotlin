@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FULL_JDK
 
 val xsl = arrayListOf("a", "b", "c", "d")

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: util.kt
 const val MAGIC = 42
 

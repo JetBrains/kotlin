@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 
 inline fun <R, T> foo(x : R?, y : R?, block : (R?) -> T) : T {
     if (x == null) {

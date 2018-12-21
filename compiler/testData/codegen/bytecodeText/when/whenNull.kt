@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test(a: Any?, b: Any?, c: Any?) {
     when (null) {
         a -> throw IllegalArgumentException("a is null")

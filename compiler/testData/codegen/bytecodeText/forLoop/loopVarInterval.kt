@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun f() {
     for (c in "123") {
         print(c)

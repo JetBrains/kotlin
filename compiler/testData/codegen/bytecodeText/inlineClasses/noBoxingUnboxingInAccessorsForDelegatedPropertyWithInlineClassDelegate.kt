@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 // FILE: Foo.kt
 class Foo {
     var a: Int = 42

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 val xs = "abcd"
 
 fun box(): String {

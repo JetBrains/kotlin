@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 const val N = 42
 
 fun test(): Int {
