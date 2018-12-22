@@ -244,8 +244,6 @@ val coreLibProjects = listOf(
         ":kotlin-stdlib",
         ":kotlin-stdlib-common",
         ":kotlin-stdlib-js",
-        ":kotlin-stdlib-jre7",
-        ":kotlin-stdlib-jre8",
         ":kotlin-stdlib-jdk7",
         ":kotlin-stdlib-jdk8",
         ":kotlin-test:kotlin-test-common",
@@ -451,8 +449,16 @@ tasks {
         }
     }
 
+    listOf("clean", "assemble", "install", "dist").forEach { taskName ->
+        create("coreLibs${taskName.capitalize()}") {
+            coreLibProjects.forEach { projectName -> dependsOn("$projectName:$taskName") }
+        }
+    }
+
     create("coreLibsTest") {
         (coreLibProjects + listOf(
+                ":kotlin-stdlib-jre7",
+                ":kotlin-stdlib-jre8",
                 ":kotlin-stdlib:samples",
                 ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
                 ":kotlinx-metadata-jvm",
