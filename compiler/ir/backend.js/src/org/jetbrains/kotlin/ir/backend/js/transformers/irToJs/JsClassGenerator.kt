@@ -102,7 +102,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         val translatedFunction = declaration.run { if (isReal) accept(IrFunctionToJsTransformer(), context) else null }
         if (declaration.isStaticMethodOfClass) {
-            return translatedFunction!!.makeStmt()
+            return translatedFunction?.makeStmt()
         }
 
         val memberName = context.getNameForSymbol(declaration.symbol)
