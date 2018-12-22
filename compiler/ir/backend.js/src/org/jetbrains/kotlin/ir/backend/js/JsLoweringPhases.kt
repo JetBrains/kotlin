@@ -174,11 +174,22 @@ private val SuspendFunctionsLoweringPhase = makeJsPhase(
     prerequisite = setOf(UnitMaterializationLoweringPhase, CoroutineIntrinsicLoweringPhase)
 )
 
+private val PrivateMembersLoweringPhase = makeJsPhase(
+    { context, module -> PrivateMembersLowering(context).lower(module) },
+    name = "PrivateMembersLowering",
+    description = "Extract private members from classes"
+)
+
 private val CallableReferenceLoweringPhase = makeJsPhase(
     { context, module -> CallableReferenceLowering(context).lower(module) },
     name = "CallableReferenceLowering",
     description = "Handle callable references",
-    prerequisite = setOf(SuspendFunctionsLoweringPhase, LocalDeclarationsLoweringPhase, LocalDelegatedPropertiesLoweringPhase)
+    prerequisite = setOf(
+        SuspendFunctionsLoweringPhase,
+        LocalDeclarationsLoweringPhase,
+        LocalDelegatedPropertiesLoweringPhase,
+        PrivateMembersLoweringPhase
+    )
 )
 
 private val DefaultArgumentStubGeneratorPhase = makeJsPhase(
@@ -346,6 +357,7 @@ val jsPhases = listOf(
     InnerClassesLoweringPhase,
     InnerClassConstructorCallsLoweringPhase,
     SuspendFunctionsLoweringPhase,
+    PrivateMembersLoweringPhase,
     CallableReferenceLoweringPhase,
     DefaultArgumentStubGeneratorPhase,
     DefaultParameterInjectorPhase,

@@ -240,8 +240,8 @@ public class Long internal constructor(
     public override fun toFloat(): Float = toDouble().toFloat()
     public override fun toDouble(): Double = toNumber()
 
-    // TODO: is it still needed?
-    private fun valueOf() = toDouble()
+    // This method is used by `toString()`
+    internal fun valueOf() = toDouble()
 
     override fun equals(other: Any?): Boolean = other is Long && equalsLong(other)
 
