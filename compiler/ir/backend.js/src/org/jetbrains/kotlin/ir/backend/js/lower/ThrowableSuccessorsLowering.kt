@@ -44,12 +44,10 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
     private val causeName get() = JsIrBuilder.buildString(stringType, "cause")
     private val nameName get() = JsIrBuilder.buildString(stringType, "name")
 
-    private val throwableClass = context.symbolTable.referenceClass(
-        context.getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
-    ).owner
-    private val throwableConstructors = throwableClass.declarations.filterIsInstance<IrConstructor>()
+    private val throwableClass = context.throwableClass
+    private val throwableConstructors = context.throwableConstructors
 
-    private val defaultCtor = throwableConstructors.single { it.valueParameters.size == 0 }
+    private val defaultCtor = context.defaultThrowableCtor
     private val toString =
         throwableClass.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.identifier("toString") }
 

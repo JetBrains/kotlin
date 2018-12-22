@@ -23,15 +23,13 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceKey
+import org.jetbrains.kotlin.ir.backend.js.lower.ConstructorPair
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.ModuleIndex
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getPropertyDeclaration
@@ -120,6 +118,7 @@ class JsIrBackendContext(
     val enumEntryToGetInstanceFunction = mutableMapOf<IrEnumEntrySymbol, IrSimpleFunction>()
     val enumEntryExternalToInstanceField = mutableMapOf<IrEnumEntrySymbol, IrField>()
     val callableReferencesCache = mutableMapOf<CallableReferenceKey, IrSimpleFunction>()
+    val secondaryConstructorToFactoryCache = mutableMapOf<IrConstructor, ConstructorPair>()
 
     val coroutineGetContext: IrFunctionSymbol
         get() {
@@ -240,6 +239,13 @@ class JsIrBackendContext(
     ).owner
 
     val primitiveClassProperties = primitiveClassesObject.declarations.filterIsInstance<IrProperty>()
+
+    val throwableClass = symbolTable.referenceClass(
+        getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
+    ).owner
+    val throwableConstructors = throwableClass.declarations.filterIsInstance<IrConstructor>()
+
+    val defaultThrowableCtor = throwableConstructors.single { it.valueParameters.size == 0 }
 
     private fun referenceOperators() = OperatorNames.ALL.map { name ->
         // TODO to replace KotlinType with IrType we need right equals on IrType
