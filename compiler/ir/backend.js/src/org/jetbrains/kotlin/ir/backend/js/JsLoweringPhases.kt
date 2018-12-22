@@ -246,15 +246,17 @@ private val TypeOperatorLoweringPhase = makeJsPhase(
     prerequisite = setOf(BridgesConstructionPhase, RemoveInlineFunctionsWithReifiedTypeParametersLoweringPhase)
 )
 
-private val SecondaryCtorLoweringPhase = makeJsPhase(
-    { context, module ->
-        SecondaryCtorLowering(context).run {
-            constructorProcessorLowering.runOnFilesPostfix(module.files + context.dependencies.flatMap { it.files })
-            constructorRedirectorLowering.lower(module)
-        }
-    },
-    name = "SecondaryCtorLoweringPhase",
-    description = "Generate static functions for each secondary constructor and replace usages",
+private val SecondaryConstructorLoweringPhase = makeJsPhase(
+    { context, module -> SecondaryConstructorLowering(context).lower(module) },
+    name = "SecondaryConstructorLoweringPhase",
+    description = "Generate static functions for each secondary constructor",
+    prerequisite = setOf(InnerClassesLoweringPhase)
+)
+
+private val SecondaryFactoryInjectorLoweringPhase = makeJsPhase(
+    { context, module -> SecondaryFactoryInjectorLowering(context).lower(module) },
+    name = "SecondaryFactoryInjectorLoweringPhase",
+    description = "Replace usage of secondary constructor with corresponding static function",
     prerequisite = setOf(InnerClassesLoweringPhase)
 )
 
@@ -355,7 +357,8 @@ val jsPhases = listOf(
     MultipleCatchesLoweringPhase,
     BridgesConstructionPhase,
     TypeOperatorLoweringPhase,
-    SecondaryCtorLoweringPhase,
+    SecondaryConstructorLoweringPhase,
+    SecondaryFactoryInjectorLoweringPhase,
     InlineClassLoweringPhase,
     AutoboxingTransformerPhase,
     BlockDecomposerLoweringPhase,
