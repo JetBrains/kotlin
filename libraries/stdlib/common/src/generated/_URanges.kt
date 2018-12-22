@@ -182,7 +182,7 @@ public infix fun ULongProgression.step(step: Long): ULongProgression {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * If the [to] value is less than or equal to `this` value the returned range is empty.
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -193,9 +193,7 @@ public infix fun UByte.until(to: UByte): UIntRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * If the [to] value is less than or equal to `this` value the returned range is empty.
- * 
- * If the [to] value is less than or equal to [UInt.MIN_VALUE] the returned range is empty.
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -207,9 +205,7 @@ public infix fun UInt.until(to: UInt): UIntRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * If the [to] value is less than or equal to `this` value the returned range is empty.
- * 
- * If the [to] value is less than or equal to [ULong.MIN_VALUE] the returned range is empty.
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -221,7 +217,7 @@ public infix fun ULong.until(to: ULong): ULongRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * If the [to] value is less than or equal to `this` value the returned range is empty.
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
