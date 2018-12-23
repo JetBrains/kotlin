@@ -236,6 +236,18 @@ class Merger(
         }
     }
 
+    private fun JsStatement?.isFakeOverrideAssignment(): Boolean {
+        fun JsExpression?.isMemberReference(): Boolean {
+            val qualifier = (this as? JsNameRef)?.qualifier as? JsNameRef ?: return false
+
+            return qualifier.name == null && qualifier.ident == "prototype"
+        }
+
+        val binOp = (this as? JsExpressionStatement)?.expression as? JsBinaryOperation ?: return false
+
+        return binOp.operator == JsBinaryOperator.ASG && binOp.arg1.isMemberReference() && binOp.arg2.isMemberReference()
+    }
+
     // Adds different boilerplate code (like imports, class prototypes, etc) to resulting program.
     fun merge() {
         mergeNames()
@@ -246,13 +258,21 @@ class Merger(
             addClassPrototypes(this)
 
             // TODO better placing?
-            importedFunctionWrappers.values.forEach {
-                this += it.statements
+            val additionalFakeOverrides = mutableListOf<JsStatement>()
+            importedFunctionWrappers.values.forEach {block ->
+                block.statements.forEach { s ->
+                    if (s.isFakeOverrideAssignment()) {
+                        additionalFakeOverrides += s
+                    } else {
+                        this += s
+                    }
+                }
             }
 
             this += declarationBlock.statements
             this += exportBlock.statements
             addClassPostDeclarations(this)
+            this += additionalFakeOverrides
             this += initializerBlock.statements
             this += testsMap.values
             mainFn?.second?.let { this += it }
