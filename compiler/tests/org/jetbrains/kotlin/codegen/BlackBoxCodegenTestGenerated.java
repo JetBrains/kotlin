@@ -12145,9 +12145,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inlineClasses/kt28585.kt");
         }
 
+        @TestMetadata("kt28879.kt")
+        public void testKt28879() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt28879.kt");
+        }
+
         @TestMetadata("mapInlineClassesWithSuppressWildcardsMode.kt")
         public void testMapInlineClassesWithSuppressWildcardsMode() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mapInlineClassesWithSuppressWildcardsMode.kt");
+        }
+
+        @TestMetadata("mappingOfBoxedFlexibleInlineClassType.kt")
+        public void testMappingOfBoxedFlexibleInlineClassType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mappingOfBoxedFlexibleInlineClassType.kt");
         }
 
         @TestMetadata("noAssertionsOnInlineClassBasedOnNullableType.kt")
