@@ -5133,6 +5133,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/declarationChecks/LocalVariableWithNoTypeInformation.kt");
             }
 
+            @TestMetadata("localVariablesWithTypeParameters_1_3.kt")
+            public void testLocalVariablesWithTypeParameters_1_3() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/declarationChecks/localVariablesWithTypeParameters_1_3.kt");
+            }
+
+            @TestMetadata("localVariablesWithTypeParameters_1_4.kt")
+            public void testLocalVariablesWithTypeParameters_1_4() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/declarationChecks/localVariablesWithTypeParameters_1_4.kt");
+            }
+
             @TestMetadata("mulitpleVarargParameters.kt")
             public void testMulitpleVarargParameters() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/declarationChecks/mulitpleVarargParameters.kt");
