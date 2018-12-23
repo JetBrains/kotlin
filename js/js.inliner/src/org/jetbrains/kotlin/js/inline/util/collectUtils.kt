@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.js.inline.util
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
+import org.jetbrains.kotlin.js.backend.ast.metadata.functionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.imported
-import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
-import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -244,6 +243,31 @@ fun collectAccessors(fragments: Iterable<JsProgramFragment>): Map<String, Functi
     val result = mutableMapOf<String, FunctionWithWrapper>()
     for (fragment in fragments) {
         result += collectAccessors(fragment.declarationBlock)
+    }
+    return result
+}
+
+fun collectLocalFunctions(scope: JsNode): Map<CallableDescriptor, FunctionWithWrapper> {
+    val localFunctions = hashMapOf<CallableDescriptor, FunctionWithWrapper>()
+
+    scope.accept(object : RecursiveJsVisitor() {
+        override fun visitInvocation(invocation: JsInvocation) {
+            InlineMetadata.tryExtractFunction(invocation)?.let {
+                it.function.functionDescriptor?.let { fd ->
+                    localFunctions[fd] = it
+                }
+            }
+            super.visitInvocation(invocation)
+        }
+    })
+
+    return localFunctions
+}
+
+fun collectLocalFunctions(fragments: List<JsProgramFragment>): Map<CallableDescriptor, FunctionWithWrapper> {
+    val result = mutableMapOf<CallableDescriptor, FunctionWithWrapper>()
+    for (fragment in fragments) {
+        result += collectLocalFunctions(fragment.declarationBlock)
     }
     return result
 }

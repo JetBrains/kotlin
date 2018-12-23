@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.context
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
@@ -83,11 +84,12 @@ class FunctionContext(
 
     private val functionReader = FunctionReader(inliner.reporter, inliner.config, inliner.translationResult.innerModuleName)
 
-    private data class FunctionsAndAccessors(
+    private data class FragmentInfo(
         val functions: Map<JsName, FunctionWithWrapper>,
-        val accessors: Map<String, FunctionWithWrapper>)
+        val accessors: Map<String, FunctionWithWrapper>,
+        val localAccessors: Map<CallableDescriptor, FunctionWithWrapper>)
 
-    private val fragmentInfo = mutableMapOf<JsProgramFragment, FunctionsAndAccessors>()
+    private val fragmentInfo = mutableMapOf<JsProgramFragment, FragmentInfo>()
 
     private fun lookUpStaticFunction(functionName: JsName?, fragment: JsProgramFragment): FunctionWithWrapper? =
         fragmentInfo[fragment]?.run { functions[functionName] }
@@ -102,6 +104,16 @@ class FunctionContext(
             (call.qualifier as JsNameRef).qualifier!!
         } else {
             call.qualifier
+        }
+
+        call.descriptor?.let { descriptor ->
+            fragmentInfo[scope.fragment]?.let { info ->
+                info.localAccessors[descriptor]?.let { fn ->
+                    return InlineFunctionDefinition(fn, null).also { def ->
+                        inliner.process(def, call, scope)
+                    }
+                }
+            }
         }
 
         /** process cases 2, 3 */
@@ -134,9 +146,10 @@ class FunctionContext(
 
     private fun loadFragment(fragment: JsProgramFragment) {
         fragmentInfo.computeIfAbsent(fragment) {
-            FunctionsAndAccessors(
+            FragmentInfo(
                 collectNamedFunctionsAndWrappers(listOf(fragment)),
-                collectAccessors(listOf(fragment))
+                collectAccessors(listOf(fragment)),
+                collectLocalFunctions(listOf(fragment))
             ).also { (functions, accessors) ->
                 (functions.values.asSequence() + accessors.values.asSequence()).forEach { f ->
                     functionsByFunctionNodes[f.function] = f
