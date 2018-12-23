@@ -33,7 +33,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     PropertiesWithBackingFieldsInsideInlineClass(),
     AnnotationClassTargetAndRetentionChecker(),
     ReservedMembersAndConstructsForInlineClass(),
-    ResultClassInReturnTypeChecker()
+    ResultClassInReturnTypeChecker(),
+    LocalVariableTypeParametersChecker()
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
