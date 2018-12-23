@@ -604,6 +604,16 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads/jvmOverloadsOnAbstractMethods.kt");
             }
 
+            @TestMetadata("jvmOverloadsOnAnnotationClassConstructor_1_3.kt")
+            public void testJvmOverloadsOnAnnotationClassConstructor_1_3() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads/jvmOverloadsOnAnnotationClassConstructor_1_3.kt");
+            }
+
+            @TestMetadata("jvmOverloadsOnAnnotationClassConstructor_1_4.kt")
+            public void testJvmOverloadsOnAnnotationClassConstructor_1_4() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads/jvmOverloadsOnAnnotationClassConstructor_1_4.kt");
+            }
+
             @TestMetadata("jvmOverloadsOnPrivate.kt")
             public void testJvmOverloadsOnPrivate() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads/jvmOverloadsOnPrivate.kt");

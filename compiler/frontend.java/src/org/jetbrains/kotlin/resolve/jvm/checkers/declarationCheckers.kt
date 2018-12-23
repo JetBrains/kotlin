@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithCorrespondingExpectedDefault
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
@@ -194,21 +195,34 @@ class OverloadsAnnotationChecker: DeclarationChecker {
         descriptor.findJvmOverloadsAnnotation()?.let { annotation ->
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation)
             if (annotationEntry != null) {
-                checkDeclaration(annotationEntry, descriptor, context.trace)
+                checkDeclaration(annotationEntry, descriptor, context)
             }
         }
     }
 
-    private fun checkDeclaration(annotationEntry: KtAnnotationEntry, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+    private fun checkDeclaration(
+        annotationEntry: KtAnnotationEntry,
+        descriptor: DeclarationDescriptor,
+        context: DeclarationCheckerContext
+    ) {
+        val diagnosticHolder = context.trace
+
         if (descriptor !is CallableDescriptor) {
             return
-        }
-        if ((descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE) {
+        } else if ((descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_INTERFACE.on(annotationEntry))
         } else if (descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(annotationEntry))
         } else if (DescriptorUtils.isLocal(descriptor)) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_LOCAL.on(annotationEntry))
+        } else if (descriptor.isAnnotationConstructor()) {
+            val diagnostic =
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses))
+                    ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR
+                else
+                    ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING
+
+            diagnosticHolder.report(diagnostic.on(annotationEntry))
         } else if (!descriptor.visibility.isPublicAPI && descriptor.visibility != Visibilities.INTERNAL) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(annotationEntry))
         } else if (descriptor.valueParameters.none { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }) {
