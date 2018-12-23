@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -145,6 +146,8 @@ val IrSimpleFunction.isOverridableOrOverrides: Boolean get() = isOverridable || 
 val IrClass.isFinalClass: Boolean
     get() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
 
+val IrTypeParametersContainer.classIfConstructor get() = if (this is IrConstructor) parentAsClass else this
+
 fun IrValueParameter.copyTo(
     irFunction: IrFunction,
     origin: IrDeclarationOrigin = this.origin,
@@ -152,7 +155,10 @@ fun IrValueParameter.copyTo(
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
     name: Name = this.name,
-    type: IrType = this.type.remapTypeParameters(this.parent as IrTypeParametersContainer, irFunction),
+    type: IrType = this.type.remapTypeParameters(
+            (parent as IrTypeParametersContainer).classIfConstructor,
+            irFunction.classIfConstructor
+    ),
     varargElementType: IrType? = this.varargElementType
 ): IrValueParameter {
     val descriptor = WrappedValueParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
