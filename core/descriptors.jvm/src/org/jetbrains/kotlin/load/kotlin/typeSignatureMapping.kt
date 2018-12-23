@@ -284,7 +284,7 @@ internal fun computeExpandedTypeInner(kotlinType: KotlinType, visitedClassifiers
             val underlyingType = kotlinType.substitutedUnderlyingType() ?: return null
             val expandedUnderlyingType = computeExpandedTypeInner(underlyingType, visitedClassifiers) ?: return null
             when {
-                !kotlinType.isMarkedNullable -> expandedUnderlyingType
+                !kotlinType.isNullable() -> expandedUnderlyingType
 
                 // Here inline class type is nullable. Apply nullability to the expandedUnderlyingType.
 
