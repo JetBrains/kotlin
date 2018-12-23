@@ -9381,6 +9381,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testJvmOverloads() throws Exception {
             runTest("idea/testData/quickfix/removeAnnotation/jvmOverloads.kt");
         }
+
+        @TestMetadata("jvmOverloadsOnAnnotationClassConstructor.kt")
+        public void testJvmOverloadsOnAnnotationClassConstructor() throws Exception {
+            runTest("idea/testData/quickfix/removeAnnotation/jvmOverloadsOnAnnotationClassConstructor.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/removeAtFromAnnotationArgument")
