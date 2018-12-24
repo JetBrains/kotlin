@@ -43,7 +43,7 @@ import java.io.File
 
 class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnotationArgumentExtractor> = emptyList()) : DeclarationChecker {
     interface ActualAnnotationArgumentExtractor {
-        fun extractActualValue(argument: PsiElement, expectedType: KotlinType): ConstantValue<*>?
+        fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>?
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -233,14 +233,15 @@ class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnota
             if (expectedParameterDescriptor.declaresDefaultValue() && actualParameterDescriptor.declaresDefaultValue()) {
                 val expectedParameter =
                     DescriptorToSourceUtils.descriptorToDeclaration(expectedParameterDescriptor) as? KtParameter ?: continue
-                val actualParameter = DescriptorToSourceUtils.descriptorToDeclaration(actualParameterDescriptor)
 
                 val expectedValue = trace.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expectedParameter.defaultValue)
                     ?.toConstantValue(expectedParameterDescriptor.type)
 
-                val actualValue = getActualAnnotationParameterValue(actualParameter, trace.bindingContext, expectedParameterDescriptor.type)
+                val actualValue =
+                    getActualAnnotationParameterValue(actualParameterDescriptor, trace.bindingContext, expectedParameterDescriptor.type)
                 if (expectedValue != actualValue) {
-                    val target = (actualParameter as? KtParameter)?.defaultValue ?: (reportOn as? KtTypeAlias)?.nameIdentifier ?: reportOn
+                    val ktParameter = DescriptorToSourceUtils.descriptorToDeclaration(actualParameterDescriptor)
+                    val target = (ktParameter as? KtParameter)?.defaultValue ?: (reportOn as? KtTypeAlias)?.nameIdentifier ?: reportOn
                     trace.report(Errors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE.on(target, actualParameterDescriptor))
                 }
             }
@@ -248,16 +249,15 @@ class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnota
     }
 
     private fun getActualAnnotationParameterValue(
-        actualParameter: PsiElement?, bindingContext: BindingContext, expectedType: KotlinType
+        actualParameter: ValueParameterDescriptor, bindingContext: BindingContext, expectedType: KotlinType
     ): ConstantValue<*>? {
-        if (actualParameter is KtParameter) {
-            return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, actualParameter.defaultValue)?.toConstantValue(expectedType)
+        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(actualParameter)
+        if (declaration is KtParameter) {
+            return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, declaration.defaultValue)?.toConstantValue(expectedType)
         }
 
-        if (actualParameter != null) {
-            for (extractor in argumentExtractors) {
-                extractor.extractActualValue(actualParameter, expectedType)?.let { return it }
-            }
+        for (extractor in argumentExtractors) {
+            extractor.extractDefaultValue(actualParameter, expectedType)?.let { return it }
         }
 
         return null
