@@ -81,7 +81,7 @@ interface JKKtValueWhenLabel : JKKtWhenLabel {
     var expression: JKExpression
 }
 
-interface JKKtIsExpression : JKExpression {
+interface JKKtIsExpression : JKExpression, PsiOwner {
     var expression: JKExpression
     var type: JKTypeElement
 }

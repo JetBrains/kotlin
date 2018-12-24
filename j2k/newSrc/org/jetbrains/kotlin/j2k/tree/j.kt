@@ -88,10 +88,6 @@ interface JKJavaForLoopStatement : JKLoopStatement {
     var updaters: List<JKStatement>
 }
 
-interface JKJavaInstanceOfExpression : JKExpression {
-    var expression: JKExpression
-    var type: JKTypeElement
-}
 
 interface JKJavaPolyadicExpression : JKExpression {
     var operands: List<JKExpression>

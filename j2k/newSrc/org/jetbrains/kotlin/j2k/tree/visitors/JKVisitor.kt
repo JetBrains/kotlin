@@ -90,7 +90,6 @@ interface JKVisitor<out R, in D> {
     fun visitReturnStatement(returnStatement: JKReturnStatement, data: D): R = visitStatement(returnStatement, data)
     fun visitJavaAssertStatement(javaAssertStatement: JKJavaAssertStatement, data: D): R = visitStatement(javaAssertStatement, data)
     fun visitJavaForLoopStatement(javaForLoopStatement: JKJavaForLoopStatement, data: D): R = visitLoopStatement(javaForLoopStatement, data)
-    fun visitJavaInstanceOfExpression(javaInstanceOfExpression: JKJavaInstanceOfExpression, data: D): R = visitExpression(javaInstanceOfExpression, data)
     fun visitJavaPolyadicExpression(javaPolyadicExpression: JKJavaPolyadicExpression, data: D): R = visitExpression(javaPolyadicExpression, data)
     fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): R = visitExpression(javaAssignmentExpression, data)
     fun visitJavaThrowStatement(javaThrowStatement: JKJavaThrowStatement, data: D): R = visitStatement(javaThrowStatement, data)

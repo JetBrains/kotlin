@@ -112,9 +112,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             )
         }
 
-        fun PsiInstanceOfExpression.toJK(): JKJavaInstanceOfExpression {
-            return JKJavaInstanceOfExpressionImpl(operand.toJK(), checkType?.toJK() ?: TODO())
-        }
+        fun PsiInstanceOfExpression.toJK(): JKKtIsExpression =
+            JKKtIsExpressionImpl(operand.toJK(), checkType?.toJK() ?: JKTypeElementImpl(JKNoTypeImpl))
+
 
         fun PsiAssignmentExpression.toJK(): JKJavaAssignmentExpression {
             return JKJavaAssignmentExpressionImpl(

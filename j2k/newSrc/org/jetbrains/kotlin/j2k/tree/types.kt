@@ -7,23 +7,24 @@ package org.jetbrains.kotlin.j2k.tree
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.JKSymbolProvider
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
+import org.jetbrains.kotlin.j2k.kotlinTypeByName
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtTypeElement
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-
-import org.jetbrains.kotlin.idea.caches.resolve.util.*
-import org.jetbrains.kotlin.j2k.kotlinTypeByName
-import org.jetbrains.kotlin.psi.KtNullableType
 
 fun JKExpression.type(context: ConversionContext): JKType? =
     when (this) {
@@ -43,7 +44,7 @@ fun JKExpression.type(context: ConversionContext): JKType? =
         is JKKtThrowExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.nothing.asString(), context.symbolProvider)
         is JKClassAccessExpression -> null
         is JKJavaNewExpression -> JKClassTypeImpl(classSymbol)
-        is JKJavaInstanceOfExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES._boolean.asString(), context.symbolProvider)
+        is JKKtIsExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES._boolean.asString(), context.symbolProvider)
         is JKParenthesizedExpression -> expression.type(context)
         is JKTypeCastExpression -> type.type
         is JKThisExpression -> null// TODO return actual type

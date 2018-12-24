@@ -295,12 +295,6 @@ class JKJavaForLoopStatementImpl(initializer: JKStatement, condition: JKExpressi
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaForLoopStatement(this, data)
 }
 
-class JKJavaInstanceOfExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKJavaInstanceOfExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
-    override var type by child(type)
-    override var expression by child(expression)
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaInstanceOfExpression(this, data)
-}
 
 class JKJavaPolyadicExpressionImpl(operands: List<JKExpression>, override var tokens: List<JKOperator>) : JKJavaPolyadicExpression,
     JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {

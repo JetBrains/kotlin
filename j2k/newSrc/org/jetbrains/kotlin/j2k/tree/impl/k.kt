@@ -229,7 +229,7 @@ class JKKtValueWhenLabelImpl(expression: JKExpression) : JKKtValueWhenLabel, JKB
 }
 
 
-class JKKtIsExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKKtIsExpression, JKBranchElementBase() {
+class JKKtIsExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKKtIsExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var type by child(type)
     override var expression by child(expression)
 

@@ -177,8 +177,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitJavaAssertStatement(javaAssertStatement: JKJavaAssertStatement, data: Nothing?) = visitJavaAssertStatement(javaAssertStatement)
     fun visitJavaForLoopStatement(javaForLoopStatement: JKJavaForLoopStatement) = visitLoopStatement(javaForLoopStatement, null)
     override fun visitJavaForLoopStatement(javaForLoopStatement: JKJavaForLoopStatement, data: Nothing?) = visitJavaForLoopStatement(javaForLoopStatement)
-    fun visitJavaInstanceOfExpression(javaInstanceOfExpression: JKJavaInstanceOfExpression) = visitExpression(javaInstanceOfExpression, null)
-    override fun visitJavaInstanceOfExpression(javaInstanceOfExpression: JKJavaInstanceOfExpression, data: Nothing?) = visitJavaInstanceOfExpression(javaInstanceOfExpression)
     fun visitJavaPolyadicExpression(javaPolyadicExpression: JKJavaPolyadicExpression) = visitExpression(javaPolyadicExpression, null)
     override fun visitJavaPolyadicExpression(javaPolyadicExpression: JKJavaPolyadicExpression, data: Nothing?) = visitJavaPolyadicExpression(javaPolyadicExpression)
     fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression) = visitExpression(javaAssignmentExpression, null)
