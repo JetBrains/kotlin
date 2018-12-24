@@ -407,6 +407,24 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/multiplatform")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Multiplatform extends AbstractIrBlackBoxAgainstJavaCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMultiplatform() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("annotationsViaActualTypeAliasFromBinary.kt")
+        public void testAnnotationsViaActualTypeAliasFromBinary() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/multiplatform/annotationsViaActualTypeAliasFromBinary.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/notNullAssertions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

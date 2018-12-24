@@ -105,7 +105,7 @@ interface JavaMethod : JavaMember, JavaTypeParameterListOwner {
     val valueParameters: List<JavaValueParameter>
     val returnType: JavaType
 
-    val hasAnnotationParameterDefaultValue: Boolean
+    val annotationParameterDefaultValue: JavaAnnotationArgument?
 }
 
 interface JavaField : JavaMember {
