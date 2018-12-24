@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinDefaultHighlightingSettingsProvider : DefaultHighlightingSettingProvider() {
     override fun getDefaultSetting(project: Project, file: VirtualFile): FileHighlightingSetting? {
+        if (!file.isValid) {
+            return null
+        }
+
         return when {
             file.toPsiFile(project) !is KtFile -> null
             ProjectRootsUtil.isLibraryFile(project, file) -> FileHighlightingSetting.SKIP_INSPECTION
