@@ -58,6 +58,7 @@ object ConversionsRunner {
             +ForConversion(context)
             +ForInConversion()
             +CollectionOperationsConversion(context)
+            +TypeParametersNullabilityConversion()
             +ArrayOperationsConversion(context)
             +TypeMappingConversion(context)
             +ImplicitCastsConversion(context)
