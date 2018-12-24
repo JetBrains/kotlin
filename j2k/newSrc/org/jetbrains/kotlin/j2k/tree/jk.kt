@@ -249,7 +249,7 @@ interface JKTypeArgumentListOwner : JKTreeElement {
 
 interface JKMethodCallExpression : JKExpression, JKTypeArgumentListOwner, JKBranchElement {
     val identifier: JKMethodSymbol
-    val arguments: JKExpressionList
+    var arguments: JKExpressionList
 }
 
 interface JKFieldAccessExpression : JKAssignableExpression {
@@ -357,7 +357,7 @@ interface JKLambdaExpression : JKExpression {
 interface JKDelegationConstructorCall : JKMethodCallExpression {
     override val identifier: JKMethodSymbol
     val expression: JKExpression
-    override val arguments: JKExpressionList
+    override var arguments: JKExpressionList
 }
 
 interface JKLabel : JKTreeElement

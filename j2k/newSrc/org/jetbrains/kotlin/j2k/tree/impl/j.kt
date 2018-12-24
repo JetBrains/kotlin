@@ -197,7 +197,7 @@ class JKJavaMethodCallExpressionImpl(
 ) : JKJavaMethodCallExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
 
-    override val arguments: JKExpressionList by child(arguments)
+    override var arguments: JKExpressionList by child(arguments)
     override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
 }
 

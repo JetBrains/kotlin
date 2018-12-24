@@ -386,7 +386,7 @@ class JKDelegationConstructorCallImpl(
 ) : JKBranchElementBase(), JKDelegationConstructorCall, PsiOwner by PsiOwnerImpl() {
     override var typeArgumentList: JKTypeArgumentList by child(JKTypeArgumentListImpl())
     override val expression: JKExpression by child(expression)
-    override val arguments: JKExpressionList by child(arguments)
+    override var arguments: JKExpressionList by child(arguments)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitDelegationConstructorCall(this, data)
 }
