@@ -115,8 +115,7 @@ class NewCodeBuilder {
         }
 
         override fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression) {
-            //TODO handle class Access in seperate conversion?
-            printer.printWithNoIndent(classAccessExpression.identifier.fqName!!.substringAfter("java.lang."))
+            printer.printWithNoIndent(classAccessExpression.identifier.displayName().escaped())
         }
 
         override fun visitFile(file: JKFile) {
@@ -582,8 +581,7 @@ class NewCodeBuilder {
         private fun renderType(type: JKType) {
             if (type is JKNoTypeImpl) return
             when (type) {
-                is JKClassType -> printer.printWithNoIndent(type.classReference.displayName())
-                is JKUnresolvedClassType -> printer.printWithNoIndent(type.name)
+                is JKClassType -> printer.printWithNoIndent(type.classReference.displayName().escapedAsQualifiedName())
                 is JKContextType -> return
                 is JKStarProjectionType ->
                     printer.printWithNoIndent("*")
@@ -615,7 +613,7 @@ class NewCodeBuilder {
             if (javaNewExpression.isAnonymousClass()) {
                 printer.printWithNoIndent("object : ")
             }
-            printer.printWithNoIndent(javaNewExpression.classSymbol.displayName())
+            printer.printWithNoIndent(javaNewExpression.classSymbol.displayName().escapedAsQualifiedName())
             javaNewExpression.typeArgumentList.accept(this)
             if (javaNewExpression.constructorIsPresent() || !javaNewExpression.isAnonymousClass()) {
                 printer.par(ROUND) {
@@ -673,7 +671,7 @@ class NewCodeBuilder {
         }
 
         override fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) {
-            printer.printWithNoIndent(FqName(fieldAccessExpression.identifier.fqName).shortName().asString())
+            printer.printWithNoIndent(fieldAccessExpression.identifier.name.escaped())
         }
 
         override fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression) {
@@ -796,7 +794,7 @@ class NewCodeBuilder {
 
         override fun visitAnnotation(annotation: JKAnnotation) {
             printer.printWithNoIndent("@")
-            printer.printWithNoIndent(annotation.classSymbol.displayName())
+            printer.printWithNoIndent(annotation.classSymbol.displayName().escapedAsQualifiedName())
             if (annotation.arguments.expressions.isNotEmpty()) {
                 printer.par {
                     annotation.arguments.accept(this)
