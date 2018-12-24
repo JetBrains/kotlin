@@ -287,7 +287,9 @@ interface JKLiteralExpression : JKExpression {
     }
 }
 
-interface JKParameter : JKVariable, JKModifiersListOwner
+interface JKParameter : JKVariable, JKModifiersListOwner {
+    var isVarArgs: Boolean
+}
 
 interface JKStringLiteralExpression : JKLiteralExpression {
     val text: String

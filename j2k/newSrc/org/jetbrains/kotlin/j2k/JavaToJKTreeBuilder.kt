@@ -506,9 +506,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
 
         fun PsiParameter.toJK(): JKParameter {
+            val rawType = with(expressionTreeMapper) { typeElement?.toJK() } ?: JKTypeElementImpl(JKNoTypeImpl)
+            val type =
+                if (isVarArgs && rawType.type is JKJavaArrayType) JKTypeElementImpl((rawType.type as JKJavaArrayType).type)
+                else rawType
             return JKParameterImpl(
-                with(expressionTreeMapper) { typeElement?.toJK() } ?: JKTypeElementImpl(JKNoTypeImpl),
-                JKNameIdentifierImpl(name!!)
+                type,
+                JKNameIdentifierImpl(name!!),
+                isVarArgs
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this

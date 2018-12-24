@@ -83,6 +83,7 @@ class JKForLoopVariableImpl(
 class JKParameterImpl(
     type: JKTypeElement,
     name: JKNameIdentifier,
+    override var isVarArgs: Boolean = false,
     initializer: JKExpression = JKStubExpressionImpl()
 ) : JKParameter, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitParameter(this, data)

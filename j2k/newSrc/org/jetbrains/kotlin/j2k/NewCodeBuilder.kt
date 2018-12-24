@@ -299,6 +299,9 @@ class NewCodeBuilder {
         override fun visitParameter(parameter: JKParameter) {
             renderModifiersList(parameter)
             printer.printWithNoIndent(" ")
+            if (parameter.isVarArgs) {
+                printer.printWithNoIndent("vararg ")
+            }
             parameter.name.accept(this)
             if (parameter.type.present() && parameter.type.type !is JKContextType) {
                 printer.printWithNoIndent(":")
