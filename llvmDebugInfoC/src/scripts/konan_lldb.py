@@ -155,7 +155,7 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
     def _deref_or_obj_summary(self, index):
         value = self._values[index]
         if not value:
-            print "_deref_or_obj_summary: value none, index:{}, type:{}".format(index, self._children_types[index])
+            print("_deref_or_obj_summary: value none, index:{}, type:{}".format(index, self._children_types[index]))
             return None
         if check_type_info(value):
             return kotlin_object_type_summary(value, None)
@@ -276,7 +276,7 @@ class KonanProxyTypeProvider:
 
 def print_this_command(debugger, command, result, internal_dict):
     pthis = lldb.frame.FindVariable('<this>')
-    print pthis
+    print(pthis)
 
 def __lldb_init_module(debugger, _):
     __FACTORY['object'] = lambda x: KonanObjectSyntheticProvider(x)
