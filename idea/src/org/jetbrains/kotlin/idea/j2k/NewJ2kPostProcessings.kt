@@ -406,6 +406,10 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
                 if (!element.isLocal) return false
                 val typeReference = element.typeReference
                 if (typeReference == null || typeReference.typeElement !is KtNullableType) return false
+                val initializerType = element.initializer?.let {
+                    it.analyzeInContext(element.getResolutionScope()).getType(it)
+                }
+                if (initializerType?.isNullable() == true) return false
 
                 return ReferencesSearch.search(element, element.useScope).findAll().mapNotNull { ref ->
                     val parent = (ref.element.parent as? KtExpression)?.asAssignment()
