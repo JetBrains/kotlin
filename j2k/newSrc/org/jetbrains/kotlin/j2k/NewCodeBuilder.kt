@@ -812,12 +812,16 @@ class NewCodeBuilder {
         }
 
         override fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) {
-            renderType(classLiteralExpression.classType.type.updateNullability(Nullability.NotNull))
-            printer.printWithNoIndent("::")
-            when (classLiteralExpression.literalType) {
-                JKClassLiteralExpression.LiteralType.KOTLIN_CLASS -> printer.printWithNoIndent("class")
-                JKClassLiteralExpression.LiteralType.JAVA_CLASS -> printer.printWithNoIndent("class.java")
-                JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS -> printer.printWithNoIndent("class.javaPrimitiveType")
+            if (classLiteralExpression.literalType == JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE) {
+                printer.printWithNoIndent("Void.TYPE")
+            } else {
+                renderType(classLiteralExpression.classType.type)
+                printer.printWithNoIndent("::")
+                when (classLiteralExpression.literalType) {
+                    JKClassLiteralExpression.LiteralType.KOTLIN_CLASS -> printer.printWithNoIndent("class")
+                    JKClassLiteralExpression.LiteralType.JAVA_CLASS -> printer.printWithNoIndent("class.java")
+                    JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS -> printer.printWithNoIndent("class.javaPrimitiveType")
+                }
             }
         }
 

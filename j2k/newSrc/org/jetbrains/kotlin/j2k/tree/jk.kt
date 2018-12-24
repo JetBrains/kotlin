@@ -412,6 +412,7 @@ interface JKClassLiteralExpression : JKExpression {
     enum class LiteralType {
         KOTLIN_CLASS,
         JAVA_CLASS,
-        JAVA_PRIMITIVE_CLASS
+        JAVA_PRIMITIVE_CLASS,
+        JAVA_VOID_TYPE
     }
 }

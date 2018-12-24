@@ -104,11 +104,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
 
         fun PsiClassObjectAccessExpressionImpl.toJK(): JKClassLiteralExpression {
-            val type = operand.toJK()
+            val type = operand.toJK().type.updateNullabilityRecursively(Nullability.NotNull)
             return JKClassLiteralExpressionImpl(
-                type,
-                if (type.type is JKJavaPrimitiveType) JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS
-                else JKClassLiteralExpression.LiteralType.JAVA_CLASS
+                JKTypeElementImpl(type),
+                when (type) {
+                    is JKJavaPrimitiveType -> JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS
+                    is JKJavaVoidType -> JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE
+                    else -> JKClassLiteralExpression.LiteralType.JAVA_CLASS
+                }
             )
         }
 
