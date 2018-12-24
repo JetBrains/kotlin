@@ -98,8 +98,8 @@ private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? {
     }
 }
 
-fun KtWhenExpression.introduceSubject(): KtWhenExpression {
-    val subject = getSubjectToIntroduce()!!
+fun KtWhenExpression.introduceSubject(): KtWhenExpression? {
+    val subject = getSubjectToIntroduce() ?: return null
 
     val commentSaver = CommentSaver(this, saveLineBreaks = true)
 

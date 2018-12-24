@@ -334,7 +334,7 @@ private fun makeCall(
     val inlinableCall = controlFlow.outputValues.size <= 1
     val unboxingExpressions =
             if (inlinableCall) {
-                controlFlow.outputValueBoxer.getUnboxingExpressions(callText!!)
+                controlFlow.outputValueBoxer.getUnboxingExpressions(callText ?: return)
             }
             else {
                 val varNameValidator = NewDeclarationNameValidator(block, anchorInBlock, NewDeclarationNameValidator.Target.VARIABLES)
