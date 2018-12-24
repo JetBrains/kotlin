@@ -528,9 +528,8 @@ class NewCodeBuilder {
         }
 
         override fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement) {
-            declarationStatement.declaredStatements.forEach {
+            renderList(declarationStatement.declaredStatements, { printer.println() }) {
                 it.accept(this)
-                printer.printlnWithNoIndent()
             }
         }
 
