@@ -154,8 +154,8 @@ fun selectElementsWithTargetParent(
     selectSingleElement()
 }
 
-fun PsiElement.findExpressionByCopyableDataAndClearIt(key: Key<Boolean>): KtExpression {
-    val result = findDescendantOfType<KtExpression> { it.getCopyableUserData(key) != null }!!
+fun PsiElement.findExpressionByCopyableDataAndClearIt(key: Key<Boolean>): KtExpression? {
+    val result = findDescendantOfType<KtExpression> { it.getCopyableUserData(key) != null } ?: return null
     result.putCopyableUserData(key, null)
     return result
 }
