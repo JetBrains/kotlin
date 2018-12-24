@@ -200,15 +200,18 @@ fun JKJavaPrimitiveType.toLiteralType(): JKLiteralExpression.LiteralType? =
         else -> null
     }
 
-fun JKClassType.toPrimitiveType(): JKJavaPrimitiveType? =
-    when (classReference.fqName) {
-        "java.lang.Character" -> JKJavaPrimitiveTypeImpl.CHAR
-        "java.lang.Boolean" -> JKJavaPrimitiveTypeImpl.BOOLEAN
-        "java.lang.Integer" -> JKJavaPrimitiveTypeImpl.INT
-        "java.lang.Long" -> JKJavaPrimitiveTypeImpl.LONG
-        "java.lang.Float" -> JKJavaPrimitiveTypeImpl.FLOAT
-        "java.lang.Double" -> JKJavaPrimitiveTypeImpl.DOUBLE
-        "java.lang.Byte" -> JKJavaPrimitiveTypeImpl.BYTE
+
+fun JKType.asPrimitiveType(): JKJavaPrimitiveType? =
+    if (this is JKJavaPrimitiveType) this
+    else when ((this as? JKClassType)?.classReference?.fqName) {
+        KotlinBuiltIns.FQ_NAMES._char.asString(), CommonClassNames.JAVA_LANG_CHARACTER -> JKJavaPrimitiveTypeImpl.CHAR
+        KotlinBuiltIns.FQ_NAMES._boolean.asString(), CommonClassNames.JAVA_LANG_BOOLEAN -> JKJavaPrimitiveTypeImpl.BOOLEAN
+        KotlinBuiltIns.FQ_NAMES._int.asString(), CommonClassNames.JAVA_LANG_INTEGER -> JKJavaPrimitiveTypeImpl.INT
+        KotlinBuiltIns.FQ_NAMES._long.asString(), CommonClassNames.JAVA_LANG_LONG -> JKJavaPrimitiveTypeImpl.LONG
+        KotlinBuiltIns.FQ_NAMES._float.asString(), CommonClassNames.JAVA_LANG_FLOAT -> JKJavaPrimitiveTypeImpl.FLOAT
+        KotlinBuiltIns.FQ_NAMES._double.asString(), CommonClassNames.JAVA_LANG_DOUBLE -> JKJavaPrimitiveTypeImpl.DOUBLE
+        KotlinBuiltIns.FQ_NAMES._byte.asString(), CommonClassNames.JAVA_LANG_BYTE -> JKJavaPrimitiveTypeImpl.BYTE
+        KotlinBuiltIns.FQ_NAMES._short.asString(), CommonClassNames.JAVA_LANG_SHORT -> JKJavaPrimitiveTypeImpl.SHORT
         else -> null
     }
 
@@ -217,3 +220,41 @@ fun JKJavaPrimitiveType.isNumberType() =
             this == JKJavaPrimitiveTypeImpl.LONG ||
             this == JKJavaPrimitiveTypeImpl.FLOAT ||
             this == JKJavaPrimitiveTypeImpl.DOUBLE
+
+inline fun <reified T : JKType> T.addTypeParametersToRawProjectionType(typeParameter: JKType): T =
+    if (this is JKClassType && parameters.isEmpty()) {
+        val resolvedClass = classReference.target
+        val parametersCount =
+            when (resolvedClass) {
+                is PsiClass -> resolvedClass.typeParameters.size
+                is KtClass -> resolvedClass.typeParameters.size
+                else -> 0
+            }
+        val typeParameters = List(parametersCount) { typeParameter }
+        JKClassTypeImpl(
+            classReference,
+            typeParameters,
+            nullability
+        ) as T
+    } else this
+
+fun JKClassSymbol.isArrayType(): Boolean =
+    fqName in
+            JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE.values
+                .filterIsInstance<JKJavaPrimitiveType>()
+                .map { PrimitiveType.valueOf(it.jvmPrimitiveType.name).arrayTypeFqName.asString() } +
+            KotlinBuiltIns.FQ_NAMES.array.asString()
+
+
+fun JKType.arrayInnerType(): JKType? =
+    when (this) {
+        is JKJavaArrayType -> type
+        is JKClassType ->
+            if (this.classReference.isArrayType()) this.parameters.singleOrNull()
+            else null
+        else -> null
+    }
+
+val namesOfPrimitiveTypes by lazy {
+    KotlinBuiltIns.FQ_NAMES.primitiveTypeShortNames.map { it.identifier.decapitalize() }
+}

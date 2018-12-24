@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.psi.KtProperty
 
 
 class JKSymbolProvider {
@@ -98,6 +96,9 @@ class JKSymbolProvider {
         provideByFqName(ClassId.fromString(fqName), context)
 
     internal inline fun <reified T : JKSymbol> provideByFqName(fqName: FqName, context: PsiElement = symbolsByPsi.keys.first()): T =
+        provideByFqName(fqName.asString(), context)
+
+    internal inline fun <reified T : JKSymbol> provideByFqName(fqName: FqNameUnsafe, context: PsiElement = symbolsByPsi.keys.first()): T =
         provideByFqName(fqName.asString(), context)
 
 

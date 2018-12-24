@@ -5,18 +5,22 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiVariable
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
-import com.intellij.util.reverse
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.JKSymbolProvider
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.conversions.parentOfType
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 interface JKSymbol {
     val target: Any
@@ -24,11 +28,16 @@ interface JKSymbol {
     val fqName: String?
 }
 
+interface JKUnresolvedSymbol : JKSymbol
+
+fun JKSymbol.isUnresolved() =
+    this is JKUnresolvedSymbol
+
 interface JKNamedSymbol : JKSymbol {
     val name: String
 }
 
-interface JKUniverseSymbol<T: JKTreeElement> : JKSymbol {
+interface JKUniverseSymbol<T : JKTreeElement> : JKSymbol {
     override var target: T
 }
 
@@ -38,13 +47,21 @@ interface JKClassSymbol : JKNamedSymbol
 interface JKMethodSymbol : JKNamedSymbol {
     override val fqName: String
     val receiverType: JKType?
-    val parameterTypes: List<JKType>
-    val returnType: JKType
+    val parameterTypes: List<JKType>?
+    val returnType: JKType?
 }
+
+fun JKMethodSymbol.parameterTypesWithUnfoldedVarargs(): Sequence<JKType>? {
+    val realParameterTypes = parameterTypes ?: return null
+    if (realParameterTypes.isEmpty()) return emptySequence()
+    val lastArrayType = realParameterTypes.last().arrayInnerType() ?: return realParameterTypes.asSequence()
+    return realParameterTypes.dropLast(1).asSequence() + generateSequence { lastArrayType }
+}
+
 
 interface JKFieldSymbol : JKNamedSymbol {
     override val fqName: String
-    val fieldType: JKType
+    val fieldType: JKType?
 }
 
 class JKUniverseClassSymbol : JKClassSymbol, JKUniverseSymbol<JKClass> {
@@ -132,10 +149,21 @@ class JKMultiverseMethodSymbol(override val target: PsiMethod, private val symbo
 class JKMultiverseFunctionSymbol(override val target: KtNamedFunction, private val symbolProvider: JKSymbolProvider) : JKMethodSymbol {
     override val receiverType: JKType?
         get() = target.receiverTypeReference?.typeElement?.toJK(symbolProvider)
-    override val parameterTypes: List<JKType>
-        get() = target.valueParameters.map { it.typeReference!!.typeElement!!.toJK(symbolProvider) }
-    override val returnType: JKType
-        get() = target.typeReference!!.typeElement!!.toJK(symbolProvider)
+    override val parameterTypes: List<JKType>?
+        get() = target.valueParameters.map { parameter ->
+            val type = parameter.typeReference?.typeElement?.toJK(symbolProvider)
+            type?.let {
+                if (parameter.isVarArg) {
+                    JKClassTypeImpl(
+                        symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.array),
+                        listOf(it)
+                    )
+                } else it
+            }
+        }.takeIf { parameters -> parameters.all { it != null } } as? List<JKType>
+
+    override val returnType: JKType?
+        get() = target.typeReference?.typeElement?.toJK(symbolProvider)
     override val name: String
         get() = target.name!!
     override val declaredIn: JKSymbol
@@ -168,8 +196,8 @@ class JKMultiverseFieldSymbol(override val target: PsiVariable, private val symb
 }
 
 class JKMultiversePropertySymbol(override val target: KtCallableDeclaration, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
-    override val fieldType: JKType
-        get() = target.typeReference!!.typeElement!!.toJK(symbolProvider)
+    override val fieldType: JKType?
+        get() = target.typeReference?.typeElement?.toJK(symbolProvider)
     override val name: String
         get() = target.name!!
     override val declaredIn: JKSymbol
@@ -178,7 +206,7 @@ class JKMultiversePropertySymbol(override val target: KtCallableDeclaration, pri
         get() = target.fqName!!.asString()
 }
 
-class JKUnresolvedField(override val target: PsiReference, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
+class JKUnresolvedField(override val target: PsiReference, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol, JKUnresolvedSymbol {
     override val fieldType: JKType
         get() {
             val resolvedType = (target as? PsiReferenceExpressionImpl)?.type
@@ -198,7 +226,7 @@ class JKUnresolvedField(override val target: PsiReference, private val symbolPro
 class JKUnresolvedMethod(
     override val target: String,
     override val returnType: JKType = JKNoTypeImpl
-) : JKMethodSymbol {
+) : JKMethodSymbol, JKUnresolvedSymbol {
     constructor(target: PsiReference) : this(target.canonicalText)
 
     override val declaredIn: JKSymbol
@@ -207,12 +235,27 @@ class JKUnresolvedMethod(
     override val receiverType: JKType?
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val parameterTypes: List<JKType>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO(target) //To change initializer of created properties use File | Settings | File Templates.
     override val name: String
         get() = target
 }
 
-class JKUnresolvedClassSymbol(override val target: String) : JKClassSymbol {
+class JKExclExclMethod(
+    operandType: JKType
+) : JKMethodSymbol {
+    override val target: String = "!!"
+    override val returnType: JKType = operandType.updateNullability(Nullability.NotNull)
+    override val declaredIn: JKSymbol
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val fqName: String = "!!"
+    override val receiverType: JKType?
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val parameterTypes: List<JKType>
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val name: String = "!!"
+}
+
+class JKUnresolvedClassSymbol(override val target: String) : JKClassSymbol, JKUnresolvedSymbol {
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String?
