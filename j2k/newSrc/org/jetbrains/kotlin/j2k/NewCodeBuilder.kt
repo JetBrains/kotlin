@@ -544,13 +544,6 @@ class NewCodeBuilder {
         }
 
         override fun visitLocalVariable(localVariable: JKLocalVariable) {
-//            if (localVariable.parent !is JKForInStatement) {
-//                if (localVariable.modifierList.modality == JKModifierTokens.FINAL) {
-//                    printer.print("val")
-//                } else {
-//                    printer.print("var")
-//                }
-//            }
             renderModifiersList(localVariable)
             printer.printWithNoIndent(" ")
             localVariable.name.accept(this)
@@ -762,10 +755,6 @@ class NewCodeBuilder {
                 blockStatement.block.accept(this)
             }
         }
-
-        /*override fun visitParameter(parameter: JKParameter) {
-            printer.printWithNoIndent(parameter.name.value)
-        }*/
 
         override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement) {
             ktAssignmentStatement.field.accept(this)
