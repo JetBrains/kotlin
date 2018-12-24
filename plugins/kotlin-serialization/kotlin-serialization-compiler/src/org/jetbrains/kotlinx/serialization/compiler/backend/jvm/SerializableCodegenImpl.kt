@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParameter
@@ -46,6 +47,12 @@ class SerializableCodegenImpl(
             val serializableClass = codegen.descriptor
             if (serializableClass.isInternalSerializable)
                 SerializableCodegenImpl(codegen, serializableClass).generate()
+            else if (serializableClass.hasSerializableAnnotationWithoutArgs && !serializableClass.hasCompanionObjectAsSerializer) {
+                throw CompilationException(
+                    "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
+                            "Provide serializer manually via e.g. companion object", null, serializableClass.findPsi()
+                )
+            }
         }
     }
 

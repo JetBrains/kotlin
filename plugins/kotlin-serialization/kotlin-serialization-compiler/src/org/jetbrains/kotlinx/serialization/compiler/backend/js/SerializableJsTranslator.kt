@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.js
 
+import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
@@ -30,10 +32,10 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
+import org.jetbrains.kotlinx.serialization.compiler.resolve.hasCompanionObjectAsSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.hasSerializableAnnotationWithoutArgs
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 
 class SerializableJsTranslator(
@@ -104,12 +106,18 @@ class SerializableJsTranslator(
     companion object {
         fun translate(
             declaration: KtPureClassOrObject,
-            descriptor: ClassDescriptor,
+            serializableClass: ClassDescriptor,
             translator: DeclarationBodyVisitor,
             context: TranslationContext
         ) {
-            if (descriptor.isInternalSerializable)
-                SerializableJsTranslator(declaration, descriptor, translator, context).generate()
+            if (serializableClass.isInternalSerializable)
+                SerializableJsTranslator(declaration, serializableClass, translator, context).generate()
+            else if (serializableClass.hasSerializableAnnotationWithoutArgs && !serializableClass.hasCompanionObjectAsSerializer) {
+                throw CompilationException(
+                    "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
+                            "Provide serializer manually via e.g. companion object", null, serializableClass.findPsi()
+                )
+            }
         }
     }
 }
