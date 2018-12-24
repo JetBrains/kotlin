@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
+// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     val c = UInt::class.javaObjectType 
