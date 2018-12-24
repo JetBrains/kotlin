@@ -166,6 +166,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/ColonSpaces.after.kt");
         }
 
+        @TestMetadata("CommentInExpressionBodies.after.kt")
+        public void testCommentInExpressionBodies() throws Exception {
+            runTest("idea/testData/formatter/CommentInExpressionBodies.after.kt");
+        }
+
         @TestMetadata("CommentInFunctionLiteral.after.kt")
         public void testCommentInFunctionLiteral() throws Exception {
             runTest("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
