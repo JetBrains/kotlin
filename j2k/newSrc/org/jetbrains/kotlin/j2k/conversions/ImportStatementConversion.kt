@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import com.intellij.psi.CommonClassNames
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKImportStatementImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKNameIdentifierImpl
@@ -19,21 +20,28 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 class ImportStatementConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKFile) return recurse(element)
-        element.importList = element.importList.map {
-            mapOf("java.util.Collection" to "kotlin.collections.Collection")[it.name.value]?.let {
-                JKImportStatementImpl(JKNameIdentifierImpl(it))
-            } ?: it
-        }
-        val packageName = element.packageDeclaration.packageName.value
         for (import in element.declarationList.collectImports()) {
-            if (!element.importList.containsImport(import) && importIsInPacakge(import, packageName)) {
+            if (!element.importList.containsImport(import)) {
                 element.importList += JKImportStatementImpl(JKNameIdentifierImpl(import))
             }
         }
+        element.importList = element.importList.filter { it.name.value !in importExceptionList }
         return recurse(element)
     }
 
-    private fun importIsInPacakge(import: String, packageName: String) =
+    private val importExceptionList =
+        listOf(
+            CommonClassNames.JAVA_UTIL_ARRAY_LIST,
+            CommonClassNames.JAVA_UTIL_LIST,
+            CommonClassNames.JAVA_UTIL_HASH_SET,
+            CommonClassNames.JAVA_UTIL_HASH_MAP,
+            CommonClassNames.JAVA_UTIL_COLLECTION,
+            CommonClassNames.JAVA_UTIL_ITERATOR,
+            "java.util.LinkedHashMap",
+            "java.util.LinkedHashSet"
+        )
+
+    private fun importIsInPackage(import: String, packageName: String) =
         '.' !in import.substringAfter(packageName)
 
 
