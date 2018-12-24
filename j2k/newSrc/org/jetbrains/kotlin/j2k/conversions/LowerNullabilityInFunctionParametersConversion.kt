@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.*
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.j2k.tree.impl.JKFieldSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
 
 class LowerNullabilityInFunctionParametersConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -21,7 +20,7 @@ class LowerNullabilityInFunctionParametersConversion(private val context: Conver
                 (element as? JKKtConstructor)?.delegationCall
             )
         for (parameter in element.parameters) {
-            if (parameter.type.type.nullability == Nullability.NotNull) continue
+            if (parameter.type.type.nullability != Nullability.Default) continue
             if (parameter.hasNotNullUsages(scopes)) {
                 parameter.type = JKTypeElementImpl(parameter.type.type.updateNullability(Nullability.NotNull))
             }

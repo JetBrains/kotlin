@@ -362,7 +362,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiTypeParameter.toJK(): JKTypeParameter =
             JKTypeParameterImpl(JKNameIdentifierImpl(name!!),
-                                extendsListTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.NotNull)) })
+                                extendsListTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) })
 
         fun PsiClass.toJK(): JKClass {
             val classKind: JKClass.ClassKind = when {
@@ -373,7 +373,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             }
 
             fun PsiReferenceList.mapTypes() =
-                this.referencedTypes.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.NotNull)) } }
+                this.referencedTypes.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) } }
 
             val implTypes = this.implementsList?.mapTypes().orEmpty()
             val extensionType = this.extendsList?.mapTypes().orEmpty()
