@@ -754,7 +754,7 @@ void ScanBlack(ContainerHeader* start) {
       if (color == CONTAINER_TAG_GC_GREEN || color == CONTAINER_TAG_GC_BLACK) continue;
       container->setColorAssertIfGreen(CONTAINER_TAG_GC_BLACK);
     } else {
-      if (container->marked()) continue;
+      if (!container->marked()) continue;
       container->unMark();
     }
     traverseContainerReferredObjects(container, [&toVisit](ObjHeader* ref) {
