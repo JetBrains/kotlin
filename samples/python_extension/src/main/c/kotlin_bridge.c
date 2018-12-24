@@ -108,6 +108,38 @@ static PyMethodDef kotlin_bridge_funcs[] = {
    { NULL }
 };
 
+#if PY_MAJOR_VERSION >= 3
+
+struct module_state {
+  server_kref_demo_Server server;
+};
+
+static int kotlin_bridge_traverse(PyObject *m, visitproc visit, void *arg) {
+    return 0;
+}
+
+static int kotlin_bridge_clear(PyObject *m) {
+    return 0;
+}
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "kotlin_bridge",
+        NULL,
+        sizeof(struct module_state),
+        kotlin_bridge_funcs,
+        NULL,
+        kotlin_bridge_traverse,
+        kotlin_bridge_clear,
+        NULL
+};
+
+PyMODINIT_FUNC PyInit_kotlin_bridge(void) {
+   PyObject *module = PyModule_Create(&moduledef);
+   return module;
+}
+#else
 void initkotlin_bridge(void) {
    Py_InitModule3("kotlin_bridge", kotlin_bridge_funcs, "Kotlin/Native example module");
 }
+#endif

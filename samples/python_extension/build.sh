@@ -11,6 +11,7 @@ fi
 KONAN_USER_DIR=${KONAN_DATA_DIR:-"$HOME/.konan"}
 KONAN_DEPS="$KONAN_USER_DIR/dependencies"
 
+# python3 shall work as well.
 PYTHON=python
 
 mkdir -p $DIR/build

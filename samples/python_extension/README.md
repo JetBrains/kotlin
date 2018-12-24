@@ -17,13 +17,13 @@ To build and run the sample do the following:
 *   On macOS copy Kotlin binary to extension's directory and change install name with
     `install_name_tool` tool, i.e.
     ```
-    sudo cp libserver.dylib  /Library/Python/2.7/site-packages/
+    sudo cp ./build/libserver.dylib  /Library/Python/2.7/site-packages/
     sudo install_name_tool /Library/Python/2.7/site-packages/kotlin_bridge.so \
           -change libserver.dylib @loader_path/libserver.dylib
     ```
 *   On Linux copy Kotlin binary in some place where libraries could be loaded from, i.e.
     ```
-    cp libserver.so /usr/local/lib/
+    cp ./build/libserver.so /usr/local/lib/
     ldconfig
     ```
     or modify dynamic loader search path with
