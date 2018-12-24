@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.j2k.conversions
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaMethodImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaVoidType
-import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKUnresolvedClassType
+import org.jetbrains.kotlin.j2k.tree.impl.*
 
 class JavaStandartMethodsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -23,7 +20,10 @@ class JavaStandartMethodsConversion(private val context: ConversionContext) : Re
             if (fixCloneMethod(declaration)) {
                 element.inheritance.implements +=
                         JKTypeElementImpl(
-                            JKUnresolvedClassType("Cloneable", emptyList(), Nullability.NotNull)
+                            JKClassTypeImpl(
+                                JKUnresolvedClassSymbol("Cloneable"),
+                                emptyList(), Nullability.NotNull
+                            )
                         )
                 continue
             }

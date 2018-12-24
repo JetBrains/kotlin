@@ -193,12 +193,6 @@ object JKNoTypeImpl: JKNoType {
 
 class JKStarProjectionTypeImpl : JKStarProjectionType
 
-class JKUnresolvedClassType(
-    val name: String,
-    override val parameters: List<JKType>,
-    override val nullability: Nullability = Nullability.Default
-) : JKParametrizedType
-
 fun JKType.fqName(): String =
     when (this) {
         is JKClassType -> {
@@ -209,13 +203,9 @@ fun JKType.fqName(): String =
                 else -> TODO(target.toString())
             }
         }
-        is JKUnresolvedClassType -> name
         is JKJavaPrimitiveType -> jvmPrimitiveType.name
         else -> TODO(toString())
     }
-
-fun JKType.equalsByName(other: JKType) = fqName() == other.fqName()
-
 
 class JKNullLiteral : JKLiteralExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override val literal: String

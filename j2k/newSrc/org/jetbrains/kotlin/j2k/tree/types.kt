@@ -68,7 +68,7 @@ fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nu
             val parameters = parameters.map { it.toJK(symbolProvider, nullability) }
             when (target) {
                 null ->
-                    JKUnresolvedClassType(rawType().canonicalText, parameters, nullability)
+                    JKClassTypeImpl(JKUnresolvedClassSymbol(rawType().canonicalText), parameters, nullability)
                 is PsiTypeParameter ->
                     JKTypeParameterTypeImpl(target.name!!)
                 else -> {
@@ -157,7 +157,6 @@ inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability)
     else when (this) {
         is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(name, newNullability)
         is JKClassTypeImpl -> JKClassTypeImpl(classReference, parameters, newNullability)
-        is JKUnresolvedClassType -> JKUnresolvedClassType(name, parameters, newNullability)
         is JKNoType -> this
         is JKJavaVoidType -> this
         is JKJavaPrimitiveType -> this

@@ -866,9 +866,6 @@ private inline fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKTyp
             val symbol = type.classReference as? JKClassSymbol ?: return false
             this.identifier.name == symbol.name && this.identifier.declaredIn == symbol
         }
-        is JKUnresolvedClassType -> {
-            this.identifier.name == type.name
-        }
         else -> false
     }
 }

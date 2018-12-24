@@ -34,7 +34,7 @@ class ImplicitInitializerConversion(private val context: ConversionContext) : Re
 
         val fieldType = element.type.type
         val newInitializer = when (fieldType) {
-            is JKClassType, is JKUnresolvedClassType -> JKNullLiteral()
+            is JKClassType -> JKNullLiteral()
             is JKJavaPrimitiveType -> createPrimitiveTypeInitializer(fieldType)
             else -> null
         }
