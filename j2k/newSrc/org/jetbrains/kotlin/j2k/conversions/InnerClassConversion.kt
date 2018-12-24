@@ -19,6 +19,7 @@ class InnerClassConversion : RecursiveApplicableConversionBase() {
 
     private fun applyArmed(element: JKTreeElement, outer: JKClass): JKTreeElement {
         if (element !is JKClass) return recurseArmed(element, outer)
+        if (element.isLocalClass()) return recurseArmed(element, outer)
 
         val static = element.extraModifiers.find { it == ExtraModifier.STATIC }
         if (static != null) {

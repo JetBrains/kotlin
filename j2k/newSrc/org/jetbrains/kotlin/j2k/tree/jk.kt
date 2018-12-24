@@ -63,6 +63,9 @@ interface JKClass : JKDeclaration, JKVisibilityOwner, JKExtraModifiersOwner, JKM
     }
 }
 
+fun JKClass.isLocalClass(): Boolean =
+    parent !is JKClassBody && parent !is JKFile
+
 val JKClass.declarationList: List<JKDeclaration>
     get() = classBody.declarations
 

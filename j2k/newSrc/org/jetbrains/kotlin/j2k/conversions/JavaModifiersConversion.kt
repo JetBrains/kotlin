@@ -13,7 +13,11 @@ class JavaModifiersConversion(private val context: ConversionContext) : Recursiv
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKVisibilityOwner) {
             if (element.visibility == Visibility.PACKAGE_PRIVATE) {
-                element.visibility = Visibility.INTERNAL
+                if (element is JKClass && element.isLocalClass()) {
+                    element.visibility = Visibility.PUBLIC
+                } else {
+                    element.visibility = Visibility.INTERNAL
+                }
             }
         }
         if (element is JKExtraModifiersOwner && element is JKAnnotationListOwner) {
