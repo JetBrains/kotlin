@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.kotlinBinaryExpression
 import org.jetbrains.kotlin.j2k.tree.JKExpression
 import org.jetbrains.kotlin.j2k.tree.JKJavaPolyadicExpression
 import org.jetbrains.kotlin.j2k.tree.JKOperator
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
-import org.jetbrains.kotlin.j2k.tree.impl.JKBinaryExpressionImpl
+import org.jetbrains.kotlin.j2k.tree.impl.*
 
 
-class PolyadicExpressionConversion : RecursiveApplicableConversionBase() {
+class PolyadicExpressionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         return (if (element is JKJavaPolyadicExpression)
             convertPolyadic(element.operands.also { element.operands = emptyList() }, element.tokens)
@@ -26,11 +28,17 @@ class PolyadicExpressionConversion : RecursiveApplicableConversionBase() {
         return if (operators.isEmpty())
             operands.first()
         else {
-            val op = operators.reduce { a, b -> if (a.precedence > b.precedence) a else b }
-            val index = operators.indexOf(op)
+            val operator = operators.maxBy { it.precedence }
+            val token =
+                when (operator) {
+                    is JKJavaOperatorImpl -> operator.token.toKtToken()
+                    is JKKtOperatorImpl -> operator.token
+                    else -> error("operator should be either kotlin or java")
+                }
+            val index = operators.indexOf(operator)
             val left = convertPolyadic(operands.subList(0, index + 1), operators.subList(0, index))
             val right = convertPolyadic(operands.subList(index + 1, operands.size), operators.subList(index + 1, operators.size))
-            JKBinaryExpressionImpl(left, right, op)
+            kotlinBinaryExpression(left, right, token, context)!!
         }
     }
 }
