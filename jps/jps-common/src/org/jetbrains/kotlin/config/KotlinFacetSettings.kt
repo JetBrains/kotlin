@@ -200,7 +200,7 @@ class KotlinFacetSettings {
             return CoroutineSupport.byCompilerArgumentsOrNull(compilerArguments)
         }
         set(value) {
-            compilerArguments!!.coroutinesState = when (value) {
+            compilerArguments?.coroutinesState = when (value) {
                 null -> CommonCompilerArguments.DEFAULT
                 LanguageFeature.State.ENABLED -> CommonCompilerArguments.ENABLE
                 LanguageFeature.State.ENABLED_WITH_WARNING -> CommonCompilerArguments.WARN
