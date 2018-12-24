@@ -18,18 +18,20 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         var newElement = element
         if (element is JKJavaNewArray) {
-            val arrayType = element.type.type
+            val arrayType = element.type.type.asPrimitiveType()
+            val arrayConstructorName =
+                if (arrayType != null)
+                    CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY[PrimitiveType.valueOf(arrayType.jvmPrimitiveType.name)]!!.asString()
+                else
+                    CollectionLiteralResolver.ARRAY_OF_FUNCTION.asString()
             newElement = JKJavaMethodCallExpressionImpl(
-                context.symbolProvider.provideByFqName(
-                    if (arrayType is JKJavaPrimitiveType)
-                        CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY[PrimitiveType.valueOf(arrayType.jvmPrimitiveType.name)]!!.asString()
-                    else
-                        CollectionLiteralResolver.ARRAY_OF_FUNCTION.asString()
-                ),
+                context.symbolProvider.provideByFqName("kotlin.$arrayConstructorName"),
                 JKExpressionListImpl(element.initializer.also { element.initializer = emptyList() })
             )
         } else if (element is JKJavaNewEmptyArray) {
-            newElement = buildArrayInitializer(element.initializer.also { element.initializer = emptyList() }, element.type.type)
+            newElement = buildArrayInitializer(
+                element.initializer.also { element.initializer = emptyList() }, element.type.type
+            )
         }
 
         return recurse(newElement)
@@ -37,19 +39,23 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
 
     private fun buildArrayInitializer(dimensions: List<JKExpression>, type: JKType): JKExpression {
         if (dimensions.size == 1) {
-            val methodOrConstructorReference = if (type !is JKJavaPrimitiveType)
-                context.symbolProvider.provideByFqName("kotlin/arrayOfNulls")
-            else
-                JKUnresolvedMethod(arrayFqName(type).replace('/', '.')/*TODO resolve real reference*/)
-            return JKJavaMethodCallExpressionImpl(
-                methodOrConstructorReference,
-                JKExpressionListImpl(dimensions[0]),
-                JKTypeArgumentListImpl(if (type is JKJavaPrimitiveType) emptyList() else listOf(JKTypeElementImpl(type)))
-            )
+            return if (type !is JKJavaPrimitiveType) {
+                JKJavaMethodCallExpressionImpl(
+                    context.symbolProvider.provideByFqName("kotlin/arrayOfNulls"),
+                    JKExpressionListImpl(dimensions[0]),
+                    JKTypeArgumentListImpl(listOf(JKTypeElementImpl(type.updateNullability(Nullability.NotNull))))
+                )
+            } else {
+                JKJavaNewExpressionImpl(
+                    context.symbolProvider.provideByFqName(arrayFqName(type).replace('/', '.')),
+                    JKExpressionListImpl(dimensions[0]),
+                    JKTypeArgumentListImpl(emptyList())
+                )
+            }
         }
         if (dimensions[1] !is JKStubExpression) {
             return JKJavaMethodCallExpressionImpl(
-                JKUnresolvedMethod("kotlin.Array"),//TODO resolve real reference
+                context.symbolProvider.provideByFqName("kotlin.Array"),
                 JKExpressionListImpl(
                     dimensions[0],
                     JKLambdaExpressionImpl(
