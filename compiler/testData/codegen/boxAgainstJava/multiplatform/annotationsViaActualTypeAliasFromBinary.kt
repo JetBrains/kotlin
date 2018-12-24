@@ -1,8 +1,13 @@
 // !LANGUAGE: +MultiPlatformProjects
-// MODULE: m1-common
-// FILE: common.kt
+// WITH_REFLECT
+// IGNORE_BACKEND: JVM_IR
+// FILE: main.kt
 
-// See also compiler/testData/codegen/boxAgainstJava/multiplatform/annotationsViaActualTypeAliasFromBinary.kt
+// See compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationsViaActualTypeAlias2.kt
+
+// This test checks the same behavior but against the Java implementation compiled to the .class file (as opposed to a .java source file).
+// Enum annotation argument is commented below, because to be able to resolve E in Jnno.java we have to have a multi-module test where
+// one of the modules also contains Java files, and that is too complicated for our test infrastructure at the moment.
 
 import kotlin.reflect.KClass
 
@@ -27,28 +32,36 @@ expect annotation class Anno(
     val za: BooleanArray = [false, true],
     val str: String = "fizz",
     val k: KClass<*> = Number::class,
-    val e: E = E.E1,
+    // val e: E = E.E1,
     // TODO: val a: A = A("1"),
     val stra: Array<String> = ["bu", "zz"],
-    val ka: Array<KClass<*>> = [Double::class, String::class, LongArray::class, Array<Array<Array<Int>>>::class, Unit::class],
-    val ea: Array<E> = [E.E2, E.E3]
+    val ka: Array<KClass<*>> = [Double::class, String::class, LongArray::class, Array<Array<Array<Int>>>::class, Unit::class]
+    // val ea: Array<E> = [E.E2, E.E3],
     // TODO: val aa: Array<A> = [A("2"), A("3")]
 )
 
-enum class E { E1, E2, E3 }
+// enum class E { E1, E2, E3 }
 
 annotation class A(val value: String)
 
 @Anno
 fun test() {}
 
-// MODULE: m2-jvm(m1-common)
-// FILE: jvm.kt
-
 actual typealias Anno = Jnno
+
+fun box(): String {
+    // We don't need to check the contents, just check that there are no anomalities in the bytecode by loading annotations
+    ::test.annotations.toString()
+
+    return "OK"
+}
 
 // FILE: Jnno.java
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Jnno {
     byte b() default 1;
     char c() default 'x';
@@ -70,10 +83,10 @@ public @interface Jnno {
     boolean[] za() default {false, true};
     String str() default "fi" + "zz";
     Class<?> k() default Number.class;
-    E e() default E.E1;
+    // E e() default E.E1;
     // TODO: A a() default @A("1");
     String[] stra() default {"bu", "zz"};
     Class<?>[] ka() default {double.class, String.class, long[].class, Integer[][][].class, void.class};
-    E[] ea() default {E.E2, E.E3};
+    // E[] ea() default {E.E2, E.E3};
     // TODO: A[] aa() default {@A("2"), @A("3")};
 }
