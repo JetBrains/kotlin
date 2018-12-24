@@ -12,6 +12,8 @@ import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
 import com.jetbrains.cidr.execution.debugger.evaluation.ValueRendererFactory
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer
 import org.jetbrains.konan.util.getKotlinNativePath
+import org.jetbrains.konan.util.getKotlinNativeVersion
+import java.nio.file.Path
 import java.nio.file.Paths
 
 class KonanValueRendererFactory : ValueRendererFactory {
@@ -36,10 +38,40 @@ private fun initLLDBDriver(project: Project, driver: LLDBDriver) {
     getKotlinNativePath(project)?.let { path ->
         // Apply custom formatting for Kotlin/Native structs:
         val lldbPrettyPrinters = Paths.get(path, "tools", "konan_lldb.py")
-        driver.executeConsoleCommand("command script import \"$lldbPrettyPrinters\"")
+
+        // Patch pretty printers to make them compatible with Python 3.x. KT-29625
+        val lldbPrettyPrintersPatched = if (getKotlinNativeVersion(path)?.isAtLeast(1, 1, 1) == true)
+            lldbPrettyPrinters
+        else
+            patchPythonPrettyPrinters(lldbPrettyPrinters)
+
+        driver.executeConsoleCommand("command script import \"$lldbPrettyPrintersPatched\"")
+
         // Re-draw debugger views that may be drawn by concurrent threads while formatting hasn't been applied:
         XDebuggerManager.getInstance(project).currentSession?.rebuildViews()
     }
 
     driver.executeConsoleCommand("settings set target.process.thread.step-avoid-regexp ^::Kotlin_")
+}
+
+private val LLDB_PRETTY_PRINTERS_PATCHED_LINE_REGEX = Regex("^\\s*print\\s.*")
+
+private fun patchPythonPrettyPrinters(lldbPrettyPrinters: Path): Path {
+    val lldbPrettyPrintersPatched = createTempDir().toPath().resolve("konan_lldb.py")
+
+    lldbPrettyPrintersPatched.toFile().bufferedWriter().use { writer ->
+        lldbPrettyPrinters.toFile().forEachLine { input ->
+            val output = when {
+                input.length <= 5 -> input
+                input.startsWith("#") -> input
+                input.matches(LLDB_PRETTY_PRINTERS_PATCHED_LINE_REGEX) -> input.replaceFirst("print", "print(") + ")"
+                else -> input
+            }
+
+            writer.write(output)
+            writer.write(System.lineSeparator())
+        }
+    }
+
+    return lldbPrettyPrintersPatched
 }

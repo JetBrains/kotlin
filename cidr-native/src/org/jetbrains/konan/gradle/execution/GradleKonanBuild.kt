@@ -54,8 +54,8 @@ object GradleKonanBuild {
 
         buildModules.forEach { buildModule ->
             projectPaths += buildModule.projectPath
-            if (cleanupNeeded) cleanupTasks.addIfNotNull(buildModule.moduleCleanTaskName)
-            if (compileNeeded) compileTasks.addIfNotNull(buildModule.moduleBuildTaskName)
+            if (cleanupNeeded) cleanupTasks.addIfNotNull(buildModule.moduleCleanTaskPath)
+            if (compileNeeded) compileTasks.addIfNotNull(buildModule.moduleBuildTaskPath)
         }
 
         val executionName = when (compileTasks.isEmpty()) {
@@ -93,8 +93,8 @@ object GradleKonanBuild {
         )?.buildConfiguration ?: return
 
         val tasks = mutableListOf<String>()
-        if (cleanupNeeded) tasks.addIfNotNull(buildConfiguration.artifactCleanTaskName)
-        tasks += buildConfiguration.artifactBuildTaskName
+        if (cleanupNeeded) tasks.addIfNotNull(buildConfiguration.artifactCleanTaskPath)
+        tasks += buildConfiguration.artifactBuildTaskPath
 
         runBuildTasks(project, executionName, tasks, buildConfiguration.projectPath, true)
     }
@@ -107,7 +107,7 @@ object GradleKonanBuild {
         )?.buildConfiguration ?: return false
 
         return with(buildConfiguration) {
-            runBuildTasks(project, message("execution.compileConfiguration.name", name), listOf(artifactBuildTaskName), projectPath, false)
+            runBuildTasks(project, message("execution.compileConfiguration.name", name), listOf(artifactBuildTaskPath), projectPath, false)
         }
     }
 

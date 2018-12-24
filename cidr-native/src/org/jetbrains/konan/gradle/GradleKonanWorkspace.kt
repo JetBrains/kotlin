@@ -104,13 +104,13 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
         buildModules += GradleKonanBuildModule(
             konanModel.toString(),
             rootProjectPath,
-            konanModel.buildTaskName,
-            konanModel.cleanTaskName
+            konanModel.buildTaskPath,
+            konanModel.cleanTaskPath
         )
 
         val configurationsMap = MultiMap.createSmart<Triple<String, String, String>, GradleKonanConfiguration>()
         for (konanArtifact in konanModel.artifacts) {
-            val artifactBuildTaskName = konanArtifact.buildTaskName
+            val artifactBuildTaskPath = konanArtifact.buildTaskPath
             val id = getConfigurationId(moduleData.id, konanArtifact)
             // TODO: We should do something about debug/release for gradle
             val configuration = GradleKonanConfiguration(
@@ -119,8 +119,8 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
                 "Debug",
                 konanArtifact.file,
                 konanArtifact.type,
-                artifactBuildTaskName,
-                konanModel.cleanTaskName,
+                artifactBuildTaskPath,
+                konanModel.cleanTaskPath,
                 rootProjectPath,
                 konanArtifact.isTests
             )
@@ -153,7 +153,7 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
 }
 
 private fun getConfigurationId(moduleId: String, konanArtifact: KonanModelArtifact) =
-    getBuildTargetId(moduleId, konanArtifact.name) + ":" + konanArtifact.buildTaskName
+    getBuildTargetId(moduleId, konanArtifact.name) + ":" + konanArtifact.buildTaskPath
 
 private fun getBuildTargetId(moduleId: String, targetName: String) = "$moduleId:$targetName"
 

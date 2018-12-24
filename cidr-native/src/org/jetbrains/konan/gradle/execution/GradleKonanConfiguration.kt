@@ -20,8 +20,8 @@ class GradleKonanConfiguration(
     val profileName: String,
     val productFile: File?,
     val targetType: CompilerOutputKind?,
-    val artifactBuildTaskName: String,
-    val artifactCleanTaskName: String?,
+    val artifactBuildTaskPath: String,
+    artifactCleanTaskPath: String?,
     val projectPath: String,
     val isTests: Boolean
 ) : Serializable, CidrBuildConfiguration {
@@ -31,4 +31,6 @@ class GradleKonanConfiguration(
         get() = targetType == CompilerOutputKind.PROGRAM
 
     override fun getName() = myName
+
+    val artifactCleanTaskPath: String? = artifactCleanTaskPath?.takeIf { it.isNotEmpty() }
 }

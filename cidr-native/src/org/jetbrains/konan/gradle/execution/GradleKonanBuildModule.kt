@@ -12,6 +12,9 @@ package org.jetbrains.konan.gradle.execution
 class GradleKonanBuildModule(
     val id: String,
     val projectPath: String,
-    val moduleBuildTaskName: String?,
-    val moduleCleanTaskName: String?
-)
+    moduleBuildTaskPath: String?,
+    moduleCleanTaskPath: String?
+) {
+    val moduleBuildTaskPath: String? = moduleBuildTaskPath?.takeIf { it.isNotEmpty() }
+    val moduleCleanTaskPath: String? = moduleCleanTaskPath?.takeIf { it.isNotEmpty() }
+}

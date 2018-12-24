@@ -11,9 +11,14 @@ import java.io.Serializable
 
 interface KonanModel : Serializable {
     val artifacts: List<KonanModelArtifact>
-    val buildTaskName: String?
-    val cleanTaskName: String?
-    val kotlinNativeHome: String?
+    val buildTaskPath: String
+    val cleanTaskPath: String
+    val kotlinNativeHome: String
+
+    companion object {
+        const val NO_TASK_PATH = ""
+        const val NO_KOTLIN_NATIVE_HOME = ""
+    }
 }
 
 interface KonanModelArtifact : Serializable {
@@ -21,6 +26,6 @@ interface KonanModelArtifact : Serializable {
     val type: CompilerOutputKind
     val targetPlatform: String
     val file: File
-    val buildTaskName: String
+    val buildTaskPath: String
     val isTests: Boolean
 }

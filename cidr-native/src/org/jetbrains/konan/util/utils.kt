@@ -9,6 +9,7 @@ package org.jetbrains.konan.util
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.konan.gradle.KonanProjectDataService
+import org.jetbrains.kotlin.konan.library.lite.LiteKonanDistributionInfoProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun getKotlinNativePath(project: Project): String? {
@@ -19,3 +20,6 @@ fun getKotlinNativePath(project: Project): String? {
 
     return paths.firstOrNull()
 }
+
+fun getKotlinNativeVersion(kotlinNativeHome: String): KotlinVersion? =
+    LiteKonanDistributionInfoProvider(kotlinNativeHome).getDistributionInfo()?.kotlinNativeVersion

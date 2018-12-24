@@ -10,6 +10,8 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.jetbrains.konan.gradle.KotlinNativeHomeEvaluator.getKotlinNativeHome
+import org.jetbrains.konan.gradle.KonanModel.Companion.NO_KOTLIN_NATIVE_HOME
+import org.jetbrains.konan.gradle.KonanModel.Companion.NO_TASK_PATH
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
 import org.jetbrains.kotlin.gradle.getMethodOrNull
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -31,11 +33,11 @@ class KonanModelBuilder : ModelBuilderService {
 
         val artifacts = collectArtifacts1320(targets).takeIf { it.isNotEmpty() } ?: collectArtifactsLegacy(targets)
 
-        val buildModuleTaskName = project.tasks.findByName("assemble")?.path
-        val cleanModuleTaskName = project.tasks.findByName("clean")?.path
-        val kotlinNativeHome = getKotlinNativeHome(project)
+        val buildModuleTaskPath = project.tasks.findByName("assemble")?.path ?: NO_TASK_PATH
+        val cleanModuleTaskPath = project.tasks.findByName("clean")?.path ?: NO_TASK_PATH
+        val kotlinNativeHome = getKotlinNativeHome(project) ?: NO_KOTLIN_NATIVE_HOME
 
-        return KonanModelImpl(artifacts, buildModuleTaskName, cleanModuleTaskName, kotlinNativeHome)
+        return KonanModelImpl(artifacts, buildModuleTaskPath, cleanModuleTaskPath, kotlinNativeHome)
     }
 
     // This is for Kotlin 1.3.20+:

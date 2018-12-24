@@ -34,16 +34,16 @@ class KonanProjectResolver : AbstractProjectResolverExtension() {
 
     private class MyKonanModel(konanModel: KonanModel) : KonanModel {
         override val artifacts: List<KonanModelArtifact> = konanModel.artifacts.map { MyKonanArtifactEx(it) }
-        override val buildTaskName: String? = konanModel.buildTaskName
-        override val cleanTaskName: String? = konanModel.cleanTaskName
-        override val kotlinNativeHome: String? = konanModel.kotlinNativeHome
+        override val buildTaskPath: String = konanModel.buildTaskPath
+        override val cleanTaskPath: String = konanModel.cleanTaskPath
+        override val kotlinNativeHome: String = konanModel.kotlinNativeHome
 
         private class MyKonanArtifactEx(artifact: KonanModelArtifact) : KonanModelArtifact {
             override val name: String = artifact.name
             override val type: CompilerOutputKind = artifact.type
             override val targetPlatform: String = artifact.targetPlatform
             override val file: File = artifact.file
-            override val buildTaskName: String = artifact.buildTaskName
+            override val buildTaskPath: String = artifact.buildTaskPath
             override val isTests: Boolean = artifact.isTests
         }
     }
