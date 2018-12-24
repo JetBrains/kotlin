@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 
 fun JsNode.resolveTemporaryNames() {
     val renamings = resolveNames()
@@ -30,14 +29,6 @@ fun JsNode.resolveTemporaryNames() {
                     renamings[name]?.let { node.name = it }
                 }
             }
-        }
-
-        override fun visitFunction(x: JsFunction) {
-            x.coroutineMetadata?.apply {
-                accept(suspendObjectRef)
-                accept(baseClassRef)
-            }
-            super.visitFunction(x)
         }
     })
 }
@@ -77,7 +68,7 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
         var labels = mutableSetOf<String>()
 
         override fun visitLabel(x: JsLabel) {
-            val addedNames = mutableSetOf<String>()
+            var addedName: String? = null
             if (x.name.isTemporary) {
                 var resolvedName = x.name.ident
                 var suffix = 0
@@ -85,15 +76,17 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
                     resolvedName = "${x.name.ident}_${suffix++}"
                 }
                 replacements[x.name] = JsDynamicScope.declareName(resolvedName)
-                addedNames += resolvedName
+                addedName = resolvedName
             }
             super.visitLabel(x)
-            labels.removeAll(addedNames)
+            addedName?.let {
+                labels.remove(it)
+            }
         }
 
         override fun visitFunction(x: JsFunction) {
             val oldLabels = labels
-            labels = mutableSetOf<String>()
+            labels = mutableSetOf()
             super.visitFunction(x)
             labels = oldLabels
         }

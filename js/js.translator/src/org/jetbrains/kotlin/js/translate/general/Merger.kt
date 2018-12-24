@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.js.translate.general
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
+import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.createPrototypeStatements
@@ -182,26 +183,7 @@ class Merger(
             override fun visitElement(node: JsNode) {
                 super.visitElement(node)
                 if (node is HasName) {
-                    val oldName = node.name
-                    node.name = oldName?.let { rename(it) }
-                    node.name?.localAlias = oldName?.localAlias?.let { it.copy(name = rename(it.name)) }
-                }
-                if (node is JsFunction) {
-                    val coroutineMetadata = node.coroutineMetadata
-                    if (coroutineMetadata != null) {
-                        node.coroutineMetadata = coroutineMetadata.copy(
-                            baseClassRef = rename(coroutineMetadata.baseClassRef),
-                            suspendObjectRef = rename(coroutineMetadata.suspendObjectRef)
-                        )
-                    }
-                }
-                if (node is JsExpression) {
-                    node.localAlias = node.localAlias?.let {
-                        JsImportedModule(it.externalName,
-                                         rename(it.internalName),
-                                         it.plainReference?.let { rename(it) }
-                        )
-                    }
+                    node.name = node.name?.let { rename(it) }
                 }
             }
         })
