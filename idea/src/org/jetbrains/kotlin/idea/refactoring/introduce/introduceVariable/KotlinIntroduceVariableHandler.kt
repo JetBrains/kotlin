@@ -213,7 +213,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                         }
                     }
                     //ugly logic to make sure we are working with right actual expression
-                    var actualExpression = reference!!
+                    var actualExpression = reference ?: return
                     var diff = actualExpression.textRange.startOffset - oldElement.textRange.startOffset
                     var actualExpressionText = actualExpression.text
                     val newElement = emptyBody.addAfter(oldElement, firstChild)
@@ -224,7 +224,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild)
                     property = emptyBody.addAfter(property, firstChild) as KtProperty
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild)
-                    actualExpression = reference!!
+                    actualExpression = reference ?: return
                     diff = actualExpression.textRange.startOffset - emptyBody.textRange.startOffset
                     actualExpressionText = actualExpression.text
                     emptyBody = anchor.replace(emptyBody) as KtBlockExpression
