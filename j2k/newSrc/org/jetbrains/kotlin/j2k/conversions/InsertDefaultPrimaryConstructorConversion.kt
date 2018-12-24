@@ -20,6 +20,7 @@ class InsertDefaultPrimaryConstructorConversion(private val context: ConversionC
             JKNameIdentifierImpl(element.name.value),
             emptyList(),
             JKStubExpressionImpl(),
+            JKAnnotationListImpl(),
             emptyList(),
             Visibility.PUBLIC,
             Modality.FINAL

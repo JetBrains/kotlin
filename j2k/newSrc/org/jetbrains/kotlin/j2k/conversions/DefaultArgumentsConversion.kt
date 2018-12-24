@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.jvmAnnotation
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKFieldAccessExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKUniverseMethodSymbol
@@ -35,7 +36,7 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
 
 
             // TODO: Filter by annotations, visibility, modality, modifiers like synchronized
-
+            if (calledMethod.visibility != method.visibility) continue@checkMethod
             for (i in method.parameters.indices) {
                 val parameter = method.parameters[i]
                 val targetParameter = calledMethod.parameters[i]
@@ -67,7 +68,11 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
 
                 parameter.initializer = remapParameterSymbol(defaultValue) as JKExpression
             }
-
+            if (calledMethod.visibility == Visibility.PUBLIC &&
+                !calledMethod.annotationList.annotations.any { it.classSymbol.fqName == "kotlin.annotation.AnnotationTarget.JvmOverloads" }
+            ) {
+                calledMethod.annotationList.annotations += jvmAnnotation("JvmOverloads", context.symbolProvider)
+            }
             element.classBody.declarations -= method
         }
 

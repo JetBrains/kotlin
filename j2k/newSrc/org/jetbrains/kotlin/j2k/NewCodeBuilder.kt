@@ -703,6 +703,8 @@ class NewCodeBuilder {
         }
 
         override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) {
+            ktPrimaryConstructor.annotationList.accept(this)
+            printer.printWithNoIndent(" ")
             renderModifiersList(ktPrimaryConstructor)
             printer.printWithNoIndent(" constructor ")
             if (ktPrimaryConstructor.parameters.isNotEmpty()) {

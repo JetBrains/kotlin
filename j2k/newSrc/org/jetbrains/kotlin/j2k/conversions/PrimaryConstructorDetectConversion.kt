@@ -49,6 +49,7 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
                 primaryConstructorCandidate.name,
                 primaryConstructorCandidate.parameters,
                 primaryConstructorCandidate.delegationCall,
+                primaryConstructorCandidate.annotationList,
                 primaryConstructorCandidate.extraModifiers,
                 primaryConstructorCandidate.visibility,
                 primaryConstructorCandidate.modality

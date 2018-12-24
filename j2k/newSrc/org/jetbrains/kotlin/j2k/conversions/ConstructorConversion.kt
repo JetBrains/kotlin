@@ -23,6 +23,7 @@ class ConstructorConversion(private val context: ConversionContext) : RecursiveA
             element.parameters,
             element.block,
             delegationCall,
+            element.annotationList,
             element.extraModifiers,
             element.visibility,
             element.modality

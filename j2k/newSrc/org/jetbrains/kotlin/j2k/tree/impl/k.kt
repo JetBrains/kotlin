@@ -167,6 +167,7 @@ class JKKtConstructorImpl(
     parameters: List<JKParameter>,
     block: JKBlock,
     delegationCall: JKExpression,
+    annotationList: JKAnnotationList,
     override var extraModifiers: List<ExtraModifier>,
     override var visibility: Visibility,
     override var modality: Modality
@@ -178,7 +179,7 @@ class JKKtConstructorImpl(
     override var block: JKBlock by child(block)
     override var delegationCall: JKExpression by child(delegationCall)
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
-    override var annotationList: JKAnnotationList by child(JKAnnotationListImpl())
+    override var annotationList: JKAnnotationList by child(annotationList)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtConstructor(this, data)
 }
@@ -187,6 +188,7 @@ class JKKtPrimaryConstructorImpl(
     name: JKNameIdentifier,
     parameters: List<JKParameter>,
     delegationCall: JKExpression,
+    annotationList: JKAnnotationList,
     override var extraModifiers: List<ExtraModifier>,
     override var visibility: Visibility,
     override var modality: Modality
@@ -198,7 +200,7 @@ class JKKtPrimaryConstructorImpl(
     override var block: JKBlock by child(JKBodyStub)
     override var delegationCall: JKExpression by child(delegationCall)
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
-    override var annotationList: JKAnnotationList by child(JKAnnotationListImpl())
+    override var annotationList: JKAnnotationList by child(annotationList)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtPrimaryConstructor(this, data)
 }
