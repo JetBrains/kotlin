@@ -49,6 +49,21 @@ fun JKExpression.type(context: ConversionContext): JKType? =
         is JKTypeCastExpression -> type.type
         is JKThisExpression -> null// TODO return actual type
         is JKSuperExpression -> null// TODO return actual type
+        is JKStubExpression -> null
+        is JKIfElseExpression -> thenBranch.type(context)// TODO return actual type
+        is JKArrayAccessExpression ->
+            (expression.type(context) as? JKParametrizedType)?.parameters?.lastOrNull()
+        is JKClassLiteralExpression -> {
+            val symbol = when (literalType) {
+                JKClassLiteralExpression.LiteralType.KOTLIN_CLASS ->
+                    context.symbolProvider.provideByFqName<JKClassSymbol>("kotlin.reflect.KClass")
+                JKClassLiteralExpression.LiteralType.JAVA_CLASS,
+                JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS, JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE ->
+                    context.symbolProvider.provideByFqName("java.lang.Class")
+            }
+            JKClassTypeImpl(symbol, listOf(classType.type), Nullability.NotNull)
+        }
+
         else -> TODO(this::class.java.toString())
     }
 
@@ -108,21 +123,21 @@ fun JKType.isSubtypeOf(other: JKType, symbolProvider: JKSymbolProvider): Boolean
         ?.let { otherType -> this.toKtType(symbolProvider)?.isSubtypeOf(otherType) } == true
 
 
-fun KtTypeElement.toJK(symbolProvider: JKSymbolProvider): JKType =
-    when (this) {
+fun KtTypeElement.toJK(symbolProvider: JKSymbolProvider): JKType? {
+    return when (this) {
         is KtUserType -> {
             val qualifiedName = qualifier?.text?.let { it + "." }.orEmpty() + referencedName
-            val typeParameters = typeArguments.map { it.typeReference!!.typeElement!!.toJK(symbolProvider) }
-            val symbol = symbolProvider.provideDirectSymbol(
-                resolveFqName(ClassId.fromString(qualifiedName), this)!!
-            ) as JKClassSymbol
-
-            JKClassTypeImpl(symbol, typeParameters)
+            val typeParameters = typeArguments.map { it.typeReference?.typeElement?.toJK(symbolProvider) }
+            if (typeParameters.any { it == null }) return null
+            val fqName = resolveFqName(ClassId.fromString(qualifiedName), this) ?: return null
+            val symbol = symbolProvider.provideDirectSymbol(fqName) as? JKClassSymbol ?: return null
+            JKClassTypeImpl(symbol, typeParameters as List<JKType>)
         }
         is KtNullableType ->
-            innerType!!.toJK(symbolProvider).updateNullability(Nullability.Nullable)
-        else -> TODO(this::class.java.toString())
+            innerType?.toJK(symbolProvider)?.updateNullability(Nullability.Nullable)
+        else -> null
     }
+}
 
 fun JKType.toKtType(symbolProvider: JKSymbolProvider): KotlinType? =
     when (this) {
@@ -161,6 +176,27 @@ inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability)
         is JKJavaVoidType -> this
         is JKJavaPrimitiveType -> this
         is JKJavaArrayType -> JKJavaArrayTypeImpl(type, newNullability)
+        is JKContextType -> JKContextType
+        is JKJavaDisjunctionType -> this
+        else -> TODO(this::class.toString())
+    } as T
+
+fun <T : JKType> T.updateNullabilityRecursively(newNullability: Nullability): T =
+    if (nullability == newNullability) this
+    else when (this) {
+        is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(name, newNullability)
+        is JKClassTypeImpl ->
+            JKClassTypeImpl(
+                classReference,
+                parameters.map { it.updateNullabilityRecursively(newNullability) },
+                newNullability
+            )
+        is JKNoType -> this
+        is JKJavaVoidType -> this
+        is JKJavaPrimitiveType -> this
+        is JKJavaArrayType -> JKJavaArrayTypeImpl(type.updateNullabilityRecursively(newNullability), newNullability)
+        is JKContextType -> JKContextType
+        is JKJavaDisjunctionType -> this
         else -> TODO(this::class.toString())
     } as T
 
