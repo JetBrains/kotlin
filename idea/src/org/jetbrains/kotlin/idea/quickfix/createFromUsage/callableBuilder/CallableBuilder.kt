@@ -917,7 +917,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val caretModel = containingFileEditor.caretModel
             caretModel.moveToOffset(jetFileToEdit.node.startOffset)
 
-            val declaration = declarationPointer.element!!
+            val declaration = declarationPointer.element ?: return
 
             val declarationMarker = containingFileEditor.document.createRangeMarker(declaration.textRange)
 
