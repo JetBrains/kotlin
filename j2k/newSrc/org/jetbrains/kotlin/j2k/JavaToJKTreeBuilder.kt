@@ -23,11 +23,9 @@ import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.kotlin.j2k.ast.LiteralExpression.NullLiteral.isNullable
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
-import org.jetbrains.kotlin.j2k.tree.Mutability
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -313,11 +311,18 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                         classOrAnonymousClassReference?.resolve()?.let {
                             symbolProvider.provideDirectSymbol(it) as JKClassSymbol
                         } ?: JKUnresolvedClassSymbol(classOrAnonymousClassReference!!.text)
-
+                    val typeArgumentList =
+                        this.typeArgumentList.toJK()
+                            .takeIf { it.typeArguments.isNotEmpty() }
+                            ?: classOrAnonymousClassReference
+                                ?.typeParameters
+                                ?.let { typeParameters ->
+                                    JKTypeArgumentListImpl(typeParameters.map { JKTypeElementImpl(it.toJK(symbolProvider)) })
+                                } ?: JKTypeArgumentListImpl()
                     JKJavaNewExpressionImpl(
                         classSymbol,
                         argumentList.toJK(),
-                        typeArgumentList.toJK(),
+                        typeArgumentList,
                         with(declarationMapper) { anonymousClass?.createClassBody() } ?: JKEmptyClassBodyImpl()
                     )
                 }
