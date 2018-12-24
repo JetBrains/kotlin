@@ -26,6 +26,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.descriptors.*
@@ -462,10 +463,12 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             element: PsiElement,
             originalElement: PsiElement?
         ): String? {
-            val originalInfo = JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement)
-            if (originalInfo != null) {
-                val renderedDecl = constant { DESCRIPTOR_RENDERER.withOptions { withDefinedIn = false } }.render(declarationDescriptor)
-                return renderedDecl + "<br/>Java declaration:<br/>" + originalInfo
+            if (!PlatformUtils.isCidr()) {
+                val originalInfo = JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement)
+                if (originalInfo != null) {
+                    val renderedDecl = constant { DESCRIPTOR_RENDERER.withOptions { withDefinedIn = false } }.render(declarationDescriptor)
+                    return renderedDecl + "<br/>Java declaration:<br/>" + originalInfo
+                }
             }
 
             return null
