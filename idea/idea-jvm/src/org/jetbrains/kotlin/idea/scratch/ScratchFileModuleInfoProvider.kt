@@ -48,7 +48,7 @@ class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
 
             val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
 
-            // Hack before api in IDEA will be introduced
+            // BUNCH: 181 scratch files are created with .kt extension
             if (file.extension == KotlinFileType.EXTENSION) {
                 runWriteAction {
                     var newName = file.nameWithoutExtension + STD_SCRIPT_EXT

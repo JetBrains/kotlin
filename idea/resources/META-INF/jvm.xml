@@ -122,6 +122,9 @@
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
 
+        <scratch.creationHelper language="kotlin"
+                                implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileCreationHelper"/>
+
         <localInspection
             groupName="Plugin DevKit"
             shortName="IncompatibleAPI"
