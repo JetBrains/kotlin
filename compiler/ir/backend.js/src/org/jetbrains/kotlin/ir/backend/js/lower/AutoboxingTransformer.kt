@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.backend.common.ir.target
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
+import org.jetbrains.kotlin.backend.common.utils.isPrimitiveArray
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
@@ -155,7 +156,8 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
     override fun IrExpression.useAsVarargElement(expression: IrVararg): IrExpression {
         return this.useAs(
-            if (this.type.isInlined())
+            // Do not box primitive inline classes
+            if (this.type.isInlined() && !expression.type.isInlined() && !expression.type.isPrimitiveArray())
                 irBuiltIns.anyNType
             else
                 expression.varargElementType
