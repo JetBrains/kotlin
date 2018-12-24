@@ -20,12 +20,13 @@ import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import org.jetbrains.kotlin.idea.caches.resolve.util.hasJavaResolutionFacade
 import org.jetbrains.kotlin.idea.search.usagesSearch.operators.OperatorReferenceSearcher
 
 class KotlinConventionMethodReferencesSearcher : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: ExecutorProcessor<PsiReference>) {
         val method = queryParameters.method
-        if (method.originalElement.containingFile == null) return
+        if (!method.hasJavaResolutionFacade()) return
 
         val operatorSearcher = OperatorReferenceSearcher.create(
             queryParameters.method,
