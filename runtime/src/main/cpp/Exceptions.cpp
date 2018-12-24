@@ -39,6 +39,7 @@
 #include "Memory.h"
 #include "Natives.h"
 #include "KString.h"
+#include "SourceInfo.h"
 #include "Types.h"
 #include "Utils.h"
 
@@ -171,7 +172,22 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
     RuntimeCheck(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
     AutoFree autoFree(symbols);
     for (int index = 0; index < size; ++index) {
-      CreateStringFromCString(symbols[index], ArrayAddressOfElementAt(strings->array(), index));
+      auto sourceInfo = Kotlin_getSourceInfo(*PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), index));
+      const char* symbol = symbols[index];
+      const char* result;
+      char line[1024];
+      if (sourceInfo.fileName != nullptr) {
+        if (sourceInfo.lineNumber != -1) {
+          konan::snprintf(line, sizeof(line) - 1, "%s (%s:%d:%d)",
+                          symbol, sourceInfo.fileName, sourceInfo.lineNumber, sourceInfo.column);
+        } else {
+          konan::snprintf(line, sizeof(line) - 1, "%s (%s:<unknown>)", symbol, sourceInfo.fileName);
+        }
+        result = line;
+      } else {
+        result = symbol;
+      }
+      CreateStringFromCString(result, ArrayAddressOfElementAt(strings->array(), index));
     }
   }
 #endif

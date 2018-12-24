@@ -44,7 +44,7 @@ fun sourceInfoString(owner: CValue<CSSymbolOwnerRef>, address: ULong): String? {
     if (sourceInfo == null) return null
     val filePath = CSSourceInfoGetPath(sourceInfo)?.toKString() ?: return null
     val columnNumber = CSSourceInfoGetColumn(sourceInfo)
-    return "$filePath:${if (maybe) "~" else ""}$lineNumber:$columnNumber"
+    return "$filePath:${if (lineNumber == 0u) "<unknown>" else "${if (maybe) "~" else ""}$lineNumber:$columnNumber"}"
 }
 
 fun analyzeTrace(program: String, arch: String, input: Sequence<String>) {
@@ -67,7 +67,7 @@ fun analyzeTrace(program: String, arch: String, input: Sequence<String>) {
                     val address = this.location + offsetInFunction
                     val sourceInfo = sourceInfoString(owner, address)
                     if (sourceInfo != null) {
-                        result = matcher.replaceFirst(line, "$atPart$functionName $sourceInfo")
+                        result = matcher.replaceFirst(line, "$atPart$functionName + $offsetInFunction ($sourceInfo)")
                     }
                 }
             }

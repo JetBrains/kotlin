@@ -496,7 +496,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun shouldProfilePhases() = config.configuration.getBoolean(KonanConfigKeys.TIME_PHASES)
 
-    fun shouldContainDebugInfo() = config.configuration.getBoolean(KonanConfigKeys.DEBUG)
+    fun shouldContainDebugInfo() = config.debug
 
     fun shouldOptimize() = config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
 

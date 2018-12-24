@@ -150,6 +150,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             KonanTarget.MACOS_X64 ->
                 listOf("-DKONAN_OSX=1",
                         "-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 ->
@@ -158,6 +159,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
             KonanTarget.IOS_X64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.ANDROID_ARM32 ->

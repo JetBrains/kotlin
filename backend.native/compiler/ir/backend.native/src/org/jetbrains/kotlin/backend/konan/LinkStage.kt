@@ -23,7 +23,7 @@ internal class LinkStage(val context: Context, val phaser: PhaseManager) {
     private val linker = platform.linker
 
     private val optimize = context.shouldOptimize()
-    private val debug = config.get(KonanConfigKeys.DEBUG) ?: false
+    private val debug = context.config.debug
     private val linkerOutput = when (context.config.produce) {
         CompilerOutputKind.DYNAMIC, CompilerOutputKind.FRAMEWORK -> LinkerOutputKind.DYNAMIC_LIBRARY
         CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
@@ -181,7 +181,8 @@ internal class LinkStage(val context: Context, val phaser: PhaseManager) {
         try {
             File(executable).delete()
             linker.linkCommands(objectFiles = objectFiles, executable = executable,
-                    libraries = linker.targetLibffi + linker.linkStaticLibraries(includedBinaries),
+                    libraries = linker.targetLibffi + linker.linkStaticLibraries(includedBinaries) +
+                            context.config.defaultSystemLibraries,
                     linkerArgs = entryPointSelector +
                             asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                             BitcodeEmbedding.getLinkerOptions(context.config) +

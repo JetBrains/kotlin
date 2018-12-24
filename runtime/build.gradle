@@ -6,30 +6,47 @@ import org.jetbrains.kotlin.CompileCppToBitcode
 
 // TODO: consider using some Gradle plugins to build and test
 
+void includeRuntime(CompileCppToBitcode task) {
+    task.compilerArgs '-I' + project.file('../common/src/hash/headers')
+    task.compilerArgs '-I' + project.file('src/main/cpp')
+}
+
 targetList.each { targetName ->
     task("${targetName}Runtime", type: CompileCppToBitcode) {
         name "runtime"
         srcRoot file('src/main')
         dependsOn ":common:${targetName}Hash"
         dependsOn "${targetName}Launcher"
+        dependsOn "${targetName}Debug"
+        dependsOn "${targetName}Release"
         target targetName
 	    if (!isWindows())
 	       compilerArgs '-fPIC'
-        compilerArgs '-I' + project.file('../common/src/hash/headers')
-        compilerArgs '-I' + file('src/main/cpp')
+        includeRuntime(delegate)
         if (rootProject.hasProperty("${targetName}LibffiDir"))
             compilerArgs '-I' + project.file(rootProject.ext.get("${targetName}LibffiDir") + "/include")
         linkerArgs project.file("../common/build/$targetName/hash.bc").path
     }
-}
 
-targetList.each { targetName ->
     task("${targetName}Launcher", type: CompileCppToBitcode) {
         name "launcher"
         srcRoot file('src/launcher')
         target targetName
-        compilerArgs '-I' + project.file('../common/src/hash/headers')
-        compilerArgs '-I' + project.file('src/main/cpp')
+        includeRuntime(delegate)
+    }
+
+    task ("${targetName}Debug", type: CompileCppToBitcode) {
+        name "debug"
+        srcRoot file('src/debug')
+        target targetName
+        includeRuntime(delegate)
+    }
+
+    task ("${targetName}Release", type: CompileCppToBitcode) {
+        name "release"
+        srcRoot file('src/release')
+        target targetName
+        includeRuntime(delegate)
     }
 }
 
