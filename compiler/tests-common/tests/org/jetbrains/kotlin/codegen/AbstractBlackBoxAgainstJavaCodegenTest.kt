@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
 
@@ -32,6 +33,7 @@ abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenT
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.addJvmClasspathRoot(javaClassesOutputDirectory)
+        configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, true)
     }
 
     override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
