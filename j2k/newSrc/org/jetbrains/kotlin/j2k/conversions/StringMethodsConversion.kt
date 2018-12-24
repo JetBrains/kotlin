@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.j2k.conversions
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKFieldAccessExpressionImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKKtCallExpressionImpl
 
 
 class StringMethodsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -20,6 +21,10 @@ class StringMethodsConversion(private val context: ConversionContext) : Recursiv
             element.selector = it
         }
 
+        convertCharAtCall(element.selector)?.also {
+            element.selector = it
+        }
+
         return recurse(element)
     }
 
@@ -27,6 +32,16 @@ class StringMethodsConversion(private val context: ConversionContext) : Recursiv
         if (selector !is JKMethodCallExpression) return null
         return if (selector.identifier.name == "length") {
             JKFieldAccessExpressionImpl(context.symbolProvider.provideByFqName("kotlin.String.length"))
+        } else null
+    }
+
+    private fun convertCharAtCall(selector: JKExpression): JKExpression? {
+        if (selector !is JKMethodCallExpression) return null
+        return if (selector.identifier.name == "charAt") {
+            JKKtCallExpressionImpl(
+                context.symbolProvider.provideByFqName("kotlin.String.get"),
+                selector::arguments.detached()
+            )
         } else null
     }
 }
