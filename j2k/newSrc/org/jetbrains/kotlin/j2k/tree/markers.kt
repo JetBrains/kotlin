@@ -56,6 +56,9 @@ interface JKType {
     val nullability: Nullability
 }
 
+fun JKType.isNullable(): Boolean =
+    nullability != Nullability.NotNull
+
 interface JKVarianceTypeParameterType : JKType {
     val variance: Variance
     val boundType: JKType
