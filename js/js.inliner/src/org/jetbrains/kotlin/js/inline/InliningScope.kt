@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.localAlias
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.inline.clean.removeUnusedFunctionDefinitions
 import org.jetbrains.kotlin.js.inline.clean.removeUnusedImports
+import org.jetbrains.kotlin.js.inline.clean.renameLabels
 import org.jetbrains.kotlin.js.inline.clean.simplifyWrappedFunctions
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.translate.declaration.transformSpecialFunctionsToCoroutineMetadata
@@ -162,6 +163,7 @@ class ProgramFragmentInliningScope(
         simplifyWrappedFunctions(allCode)
         removeUnusedFunctionDefinitions(allCode, collectNamedFunctions(allCode))
         removeUnusedImports(fragment, allCode)
+        renameLabels(allCode)
     }
 
     override fun hasImport(name: JsName, tag: String): JsName? {

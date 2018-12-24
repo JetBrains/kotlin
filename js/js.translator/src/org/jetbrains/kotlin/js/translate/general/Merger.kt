@@ -241,7 +241,7 @@ class Merger(
 
             // TODO better placing?
             val additionalFakeOverrides = mutableListOf<JsStatement>()
-            importedFunctionWrappers.values.forEach {block ->
+            importedFunctionWrappers.values.forEach { block ->
                 block.statements.forEach { s ->
                     if (s.isFakeOverrideAssignment()) {
                         additionalFakeOverrides += s

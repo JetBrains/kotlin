@@ -62,36 +62,6 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
 
     traverse(rootScope)
 
-    // Labels in JS are in separate scope from local variables. It's only important that nested labels don't clash.
-    // Adjacent labels in one function is OK
-    accept(object : RecursiveJsVisitor() {
-        var labels = mutableSetOf<String>()
-
-        override fun visitLabel(x: JsLabel) {
-            var addedName: String? = null
-            if (x.name.isTemporary) {
-                var resolvedName = x.name.ident
-                var suffix = 0
-                while (!labels.add(resolvedName)) {
-                    resolvedName = "${x.name.ident}_${suffix++}"
-                }
-                replacements[x.name] = JsDynamicScope.declareName(resolvedName)
-                addedName = resolvedName
-            }
-            super.visitLabel(x)
-            addedName?.let {
-                labels.remove(it)
-            }
-        }
-
-        override fun visitFunction(x: JsFunction) {
-            val oldLabels = labels
-            labels = mutableSetOf()
-            super.visitFunction(x)
-            labels = oldLabels
-        }
-    })
-
     return replacements
 }
 
