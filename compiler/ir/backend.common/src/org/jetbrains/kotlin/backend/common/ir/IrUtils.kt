@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -162,7 +162,10 @@ fun IrValueParameter.copyTo(
             (parent as IrTypeParametersContainer).classIfConstructor,
             irFunction.classIfConstructor
     ),
-    varargElementType: IrType? = this.varargElementType
+    varargElementType: IrType? = this.varargElementType,
+    defaultValue: IrExpressionBody? = this.defaultValue,
+    isCrossinline: Boolean = this.isCrossinline,
+    isNoinline: Boolean = this.isNoinline
 ): IrValueParameter {
     val descriptor = WrappedValueParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
     val symbol = IrValueParameterSymbolImpl(descriptor)
@@ -382,3 +385,7 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
     assert(typeParameters.isEmpty())
     assert(descriptor.declaredTypeParameters.isEmpty())
 }
+
+fun IrSimpleFunction.isMethodOfAny() =
+    ((valueParameters.size == 0 && name.asString().let { it == "hashCode" || it == "toString" }) ||
+            (valueParameters.size == 1 && name.asString() == "equals" && valueParameters[0].type.isNullableAny()))

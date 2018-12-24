@@ -44,7 +44,7 @@ class JvmDeclarationFactory(
     private val outerThisDeclarations = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
 
-    private val defaultImplsMethods = HashMap<IrFunction, IrFunction>()
+    private val defaultImplsMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
     private val defaultImplsClasses = HashMap<IrClass, IrClass>()
 
     override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField =
@@ -108,7 +108,8 @@ class JvmDeclarationFactory(
             newValueParameters,
             oldDescriptor.returnType,
             oldDescriptor.modality,
-            oldDescriptor.visibility)
+            oldDescriptor.visibility
+        )
         val symbol = IrConstructorSymbolImpl(newDescriptor)
         return IrConstructorImpl(
             oldConstructor.startOffset,
@@ -188,7 +189,7 @@ class JvmDeclarationFactory(
         ).initialize(objectDescriptor.defaultType)
     }
 
-    fun getDefaultImplsFunction(interfaceFun: IrFunction): IrFunction {
+    fun getDefaultImplsFunction(interfaceFun: IrSimpleFunction): IrSimpleFunction {
         val parent = interfaceFun.parentAsClass
         assert(parent.isInterface) { "Parent of ${interfaceFun.dump()} should be interface" }
         return defaultImplsMethods.getOrPut(interfaceFun) {
