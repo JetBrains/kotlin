@@ -32,10 +32,12 @@ private fun JKType.classSymbol(symbolProvider: JKSymbolProvider) =
             val psiClass = resolveFqName(
                 ClassId.fromString(jvmPrimitiveType.primitiveType.typeFqName.asString()),
                 symbolProvider.symbolsByPsi.keys.first()
-            )!!
-            symbolProvider.provideDirectSymbol(psiClass) as JKClassSymbol
+            )
+            psiClass?.let { klass ->
+                symbolProvider.provideDirectSymbol(klass) as? JKClassSymbol
+            }
         }
-        else -> TODO(this::class.java.toString())
+        else -> null
     }
 
 private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
@@ -59,7 +61,6 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
         if (leftType.isStringType()) symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.string.toSafe())
         else leftType.classSymbol(symbolProvider)
 
-
     val defaultClassSymbol by lazy {
         when (text) {
             "<", ">", "<=", ">=", "==", "!=", "&&", "||" ->
@@ -82,7 +83,7 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
                 .filterIsInstance<KtNamedFunction>()
                 .filter { it.name == operatorName }
                 .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
-                .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }
+                .firstOrNull { it.parameterTypes?.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }
                 ?: defaultClassSymbol
         is JKUniverseClassSymbol -> classSymbol.target.psi<PsiClass>()?.methodSymbol() ?: defaultClassSymbol
         is JKMultiverseClassSymbol -> classSymbol.target.methodSymbol() ?: defaultClassSymbol
@@ -94,6 +95,9 @@ private fun JKKtOperatorToken.unaryExpressionMethodSymbol(
     operandType: JKType,
     symbolProvider: JKSymbolProvider
 ): JKMethodSymbol {
+    if (this == KtTokens.EXCLEQ) {
+        return JKExclExclMethod(operandType)
+    }
     val classSymbol = operandType.classSymbol(symbolProvider)
     return when (classSymbol) {
         is JKMultiverseKtClassSymbol ->// todo look for extensions
@@ -102,6 +106,7 @@ private fun JKKtOperatorToken.unaryExpressionMethodSymbol(
                 .filter { it.name == operatorName }
                 .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
                 .firstOrNull()!!
+        null -> TODO(" No class symbol")
         else -> TODO(classSymbol::class.toString())
     }
 }
@@ -267,6 +272,12 @@ fun JKFieldAccessExpression.asAssignmentFromTarget(): JKKtAssignmentStatement? =
 
 fun JKFieldAccessExpression.isInDecrementOrIncrement(): Boolean =
     (parent as? JKUnaryExpression)?.operator?.token?.text in listOf("++", "--")
+
+fun JKExpression.bangedBangedExpr(context: ConversionContext): JKExpression =
+    JKPostfixExpressionImpl(
+        this,
+        JKKtOperatorImpl(KtTokens.EXCLEXCL, JKExclExclMethod(type(context)!!))
+    )
 
 fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: ConversionContext): Boolean =
     findUsages(scope, context).any {
