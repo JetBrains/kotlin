@@ -1034,8 +1034,15 @@ public actual operator fun BooleanArray.plus(elements: Collection<Boolean>): Boo
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun CharArray.plus(elements: Collection<Char>): CharArray {
-    return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)
+    return fillFromCharCollection(this.copyOf(size + elements.size), this.size, elements)
 }
+
+internal fun fillFromCharCollection(dst: CharArray, startIndex: Int, collection: Collection<Char>): CharArray {
+    var index = startIndex
+    for (element in collection) dst[index++] = element
+    return dst
+}
+
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
