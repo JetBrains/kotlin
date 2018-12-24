@@ -50,7 +50,7 @@ class JavaMethodToKotlinFunctionConversion(private val context: ConversionContex
                         if (declaration.throwsList.isNotEmpty()) {
                             it.annotations +=
                                     throwAnnotation(
-                                        declaration.throwsList.map { it.type },
+                                        declaration.throwsList.map { it.type.updateNullabilityRecursively(Nullability.NotNull) },
                                         context.symbolProvider
                                     )
                         }
