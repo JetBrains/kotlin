@@ -59,9 +59,9 @@ interface AddValVarToConstructorParameterAction {
         editor.caretModel.moveToOffset(parameter.startOffset)
 
         TemplateBuilderImpl(parameter)
-                .apply { replaceElement(parameter.valOrVarKeyword!!, ValVarExpression) }
-                .buildInlineTemplate()
-                .let { TemplateManager.getInstance(project).startTemplate(editor, it) }
+            .apply { replaceElement(parameter.valOrVarKeyword ?: return@apply, ValVarExpression) }
+            .buildInlineTemplate()
+            .let { TemplateManager.getInstance(project).startTemplate(editor, it) }
     }
 
     class Intention :
