@@ -46,21 +46,21 @@ internal class ParameterNameExpression(
     }
 
     override fun calculateResult(context: ExpressionContext?): Result? {
-        val lookupItems = calculateLookupItems(context)!!
+        val lookupItems = calculateLookupItems(context) ?: return null
         return TextResult(if (lookupItems.isEmpty()) "" else lookupItems.first().lookupString)
     }
 
     override fun calculateQuickResult(context: ExpressionContext?) = calculateResult(context)
 
     override fun calculateLookupItems(context: ExpressionContext?): Array<LookupElement>? {
-        context!!
+        context ?: return null
         val names = LinkedHashSet(this.names.toList())
 
         // find the parameter list
-        val project = context.project!!
+        val project = context.project ?: return null
         val offset = context.startOffset
         PsiDocumentManager.getInstance(project).commitAllDocuments()
-        val editor = context.editor!!
+        val editor = context.editor ?: return null
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) as KtFile
         val elementAt = file.findElementAt(offset)
         val declaration = PsiTreeUtil.getParentOfType(elementAt, KtFunction::class.java, KtClass::class.java) ?: return arrayOf()
