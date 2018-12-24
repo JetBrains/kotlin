@@ -241,15 +241,6 @@ class JKKtInitDeclarationImpl(block: JKBlock) : JKKtInitDeclaration, JKBranchEle
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtInitDeclaration(this, data)
 }
 
-class JKKtOperatorExpressionImpl(
-    receiver: JKExpression,
-    override var identifier: JKMethodSymbol,
-    argument: JKExpression
-) : JKKtOperatorExpression, JKBranchElementBase() {
-    override var receiver: JKExpression by child(receiver)
-    override var argument: JKExpression by child(argument)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtOperatorExpression(this, data)
-}
 
 class JKKtConvertedFromForLoopSyntheticWhileStatementImpl(
     variableDeclaration: JKStatement,

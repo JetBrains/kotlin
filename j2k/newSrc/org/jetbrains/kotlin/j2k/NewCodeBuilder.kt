@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.j2k.NewCodeBuilder.ParenthesisKind.*
-import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.conversions.parentOfType
 import org.jetbrains.kotlin.j2k.tree.*
@@ -343,14 +342,6 @@ class NewCodeBuilder {
                     ktFunction.block.accept(this)
                 }
             }
-        }
-
-        override fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression) {
-            ktOperatorExpression.receiver.accept(this)
-            printer.printWithNoIndent(" ")
-            printer.printWithNoIndent(ktOperatorExpression.identifier.name)
-            printer.printWithNoIndent(" ")
-            ktOperatorExpression.argument.accept(this)
         }
 
         override fun visitIfElseExpression(ifElseExpression: JKIfElseExpression) {

@@ -90,11 +90,6 @@ interface JKKtInitDeclaration : JKDeclaration {
     var block: JKBlock
 }
 
-interface JKKtOperatorExpression : JKExpression {
-    var receiver: JKExpression
-    var identifier: JKMethodSymbol
-    var argument: JKExpression
-}
 
 interface JKKtConvertedFromForLoopSyntheticWhileStatement : JKStatement {
     var variableDeclaration: JKStatement

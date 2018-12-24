@@ -118,7 +118,6 @@ interface JKVisitor<out R, in D> {
     fun visitKtValueWhenLabel(ktValueWhenLabel: JKKtValueWhenLabel, data: D): R = visitKtWhenLabel(ktValueWhenLabel, data)
     fun visitKtIsExpression(ktIsExpression: JKKtIsExpression, data: D): R = visitExpression(ktIsExpression, data)
     fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration, data: D): R = visitDeclaration(ktInitDeclaration, data)
-    fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression, data: D): R = visitExpression(ktOperatorExpression, data)
     fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement, data: D): R = visitStatement(ktConvertedFromForLoopSyntheticWhileStatement, data)
     fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression, data: D): R = visitExpression(ktThrowExpression, data)
     fun visitKtTryExpression(ktTryExpression: JKKtTryExpression, data: D): R = visitExpression(ktTryExpression, data)

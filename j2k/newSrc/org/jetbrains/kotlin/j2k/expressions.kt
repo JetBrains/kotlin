@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.j2k.conversions.multiResolveFqName
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import java.math.BigInteger
@@ -150,7 +151,7 @@ fun untilToExpression(
     to: JKExpression,
     conversionContext: ConversionContext,
     psiContext: PsiElement
-): JKKtOperatorExpression =
+): JKExpression =
     rangeExpression(
         from,
         to,
@@ -164,7 +165,7 @@ fun downToExpression(
     to: JKExpression,
     conversionContext: ConversionContext,
     psiContext: PsiElement
-): JKKtOperatorExpression =
+): JKExpression =
     rangeExpression(
         from,
         to,
@@ -179,11 +180,11 @@ fun rangeExpression(
     operatorName: String,
     conversionContext: ConversionContext,
     psiContext: PsiElement
-): JKKtOperatorExpressionImpl {
+): JKExpression {
     val symbol = conversionContext.symbolProvider.provideDirectSymbol(
         multiResolveFqName(ClassId.fromString("kotlin/ranges/$operatorName"), psiContext).first()
     ) as JKMethodSymbol
-    return JKKtOperatorExpressionImpl(from, symbol, to)
+    return JKBinaryExpressionImpl(from, to, JKKtOperatorImpl(JKKtWordOperatorToken(operatorName), symbol))
 }
 
 fun blockStatement(vararg statements: JKStatement) =

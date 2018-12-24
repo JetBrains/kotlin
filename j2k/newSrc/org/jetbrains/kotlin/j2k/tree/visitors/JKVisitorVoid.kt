@@ -233,8 +233,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitKtIsExpression(ktIsExpression: JKKtIsExpression, data: Nothing?) = visitKtIsExpression(ktIsExpression)
     fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration) = visitDeclaration(ktInitDeclaration, null)
     override fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration, data: Nothing?) = visitKtInitDeclaration(ktInitDeclaration)
-    fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression) = visitExpression(ktOperatorExpression, null)
-    override fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression, data: Nothing?) = visitKtOperatorExpression(ktOperatorExpression)
     fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement) = visitStatement(ktConvertedFromForLoopSyntheticWhileStatement, null)
     override fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement, data: Nothing?) = visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement)
     fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression) = visitExpression(ktThrowExpression, null)
