@@ -812,6 +812,12 @@ public class KtPsiUtil {
                 else if (parent instanceof KtClassBody && !isMemberOfObjectExpression((KtCallableDeclaration) current)) {
                     return (KtElement) parent;
                 }
+                else if (parent instanceof KtBlockExpression) {
+                    PsiElement grandParent = parent.getParent();
+                    if (grandParent instanceof KtScript) {
+                        return (KtElement) parent;
+                    }
+                }
             }
             if (current instanceof KtParameter) {
                 return (KtElement) current;
