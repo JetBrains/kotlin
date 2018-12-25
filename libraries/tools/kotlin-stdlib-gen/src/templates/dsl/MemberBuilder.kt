@@ -381,7 +381,7 @@ class MemberBuilder(
 
         val body = (body ?:
                 deprecate?.replaceWith?.let { "return $it" } ?:
-                throw RuntimeException("$signature for ${target.fullName}: no body specified for ${family to primitive}")
+                """TODO("Body is not provided")""".also { System.err.println("ERROR: $signature for ${target.fullName}: no body specified for ${family to primitive}") }
                 ).trim('\n')
         val indent: Int = body.takeWhile { it == ' ' }.length
 
