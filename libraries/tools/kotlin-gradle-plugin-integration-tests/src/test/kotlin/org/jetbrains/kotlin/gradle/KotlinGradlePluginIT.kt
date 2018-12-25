@@ -682,6 +682,47 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testGeneratedSourceSet() {
+        /* Note that the key here is having compileGeneratedKotlin depend on generateSources.
+         * Without that, it runs before sources are generated, resulting in it being skipped
+         * entirely, which means that the kotlin source root (the kotlin compile task destination
+         * dir) is not created. The kotlin compile task destination dir is used as an input dir to
+         * the (existing) java task, and in Gradle 5+ running a task fails if its input dir doesn't
+         * exist (https://github.com/gradle/gradle/pull/6408/). */
+        Project("simpleProject", GradleVersionRequired.AtLeast("5.0")).apply {
+            setupWorkingDir()
+            File(projectDir, "build.gradle").appendText(
+                """${'\n'}
+                tasks.register('generateSources') {
+                    outputs.dir('${'$'}{project.buildDir}/generated/java')
+                    doLast {
+                        def file = new File('${'$'}{project.buildDir}/generated/java/test/TestClass.java')
+                        file.parentFile.mkdirs()
+                        file.text = ""${'"'}
+                            package test;
+
+                            public class TestClass { }
+                        ""${'"'}
+                    }
+                }
+                sourceSets {
+                   generated {
+                     java {
+                       srcDir '${'$'}{project.buildDir}/generated/java'
+                     }
+                   }
+                }
+                tasks.compileGeneratedJava.dependsOn(tasks.named('generateSources'))
+                tasks.compileGeneratedKotlin.dependsOn(tasks.named('generateSources'))
+                tasks.jar.dependsOn(tasks.named('compileGeneratedJava'))
+                """.trimIndent())
+            build("build") {
+                assertSuccessful()
+            }
+        }
+    }
+
+    @Test
     fun testSourceJar() {
         Project("simpleProject").apply {
             setupWorkingDir()
