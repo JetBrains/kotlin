@@ -13,3 +13,13 @@ internal fun lowerCamelCaseName(vararg nameParts: String?): String {
         transform = String::capitalize
     )
 }
+
+internal fun lowerSpinalCaseName(nameParts: Iterable<String?>) = lowerSpinalCaseName(*nameParts.toList().toTypedArray())
+
+internal fun lowerSpinalCaseName(vararg nameParts: String?): String {
+    val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
+    return nonEmptyParts.joinToString(
+        separator = "-",
+        transform = String::toLowerCase
+    )
+}

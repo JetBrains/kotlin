@@ -14,7 +14,6 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage.JAVA_API
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
-import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.ConfigureUtil
@@ -52,52 +51,67 @@ abstract class AbstractKotlinTarget(
     override val publishable: Boolean
         get() = true
 
-    override val component: KotlinTargetComponent by lazy {
-        if (isGradleVersionAtLeast(4, 7)) {
-            createKotlinTargetComponent()
-        } else {
-            KotlinVariant(this)
-        }
+    override val components: Set<KotlinTargetComponent> by lazy {
+        val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        val usageContexts = createUsageContexts(mainCompilation, targetName, targetName.toLowerCase())
+        setOf(
+            if (isGradleVersionAtLeast(4, 7)) {
+                createKotlinVariant(mainCompilation.target.name, mainCompilation, usageContexts)
+            } else {
+                KotlinVariant(mainCompilation, usageContexts)
+            }
+        ).also { project.components.addAll(it) }
     }
 
-    private fun createKotlinTargetComponent(): KotlinTargetComponent {
+    protected fun createKotlinVariant(
+        componentName: String,
+        compilation: KotlinCompilation<*>,
+        usageContexts: Set<DefaultKotlinUsageContext>
+    ): KotlinVariant {
+
         val kotlinExtension = project.kotlinExtension as? KotlinMultiplatformExtension
-            ?: return KotlinVariantWithCoordinates(this)
+            ?: return KotlinVariantWithCoordinates(compilation, usageContexts)
 
         if (targetName == KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
-            return KotlinVariantWithCoordinates(this)
+            return KotlinVariantWithCoordinates(compilation, usageContexts)
 
         val separateMetadataTarget = kotlinExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
 
-        return if (kotlinExtension.isGradleMetadataAvailable) {
-            KotlinVariantWithMetadataVariant(this, separateMetadataTarget)
+        val result = if (kotlinExtension.isGradleMetadataAvailable) {
+            KotlinVariantWithMetadataVariant(compilation, usageContexts, separateMetadataTarget)
         } else {
             // we should only add the Kotlin metadata dependency if we publish no Gradle metadata related to Kotlin MPP;
             // with metadata, such a dependency would get invalid, since a platform module should only depend on modules for that
             // same platform, not Kotlin metadata modules
-            KotlinVariantWithMetadataDependency(this, separateMetadataTarget)
+            KotlinVariantWithMetadataDependency(compilation, usageContexts, separateMetadataTarget)
         }
+
+        result.componentName = componentName
+        return result
     }
 
-    override fun createUsageContexts(): Set<UsageContext> {
+    private fun createUsageContexts(
+        producingCompilation: KotlinCompilation<*>,
+        componentName: String,
+        artifactNameAppendix: String
+    ): Set<DefaultKotlinUsageContext> {
         val publishWithKotlinMetadata = (project.kotlinExtension as? KotlinMultiplatformExtension)?.isGradleMetadataAvailable
             ?: true // In non-MPP project, these usage contexts do not get published anyway
 
         // Here, `JAVA_API` and `JAVA_RUNTIME_JARS` are used intentionally as Gradle needs this for
-        // ordering of the usage contexts (prioritizing the dependencies);
+        // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
         // These Java usages should not be replaced with the custom Kotlin usages.
         return listOfNotNull(
-            KotlinPlatformUsageContext(
-                this, project.usageByName(JAVA_API),
-                apiElementsConfigurationName, publishWithKotlinMetadata
-            ),
-            if (compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME) is KotlinCompilationToRunnableFiles) {
-                KotlinPlatformUsageContext(
-                    this, project.usageByName(JAVA_RUNTIME_JARS),
-                    runtimeElementsConfigurationName, publishWithKotlinMetadata
+            JAVA_API to apiElementsConfigurationName,
+            (JAVA_RUNTIME_JARS to runtimeElementsConfigurationName).takeIf { producingCompilation is KotlinCompilationToRunnableFiles }
+        ).mapTo(mutableSetOf()) { (usageName, dependenciesConfigurationName) ->
+            DefaultKotlinUsageContext(
+                producingCompilation,
+                project.usageByName(usageName),
+                dependenciesConfigurationName,
+                publishWithKotlinMetadata
                 )
-            } else null
-        ).toSet()
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -134,10 +148,8 @@ open class KotlinAndroidTarget(
     override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
         project.container(compilationFactory.itemClass, compilationFactory)
 
-    override fun createUsageContexts(): Set<UsageContext> {
-        //TODO setup Android libraries publishing. This will likely require new API in the Android Gradle plugin
-        return emptySet()
-    }
+    override val components: Set<KotlinTargetComponent>
+        get() = emptySet()
 }
 
 open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(

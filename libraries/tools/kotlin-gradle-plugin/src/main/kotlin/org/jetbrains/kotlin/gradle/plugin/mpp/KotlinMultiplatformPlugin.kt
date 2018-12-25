@@ -14,6 +14,7 @@ import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
@@ -155,12 +156,13 @@ class KotlinMultiplatformPlugin(
         }
 
         val targets = project.multiplatformExtension!!.targets
-        val kotlinSoftwareComponent = KotlinSoftwareComponent(project, "kotlin", targets)
+        val kotlinSoftwareComponent = KotlinSoftwareComponent("kotlin", targets)
 
         project.extensions.configure(PublishingExtension::class.java) { publishing ->
 
             // The root publication that references the platform specific publications as its variants:
             val rootPublication = publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
+                artifactId = project.name.toLowerCase()
                 from(kotlinSoftwareComponent)
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
             }
@@ -170,36 +172,34 @@ class KotlinMultiplatformPlugin(
                 publishTask.onlyIf { publishTask.publication != rootPublication || project.multiplatformExtension!!.isGradleMetadataAvailable }
             }
 
-            fun createTargetPublication(target: KotlinTarget) {
-                val variant = target.component as KotlinVariant
-                val name = target.name
+            // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
+            (targets.getByName(METADATA_TARGET_NAME) as AbstractKotlinTarget).createMavenPublications(publishing.publications)
+            targets
+                .withType(AbstractKotlinTarget::class.java).matching { it.publishable && it.name != METADATA_TARGET_NAME }
+                .all { it.createMavenPublications(publishing.publications) }
+        }
 
-                val variantPublication = publishing.publications.create(name, MavenPublication::class.java).apply {
+        project.components.add(kotlinSoftwareComponent)
+    }
+
+    private fun AbstractKotlinTarget.createMavenPublications(publications: PublicationContainer) {
+        components
+            .filter { it.publishable }
+            .forEach { variant ->
+                val variantPublication = publications.create(variant.name, MavenPublication::class.java).apply {
                     // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
                     project.whenEvaluated {
                         from(variant)
-                        (project.tasks.findByName(target.sourcesJarTaskName) as Jar?)?.let { sourcesJar ->
+                        (project.tasks.findByName(sourcesJarTaskName) as Jar?)?.let { sourcesJar ->
                             artifact(sourcesJar)
                         }
                     }
                     (this as MavenPublicationInternal).publishWithOriginalFileName()
-                    artifactId = variant.target.defaultArtifactId
+                    artifactId = variant.defaultArtifactId
                 }
 
-                variant.publicationDelegate = variantPublication
-                (target as AbstractKotlinTarget).publicationConfigureActions.all {
-                    it.execute(variantPublication)
-                }
-            }
-
-            // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
-            createTargetPublication(targets.getByName(METADATA_TARGET_NAME))
-            targets.matching { it.publishable && it.name != METADATA_TARGET_NAME }.all(::createTargetPublication)
-        }
-
-        project.components.add(kotlinSoftwareComponent)
-        targets.all {
-            project.components.add(it.component)
+                (variant as? KotlinTargetComponentWithPublication)?.publicationDelegate = variantPublication
+                publicationConfigureActions.all { it.execute(variantPublication) }
         }
     }
 
@@ -292,8 +292,6 @@ class KotlinMultiplatformPlugin(
                     "`enableFeaturePreview('GRADLE_METADATA')` from the settings.gradle file."
     }
 }
-
-internal val KotlinTarget.defaultArtifactId get() = "${project.name}-${name.toLowerCase()}"
 
 internal fun compilationsBySourceSet(project: Project): Map<KotlinSourceSet, Set<KotlinCompilation<*>>> =
     HashMap<KotlinSourceSet, MutableSet<KotlinCompilation<*>>>().also { result ->
