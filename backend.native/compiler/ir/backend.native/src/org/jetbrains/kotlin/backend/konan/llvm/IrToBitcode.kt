@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.util.getContainingFile
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -655,12 +657,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private inner class FunctionScope (val declaration: IrFunction?, val functionGenerationContext: FunctionGenerationContext) : InnerScopeImpl() {
 
 
-        constructor(llvmFunction:LLVMValueRef, name:String, functionGenerationContext: FunctionGenerationContext):this(null, functionGenerationContext) {
+        constructor(llvmFunction:LLVMValueRef, name:String, functionGenerationContext: FunctionGenerationContext):
+                this(null, functionGenerationContext) {
             this.llvmFunction = llvmFunction
             this.name = name
         }
 
-        var llvmFunction:LLVMValueRef? = declaration?.let{
+        var llvmFunction: LLVMValueRef? = declaration?.let{
             codegen.llvmFunction(it)
         }
 
@@ -1641,8 +1644,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
     fun getFileEntry(sourceFileName: String): SourceManager.FileEntry =
-        // We must cache file entries, otherwise we reparse same file many times.
-            context.fileEntryCache.getOrPut(sourceFileName) {
+         // We must cache file entries, otherwise we reparse same file many times.
+         context.fileEntryCache.getOrPut(sourceFileName) {
                 NaiveSourceBasedFileEntryImpl(sourceFileName)
             }
 
@@ -1687,7 +1690,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
          * Note: DILexicalBlocks aren't nested, they should be scoped with the parent function.
          */
         private val scope by lazy {
-            if (!context.shouldContainDebugInfo())
+            if (!context.shouldContainDebugInfo() || returnableBlock.startOffset == UNDEFINED_OFFSET)
                 return@lazy null
             val lexicalBlockFile = DICreateLexicalBlockFile(context.debugInfo.builder, functionScope()!!.scope(), super.file.file())
             DICreateLexicalBlock(context.debugInfo.builder, lexicalBlockFile, super.file.file(), returnableBlock.startLine(), returnableBlock.startColumn())!!
@@ -1702,7 +1705,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private open inner class FileScope(val file: IrFile) : InnerScopeImpl() {
         override fun fileScope(): CodeContext? = this
 
-        override fun location(line: Int, column: Int) = scope()?.let {LocationInfo(it, line, column) }
+        override fun location(line: Int, column: Int) = scope()?.let { LocationInfo(it, line, column) }
 
         @Suppress("UNCHECKED_CAST")
         private val scope by lazy {
@@ -1861,11 +1864,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun updateBuilderDebugLocation(element: IrElement): DILocationRef? {
         if (!context.shouldContainDebugInfo() || currentCodeContext.functionScope() == null) return null
         @Suppress("UNCHECKED_CAST")
-        return element.startLocation?.let{ functionGenerationContext.debugLocation(it) }
+        return element.startLocation?.let { functionGenerationContext.debugLocation(it) }
     }
 
     private val IrElement.startLocation: LocationInfo?
-        get() = if (startOffset == UNDEFINED_OFFSET)  null
+        get() = if (startOffset == UNDEFINED_OFFSET) null
             else currentCodeContext.location(startLine(), startColumn())
 
     private val IrElement.endLocation: LocationInfo?
@@ -1928,7 +1931,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun IrFunction.scope():DIScopeOpaqueRef? = this.scope(startLine())
+    private fun IrFunction.scope(): DIScopeOpaqueRef? = if (startOffset != UNDEFINED_OFFSET)
+        this.scope(startLine()) else null
 
     @Suppress("UNCHECKED_CAST")
     private fun FunctionDescriptor.scope(startLine:Int): DIScopeOpaqueRef? {

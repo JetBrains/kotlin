@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.memScoped
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
@@ -81,19 +83,26 @@ internal class DebugInfo internal constructor(override val context: Context):Con
     val otherTypeSize = LLVMSizeOfTypeInBits(llvmTargetData, otherLlvmType)
     val otherTypeAlignment = LLVMPreferredAlignmentOfType(llvmTargetData, otherLlvmType)
 }
+
 /**
  * File entry starts offsets from zero while dwarf number lines/column starting from 1.
  */
-private fun FileEntry.location(offset:Int, offsetToNumber:(Int) -> Int):Int {
-    return if (offset < 0) 0 // lldb uses 1-based unsigned integers, so 0 is "no-info"
-    else offsetToNumber(offset) + 1
+private val NO_SOURCE_FILE = "no source file"
+private fun FileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int {
+    assert(offset != UNDEFINED_OFFSET)
+    // Part "name.isEmpty() || name == NO_SOURCE_FILE" is an awful hack, @minamoto, please fix properly.
+    if (offset == SYNTHETIC_OFFSET || name.isEmpty() || name == NO_SOURCE_FILE) return 1
+    // lldb uses 1-based unsigned integers, so 0 is "no-info".
+    val result = offsetToNumber(offset) + 1
+    assert(result != 0)
+    return result
 }
 
 internal fun FileEntry.line(offset: Int) = location(offset, this::getLineNumber)
 
 internal fun FileEntry.column(offset: Int) = location(offset, this::getColumnNumber)
 
-internal data class FileAndFolder(val file:String, val folder:String) {
+internal data class FileAndFolder(val file: String, val folder: String) {
     companion object {
         val NOFILE =  FileAndFolder("-", "")
     }
@@ -109,7 +118,6 @@ internal fun String?.toFileAndFolder():FileAndFolder {
 
 internal fun generateDebugInfoHeader(context: Context) {
     if (context.shouldContainDebugInfo()) {
-
         val path = context.config.outputFile
             .toFileAndFolder()
         @Suppress("UNCHECKED_CAST")
@@ -150,7 +158,7 @@ internal fun generateDebugInfoHeader(context: Context) {
 }
 
 @Suppress("UNCHECKED_CAST")
-internal fun KotlinType.dwarfType(context:Context, targetData:LLVMTargetDataRef): DITypeOpaqueRef {
+internal fun KotlinType.dwarfType(context: Context, targetData: LLVMTargetDataRef): DITypeOpaqueRef {
     when {
         KotlinBuiltIns.isPrimitiveType(this) -> return debugInfoBaseType(context, targetData, this.getJetTypeFqName(false), llvmType(context), encoding(context).value.toInt())
         else -> {
@@ -186,7 +194,6 @@ internal fun KotlinType.diType(context: Context, llvmTargetData: LLVMTargetDataR
             dwarfType(context, llvmTargetData)
         }
 
-
 @Suppress("UNCHECKED_CAST")
 private fun debugInfoBaseType(context:Context, targetData:LLVMTargetDataRef, typeName:String, type:LLVMTypeRef, encoding:Int) = DICreateBasicType(
         context.debugInfo.builder, typeName,
@@ -205,14 +212,12 @@ internal fun KotlinType.alignment(context:Context) = context.debugInfo.llvmTypeA
 
 internal fun KotlinType.llvmType(context:Context): LLVMTypeRef = context.debugInfo.llvmTypes.getOrDefault(this, context.debugInfo.otherLlvmType)
 
-private fun<T> or(v:T, vararg p:(T)->Boolean):Boolean = p.any{it(v)}
-
-internal fun KotlinType.encoding(context:Context):DwarfTypeKind = when {
+internal fun KotlinType.encoding(context: Context): DwarfTypeKind = when {
     this in context.debugInfo.intTypes            -> DwarfTypeKind.DW_ATE_signed
     this in context.debugInfo.realTypes           -> DwarfTypeKind.DW_ATE_float
-    KotlinBuiltIns.isBoolean(this)                -> DwarfTypeKind.DW_ATE_boolean
-    KotlinBuiltIns.isChar(this)                   -> DwarfTypeKind.DW_ATE_unsigned
-    (!KotlinBuiltIns.isPrimitiveType(this))       -> DwarfTypeKind.DW_ATE_address
+    KotlinBuiltIns.isBoolean(this)          -> DwarfTypeKind.DW_ATE_boolean
+    KotlinBuiltIns.isChar(this)             -> DwarfTypeKind.DW_ATE_unsigned
+    (!KotlinBuiltIns.isPrimitiveType(this)) -> DwarfTypeKind.DW_ATE_address
     else                                          -> TODO(toString())
 }
 

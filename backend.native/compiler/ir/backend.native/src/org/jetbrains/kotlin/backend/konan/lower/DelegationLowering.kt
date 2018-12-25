@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.isObjCClass
+import org.jetbrains.kotlin.backend.konan.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -103,7 +103,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
 
         val kPropertiesFieldType: IrType = context.ir.symbols.array.typeWith(kPropertyImplType)
 
-        val kPropertiesField = IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+        val kPropertiesField = IrFieldImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
                 createKPropertiesFieldDescriptor(irFile.packageFragmentDescriptor,
                         kPropertiesFieldType.toKotlinType()
@@ -187,8 +187,9 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
             val initializers = kProperties.values.sortedBy { it.second }.map { it.first }
             // TODO: move to object for lazy initialization.
             irFile.declarations.add(0, kPropertiesField.apply {
-                initializer = IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        context.createArrayOfExpression(kPropertyImplType, initializers, UNDEFINED_OFFSET, UNDEFINED_OFFSET))
+                initializer = IrExpressionBodyImpl(startOffset, endOffset,
+                        context.createArrayOfExpression(kPropertyImplType, initializers,
+                                startOffset, endOffset))
             })
 
             kPropertiesField.parent = irFile

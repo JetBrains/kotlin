@@ -5,30 +5,27 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
+import org.jetbrains.kotlin.backend.konan.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallWithIndexedArgumentsBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrTerminalDeclarationReferenceBase
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.KotlinType
 
 //-----------------------------------------------------------------------------//
 /**
@@ -49,12 +46,19 @@ class NaiveSourceBasedFileEntryImpl(override val name: String) : SourceManager.F
     init {
         val file = File(name)
         if (file.isFile) {
+            // TODO: could be incorrect, if file is not in system's line terminator format.
+            // Maybe use (0..document.lineCount - 1)
+            //                .map { document.getLineStartOffset(it) }
+            //                .toIntArray()
+            // as in PSI.
+            val separatorLength = System.lineSeparator().length
             val buffer = mutableListOf<Int>()
             var currentOffset = 0
             file.forEachLine { line ->
                 buffer.add(currentOffset)
-                currentOffset += line.length
+                currentOffset += line.length + separatorLength
             }
+            buffer.add(currentOffset)
             lineStartOffsets = buffer.toIntArray()
         } else {
             lineStartOffsets = IntArray(0)
@@ -64,19 +68,18 @@ class NaiveSourceBasedFileEntryImpl(override val name: String) : SourceManager.F
     //-------------------------------------------------------------------------//
 
     override fun getLineNumber(offset: Int): Int {
+        assert(offset != UNDEFINED_OFFSET)
+        if (offset == SYNTHETIC_OFFSET) return 0
         val index = lineStartOffsets.binarySearch(offset)
-        return if (index >= 0) index else -index - 1
+        return if (index >= 0) index else -index - 2
     }
 
     //-------------------------------------------------------------------------//
 
     override fun getColumnNumber(offset: Int): Int {
+        assert(offset != UNDEFINED_OFFSET)
+        if (offset == SYNTHETIC_OFFSET) return 0
         var lineNumber = getLineNumber(offset)
-        if (lineNumber >= lineStartOffsets.size) {
-            lineNumber = lineStartOffsets.size - 1
-        }
-        if (lineNumber < 0) lineNumber = 0
-        if (lineStartOffsets.size == 0) return offset
         return offset - lineStartOffsets[lineNumber]
     }
 

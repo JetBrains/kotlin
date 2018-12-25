@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
@@ -130,8 +131,9 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator,
 }
 
 
-internal inline fun<R> generateFunction(codegen: CodeGenerator, function: LLVMValueRef, code:FunctionGenerationContext.(FunctionGenerationContext) -> R) {
-    generateFunctionBody(FunctionGenerationContext(function, codegen), code)
+internal inline fun<R> generateFunction(codegen: CodeGenerator, function: LLVMValueRef,
+                                        code:FunctionGenerationContext.(FunctionGenerationContext) -> R) {
+    generateFunctionBody(FunctionGenerationContext(function, codegen, null, null), code)
 }
 
 internal inline fun generateFunction(
@@ -145,7 +147,9 @@ internal inline fun generateFunction(
     return function
 }
 
-inline private fun <R> generateFunctionBody(functionGenerationContext: FunctionGenerationContext, code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
+inline private fun <R> generateFunctionBody(
+        functionGenerationContext: FunctionGenerationContext,
+        code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
     functionGenerationContext.prologue()
     functionGenerationContext.code(functionGenerationContext)
     if (!functionGenerationContext.isAfterTerminator())
@@ -155,10 +159,11 @@ inline private fun <R> generateFunctionBody(functionGenerationContext: FunctionG
 }
 
 internal class FunctionGenerationContext(val function: LLVMValueRef,
-                                         val codegen:CodeGenerator,
-                                         startLocation:LocationInfo? = null,
-                                         endLocation:LocationInfo? = null,
-                                         internal val functionDescriptor: FunctionDescriptor? = null):ContextUtils {
+                                         val codegen: CodeGenerator,
+                                         startLocation: LocationInfo?,
+                                         endLocation: LocationInfo?,
+                                         internal val functionDescriptor: FunctionDescriptor? = null): ContextUtils {
+
     override val context = codegen.context
     val vars = VariableManager(this)
     private val basicBlockToLastLocation = mutableMapOf<LLVMBasicBlockRef, LocationInfo>()
@@ -208,7 +213,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return bb
     }
 
-    fun basicBlock(name:String = "label_" , locationInfo:LocationInfo?):LLVMBasicBlockRef {
+    fun basicBlock(name:String = "label_" , locationInfo:LocationInfo?): LLVMBasicBlockRef {
         val result = LLVMInsertBasicBlock(this.currentBlock, name)!!
         update(result, locationInfo)
         LLVMMoveBasicBlockAfter(result, this.currentBlock)
@@ -359,7 +364,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val rargs = args.toCValues()
         if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */  &&
                 isFunctionNoUnwind(llvmFunction)) {
-
             return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
         } else {
             val unwind = when (exceptionHandler) {

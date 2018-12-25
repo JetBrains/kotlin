@@ -52,6 +52,11 @@ import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 
+/**
+ * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
+ */
+internal const val SYNTHETIC_OFFSET = -2
+
 internal class SpecialDeclarationsFactory(val context: Context) {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
     private val outerThisFields = mutableMapOf<ClassDescriptor, IrField>()

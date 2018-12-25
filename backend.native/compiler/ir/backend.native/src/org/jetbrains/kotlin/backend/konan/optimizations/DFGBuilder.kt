@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -636,7 +635,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                             is IrDelegatingConstructorCall -> {
                                 val thisReceiver = (descriptor as ConstructorDescriptor).constructedClass.thisReceiver!!
-                                val thiz = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisReceiver.type,
+                                val thiz = IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, thisReceiver.type,
                                         thisReceiver.symbol)
                                 val arguments = listOf(thiz) + value.getArguments().map { it.second }
                                 DataFlowIR.Node.StaticCall(

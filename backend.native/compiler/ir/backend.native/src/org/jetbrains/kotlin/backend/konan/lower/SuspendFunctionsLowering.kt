@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -938,7 +937,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
         }
 
         // These are marker descriptors to split up the lowering on two parts.
-        private val saveState = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED,
+        private val saveState = IrFunctionImpl(irFunction.startOffset, irFunction.startOffset, IrDeclarationOrigin.DEFINED,
                 SimpleFunctionDescriptorImpl.create(
                         irFunction.descriptor,
                         Annotations.EMPTY,
@@ -948,7 +947,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                     initialize(null, null, emptyList(), emptyList(), context.builtIns.unitType, Modality.ABSTRACT, Visibilities.PRIVATE)
                 }, context.irBuiltIns.unitType)
 
-        private val restoreState = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED,
+        private val restoreState = IrFunctionImpl(irFunction.startOffset, irFunction.startOffset, IrDeclarationOrigin.DEFINED,
                 SimpleFunctionDescriptorImpl.create(
                         irFunction.descriptor,
                         Annotations.EMPTY,

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.util.visibleName
 
 
 /**
- * Creates and stores terminal compiler outputs
+ * Creates and stores terminal compiler outputs.
  */
 class OutputFiles(outputPath: String?, target: KonanTarget, produce: CompilerOutputKind) {
 
@@ -24,13 +24,13 @@ class OutputFiles(outputPath: String?, target: KonanTarget, produce: CompilerOut
     val outputName = outputPath?.removeSuffixIfPresent(suffix) ?: produce.visibleName
 
     /**
-     * Header file for dynamic library
+     * Header file for dynamic library.
      */
     val cAdapterHeader      by lazy { File("${outputName}_api.h") }
     val cAdapterDef         by lazy { File("${outputName}_symbols.def") }
 
     /**
-     * Main compiler's output file
+     * Main compiler's output file.
      */
     val mainFile = outputName
             .prefixBaseNameIfNot(prefix)
