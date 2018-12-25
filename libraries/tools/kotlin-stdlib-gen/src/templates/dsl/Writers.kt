@@ -39,7 +39,7 @@ data class TargetedSourceFile(
 
 @JvmName("groupByFileAndWriteGroups")
 fun Sequence<TemplateGroup>.groupByFileAndWrite(
-        targetsToGenerate: List<KotlinTarget>,
+        targetsToGenerate: Collection<KotlinTarget>,
         fileNameBuilder: (TargetedSourceFile) -> File
 ) {
     flatMap { group ->
@@ -51,7 +51,7 @@ fun Sequence<TemplateGroup>.groupByFileAndWrite(
 
 @JvmName("groupByFileAndWriteTemplates")
 fun Sequence<MemberTemplate>.groupByFileAndWrite(
-        targetsToGenerate: List<KotlinTarget>,
+        targetsToGenerate: Collection<KotlinTarget>,
         fileNameBuilder: (TargetedSourceFile) -> File
 ) {
     flatMap { it.instantiate(targetsToGenerate) }
