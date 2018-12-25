@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cidr
 
-import org.gradle.api.Task
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Zip
 import java.util.regex.Pattern
 
@@ -47,4 +47,34 @@ fun Zip.includePatchedJavaXmls() {
             javaPluginXmlPath to listOf("implementation=\"com.intellij.spi.SPIFileTypeFactory\"")
         )
     )
+}
+
+fun Copy.applyCidrVersionRestrictions(
+    productVersion: String,
+    strictProductVersionLimitation: Boolean,
+    pluginVersion: String
+) {
+    val dotsCount = productVersion.count { it == '.' }
+    check(dotsCount >= 1 && dotsCount <= 2) {
+        "Wrong CIDR product version format: $productVersion"
+    }
+
+    val sinceBuild = if (dotsCount == 1)
+        productVersion
+    else
+        productVersion.substringBeforeLast('.')
+
+    val untilBuild = if (strictProductVersionLimitation)
+        // if strict then restrict plugin to the same single version of CLion or AppCode
+        sinceBuild + ".*"
+    else
+        productVersion.substringBefore('.') + ".*"
+
+    filter {
+        it
+            .replace("<!--idea_version_placeholder-->",
+                     "<idea-version since-build=\"$sinceBuild\" until-build=\"$untilBuild\"/>")
+            .replace("<!--version_placeholder-->",
+                     "<version>$pluginVersion</version>")
+    }
 }
