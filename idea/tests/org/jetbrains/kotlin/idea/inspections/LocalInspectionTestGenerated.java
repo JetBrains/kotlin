@@ -1529,6 +1529,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryEq.kt");
         }
 
+        @TestMetadata("enumEntryEq2.kt")
+        public void testEnumEntryEq2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryEq2.kt");
+        }
+
+        @TestMetadata("enumEntryEq3.kt")
+        public void testEnumEntryEq3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryEq3.kt");
+        }
+
         @TestMetadata("enumEntryGt.kt")
         public void testEnumEntryGt() throws Exception {
             runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryGt.kt");
