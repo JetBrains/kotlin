@@ -3074,6 +3074,9 @@ task produce_dynamic(type: DynamicKonanTest) {
 }
 
 task library_mismatch(type: RunStandaloneKonanTest) {
+    // Does not work for cross targets yet.
+    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+
     def dir = buildDir.absolutePath
     def lib = "$projectDir/link/versioning/empty.kt"
 
