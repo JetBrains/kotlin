@@ -1371,6 +1371,37 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Annotation_classes extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInAnnotation_classes() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Neg extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
+                    @TestMetadata("1.kt")
+                    public void test1() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg/1.kt");
+                    }
+
+                    public void testAllFilesPresentInNeg() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+                }
+            }
+
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
