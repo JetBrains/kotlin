@@ -1384,9 +1384,24 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 runTest("idea/testData/findUsages/kotlin/script/anonymousObject.0.kts");
             }
 
+            @TestMetadata("anonymousObjectAsInitializer.0.kts")
+            public void testAnonymousObjectAsInitializer() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/script/anonymousObjectAsInitializer.0.kts");
+            }
+
+            @TestMetadata("anonymousObjectInFun.0.kts")
+            public void testAnonymousObjectInFun() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/script/anonymousObjectInFun.0.kts");
+            }
+
             @TestMetadata("dummy.0.kts")
             public void testDummy() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/script/dummy.0.kts");
+            }
+
+            @TestMetadata("localClass.0.kts")
+            public void testLocalClass() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/script/localClass.0.kts");
             }
         }
 
