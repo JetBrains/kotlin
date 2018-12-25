@@ -28,7 +28,7 @@ sourceSets {
     "test" { none() }
 }
 
-configureInstrumentation()
+configureFormInstrumentation()
 
 runtimeJar {
     archiveName = "jvm-ide.jar"
