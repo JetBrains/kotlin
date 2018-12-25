@@ -199,11 +199,26 @@ class ArraysTest {
     }
 
     @Test fun contentEquals() {
-        val arr1 = arrayOf("a", 1, null)
-        val arr2 = arrayOf(*arr1)
-        assertTrue(arr1 contentEquals arr2)
-        val arr3 = arr2.reversedArray()
-        assertFalse(arr1 contentEquals arr3)
+        fun <T> checkArray(array: T, copy: T.() -> T, toList: T.() -> List<*>, check: (T, T) -> Boolean, modify: T.() -> Unit) {
+            val list = toList(array)
+            val array2 = copy(array)
+            val list2 = toList(array2)
+            assertEquals(list, list2)
+            assertNotSame(array, array2)
+            assertTrue(check(array, array2), "Copy of array should have the same content: original $list, modified $list2")
+
+            modify(array2)
+            val list2m = toList(array2)
+            assertNotEquals(list, list2m)
+            assertFalse(check(array, array2), "Modified array should be different: original $list, modified $list2m")
+        }
+
+        checkArray(arrayOf("a", 1, null), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
+        checkArray(byteArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
+        checkArray(intArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
+        checkArray(longArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
+        checkArray(doubleArrayOf(Double.NaN, -0.0, 0.0, Double.POSITIVE_INFINITY, 1.0),
+                   { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { this[1] = 0.0 })
     }
 
     @Test fun contentDeepEquals() {
@@ -222,6 +237,13 @@ class ArraysTest {
 
         arr4[2] = arr3
         assertFalse(arr3 contentDeepEquals arr4)
+
+        val arr5 = arrayOf(doubleArrayOf(-0.0, Double.NaN))
+        val arr6 = arrayOf(doubleArrayOf(0.0, Double.NaN))
+        assertFalse(arr5 contentDeepEquals arr6)
+
+        arr5[0][0] = 0.0
+        assertTrue(arr5 contentDeepEquals arr6)
     }
 
     @Test fun contentToString() {
@@ -265,6 +287,8 @@ class ArraysTest {
         intArrayOf(1, Int.MAX_VALUE, Int.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
         byteArrayOf(1, Byte.MAX_VALUE, Byte.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
         charArrayOf('a', Char.MAX_VALUE, Char.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+        doubleArrayOf(1.0, -0.0, 0.0, Double.NaN, Double.POSITIVE_INFINITY).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+        floatArrayOf(1.0f, -0.0f, 0.0f, Float.NaN, Float.POSITIVE_INFINITY).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
     }
 
     @Test fun contentDeepHashCode() {
@@ -275,6 +299,11 @@ class ArraysTest {
         val intList2 = listOf(listOf(1, 2), listOf(3, 4))
 
         assertEquals(intList2.hashCode(), intArray2.contentDeepHashCode())
+
+        val doubleArray2 = arrayOf(doubleArrayOf(1.0, Double.NaN), doubleArrayOf(-0.0, 0.0))
+        val doubleList2 = listOf(listOf(1.0, Double.NaN), listOf(-0.0, 0.0))
+
+        assertEquals(doubleList2.hashCode(), doubleArray2.contentDeepHashCode())
 
         val uintArray2 = arrayOf(uintArrayOf(1u, 2u), uintArrayOf(3u, 4u))
         val uintList2 = listOf(listOf(1u, 2u), listOf(3u, 4u))
