@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class KotlinSoftwareComponent(
-    private val project: Project,
     private val name: String,
     private val kotlinTargets: Iterable<KotlinTarget>
 ) : SoftwareComponentInternal, ComponentWithVariants {
@@ -25,7 +24,7 @@ class KotlinSoftwareComponent(
     override fun getUsages(): Set<UsageContext> = emptySet()
 
     override fun getVariants(): Set<KotlinTargetComponent> =
-        kotlinTargets.map { it.component }.toSet()
+        kotlinTargets.flatMap { it.components }.toSet()
 
     override fun getName(): String = name
 }
@@ -36,12 +35,20 @@ object NativeUsage {
     const val KOTLIN_KLIB = "kotlin-klib"
 }
 
-internal class KotlinPlatformUsageContext(
-    val kotlinTarget: KotlinTarget,
+interface KotlinUsageContext : UsageContext {
+    val compilation: KotlinCompilation<*>
+    val dependencyConfigurationName: String
+}
+
+class DefaultKotlinUsageContext(
+    override val compilation: KotlinCompilation<*>,
     private val usage: Usage,
-    val dependencyConfigurationName: String,
-    private val publishWithGradleMetadata: Boolean
-) : UsageContext {
+    override val dependencyConfigurationName: String,
+    private val publishWithGradleMetadata: Boolean,
+    private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null
+) : KotlinUsageContext {
+
+    val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
     override fun getUsage(): Usage = usage
@@ -49,7 +56,7 @@ internal class KotlinPlatformUsageContext(
     override fun getName(): String = kotlinTarget.targetName + when (dependencyConfigurationName) {
         kotlinTarget.apiElementsConfigurationName -> "-api"
         kotlinTarget.runtimeElementsConfigurationName -> "-runtime"
-        else -> error("unexpected configuration")
+        else -> "-$dependencyConfigurationName" // for Android variants
     }
 
     private val configuration: Configuration
@@ -64,7 +71,8 @@ internal class KotlinPlatformUsageContext(
     override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> =
         configuration.incoming.dependencyConstraints
 
-    override fun getArtifacts(): MutableSet<out PublishArtifact> =
+    override fun getArtifacts(): Set<PublishArtifact> =
+        overrideConfigurationArtifacts ?:
     // TODO Gradle Java plugin does that in a different way; check whether we can improve this
         configuration.artifacts
 
@@ -77,7 +85,7 @@ internal class KotlinPlatformUsageContext(
 }
 
 private fun rewriteMppDependenciesToTargetModuleDependencies(
-    context: KotlinPlatformUsageContext,
+    context: DefaultKotlinUsageContext,
     configuration: Configuration
 ): Set<ModuleDependency> = with(context.kotlinTarget.project) {
     val target = context.kotlinTarget
@@ -126,12 +134,13 @@ private fun rewriteMppDependenciesToTargetModuleDependencies(
                     )
                 } ?: return@map dependency
 
-                val publicationDelegate = (dependencyTarget.component as KotlinVariant).publicationDelegate
+                val dependencyTargetComponent = dependencyTarget.components.single() // FIXME handle multiple components later
+                val publicationDelegate = (dependencyTargetComponent as KotlinVariant).publicationDelegate
 
                 dependencies.module(
                     listOf(
                         publicationDelegate?.groupId ?: dependency.group,
-                        publicationDelegate?.artifactId ?: dependencyTarget.defaultArtifactId,
+                        publicationDelegate?.artifactId ?: dependencyTargetComponent.defaultArtifactId,
                         publicationDelegate?.version ?: dependency.version
                     ).joinToString(":")
                 ) as ModuleDependency
