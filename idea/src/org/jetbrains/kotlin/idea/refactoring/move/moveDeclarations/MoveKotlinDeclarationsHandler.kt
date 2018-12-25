@@ -48,17 +48,21 @@ import java.util.*
 
 class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     private fun getUniqueContainer(elements: Array<out PsiElement>): PsiElement? {
+        val allTopLevel = elements.all { isTopLevelInFileOrScript(it) }
+
         val getContainer: (PsiElement) -> PsiElement? =
-                if (elements.any { !isTopLevelInFileOrScript(it) }) { e ->
+            { e ->
+                if (allTopLevel) {
+                    e.containingFile?.parent
+                } else {
                     when (e) {
                         is KtNamedDeclaration -> e.containingClassOrObject ?: e.parent
                         is KtFile -> e.parent
                         else -> null
                     }
                 }
-                else { e ->
-                    e.containingFile?.parent
-                }
+            }
+
         return elements.mapNotNullTo(LinkedHashSet(), getContainer).singleOrNull()
     }
 
