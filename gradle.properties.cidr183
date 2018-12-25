@@ -1,6 +1,3 @@
-org.gradle.daemon=true
-org.gradle.parallel=false
-org.gradle.configureondemand=false
 org.gradle.jvmargs=-Duser.country=US -Dkotlin.daemon.jvm.options=-Xmx1600m -Dfile.encoding=UTF-8
 
 cacheRedirectorEnabled=true
