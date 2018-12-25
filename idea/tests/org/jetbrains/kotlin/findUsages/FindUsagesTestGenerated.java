@@ -1379,6 +1379,11 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/script"), Pattern.compile("^(.+)\\.0\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("anonymousObject.0.kts")
+            public void testAnonymousObject() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/script/anonymousObject.0.kts");
+            }
+
             @TestMetadata("dummy.0.kts")
             public void testDummy() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/script/dummy.0.kts");
