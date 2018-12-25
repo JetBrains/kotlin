@@ -43,6 +43,11 @@ sealed class ConvertToScopeIntention(
         when (element) {
             is KtProperty ->
                 if (!element.isLocal) return false
+            is KtCallExpression -> {
+                if (element.parent is KtDotQualifiedExpression) return false
+                val propertyName = element.prevProperty()?.name ?: return false
+                if (!element.isTarget(propertyName)) return false
+            }
             is KtDotQualifiedExpression -> {
                 if (element.parent is KtDotQualifiedExpression) return false
                 val name = element.getLeftMostReceiverExpression().text
@@ -55,7 +60,7 @@ sealed class ConvertToScopeIntention(
     }
 
     override fun applyTo(element: KtExpression, editor: Editor?) {
-        val targets = element.collectTargetElements() ?: return
+        val (targets, referenceName) = element.collectTargetElements() ?: return
         val first = targets.firstOrNull() ?: return
         val last = targets.lastOrNull() ?: return
         val property = element.prevProperty()
@@ -68,33 +73,46 @@ sealed class ConvertToScopeIntention(
         val psiFactory = KtPsiFactory(element)
         val (scopeFunctionCall, block) = psiFactory.createScopeFunctionCall(propertyOrFirst) ?: return
         block.addRange(property?.nextSibling ?: first, last)
-        block.children.filterIsInstance(KtDotQualifiedExpression::class.java)
-            .forEach {
-                val replaced = it.deleteFirstReceiver()
-                if (scopeFunction.isParameterScope) {
-                    replaced.replace(psiFactory.createExpressionByPattern("${scopeFunction.receiver}.$0", replaced))
+        block.children.forEach { child ->
+            when (child) {
+                is KtDotQualifiedExpression -> {
+                    val replaced = child.deleteFirstReceiver()
+                    if (scopeFunction.isParameterScope) {
+                        replaced.replace(psiFactory.createExpressionByPattern("${scopeFunction.receiver}.$0", replaced))
+                    }
+                }
+                is KtCallExpression -> {
+                    child.valueArguments.forEach { arg ->
+                        if (arg.getArgumentExpression()?.text == referenceName) {
+                            arg.replace(psiFactory.createArgument(scopeFunction.receiver))
+                        }
+                    }
                 }
             }
+        }
         parent.addBefore(scopeFunctionCall, propertyOrFirst)
         parent.deleteChildRange(propertyOrFirst, last)
     }
 
-    private fun KtExpression.collectTargetElements(): List<PsiElement>? {
-        val targets = when (scopeFunction) {
+    private fun KtExpression.collectTargetElements(): Pair<List<PsiElement>, String>? {
+        val (targets, referenceName) = when (scopeFunction) {
             ALSO, APPLY -> {
                 val property = prevProperty() ?: return null
                 val referenceName = property.name ?: return null
-                property.collectTargetElements(referenceName, forward = true).toList().takeIf { this is KtProperty || this in it }
+                val targets = property.collectTargetElements(referenceName, forward = true).toList()
+                if (this !is KtProperty && this !in targets) return null
+                targets to referenceName
             }
             else -> {
                 if (this !is KtDotQualifiedExpression) return null
                 val referenceName = getLeftMostReceiverExpression().text
                 val prev = collectTargetElements(referenceName, forward = false).toList().reversed()
                 val next = collectTargetElements(referenceName, forward = true)
-                prev + listOf(this) + next
+                (prev + listOf(this) + next) to referenceName
             }
         }
-        return targets?.takeIf { it.size >= 2 }
+        if (targets.size < 2) return null
+        return targets to referenceName
     }
 
     private fun KtExpression.collectTargetElements(referenceName: String, forward: Boolean): Sequence<PsiElement> {
@@ -104,12 +122,22 @@ sealed class ConvertToScopeIntention(
     }
 
     private fun PsiElement.isTarget(referenceName: String): Boolean {
-        if (this !is KtDotQualifiedExpression) return false
-        val leftMostReceiver = getLeftMostReceiverExpression()
-        if (leftMostReceiver.text != referenceName) return false
-        if (leftMostReceiver.mainReference?.resolve() is PsiClass) return false
-        val callExpr = callExpression ?: return false
-        if (callExpr.lambdaArguments.isNotEmpty() || callExpr.valueArguments.any { it.text == scopeFunction.receiver }) return false
+        when (this) {
+            is KtDotQualifiedExpression -> {
+                val leftMostReceiver = getLeftMostReceiverExpression()
+                if (leftMostReceiver.text != referenceName) return false
+                if (leftMostReceiver.mainReference?.resolve() is PsiClass) return false
+                val callExpr = callExpression ?: return false
+                if (callExpr.lambdaArguments.isNotEmpty() || callExpr.valueArguments.any { it.text == scopeFunction.receiver }) return false
+            }
+            is KtCallExpression -> {
+                val valueArguments = this.valueArguments
+                if (valueArguments.none { it.getArgumentExpression()?.text == referenceName }) return false
+                if (lambdaArguments.isNotEmpty() || valueArguments.any { it.text == scopeFunction.receiver }) return false
+            }
+            else ->
+                return false
+        }
         return !anyDescendantOfType<KtNameReferenceExpression> { it.text == scopeFunction.receiver }
     }
 
