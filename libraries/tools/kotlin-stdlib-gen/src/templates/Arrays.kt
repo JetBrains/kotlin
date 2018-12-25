@@ -92,6 +92,24 @@ object ArrayOps : TemplateGroupBase() {
                 body { "return contentEqualsInternal(other)" }
             }
         }
+        on(Platform.Native) {
+            body {
+                """
+                if (this === other) {
+                    return true
+                }
+                if (size != other.size) {
+                    return false
+                }
+                for (i in indices) {
+                    if (this[i] != other[i]) {
+                        return false
+                    }
+                }
+                return true
+                """
+            }
+        }
     }
 
     val f_contentDeepEquals = fn("contentDeepEquals(other: SELF)") {
@@ -131,6 +149,9 @@ object ArrayOps : TemplateGroupBase() {
                 body { "return contentDeepEqualsImpl(other)" }
             }
         }
+        on(Platform.Native) {
+            body { "return contentDeepEqualsImpl(other)" }
+        }
     }
 
     val f_contentToString = fn("contentToString()") {
@@ -160,6 +181,9 @@ object ArrayOps : TemplateGroupBase() {
             on(Backend.IR) {
                 body { "return arrayToString(this as Array<*>)" }
             }
+        }
+        on(Platform.Native) {
+            body { """return joinToString(", ", "[", "]")""" }
         }
     }
 
@@ -199,6 +223,9 @@ object ArrayOps : TemplateGroupBase() {
                 body { "return contentDeepToStringImpl()" }
             }
         }
+        on(Platform.Native) {
+            body { "return contentDeepToStringImpl()" }
+        }
     }
 
     val f_contentHashCode = fn("contentHashCode()") {
@@ -224,6 +251,16 @@ object ArrayOps : TemplateGroupBase() {
             }
             on(Backend.IR) {
                 body { "return contentHashCodeInternal()" }
+            }
+        }
+        on(Platform.Native) {
+            body {
+                """
+                var result = 1
+                for (element in this)
+                    result = 31 * result + element.hashCode()
+                return result
+                """
             }
         }
     }
@@ -261,6 +298,9 @@ object ArrayOps : TemplateGroupBase() {
             on(Backend.IR) {
                 body { "return contentDeepHashCodeInternal()" }
             }
+        }
+        on(Platform.Native) {
+            body { "return contentDeepHashCodeImpl()" }
         }
     }
 
@@ -382,6 +422,10 @@ object ArrayOps : TemplateGroupBase() {
             inlineOnly()
             body { "return plus(element)" }
         }
+        on(Platform.Native) {
+            inlineOnly()
+            body { "return plus(element)" }
+        }
         on(Platform.JS) {
             family = ArraysOfObjects
             inline(suppressWarning = true)
@@ -433,6 +477,16 @@ object ArrayOps : TemplateGroupBase() {
                     "return plus(${primitive.name.toLowerCase()}ArrayOf(element))"
             }
         }
+        on(Platform.Native) {
+            body {
+                """
+                val index = size
+                val result = copyOfUninitializedElements(index + 1)
+                result[index] = element
+                return result
+                """
+            }
+        }
         on(Platform.Common) {
             specialFor(InvariantArraysOfObjects) {
                 suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
@@ -471,6 +525,16 @@ object ArrayOps : TemplateGroupBase() {
                     body { "return arrayPlusCollection(this, elements)" }
                 else ->
                     body { "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)" }
+            }
+        }
+        on(Platform.Native) {
+            body {
+                """
+                var index = size
+                val result = copyOfUninitializedElements(index + elements.size)
+                for (element in elements) result[index++] = element
+                return result
+                """
             }
         }
         on(Platform.Common) {
@@ -512,6 +576,17 @@ object ArrayOps : TemplateGroupBase() {
             }
             specialFor(ArraysOfPrimitives) {
                 body { """return primitiveArrayConcat(this, elements)""" }
+            }
+        }
+        on(Platform.Native) {
+            body {
+                """
+                val thisSize = size
+                val arraySize = elements.size
+                val result = copyOfUninitializedElements(thisSize + arraySize)
+                elements.copyRangeTo(result, 0, arraySize, thisSize)
+                return result
+                """
             }
         }
         on(Platform.Common) {
@@ -577,6 +652,15 @@ object ArrayOps : TemplateGroupBase() {
                     val cast = ".unsafeCast<Array<$primitive>>()".takeIf { family == ArraysOfPrimitives } ?: ""
                     """
                     arrayCopy(this$cast, destination$cast, destinationOffset, startIndex, endIndex)
+                    return destination
+                    """
+                }
+            }
+            on(Platform.Native) {
+                suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+                body {
+                    """
+                    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
                     return destination
                     """
                 }
@@ -654,6 +738,15 @@ object ArrayOps : TemplateGroupBase() {
                     suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
                 }
             }
+            on(Platform.Native) {
+                inlineOnly()
+                body {
+                    """
+                    checkCopyOfRangeArguments(fromIndex, toIndex, size)
+                    return copyOfUninitializedElements(fromIndex, toIndex)
+                    """
+                }
+            }
         }
     }
 
@@ -699,7 +792,10 @@ object ArrayOps : TemplateGroupBase() {
                     suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
                 }
             }
-
+            on(Platform.Native) {
+                inlineOnly()
+                body { "return this.copyOfUninitializedElements(size)" }
+            }
         }
     }
 
@@ -739,7 +835,10 @@ object ArrayOps : TemplateGroupBase() {
                 }
                 body { newSizeCheck + "\n" + body }
             }
-
+            on(Platform.Native) {
+                inlineOnly()
+                body { "return this.copyOfUninitializedElements(newSize)" }
+            }
         }
         specialFor(InvariantArraysOfObjects) {
             sample("samples.collections.Arrays.CopyOfOperations.resizingCopyOf")
@@ -756,6 +855,10 @@ object ArrayOps : TemplateGroupBase() {
             }
             on(Platform.Common) {
                 suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
+            }
+            on(Platform.Native) {
+                inlineOnly()
+                body { "return this.copyOfNulls(newSize)" }
             }
         }
         specialFor(ArraysOfPrimitives, InvariantArraysOfObjects) {
@@ -814,6 +917,14 @@ object ArrayOps : TemplateGroupBase() {
                 }
             }
         }
+        on(Platform.Native) {
+            specialFor(ArraysOfObjects) {
+                body { """if (size > 1) kotlin.util.sortArrayComparable(this)""" }
+            }
+            specialFor(ArraysOfPrimitives) {
+                body { """if (size > 1) kotlin.util.sortArray(this)""" }
+            }
+        }
     }
 
     val f_sortWith = fn("sortWith(comparator: Comparator<in T>)") {
@@ -833,6 +944,9 @@ object ArrayOps : TemplateGroupBase() {
                     sort { a, b -> comparator.compare(a, b) }
                 """
             }
+        }
+        on(Platform.Native) {
+            body { """if (size > 1) kotlin.util.sortArrayWith(this, 0, size, comparator)""" }
         }
     }
 
@@ -902,8 +1016,7 @@ object ArrayOps : TemplateGroupBase() {
             body { """return ArrayList<T>(this.unsafeCast<Array<Any?>>())""" }
         }
 
-        specialFor(ArraysOfPrimitives) {
-            val objectLiteralImpl = """
+        val objectLiteralImpl = """
                         return object : AbstractList<T>(), RandomAccess {
                             override val size: Int get() = this@asList.size
                             override fun isEmpty(): Boolean = this@asList.isEmpty()
@@ -913,6 +1026,7 @@ object ArrayOps : TemplateGroupBase() {
                             override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
                         }
                         """
+        specialFor(ArraysOfPrimitives) {
             on(Platform.JVM) {
                 body { objectLiteralImpl }
             }
@@ -925,6 +1039,9 @@ object ArrayOps : TemplateGroupBase() {
                     body { "return this.unsafeCast<Array<T>>().asList()" }
                 }
             }
+        }
+        on(Platform.Native) {
+            body { objectLiteralImpl }
         }
     }
 
