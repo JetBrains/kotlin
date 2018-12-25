@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
-import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
@@ -108,9 +107,11 @@ class FunctionClassDescriptor(
         override fun computeSupertypes(): Collection<KotlinType> {
             val result = ArrayList<KotlinType>(2)
 
-            fun add(packageFragment: PackageFragmentDescriptor, name: Name) {
-                val descriptor = packageFragment.getMemberScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
-                    ?: error("Class $name not found in $packageFragment")
+            fun add(packageFragments: List<PackageFragmentDescriptor>, name: Name) {
+                val descriptor = packageFragments
+                    .mapNotNull { it.getMemberScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor }
+                    .firstOrNull()
+                    ?: error("Class $name not found")
 
                 val typeConstructor = descriptor.typeConstructor
 
@@ -126,9 +127,11 @@ class FunctionClassDescriptor(
                 Kind.SuspendFunction -> // SuspendFunction$N<...> <: Function
                     add(getBuiltInPackage(BUILT_INS_PACKAGE_FQ_NAME), Name.identifier("Function"))
                 Kind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
-                    add(containingDeclaration, Name.identifier("KFunction"))
-                else -> // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
-                    add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
+                    add(getBuiltInPackage(KOTLIN_REFLECT_FQ_NAME), Name.identifier("KFunction"))
+                Kind.Function ->
+                    add(getBuiltInPackage(BUILT_INS_PACKAGE_FQ_NAME), Name.identifier("Function"))
+                Kind.KFunction ->
+                    add(getBuiltInPackage(KOTLIN_REFLECT_FQ_NAME), Name.identifier("KFunction"))
             }
 
             // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for K{Suspend}Function2
@@ -145,9 +148,9 @@ class FunctionClassDescriptor(
             return result.toList()
         }
 
-        private fun getBuiltInPackage(fqName: FqName): BuiltInsPackageFragment {
+        private fun getBuiltInPackage(fqName: FqName): List<PackageFragmentDescriptor> {
             val packageView = containingDeclaration.containingDeclaration.getPackage(fqName)
-            return packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()
+            return packageView.fragments
         }
 
         override fun getParameters() = this@FunctionClassDescriptor.parameters

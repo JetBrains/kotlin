@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.builtins.functions
 
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
+import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -81,7 +82,15 @@ class BuiltInFictitiousFunctionClassFactory(
         val packageFqName = classId.packageFqName
         val (kind, arity) = parseClassName(className, packageFqName) ?: return null
 
-        val containingPackageFragment = module.getPackage(packageFqName).fragments.filterIsInstance<BuiltInsPackageFragment>().first()
+
+        val builtInsFragments = module.getPackage(packageFqName).fragments.filterIsInstance<BuiltInsPackageFragment>()
+
+        val containingPackageFragment = when {
+            builtInsFragments.size == 1 -> builtInsFragments.single()
+            // JS IR backend uses separate FunctionInterfacePackageFragment for function interfaces
+            // TODO: Why first? Should be single
+            else -> builtInsFragments.filterIsInstance<FunctionInterfacePackageFragment>().first()
+        }
 
         return FunctionClassDescriptor(storageManager, containingPackageFragment, kind, arity)
     }

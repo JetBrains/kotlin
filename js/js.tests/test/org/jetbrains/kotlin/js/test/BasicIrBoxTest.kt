@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test
 
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.Result
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -21,19 +22,9 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/common/src",
     "libraries/stdlib/src/kotlin/",
     "libraries/stdlib/js/src/kotlin",
-    "libraries/stdlib/js/src/generated",
     "libraries/stdlib/js/irRuntime",
     "libraries/stdlib/js/runtime",
     "libraries/stdlib/unsigned",
-
-    "core/builtins/native/kotlin/Annotation.kt",
-    "core/builtins/native/kotlin/Number.kt",
-    "core/builtins/native/kotlin/Comparable.kt",
-    "core/builtins/native/kotlin/Collections.kt",
-    "core/builtins/native/kotlin/Iterator.kt",
-    "core/builtins/native/kotlin/CharSequence.kt",
-
-    "core/builtins/src/kotlin/Unit.kt",
 
     BasicBoxTest.COMMON_FILES_DIR_PATH
 ) - listOfKtFilesFrom(
@@ -66,7 +57,6 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/currentBeMisc.kt",
 
     // IR BE has its own generated sources
-    "libraries/stdlib/js/src/generated",
     "libraries/stdlib/js/src/kotlin/collectionsExternal.kt",
 
     // Full version is defined in stdlib
@@ -166,9 +156,11 @@ abstract class BasicIrBoxTest(
             runtimeFile.write(runtimeResult!!.generatedCode)
         }
 
+        val runtime = runtimeResult!!
+
         val dependencyNames = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
-        val dependencies = listOf(runtimeResult!!.moduleDescriptor) + dependencyNames.mapNotNull { compilationCache[it]?.moduleDescriptor }
-        val irDependencies = listOf(runtimeResult!!.moduleFragment) + compilationCache.values.map { it.moduleFragment }
+        val dependencies = listOf(runtime.moduleDescriptor) + dependencyNames.mapNotNull { compilationCache[it]?.moduleDescriptor }
+        val irDependencies = listOf(runtime.moduleFragment) + compilationCache.values.map { it.moduleFragment }
 
 //        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, setOf("UnitMaterializationLowering"))
 //        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, setOf("ReturnableBlockLowering"))
@@ -181,7 +173,8 @@ abstract class BasicIrBoxTest(
             config.configuration,
             FqName((testPackage?.let { "$it." } ?: "") + testFunction),
             dependencies,
-            irDependencies)
+            irDependencies,
+            runtime.moduleDescriptor as ModuleDescriptorImpl)
 
         compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
 
