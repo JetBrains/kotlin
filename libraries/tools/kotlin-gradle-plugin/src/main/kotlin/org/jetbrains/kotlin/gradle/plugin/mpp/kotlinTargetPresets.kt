@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
-import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
@@ -185,11 +184,7 @@ class KotlinAndroidTargetPreset(
             preset = this@KotlinAndroidTargetPreset
         }
 
-        KotlinAndroidPlugin.applyToTarget(
-            project, result, AndroidTasksProvider(name),
-            kotlinPluginVersion
-        )
-
+        KotlinAndroidPlugin.applyToTarget(kotlinPluginVersion, result)
         return result
     }
 

@@ -598,22 +598,16 @@ internal open class KotlinAndroidPlugin(
 
     override fun apply(project: Project) {
         val androidTarget = KotlinAndroidTarget("", project)
-        val tasksProvider = AndroidTasksProvider(androidTarget.targetName)
-
-        applyToTarget(
-            project, androidTarget, tasksProvider,
-            kotlinPluginVersion
-        )
+        applyToTarget(kotlinPluginVersion, androidTarget)
         registry.register(KotlinModelBuilder(kotlinPluginVersion, androidTarget))
     }
 
     companion object {
-        fun applyToTarget(
-            project: Project,
-            kotlinTarget: KotlinAndroidTarget,
-            tasksProvider: KotlinTasksProvider,
-            kotlinPluginVersion: String
-        ) {
+        fun androidTargetHandler(
+            kotlinPluginVersion: String,
+            androidTarget: KotlinAndroidTarget
+        ): AbstractAndroidProjectHandler<*> {
+            val tasksProvider = AndroidTasksProvider(androidTarget.targetName)
 
             val version = loadAndroidPluginVersion()
             if (version != null) {
@@ -630,7 +624,7 @@ internal open class KotlinAndroidPlugin(
 
             val legacyVersionThreshold = "2.5.0"
 
-            val variantProcessor = if (compareVersionNumbers(version, legacyVersionThreshold) < 0) {
+            return if (compareVersionNumbers(version, legacyVersionThreshold) < 0) {
                 LegacyAndroidAndroidProjectHandler(kotlinTools)
             } else {
                 val android25ProjectHandlerClass = Class.forName("org.jetbrains.kotlin.gradle.plugin.Android25ProjectHandler")
@@ -639,8 +633,13 @@ internal open class KotlinAndroidPlugin(
                 }
                 ctor.newInstance(kotlinTools) as AbstractAndroidProjectHandler<*>
             }
+        }
 
-            variantProcessor.handleProject(project, kotlinTarget)
+        fun applyToTarget(
+            kotlinPluginVersion: String,
+            kotlinTarget: KotlinAndroidTarget
+        ) {
+            androidTargetHandler(kotlinPluginVersion, kotlinTarget).configureTarget(kotlinTarget)
         }
     }
 }
@@ -682,7 +681,8 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
     protected abstract fun wrapVariantDataForKapt(variantData: V): KaptVariantData<V>
 
-    fun handleProject(project: Project, kotlinAndroidTarget: KotlinAndroidTarget) {
+    fun configureTarget(kotlinAndroidTarget: KotlinAndroidTarget) {
+        val project = kotlinAndroidTarget.project
         val ext = project.extensions.getByName("android") as BaseExtension
 
         ext.sourceSets.all { sourceSet ->
