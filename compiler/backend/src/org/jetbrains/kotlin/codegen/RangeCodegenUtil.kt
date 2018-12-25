@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
@@ -55,26 +56,26 @@ private fun getPrimitiveRangeOrProgressionElementType(
 }
 
 fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
-    val rangeTypeDescriptor = rangeType.constructor.declarationDescriptor ?: return null
-    val builtIns = rangeTypeDescriptor.builtIns
+    val rangeClassDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+    val builtIns = rangeClassDescriptor.builtIns
 
-    return when {
-        rangeTypeDescriptor.isTopLevelInPackage("CharRange", "kotlin.ranges") -> builtIns.charType
-        rangeTypeDescriptor.isTopLevelInPackage("IntRange", "kotlin.ranges") -> builtIns.intType
-        rangeTypeDescriptor.isTopLevelInPackage("LongRange", "kotlin.ranges") -> builtIns.longType
+    return when (rangeClassDescriptor.fqNameSafe.asString()) {
+        "kotlin.ranges.CharRange" -> builtIns.charType
+        "kotlin.ranges.IntRange" -> builtIns.intType
+        "kotlin.ranges.LongRange" -> builtIns.longType
 
-        rangeTypeDescriptor.isTopLevelInPackage("CharProgression", "kotlin.ranges") -> builtIns.charType
-        rangeTypeDescriptor.isTopLevelInPackage("IntProgression", "kotlin.ranges") -> builtIns.intType
-        rangeTypeDescriptor.isTopLevelInPackage("LongProgression", "kotlin.ranges") -> builtIns.longType
+        "kotlin.ranges.CharProgression" -> builtIns.charType
+        "kotlin.ranges.IntProgression" -> builtIns.intType
+        "kotlin.ranges.LongProgression" -> builtIns.longType
 
-        rangeTypeDescriptor.isTopLevelInPackage("ClosedFloatRange", "kotlin.ranges") -> builtIns.floatType
-        rangeTypeDescriptor.isTopLevelInPackage("ClosedDoubleRange", "kotlin.ranges") -> builtIns.doubleType
+        "kotlin.ranges.ClosedFloatRange" -> builtIns.floatType
+        "kotlin.ranges.ClosedDoubleRange" -> builtIns.doubleType
 
-        rangeTypeDescriptor.isTopLevelInPackage("ClosedRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
+        "kotlin.ranges.ClosedRange" -> rangeType.arguments.singleOrNull()?.type
 
-        rangeTypeDescriptor.isTopLevelInPackage("ClosedFloatingPointRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
+        "kotlin.ranges.ClosedFloatingPointRange" -> rangeType.arguments.singleOrNull()?.type
 
-        rangeTypeDescriptor.isTopLevelInPackage("ComparableRange", "kotlin.ranges") -> rangeType.arguments.singleOrNull()?.type
+        "kotlin.ranges.ComparableRange" -> rangeType.arguments.singleOrNull()?.type
 
         else -> null
     }
@@ -83,7 +84,7 @@ fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
 fun BindingContext.getElementType(forExpression: KtForExpression): KotlinType {
     val loopRange = forExpression.loopRange!!
     val nextCall = get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange)
-            ?: throw AssertionError("No next() function " + PsiDiagnosticUtils.atLocation(loopRange))
+        ?: throw AssertionError("No next() function " + PsiDiagnosticUtils.atLocation(loopRange))
     return nextCall.resultingDescriptor.returnType!!
 }
 
@@ -250,5 +251,5 @@ fun getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCallee: CallableDe
 fun isCharSequenceIterator(descriptor: CallableDescriptor) =
     descriptor.isTopLevelExtensionOnType("iterator", "kotlin.text") {
         it.constructor.declarationDescriptor?.isTopLevelInPackage("CharSequence", "kotlin")
-                ?: false
+            ?: false
     }
