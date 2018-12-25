@@ -1524,6 +1524,56 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/constantConditionIf/endWithElseIfNoBraces.kt");
         }
 
+        @TestMetadata("enumEntryEq.kt")
+        public void testEnumEntryEq() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryEq.kt");
+        }
+
+        @TestMetadata("enumEntryEq2.kt")
+        public void testEnumEntryEq2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryEq2.kt");
+        }
+
+        @TestMetadata("enumEntryEq3.kt")
+        public void testEnumEntryEq3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryEq3.kt");
+        }
+
+        @TestMetadata("enumEntryGt.kt")
+        public void testEnumEntryGt() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryGt.kt");
+        }
+
+        @TestMetadata("enumEntryGtEq.kt")
+        public void testEnumEntryGtEq() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryGtEq.kt");
+        }
+
+        @TestMetadata("enumEntryGtEq2.kt")
+        public void testEnumEntryGtEq2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryGtEq2.kt");
+        }
+
+        @TestMetadata("enumEntryLt.kt")
+        public void testEnumEntryLt() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryLt.kt");
+        }
+
+        @TestMetadata("enumEntryLtEq.kt")
+        public void testEnumEntryLtEq() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryLtEq.kt");
+        }
+
+        @TestMetadata("enumEntryLtEq2.kt")
+        public void testEnumEntryLtEq2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryLtEq2.kt");
+        }
+
+        @TestMetadata("enumEntryNotEq.kt")
+        public void testEnumEntryNotEq() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/enumEntryNotEq.kt");
+        }
+
         @TestMetadata("expression.kt")
         public void testExpression() throws Exception {
             runTest("idea/testData/inspectionsLocal/constantConditionIf/expression.kt");
