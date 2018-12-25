@@ -3,6 +3,7 @@ import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
 import org.gradle.kotlin.dsl.support.zipTo
 import org.jetbrains.kotlin.cidr.includePatchedJavaXmls
+import org.jetbrains.kotlin.cidr.applyCidrVersionRestrictions
 
 apply {
     plugin("kotlin")
@@ -22,16 +23,21 @@ repositories {
     }
 }
 
+val kotlinVersion = rootProject.extra["kotlinVersion"] as String
+
 val cidrPluginDir: File by rootProject.extra
 val appcodePluginDir: File by rootProject.extra
 val appcodeVersion = rootProject.extra["versions.appcode"] as String
+val appcodeVersionStrict = rootProject.extra["versions.appcode.strict"] as Boolean
 val appcodeVersionRepo = rootProject.extra["versions.appcode.repo"] as String
 
 val cidrPlugin by configurations.creating
 val platformDepsZip by configurations.creating
 
 val pluginXmlPath = "META-INF/plugin.xml"
+
 val platformDepsJarName = "kotlinNative-platformDeps.jar"
+val pluginXmlLocation = File(buildDir, "pluginXml")
 
 // Do not rename, used in JPS importer
 val projectsToShadow by extra(listOf(
@@ -57,9 +63,25 @@ val kotlinPluginXml by tasks.creating {
     }
 }
 
+val preparePluginXml by task<Copy> {
+    dependsOn(":kotlin-ultimate:appcode-native:assemble")
+
+    val cidrPluginVersion = project.findProperty("cidrPluginVersion") as String? ?: "beta-1"
+    val appcodePluginVersion = "$kotlinVersion-AppCode-$cidrPluginVersion-$appcodeVersion"
+
+    inputs.property("appcodePluginVersion", appcodePluginVersion)
+    outputs.files(pluginXmlLocation)
+
+    from(project(":kotlin-ultimate:appcode-native").mainSourceSet.output.resourcesDir) { include(pluginXmlPath) }
+    into(pluginXmlLocation)
+
+    applyCidrVersionRestrictions(appcodeVersion, appcodeVersionStrict, appcodePluginVersion)
+}
+
 val jar = runtimeJar {
     archiveName = "kotlin-plugin.jar"
     dependsOn(cidrPlugin)
+    dependsOn(preparePluginXml)
     from(kotlinPluginXml) { into("META-INF") }
 
     from {
@@ -70,8 +92,11 @@ val jar = runtimeJar {
 
     for (p in projectsToShadow) {
         dependsOn("$p:classes")
-        from(getSourceSetsFrom(p)["main"].output)
+        from(getSourceSetsFrom(p)["main"].output) {
+            exclude(pluginXmlPath)
+        }
     }
+    from(pluginXmlLocation) { include(pluginXmlPath) }
 }
 
 val platformDepsJar by task<Zip> {
