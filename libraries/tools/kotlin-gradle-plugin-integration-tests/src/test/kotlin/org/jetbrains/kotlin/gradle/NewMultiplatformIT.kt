@@ -1114,7 +1114,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTasksExecuted(":publishedLibrary:cinteropStdio${host.capitalize()}")
                 assertTrue(output.contains("Published test"), "No test output found")
                 assertFileExists("publishedLibrary/build/classes/kotlin/$host/main/publishedLibrary-cinterop-stdio.klib")
-                assertFileExists("repo/org/example/publishedLibrary-$host/1.0/publishedLibrary-$host-1.0-cinterop-stdio.klib")
+                assertFileExists("repo/org/example/publishedlibrary-$host/1.0/publishedlibrary-$host-1.0-cinterop-stdio.klib")
             }
 
             build(":build") {

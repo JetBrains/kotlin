@@ -14,27 +14,22 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.lowerSpinalCaseName
 
-open class KotlinVariant(
-    override val target: KotlinTarget
-) : SoftwareComponentInternal, KotlinTargetComponent {
-    override fun getUsages(): Set<UsageContext> = target.createUsageContexts()
-    override fun getName(): String = target.name
-
-    // This property is declared in the parent class to allow usages to reference it without forcing the subclass to load,
+internal interface KotlinTargetComponentWithPublication : KotlinTargetComponent {
+    // This property is declared in the separate parent type to allow the usages to reference it without forcing the subtypes to load,
     // which is needed for compatibility with older Gradle versions
-    internal var publicationDelegate: MavenPublication? = null
-
-    override val publishable: Boolean
-        get() = target.publishable
+    var publicationDelegate: MavenPublication?
 }
 
-open class KotlinVariantWithCoordinates(
-    target: KotlinTarget
-) : KotlinVariant(target),
-    ComponentWithCoordinates /* Gradle 4.7+ API, don't use with older versions */ {
+private interface KotlinTargetComponentWithCoordinatesAndPublication :
+    KotlinTargetComponentWithPublication,
+    ComponentWithCoordinates /* Gradle 4.7+ API, don't use with older versions */
+{
     override fun getCoordinates() = object : ModuleVersionIdentifier {
         private val project get() = target.project
 
@@ -57,29 +52,65 @@ open class KotlinVariantWithCoordinates(
     }
 }
 
-class KotlinVariantWithMetadataVariant(target: KotlinTarget, private val metadataTarget: KotlinTarget) :
-    KotlinVariantWithCoordinates(target), ComponentWithVariants {
-    override fun getVariants() = setOf(metadataTarget.component)
+open class KotlinVariant(
+    val producingCompilation: KotlinCompilation<*>,
+    private val usages: Set<DefaultKotlinUsageContext>
+) : KotlinTargetComponentWithPublication, SoftwareComponentInternal {
+    var componentName: String? = null
+
+    final override val target: KotlinTarget
+        get() = producingCompilation.target
+
+    override fun getUsages(): Set<UsageContext> = usages
+
+    override fun getName(): String = componentName ?: producingCompilation.target.targetName
+
+    override val publishable: Boolean
+        get() = target.publishable
+
+    internal var defaultArtifactIdSuffix: String? = null
+
+    override val defaultArtifactId: String
+        get() = lowerSpinalCaseName(target.project.name, target.targetName, defaultArtifactIdSuffix)
+
+    override var publicationDelegate: MavenPublication? = null
 }
 
-class KotlinVariantWithMetadataDependency(target: KotlinTarget, private val metadataTarget: KotlinTarget) :
-    KotlinVariantWithCoordinates(target) {
-    override fun getUsages(): Set<UsageContext> = target.createUsageContexts().mapTo(mutableSetOf()) { usageContext ->
-        UsageContextWithAdditionalDependencies(usageContext, setOf(metadataDependency()))
+open class KotlinVariantWithCoordinates(
+    producingCompilation: KotlinCompilation<*>,
+    usages: Set<DefaultKotlinUsageContext>
+) : KotlinVariant(producingCompilation, usages),
+    KotlinTargetComponentWithCoordinatesAndPublication /* Gradle 4.7+ API, don't use with older versions */
+
+class KotlinVariantWithMetadataVariant(
+    producingCompilation: KotlinCompilation<*>,
+    usages: Set<DefaultKotlinUsageContext>,
+    private val metadataTarget: KotlinTarget
+) : KotlinVariantWithCoordinates(producingCompilation, usages), ComponentWithVariants {
+    override fun getVariants() = metadataTarget.components
+}
+
+class KotlinVariantWithMetadataDependency(
+    producingCompilation: KotlinCompilation<*>,
+    val originalUsages: Set<DefaultKotlinUsageContext>,
+    private val metadataTarget: KotlinTarget
+) : KotlinVariantWithCoordinates(producingCompilation, originalUsages) {
+    override fun getUsages(): Set<UsageContext> = originalUsages.mapTo(mutableSetOf()) { usageContext ->
+        KotlinUsageContextWithAdditionalDependencies(usageContext, setOf(metadataDependency()))
     }
 
     private fun metadataDependency(): ModuleDependency {
-        val metadataPublication = (metadataTarget.component as KotlinVariant).publicationDelegate!!
+        val metadataPublication = (metadataTarget.components.single() as KotlinTargetComponentWithPublication).publicationDelegate!!
         val metadataGroupId = metadataPublication.groupId
         val metadataArtifactId = metadataPublication.artifactId
         val metadataVersion = metadataPublication.version
         return target.project.dependencies.module("$metadataGroupId:$metadataArtifactId:$metadataVersion") as ModuleDependency
     }
 
-    private class UsageContextWithAdditionalDependencies(
-        val parentUsageContext: UsageContext,
+    class KotlinUsageContextWithAdditionalDependencies(
+        val parentUsageContext: DefaultKotlinUsageContext,
         val additionalDependencies: Set<ModuleDependency>
-    ) : UsageContext by parentUsageContext {
+    ) : KotlinUsageContext by parentUsageContext {
         override fun getDependencies() = parentUsageContext.dependencies + additionalDependencies
 
         override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
