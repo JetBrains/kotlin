@@ -38,9 +38,11 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     // also look into org.jetbrains.kotlin.generators.tests and update related testData generators
     // (e.g., GenerateInRangeExpressionTestData).
 
-    getResolvedCallForRangeExpression(bindingContext, rangeExpression)?.let {
-        createIntrinsifiedRangeValueOrNull(it)?.let {
-            return it
+    val resolvedCall = getResolvedCallForRangeExpression(bindingContext, rangeExpression)
+    if (resolvedCall != null) {
+        val intrinsicRangeValue = createIntrinsifiedRangeValueOrNull(resolvedCall)
+        if (intrinsicRangeValue != null) {
+            return intrinsicRangeValue
         }
     }
 

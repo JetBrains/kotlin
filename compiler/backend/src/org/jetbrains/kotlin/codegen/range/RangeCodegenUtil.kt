@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
@@ -41,10 +41,16 @@ fun isPrimitiveProgression(rangeType: KotlinType) =
     !rangeType.isMarkedNullable && getPrimitiveProgressionElementType(rangeType) != null
 
 fun getPrimitiveRangeElementType(rangeType: KotlinType): PrimitiveType? =
-    getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE)
+    getPrimitiveRangeOrProgressionElementType(
+        rangeType,
+        RANGE_TO_ELEMENT_TYPE
+    )
 
 private fun getPrimitiveProgressionElementType(rangeType: KotlinType) =
-    getPrimitiveRangeOrProgressionElementType(rangeType, PROGRESSION_TO_ELEMENT_TYPE)
+    getPrimitiveRangeOrProgressionElementType(
+        rangeType,
+        PROGRESSION_TO_ELEMENT_TYPE
+    )
 
 private fun getPrimitiveRangeOrProgressionElementType(
     rangeOrProgression: KotlinType,
