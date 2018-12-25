@@ -1,6 +1,7 @@
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
 import org.jetbrains.kotlin.cidr.includePatchedJavaXmls
+import org.jetbrains.kotlin.cidr.applyCidrVersionRestrictions
 
 apply {
     plugin("kotlin")
@@ -25,6 +26,7 @@ val kotlinVersion = rootProject.extra["kotlinVersion"] as String
 val cidrPluginDir: File by rootProject.extra
 val clionPluginDir: File by rootProject.extra
 val clionVersion = rootProject.extra["versions.clion"] as String
+val clionVersionStrict = rootProject.extra["versions.clion.strict"] as Boolean
 val clionVersionRepo = rootProject.extra["versions.clion.repo"] as String
 
 val cidrPlugin by configurations.creating
@@ -66,21 +68,12 @@ val preparePluginXml by task<Copy> {
     val clionPluginVersion = "$kotlinVersion-CLion-$cidrPluginVersion-$clionVersion"
 
     inputs.property("clionPluginVersion", clionPluginVersion)
+    outputs.files(pluginXmlLocation)
 
     from(project(":kotlin-ultimate:clion-native").mainSourceSet.output.resourcesDir) { include(pluginXmlPath) }
     into(pluginXmlLocation)
 
-    val sinceBuild =
-        if (clionVersion.matches(Regex("\\d+\\.\\d+"))) clionVersion else clionVersion.substring(0, clionVersion.lastIndexOf('.'))
-    val untilBuild = clionVersion.substring(0, clionVersion.lastIndexOf('.')) + ".*"
-
-    filter {
-        it
-            .replace("<!--idea_version_placeholder-->",
-                     "<idea-version since-build=\"$sinceBuild\" until-build=\"$untilBuild\"/>")
-            .replace("<!--version_placeholder-->",
-                     "<version>$clionPluginVersion</version>")
-    }
+    applyCidrVersionRestrictions(clionVersion, clionVersionStrict, clionPluginVersion)
 }
 
 val jar = runtimeJar {
