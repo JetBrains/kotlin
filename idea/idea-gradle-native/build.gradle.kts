@@ -30,4 +30,4 @@ sourceSets {
     "test" { none() }
 }
 
-configureInstrumentation()
+configureFormInstrumentation()

@@ -17,7 +17,7 @@ sourceSets {
     "test" { none() }
 }
 
-configureInstrumentation()
+configureFormInstrumentation()
 
 runtimeJar {
     archiveName = "native-ide.jar"

@@ -28,7 +28,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
-fun Project.configureInstrumentation() {
+fun Project.configureFormInstrumentation() {
     plugins.matching { it::class.java.canonicalName.startsWith("org.jetbrains.kotlin.gradle.plugin") }.all {
         // When we change the output classes directory, Gradle will automatically configure
         // the test compile tasks to use the instrumented classes. Normally this is fine,
@@ -100,6 +100,9 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
     @Input
     var originalClassesDirs: FileCollection? = null
 
+    @get:Input
+    var instrumentNotNull: Boolean = false
+
     @get:InputFiles
     val sourceDirs: FileCollection
         get() = project.files(sourceSet!!.allSource.srcDirs.filter { !sourceSet!!.resources.contains(it) && it.exists() })
@@ -129,7 +132,10 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         }
 
         logger.info("Compiling forms and instrumenting code with nullability preconditions")
-        val instrumentNotNull = prepareNotNullInstrumenting(classpath.asPath)
+        if (instrumentNotNull) {
+            prepareNotNullInstrumenting(classpath.asPath)
+        }
+
         instrumentCode(sourceDirs, instrumentNotNull)
     }
 
@@ -140,7 +146,7 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         }
     }
 
-    private fun prepareNotNullInstrumenting(classpath: String): Boolean {
+    private fun prepareNotNullInstrumenting(classpath: String) {
         ant.withGroovyBuilder {
             "typedef"(
                 "name" to "skip",
@@ -149,7 +155,6 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
                 "classname" to FILTER_ANNOTATION_REGEXP_CLASS
             )
         }
-        return true
     }
 
     private fun instrumentCode(srcDirs: FileCollection, instrumentNotNull: Boolean) {

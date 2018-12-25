@@ -74,4 +74,4 @@ projectTest {
     useAndroidSdk()
 }
 
-configureInstrumentation()
+configureFormInstrumentation()
