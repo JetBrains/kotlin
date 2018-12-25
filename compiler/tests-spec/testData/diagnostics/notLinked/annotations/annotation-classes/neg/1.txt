@@ -1,0 +1,167 @@
+package
+
+public final annotation class Case1 : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case1(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case10</*0*/ T> : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case10</*0*/ T>(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case11</*0*/ T : kotlin.Number, /*1*/ K : kotlin.Comparable<K>> : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case11</*0*/ T : kotlin.Number, /*1*/ K : kotlin.Comparable<K>>(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case12</*0*/ T : kotlin.Number> : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case12</*0*/ T : kotlin.Number>(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CONSTRUCTOR}) public final annotation class Case12_1 : kotlin.Annotation {
+    public constructor Case12_1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable public final annotation class Case12_2 : kotlin.Annotation {
+    public constructor Case12_2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case13 : kotlin.Annotation {
+    public constructor Case13(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final annotation class Case1 : kotlin.Annotation {
+        @kotlin.jvm.JvmOverloads public constructor Case1(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final annotation class Case14 : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case14(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final annotation class Case1 : kotlin.Annotation {
+        public constructor Case1(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public object Case15 {
+    private constructor Case15()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final annotation class Case15 : kotlin.Annotation {
+        @kotlin.jvm.JvmOverloads public constructor Case15(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class Case16 {
+    public constructor Case16()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final annotation class Case16 : kotlin.Annotation {
+        @kotlin.jvm.JvmOverloads public constructor Case16(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final annotation class Case2 : kotlin.Annotation {
+    @Case12_2 @Case12_2 @Case12_2 @Case12_2 @Case12_2 @Case12_2 @kotlin.jvm.JvmOverloads @Case12_1 public constructor Case2(/*0*/ x: kotlin.Int = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case3 : kotlin.Annotation {
+    @Case12_2 @Case12_1 @Case12_2 @kotlin.jvm.JvmOverloads @Case12_2 @Case12_2 public constructor Case3(/*0*/ x: kotlin.Int = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case4 : kotlin.Annotation {
+    @Case12_2 @Case12_2 @Case12_2 @Case12_2 @Case12_2 @Case12_2 @Case12_2 @kotlin.jvm.JvmOverloads @Case12_1 @Case12_2 @Case12_2 public constructor Case4(/*0*/ x: kotlin.Int = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case5 : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case5(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case6 : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case6()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case7 : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case7()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case8 : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case8()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Case9</*0*/ A, /*1*/ Case12_1 : A, /*2*/ Case12_2 : Case12_1, /*3*/ D : Case12_2, /*4*/ E : D> : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor Case9</*0*/ A, /*1*/ Case12_1 : A, /*2*/ Case12_2 : Case12_1, /*3*/ D : Case12_2, /*4*/ E : D>(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
