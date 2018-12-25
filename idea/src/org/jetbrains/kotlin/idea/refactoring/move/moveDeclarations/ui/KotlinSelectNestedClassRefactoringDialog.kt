@@ -85,8 +85,8 @@ internal class KotlinSelectNestedClassRefactoringDialog private constructor (
         private fun MoveKotlinNestedClassesToUpperLevelDialog(
                 nestedClass: KtClassOrObject,
                 targetContainer: PsiElement?
-        ): MoveKotlinNestedClassesToUpperLevelDialog {
-            val outerClass = nestedClass.containingClassOrObject!!
+        ): MoveKotlinNestedClassesToUpperLevelDialog? {
+            val outerClass = nestedClass.containingClassOrObject ?: return null
             val newTarget = targetContainer
                             ?: outerClass.containingClassOrObject
                             ?: outerClass.containingFile.let { it.containingDirectory ?: it }
@@ -119,7 +119,7 @@ internal class KotlinSelectNestedClassRefactoringDialog private constructor (
                     selectionDialog.getNextDialog() ?: return
                 }
             }
-            dialog.show()
+            dialog?.show()
         }
     }
 }
