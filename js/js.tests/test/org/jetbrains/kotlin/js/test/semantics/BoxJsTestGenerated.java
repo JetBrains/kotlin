@@ -5940,6 +5940,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/nameClashes/constructorLocalVar.kt");
         }
 
+        @TestMetadata("constructorsCrossFile.kt")
+        public void testConstructorsCrossFile() throws Exception {
+            runTest("js/js.translator/testData/box/nameClashes/constructorsCrossFile.kt");
+        }
+
         @TestMetadata("differenceInCapitalization.kt")
         public void testDifferenceInCapitalization() throws Exception {
             runTest("js/js.translator/testData/box/nameClashes/differenceInCapitalization.kt");
