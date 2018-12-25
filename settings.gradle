@@ -39,10 +39,12 @@ includeBuild 'tools/kotlin-native-gradle-plugin'
 
 
 if (hasProperty("kotlinProjectPath")) {
+    include ':runtime:generator'
     includeBuild(kotlinProjectPath) {
         dependencySubstitution {
             substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':include:kotlin-compiler')
             substitute module("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion") with project(':include:kotlin-stdlib-common-sources')
+            substitute module("org.jetbrains.kotlin:kotlin-stdlib-gen:$kotlinVersion") with project(':tools:kotlin-stdlib-gen')
         }
     }
 }

@@ -1,0 +1,16 @@
+configurations {
+    generatorRuntime
+}
+
+dependencies {
+    generatorRuntime "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    generatorRuntime "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+    generatorRuntime "org.jetbrains.kotlin:kotlin-stdlib-gen:${kotlinVersion}"
+}
+
+task run(type: JavaExec) {
+    group 'application'
+    main 'generators.GenerateStandardLibKt'
+    classpath configurations.generatorRuntime
+    args = ["native", "${project(":runtime").projectDir}/src/main/kotlin/generated"]
+}
