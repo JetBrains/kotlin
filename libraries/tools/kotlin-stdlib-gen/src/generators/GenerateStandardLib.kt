@@ -61,15 +61,13 @@ fun main(args: Array<String>) {
         }
     }
 
-    templateGroups.groupByFileAndWrite(targetsToGenerate = targetBaseDirs.keys.toList()) { (target, source) ->
+    templateGroups.groupByFileAndWrite(targetsToGenerate = targetBaseDirs.keys) { (target, source) ->
         val targetDir = targetBaseDirs[target] ?: error("Target $target directory is not configured")
-        when (target) {
-            KotlinTarget.Common -> targetDir.resolve("_${source.name.capitalize()}.kt")
-            KotlinTarget.JVM -> targetDir.resolve("_${source.name.capitalize()}Jvm.kt")
-            KotlinTarget.JS -> targetDir.resolve("_${source.name.capitalize()}Js.kt")
-            KotlinTarget.JS_IR -> targetDir.resolve("_${source.name.capitalize()}Js.kt")
-            KotlinTarget.Native -> targetDir.resolve("_${source.name.capitalize()}Native.kt")
+        val platformSuffix = when (val platform = target.platform) {
+            Platform.Common -> ""
+            else -> platform.name.toLowerCase().capitalize()
         }
+        targetDir.resolve("_${source.name.capitalize()}$platformSuffix.kt")
     }
 }
 
