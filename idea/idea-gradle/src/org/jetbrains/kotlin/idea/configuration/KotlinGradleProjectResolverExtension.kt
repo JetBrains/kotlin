@@ -219,7 +219,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
         KotlinStatisticsTrigger.trigger(
                 KotlinTargetTrigger::class.java,
-                gradleModel.platformPluginId ?: "unknown"
+                gradleModel.kotlinTarget ?: "unknown"
         )
 
         addImplementedModuleNames(gradleModule, ideModule, ideProject, gradleModel)
