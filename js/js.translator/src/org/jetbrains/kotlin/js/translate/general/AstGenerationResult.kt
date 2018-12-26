@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.js.inline.util.toIdentitySet
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
@@ -36,15 +37,7 @@ class AstGenerationResult(
     config: JsConfig
 ) {
 
-    // TODO remove
-    val newFragments = translatedSourceFiles.values.map { it.fragment }
-
-    // Only available after the merge
-    val importedModuleList: List<JsImportedModule>
-        get() = merger.importedModules
-
-    val innerModuleName: JsName
-        get() = merger.internalModuleName
+    val newFragments = translatedSourceFiles.values.map { it.fragment }.toSet()
 
     private val cache = mutableMapOf<TranslationUnit.BinaryAst, DeserializedFileTranslationResult>()
 
@@ -68,10 +61,10 @@ class AstGenerationResult(
             }
         }
 
-    fun buildProgram(): JsProgram {
+    fun buildProgram(): Pair<JsProgram, List<String>> {
         val fragments = units.map { translate(it).fragment }
         fragments.forEach { merger.addFragment(it) }
-        return merger.buildProgram()
+        return merger.buildProgram() to merger.importedModules.map { it.externalName }
     }
 }
 

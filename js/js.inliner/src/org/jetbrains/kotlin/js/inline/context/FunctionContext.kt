@@ -38,7 +38,7 @@ class FunctionContext(
 
     val functionsByFunctionNodes = HashMap<JsFunction, FunctionWithWrapper>()
 
-    fun scopeForFragment(fragment: JsProgramFragment) = if (fragment in newFragments) {
+    fun scopeForFragment(fragment: JsProgramFragment) = if (fragment in inliner.translationResult.newFragments) {
         inliningScopeCache.computeIfAbsent(fragment) {
             loadFragment(fragment)
             ProgramFragmentInliningScope(fragment)
@@ -82,7 +82,7 @@ class FunctionContext(
         return lookUpFunctionDirect(call) ?: lookUpFunctionIndirect(call, scope) ?: lookUpFunctionExternal(call, scope.fragment)
     }
 
-    private val functionReader = FunctionReader(inliner.reporter, inliner.config, inliner.translationResult.innerModuleName)
+    private val functionReader = FunctionReader(inliner.reporter, inliner.config)
 
     private data class FragmentInfo(
         val functions: Map<JsName, FunctionWithWrapper>,
@@ -132,7 +132,7 @@ class FunctionContext(
             else -> null
         }?.let {
             InlineFunctionDefinition(it, null).also { definition ->
-                if (scope.fragment in newFragments) {
+                if (scope.fragment in inliner.translationResult.newFragments) {
                     inliner.process(definition, call, scope)
                 }
             }
@@ -140,9 +140,6 @@ class FunctionContext(
     }
 
     private val inliningScopeCache = mutableMapOf<JsProgramFragment, ProgramFragmentInliningScope>()
-
-    private val newFragments = inliner.translationResult.newFragments.toIdentitySet()
-
 
     private fun loadFragment(fragment: JsProgramFragment) {
         fragmentInfo.computeIfAbsent(fragment) {

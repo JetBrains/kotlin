@@ -114,7 +114,7 @@ object LabeledBlockToDoWhileTransformation {
     }
 }
 
-fun transformLabeledBlockToDoWhile(fragments: List<JsProgramFragment>) {
+fun transformLabeledBlockToDoWhile(fragments: Iterable<JsProgramFragment>) {
     for (fragment in fragments) {
         LabeledBlockToDoWhileTransformation.apply(fragment.declarationBlock)
         LabeledBlockToDoWhileTransformation.apply(fragment.initializerBlock)

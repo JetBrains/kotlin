@@ -57,8 +57,7 @@ private val SPECIAL_FUNCTION_PATTERN = Regex("var\\s+($JS_IDENTIFIER)\\s*=\\s*($
 
 class FunctionReader(
     private val reporter: JsConfig.Reporter,
-    private val config: JsConfig,
-    private val currentModuleName: JsName
+    private val config: JsConfig
 ) {
     /**
      * fileContent: .js file content, that contains this module definition.
@@ -198,7 +197,7 @@ class FunctionReader(
         fragment: JsProgramFragment
     ): FunctionWithWrapper {
         val tag = Namer.getFunctionTag(descriptor, config)
-        val moduleReference = fragment.inlineModuleMap[tag]?.deepCopy() ?: currentModuleName.makeRef()
+        val moduleReference = fragment.inlineModuleMap[tag]?.deepCopy() ?: fragment.scope.declareName("_").makeRef()
         val allDefinedNames = collectDefinedNamesInAllScopes(fn.function)
         val replacements = hashMapOf(
             info.moduleVariable to moduleReference,

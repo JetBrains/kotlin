@@ -69,7 +69,7 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
     }
 }
 
-fun transformCoroutines(fragments: List<JsProgramFragment>) {
+fun transformCoroutines(fragments: Iterable<JsProgramFragment>) {
     val coroutineTransformer = CoroutineTransformer()
     for (fragment in fragments) {
         val scope = ProgramFragmentInliningScope(fragment)

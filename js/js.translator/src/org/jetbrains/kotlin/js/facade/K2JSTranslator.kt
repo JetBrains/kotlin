@@ -139,7 +139,7 @@ class K2JSTranslator @JvmOverloads constructor(
 
         // Global phases
 
-        val program = translationResult.buildProgram()
+        val (program, importedModules) = translationResult.buildProgram()
 
         program.resolveTemporaryNames()
         checkCanceled()
@@ -152,7 +152,7 @@ class K2JSTranslator @JvmOverloads constructor(
                 files,
                 program,
                 diagnostics,
-                translationResult.importedModuleList.map { it.externalName },
+                importedModules,
                 moduleDescriptor,
                 bindingTrace.bindingContext
             )
