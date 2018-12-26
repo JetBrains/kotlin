@@ -38,6 +38,7 @@ object NativeUsage {
 interface KotlinUsageContext : UsageContext {
     val compilation: KotlinCompilation<*>
     val dependencyConfigurationName: String
+    val sourcesArtifact: PublishArtifact?
 }
 
 class DefaultKotlinUsageContext(
@@ -45,6 +46,7 @@ class DefaultKotlinUsageContext(
     private val usage: Usage,
     override val dependencyConfigurationName: String,
     private val publishWithGradleMetadata: Boolean,
+    override val sourcesArtifact: PublishArtifact? = null,
     private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null
 ) : KotlinUsageContext {
 
@@ -73,7 +75,7 @@ class DefaultKotlinUsageContext(
 
     override fun getArtifacts(): Set<PublishArtifact> =
         overrideConfigurationArtifacts ?:
-    // TODO Gradle Java plugin does that in a different way; check whether we can improve this
+        // TODO Gradle Java plugin does that in a different way; check whether we can improve this
         configuration.artifacts
 
     override fun getAttributes(): AttributeContainer =
