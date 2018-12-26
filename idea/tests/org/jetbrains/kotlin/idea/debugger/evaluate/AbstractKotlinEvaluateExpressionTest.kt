@@ -106,12 +106,6 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         configureSettings(fileText)
         createAdditionalBreakpoints(fileText)
 
-        val shouldPrintFrame = isDirectiveDefined(fileText, "// PRINT_FRAME")
-        val skipInPrintFrame = if (shouldPrintFrame) findListWithPrefixes(fileText, "// SKIP: ") else emptyList()
-        val descriptorViewOptions = DescriptorViewOptions.valueOf(findStringWithPrefixes(fileText, "// DESCRIPTOR_VIEW_OPTIONS: ") ?: "FULL")
-
-        ToggleKotlinVariablesState.getService().kotlinVariableView = isDirectiveDefined(fileText, "// SHOW_KOTLIN_VARIABLES")
-
         val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 
         val blocks = findFilesWithBlocks(file).map { FileUtil.loadFile(it, true) }
@@ -119,15 +113,9 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
         createDebugProcess(path)
 
+        val printFrameHandler = PrintFrameHandler(fileText)
+
         doStepping(path)
-
-        var variablesView: XVariablesView? = null
-        var watchesView: XWatchesViewImpl? = null
-
-        ApplicationManager.getApplication().invokeAndWait({
-            variablesView = createVariablesView()
-            watchesView = createWatchesView()
-        }, ModalityState.any())
 
         doOnBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
@@ -145,15 +133,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                         evaluate(block, CodeFragmentKind.CODE_BLOCK, expectedBlockResults[i])
                     }
                 }
-            }
-            finally {
-                if (shouldPrintFrame) {
-                    printFrame(variablesView!!, watchesView!!, PrinterConfig(skipInPrintFrame, descriptorViewOptions))
-                    println(fileText, ProcessOutputTypes.SYSTEM)
-                }
-                else {
-                    resume(this)
-                }
+            } finally {
+                printFrameHandler.trigger(this@doOnBreakpoint)
             }
 
             checkExceptions(exceptions)
@@ -170,6 +151,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
         createDebugProcess(path)
 
+        val printFrameHandler = PrintFrameHandler(fileText)
+
         val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 
         val exceptions = linkedMapOf<String, Throwable>()
@@ -178,17 +161,50 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                 doOnBreakpoint {
                     try {
                         evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
-                    }
-                    finally {
-                        resume(this)
+                    } finally {
+                        printFrameHandler.trigger(this@doOnBreakpoint)
                     }
                 }
             }
         }
 
         checkExceptions(exceptions)
-
         finish()
+    }
+
+    private inner class PrintFrameHandler(fileText: String) {
+        private val shouldPrintFrame = isDirectiveDefined(fileText, "// PRINT_FRAME")
+        private val skipInPrintFrame = if (shouldPrintFrame) findListWithPrefixes(fileText, "// SKIP: ") else emptyList()
+        private val descriptorViewOptions =
+            DescriptorViewOptions.valueOf(findStringWithPrefixes(fileText, "// DESCRIPTOR_VIEW_OPTIONS: ") ?: "FULL")
+
+        private val kotlinVariablesState: ToggleKotlinVariablesState
+        private val oldKotlinVariablesState: Boolean
+
+        private lateinit var variablesView: XVariablesView
+        private lateinit var watchesView: XWatchesViewImpl
+
+        init {
+            ApplicationManager.getApplication().invokeAndWait(
+                {
+                    variablesView = createVariablesView()
+                    watchesView = createWatchesView()
+                }, ModalityState.any()
+            )
+
+            kotlinVariablesState = ToggleKotlinVariablesState.getService()
+            oldKotlinVariablesState = kotlinVariablesState.kotlinVariableView
+
+            kotlinVariablesState.kotlinVariableView = isDirectiveDefined(fileText, "// SHOW_KOTLIN_VARIABLES")
+        }
+
+        fun trigger(suspendContext: SuspendContextImpl) {
+            if (shouldPrintFrame) {
+                suspendContext.printFrame(variablesView, watchesView, PrinterConfig(skipInPrintFrame, descriptorViewOptions))
+            } else {
+                resume(suspendContext)
+            }
+        }
     }
 
     private fun createWatchesView(): XWatchesViewImpl {

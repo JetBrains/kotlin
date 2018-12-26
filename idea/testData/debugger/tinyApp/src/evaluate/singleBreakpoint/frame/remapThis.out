@@ -2,26 +2,6 @@ LineBreakpoint created at remapThis.kt:14
 Run Java
 Connected to the target VM
 remapThis.kt:14
-package remapThis
-
-fun main() {
-    Bar().bar()
-}
-
-class Bar {
-    fun bar() {
-        "a".foo()
-    }
-
-    fun String.foo() {
-        //Breakpoint!
-        val a = this
-    }
-}
-
-// PRINT_FRAME
-// SHOW_KOTLIN_VARIABLES
-// DESCRIPTOR_VIEW_OPTIONS: NAME_EXPRESSION
  frame    = foo
    this     = this (@Bar) (expression = this)
               -

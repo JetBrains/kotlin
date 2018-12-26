@@ -2,34 +2,6 @@ LineBreakpoint created at delegatedPropertyInClass.kt:9
 Run Java
 Connected to the target VM
 delegatedPropertyInClass.kt:9
-package delegatedPropertyInClass
-
-import kotlin.properties.Delegates
-import kotlin.reflect.KProperty
-
-fun main(args: Array<String>) {
-    val a = A()
-    //Breakpoint!
-    args.size
-}
-
-class A {
-    val prop by MyDelegate()
-    val propEx by MyDelegateThrowsException()
-}
-
-class MyDelegate {
-    operator fun getValue(t: Any?, p: KProperty<*>): Int = 1
-}
-
-class MyDelegateThrowsException {
-    operator fun getValue(t: Any?, p: KProperty<*>): Int = throw IllegalStateException()
-}
-
-// PRINT_FRAME
-// SKIP: suppressedExceptions
-// SKIP: stackTrace
-
 Compile bytecode for args.size
  frame    = main:9, DelegatedPropertyInClassKt {delegatedPropertyInClass}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClass.kt, 6)

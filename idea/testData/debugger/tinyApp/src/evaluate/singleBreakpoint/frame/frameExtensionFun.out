@@ -4,29 +4,6 @@ Connected to the target VM
 frameExtensionFun.kt:14
 Compile bytecode for prop
 Compile bytecode for myFun()
-package frameExtensionFun
-
-fun main(args: Array<String>) {
-    A().foo()
-}
-
-class A {
-    val prop = 1
-    fun myFun() = 1
-}
-
-fun A.foo() {
-    //Breakpoint!
-    prop
-}
-
-// PRINT_FRAME
-
-// EXPRESSION: prop
-// RESULT: 1: I
-
-// EXPRESSION: myFun()
-// RESULT: 1: I
  frame    = foo:14, FrameExtensionFunKt {frameExtensionFun}
    local    = $this$foo: frameExtensionFun.A = {frameExtensionFun.A@uniqueID} (sp = null)
      field    = prop: int = 1 (sp = frameExtensionFun.kt, 8)

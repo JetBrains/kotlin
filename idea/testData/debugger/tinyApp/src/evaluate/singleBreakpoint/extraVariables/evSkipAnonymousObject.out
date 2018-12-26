@@ -2,32 +2,6 @@ LineBreakpoint created at evSkipAnonymousObject.kt:12
 Run Java
 Connected to the target VM
 evSkipAnonymousObject.kt:12
-package evSkipAnonymousObject
-
-class A {
-    var prop = 1
-}
-
-fun main(args: Array<String>) {
-    val a1 = A()
-    val a2 = A()
-
-    //Breakpoint!
-    foo(a1.prop)
-    object: T {
-        override fun f() {
-            foo(a2.prop)
-        }
-    }
-}
-
-interface T {
-    fun f() {}
-}
-
-fun foo(i: Int) {}
-
-// PRINT_FRAME
 Compile bytecode for a1.prop
  frame    = main:12, EvSkipAnonymousObjectKt {evSkipAnonymousObject}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evSkipAnonymousObject.kt, 7)

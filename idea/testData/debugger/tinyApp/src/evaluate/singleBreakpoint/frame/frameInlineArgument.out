@@ -3,31 +3,6 @@ Run Java
 Connected to the target VM
 frameInlineArgument.kt:7
 Compile bytecode for element
-package frameInlineArgument
-
-fun main(args: Array<String>) {
-    val element = 1
-    A().inlineFun {
-        //Breakpoint!
-        element
-    }
-}
-
-class A {
-    inline fun inlineFun(s: () -> Unit) {
-        val element = 1.0
-        s()
-    }
-
-    val prop = 1
-}
-
-// PRINT_FRAME
-
-// EXPRESSION: element
-// RESULT: 1: I
-
-
  frame    = main:7, FrameInlineArgumentKt {frameInlineArgument}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameInlineArgument.kt, 3)
    local    = element: int = 1 (sp = frameInlineArgument.kt, 4)
