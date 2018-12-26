@@ -26,3 +26,10 @@ import kotlin.reflect.*
 inline fun <reified T : Annotation> KAnnotatedElement.findAnnotation(): T? =
         @Suppress("UNCHECKED_CAST")
         annotations.firstOrNull { it is T } as T?
+
+/**
+ * Returns true if this element is annotated with [T], false otherwise
+ */
+@SinceKotlin("1.4")
+inline fun <reified T : Annotation> KAnnotatedElement.hasAnnotation(): Boolean =
+        findAnnotation<T>() != null
