@@ -1,5 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-multiplatform'
+apply plugin: 'maven-publish'
+
+group 'com.example'
+version '1.0'
 
 android {
     compileSdkVersion 27
@@ -51,4 +55,12 @@ kotlin {
         fromPreset(presets.jvm, 'jvmLib')
         fromPreset(presets.js, 'jsLib')
     }
+}
+
+publishing {
+	repositories {
+        maven {
+            url = uri("$buildDir/repo")
+        }
+	}
 }

@@ -50,7 +50,7 @@ class DefaultKotlinUsageContext(
     private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null
 ) : KotlinUsageContext {
 
-    val kotlinTarget: KotlinTarget get() = compilation.target
+    private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
     override fun getUsage(): Usage = usage
@@ -87,21 +87,28 @@ class DefaultKotlinUsageContext(
 }
 
 private fun rewriteMppDependenciesToTargetModuleDependencies(
-    context: DefaultKotlinUsageContext,
-    configuration: Configuration
-): Set<ModuleDependency> = with(context.kotlinTarget.project) {
-    val target = context.kotlinTarget
-    val moduleDependencies = configuration.incoming.dependencies.withType(ModuleDependency::class.java).ifEmpty { return emptySet() }
-
-    val targetMainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-        ?: return moduleDependencies // Android is not yet supported
+    usageContext: KotlinUsageContext,
+    fromConfiguration: Configuration
+): Set<ModuleDependency> = with(usageContext.compilation.target.project) {
+    val compilation = usageContext.compilation
+    val moduleDependencies = fromConfiguration.incoming.dependencies.withType(ModuleDependency::class.java).ifEmpty { return emptySet() }
 
     val targetCompileDependenciesConfiguration = project.configurations.getByName(
-        when (context.dependencyConfigurationName) {
-            target.apiElementsConfigurationName -> targetMainCompilation.compileDependencyConfigurationName
-            target.runtimeElementsConfigurationName ->
-                (targetMainCompilation as KotlinCompilationToRunnableFiles).runtimeDependencyConfigurationName
-            else -> error("unexpected configuration")
+        when (compilation) {
+            is KotlinJvmAndroidCompilation -> {
+                // TODO handle Android configuration names in a general way once we drop AGP < 3.0.0
+                val variantName = compilation.name
+                when (usageContext.usage.name) {
+                    Usage.JAVA_API -> variantName + "CompileClasspath"
+                    Usage.JAVA_RUNTIME_JARS -> variantName + "RuntimeClasspath"
+                    else -> error("Unexpected Usage for usage context: ${usageContext.usage}")
+                }
+            }
+            else -> when (usageContext.usage.name) {
+                Usage.JAVA_API -> compilation.compileDependencyConfigurationName
+                Usage.JAVA_RUNTIME_JARS -> (compilation as KotlinCompilationToRunnableFiles).runtimeDependencyConfigurationName
+                else -> error("Unexpected Usage for usage context: ${usageContext.usage}")
+            }
         }
     )
 
@@ -128,16 +135,18 @@ private fun rewriteMppDependenciesToTargetModuleDependencies(
 
                 val resolvedToConfiguration = resolved.configuration
 
-                val dependencyTarget = dependencyProjectKotlinExtension.targets.singleOrNull {
-                    resolvedToConfiguration in setOf(
-                        it.apiElementsConfigurationName,
-                        it.runtimeElementsConfigurationName,
-                        it.defaultConfigurationName
-                    )
-                } ?: return@map dependency
+                val dependencyTargetComponent: KotlinTargetComponent = run {
+                    dependencyProjectKotlinExtension.targets.forEach { target ->
+                        target.components.forEach { component ->
+                            if (component.findUsageContext(resolvedToConfiguration) != null)
+                                return@run component
+                        }
+                    }
+                    // Failed to find a matching component:
+                    return@map dependency
+                }
 
-                val dependencyTargetComponent = dependencyTarget.components.single() // FIXME handle multiple components later
-                val publicationDelegate = (dependencyTargetComponent as KotlinVariant).publicationDelegate
+                val publicationDelegate = (dependencyTargetComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate
 
                 dependencies.module(
                     listOf(
@@ -149,4 +158,20 @@ private fun rewriteMppDependenciesToTargetModuleDependencies(
             }
         }
     }.toSet()
+}
+
+internal fun KotlinTargetComponent.findUsageContext(configurationName: String): UsageContext? {
+    val usageContexts = when (this) {
+        is KotlinVariantWithMetadataDependency -> originalUsages
+        is SoftwareComponentInternal -> usages
+        else -> emptySet()
+    }
+    return usageContexts.find { usageContext ->
+        if (usageContext !is KotlinUsageContext) return@find false
+        val compilation = usageContext.compilation
+        configurationName in compilation.relatedConfigurationNames ||
+                configurationName == compilation.target.apiElementsConfigurationName ||
+                configurationName == compilation.target.runtimeElementsConfigurationName ||
+                configurationName == compilation.target.defaultConfigurationName
+    }
 }

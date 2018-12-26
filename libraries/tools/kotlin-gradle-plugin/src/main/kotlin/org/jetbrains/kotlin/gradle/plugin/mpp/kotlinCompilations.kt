@@ -264,6 +264,9 @@ class KotlinJvmAndroidCompilation(
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(target, name) {
     override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
         get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+    override val relatedConfigurationNames: List<String>
+        get() = super.relatedConfigurationNames + listOf("${name}ApiElements", "${name}RuntimeElements")
 }
 
 class KotlinJsCompilation(
