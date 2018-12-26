@@ -12488,6 +12488,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testConvertExpression() throws Exception {
                 runTest("idea/testData/quickfix/typeMismatch/numberConversion/convertExpression.kt");
             }
+
+            @TestMetadata("convertToSigned.kt")
+            public void testConvertToSigned() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/numberConversion/convertToSigned.kt");
+            }
+
+            @TestMetadata("convertToUnsigned.kt")
+            public void testConvertToUnsigned() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/numberConversion/convertToUnsigned.kt");
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/typeMismatch/parameterTypeMismatch")
@@ -12771,6 +12781,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/typeMismatch/wrongPrimitive/intToFloat.kt");
             }
 
+            @TestMetadata("intToUnsigned.kt")
+            public void testIntToUnsigned() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrongPrimitive/intToUnsigned.kt");
+            }
+
             @TestMetadata("longToDouble.kt")
             public void testLongToDouble() throws Exception {
                 runTest("idea/testData/quickfix/typeMismatch/wrongPrimitive/longToDouble.kt");
@@ -12784,6 +12799,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("longToIntBinary.kt")
             public void testLongToIntBinary() throws Exception {
                 runTest("idea/testData/quickfix/typeMismatch/wrongPrimitive/longToIntBinary.kt");
+            }
+
+            @TestMetadata("unsignedToInt.kt")
+            public void testUnsignedToInt() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrongPrimitive/unsignedToInt.kt");
             }
         }
     }

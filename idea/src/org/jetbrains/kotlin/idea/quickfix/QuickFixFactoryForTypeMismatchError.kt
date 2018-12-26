@@ -117,7 +117,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             return emptyList()
         }
 
-        if (expressionType.isPrimitiveNumberType() && expectedType.isPrimitiveNumberType()) {
+        if (expressionType.isSignedOrUnsignedNumberType() && expectedType.isSignedOrUnsignedNumberType()) {
             var wrongPrimitiveLiteralFix: WrongPrimitiveLiteralFix? = null
             if (diagnosticElement is KtConstantExpression && !KotlinBuiltIns.isChar(expectedType)) {
                 wrongPrimitiveLiteralFix = WrongPrimitiveLiteralFix(diagnosticElement, expectedType)
