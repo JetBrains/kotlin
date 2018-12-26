@@ -4799,6 +4799,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertCamelCaseTestFunctionToSpaced/notTestFunction.kt");
         }
 
+        @TestMetadata("snake.kt")
+        public void testSnake() throws Exception {
+            runTest("idea/testData/intentions/convertCamelCaseTestFunctionToSpaced/snake.kt");
+        }
+
         @TestMetadata("unchanged.kt")
         public void testUnchanged() throws Exception {
             runTest("idea/testData/intentions/convertCamelCaseTestFunctionToSpaced/unchanged.kt");
@@ -7001,6 +7006,29 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("withProperties.kt")
         public void testWithProperties() throws Exception {
             runTest("idea/testData/intentions/convertSecondaryConstructorToPrimary/withProperties.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/convertSnakeCaseTestFunctionToSpaced")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertSnakeCaseTestFunctionToSpaced extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInConvertSnakeCaseTestFunctionToSpaced() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertSnakeCaseTestFunctionToSpaced"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("camel.kt")
+        public void testCamel() throws Exception {
+            runTest("idea/testData/intentions/convertSnakeCaseTestFunctionToSpaced/camel.kt");
+        }
+
+        @TestMetadata("snake.kt")
+        public void testSnake() throws Exception {
+            runTest("idea/testData/intentions/convertSnakeCaseTestFunctionToSpaced/snake.kt");
         }
     }
 
