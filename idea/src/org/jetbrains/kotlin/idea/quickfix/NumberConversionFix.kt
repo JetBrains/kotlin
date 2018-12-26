@@ -29,22 +29,22 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
+import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType
 
 class NumberConversionFix(
-        element: KtExpression,
-        type: KotlinType,
-        private val disableIfAvailable: IntentionAction? = null
+    element: KtExpression,
+    type: KotlinType,
+    private val disableIfAvailable: IntentionAction? = null
 ) : KotlinQuickFixAction<KtExpression>(element) {
     private val isConversionAvailable: Boolean = run {
         val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element)
-        expressionType != null && expressionType != type && expressionType.isPrimitiveNumberType() && type.isPrimitiveNumberType()
+        expressionType != null && expressionType != type &&
+                expressionType.isSignedOrUnsignedNumberType() && type.isSignedOrUnsignedNumberType()
     }
     private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
 
-    override fun isAvailable(project: Project, editor: Editor?, file: KtFile)
-            = disableIfAvailable?.isAvailable(project, editor, file) != true
-              && isConversionAvailable
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile) =
+        disableIfAvailable?.isAvailable(project, editor, file) != true && isConversionAvailable
 
     override fun getFamilyName() = "Insert number conversion"
     override fun getText() = "Convert expression to '$typePresentation'"
