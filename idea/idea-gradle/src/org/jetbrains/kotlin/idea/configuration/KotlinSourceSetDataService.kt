@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.KotlinModule
 import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.gradle.KotlinSourceSet
 import org.jetbrains.kotlin.idea.facet.*
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
@@ -43,6 +44,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
         project: Project,
         modelsProvider: IdeModifiableModelsProvider
     ) {
+        var hasKotlinSourceRootTypes = false
         for (nodeToImport in toImport) {
             val mainModuleData = ExternalSystemApiUtil.findParent(
                 nodeToImport,
@@ -56,6 +58,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
 
             if (platform != KotlinPlatform.JVM && platform != KotlinPlatform.ANDROID) {
                 migrateNonJvmSourceFolders(rootModel)
+                hasKotlinSourceRootTypes = true
             }
 
             configureFacet(sourceSetData, kotlinSourceSet, mainModuleData, ideModule, modelsProvider)?.let { facet ->
@@ -65,6 +68,9 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             if (kotlinSourceSet.isTestModule) {
                 assignTestScope(rootModel)
             }
+        }
+        if (hasKotlinSourceRootTypes) {
+            KotlinSdkType.setUpIfNeeded()
         }
     }
 

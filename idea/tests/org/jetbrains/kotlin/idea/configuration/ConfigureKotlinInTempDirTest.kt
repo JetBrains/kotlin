@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.ApplicationImpl
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -27,9 +26,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.junit.Assert
-import java.io.File
 import java.io.IOException
-import java.nio.file.Path
 
 open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest() {
     @Throws(IOException::class)
@@ -123,9 +120,4 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         application.saveAll()
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
     }
-
-    //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also PluginStartupComponent)
-    /*fun testKotlinSdkAdded() {
-        Assert.assertTrue(ProjectJdkTable.getInstance().allJdks.any { it.sdkType is KotlinSdkType })
-    }*/
 }
