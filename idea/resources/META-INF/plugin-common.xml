@@ -1382,6 +1382,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertSnakeCaseTestFunctionToSpacedIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetIntention</className>
       <category>Kotlin</category>
     </intentionAction>
