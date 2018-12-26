@@ -116,3 +116,22 @@ class KotlinVariantWithMetadataDependency(
         override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
     }
 }
+
+class JointAndroidKotlinTargetComponent(
+    override val target: KotlinAndroidTarget,
+    private val nestedVariants: Set<KotlinVariant>,
+    val flavorNames: List<String>
+) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
+
+    override fun getUsages(): Set<UsageContext> = nestedVariants.flatMap { it.usages }.toSet()
+
+    override fun getName(): String = lowerCamelCaseName(target.targetName, *flavorNames.toTypedArray())
+
+    override val publishable: Boolean
+        get() = target.publishable
+
+    override val defaultArtifactId: String =
+        lowerSpinalCaseName(target.project.name, target.targetName, *flavorNames.toTypedArray())
+
+    override var publicationDelegate: MavenPublication? = null
+}

@@ -6,6 +6,7 @@ import com.android.build.gradle.tasks.MergeResources
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptTask
@@ -83,6 +84,10 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
 
     override fun getVariantName(variant: BaseVariant): String = variant.name
 
+    override fun getFlavorNames(variant: BaseVariant): List<String> = variant.productFlavors.map { it.name }
+
+    override fun getBuildTypeName(variant: BaseVariant): String = variant.buildType.name
+
     override fun getTestedVariantData(variantData: BaseVariant): BaseVariant? = when (variantData) {
         is TestVariant -> variantData.testedVariant
         is UnitTestVariant -> variantData.testedVariant as? BaseVariant
@@ -113,6 +118,9 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         val project = variantData.mergeResources.project
         return project.files(Callable { variantData.mergeResources?.computeResourceSetList0() ?: emptyList() })
     }
+
+    override fun getLibraryOutputTask(variant: BaseVariant): AbstractArchiveTask? =
+        (variant as? LibraryVariant)?.packageLibrary
 
     override fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {
         val project = compilation.target.project

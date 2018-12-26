@@ -15,6 +15,7 @@ import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
@@ -43,6 +44,9 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
         val variantManager = AndroidGradleWrapper.getVariantDataManager(plugin)
         variantManager.variantDataList.forEach(action)
     }
+
+    override fun getLibraryOutputTask(variant: BaseVariantData<out BaseVariantOutputData>): AbstractArchiveTask? =
+        null // We don't support publishing AARs of old Android in MPP
 
     override fun wireKotlinTasks(
         project: Project,
@@ -92,7 +96,16 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
 
     override fun getVariantName(variant: BaseVariantData<out BaseVariantOutputData>): String = variant.name
 
-    override fun checkVariantIsValid(variant: BaseVariantData<out BaseVariantOutputData>): Unit {
+    private fun operationNotSupportedInOldAndroidPlugin(): Nothing =
+        throw UnsupportedOperationException("Publishing is not supported for Android Gradle plugin 2.3.x and below. Please upgrade to 3.0+")
+
+    override fun getFlavorNames(variant: BaseVariantData<out BaseVariantOutputData>): List<String> =
+        operationNotSupportedInOldAndroidPlugin()
+
+    override fun getBuildTypeName(variant: BaseVariantData<out BaseVariantOutputData>): String =
+        operationNotSupportedInOldAndroidPlugin()
+
+    override fun checkVariantIsValid(variant: BaseVariantData<out BaseVariantOutputData>) {
         if (AndroidGradleWrapper.isJackEnabled(variant)) {
             throw ProjectConfigurationException(
                 "Kotlin Gradle plugin does not support the deprecated Jack toolchain.\n" +

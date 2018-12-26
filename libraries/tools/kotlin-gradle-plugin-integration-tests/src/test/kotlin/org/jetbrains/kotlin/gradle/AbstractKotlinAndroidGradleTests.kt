@@ -23,7 +23,7 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
         get() = GradleVersionRequired.AtLeast("4.6")
 
     @Test
-    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android")) {
+    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("4.7"))) {
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
 
@@ -69,6 +69,107 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
                         "$sourceSetName is not an Android source set and should not have Android Extensions in the args"
                     )
             }
+        }
+
+        // By default, no Android variant should be published in 1.3.20:
+        val groupDir = "lib/build/repo/com/example/"
+        build("publish") {
+            assertSuccessful()
+            assertFileExists(groupDir + "lib-jvmlib")
+            assertFileExists(groupDir + "lib-jslib")
+            assertNoSuchFile(groupDir + "lib-androidlib")
+            assertNoSuchFile(groupDir + "lib-androidlib-debug")
+            projectDir.resolve(groupDir).deleteRecursively()
+        }
+
+        // Choose a single variant to publish, check that it's there:
+        gradleBuildScript("lib").appendText("\nkotlin.android('androidLib').publishLibraryVariants = ['release']")
+        build("publish") {
+            assertSuccessful()
+            assertFileExists(groupDir + "lib-androidlib/1.0/lib-androidlib-1.0.aar")
+            assertFileExists(groupDir + "lib-androidlib/1.0/lib-androidlib-1.0-sources.jar")
+            assertNoSuchFile(groupDir + "lib-androidlib-debug")
+            projectDir.resolve(groupDir).deleteRecursively()
+        }
+
+        // Enable publishing for all Android variants:
+        gradleBuildScript("lib").appendText("\nkotlin.android('androidLib') { publishAllLibraryVariants() }")
+        build("publish") {
+            assertSuccessful()
+            assertFileExists(groupDir + "lib-androidlib/1.0/lib-androidlib-1.0.aar")
+            assertFileExists(groupDir + "lib-androidlib/1.0/lib-androidlib-1.0-sources.jar")
+            assertFileExists(groupDir + "lib-androidlib-debug/1.0/lib-androidlib-debug-1.0.aar")
+            assertFileExists(groupDir + "lib-androidlib-debug/1.0/lib-androidlib-debug-1.0-sources.jar")
+            projectDir.resolve(groupDir).deleteRecursively()
+        }
+
+        // Then group the variants by flavor and check that only one publication is created:
+        gradleBuildScript("lib").appendText("\nkotlin.android('androidLib').publishLibraryVariantsGroupedByFlavor = true")
+        build("publish") {
+            assertSuccessful()
+            assertFileExists(groupDir + "lib-androidlib/1.0/lib-androidlib-1.0.aar")
+            assertFileExists(groupDir + "lib-androidlib/1.0/lib-androidlib-1.0-sources.jar")
+            assertFileExists(groupDir + "lib-androidlib/1.0/lib-androidlib-1.0-debug.aar")
+            assertFileExists(groupDir + "lib-androidlib/1.0/lib-androidlib-1.0-debug-sources.jar")
+            projectDir.resolve(groupDir).deleteRecursively()
+        }
+
+        // Add one flavor dimension with two flavors, check that the flavors produce grouped publications:
+        gradleBuildScript("lib").appendText(
+            "\nandroid { flavorDimensions('foo'); productFlavors { foo1 { dimension 'foo' }; foo2 { dimension 'foo' } } }"
+        )
+        build("publish") {
+            assertSuccessful()
+            listOf("foo1", "foo2").forEach { flavor ->
+                assertFileExists(groupDir + "lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0.aar")
+                assertFileExists(groupDir + "lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-sources.jar")
+                assertFileExists(groupDir + "lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-debug.aar")
+                assertFileExists(groupDir + "lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-debug-sources.jar")
+            }
+            projectDir.resolve(groupDir).deleteRecursively()
+        }
+
+        // Disable the grouping and check that all the variants are published under separate artifactIds:
+        gradleBuildScript("lib").appendText(
+            "\nkotlin.android('androidLib') { publishLibraryVariantsGroupedByFlavor = false }"
+        )
+        build("publish") {
+            assertSuccessful()
+            listOf("foo1", "foo2").forEach { flavor ->
+                listOf("-debug", "").forEach { buildType ->
+                    assertFileExists(groupDir + "lib-androidlib-$flavor$buildType/1.0/lib-androidlib-$flavor$buildType-1.0.aar")
+                    assertFileExists(groupDir + "lib-androidlib-$flavor$buildType/1.0/lib-androidlib-$flavor$buildType-1.0-sources.jar")
+                }
+            }
+            projectDir.resolve(groupDir).deleteRecursively()
+        }
+
+        // Convert the 'app' project to a library, publish the two without metadata,
+        // check that the dependencies in the POMs are correctly rewritten:
+        gradleSettingsScript().modify { it.replace("enableFeaturePreview", "//") }
+        gradleBuildScript("app").modify {
+            it.replace("com.android.application", "com.android.library")
+                .replace("applicationId", "//") + "\n" + """
+                    apply plugin: 'maven-publish'
+                    publishing { repositories { maven { url = uri("${'$'}buildDir/repo") } } }
+                    kotlin.android('androidApp') { publishAllLibraryVariants() }
+                    android { flavorDimensions('foo'); productFlavors { foo1 { dimension 'foo' }; foo2 { dimension 'foo' } } }
+                """.trimIndent()
+        }
+        build("publish") {
+            assertSuccessful()
+            val appGroupDir = "app/build/repo/com/example/"
+            listOf("foo1", "foo2").forEach { flavor ->
+                listOf("-debug", "").forEach { buildType ->
+                    assertFileExists(appGroupDir + "app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0.aar")
+                    assertFileExists(appGroupDir + "app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0-sources.jar")
+                    val pomText = projectDir.resolve(
+                        appGroupDir + "app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0.pom"
+                    ).readText()
+                    assertTrue { "<artifactId>lib-androidlib-$flavor$buildType</artifactId>" in pomText }
+                }
+            }
+            projectDir.resolve(groupDir).deleteRecursively()
         }
     }
 
