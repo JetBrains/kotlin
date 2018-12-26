@@ -43,6 +43,7 @@ import org.gradle.util.GradleVersion
 import org.gradle.wrapper.GradleWrapperMain
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.gradle.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -64,6 +65,8 @@ import java.util.*
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 @RunWith(value = Parameterized::class)
 abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
+
+    protected var sdkCreationChecker : KotlinSdkCreationChecker? = null
 
     @JvmField
     @Rule
@@ -101,6 +104,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         GradleSettings.getInstance(myProject).gradleVmOptions = "-Xmx128m -XX:MaxPermSize=64m"
         System.setProperty(ExternalSystemExecutionSettings.REMOTE_PROCESS_IDLE_TTL_IN_MS_KEY, GRADLE_DAEMON_TTL_MS.toString())
         configureWrapper()
+        sdkCreationChecker = KotlinSdkCreationChecker()
     }
 
     override fun tearDown() {
@@ -114,6 +118,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
             Messages.setTestDialog(TestDialog.DEFAULT)
             FileUtil.delete(BuildManager.getInstance().buildSystemDirectory.toFile())
+            sdkCreationChecker?.removeNewKotlinSdk()
         } finally {
             super.tearDown()
         }
