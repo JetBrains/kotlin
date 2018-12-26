@@ -238,6 +238,10 @@ def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfigurati
 void dependsOnPlatformLibs(Task t) {
     if (!useCustomDist) {
         t.dependsOn(':distPlatformLibs')
+        def testTarget = project.testTarget
+        if (testTarget != null && testTarget != project.hostName) {
+            t.dependsOn(":${testTarget}PlatformLibs")
+        }
     }
 }
 
