@@ -22,7 +22,6 @@
     <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>
 
     <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
-    <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeKonanBuildBeforeRunTaskProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="appcode">
