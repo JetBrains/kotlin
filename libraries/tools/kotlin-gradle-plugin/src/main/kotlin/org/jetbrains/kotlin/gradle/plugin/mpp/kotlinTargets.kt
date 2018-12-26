@@ -9,7 +9,9 @@ import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage.JAVA_API
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.lowerSpinalCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class AbstractKotlinTarget(
@@ -98,6 +101,8 @@ abstract class AbstractKotlinTarget(
         val publishWithKotlinMetadata = (project.kotlinExtension as? KotlinMultiplatformExtension)?.isGradleMetadataAvailable
             ?: true // In non-MPP project, these usage contexts do not get published anyway
 
+        val sourcesJarArtifact = sourcesJarArtifact(producingCompilation, componentName, artifactNameAppendix)
+
         // Here, `JAVA_API` and `JAVA_RUNTIME_JARS` are used intentionally as Gradle needs this for
         // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
         // These Java usages should not be replaced with the custom Kotlin usages.
@@ -109,9 +114,34 @@ abstract class AbstractKotlinTarget(
                 producingCompilation,
                 project.usageByName(usageName),
                 dependenciesConfigurationName,
-                publishWithKotlinMetadata
-                )
+                publishWithKotlinMetadata,
+                sourcesJarArtifact
+            )
         }
+    }
+
+    protected fun sourcesJarArtifact(
+        producingCompilation: KotlinCompilation<*>,
+        componentName: String,
+        artifactNameAppendix: String,
+        classifierPrefix: String? = null
+    ): PublishArtifact {
+        val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
+        val sourceArtifactConfigurationName = producingCompilation.disambiguateName("sourceArtifacts")
+        val sourcesJarArtifact = producingCompilation.target.project.run {
+            (configurations.findByName(sourceArtifactConfigurationName) ?: run {
+                val configuration = configurations.create(sourceArtifactConfigurationName) {
+                    it.isCanBeResolved = false
+                    it.isCanBeConsumed = false
+                }
+                artifacts.add(sourceArtifactConfigurationName, sourcesJarTask)
+                configuration
+            }).artifacts.single().apply {
+                this as ConfigurablePublishArtifact
+                classifier = lowerSpinalCaseName(classifierPrefix, "sources")
+            }
+        }
+        return sourcesJarArtifact
     }
 
     @Suppress("UNCHECKED_CAST")

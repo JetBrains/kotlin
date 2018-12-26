@@ -55,6 +55,9 @@ abstract class KotlinOnlyTargetPreset<T : KotlinCompilation<*>>(
 
         result.compilations.all { compilation ->
             buildCompilationProcessor(compilation).run()
+            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+                sourcesJarTask(compilation, result.targetName, result.targetName.toLowerCase())
+            }
         }
 
         return result
