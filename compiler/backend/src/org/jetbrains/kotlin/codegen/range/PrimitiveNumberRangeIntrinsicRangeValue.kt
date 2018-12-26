@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.range
 
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForRangeContainsCall
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInDefinitelySafeSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
@@ -36,7 +38,12 @@ import org.jetbrains.org.objectweb.asm.Type
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(
     rangeCall: ResolvedCall<out CallableDescriptor>
 ) : CallIntrinsicRangeValue(rangeCall) {
-    protected val asmElementType = getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCall.resultingDescriptor)
+
+    protected val elementKotlinType =
+        rangeCall.resultingDescriptor.returnType?.let { getRangeOrProgressionElementType(it) }
+            ?: throw AssertionError("Unexpected range ")
+
+    protected val elementType = getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCall.resultingDescriptor)
 
     override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
         resolvedCallForIn.resultingDescriptor.let {
@@ -138,8 +145,9 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             codegen, forExpression,
             startValue = startValue,
             isStartInclusive = isStartInclusive,
-            endValue = StackValue.integerConstant(endIntValue, asmElementType),
+            endValue = StackValue.integerConstant(endIntValue, elementType),
             isEndInclusive = true,
+            comparisonGenerator = getComparisonGeneratorForKotlinType(elementKotlinType),
             step = step
         )
 
@@ -155,8 +163,9 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             codegen, forExpression,
             startValue = startValue,
             isStartInclusive = isStartInclusive,
-            endValue = StackValue.constant(endLongValue, asmElementType),
+            endValue = StackValue.constant(endLongValue, elementType),
             isEndInclusive = true,
+            comparisonGenerator = getComparisonGeneratorForKotlinType(elementKotlinType),
             step = step
         )
 
