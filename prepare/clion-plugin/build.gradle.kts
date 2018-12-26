@@ -26,7 +26,7 @@ val kotlinVersion = rootProject.extra["kotlinVersion"] as String
 val cidrPluginDir: File by rootProject.extra
 val clionPluginDir: File by rootProject.extra
 val clionVersion = rootProject.extra["versions.clion"] as String
-val clionVersionStrict = rootProject.extra["versions.clion.strict"] as Boolean
+val clionVersionStrict = (rootProject.extra["versions.clion.strict"] as String).toBoolean()
 val clionVersionRepo = rootProject.extra["versions.clion.repo"] as String
 
 val cidrPlugin by configurations.creating
