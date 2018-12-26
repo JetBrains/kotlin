@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.scratch.ui
 
 
 import com.intellij.application.options.ModulesComboBox
-import com.intellij.execution.ui.ConfigurationModuleSelector
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
@@ -72,6 +71,14 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         add(JLabel("Use classpath of module"))
         add(moduleChooser)
 
+        isMakeBeforeRunCheckbox = JCheckBox("Make before Run")
+        add(isMakeBeforeRunCheckbox)
+        isMakeBeforeRunCheckbox.addItemListener {
+            scratchFile.saveOptions {
+                copy(isMakeBeforeRun = isMakeBeforeRunCheckbox.isSelected)
+            }
+        }
+
         add(JSeparator(SwingConstants.VERTICAL))
 
         isReplCheckbox = JCheckBox("Use REPL")
@@ -79,16 +86,6 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         isReplCheckbox.addItemListener {
             scratchFile.saveOptions {
                 copy(isRepl = isReplCheckbox.isSelected)
-            }
-        }
-
-        add(JSeparator(SwingConstants.VERTICAL))
-
-        isMakeBeforeRunCheckbox = JCheckBox("Make before Run")
-        add(isMakeBeforeRunCheckbox)
-        isMakeBeforeRunCheckbox.addItemListener {
-            scratchFile.saveOptions {
-                copy(isMakeBeforeRun = isMakeBeforeRunCheckbox.isSelected)
             }
         }
 
