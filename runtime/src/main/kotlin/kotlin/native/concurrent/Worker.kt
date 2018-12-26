@@ -8,6 +8,8 @@ package kotlin.native.concurrent
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.Frozen
 import kotlin.native.internal.VolatileLambda
+import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.TypedIntrinsic
 import kotlinx.cinterop.*
 
 /**
@@ -69,6 +71,7 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
      * @return the future with the computation result of [job]
      */
     @Suppress("UNUSED_PARAMETER")
+    @TypedIntrinsic(IntrinsicType.WORKER_EXECUTE)
     public fun <T1, T2> execute(mode: TransferMode, producer: () -> T1, @VolatileLambda job: (T1) -> T2): Future<T2> =
             /*
              * This function is a magical operation, handled by lowering in the compiler, and replaced with call to

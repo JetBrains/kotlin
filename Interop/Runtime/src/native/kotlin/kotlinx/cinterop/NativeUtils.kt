@@ -17,33 +17,35 @@
 package kotlinx.cinterop
 
 import kotlin.native.internal.Intrinsic
+import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.IntrinsicType
 
 internal fun decodeFromUtf8(bytes: ByteArray): String = bytes.stringFromUtf8()
 
 fun encodeToUtf8(str: String): ByteArray = str.toUtf8()
 
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.INTEROP_BITS_TO_FLOAT)
 external fun bitsToFloat(bits: Int): Float
 
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.INTEROP_BITS_TO_DOUBLE)
 external fun bitsToDouble(bits: Long): Double
 
 // TODO: deprecate.
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.INTEROP_SIGN_EXTEND)
 external fun <R : Number> Number.signExtend(): R
 
 // TODO: deprecate.
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.INTEROP_NARROW)
 external fun <R : Number> Number.narrow(): R
 
-@Intrinsic external fun <R : Any> Byte.convert(): R
-@Intrinsic external fun <R : Any> Short.convert(): R
-@Intrinsic external fun <R : Any> Int.convert(): R
-@Intrinsic external fun <R : Any> Long.convert(): R
-@Intrinsic external fun <R : Any> UByte.convert(): R
-@Intrinsic external fun <R : Any> UShort.convert(): R
-@Intrinsic external fun <R : Any> UInt.convert(): R
-@Intrinsic external fun <R : Any> ULong.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> Byte.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> Short.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> Int.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> Long.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> UByte.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> UShort.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> UInt.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> ULong.convert(): R
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)

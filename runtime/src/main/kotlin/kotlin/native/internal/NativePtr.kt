@@ -7,7 +7,7 @@
 
 package kotlin.native.internal
 
-@TypedIntrinsic(IntrinsicType.GET_NATIVE_NULL_PTR)
+@TypedIntrinsic(IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR)
 external fun getNativeNullPtr(): NativePtr
 
 class NativePtr @PublishedApi internal constructor(private val value: NonNullNativePtr?) {
@@ -15,10 +15,10 @@ class NativePtr @PublishedApi internal constructor(private val value: NonNullNat
         val NULL = getNativeNullPtr()
     }
 
-    @TypedIntrinsic(IntrinsicType.NATIVE_PTR_PLUS_LONG)
+    @TypedIntrinsic(IntrinsicType.INTEROP_NATIVE_PTR_PLUS_LONG)
     external operator fun plus(offset: Long): NativePtr
 
-    @TypedIntrinsic(IntrinsicType.NATIVE_PTR_TO_LONG)
+    @TypedIntrinsic(IntrinsicType.INTEROP_NATIVE_PTR_TO_LONG)
     external fun toLong(): Long
 
     override fun equals(other: Any?) = (other is NativePtr) && kotlin.native.internal.areEqualByValue(this, other)

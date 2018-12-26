@@ -240,7 +240,6 @@ fun CallableMemberDescriptor.findSourceFile(): SourceFile {
 }
 
 internal val TypedIntrinsic = FqName("kotlin.native.internal.TypedIntrinsic")
-private val intrinsicAnnotation = FqName("kotlin.native.internal.Intrinsic")
 private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
 private val objCMethodAnnotation = FqName("kotlinx.cinterop.ObjCMethod")
 private val frozenAnnotation = FqName("kotlin.native.internal.Frozen")
@@ -250,9 +249,6 @@ internal val DeclarationDescriptor.isFrozen: Boolean
             (this is org.jetbrains.kotlin.descriptors.ClassDescriptor
                     // RTTI is used for non-reference type box or Objective-C object wrapper:
                     && (!this.defaultType.binaryTypeIsReference() || this.isObjCClass()))
-
-internal val FunctionDescriptor.isIntrinsic: Boolean
-    get() = this.annotations.hasAnnotation(intrinsicAnnotation)
 
 internal val FunctionDescriptor.isTypedIntrinsic: Boolean
     get() = this.annotations.hasAnnotation(TypedIntrinsic)
@@ -269,11 +265,9 @@ fun CallableMemberDescriptor.externalSymbolOrThrow(): String? {
     this.annotations.findAnnotation(symbolNameAnnotation)?.let {
         return getAnnotationValue(it)!!
     }
-    if (this.annotations.hasAnnotation(intrinsicAnnotation)) return null
-
     if (this.annotations.hasAnnotation(objCMethodAnnotation)) return null
 
     if (this.annotations.hasAnnotation(TypedIntrinsic)) return null
 
-    throw Error("external function ${this} must have @TypedIntrinsic, @SymbolName, @Intrinsic or @ObjCMethod annotation")
+    throw Error("external function ${this} must have @TypedIntrinsic, @SymbolName or @ObjCMethod annotation")
 }

@@ -82,5 +82,5 @@ private external fun ImmutableBlob.asCPointerImpl(offset: Int): kotlin.native.in
  * One element still represent one byte in the output data.
  * This is the only way to create ImmutableBlob for now.
  */
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.IMMUTABLE_BLOB)
 public external fun immutableBlobOf(vararg elements: Short): ImmutableBlob

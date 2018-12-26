@@ -54,32 +54,9 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: 
 
     val typeOf = packageScope.getContributedFunctions("typeOf").single()
 
-    val bitsToFloat = packageScope.getContributedFunctions("bitsToFloat").single()
-
-    val bitsToDouble = packageScope.getContributedFunctions("bitsToDouble").single()
-
-    val staticCFunction = packageScope.getContributedFunctions("staticCFunction").toSet()
-
     val concurrentPackageScope = builtIns.builtInsModule.getPackage(FqName("kotlin.native.concurrent")).memberScope
 
-    val executeFunction = concurrentPackageScope.getContributedClass("Worker")
-            .unsubstitutedMemberScope.getContributedFunctions("execute").single()
-
     val executeImplFunction = concurrentPackageScope.getContributedFunctions("executeImpl").single()
-
-    val signExtend = packageScope.getContributedFunctions("signExtend").single()
-
-    val narrow = packageScope.getContributedFunctions("narrow").single()
-
-    val convert = packageScope.getContributedFunctions("convert").toSet()
-
-    val cFunctionPointerInvokes = packageScope.getContributedFunctions(OperatorNameConventions.INVOKE.asString())
-            .filter {
-                val extensionReceiverParameter = it.extensionReceiverParameter
-                it.isOperator &&
-                        extensionReceiverParameter != null &&
-                        TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == cPointer
-            }.toSet()
 
     private fun KonanBuiltIns.getUnsignedClass(unsignedType: UnsignedType): ClassDescriptor =
             this.builtInsModule.findClassAcrossModuleDependencies(unsignedType.classId)!!

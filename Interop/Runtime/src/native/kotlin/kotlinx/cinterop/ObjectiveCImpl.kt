@@ -44,7 +44,7 @@ fun optional(): Nothing = throw RuntimeException("Do not call me!!!")
         "Add @OverrideInit to constructor to make it override Objective-C initializer",
         level = DeprecationLevel.WARNING
 )
-@kotlin.native.internal.Intrinsic
+@TypedIntrinsic(IntrinsicType.OBJC_INIT_BY)
 external fun <T : ObjCObjectBase> T.initBy(constructorCall: T): T
 
 @kotlin.native.internal.ExportForCompiler

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
+import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
@@ -774,235 +776,232 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
 
         fun reportError(message: String): Nothing = context.reportCompilationError(message, irFile, expression)
 
+        val intrinsicType = tryGetIntrinsicType(expression)
+
+        if (intrinsicType != null) {
+            return when (intrinsicType) {
+                IntrinsicType.INTEROP_BITS_TO_FLOAT -> {
+                    val argument = expression.getValueArgument(0)
+                    if (argument is IrConst<*> && argument.kind == IrConstKind.Int) {
+                        val floatValue = kotlinx.cinterop.bitsToFloat(argument.value as Int)
+                        builder.irFloat(floatValue)
+                    } else {
+                        expression
+                    }
+                }
+                IntrinsicType.INTEROP_BITS_TO_DOUBLE -> {
+                    val argument = expression.getValueArgument(0)
+                    if (argument is IrConst<*> && argument.kind == IrConstKind.Long) {
+                        val doubleValue = kotlinx.cinterop.bitsToDouble(argument.value as Long)
+                        builder.irDouble(doubleValue)
+                    } else {
+                        expression
+                    }
+                }
+                IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
+                    val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(0)!!)
+
+                    if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()) {
+                        context.reportCompilationError(
+                                "${descriptor.fqNameSafe} must take an unbound, non-capturing function or lambda",
+                                irFile, expression
+                        )
+                        // TODO: should probably be reported during analysis.
+                    }
+
+                    val targetSymbol = irCallableReference.symbol
+                    val target = targetSymbol.owner
+                    val signatureTypes = target.allParameters.map { it.type } + target.returnType
+
+                    signatureTypes.forEachIndexed { index, type ->
+                        type.ensureSupportedInCallbacks(
+                                isReturnType = (index == signatureTypes.lastIndex),
+                                reportError = ::reportError
+                        )
+                    }
+
+                    descriptor.typeParameters.forEachIndexed { index, typeParameterDescriptor ->
+                        val typeArgument = expression.getTypeArgument(typeParameterDescriptor)!!.toKotlinType()
+                        val signatureType = signatureTypes[index].toKotlinType()
+                        if (typeArgument.constructor != signatureType.constructor ||
+                                typeArgument.isMarkedNullable != signatureType.isMarkedNullable) {
+                            context.reportCompilationError(
+                                    "C function signature element mismatch: expected '$signatureType', got '$typeArgument'",
+                                    irFile, expression
+                            )
+                        }
+                    }
+
+                    IrFunctionReferenceImpl(
+                            builder.startOffset, builder.endOffset,
+                            expression.type,
+                            targetSymbol, target.descriptor,
+                            typeArgumentsCount = 0)
+                }
+                IntrinsicType.INTEROP_FUNPTR_INVOKE -> {
+                    // Replace by `invokeImpl${type}Ret`:
+
+                    val returnType =
+                            expression.getTypeArgument(descriptor.typeParameters.single { it.name.asString() == "R" })!!
+
+                    returnType.checkCTypeNullability(::reportError)
+
+                    val invokeImpl = symbols.interopInvokeImpls[returnType.getClass()?.descriptor] ?:
+                    context.reportCompilationError(
+                            "Invocation of C function pointer with return type '${returnType.toKotlinType()}' is not supported yet",
+                            irFile, expression
+                    )
+
+                    builder.irCall(invokeImpl).apply {
+                        putValueArgument(0, expression.extensionReceiver)
+
+                        val varargParameter = invokeImpl.owner.valueParameters[1]
+                        val varargArgument = IrVarargImpl(
+                                startOffset, endOffset, varargParameter.type, varargParameter.varargElementType!!
+                        ).apply {
+                            descriptor.valueParameters.forEach {
+                                this.addElement(expression.getValueArgument(it)!!)
+                            }
+                        }
+                        putValueArgument(varargParameter.index, varargArgument)
+                    }
+                }
+                IntrinsicType.INTEROP_SIGN_EXTEND, IntrinsicType.INTEROP_NARROW -> {
+
+                    val integerTypePredicates = arrayOf(
+                            IrType::isByte, IrType::isShort, IrType::isInt, IrType::isLong
+                    )
+
+                    val receiver = expression.extensionReceiver!!
+                    val typeOperand = expression.getSingleTypeArgument()
+                    val kotlinTypeOperand = typeOperand.toKotlinType()
+
+                    val receiverTypeIndex = integerTypePredicates.indexOfFirst { it(receiver.type) }
+                    val typeOperandIndex = integerTypePredicates.indexOfFirst { it(typeOperand) }
+
+                    val receiverKotlinType = receiver.type.toKotlinType()
+
+                    if (receiverTypeIndex == -1) {
+                        context.reportCompilationError("Receiver's type $receiverKotlinType is not an integer type",
+                                irFile, receiver)
+                    }
+
+                    if (typeOperandIndex == -1) {
+                        context.reportCompilationError("Type argument $kotlinTypeOperand is not an integer type",
+                                irFile, expression)
+                    }
+
+                    when (intrinsicType) {
+                        IntrinsicType.INTEROP_SIGN_EXTEND -> if (receiverTypeIndex > typeOperandIndex) {
+                            context.reportCompilationError("unable to sign extend $receiverKotlinType to $kotlinTypeOperand",
+                                    irFile, expression)
+                        }
+
+                        IntrinsicType.INTEROP_NARROW -> if (receiverTypeIndex < typeOperandIndex) {
+                            context.reportCompilationError("unable to narrow $receiverKotlinType to $kotlinTypeOperand",
+                                    irFile, expression)
+                        }
+
+                        else -> throw Error()
+                    }
+
+                    val receiverClass = symbols.integerClasses.single {
+                        receiver.type.isSubtypeOf(it.owner.defaultType)
+                    }
+                    val targetClass = symbols.integerClasses.single {
+                        typeOperand.isSubtypeOf(it.owner.defaultType)
+                    }
+
+                    val conversionSymbol = receiverClass.functions.single {
+                        it.descriptor.name == Name.identifier("to${targetClass.owner.name}")
+                    }
+
+                    builder.irCall(conversionSymbol).apply {
+                        dispatchReceiver = receiver
+                    }
+                }
+                IntrinsicType.INTEROP_CONVERT -> {
+                    val integerClasses = symbols.allIntegerClasses
+                    val typeOperand = expression.getTypeArgument(0)!!
+                    val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
+                    val source = receiverType.classifierOrFail as IrClassSymbol
+                    assert(source in integerClasses)
+
+                    if (typeOperand is IrSimpleType && typeOperand.classifier in integerClasses && !typeOperand.hasQuestionMark) {
+                        val target = typeOperand.classifier as IrClassSymbol
+                        val valueToConvert = expression.extensionReceiver!!
+
+                        if (source in symbols.signedIntegerClasses && target in symbols.unsignedIntegerClasses) {
+                            // Default Kotlin signed-to-unsigned widening integer conversions don't follow C rules.
+                            val signedTarget = symbols.unsignedToSignedOfSameBitWidth[target]!!
+                            val widened = builder.irConvertInteger(source, signedTarget, valueToConvert)
+                            builder.irConvertInteger(signedTarget, target, widened)
+                        } else {
+                            builder.irConvertInteger(source, target, valueToConvert)
+                        }
+                    } else {
+                        context.reportCompilationError(
+                                "unable to convert ${receiverType.toKotlinType()} to ${typeOperand.toKotlinType()}",
+                                irFile,
+                                expression
+                        )
+                    }
+                }
+                IntrinsicType.OBJC_INIT_BY -> {
+                    val intrinsic = interop.objCObjectInitBy.name
+
+                    val argument = expression.getValueArgument(0)!!
+                    val constructedClass =
+                            ((argument as? IrCall)?.descriptor as? ClassConstructorDescriptor)?.constructedClass
+
+                    if (constructedClass == null) {
+                        context.reportCompilationError("Argument of '$intrinsic' must be a constructor call",
+                                irFile, argument)
+                    }
+
+                    val extensionReceiver = expression.extensionReceiver!!
+                    if (extensionReceiver !is IrGetValue ||
+                            extensionReceiver.descriptor != constructedClass.thisAsReceiverParameter) {
+
+                        context.reportCompilationError("Receiver of '$intrinsic' must be a 'this' of the constructed class",
+                                irFile, extensionReceiver)
+                    }
+                    expression
+                }
+                IntrinsicType.WORKER_EXECUTE -> {
+                    val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
+
+                    if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()) {
+                        context.reportCompilationError(
+                                "${descriptor.fqNameSafe} must take an unbound, non-capturing function or lambda",
+                                irFile, expression
+                        )
+                    }
+
+                    val targetSymbol = irCallableReference.symbol
+                    val target = targetSymbol.descriptor
+                    val jobPointer = IrFunctionReferenceImpl(
+                            builder.startOffset, builder.endOffset,
+                            symbols.executeImpl.owner.valueParameters[3].type,
+                            targetSymbol, target,
+                            typeArgumentsCount = 0)
+
+                    builder.irCall(symbols.executeImpl).apply {
+                        putValueArgument(0, expression.dispatchReceiver)
+                        putValueArgument(1, expression.getValueArgument(0))
+                        putValueArgument(2, expression.getValueArgument(1))
+                        putValueArgument(3, jobPointer)
+                    }
+                }
+                else -> expression
+            }
+        }
         return when (descriptor) {
             interop.cPointerRawValue.getter ->
                 // Replace by the intrinsic call to be handled by code generator:
                 builder.irCall(symbols.interopCPointerGetRawValue).apply {
                     extensionReceiver = expression.dispatchReceiver
                 }
-
-            interop.bitsToFloat -> {
-                val argument = expression.getValueArgument(0)
-                if (argument is IrConst<*> && argument.kind == IrConstKind.Int) {
-                    val floatValue = kotlinx.cinterop.bitsToFloat(argument.value as Int)
-                    builder.irFloat(floatValue)
-                } else {
-                    expression
-                }
-            }
-
-            interop.bitsToDouble -> {
-                val argument = expression.getValueArgument(0)
-                if (argument is IrConst<*> && argument.kind == IrConstKind.Long) {
-                    val doubleValue = kotlinx.cinterop.bitsToDouble(argument.value as Long)
-                    builder.irDouble(doubleValue)
-                } else {
-                    expression
-                }
-            }
-
-            in interop.staticCFunction -> {
-                val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(0)!!)
-
-                if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()) {
-                    context.reportCompilationError(
-                            "${descriptor.fqNameSafe} must take an unbound, non-capturing function or lambda",
-                            irFile, expression
-                    )
-                    // TODO: should probably be reported during analysis.
-                }
-
-                val targetSymbol = irCallableReference.symbol
-                val target = targetSymbol.owner
-                val signatureTypes = target.allParameters.map { it.type } + target.returnType
-
-                signatureTypes.forEachIndexed { index, type ->
-                    type.ensureSupportedInCallbacks(
-                            isReturnType = (index == signatureTypes.lastIndex),
-                            reportError = ::reportError
-                    )
-                }
-
-                descriptor.typeParameters.forEachIndexed { index, typeParameterDescriptor ->
-                    val typeArgument = expression.getTypeArgument(typeParameterDescriptor)!!.toKotlinType()
-                    val signatureType = signatureTypes[index].toKotlinType()
-                    if (typeArgument.constructor != signatureType.constructor ||
-                            typeArgument.isMarkedNullable != signatureType.isMarkedNullable) {
-                        context.reportCompilationError(
-                                "C function signature element mismatch: expected '$signatureType', got '$typeArgument'",
-                                irFile, expression
-                        )
-                    }
-                }
-
-                IrFunctionReferenceImpl(
-                        builder.startOffset, builder.endOffset,
-                        expression.type,
-                        targetSymbol, target.descriptor,
-                        typeArgumentsCount = 0)
-            }
-
-            interop.executeFunction -> {
-                val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
-
-                if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()) {
-                    context.reportCompilationError(
-                            "${descriptor.fqNameSafe} must take an unbound, non-capturing function or lambda",
-                            irFile, expression
-                    )
-                }
-
-                val targetSymbol = irCallableReference.symbol
-                val target = targetSymbol.descriptor
-                val jobPointer = IrFunctionReferenceImpl(
-                        builder.startOffset, builder.endOffset,
-                        symbols.executeImpl.owner.valueParameters[3].type,
-                        targetSymbol, target,
-                        typeArgumentsCount = 0)
-
-                builder.irCall(symbols.executeImpl).apply {
-                    putValueArgument(0, expression.dispatchReceiver)
-                    putValueArgument(1, expression.getValueArgument(0))
-                    putValueArgument(2, expression.getValueArgument(1))
-                    putValueArgument(3, jobPointer)
-                }
-            }
-
-            interop.signExtend, interop.narrow -> {
-
-                val integerTypePredicates = arrayOf(
-                        IrType::isByte, IrType::isShort, IrType::isInt, IrType::isLong
-                )
-
-                val receiver = expression.extensionReceiver!!
-                val typeOperand = expression.getSingleTypeArgument()
-                val kotlinTypeOperand = typeOperand.toKotlinType()
-
-                val receiverTypeIndex = integerTypePredicates.indexOfFirst { it(receiver.type) }
-                val typeOperandIndex = integerTypePredicates.indexOfFirst { it(typeOperand) }
-
-                val receiverKotlinType = receiver.type.toKotlinType()
-
-                if (receiverTypeIndex == -1) {
-                    context.reportCompilationError("Receiver's type $receiverKotlinType is not an integer type",
-                            irFile, receiver)
-                }
-
-                if (typeOperandIndex == -1) {
-                    context.reportCompilationError("Type argument $kotlinTypeOperand is not an integer type",
-                            irFile, expression)
-                }
-
-                when (descriptor) {
-                    interop.signExtend -> if (receiverTypeIndex > typeOperandIndex) {
-                        context.reportCompilationError("unable to sign extend $receiverKotlinType to $kotlinTypeOperand",
-                                irFile, expression)
-                    }
-
-                    interop.narrow -> if (receiverTypeIndex < typeOperandIndex) {
-                        context.reportCompilationError("unable to narrow $receiverKotlinType to $kotlinTypeOperand",
-                                irFile, expression)
-                    }
-
-                    else -> throw Error()
-                }
-
-                val receiverClass = symbols.integerClasses.single {
-                    receiver.type.isSubtypeOf(it.owner.defaultType)
-                }
-                val targetClass = symbols.integerClasses.single {
-                    typeOperand.isSubtypeOf(it.owner.defaultType)
-                }
-
-                val conversionSymbol = receiverClass.functions.single {
-                    it.descriptor.name == Name.identifier("to${targetClass.owner.name}")
-                }
-
-                builder.irCall(conversionSymbol).apply {
-                    dispatchReceiver = receiver
-                }
-            }
-
-            in interop.convert -> {
-                val integerClasses = symbols.allIntegerClasses
-                val typeOperand = expression.getTypeArgument(0)!!
-                val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
-                val source = receiverType.classifierOrFail as IrClassSymbol
-                assert(source in integerClasses)
-
-                if (typeOperand is IrSimpleType && typeOperand.classifier in integerClasses && !typeOperand.hasQuestionMark) {
-                    val target = typeOperand.classifier as IrClassSymbol
-                    val valueToConvert = expression.extensionReceiver!!
-
-                    if (source in symbols.signedIntegerClasses && target in symbols.unsignedIntegerClasses) {
-                        // Default Kotlin signed-to-unsigned widening integer conversions don't follow C rules.
-                        val signedTarget = symbols.unsignedToSignedOfSameBitWidth[target]!!
-                        val widened = builder.irConvertInteger(source, signedTarget, valueToConvert)
-                        builder.irConvertInteger(signedTarget, target, widened)
-                    } else {
-                        builder.irConvertInteger(source, target, valueToConvert)
-                    }
-                } else {
-                    context.reportCompilationError(
-                            "unable to convert ${receiverType.toKotlinType()} to ${typeOperand.toKotlinType()}",
-                            irFile,
-                            expression
-                    )
-                }
-            }
-
-            in interop.cFunctionPointerInvokes -> {
-                // Replace by `invokeImpl${type}Ret`:
-
-                val returnType =
-                        expression.getTypeArgument(descriptor.typeParameters.single { it.name.asString() == "R" })!!
-
-                returnType.checkCTypeNullability(::reportError)
-
-                val invokeImpl = symbols.interopInvokeImpls[returnType.getClass()?.descriptor] ?:
-                        context.reportCompilationError(
-                                "Invocation of C function pointer with return type '${returnType.toKotlinType()}' is not supported yet",
-                                irFile, expression
-                        )
-
-                builder.irCall(invokeImpl).apply {
-                    putValueArgument(0, expression.extensionReceiver)
-
-                    val varargParameter = invokeImpl.owner.valueParameters[1]
-                    val varargArgument = IrVarargImpl(
-                            startOffset, endOffset, varargParameter.type, varargParameter.varargElementType!!
-                    ).apply {
-                        descriptor.valueParameters.forEach {
-                            this.addElement(expression.getValueArgument(it)!!)
-                        }
-                    }
-                    putValueArgument(varargParameter.index, varargArgument)
-                }
-            }
-
-            interop.objCObjectInitBy -> {
-                val intrinsic = interop.objCObjectInitBy.name
-
-                val argument = expression.getValueArgument(0)!!
-                val constructedClass =
-                        ((argument as? IrCall)?.descriptor as? ClassConstructorDescriptor)?.constructedClass
-
-                if (constructedClass == null) {
-                    context.reportCompilationError("Argument of '$intrinsic' must be a constructor call",
-                            irFile, argument)
-                }
-
-                val extensionReceiver = expression.extensionReceiver!!
-                if (extensionReceiver !is IrGetValue ||
-                        extensionReceiver.descriptor != constructedClass.thisAsReceiverParameter) {
-
-                    context.reportCompilationError("Receiver of '$intrinsic' must be a 'this' of the constructed class",
-                            irFile, extensionReceiver)
-                }
-
-                expression
-            }
-
             else -> expression
         }
     }

@@ -120,7 +120,7 @@ fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
 @TypedIntrinsic(IntrinsicType.CREATE_UNINITIALIZED_INSTANCE)
 internal external fun <T> createUninitializedInstance(): T
 
-@Intrinsic
+@TypedIntrinsic(IntrinsicType.INIT_INSTANCE)
 internal external fun initInstance(thiz: Any, constructorCall: Any): Unit
 
 fun checkProgressionStep(step: Int)  = if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")

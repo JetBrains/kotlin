@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 private val threadLocalAnnotationFqName = FqName("kotlin.native.ThreadLocal")
 private val sharedAnnotationFqName = FqName("kotlin.native.SharedImmutable")
@@ -297,9 +296,33 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     // TODO: consider eliminating mutable state
     private var currentCodeContext: CodeContext = TopLevelCodeContext
 
-    private val intrinsicGenerator = IntrinsicGenerator(codegen,
-            ::resultLifetime, ::getContinuation, { currentCodeContext.exceptionHandler })
+    private val intrinsicGeneratorEnvironment = object : IntrinsicGeneratorEnvironment {
+        override val codegen: CodeGenerator
+            get() = this@CodeGeneratorVisitor.codegen
 
+        override val functionGenerationContext: FunctionGenerationContext
+            get() = this@CodeGeneratorVisitor.functionGenerationContext
+
+        override fun calculateLifetime(element: IrElement): Lifetime =
+                resultLifetime(element)
+
+        override val continuation: LLVMValueRef
+            get() = getContinuation()
+
+        override val exceptionHandler: ExceptionHandler
+            get() = currentCodeContext.exceptionHandler
+
+        override fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef =
+                evaluateSimpleFunctionCall(function, args, resultLifetime)
+
+        override fun evaluateExplicitArgs(expression: IrMemberAccessExpression): List<LLVMValueRef> =
+                this@CodeGeneratorVisitor.evaluateExplicitArgs(expression)
+
+        override fun evaluateExpression(value: IrExpression): LLVMValueRef =
+                this@CodeGeneratorVisitor.evaluateExpression(value)
+    }
+
+    private val intrinsicGenerator = IntrinsicGenerator(intrinsicGeneratorEnvironment)
 
     /**
      * Fake [CodeContext] that doesn't support any operation.
@@ -1803,50 +1826,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return codegen.theUnitInstanceRef.llvm
     }
 
-    // TODO: should be unified with other intrinsics
-    private fun evaluateSpecialIntrinsicCall(expression: IrFunctionAccessExpression): LLVMValueRef? {
-        val function = expression.symbol.owner
-
-        if (function.isIntrinsic) {
-            when (function.descriptor) {
-                context.interopBuiltIns.objCObjectInitBy -> {
-                    val receiver = evaluateExpression(expression.extensionReceiver!!)
-                    val irConstructorCall = expression.getValueArgument(0) as IrCall
-                    val constructorDescriptor = irConstructorCall.symbol.owner as ClassConstructorDescriptor
-                    val constructorArgs = evaluateExplicitArgs(irConstructorCall)
-                    val args = listOf(receiver) + constructorArgs
-                    callDirect(constructorDescriptor, args, Lifetime.IRRELEVANT)
-                    return receiver
-                }
-
-                context.immutableBlobOf -> {
-                    @Suppress("UNCHECKED_CAST")
-                    val arg = expression.getValueArgument(0) as IrConst<String>
-                    return context.llvm.staticData.createImmutableBlob(arg)
-                }
-
-                context.ir.symbols.initInstance.descriptor -> {
-                    val callee = expression as IrCall
-                    val initializer = callee.getValueArgument(1) as IrCall
-                    val thiz = evaluateExpression(callee.getValueArgument(0)!!)
-                    evaluateSimpleFunctionCall(
-                            initializer.symbol.owner,
-                            listOf(thiz) + evaluateExplicitArgs(initializer),
-                            resultLifetime(initializer)
-                    )
-                    return codegen.theUnitInstanceRef.llvm
-                }
-            }
-        }
-
-        return null
-    }
-
     //-------------------------------------------------------------------------//
     private fun evaluateCall(value: IrFunctionAccessExpression): LLVMValueRef {
         context.log{"evaluateCall                   : ${ir2string(value)}"}
 
-        evaluateSpecialIntrinsicCall(value)?.let { return it }
+        intrinsicGenerator.tryEvaluateSpecialCall(value)?.let { return it }
 
         val args = evaluateExplicitArgs(value)
 
@@ -2103,8 +2087,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                                args + getContinuation()
                                            else args
         return when {
-            function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args, functionGenerationContext)
-            function.isIntrinsic -> context.reportCompilationError("Unexpected @Intrinsic function: ${function.name.asString()}")
+            function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args)
             function.origin == IrDeclarationOrigin.IR_BUILTINS_STUB -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
             function is ConstructorDescriptor -> evaluateConstructorCall(callee, argsWithContinuationIfNeeded)
             else -> evaluateSimpleFunctionCall(function, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifierSymbol?.owner)
