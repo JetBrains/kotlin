@@ -116,6 +116,13 @@
           <Problem reference="com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture" reason="Absent in &lt;= 181. Use org.jetbrains.kotlin.test.HierarchyViewTestFixture instead." />
           <Problem reference="org.jetbrains.kotlin.test.HierarchyViewTestFixtureCompat" reason="Do not use the wrapper for 181 directly. Use org.jetbrains.kotlin.test.HierarchyViewTestFixture instead." />
           <Problem reference="com.intellij.psi.codeStyle.CodeStyleSettingsProvider" reason="Additional method is introduced in 183 instead of deprecated one. Use CodeStyleSettingsProviderCompat instead." />
+          <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#getExtensionList()" reason="Absent in 182 and before." />
+          <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#extensions()" reason="Absent in 182." />
+          <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#hasAnyExtensions" reason="Absent in 182." />
+          <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#getExtensionList(com.intellij.openapi.extensions.AreaInstance)" reason="Absent in 182." />
+          <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#extensions(com.intellij.openapi.extensions.AreaInstance)" reason="Absent in 182." />
+          <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#getPoint" reason="Absent in 182." />
+          <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#findExtensionOrFail" reason="Absent in 182." />
         </list>
       </option>
     </inspection_tool>
