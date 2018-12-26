@@ -223,8 +223,7 @@ postfixUnaryOperation
   ;
 
 callSuffix
-  : typeArguments? valueArguments annotatedLambda
-  : typeArguments annotatedLambda
+  : typeArguments? (valueArguments annotatedLambda? | annotatedLambda)
   ;
 
 annotatedLambda

@@ -18,7 +18,7 @@ type
 
 // If you change this, consider updating TYPE_REF_FIRST in KotlinParsing
 typeReference
-  : "(" typeReference ")"
+  : "(" type ")"
   : functionType
   : userType
   : nullableType
