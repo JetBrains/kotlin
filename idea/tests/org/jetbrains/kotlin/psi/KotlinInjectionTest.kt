@@ -443,6 +443,21 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         shreds = listOf(ShredInfo(range(0, 9), hostRange=range(1, 4), prefix = "abc", suffix = "ghi"))
     )
 
+    fun testSuffixAfterInterpolationInMultiline() = doInjectionPresentTest(
+        """
+        //language=TEXT suffix="check"
+        val some = 1
+        val text = ""${'"'}
+          <caret>${'$'}{some}
+          ""${'"'} // Position is important! Shouldn't be start of the line.
+        """,
+        languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+        shreds = listOf(
+            ShredInfo(range(0, 3), hostRange = range(3,6), prefix = "", suffix = ""),
+            ShredInfo(range(3, 23), hostRange = range(13,16), prefix= "missingValue", suffix = "check")
+        )
+    )
+
     fun testJavaAnnotationsPattern() {
         myFixture.addClass("""
                 @interface Matches { String value(); }

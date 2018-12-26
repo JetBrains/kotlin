@@ -83,7 +83,7 @@ fun splitLiteralToInjectionParts(injection: BaseInjection, literal: KtStringTemp
             }
         }
 
-        val suffix = if (child == lastChild) injection.suffix else ""
+        val suffix = if (i == len - 1) injection.suffix else ""
 
         if (part is PsiElement) {
             addInjectionRange(TextRange.create(partOffsetInParent, part.startOffsetInParent + part.textLength), prefix, suffix)
