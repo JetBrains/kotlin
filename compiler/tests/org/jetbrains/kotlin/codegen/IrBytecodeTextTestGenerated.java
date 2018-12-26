@@ -2585,6 +2585,74 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/localInitializationLVT")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LocalInitializationLVT extends AbstractIrBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLocalInitializationLVT() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/localInitializationLVT"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("boxing.kt")
+        public void testBoxing() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/boxing.kt");
+        }
+
+        @TestMetadata("contract.kt")
+        public void testContract() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/contract.kt");
+        }
+
+        @TestMetadata("generics.kt")
+        public void testGenerics() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/generics.kt");
+        }
+
+        @TestMetadata("ifStatement.kt")
+        public void testIfStatement() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/ifStatement.kt");
+        }
+
+        @TestMetadata("ifStatementWithoutBlock.kt")
+        public void testIfStatementWithoutBlock() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/ifStatementWithoutBlock.kt");
+        }
+
+        @TestMetadata("inlineClass.kt")
+        public void testInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/inlineClass.kt");
+        }
+
+        @TestMetadata("lateinit.kt")
+        public void testLateinit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/lateinit.kt");
+        }
+
+        @TestMetadata("run.kt")
+        public void testRun() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/run.kt");
+        }
+
+        @TestMetadata("singleBlock.kt")
+        public void testSingleBlock() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/singleBlock.kt");
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/var.kt");
+        }
+
+        @TestMetadata("whenStatement.kt")
+        public void testWhenStatement() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/whenStatement.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/multifileClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
