@@ -14,6 +14,19 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Test
 
 class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
+
+    lateinit var sdkCreationChecker: KotlinSdkCreationChecker
+
+    override fun setUp() {
+        super.setUp()
+        sdkCreationChecker = KotlinSdkCreationChecker()
+    }
+
+    override fun tearDown() {
+        sdkCreationChecker.removeNewKotlinSdk()
+        super.tearDown()
+    }
+
     @Test
     fun testMobile() {
         // TODO: add import & tests here when we will be able to locate Android SDK automatically (see KT-27635)

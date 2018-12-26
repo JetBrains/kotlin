@@ -11,16 +11,35 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinResourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runners.Parameterized
 
 class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
     private val kotlinVersion = "1.3.0-rc-146"
+
+    @Before
+    fun saveSdksBeforeTest() {
+        val kotlinSdks = sdkCreationChecker?.getKotlinSdks() ?: emptyList()
+        if (kotlinSdks.isNotEmpty()) {
+            ExternalSystemImportingTestCase.fail("Found Kotlin SDK before importing test. Sdk list: $kotlinSdks")
+        }
+    }
+
+    @After
+    fun checkSdkCreated() {
+        if (sdkCreationChecker?.isKotlinSdkCreated() == false) {
+            ExternalSystemImportingTestCase.fail("Kotlin SDK was not created during import of MPP Project.")
+        }
+    }
+
 
     @Test
     fun testProjectDependency() {
