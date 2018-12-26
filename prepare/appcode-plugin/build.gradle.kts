@@ -28,7 +28,7 @@ val kotlinVersion = rootProject.extra["kotlinVersion"] as String
 val cidrPluginDir: File by rootProject.extra
 val appcodePluginDir: File by rootProject.extra
 val appcodeVersion = rootProject.extra["versions.appcode"] as String
-val appcodeVersionStrict = rootProject.extra["versions.appcode.strict"] as Boolean
+val appcodeVersionStrict = (rootProject.extra["versions.appcode.strict"] as String).toBoolean()
 val appcodeVersionRepo = rootProject.extra["versions.appcode.repo"] as String
 
 val cidrPlugin by configurations.creating
