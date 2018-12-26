@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 
@@ -24,8 +25,9 @@ class ForInRangeInstanceLoopGenerator(
     codegen: ExpressionCodegen,
     forExpression: KtForExpression,
     private val rangeExpression: KtExpression,
+    comparisonGenerator: ComparisonGenerator,
     private val reversed: Boolean
-) : AbstractForInRangeLoopGenerator(codegen, forExpression, if (reversed) -1 else 1) {
+) : AbstractForInRangeLoopGenerator(codegen, forExpression, if (reversed) -1 else 1, comparisonGenerator) {
 
     override fun storeRangeStartAndEnd() {
         val loopRangeType = codegen.bindingContext.getType(rangeExpression)!!

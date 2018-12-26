@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.generateCallReceiver
 import org.jetbrains.kotlin.codegen.generateCallSingleArgument
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -39,12 +40,16 @@ class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
         createConstBoundedForInDownToGenerator(codegen, forExpression)
-            ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(codegen, forExpression, getBoundedValue(codegen))
+            ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
+                codegen, forExpression, getBoundedValue(codegen),
+                getComparisonGeneratorForKotlinType(elementKotlinType)
+            )
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
         createConstBoundedForInReversedDownToGenerator(codegen, forExpression)
             ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(
                 codegen, forExpression, getBoundedValue(codegen),
+                getComparisonGeneratorForKotlinType(elementKotlinType),
                 inverseBoundsEvaluationOrder = true
             )
 

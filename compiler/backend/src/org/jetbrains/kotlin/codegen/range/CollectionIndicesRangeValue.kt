@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
+import org.jetbrains.kotlin.codegen.range.comparison.IntComparisonGenerator
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInDefinitelySafeSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -35,7 +37,7 @@ class CollectionIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
     override fun getBoundedValue(codegen: ExpressionCodegen) =
         SimpleBoundedValue(
             codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
-            StackValue.constant(0, asmElementType),
+            StackValue.constant(0, elementType),
             true,
             StackValue.operation(Type.INT_TYPE) { v ->
                 codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), expectedReceiverType, v)
@@ -45,10 +47,12 @@ class CollectionIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
         )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-        ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
+        ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(
+            codegen, forExpression, getBoundedValue(codegen), IntComparisonGenerator
+        )
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
         ForInDefinitelySafeSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
-            codegen, forExpression, getBoundedValue(codegen)
+            codegen, forExpression, getBoundedValue(codegen), IntComparisonGenerator
         )
 }
