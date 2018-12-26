@@ -448,6 +448,11 @@ public class KtPsiUtil {
             }
         }
 
+        if (innerExpression instanceof KtLambdaExpression) {
+            PsiElement prevSibling = PsiTreeUtil.skipWhitespacesAndCommentsBackward(currentInner);
+            if (prevSibling != null && prevSibling.getText().endsWith(KtTokens.RPAR.getValue())) return true;
+        }
+
         if (parentElement instanceof KtCallExpression && currentInner == ((KtCallExpression) parentElement).getCalleeExpression()) {
             KtCallExpression parentCall = (KtCallExpression) parentElement;
             if (innerExpression instanceof KtSimpleNameExpression) return false;
