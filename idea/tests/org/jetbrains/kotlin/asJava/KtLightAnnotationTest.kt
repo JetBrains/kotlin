@@ -474,6 +474,39 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
 
     }
 
+    private fun doVarargTest(type: String, parameters: List<String>) {
+        val paramsJoined = parameters.joinToString(", ")
+
+        myFixture.addClass(
+            """
+                public @interface Annotation {
+                    $type[] value() default {};
+                }
+            """.trimIndent()
+        )
+
+        myFixture.configureByText(
+            "AnnotatedClass.kt", """
+                @Annotation($paramsJoined)
+                open class AnnotatedClass
+            """.trimIndent()
+        )
+        myFixture.testHighlighting("Annotation.java", "AnnotatedClass.kt")
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("value") as PsiArrayInitializerMemberValue
+        assertTextAndRange("($paramsJoined)", annotationAttributeVal)
+        UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
+        for ((i, arg) in parameters.withIndex()) {
+            assertTextAndRange(arg, annotationAttributeVal.initializers[i])
+        }
+    }
+
+
+    fun testVarargInt() = doVarargTest("int", listOf("1", "2", "3"))
+
+    fun testVarargClasses() = doVarargTest("""Class<?>""", listOf("Any::class", "String::class", "Int::class"))
+
     fun testVarargWithSpread() {
         myFixture.addClass("""
             public @interface Annotation {
