@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.scratch.repl
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
 import org.jetbrains.kotlin.cli.common.repl.replNormalizeLineBreaks
@@ -52,7 +53,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
         file.getExpressions().forEach { expression ->
             history.addEntry(expression)
-            sendCommandToProcess(expression.element.text)
+            sendCommandToProcess(runReadAction { expression.element.text })
         }
 
         sendCommandToProcess(":quit")
