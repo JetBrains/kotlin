@@ -69,6 +69,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
         runTest("idea/testData/multiModuleLineMarker/expectEnumEntriesInOneLine/");
     }
 
+    @TestMetadata("expectEnumWithEnumEntriesInOneLine")
+    public void testExpectEnumWithEnumEntriesInOneLine() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/expectEnumWithEnumEntriesInOneLine/");
+    }
+
     @TestMetadata("expectWithOverload")
     public void testExpectWithOverload() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/expectWithOverload/");
@@ -77,6 +82,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
     @TestMetadata("fromActualAnnotation")
     public void testFromActualAnnotation() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/fromActualAnnotation/");
+    }
+
+    @TestMetadata("fromActualAnnotationWithParametersInOneLine")
+    public void testFromActualAnnotationWithParametersInOneLine() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/fromActualAnnotationWithParametersInOneLine/");
     }
 
     @TestMetadata("fromActualCompanion")

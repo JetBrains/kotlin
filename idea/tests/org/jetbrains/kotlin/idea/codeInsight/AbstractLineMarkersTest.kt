@@ -117,16 +117,17 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
             )
             if (navigationDataComments.isEmpty()) return
 
-            for (navigationComment in navigationDataComments) {
+            for ((navigationCommentIndex, navigationComment) in navigationDataComments.reversed().withIndex()) {
                 val description = getLineMarkerDescription(navigationComment)
-                val navigateMarker = markers.find { it.lineMarkerTooltip?.startsWith(description) == true }!!
+                val navigateMarkers = markers.filter { it.lineMarkerTooltip?.startsWith(description) == true }
+                val navigateMarker = navigateMarkers.singleOrNull() ?: navigateMarkers.getOrNull(navigationCommentIndex)
 
                 TestCase.assertNotNull(
                     String.format("Can't find marker for navigation check with description \"%s\"", description),
                     navigateMarker
                 )
 
-                val handler = navigateMarker.navigationHandler
+                val handler = navigateMarker!!.navigationHandler
                 if (handler is TestableLineMarkerNavigator) {
                     val navigateElements = handler.getTargetsPopupDescriptor(navigateMarker.element)?.targets?.sortedBy {
                         it.renderAsGotoImplementation()

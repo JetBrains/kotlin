@@ -385,22 +385,59 @@ private fun KtNamedDeclaration.requiresNoMarkers(
             return true
         }
         is KtParameter,
-        is KtEnumEntry -> if (document?.areAnchorsOnOneLine(this, containingClassOrObject) == true) {
-            return true
+        is KtEnumEntry -> {
+            if (document?.areAnchorsOnOneLine(this, containingClassOrObject) == true) {
+                return true
+            }
+            if (this is KtEnumEntry) {
+                val enumEntries = containingClassOrObject?.body?.enumEntries.orEmpty()
+                val previousEnumEntry = enumEntries.getOrNull(enumEntries.indexOf(this) - 1)
+                if (document?.areAnchorsOnOneLine(this, previousEnumEntry) == true) {
+                    return true
+                }
+            }
+            if (this is KtParameter && hasValOrVar()) {
+                val parameters = containingClassOrObject?.primaryConstructorParameters.orEmpty()
+                val previousParameter = parameters.getOrNull(parameters.indexOf(this) - 1)
+                if (document?.areAnchorsOnOneLine(this, previousParameter) == true) {
+                    return true
+                }
+            }
         }
     }
     return false
 }
 
-internal fun KtDeclaration.findMarkerBoundDeclarations(): List<KtNamedDeclaration> {
-    if (this !is KtClass) return emptyList()
-    val result = mutableListOf<KtNamedDeclaration>()
+internal fun KtDeclaration.findMarkerBoundDeclarations(): Sequence<KtNamedDeclaration> {
+    if (this !is KtClass && this !is KtParameter) return emptySequence()
     val document = PsiDocumentManager.getInstance(project).getDocument(containingFile)
-    result += primaryConstructor?.valueParameters?.filter { it.hasValOrVar() && it.requiresNoMarkers(document) }.orEmpty()
-    if (this.isEnum()) {
-        result += this.body?.enumEntries?.filter { it.requiresNoMarkers(document) }.orEmpty()
+
+    fun <T : KtNamedDeclaration> Sequence<T>.takeBound(bound: KtNamedDeclaration) = takeWhile {
+        document?.areAnchorsOnOneLine(bound, it) == true
     }
-    return result
+
+    return when (this) {
+        is KtParameter -> {
+            val propertyParameters = takeIf { hasValOrVar() }?.containingClassOrObject?.primaryConstructorParameters
+                ?: return emptySequence()
+            propertyParameters.asSequence().dropWhile {
+                it !== this
+            }.drop(1).takeBound(this).filter { it.hasValOrVar() }
+        }
+        is KtEnumEntry -> {
+            val enumEntries = containingClassOrObject?.body?.enumEntries ?: return emptySequence()
+            enumEntries.asSequence().dropWhile {
+                it !== this
+            }.drop(1).takeBound(this)
+        }
+        is KtClass -> {
+            val boundParameters =
+                primaryConstructor?.valueParameters?.asSequence()?.takeBound(this)?.filter { it.hasValOrVar() }.orEmpty()
+            val boundEnumEntries = this.takeIf { isEnum() }?.body?.enumEntries?.asSequence()?.takeBound(this).orEmpty()
+            boundParameters + boundEnumEntries
+        }
+        else -> emptySequence()
+    }
 }
 
 private fun collectActualMarkers(
