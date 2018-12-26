@@ -97,8 +97,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
-import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
+import static org.jetbrains.kotlin.resolve.BindingContextUtils.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
@@ -3030,7 +3029,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     public int indexOfLocalNotDelegated(KtReferenceExpression lhs) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, lhs);
-        if (isVarCapturedInClosure(bindingContext, declarationDescriptor)) {
+        if (isBoxedLocalCapturedInClosure(bindingContext, declarationDescriptor)) {
             return -1;
         }
         if (declarationDescriptor instanceof LocalVariableDescriptor && ((LocalVariableDescriptor) declarationDescriptor).isDelegated()) {
@@ -4191,6 +4190,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     // 3) D8 dropping the whole LVT
     private void initializeLocalVariableWithFakeDefaultValue(@NotNull KtProperty variableDeclaration) {
         LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) getVariableDescriptorNotNull(variableDeclaration);
+
+        // For this kind of variables we generate boxes, i.e. we regard them as
+        if (isCapturedInClosureWithExactlyOnceEffect(bindingContext, variableDescriptor)) return;
 
         assert !variableDeclaration.isVar() && !variableDeclaration.hasDelegateExpressionOrInitializer() &&
                 !variableDescriptor.isLateInit() : variableDeclaration.getText() + " in not variable declaration without initializer";

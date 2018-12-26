@@ -21,5 +21,5 @@ fun doIt(block: () -> Unit) {
     block()
 }
 
-// 2 FCONST 0
-// 1 LOCALVARIABLE c Lkotlin/jvm/internal/Ref$CharRef; L1 L10 0
+// 0 ISTORE 0
+// 1 LOCALVARIABLE c Lkotlin/jvm/internal/Ref\$CharRef; L1 L3 0

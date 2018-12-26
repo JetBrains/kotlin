@@ -64,6 +64,16 @@ public class JsInlineContractsTestsGenerated extends AbstractJsInlineContractsTe
         runTest("compiler/testData/codegen/boxInline/contracts/definiteValInitialization.kt");
     }
 
+    @TestMetadata("exactlyOnceCrossinline.kt")
+    public void testExactlyOnceCrossinline() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/contracts/exactlyOnceCrossinline.kt");
+    }
+
+    @TestMetadata("exactlyOnceNoinline.kt")
+    public void testExactlyOnceNoinline() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/contracts/exactlyOnceNoinline.kt");
+    }
+
     @TestMetadata("nonLocalReturn.kt")
     public void testNonLocalReturn() throws Exception {
         runTest("compiler/testData/codegen/boxInline/contracts/nonLocalReturn.kt");
