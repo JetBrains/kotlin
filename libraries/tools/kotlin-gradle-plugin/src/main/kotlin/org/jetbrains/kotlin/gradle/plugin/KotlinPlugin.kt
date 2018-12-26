@@ -17,6 +17,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.CompileClasspathNormalizer
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
@@ -658,10 +659,13 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
     abstract fun getTestedVariantData(variantData: V): V?
     abstract fun getResDirectories(variantData: V): FileCollection
+    abstract fun getVariantName(variant: V): String
+    abstract fun getFlavorNames(variant: V): List<String>
+    abstract fun getBuildTypeName(variant: V): String
+    abstract fun getLibraryOutputTask(variant: V): AbstractArchiveTask?
 
     protected abstract fun getSourceProviders(variantData: V): Iterable<SourceProvider>
     protected abstract fun getAllJavaSources(variantData: V): Iterable<File>
-    protected abstract fun getVariantName(variant: V): String
     protected abstract fun getJavaTask(variantData: V): AbstractCompile?
     protected abstract fun addJavaSourceDirectoryToVariantModel(variantData: V, javaSourceDirectory: File): Unit
 
@@ -705,11 +709,11 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
         project.afterEvaluate { project ->
-            forEachVariant(project) { variant ->
-                val variantName = getVariantName(variant)
-                val compilation = kotlinAndroidTarget.compilations.create(variantName)
-                setUpDependencyResolution(variant, compilation)
-            }
+        forEachVariant(project) { variant ->
+            val variantName = getVariantName(variant)
+            val compilation = kotlinAndroidTarget.compilations.create(variantName)
+            setUpDependencyResolution(variant, compilation)
+        }
 
             val androidPluginIds = listOf(
                 "android", "com.android.application", "android-library", "com.android.library",

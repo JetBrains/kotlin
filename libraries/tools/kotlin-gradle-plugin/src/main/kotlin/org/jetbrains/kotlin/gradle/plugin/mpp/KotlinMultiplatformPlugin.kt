@@ -176,7 +176,13 @@ class KotlinMultiplatformPlugin(
             (targets.getByName(METADATA_TARGET_NAME) as AbstractKotlinTarget).createMavenPublications(publishing.publications)
             targets
                 .withType(AbstractKotlinTarget::class.java).matching { it.publishable && it.name != METADATA_TARGET_NAME }
-                .all { it.createMavenPublications(publishing.publications) }
+                .all {
+                    if (it is KotlinAndroidTarget)
+                        // Android targets have their variants created in afterEvaluate; TODO handle this better?
+                        project.whenEvaluated { it.createMavenPublications(publishing.publications) }
+                    else
+                        it.createMavenPublications(publishing.publications)
+                }
         }
 
         project.components.add(kotlinSoftwareComponent)
