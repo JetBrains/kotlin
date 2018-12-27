@@ -62,12 +62,7 @@ public actual inline fun maxOf(a: Long, b: Long): Long {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Float, b: Float): Float {
-    // TODO: Check +/-0.0
-    return when {
-        a.isNaN() -> a
-        b.isNaN() -> b
-        else -> if (a >= b) a else b
-    }
+    return if (a.compareTo(b) >= 0) a else b
 }
 
 /**
@@ -76,12 +71,7 @@ public actual inline fun maxOf(a: Float, b: Float): Float {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun maxOf(a: Double, b: Double): Double {
-    // TODO: Check +/-0.0
-    return when {
-        a.isNaN() -> a
-        b.isNaN() -> b
-        else -> if (a >= b) a else b
-    }
+    return if (a.compareTo(b) >= 0) a else b
 }
 
 /**
@@ -197,11 +187,10 @@ public actual inline fun minOf(a: Long, b: Long): Long {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Float, b: Float): Float {
-    // TODO: Check +/-0.0
     return when {
         a.isNaN() -> a
         b.isNaN() -> b
-        else -> if (a <= b) a else b
+        else -> if (a.compareTo(b) <= 0) a else b
     }
 }
 
@@ -211,11 +200,10 @@ public actual inline fun minOf(a: Float, b: Float): Float {
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public actual inline fun minOf(a: Double, b: Double): Double {
-    // TODO: Check +/-0.0
     return when {
         a.isNaN() -> a
         b.isNaN() -> b
-        else -> if (a <= b) a else b
+        else -> if (a.compareTo(b) <= 0) a else b
     }
 }
 

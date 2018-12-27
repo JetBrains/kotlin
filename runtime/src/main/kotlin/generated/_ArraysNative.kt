@@ -180,16 +180,10 @@ public actual fun <T> Array<out T>.contentDeepToString(): String {
  */
 @SinceKotlin("1.1")
 public actual infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
-    if (this === other) {
-        return true
-    }
-    if (size != other.size) {
-        return false
-    }
+    if (this === other) return true
+    if (size != other.size) return false
     for (i in indices) {
-        if (this[i] != other[i]) {
-            return false
-        }
+        if (this[i] != other[i]) return false
     }
     return true
 }
@@ -200,16 +194,10 @@ public actual infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boo
  */
 @SinceKotlin("1.1")
 public actual infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
-    if (this === other) {
-        return true
-    }
-    if (size != other.size) {
-        return false
-    }
+    if (this === other) return true
+    if (size != other.size) return false
     for (i in indices) {
-        if (this[i] != other[i]) {
-            return false
-        }
+        if (this[i] != other[i]) return false
     }
     return true
 }
@@ -220,16 +208,10 @@ public actual infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
  */
 @SinceKotlin("1.1")
 public actual infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
-    if (this === other) {
-        return true
-    }
-    if (size != other.size) {
-        return false
-    }
+    if (this === other) return true
+    if (size != other.size) return false
     for (i in indices) {
-        if (this[i] != other[i]) {
-            return false
-        }
+        if (this[i] != other[i]) return false
     }
     return true
 }
@@ -240,16 +222,10 @@ public actual infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
  */
 @SinceKotlin("1.1")
 public actual infix fun IntArray.contentEquals(other: IntArray): Boolean {
-    if (this === other) {
-        return true
-    }
-    if (size != other.size) {
-        return false
-    }
+    if (this === other) return true
+    if (size != other.size) return false
     for (i in indices) {
-        if (this[i] != other[i]) {
-            return false
-        }
+        if (this[i] != other[i]) return false
     }
     return true
 }
@@ -260,16 +236,10 @@ public actual infix fun IntArray.contentEquals(other: IntArray): Boolean {
  */
 @SinceKotlin("1.1")
 public actual infix fun LongArray.contentEquals(other: LongArray): Boolean {
-    if (this === other) {
-        return true
-    }
-    if (size != other.size) {
-        return false
-    }
+    if (this === other) return true
+    if (size != other.size) return false
     for (i in indices) {
-        if (this[i] != other[i]) {
-            return false
-        }
+        if (this[i] != other[i]) return false
     }
     return true
 }
@@ -280,16 +250,10 @@ public actual infix fun LongArray.contentEquals(other: LongArray): Boolean {
  */
 @SinceKotlin("1.1")
 public actual infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
-    if (this === other) {
-        return true
-    }
-    if (size != other.size) {
-        return false
-    }
+    if (this === other) return true
+    if (size != other.size) return false
     for (i in indices) {
-        if (this[i] != other[i]) {
-            return false
-        }
+        if (!this[i].equals(other[i])) return false
     }
     return true
 }
@@ -300,16 +264,10 @@ public actual infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
  */
 @SinceKotlin("1.1")
 public actual infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
-    if (this === other) {
-        return true
-    }
-    if (size != other.size) {
-        return false
-    }
+    if (this === other) return true
+    if (size != other.size) return false
     for (i in indices) {
-        if (this[i] != other[i]) {
-            return false
-        }
+        if (!this[i].equals(other[i])) return false
     }
     return true
 }
@@ -320,16 +278,10 @@ public actual infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
  */
 @SinceKotlin("1.1")
 public actual infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
-    if (this === other) {
-        return true
-    }
-    if (size != other.size) {
-        return false
-    }
+    if (this === other) return true
+    if (size != other.size) return false
     for (i in indices) {
-        if (this[i] != other[i]) {
-            return false
-        }
+        if (this[i] != other[i]) return false
     }
     return true
 }
@@ -340,16 +292,10 @@ public actual infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
  */
 @SinceKotlin("1.1")
 public actual infix fun CharArray.contentEquals(other: CharArray): Boolean {
-    if (this === other) {
-        return true
-    }
-    if (size != other.size) {
-        return false
-    }
+    if (this === other) return true
+    if (size != other.size) return false
     for (i in indices) {
-        if (this[i] != other[i]) {
-            return false
-        }
+        if (this[i] != other[i]) return false
     }
     return true
 }
