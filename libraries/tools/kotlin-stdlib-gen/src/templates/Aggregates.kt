@@ -232,7 +232,7 @@ object Aggregates : TemplateGroupBase() {
 
 
     val f_minMax = run {
-        val genericSpecializations = PrimitiveType.numericPrimitives.filterNot { it.isIntegral() }.toSet() + setOf(null)
+        val genericSpecializations = PrimitiveType.floatingPointPrimitives + setOf(null)
 
         listOf("min", "max").map { op ->
             fn("$op()") {
@@ -242,7 +242,7 @@ object Aggregates : TemplateGroupBase() {
                 include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives - PrimitiveType.Boolean)
                 include(CharSequences)
             } builder {
-                val isFloat = primitive?.isIntegral() == false
+                val isFloat = primitive?.isFloatingPoint() == true
                 val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
 
                 typeParam("T : Comparable<T>")
