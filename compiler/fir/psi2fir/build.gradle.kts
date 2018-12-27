@@ -16,9 +16,27 @@ dependencies {
     compile(project(":compiler:fir:tree"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "annotations") }
+    
+    testRuntime(intellijDep())
+
+    testCompile(commonDep("junit:junit"))
+    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
+    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testCompile(projectTests(":compiler:tests-common"))
+    
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testRuntime(project(":kotlin-reflect"))
+
+
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
 }
+
+projectTest {
+    workingDir = rootDir
+}
+
+testsJar()

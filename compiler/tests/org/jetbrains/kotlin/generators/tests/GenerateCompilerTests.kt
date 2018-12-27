@@ -202,17 +202,7 @@ fun main(args: Array<String>) {
             model("ir/sourceRanges")
         }
 
-        testClass<AbstractRawFirBuilderTestCase> {
-            model("fir/rawBuilder", testMethod = "doRawFirTest")
-        }
 
-        testClass<AbstractFirResolveTestCase> {
-            model("fir/resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib"))
-        }
-
-        testClass<AbstractFirResolveTestCaseWithStdlib> {
-            model("fir/resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
-        }
 
         testClass<AbstractBytecodeListingTest> {
             model("codegen/bytecodeListing")
@@ -385,6 +375,22 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrBytecodeTextTest> {
             model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR)
+        }
+    }
+
+    testGroup("compiler/fir/psi2fir/tests", "compiler/fir/psi2fir/testData") {
+        testClass<AbstractRawFirBuilderTestCase> {
+            model("rawBuilder", testMethod = "doRawFirTest")
+        }
+    }
+
+    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+        testClass<AbstractFirResolveTestCase> {
+            model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib"))
+        }
+
+        testClass<AbstractFirResolveTestCaseWithStdlib> {
+            model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 }
