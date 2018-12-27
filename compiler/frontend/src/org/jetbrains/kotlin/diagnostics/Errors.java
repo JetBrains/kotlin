@@ -231,6 +231,8 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> ANNOTATION_ARGUMENT_MUST_BE_CONST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtExpression> ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotatedExpression> ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtAnnotationEntry> ANNOTATION_USED_AS_ANNOTATION_ARGUMENT = DiagnosticFactory0.create(ERROR);
