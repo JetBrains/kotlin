@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
@@ -74,31 +75,30 @@ private const val CLOSED_FLOATING_POINT_RANGE_FQN = "kotlin.ranges.ClosedFloatin
 private const val COMPARABLE_RANGE_FQN = "kotlin.ranges.ComparableRange"
 private const val UINT_RANGE_FQN = "kotlin.ranges.UIntRange"
 private const val ULONG_RANGE_FQN = "kotlin.ranges.ULongRange"
+private const val UINT_PROGRESSION_FQN = "kotlin.ranges.UIntProgression"
+private const val ULONG_PROGRESSION_FQN = "kotlin.ranges.ULongProgression"
 
 fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
     val rangeClassDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
     val builtIns = rangeClassDescriptor.builtIns
 
     return when (rangeClassDescriptor.fqNameSafe.asString()) {
-        CHAR_RANGE_FQN -> builtIns.charType
-        INT_RANGE_FQN -> builtIns.intType
-        LONG_RANGE_FQN -> builtIns.longType
-
-        CHAR_PROGRESSION_FQN -> builtIns.charType
-        INT_PROGRESSION_FQN -> builtIns.intType
-        LONG_PROGRESSION_FQN -> builtIns.longType
+        CHAR_RANGE_FQN, CHAR_PROGRESSION_FQN -> builtIns.charType
+        INT_RANGE_FQN, INT_PROGRESSION_FQN -> builtIns.intType
+        LONG_RANGE_FQN, LONG_PROGRESSION_FQN -> builtIns.longType
 
         CLOSED_FLOAT_RANGE_FQN -> builtIns.floatType
         CLOSED_DOUBLE_RANGE_FQN -> builtIns.doubleType
 
         CLOSED_RANGE_FQN -> rangeType.arguments.singleOrNull()?.type
-
         CLOSED_FLOATING_POINT_RANGE_FQN -> rangeType.arguments.singleOrNull()?.type
-
         COMPARABLE_RANGE_FQN -> rangeType.arguments.singleOrNull()?.type
 
-        UINT_RANGE_FQN -> rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltIns.FQ_NAMES.uIntFqName)
-        ULONG_RANGE_FQN -> rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltIns.FQ_NAMES.uLongFqName)
+        UINT_RANGE_FQN, UINT_PROGRESSION_FQN ->
+            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltIns.FQ_NAMES.uIntFqName)
+
+        ULONG_RANGE_FQN, ULONG_PROGRESSION_FQN ->
+            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltIns.FQ_NAMES.uLongFqName)
 
         else -> null
     }
@@ -125,12 +125,10 @@ fun isPrimitiveNumberRangeTo(rangeTo: CallableDescriptor) =
             isPrimitiveRangeToExtension(rangeTo)
 
 fun isUnsignedIntegerRangeTo(rangeTo: CallableDescriptor) =
-    "rangeTo" == rangeTo.name.asString() && isUnsignedIntegerClass(rangeTo.containingDeclaration)
+    "rangeTo" == rangeTo.name.asString() && isUnsignedIntegerClassDescriptor(rangeTo.containingDeclaration)
 
-fun isUnsignedIntegerClass(descriptor: DeclarationDescriptor) =
-    descriptor is ClassDescriptor && descriptor.defaultType.let { type ->
-        KotlinBuiltIns.isUByte(type) || KotlinBuiltIns.isUShort(type) || KotlinBuiltIns.isUInt(type) || KotlinBuiltIns.isULong(type)
-    }
+fun isUnsignedIntegerClassDescriptor(descriptor: DeclarationDescriptor?) =
+    descriptor != null && UnsignedTypes.isUnsignedClass(descriptor)
 
 private inline fun CallableDescriptor.isTopLevelExtensionOnType(
     name: String,
@@ -152,9 +150,19 @@ fun isPrimitiveNumberDownTo(descriptor: CallableDescriptor) =
         isPrimitiveNumberClassDescriptor(it.constructor.declarationDescriptor)
     }
 
+fun isUnsignedIntegerDownTo(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("downTo", "kotlin.ranges") {
+        isUnsignedIntegerClassDescriptor(it.constructor.declarationDescriptor)
+    }
+
 fun isPrimitiveNumberUntil(descriptor: CallableDescriptor) =
     descriptor.isTopLevelExtensionOnType("until", "kotlin.ranges") {
         isPrimitiveNumberClassDescriptor(it.constructor.declarationDescriptor)
+    }
+
+fun isUnsignedIntegerUntil(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("until", "kotlin.ranges") {
+        isUnsignedIntegerClassDescriptor(it.constructor.declarationDescriptor)
     }
 
 fun isArrayOrPrimitiveArrayIndices(descriptor: CallableDescriptor) =

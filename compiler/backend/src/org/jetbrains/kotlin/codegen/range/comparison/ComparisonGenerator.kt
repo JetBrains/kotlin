@@ -47,6 +47,10 @@ fun getComparisonGeneratorForKotlinType(kotlinType: KotlinType): ComparisonGener
             FloatComparisonGenerator
         KotlinBuiltIns.isDouble(kotlinType) ->
             DoubleComparisonGenerator
+        KotlinBuiltIns.isUInt(kotlinType) ->
+            UIntComparisonGenerator
+        KotlinBuiltIns.isULong(kotlinType) ->
+            ULongComparisonGenerator
         else ->
             throw UnsupportedOperationException("Unexpected element type: $kotlinType")
     }
