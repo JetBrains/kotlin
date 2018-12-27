@@ -947,12 +947,7 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.Native) {
-            specialFor(ArraysOfObjects) {
-                body { """if (size > 1) kotlin.util.sortArrayComparable(this)""" }
-            }
-            specialFor(ArraysOfPrimitives) {
-                body { """if (size > 1) kotlin.util.sortArray(this)""" }
-            }
+            body { """if (size > 1) sortArray(this)""" }
         }
     }
 
@@ -973,7 +968,7 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.Native) {
-            body { """if (size > 1) kotlin.util.sortArrayWith(this, 0, size, comparator)""" }
+            body { """if (size > 1) sortArrayWith(this, 0, size, comparator)""" }
         }
     }
 
@@ -1031,14 +1026,21 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_sortWith_range = fn("sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)") {
-        platforms(Platform.JVM)
+        platforms(Platform.JVM, Platform.Native)
         include(ArraysOfObjects)
     } builder {
         doc { "Sorts a range in the array in-place with the given [comparator]." }
         appendStableSortNote()
         returns("Unit")
-        body {
-            "java.util.Arrays.sort(this, fromIndex, toIndex, comparator)"
+        on(Platform.JVM) {
+            body {
+                "java.util.Arrays.sort(this, fromIndex, toIndex, comparator)"
+            }
+        }
+        on(Platform.Native) {
+            body {
+                "sortArrayWith(this, fromIndex, toIndex, comparator)"
+            }
         }
     }
 
