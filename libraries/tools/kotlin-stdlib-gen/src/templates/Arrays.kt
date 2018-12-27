@@ -99,18 +99,16 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.Native) {
+            fun notEq(operand1: String, operand2: String) = when {
+                primitive?.isFloatingPoint() == true -> "!$operand1.equals($operand2)"
+                else -> "$operand1 != $operand2"
+            }
             body {
                 """
-                if (this === other) {
-                    return true
-                }
-                if (size != other.size) {
-                    return false
-                }
+                if (this === other) return true
+                if (size != other.size) return false
                 for (i in indices) {
-                    if (this[i] != other[i]) {
-                        return false
-                    }
+                    if (${notEq("this[i]", "other[i]")}) return false
                 }
                 return true
                 """

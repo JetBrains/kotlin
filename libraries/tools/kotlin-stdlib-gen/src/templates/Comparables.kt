@@ -178,11 +178,10 @@ object ComparableOps : TemplateGroupBase() {
                 on(Platform.Native) {
                     body {
                         """
-                        // TODO: Check +/-0.0
                         return when {
                             a.isNaN() -> a
                             b.isNaN() -> b
-                            else -> $defaultImpl
+                            else -> if (a.compareTo(b) <= 0) a else b
                         }
                         """
                     }
@@ -318,12 +317,7 @@ object ComparableOps : TemplateGroupBase() {
                 on(Platform.Native) {
                     body {
                         """
-                        // TODO: Check +/-0.0
-                        return when {
-                            a.isNaN() -> a
-                            b.isNaN() -> b
-                            else -> $defaultImpl
-                        }
+                        return if (a.compareTo(b) >= 0) a else b
                         """
                     }
                 }
