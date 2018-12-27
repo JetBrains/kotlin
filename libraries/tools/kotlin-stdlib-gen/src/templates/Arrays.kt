@@ -611,7 +611,7 @@ object ArrayOps : TemplateGroupBase() {
                 val thisSize = size
                 val arraySize = elements.size
                 val result = copyOfUninitializedElements(thisSize + arraySize)
-                elements.copyRangeTo(result, 0, arraySize, thisSize)
+                elements.copyInto(result, thisSize)
                 return result
                 """
             }
@@ -687,9 +687,18 @@ object ArrayOps : TemplateGroupBase() {
                 suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
                 body {
                     """
-                    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+                    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
                     return destination
                     """
+                }
+                specialFor(InvariantArraysOfObjects) {
+                    body {
+                        """
+                        @Suppress("UNCHECKED_CAST")
+                        arrayCopy(this as Array<Any?>, startIndex, destination as Array<Any?>, destinationOffset, endIndex - startIndex)
+                        return destination
+                        """
+                    }
                 }
             }
         }
