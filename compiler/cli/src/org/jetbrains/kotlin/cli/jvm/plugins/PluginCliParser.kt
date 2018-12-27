@@ -76,7 +76,7 @@ object PluginCliParser {
     private fun processPluginOptions(
         pluginOptions: Iterable<String>?,
         configuration: CompilerConfiguration,
-        classLoader: ClassLoader
+        classLoader: URLClassLoader
     ) {
         val optionValuesByPlugin = pluginOptions?.map(::parsePluginOption)?.groupBy {
             if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments.PLUGIN_OPTION_FORMAT}")
@@ -84,7 +84,7 @@ object PluginCliParser {
         } ?: mapOf()
 
         // TODO issue a warning on using deprecated command line processors when all official plugin migrate to the newer convention
-        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader)
+        val commandLineProcessors = ServiceLoaderLite.loadImplementations(CommandLineProcessor::class.java, classLoader)
 
         for (processor in commandLineProcessors) {
             val declaredOptions = processor.pluginOptions.associateBy { it.optionName }
