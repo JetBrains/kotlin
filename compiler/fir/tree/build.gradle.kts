@@ -22,7 +22,6 @@ sourceSets {
         projectDefault()
         java.srcDir("visitors")
     }
-    "test" {}
 }
 
 val generatorClasspath by configurations.creating
