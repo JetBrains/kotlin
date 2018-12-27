@@ -22,7 +22,6 @@ dependencies {
     compile(projectTests(":plugins:jvm-abi-gen"))
     compile(projectTests(":plugins:android-extensions-compiler"))
     compile(projectTests(":plugins:android-extensions-ide"))
-    compile(projectTests(":plugins:android-extensions-jps"))
     compile(projectTests(":kotlin-annotation-processing"))
     compile(projectTests(":kotlin-annotation-processing-cli"))
     compile(projectTests(":kotlin-allopen-compiler-plugin"))
