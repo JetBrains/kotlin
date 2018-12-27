@@ -176,6 +176,11 @@ public class IrInlineDefaultValuesTestsGenerated extends AbstractIrInlineDefault
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultLambdaInNoInline.kt");
         }
 
+        @TestMetadata("differentInvokeSignature.kt")
+        public void testDifferentInvokeSignature() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/differentInvokeSignature.kt");
+        }
+
         @TestMetadata("genericLambda.kt")
         public void testGenericLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/genericLambda.kt");
@@ -194,6 +199,21 @@ public class IrInlineDefaultValuesTestsGenerated extends AbstractIrInlineDefault
         @TestMetadata("kt21827.kt")
         public void testKt21827() throws Exception {
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt21827.kt");
+        }
+
+        @TestMetadata("kt21946.kt")
+        public void testKt21946() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt21946.kt");
+        }
+
+        @TestMetadata("kt24477.kt")
+        public void testKt24477() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt24477.kt");
+        }
+
+        @TestMetadata("kt25106.kt")
+        public void testKt25106() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt25106.kt");
         }
 
         @TestMetadata("noInline.kt")
@@ -311,6 +331,16 @@ public class IrInlineDefaultValuesTestsGenerated extends AbstractIrInlineDefault
             @TestMetadata("constuctorReference.kt")
             public void testConstuctorReference() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/constuctorReference.kt");
+            }
+
+            @TestMetadata("differentInvokeSignature.kt")
+            public void testDifferentInvokeSignature() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature.kt");
+            }
+
+            @TestMetadata("differentInvokeSignature2.kt")
+            public void testDifferentInvokeSignature2() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature2.kt");
             }
 
             @TestMetadata("functionImportedFromObject.kt")

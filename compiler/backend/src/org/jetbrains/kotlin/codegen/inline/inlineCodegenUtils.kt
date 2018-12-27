@@ -88,7 +88,8 @@ internal fun getMethodNode(
     classData: ByteArray,
     methodName: String,
     methodDescriptor: String,
-    classType: Type
+    classType: Type,
+    signatureAmbiguity: Boolean = false
 ): SMAPAndMethodNode? {
     val cr = ClassReader(classData)
     var node: MethodNode? = null
@@ -112,17 +113,28 @@ internal fun getMethodNode(
             signature: String?,
             exceptions: Array<String>?
         ): MethodVisitor? {
-            if (methodName == name && methodDescriptor == desc) {
-                node = object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
-                    override fun visitLineNumber(line: Int, start: Label) {
-                        super.visitLineNumber(line, start)
-                        lines[0] = Math.min(lines[0], line)
-                        lines[1] = Math.max(lines[1], line)
-                    }
+            if (methodName != name || (signatureAmbiguity && access.and(Opcodes.ACC_SYNTHETIC) != 0)) return null
+
+            if (methodDescriptor != desc) {
+                val sameNumberOfParameters = Type.getArgumentTypes(methodDescriptor).size == Type.getArgumentTypes(desc).size
+                if (!signatureAmbiguity || !sameNumberOfParameters) {
+                    return null
                 }
-                return node
             }
-            return null
+
+            node?.let { existing ->
+                throw AssertionError("Can't find proper '$name' method for inline: ambiguity between '${existing.name + existing.desc}' and '${name + desc}'")
+            }
+
+            return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
+                override fun visitLineNumber(line: Int, start: Label) {
+                    super.visitLineNumber(line, start)
+                    lines[0] = Math.min(lines[0], line)
+                    lines[1] = Math.max(lines[1], line)
+                }
+            }.also {
+                node = it
+            }
         }
     }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 
