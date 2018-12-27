@@ -18,8 +18,7 @@ val projectsToShadow = listOf(
         ":jps-plugin",
         ":kotlin-preloader",
         ":compiler:util",
-        ":core:util.runtime",
-        ":plugins:android-extensions-jps")
+        ":core:util.runtime")
 
 dependencies {
     projectsToShadow.forEach {
