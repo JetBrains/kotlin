@@ -72,10 +72,4 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
             KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
         }
     }
-
-    override fun findReferences(element: PsiElement, searchInCommentsAndStrings: Boolean): MutableCollection<PsiReference> {
-        return super.findReferences(element, searchInCommentsAndStrings).also {
-            KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
-        }
-    }
 }
