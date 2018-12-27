@@ -213,7 +213,7 @@ internal fun <E> Array<E>.resetAt(index: Int) {
 
 @SymbolName("Kotlin_Array_fillImpl")
 @PointsTo(0b01000, 0, 0, 0b00001) // <array> points to <value>, <value> points to <array>.
-external private fun fillImpl(array: Array<Any>, fromIndex: Int, toIndex: Int, value: Any?)
+external private fun fillImpl(array: Array<Any?>, fromIndex: Int, toIndex: Int, value: Any?)
 
 @SymbolName("Kotlin_IntArray_fillImpl")
 external private fun fillImpl(array: IntArray, fromIndex: Int, toIndex: Int, value: Int)
@@ -226,7 +226,7 @@ external private fun fillImpl(array: IntArray, fromIndex: Int, toIndex: Int, val
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
-    fillImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any>), fromIndex, toIndex, null)
+    fillImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any?>), fromIndex, toIndex, null)
 }
 
 internal fun IntArray.fill(fromIndex: Int, toIndex: Int, value: Int) {
@@ -235,8 +235,8 @@ internal fun IntArray.fill(fromIndex: Int, toIndex: Int, value: Int) {
 
 @SymbolName("Kotlin_Array_copyImpl")
 @PointsTo(0b000100, 0, 0b000001) // <array> points to <destination>, <destination> points to <array>.
-external private fun copyImpl(array: Array<Any>, fromIndex: Int,
-                         destination: Array<Any>, toIndex: Int, count: Int)
+external private fun copyImpl(array: Array<Any?>, fromIndex: Int,
+                         destination: Array<Any?>, toIndex: Int, count: Int)
 
 @SymbolName("Kotlin_ByteArray_copyImpl")
 external private fun copyImpl(array: ByteArray, fromIndex: Int,
@@ -299,8 +299,8 @@ external private fun copyImpl(array: BooleanArray, fromIndex: Int,
 @PublishedApi
 internal fun <E> Array<out E>.copyRangeTo(
         destination: Array<in E>, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
-    copyImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any>), fromIndex,
-             @Suppress("UNCHECKED_CAST") (destination as Array<Any>),
+    copyImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any?>), fromIndex,
+             @Suppress("UNCHECKED_CAST") (destination as Array<Any?>),
              destinationIndex, toIndex - fromIndex)
 }
 
