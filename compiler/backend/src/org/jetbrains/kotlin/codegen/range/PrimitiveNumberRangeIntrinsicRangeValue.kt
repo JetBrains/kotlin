@@ -43,8 +43,6 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
         rangeCall.resultingDescriptor.returnType?.let { getRangeOrProgressionElementType(it) }
             ?: throw AssertionError("Unexpected range ")
 
-    protected val elementType = getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCall.resultingDescriptor)
-
     override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
         resolvedCallForIn.resultingDescriptor.let {
             isPrimitiveRangeContains(it) ||
@@ -145,7 +143,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             codegen, forExpression,
             startValue = startValue,
             isStartInclusive = isStartInclusive,
-            endValue = StackValue.integerConstant(endIntValue, elementType),
+            endValue = StackValue.integerConstant(endIntValue, codegen.asmType(elementKotlinType)),
             isEndInclusive = true,
             comparisonGenerator = getComparisonGeneratorForKotlinType(elementKotlinType),
             step = step
@@ -163,7 +161,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             codegen, forExpression,
             startValue = startValue,
             isStartInclusive = isStartInclusive,
-            endValue = StackValue.constant(endLongValue, elementType),
+            endValue = StackValue.constant(endLongValue, codegen.asmType(elementKotlinType), elementKotlinType),
             isEndInclusive = true,
             comparisonGenerator = getComparisonGeneratorForKotlinType(elementKotlinType),
             step = step

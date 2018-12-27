@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtForExpression
@@ -18,9 +19,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.org.objectweb.asm.Type
 
 val supportedRangeTypes = listOf(PrimitiveType.CHAR, PrimitiveType.INT, PrimitiveType.LONG)
 
@@ -61,31 +61,51 @@ private fun getPrimitiveRangeOrProgressionElementType(
     return map[fqName.toSafe()]
 }
 
+private const val CHAR_RANGE_FQN = "kotlin.ranges.CharRange"
+private const val INT_RANGE_FQN = "kotlin.ranges.IntRange"
+private const val LONG_RANGE_FQN = "kotlin.ranges.LongRange"
+private const val CHAR_PROGRESSION_FQN = "kotlin.ranges.CharProgression"
+private const val INT_PROGRESSION_FQN = "kotlin.ranges.IntProgression"
+private const val LONG_PROGRESSION_FQN = "kotlin.ranges.LongProgression"
+private const val CLOSED_FLOAT_RANGE_FQN = "kotlin.ranges.ClosedFloatRange"
+private const val CLOSED_DOUBLE_RANGE_FQN = "kotlin.ranges.ClosedDoubleRange"
+private const val CLOSED_RANGE_FQN = "kotlin.ranges.ClosedRange"
+private const val CLOSED_FLOATING_POINT_RANGE_FQN = "kotlin.ranges.ClosedFloatingPointRange"
+private const val COMPARABLE_RANGE_FQN = "kotlin.ranges.ComparableRange"
+private const val UINT_RANGE_FQN = "kotlin.ranges.UIntRange"
+private const val ULONG_RANGE_FQN = "kotlin.ranges.ULongRange"
+
 fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
     val rangeClassDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
     val builtIns = rangeClassDescriptor.builtIns
 
     return when (rangeClassDescriptor.fqNameSafe.asString()) {
-        "kotlin.ranges.CharRange" -> builtIns.charType
-        "kotlin.ranges.IntRange" -> builtIns.intType
-        "kotlin.ranges.LongRange" -> builtIns.longType
+        CHAR_RANGE_FQN -> builtIns.charType
+        INT_RANGE_FQN -> builtIns.intType
+        LONG_RANGE_FQN -> builtIns.longType
 
-        "kotlin.ranges.CharProgression" -> builtIns.charType
-        "kotlin.ranges.IntProgression" -> builtIns.intType
-        "kotlin.ranges.LongProgression" -> builtIns.longType
+        CHAR_PROGRESSION_FQN -> builtIns.charType
+        INT_PROGRESSION_FQN -> builtIns.intType
+        LONG_PROGRESSION_FQN -> builtIns.longType
 
-        "kotlin.ranges.ClosedFloatRange" -> builtIns.floatType
-        "kotlin.ranges.ClosedDoubleRange" -> builtIns.doubleType
+        CLOSED_FLOAT_RANGE_FQN -> builtIns.floatType
+        CLOSED_DOUBLE_RANGE_FQN -> builtIns.doubleType
 
-        "kotlin.ranges.ClosedRange" -> rangeType.arguments.singleOrNull()?.type
+        CLOSED_RANGE_FQN -> rangeType.arguments.singleOrNull()?.type
 
-        "kotlin.ranges.ClosedFloatingPointRange" -> rangeType.arguments.singleOrNull()?.type
+        CLOSED_FLOATING_POINT_RANGE_FQN -> rangeType.arguments.singleOrNull()?.type
 
-        "kotlin.ranges.ComparableRange" -> rangeType.arguments.singleOrNull()?.type
+        COMPARABLE_RANGE_FQN -> rangeType.arguments.singleOrNull()?.type
+
+        UINT_RANGE_FQN -> rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltIns.FQ_NAMES.uIntFqName)
+        ULONG_RANGE_FQN -> rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltIns.FQ_NAMES.uLongFqName)
 
         else -> null
     }
 }
+
+private fun DeclarationDescriptor.findTypeInModuleByTopLevelClassFqName(fqName: FqName) =
+    module.findClassAcrossModuleDependencies(ClassId.topLevel(fqName))?.defaultType
 
 fun BindingContext.getElementType(forExpression: KtForExpression): KotlinType {
     val loopRange = forExpression.loopRange!!
@@ -103,6 +123,14 @@ fun isRangeOrProgression(className: FqName) =
 fun isPrimitiveNumberRangeTo(rangeTo: CallableDescriptor) =
     "rangeTo" == rangeTo.name.asString() && isPrimitiveNumberClassDescriptor(rangeTo.containingDeclaration) ||
             isPrimitiveRangeToExtension(rangeTo)
+
+fun isUnsignedIntegerRangeTo(rangeTo: CallableDescriptor) =
+    "rangeTo" == rangeTo.name.asString() && isUnsignedIntegerClass(rangeTo.containingDeclaration)
+
+fun isUnsignedIntegerClass(descriptor: DeclarationDescriptor) =
+    descriptor is ClassDescriptor && descriptor.defaultType.let { type ->
+        KotlinBuiltIns.isUByte(type) || KotlinBuiltIns.isUShort(type) || KotlinBuiltIns.isUInt(type) || KotlinBuiltIns.isULong(type)
+    }
 
 private inline fun CallableDescriptor.isTopLevelExtensionOnType(
     name: String,
@@ -223,35 +251,6 @@ fun isClosedFloatingPointRangeContains(descriptor: CallableDescriptor): Boolean 
     if (!containingClassDescriptor.isTopLevelInPackage("ClosedFloatingPointRange", "kotlin.ranges")) return false
 
     return true
-}
-
-fun getClosedFloatingPointRangeElementType(rangeType: KotlinType): KotlinType? {
-    val classDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
-    if (!classDescriptor.isTopLevelInPackage("ClosedFloatingPointRange", "kotlin.ranges")) return null
-    return rangeType.arguments.singleOrNull()?.type
-}
-
-fun getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCallee: CallableDescriptor): Type {
-    val rangeType = rangeCallee.returnType!!
-
-    getPrimitiveRangeElementType(rangeType)?.let {
-        return AsmTypes.valueTypeForPrimitive(it)
-    }
-
-    getPrimitiveProgressionElementType(rangeType)?.let {
-        return AsmTypes.valueTypeForPrimitive(it)
-    }
-
-    getClosedFloatingPointRangeElementType(rangeType)?.let {
-        when {
-            KotlinBuiltIns.isDouble(it) -> return Type.DOUBLE_TYPE
-            KotlinBuiltIns.isFloat(it) -> return Type.FLOAT_TYPE
-            else -> {
-            }
-        }
-    }
-
-    throw AssertionError("Unexpected range type: $rangeType")
 }
 
 fun isCharSequenceIterator(descriptor: CallableDescriptor) =
