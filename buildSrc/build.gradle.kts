@@ -59,7 +59,7 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
 }
 
 rootProject.apply {
-    from(rootProject.file("../versions.gradle.kts"))
+    from(rootProject.file("../gradle/versions.gradle.kts"))
 }
 
 val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null

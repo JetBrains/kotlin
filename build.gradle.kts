@@ -142,9 +142,9 @@ fun checkJDK() {
 }
 
 rootProject.apply {
-    from(rootProject.file("versions.gradle.kts"))
-    from(rootProject.file("report.gradle.kts"))
-    from(rootProject.file("javaInstrumentation.gradle.kts"))
+    from(rootProject.file("gradle/versions.gradle.kts"))
+    from(rootProject.file("gradle/report.gradle.kts"))
+    from(rootProject.file("gradle/javaInstrumentation.gradle.kts"))
 }
 
 IdeVersionConfigurator.setCurrentIde(this)

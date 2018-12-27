@@ -1,11 +1,12 @@
 import java.util.*
 import java.io.*
 
-var propertiesFile = rootProject.file("versions.properties");
+var propertiesFile: File = rootProject.file("gradle/versions.properties")
 if (!propertiesFile.exists()) {
     //work-around for buildSrc
-    propertiesFile = rootProject.file("../versions.properties");
+    propertiesFile = rootProject.file("../gradle/versions.properties")
 }
+
 FileReader(propertiesFile).use {
     val properties = Properties()
     properties.load(it)
