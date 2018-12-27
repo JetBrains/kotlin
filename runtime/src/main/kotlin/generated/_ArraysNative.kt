@@ -538,7 +538,8 @@ public actual fun CharArray.contentToString(): String {
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T> {
-    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+    @Suppress("UNCHECKED_CAST")
+    arrayCopy(this as Array<Any?>, startIndex, destination as Array<Any?>, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -561,7 +562,7 @@ public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray {
-    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -584,7 +585,7 @@ public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray {
-    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -607,7 +608,7 @@ public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray {
-    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -630,7 +631,7 @@ public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: In
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray {
-    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -653,7 +654,7 @@ public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray {
-    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -676,7 +677,7 @@ public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray {
-    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -699,7 +700,7 @@ public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray {
-    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -722,7 +723,7 @@ public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray {
-    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -1237,7 +1238,7 @@ public actual operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
     val thisSize = size
     val arraySize = elements.size
     val result = copyOfUninitializedElements(thisSize + arraySize)
-    elements.copyRangeTo(result, 0, arraySize, thisSize)
+    elements.copyInto(result, thisSize)
     return result
 }
 
@@ -1248,7 +1249,7 @@ public actual operator fun ByteArray.plus(elements: ByteArray): ByteArray {
     val thisSize = size
     val arraySize = elements.size
     val result = copyOfUninitializedElements(thisSize + arraySize)
-    elements.copyRangeTo(result, 0, arraySize, thisSize)
+    elements.copyInto(result, thisSize)
     return result
 }
 
@@ -1259,7 +1260,7 @@ public actual operator fun ShortArray.plus(elements: ShortArray): ShortArray {
     val thisSize = size
     val arraySize = elements.size
     val result = copyOfUninitializedElements(thisSize + arraySize)
-    elements.copyRangeTo(result, 0, arraySize, thisSize)
+    elements.copyInto(result, thisSize)
     return result
 }
 
@@ -1270,7 +1271,7 @@ public actual operator fun IntArray.plus(elements: IntArray): IntArray {
     val thisSize = size
     val arraySize = elements.size
     val result = copyOfUninitializedElements(thisSize + arraySize)
-    elements.copyRangeTo(result, 0, arraySize, thisSize)
+    elements.copyInto(result, thisSize)
     return result
 }
 
@@ -1281,7 +1282,7 @@ public actual operator fun LongArray.plus(elements: LongArray): LongArray {
     val thisSize = size
     val arraySize = elements.size
     val result = copyOfUninitializedElements(thisSize + arraySize)
-    elements.copyRangeTo(result, 0, arraySize, thisSize)
+    elements.copyInto(result, thisSize)
     return result
 }
 
@@ -1292,7 +1293,7 @@ public actual operator fun FloatArray.plus(elements: FloatArray): FloatArray {
     val thisSize = size
     val arraySize = elements.size
     val result = copyOfUninitializedElements(thisSize + arraySize)
-    elements.copyRangeTo(result, 0, arraySize, thisSize)
+    elements.copyInto(result, thisSize)
     return result
 }
 
@@ -1303,7 +1304,7 @@ public actual operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray 
     val thisSize = size
     val arraySize = elements.size
     val result = copyOfUninitializedElements(thisSize + arraySize)
-    elements.copyRangeTo(result, 0, arraySize, thisSize)
+    elements.copyInto(result, thisSize)
     return result
 }
 
@@ -1314,7 +1315,7 @@ public actual operator fun BooleanArray.plus(elements: BooleanArray): BooleanArr
     val thisSize = size
     val arraySize = elements.size
     val result = copyOfUninitializedElements(thisSize + arraySize)
-    elements.copyRangeTo(result, 0, arraySize, thisSize)
+    elements.copyInto(result, thisSize)
     return result
 }
 
@@ -1325,7 +1326,7 @@ public actual operator fun CharArray.plus(elements: CharArray): CharArray {
     val thisSize = size
     val arraySize = elements.size
     val result = copyOfUninitializedElements(thisSize + arraySize)
-    elements.copyRangeTo(result, 0, arraySize, thisSize)
+    elements.copyInto(result, thisSize)
     return result
 }
 
