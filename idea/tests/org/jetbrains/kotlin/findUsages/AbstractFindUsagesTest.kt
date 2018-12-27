@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.findUsages
 
-import com.intellij.codeInsight.JavaTargetElementEvaluator
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.find.FindManager
 import com.intellij.find.findUsages.FindUsagesHandler
@@ -122,7 +121,7 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             val caretElement = when {
                 InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF") -> TargetElementUtil.findTargetElement(
                     myFixture.editor,
-                    TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR
+                    TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtil.getInstance().referenceSearchFlags
                 )!!
 
                 isFindFileUsages -> myFixture.file

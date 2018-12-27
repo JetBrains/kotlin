@@ -134,7 +134,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
 
         extraFiles.forEach { myFixture.configureByFile(it.name) }
         val file = myFixture.configureByFile(mainFile.name) as KtFile
-        val elementAtCaret = file.findElementAt(editor.caretModel.offset)
+        val elementAtCaret = file.findElementAt(editor.caretModel.offset)!!
         val sliceProvider = KotlinSliceProvider()
         val expression = sliceProvider.getExpressionAtCaret(elementAtCaret, analysisParams.dataFlowToThis)!!
         val rootUsage = sliceProvider.createRootUsage(expression, analysisParams)
