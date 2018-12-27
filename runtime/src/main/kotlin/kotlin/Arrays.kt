@@ -8,13 +8,9 @@
 
 package kotlin
 
-import kotlin.collections.*
 import kotlin.internal.PureReifiable
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.InlineConstructor
-import kotlin.util.sortArray
-import kotlin.util.sortArrayComparable
-import kotlin.util.sortArrayWith
 
 /**
  * An array of bytes.

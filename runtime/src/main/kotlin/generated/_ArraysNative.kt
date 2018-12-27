@@ -1341,49 +1341,49 @@ public actual inline fun <T> Array<T>.plusElement(element: T): Array<T> {
  * Sorts the array in-place.
  */
 public actual fun IntArray.sort(): Unit {
-    if (size > 1) kotlin.util.sortArray(this)
+    if (size > 1) sortArray(this)
 }
 
 /**
  * Sorts the array in-place.
  */
 public actual fun LongArray.sort(): Unit {
-    if (size > 1) kotlin.util.sortArray(this)
+    if (size > 1) sortArray(this)
 }
 
 /**
  * Sorts the array in-place.
  */
 public actual fun ByteArray.sort(): Unit {
-    if (size > 1) kotlin.util.sortArray(this)
+    if (size > 1) sortArray(this)
 }
 
 /**
  * Sorts the array in-place.
  */
 public actual fun ShortArray.sort(): Unit {
-    if (size > 1) kotlin.util.sortArray(this)
+    if (size > 1) sortArray(this)
 }
 
 /**
  * Sorts the array in-place.
  */
 public actual fun DoubleArray.sort(): Unit {
-    if (size > 1) kotlin.util.sortArray(this)
+    if (size > 1) sortArray(this)
 }
 
 /**
  * Sorts the array in-place.
  */
 public actual fun FloatArray.sort(): Unit {
-    if (size > 1) kotlin.util.sortArray(this)
+    if (size > 1) sortArray(this)
 }
 
 /**
  * Sorts the array in-place.
  */
 public actual fun CharArray.sort(): Unit {
-    if (size > 1) kotlin.util.sortArray(this)
+    if (size > 1) sortArray(this)
 }
 
 /**
@@ -1392,7 +1392,7 @@ public actual fun CharArray.sort(): Unit {
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
-    if (size > 1) kotlin.util.sortArrayComparable(this)
+    if (size > 1) sortArray(this)
 }
 
 /**
@@ -1401,7 +1401,7 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1) kotlin.util.sortArrayWith(this, 0, size, comparator)
+    if (size > 1) sortArrayWith(this, 0, size, comparator)
 }
 
 /**

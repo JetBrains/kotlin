@@ -3,9 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-package kotlin.util
+package kotlin.collections
 
-import kotlin.comparisons.*
 
 private fun <T: Comparable<T>> mergeSort(array: Array<T>, start: Int, endInclusive: Int) {
     @Suppress("UNCHECKED_CAST")
@@ -375,7 +374,7 @@ internal fun <T> sortArrayWith(
  * Sorts a subarray of [Comparable] elements specified by [fromIndex] (inclusive) and
  * [toIndex] (exclusive) parameters using the qsort algorithm.
  */
-internal fun <T: Comparable<T>> sortArrayComparable(array: Array<out T>) {
+internal fun <T: Comparable<T>> sortArray(array: Array<out T>) {
     @Suppress("UNCHECKED_CAST")
     mergeSort(array as Array<T>, 0, array.size - 1)
 }

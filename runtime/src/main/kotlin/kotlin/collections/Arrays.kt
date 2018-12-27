@@ -6,11 +6,7 @@
 package kotlin.collections
 
 import kotlin.native.internal.InlineConstructor
-import kotlin.collections.*
 import kotlin.internal.PureReifiable
-import kotlin.util.sortArrayComparable
-import kotlin.util.sortArrayWith
-import kotlin.util.sortArray
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 public actual inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
