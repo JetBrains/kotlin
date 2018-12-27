@@ -14,10 +14,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 
 class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
@@ -40,6 +42,11 @@ class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
             if (callExpression != null) {
                 val callee = callExpression.calleeExpression as? KtNameReferenceExpression
                 if (callee != null && callee.getReferencedName() == "forEach" && singleParameter?.name != "it") return
+            }
+
+            if (parameters.isNotEmpty()) {
+                val context = lambdaExpression.analyze()
+                if (context[BindingContext.EXPECTED_EXPRESSION_TYPE, lambdaExpression] == null) return
             }
 
             val startOffset = functionLiteral.startOffset
