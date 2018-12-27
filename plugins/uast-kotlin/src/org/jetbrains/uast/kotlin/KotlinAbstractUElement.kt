@@ -79,8 +79,7 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
             parent = parent.parent
         }
 
-        while (parent is KtStringTemplateEntryWithExpression ||
-               parent is KtStringTemplateExpression && parent.entries.size == 1) {
+        if (parent is KtBlockStringTemplateEntry) {
             parent = parent.parent
         }
 

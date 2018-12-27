@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UInjectionHost
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.expressions.*
@@ -403,17 +404,7 @@ internal object KotlinConverter {
         return with (requiredType) { when (expression) {
             is KtVariableDeclaration -> expr<UDeclarationsExpression>(build(::convertVariablesDeclaration))
 
-            is KtStringTemplateExpression -> {
-                when {
-                    expression.entries.isEmpty() -> {
-                        expr<ULiteralExpression> { KotlinStringULiteralExpression(expression, givenParent, "") }
-                    }
-                    expression.entries.size == 1 -> convertEntry(expression.entries[0], givenParent, requiredType)
-                    else -> {
-                        expr<UExpression> { KotlinStringTemplateUPolyadicExpression(expression, givenParent) }
-                    }
-                }
-            }
+            is KtStringTemplateExpression -> expr<UInjectionHost> { KotlinStringTemplateUPolyadicExpression(expression, givenParent) }
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
                 val declarationsExpression = KotlinUDestructuringDeclarationExpression(givenParent, expression)
                 declarationsExpression.apply {
