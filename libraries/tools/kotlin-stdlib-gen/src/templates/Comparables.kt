@@ -174,7 +174,7 @@ object ComparableOps : TemplateGroupBase() {
                     body { "return minOf(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
-            if (primitive?.isIntegral() == false) {
+            if (primitive?.isFloatingPoint() == true) {
                 on(Platform.Native) {
                     body {
                         """
@@ -314,7 +314,7 @@ object ComparableOps : TemplateGroupBase() {
                     body { "return maxOf(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
-            if (primitive?.isIntegral() == false) {
+            if (primitive?.isFloatingPoint() == true) {
                 on(Platform.Native) {
                     body {
                         """

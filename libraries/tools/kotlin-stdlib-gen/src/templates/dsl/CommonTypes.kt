@@ -60,6 +60,7 @@ enum class PrimitiveType {
         val defaultPrimitives = PrimitiveType.values().toSet() - unsignedPrimitives
         val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
         val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
+        val floatingPointPrimitives = setOf(Double, Float)
         val rangePrimitives = setOf(Int, Long, Char, UInt, ULong)
 
         val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
@@ -73,6 +74,8 @@ enum class PrimitiveType {
 
 fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitives
 fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
+fun PrimitiveType.isFloatingPoint(): Boolean = this in PrimitiveType.floatingPointPrimitives
+
 enum class Inline {
     No,
     Yes,
