@@ -38,7 +38,7 @@ class ArrayIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) :
     override fun getBoundedValue(codegen: ExpressionCodegen) =
         SimpleBoundedValue(
             codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
-            StackValue.constant(0, elementType),
+            StackValue.constant(0, codegen.asmType(elementKotlinType), elementKotlinType),
             true,
             StackValue.operation(Type.INT_TYPE) { v ->
                 codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), expectedReceiverType, v)
