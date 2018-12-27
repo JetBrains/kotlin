@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class SurroundWithLambdaFix(
     expression: KtExpression
@@ -66,8 +67,10 @@ class SurroundWithLambdaFix(
             if (!expectedType.isFunctionType) return null
             if (expectedType.arguments.size != 1) return null
             val lambdaReturnType = expectedType.arguments[0].type
-            if (!expressionType.isSubtypeOf(lambdaReturnType) &&
-                !(expressionType.isPrimitiveNumberType() && lambdaReturnType.isPrimitiveNumberType())) return null
+
+            if (!expressionType.makeNotNullable().isSubtypeOf(lambdaReturnType) &&
+                !(expressionType.isPrimitiveNumberType() && lambdaReturnType.isPrimitiveNumberType())
+            ) return null
 
             val diagnosticElement = diagnostic.psiElement as KtExpression
             return SurroundWithLambdaFix(diagnosticElement)
