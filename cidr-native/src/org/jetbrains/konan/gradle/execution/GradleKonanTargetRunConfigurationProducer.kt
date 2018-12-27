@@ -9,8 +9,10 @@ import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
 
-class GradleKonanTargetRunConfigurationProducer : CidrTargetRunConfigurationProducer<GradleKonanConfiguration, GradleKonanBuildTarget, GradleKonanAppRunConfiguration>(
-    GradleKonanAppRunConfigurationType.instance, GradleKonanTargetRunConfigurationBinder.INSTANCE) {
+class GradleKonanTargetRunConfigurationProducer :
+    CidrTargetRunConfigurationProducer<GradleKonanConfiguration, GradleKonanBuildTarget, GradleKonanAppRunConfiguration>(
+        GradleKonanAppRunConfigurationType.instance, GradleKonanTargetRunConfigurationBinder
+    ) {
     companion object {
 
         private var INSTANCE: GradleKonanTargetRunConfigurationProducer? = null

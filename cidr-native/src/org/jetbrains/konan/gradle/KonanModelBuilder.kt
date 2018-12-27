@@ -24,9 +24,7 @@ class KonanModelBuilder : ModelBuilderService {
             .withDescription("Unable to build Konan project configuration")
     }
 
-    override fun canBuild(modelName: String?): Boolean {
-        return modelName == KonanModel::class.java.name
-    }
+    override fun canBuild(modelName: String?) = modelName == KonanModel::class.java.name
 
     override fun buildAll(modelName: String, project: Project): Any? {
         val targets = project.getTargets() ?: return null
@@ -46,23 +44,27 @@ class KonanModelBuilder : ModelBuilderService {
             }
             .mapNotNull { buildArtifact(it) }
 
-        return KonanModelImpl(artifacts, getKotlinNativeHome(project))
+        val buildModuleTaskName = project.tasks.findByName("assemble")?.path
+        val cleanModuleTaskName = project.tasks.findByName("clean")?.path
+        val kotlinNativeHome = getKotlinNativeHome(project)
+
+        return KonanModelImpl(artifacts, buildModuleTaskName, cleanModuleTaskName, kotlinNativeHome)
     }
 
-    private fun buildArtifact(task: Task): KonanModelArtifact? {
-        val outputKind = task["getOutputKind"]["name"] as? String ?: return null
-        val konanTargetName = task["getTarget"] as? String ?: error("No arch target found")
-        val outputFile = (task["getOutputFile"] as? Provider<*>)?.orNull as? File ?: return null
-        val compilationTarget = task["getCompilation"]["getTarget"]
+    private fun buildArtifact(buildArtifactTask: Task): KonanModelArtifact? {
+        val outputKind = buildArtifactTask["getOutputKind"]["name"] as? String ?: return null
+        val konanTargetName = buildArtifactTask["getTarget"] as? String ?: error("No arch target found")
+        val outputFile = (buildArtifactTask["getOutputFile"] as? Provider<*>)?.orNull as? File ?: return null
+        val compilationTarget = buildArtifactTask["getCompilation"]["getTarget"]
         val compilationTargetName = compilationTarget["getName"] as? String ?: return null
-        val isTests = task["getProcessTests"] as? Boolean ?: return null
+        val isTests = buildArtifactTask["getProcessTests"] as? Boolean ?: return null
 
         return KonanModelArtifactImpl(
             compilationTargetName,
             CompilerOutputKind.valueOf(outputKind),
             konanTargetName,
             outputFile,
-            task.name,
+            buildArtifactTask.path,
             isTests
         )
     }

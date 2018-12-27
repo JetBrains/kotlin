@@ -11,28 +11,17 @@ import com.jetbrains.cidr.execution.CidrTargetRunConfigurationBinder
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import org.jetbrains.konan.gradle.GradleKonanWorkspace
 
-class GradleKonanTargetRunConfigurationBinder : CidrTargetRunConfigurationBinder<GradleKonanConfiguration, GradleKonanBuildTarget, GradleKonanAppRunConfiguration> {
+object GradleKonanTargetRunConfigurationBinder :
+    CidrTargetRunConfigurationBinder<GradleKonanConfiguration, GradleKonanBuildTarget, GradleKonanAppRunConfiguration> {
 
-    override fun isSupportedRunConfiguration(configuration: RunConfiguration): Boolean {
-        return configuration is GradleKonanAppRunConfiguration
-    }
+    override fun isSupportedRunConfiguration(configuration: RunConfiguration) = configuration is GradleKonanAppRunConfiguration
 
-    override fun getTargetAndConfiguration(runConfiguration: GradleKonanAppRunConfiguration): Pair<GradleKonanBuildTarget, GradleKonanConfiguration> {
-        return Pair.create(runConfiguration.buildTarget, null)
-    }
+    override fun getTargetAndConfiguration(runConfiguration: GradleKonanAppRunConfiguration) =
+        Pair.create<GradleKonanBuildTarget, GradleKonanConfiguration>(runConfiguration.buildTarget, null)
 
     override fun getTargetFromResolveConfiguration(configuration: OCResolveConfiguration): GradleKonanBuildTarget? {
-        return GradleKonanWorkspace.getInstance(configuration.project).modelTargets.stream()
-            .filter { target ->
-                target.buildConfigurations.stream()
-                    .anyMatch { conf -> conf.id == configuration.uniqueId }
-            }
-            .findFirst()
-            .orElse(null)
-    }
-
-    companion object {
-
-        val INSTANCE = GradleKonanTargetRunConfigurationBinder()
+        return GradleKonanWorkspace.getInstance(configuration.project).buildTargets.firstOrNull { target ->
+            target.buildConfigurations.any { conf -> conf.id == configuration.uniqueId }
+        }
     }
 }

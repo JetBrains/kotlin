@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class GradleKonanBuildTarget implements Serializable, CidrBuildTarget<GradleKonanConfiguration> {
     public static final Icon EXECUTABLE_ICON = CidrNativeIconProvider.Companion.getInstance().getExecutableIcon();
-    public static final Icon LIBRARY_ICON = AllIcons.Modules.Library;
-    public static final Icon TEST_ICON = AllIcons.Modules.Library;
+    public static final Icon LIBRARY_ICON = AllIcons.Nodes.PpLib;
+    public static final Icon TEST_ICON = AllIcons.Nodes.PpLib;
 
     @NotNull private final String myId;
     @NotNull private final String myName;

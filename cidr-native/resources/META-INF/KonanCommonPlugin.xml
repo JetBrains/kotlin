@@ -26,12 +26,17 @@
     </component>
   </application-components>
 
+  <project-components>
+    <component>
+      <implementation-class>org.jetbrains.konan.gradle.GradleKonanWorkspace</implementation-class>
+    </component>
+  </project-components>
+
   <extensions defaultExtensionNs="com.intellij">
     <applicationService
         serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
         serviceImplementation="org.jetbrains.konan.support.NativeOnlyDefaultTargetPlatformKindProvider"/>
     <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"/>
-    <projectService serviceImplementation="org.jetbrains.konan.gradle.GradleKonanWorkspace"/>
 
     <configurationType implementation="org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType"/>
     <runConfigurationProducer implementation="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer"/>

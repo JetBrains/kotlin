@@ -14,20 +14,21 @@ import java.io.Serializable
 /**
  * @author Vladislav.Soroka
  */
-class GradleKonanConfiguration(val id: String,
-                               name: String,
-                               val profileName: String,
-                               val productFile: File?,
-                               val targetType: CompilerOutputKind?,
-                               val compileTaskName: String?,
-                               val projectPath: String,
-                               val isTests: Boolean) : Serializable, CidrBuildConfiguration {
+class GradleKonanConfiguration(
+    val id: String,
+    name: String,
+    val profileName: String,
+    val productFile: File?,
+    val targetType: CompilerOutputKind?,
+    val artifactBuildTaskName: String,
+    val artifactCleanTaskName: String?,
+    val projectPath: String,
+    val isTests: Boolean
+) : Serializable, CidrBuildConfiguration {
     private val myName: String = "$name [$profileName]"
 
     val isExecutable: Boolean
         get() = targetType == CompilerOutputKind.PROGRAM
 
-    override fun getName(): String {
-        return myName
-    }
+    override fun getName() = myName
 }

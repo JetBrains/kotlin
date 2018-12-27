@@ -21,10 +21,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.WriteExternalException
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.CidrBundle
 import com.jetbrains.cidr.execution.*
-import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import org.jdom.Element
 import org.jetbrains.konan.gradle.GradleKonanWorkspace
 import java.io.File
@@ -32,11 +30,11 @@ import java.io.File
 /**
  * @author Vladislav.Soroka
  */
-class GradleKonanAppRunConfiguration(project: Project,
-                                     factory: ConfigurationFactory,
-                                     name: String) : CidrRunConfiguration<GradleKonanConfiguration, GradleKonanBuildTarget>(project,
-                                                                                                                            factory,
-                                                                                                                            name), CidrExecutableDataHolder {
+class GradleKonanAppRunConfiguration(
+    project: Project,
+    factory: ConfigurationFactory,
+    name: String
+) : CidrRunConfiguration<GradleKonanConfiguration, GradleKonanBuildTarget>(project, factory, name), CidrExecutableDataHolder {
 
     private var myExecutableData: ExecutableData? = null
 
@@ -60,22 +58,14 @@ class GradleKonanAppRunConfiguration(project: Project,
         }
 
     val buildProfiles: List<String>
-        get() = ContainerUtil.map(helper.getConfigurations(buildTarget)) { it -> it.profileName }
+        get() = helper.getConfigurations(buildTarget).map { it.profileName }
 
-    override fun getType(): GradleKonanAppRunConfigurationType {
-        return super.getType() as GradleKonanAppRunConfigurationType
-    }
+    override fun getType(): GradleKonanAppRunConfigurationType = super.getType() as GradleKonanAppRunConfigurationType
 
-    override fun canRunOn(target: ExecutionTarget): Boolean {
-        return target is GradleKonanBuildProfileExecutionTarget
-    }
+    override fun canRunOn(target: ExecutionTarget) = target is GradleKonanBuildProfileExecutionTarget
 
-    override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? {
-        val configurations = getBuildAndRunConfigurations(target)
-        return if (configurations == null)
-            null
-        else
-            GradleKonanWorkspace.getInstance(project).getResolveConfigurationFor(configurations.buildConfiguration)
+    override fun getResolveConfiguration(target: ExecutionTarget) = getBuildAndRunConfigurations(target)?.let {
+        GradleKonanWorkspace.getInstance(project).getResolveConfigurationFor(it.buildConfiguration)
     }
 
     @Throws(RuntimeConfigurationException::class)
@@ -100,11 +90,11 @@ class GradleKonanAppRunConfiguration(project: Project,
     }
 
     @JvmOverloads
-    fun getBuildAndRunConfigurations(target: ExecutionTarget,
-                                     problems: BuildConfigurationProblems? = null,
-                                     checkExecutableSpecified: Boolean = false): BuildAndRunConfigurations? {
-        return getBuildAndRunConfigurations(GradleKonanBuildProfileExecutionTarget.getProfileName(target), problems, checkExecutableSpecified)
-    }
+    fun getBuildAndRunConfigurations(
+        target: ExecutionTarget,
+        problems: BuildConfigurationProblems? = null,
+        checkExecutableSpecified: Boolean = false
+    ) = getBuildAndRunConfigurations(GradleKonanBuildProfileExecutionTarget.getProfileName(target), problems, checkExecutableSpecified)
 
     @JvmOverloads
     fun getBuildAndRunConfigurations(buildProfileName: String?,
@@ -234,14 +224,16 @@ class GradleKonanAppRunConfiguration(project: Project,
         myExecutableData = executableData
     }
 
-    class BuildAndRunConfigurations @JvmOverloads constructor(val buildConfiguration: GradleKonanConfiguration,
-                                                              runConfiguration: GradleKonanConfiguration? = null,
-                                                              val runExecutable: File? = null,
-                                                              val explicitBuildTargetName: String? = null) {
+    class BuildAndRunConfigurations @JvmOverloads constructor(
+        val buildConfiguration: GradleKonanConfiguration,
+        runConfiguration: GradleKonanConfiguration? = null,
+        val runExecutable: File? = null,
+        val explicitBuildTargetName: String? = null
+    ) {
 
         val runFile: File?
             get() = runExecutable ?: runConfiguration.productFile
 
-        val runConfiguration: GradleKonanConfiguration = runConfiguration ?: buildConfiguration
+        private val runConfiguration: GradleKonanConfiguration = runConfiguration ?: buildConfiguration
     }
 }

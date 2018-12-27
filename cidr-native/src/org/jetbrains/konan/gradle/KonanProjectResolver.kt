@@ -5,7 +5,6 @@
 
 package org.jetbrains.konan.gradle
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.Key
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -35,6 +34,8 @@ class KonanProjectResolver : AbstractProjectResolverExtension() {
 
     private class MyKonanModel(konanModel: KonanModel) : KonanModel {
         override val artifacts: List<KonanModelArtifact> = konanModel.artifacts.map { MyKonanArtifactEx(it) }
+        override val buildTaskName: String? = konanModel.buildTaskName
+        override val cleanTaskName: String? = konanModel.cleanTaskName
         override val kotlinNativeHome: String? = konanModel.kotlinNativeHome
 
         private class MyKonanArtifactEx(artifact: KonanModelArtifact) : KonanModelArtifact {
@@ -49,6 +50,5 @@ class KonanProjectResolver : AbstractProjectResolverExtension() {
 
     companion object {
         val KONAN_MODEL_KEY = Key.create(KonanModel::class.java, ProjectKeys.MODULE.processingWeight + 1)
-        private val LOG = Logger.getInstance(KonanProjectResolver::class.java)
     }
 }

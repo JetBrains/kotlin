@@ -20,7 +20,6 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType
 import org.jetbrains.konan.gradle.execution.GradleKonanBuildTarget
@@ -83,7 +82,7 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
 
                 var configuration =
                     gradleAppRunConfigurationType.factory.createTemplateConfiguration(project) as GradleKonanAppRunConfiguration
-                configurationProducer.setupTarget(configuration, ContainerUtil.list<GradleKonanBuildTarget>(target))
+                configurationProducer.setupTarget(configuration, listOf(target))
                 val suggestedName = configuration.suggestedName()
                 if (suggestedName == null || runManager.findConfigurationByTypeAndName(
                         gradleAppRunConfigurationType,
@@ -93,10 +92,10 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
                     return@forEach
                 }
 
-                val runConfiguration = runManager.createRunConfiguration(suggestedName, gradleAppRunConfigurationType.factory)
+                val runConfiguration = runManager.createConfiguration(suggestedName, gradleAppRunConfigurationType.factory)
                 configuration = runConfiguration.configuration as GradleKonanAppRunConfiguration
                 configuration.name = suggestedName
-                configurationProducer.setupTarget(configuration, ContainerUtil.list<GradleKonanBuildTarget>(target))
+                configurationProducer.setupTarget(configuration, listOf(target))
                 runManager.addConfiguration(runConfiguration)
                 if (runConfigurationToSelect == null) {
                     runConfigurationToSelect = runConfiguration

@@ -10,6 +10,8 @@ import java.io.File
 
 data class KonanModelImpl(
     override val artifacts: List<KonanModelArtifact>,
+    override val buildTaskName: String?,
+    override val cleanTaskName: String?,
     override val kotlinNativeHome: String?
 ) : KonanModel
 
