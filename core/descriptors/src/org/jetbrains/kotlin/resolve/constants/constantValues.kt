@@ -214,10 +214,10 @@ class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
                     KClassValue(classId, arrayDimensions)
                 }
                 is TypeParameterDescriptor -> {
-                    // This is possible if a reified type parameter is used in annotation on a local class / anonymous object.
+                    // This is possible before 1.4 if a reified type parameter is used in annotation on a local class / anonymous object.
                     // In JVM class file, we can't represent such literal properly, so we're writing java.lang.Object instead.
                     // This has no effect on the compiler front-end or other back-ends, so we use kotlin.Any for simplicity here.
-                    // Overall, it looks like such code should be disallowed: https://youtrack.jetbrains.com/issue/KT-27799
+                    // See LanguageFeature.ProhibitTypeParametersInClassLiteralsInAnnotationArguments
                     KClassValue(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.any.toSafe()), 0)
                 }
                 else -> null

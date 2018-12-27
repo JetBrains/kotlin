@@ -2986,6 +2986,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/classLiteral/inAnnotationArguments.kt");
             }
 
+            @TestMetadata("inAnnotationArguments_noTypeParams.kt")
+            public void testInAnnotationArguments_noTypeParams() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classLiteral/inAnnotationArguments_noTypeParams.kt");
+            }
+
             @TestMetadata("integerValueType.kt")
             public void testIntegerValueType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/classLiteral/integerValueType.kt");
