@@ -81,7 +81,7 @@ public class KotlinCommenterTest extends LightCodeInsightTestCase {
 
     private void check() {
         File afterFile = getTestFile(getTestName(true) + "_after.kt");
-        KotlinTestUtils.assertEqualsToFile(afterFile, getEditor(), false);
+        KotlinTestUtils.assertEqualsToFile(afterFile, getEditor());
     }
 
     private static File getTestFile(String name) {

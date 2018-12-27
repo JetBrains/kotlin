@@ -634,24 +634,8 @@ public class KotlinTestUtils {
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor) {
-        assertEqualsToFile(expectedFile, editor, true);
-    }
-
-    public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor, Boolean enableSelectionTags) {
-        Caret caret = editor.getCaretModel().getCurrentCaret();
-        List<TagsTestDataUtil.TagInfo> tags = Lists.newArrayList(
-                new TagsTestDataUtil.TagInfo<>(caret.getOffset(), true, "caret")
-        );
-
-        if (enableSelectionTags) {
-            int selectionStart = caret.getSelectionStart();
-            int selectionEnd = caret.getSelectionEnd();
-
-            tags.add(new TagsTestDataUtil.TagInfo<>(selectionStart, true, "selection"));
-            tags.add(new TagsTestDataUtil.TagInfo<>(selectionEnd, false, "selection"));
-        }
-
-        String afterText = TagsTestDataUtil.insertTagsInText(tags, editor.getDocument().getText());
+        String actualText = editor.getDocument().getText();
+        String afterText = new StringBuilder(actualText).insert(editor.getCaretModel().getOffset(), "<caret>").toString();
 
         assertEqualsToFile(expectedFile, afterText);
     }
