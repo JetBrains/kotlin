@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.spec.parsers
 
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.*
 import org.jetbrains.kotlin.spec.models.CommonInfoElementType
 import org.jetbrains.kotlin.spec.models.LinkedSpecTestFileInfoElementType
@@ -74,7 +75,8 @@ fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
                 ranges = mutableListOf(range),
                 unexpectedBehavior = caseInfoElements.contains(CommonInfoElementType.UNEXPECTED_BEHAVIOUR),
                 unspecifiedBehavior = caseInfoElements.contains(LinkedSpecTestFileInfoElementType.UNSPECIFIED_BEHAVIOR),
-                issues = CommonParser.parseIssues(caseInfoElements[CommonInfoElementType.ISSUES]).toMutableList()
+                issues = CommonParser.parseIssues(caseInfoElements[CommonInfoElementType.ISSUES]).toMutableList(),
+                exception = caseInfoElements[CommonInfoElementType.EXCEPTION]?.content?.let { TestsExceptionType.fromValue(it) }
             ).save(testCasesSet.byNumbers, testCasesOfFile, testCasesByRangesOfFile, caseInfoElements)
 
             startFind = matcher.end() - nextDirective.length

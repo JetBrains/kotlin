@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.spec.models
 
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.*
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns.issuesPattern
@@ -22,7 +23,8 @@ enum class CommonInfoElementType(
     UNEXPECTED_BEHAVIOUR,
     ISSUES(valuePattern = issuesPattern),
     DISCUSSION,
-    NOTE
+    NOTE,
+    EXCEPTION
 }
 
 enum class CommonSpecTestFileInfoElementType(
@@ -52,7 +54,8 @@ abstract class AbstractSpecTest(
     val cases: SpecTestCasesSet,
     val unexpectedBehavior: Boolean,
     val issues: Set<String>,
-    val helpers: Set<String>?
+    val helpers: Set<String>?,
+    val exception: TestsExceptionType?
 ) {
     companion object {
         private fun issuesToString(issues: Set<String>) = issues.joinToString(", ") { CommonPatterns.ISSUE_TRACKER + it }

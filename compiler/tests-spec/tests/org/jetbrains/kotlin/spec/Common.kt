@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.spec
 
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.models.LinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.models.NotLinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.parsers.BasePatterns
@@ -74,7 +75,8 @@ data class SpecTestCase(
     var ranges: MutableList<IntRange>,
     var unexpectedBehavior: Boolean,
     var unspecifiedBehavior: Boolean,
-    val issues: MutableList<String>?
+    val issues: MutableList<String>?,
+    val exception: TestsExceptionType?
 )
 
 data class SpecTestCasesSet(

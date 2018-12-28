@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.spec.models
 
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.SpecTestCasesSet
 import org.jetbrains.kotlin.spec.SpecTestInfoElementType
 import org.jetbrains.kotlin.spec.TestArea
@@ -33,8 +34,9 @@ class NotLinkedSpecTest(
     cases: SpecTestCasesSet,
     unexpectedBehavior: Boolean,
     issues: Set<String>,
-    helpers: Set<String>?
-) : AbstractSpecTest(testArea, testType, sections, testNumber, description, cases, unexpectedBehavior, issues, helpers) {
+    helpers: Set<String>?,
+    exception: TestsExceptionType?
+) : AbstractSpecTest(testArea, testType, sections, testNumber, description, cases, unexpectedBehavior, issues, helpers, exception) {
     override fun checkPathConsistency(pathMatcher: Matcher) =
         testArea == TestArea.valueOf(pathMatcher.group("testArea").withUnderscores())
                 && testType == TestType.fromValue(pathMatcher.group("testType"))!!

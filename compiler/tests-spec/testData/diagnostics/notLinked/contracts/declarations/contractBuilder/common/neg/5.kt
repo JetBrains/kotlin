@@ -33,6 +33,7 @@ fun case_3(): Boolean {
  * TESTCASE NUMBER: 4
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-26386
+ * EXCEPTION: compiler
  */
 fun case_4(): Boolean? {
     contract { returns(null) implies case_4() }

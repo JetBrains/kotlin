@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.TestExceptionsComparator
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
@@ -78,9 +79,8 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
 
         println(specTest)
 
-        val checkUnexpectedBehaviour: (Matcher?) -> Pair<Boolean, Set<Int>?> = l@{ matches ->
-            if (specTest.unexpectedBehavior) return@l Pair(true, null)
-            if (matches == null) return@l Pair(false, null)
+        val computeExceptionPoint: (Matcher?) -> Set<Int>? = l@{ matches ->
+            if (matches == null) return@l null
 
             val lineNumber = matches.group("lineNumber").toInt()
             val symbolNumber = matches.group("symbolNumber").toInt()
@@ -90,10 +90,11 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
             val testCases = specTest.cases.byRanges[filename]
             val testCasesWithSamePosition = testCases!!.floorEntry(exceptionPosition).value
 
-            return@l Pair(testCasesWithSamePosition.all { it.value.unexpectedBehavior }, testCasesWithSamePosition.keys.toSet())
+            return@l testCasesWithSamePosition.keys.toSet()
         }
 
-        TestExceptionsComparator(testDataFile).runAndCompareWithExpected(checkUnexpectedBehaviour) {
+        val exceptionsInCases = specTest.cases.byNumbers.entries.associate { it.key to it.value.exception }
+        TestExceptionsComparator(testDataFile).run(specTest.exception, exceptionsInCases, computeExceptionPoint) {
             super.analyzeAndCheck(testDataFile, files)
         }
     }
