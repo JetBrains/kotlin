@@ -102,7 +102,8 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val ktFiles = ArrayList<KtFile>(files.size)
         for (file in files.sorted()) {
             if (file.name.endsWith(".kt")) {
-                val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList(0))
+                // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
+                val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList(0), null)
                 val tmpKtFile = File(tmpDir, file.name).apply { writeText(content) }
                 val virtualFile = StandardFileSystems.local().findFileByPath(tmpKtFile.path) ?: error("Can't find ${file.name}")
                 ktFiles.add(psiManager.findFile(virtualFile) as? KtFile ?: error("Can't load ${file.name}"))

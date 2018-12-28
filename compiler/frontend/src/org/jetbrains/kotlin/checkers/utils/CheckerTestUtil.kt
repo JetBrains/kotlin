@@ -15,10 +15,24 @@ import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.diagnostics.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
+import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import java.util.*
 import java.util.regex.Pattern
 
@@ -41,7 +55,11 @@ object CheckerTestUtil {
         root: PsiElement,
         markDynamicCalls: Boolean,
         dynamicCallDescriptors: MutableList<DeclarationDescriptor>,
-        withNewInference: Boolean
+        withNewInference: Boolean,
+        languageVersionSettings: LanguageVersionSettings,
+        dataFlowValueFactory: DataFlowValueFactory?,
+        moduleDescriptor: ModuleDescriptorImpl?,
+        diagnosedRanges: MutableMap<IntRange, MutableSet<String>>? = null
     ): List<ActualDiagnostic> {
         val result = getDiagnosticsIncludingSyntaxErrors(
             bindingContext,
@@ -49,7 +67,11 @@ object CheckerTestUtil {
             markDynamicCalls,
             dynamicCallDescriptors,
             null,
-            withNewInference
+            withNewInference,
+            languageVersionSettings,
+            dataFlowValueFactory,
+            moduleDescriptor,
+            diagnosedRanges
         )
         val sortedBindings = implementingModulesBindings.sortedBy { it.first }
 
@@ -63,7 +85,11 @@ object CheckerTestUtil {
                     markDynamicCalls,
                     dynamicCallDescriptors,
                     (platform as MultiTargetPlatform.Specific).platform,
-                    withNewInference
+                    withNewInference,
+                    languageVersionSettings,
+                    dataFlowValueFactory,
+                    moduleDescriptor,
+                    diagnosedRanges
                 )
             )
         }
@@ -77,7 +103,11 @@ object CheckerTestUtil {
         markDynamicCalls: Boolean,
         dynamicCallDescriptors: MutableList<DeclarationDescriptor>,
         platform: String?,
-        withNewInference: Boolean
+        withNewInference: Boolean,
+        languageVersionSettings: LanguageVersionSettings?,
+        dataFlowValueFactory: DataFlowValueFactory?,
+        moduleDescriptor: ModuleDescriptorImpl?,
+        diagnosedRanges: MutableMap<IntRange, MutableSet<String>>? = null
     ): MutableList<ActualDiagnostic> {
         val diagnostics: MutableList<ActualDiagnostic> = mutableListOf()
 
@@ -98,7 +128,11 @@ object CheckerTestUtil {
                 markDynamicCalls,
                 dynamicCallDescriptors,
                 platform,
-                withNewInference
+                withNewInference,
+                languageVersionSettings,
+                dataFlowValueFactory,
+                moduleDescriptor,
+                diagnosedRanges
             )
         )
 
@@ -111,7 +145,11 @@ object CheckerTestUtil {
         markDynamicCalls: Boolean,
         dynamicCallDescriptors: MutableList<DeclarationDescriptor>,
         platform: String?,
-        withNewInference: Boolean
+        withNewInference: Boolean,
+        languageVersionSettings: LanguageVersionSettings?,
+        dataFlowValueFactory: DataFlowValueFactory?,
+        moduleDescriptor: ModuleDescriptorImpl?,
+        diagnosedRanges: MutableMap<IntRange, MutableSet<String>>?
     ): List<ActualDiagnostic> {
         val debugAnnotations = mutableListOf<ActualDiagnostic>()
 
@@ -131,6 +169,7 @@ object CheckerTestUtil {
         //noinspection unchecked
 
         val factoryList = listOf(
+            BindingContext.EXPRESSION_TYPE_INFO to DebugInfoDiagnosticFactory1.EXPRESSION_TYPE,
             BindingContext.SMARTCAST to DebugInfoDiagnosticFactory0.SMARTCAST,
             BindingContext.IMPLICIT_RECEIVER_SMARTCAST to DebugInfoDiagnosticFactory0.IMPLICIT_RECEIVER_SMARTCAST,
             BindingContext.SMARTCAST_NULL to DebugInfoDiagnosticFactory0.CONSTANT,
@@ -140,10 +179,16 @@ object CheckerTestUtil {
 
         for ((context, factory) in factoryList) {
             for ((expression, _) in bindingContext.getSliceContents(context)) {
-                if (PsiTreeUtil.isAncestor(root, expression, false)) {
+                val needRender = !factory.withExplicitDefinitionOnly
+                        || diagnosedRanges?.get(expression.startOffset..expression.endOffset)?.contains(factory.name) == true
+
+                if (PsiTreeUtil.isAncestor(root, expression, false) && needRender) {
                     val diagnostic = factory.createDiagnostic(
                         expression,
-                        bindingContext
+                        bindingContext,
+                        dataFlowValueFactory,
+                        languageVersionSettings,
+                        moduleDescriptor
                     )
                     debugAnnotations.add(ActualDiagnostic(diagnostic, platform, withNewInference))
                 }
@@ -323,8 +368,11 @@ object CheckerTestUtil {
         return if (iterator.hasNext()) iterator.next() else null
     }
 
-
-    fun parseDiagnosedRanges(text: String, result: MutableList<DiagnosedRange>): String {
+    fun parseDiagnosedRanges(
+        text: String,
+        ranges: MutableList<DiagnosedRange>,
+        rangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>? = null
+    ): String {
         val matcher = rangeStartOrEndPattern.matcher(text)
         val opened = Stack<DiagnosedRange>()
         var offsetCompensation = 0
@@ -340,7 +388,7 @@ object CheckerTestUtil {
                 while (diagnosticTypeMatcher.find())
                     range.addDiagnostic(diagnosticTypeMatcher.group())
                 opened.push(range)
-                result.add(range)
+                ranges.add(range)
             }
             offsetCompensation += matchedText.length
         }
@@ -348,6 +396,14 @@ object CheckerTestUtil {
         assert(opened.isEmpty()) { "Stack is not empty" }
 
         matcher.reset()
+
+        if (rangesToDiagnosticNames != null) {
+            ranges.forEach {
+                val range = it.start..it.end
+                rangesToDiagnosticNames.putIfAbsent(range, mutableSetOf())
+                rangesToDiagnosticNames[range]!! += it.getDiagnostics().map { it.name }
+            }
+        }
 
         return matcher.replaceAll("")
     }
@@ -548,5 +604,43 @@ object CheckerTestUtil {
 
             ActualDiagnosticDescriptor(range.startOffset, range.endOffset, abstractDiagnostics)
         }.toMutableList()
+    }
+
+    fun getTypeInfo(
+        expression: PsiElement,
+        bindingContext: BindingContext,
+        dataFlowValueFactory: DataFlowValueFactory?,
+        languageVersionSettings: LanguageVersionSettings?,
+        moduleDescriptor: ModuleDescriptorImpl?
+    ): Pair<KotlinType?, Set<KotlinType>?> {
+        if (expression is KtCallableDeclaration) {
+            val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, expression] as? CallableDescriptor
+            if (descriptor != null) {
+                return Pair(descriptor.returnType, null)
+            }
+        }
+
+        val expressionTypeInfo =
+            bindingContext[BindingContext.EXPRESSION_TYPE_INFO, expression as KtExpression] ?: noTypeInfo(DataFlowInfo.EMPTY)
+        val expressionType = expression.getType(bindingContext)
+        val result = expressionType ?: return Pair(null, null)
+
+        if (dataFlowValueFactory == null || moduleDescriptor == null)
+            return Pair(expressionType, null)
+
+        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expression, expressionType, bindingContext, moduleDescriptor)
+        val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue, languageVersionSettings!!)
+
+        if (!types.isNullOrEmpty())
+            return Pair(result, types)
+
+        val smartCast = bindingContext[BindingContext.SMARTCAST, expression]
+        if (smartCast != null && expression is KtReferenceExpression) {
+            val declaredType = (bindingContext[BindingContext.REFERENCE_TARGET, expression] as? CallableDescriptor)?.returnType
+            if (declaredType != null) {
+                return Pair(result, setOf(declaredType))
+            }
+        }
+        return Pair(result, null)
     }
 }

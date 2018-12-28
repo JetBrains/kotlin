@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.checkers.diagnostics.factories
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.checkers.diagnostics.DebugInfoDiagnostic
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
 class DebugInfoDiagnosticFactory0 : DiagnosticFactory0<PsiElement>,
     DebugInfoDiagnosticFactory {
@@ -21,7 +24,10 @@ class DebugInfoDiagnosticFactory0 : DiagnosticFactory0<PsiElement>,
 
     override fun createDiagnostic(
         expression: KtExpression,
-        bindingContext: BindingContext
+        bindingContext: BindingContext,
+        dataFlowValueFactory: DataFlowValueFactory?,
+        languageVersionSettings: LanguageVersionSettings?,
+        moduleDescriptor: ModuleDescriptorImpl?
     ): Diagnostic {
         return DebugInfoDiagnostic(expression, this)
     }

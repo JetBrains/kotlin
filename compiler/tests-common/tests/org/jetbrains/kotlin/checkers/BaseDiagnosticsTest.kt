@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
 import org.jetbrains.kotlin.name.FqName
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
@@ -132,8 +134,9 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         textWithMarkers: String,
         val directives: Map<String, String>
     ) {
-        private val diagnosedRanges: MutableList<DiagnosedRange> = ArrayList()
-        val actualDiagnostics: MutableList<ActualDiagnostic> = ArrayList()
+        private val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
+        private val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
+        val actualDiagnostics: MutableList<ActualDiagnostic> = mutableListOf()
         val expectedText: String
         val clearText: String
         private val createKtFile: Lazy<KtFile?>
@@ -144,7 +147,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val declareFlexibleType: Boolean
         val checkLazyLog: Boolean
         private val markDynamicCalls: Boolean
-        val dynamicCallDescriptors: MutableList<DeclarationDescriptor> = ArrayList()
+        val dynamicCallDescriptors: MutableList<DeclarationDescriptor> = mutableListOf()
         val withNewInferenceDirective: Boolean
         val newInferenceEnabled: Boolean
         val renderDiagnosticMessages: Boolean
@@ -167,7 +170,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 this.expectedText = this.clearText
             } else {
                 this.expectedText = textWithMarkers
-                this.clearText = CheckerTestUtil.parseDiagnosedRanges(addExtras(expectedText), diagnosedRanges)
+                this.clearText = CheckerTestUtil.parseDiagnosedRanges(addExtras(expectedText), diagnosedRanges, diagnosedRangesToDiagnosticNames)
                 this.createKtFile = lazy { TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, project) }
             }
             this.renderDiagnosticMessages = RENDER_DIAGNOSTICS_MESSAGES in directives
@@ -223,7 +226,9 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             bindingContext: BindingContext,
             implementingModulesBindings: List<Pair<MultiTargetPlatform, BindingContext>>,
             actualText: StringBuilder,
-            skipJvmSignatureDiagnostics: Boolean
+            skipJvmSignatureDiagnostics: Boolean,
+            languageVersionSettings: LanguageVersionSettings,
+            moduleDescriptor: ModuleDescriptorImpl
         ): Boolean {
             val ktFile = this.ktFile
             if (ktFile == null) {
@@ -242,21 +247,31 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
             val ok = booleanArrayOf(true)
             val withNewInference = newInferenceEnabled && withNewInferenceDirective && !USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI
-            val diagnostics = ContainerUtil.filter(
-                CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
-                    bindingContext, implementingModulesBindings, ktFile, markDynamicCalls, dynamicCallDescriptors, newInferenceEnabled
-                ) + jvmSignatureDiagnostics,
+            val diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
+                bindingContext,
+                implementingModulesBindings,
+                ktFile,
+                markDynamicCalls,
+                dynamicCallDescriptors,
+                newInferenceEnabled,
+                languageVersionSettings,
+                DataFlowValueFactoryImpl(languageVersionSettings),
+                moduleDescriptor,
+                this.diagnosedRangesToDiagnosticNames
+            )
+            val filteredDiagnostics = ContainerUtil.filter(
+                diagnostics + jvmSignatureDiagnostics,
                 { whatDiagnosticsToConsider.value(it.diagnostic) }
             )
 
-            actualDiagnostics.addAll(diagnostics)
+            actualDiagnostics.addAll(filteredDiagnostics)
 
             val uncheckedDiagnostics = mutableListOf<PositionalTextDiagnostic>()
             val inferenceCompatibilityOfTest = asInferenceCompatibility(withNewInference)
             val invertedInferenceCompatibilityOfTest = asInferenceCompatibility(!withNewInference)
 
             val diagnosticToExpectedDiagnostic =
-                CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, object : DiagnosticDiffCallbacks {
+                CheckerTestUtil.diagnosticsDiff(diagnosedRanges, filteredDiagnostics, object : DiagnosticDiffCallbacks {
                     override fun missingDiagnostic(diagnostic: TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
                         if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
                             updateUncheckedDiagnostics(diagnostic, expectedStart, expectedEnd)
@@ -307,7 +322,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             actualText.append(
                 CheckerTestUtil.addDiagnosticMarkersToText(
                     ktFile,
-                    diagnostics,
+                    filteredDiagnostics,
                     diagnosticToExpectedDiagnostic,
                     { file -> file.text },
                     uncheckedDiagnostics,

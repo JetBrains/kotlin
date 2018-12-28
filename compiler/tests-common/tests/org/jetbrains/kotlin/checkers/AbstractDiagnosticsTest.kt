@@ -175,9 +175,15 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 if (platform is MultiTargetPlatform.Specific) platform to moduleBindings[testModule]!!
                 else null
             }
+            val moduleDescriptor = modules[module]!!
+
             ok = ok and testFile.getActualText(
-                moduleBindings[module]!!, implementingModulesBindings, actualText,
-                shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule
+                moduleBindings[module]!!,
+                implementingModulesBindings,
+                actualText,
+                shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule,
+                languageVersionSettingsByModule[module]!!,
+                moduleDescriptor
             )
         }
 
