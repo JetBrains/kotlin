@@ -11,8 +11,7 @@ import kotlin.internal.PureReifiable
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 public actual inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 
-@Suppress("NOTHING_TO_INLINE")
-@PublishedApi internal inline fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) {
+internal fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) {
     if (toIndex > size)
         throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
     if (fromIndex > toIndex)

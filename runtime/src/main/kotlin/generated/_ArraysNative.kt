@@ -732,8 +732,7 @@ public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: 
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun <T> Array<T>.copyOf(): Array<T> {
+public actual fun <T> Array<T>.copyOf(): Array<T> {
     return this.copyOfUninitializedElements(size)
 }
 
@@ -742,8 +741,7 @@ public actual inline fun <T> Array<T>.copyOf(): Array<T> {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun ByteArray.copyOf(): ByteArray {
+public actual fun ByteArray.copyOf(): ByteArray {
     return this.copyOfUninitializedElements(size)
 }
 
@@ -752,8 +750,7 @@ public actual inline fun ByteArray.copyOf(): ByteArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun ShortArray.copyOf(): ShortArray {
+public actual fun ShortArray.copyOf(): ShortArray {
     return this.copyOfUninitializedElements(size)
 }
 
@@ -762,8 +759,7 @@ public actual inline fun ShortArray.copyOf(): ShortArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun IntArray.copyOf(): IntArray {
+public actual fun IntArray.copyOf(): IntArray {
     return this.copyOfUninitializedElements(size)
 }
 
@@ -772,8 +768,7 @@ public actual inline fun IntArray.copyOf(): IntArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun LongArray.copyOf(): LongArray {
+public actual fun LongArray.copyOf(): LongArray {
     return this.copyOfUninitializedElements(size)
 }
 
@@ -782,8 +777,7 @@ public actual inline fun LongArray.copyOf(): LongArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun FloatArray.copyOf(): FloatArray {
+public actual fun FloatArray.copyOf(): FloatArray {
     return this.copyOfUninitializedElements(size)
 }
 
@@ -792,8 +786,7 @@ public actual inline fun FloatArray.copyOf(): FloatArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun DoubleArray.copyOf(): DoubleArray {
+public actual fun DoubleArray.copyOf(): DoubleArray {
     return this.copyOfUninitializedElements(size)
 }
 
@@ -802,8 +795,7 @@ public actual inline fun DoubleArray.copyOf(): DoubleArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun BooleanArray.copyOf(): BooleanArray {
+public actual fun BooleanArray.copyOf(): BooleanArray {
     return this.copyOfUninitializedElements(size)
 }
 
@@ -812,8 +804,7 @@ public actual inline fun BooleanArray.copyOf(): BooleanArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun CharArray.copyOf(): CharArray {
+public actual fun CharArray.copyOf(): CharArray {
     return this.copyOfUninitializedElements(size)
 }
 
@@ -826,8 +817,7 @@ public actual inline fun CharArray.copyOf(): CharArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun ByteArray.copyOf(newSize: Int): ByteArray {
+public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
     return this.copyOfUninitializedElements(newSize)
 }
 
@@ -840,8 +830,7 @@ public actual inline fun ByteArray.copyOf(newSize: Int): ByteArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun ShortArray.copyOf(newSize: Int): ShortArray {
+public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
     return this.copyOfUninitializedElements(newSize)
 }
 
@@ -854,8 +843,7 @@ public actual inline fun ShortArray.copyOf(newSize: Int): ShortArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun IntArray.copyOf(newSize: Int): IntArray {
+public actual fun IntArray.copyOf(newSize: Int): IntArray {
     return this.copyOfUninitializedElements(newSize)
 }
 
@@ -868,8 +856,7 @@ public actual inline fun IntArray.copyOf(newSize: Int): IntArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun LongArray.copyOf(newSize: Int): LongArray {
+public actual fun LongArray.copyOf(newSize: Int): LongArray {
     return this.copyOfUninitializedElements(newSize)
 }
 
@@ -882,8 +869,7 @@ public actual inline fun LongArray.copyOf(newSize: Int): LongArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun FloatArray.copyOf(newSize: Int): FloatArray {
+public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
     return this.copyOfUninitializedElements(newSize)
 }
 
@@ -896,8 +882,7 @@ public actual inline fun FloatArray.copyOf(newSize: Int): FloatArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
+public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
     return this.copyOfUninitializedElements(newSize)
 }
 
@@ -910,8 +895,7 @@ public actual inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
+public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
     return this.copyOfUninitializedElements(newSize)
 }
 
@@ -924,8 +908,7 @@ public actual inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun CharArray.copyOf(newSize: Int): CharArray {
+public actual fun CharArray.copyOf(newSize: Int): CharArray {
     return this.copyOfUninitializedElements(newSize)
 }
 
@@ -938,8 +921,7 @@ public actual inline fun CharArray.copyOf(newSize: Int): CharArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
-@kotlin.internal.InlineOnly
-public actual inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
+public actual fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
     return this.copyOfNulls(newSize)
 }
 
@@ -949,8 +931,7 @@ public actual inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
  * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
  * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@kotlin.internal.InlineOnly
-public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+public actual fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
     checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
@@ -961,8 +942,7 @@ public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int):
  * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
  * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@kotlin.internal.InlineOnly
-public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+public actual fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
     checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
@@ -973,8 +953,7 @@ public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): By
  * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
  * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@kotlin.internal.InlineOnly
-public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+public actual fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
     checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
@@ -985,8 +964,7 @@ public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): S
  * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
  * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@kotlin.internal.InlineOnly
-public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
     checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
@@ -997,8 +975,7 @@ public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): Int
  * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
  * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@kotlin.internal.InlineOnly
-public actual inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
     checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
@@ -1009,8 +986,7 @@ public actual inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): Lo
  * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
  * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@kotlin.internal.InlineOnly
-public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+public actual fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
     checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
@@ -1021,8 +997,7 @@ public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): F
  * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
  * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@kotlin.internal.InlineOnly
-public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+public actual fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
     checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
@@ -1033,8 +1008,7 @@ public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): 
  * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
  * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@kotlin.internal.InlineOnly
-public actual inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
+public actual fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
     checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
@@ -1045,8 +1019,7 @@ public actual inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int):
  * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
  * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@kotlin.internal.InlineOnly
-public actual inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+public actual fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
     checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
@@ -1057,7 +1030,6 @@ public actual inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): Ch
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun <T> Array<T>.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): Array<T> {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
@@ -1074,7 +1046,6 @@ internal fun <T> Array<T>.copyOfUninitializedElements(fromIndex: Int, toIndex: I
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun ByteArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ByteArray {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
@@ -1091,7 +1062,6 @@ internal fun ByteArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int)
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun ShortArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ShortArray {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
@@ -1108,7 +1078,6 @@ internal fun ShortArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun IntArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): IntArray {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
@@ -1125,7 +1094,6 @@ internal fun IntArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int):
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun LongArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): LongArray {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
@@ -1142,7 +1110,6 @@ internal fun LongArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int)
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun FloatArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): FloatArray {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
@@ -1159,7 +1126,6 @@ internal fun FloatArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun DoubleArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): DoubleArray {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
@@ -1176,7 +1142,6 @@ internal fun DoubleArray.copyOfUninitializedElements(fromIndex: Int, toIndex: In
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun BooleanArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): BooleanArray {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
@@ -1193,7 +1158,6 @@ internal fun BooleanArray.copyOfUninitializedElements(fromIndex: Int, toIndex: I
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): CharArray {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
@@ -1209,7 +1173,6 @@ internal fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int)
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
     return copyOfUninitializedElements(0, newSize)
 }
@@ -1219,7 +1182,6 @@ internal fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun ByteArray.copyOfUninitializedElements(newSize: Int): ByteArray {
     return copyOfUninitializedElements(0, newSize)
 }
@@ -1229,7 +1191,6 @@ internal fun ByteArray.copyOfUninitializedElements(newSize: Int): ByteArray {
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun ShortArray.copyOfUninitializedElements(newSize: Int): ShortArray {
     return copyOfUninitializedElements(0, newSize)
 }
@@ -1239,7 +1200,6 @@ internal fun ShortArray.copyOfUninitializedElements(newSize: Int): ShortArray {
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray {
     return copyOfUninitializedElements(0, newSize)
 }
@@ -1249,7 +1209,6 @@ internal fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray {
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun LongArray.copyOfUninitializedElements(newSize: Int): LongArray {
     return copyOfUninitializedElements(0, newSize)
 }
@@ -1259,7 +1218,6 @@ internal fun LongArray.copyOfUninitializedElements(newSize: Int): LongArray {
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun FloatArray.copyOfUninitializedElements(newSize: Int): FloatArray {
     return copyOfUninitializedElements(0, newSize)
 }
@@ -1269,7 +1227,6 @@ internal fun FloatArray.copyOfUninitializedElements(newSize: Int): FloatArray {
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun DoubleArray.copyOfUninitializedElements(newSize: Int): DoubleArray {
     return copyOfUninitializedElements(0, newSize)
 }
@@ -1279,7 +1236,6 @@ internal fun DoubleArray.copyOfUninitializedElements(newSize: Int): DoubleArray 
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun BooleanArray.copyOfUninitializedElements(newSize: Int): BooleanArray {
     return copyOfUninitializedElements(0, newSize)
 }
@@ -1289,7 +1245,6 @@ internal fun BooleanArray.copyOfUninitializedElements(newSize: Int): BooleanArra
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-@PublishedApi
 internal fun CharArray.copyOfUninitializedElements(newSize: Int): CharArray {
     return copyOfUninitializedElements(0, newSize)
 }

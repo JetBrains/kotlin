@@ -23,10 +23,8 @@ internal fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
 /**
  * Returns a new array which is a copy of the original array with new elements filled with null values.
  */
-@PublishedApi
 internal fun <E> Array<E>.copyOfNulls(newSize: Int): Array<E?>  = copyOfNulls(0, newSize)
 
-@PublishedApi
 internal fun <E> Array<E>.copyOfNulls(fromIndex: Int, toIndex: Int): Array<E?> {
     val newSize = toIndex - fromIndex
     if (newSize < 0) {
