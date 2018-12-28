@@ -196,8 +196,7 @@ targetList.each { target ->
     "-Dfile.encoding=UTF-8"]
 
     def defaultArgs = ['-nopack', '-nostdlib', '-nodefaultlibs', '-ea' ]
-    // FIXME: disabled temporary while it fails to build with debug info
-//    if (target != "wasm32") defaultArgs += '-g'
+    if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,
                      "-Xruntime=${project(':runtime').file('build/' + target +'/runtime.bc')}",

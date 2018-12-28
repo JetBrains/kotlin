@@ -63,7 +63,7 @@ class ModuleIndex(val module: IrModuleFragment) {
 
             override fun visitDeclaration(declaration: IrDeclaration) {
                 super.visitDeclaration(declaration)
-                declarationToFile[declaration.descriptor] = currentFile!!.name
+                declarationToFile[declaration.descriptor] = currentFile!!.path
             }
         })
 
