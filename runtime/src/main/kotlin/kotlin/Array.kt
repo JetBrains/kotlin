@@ -88,13 +88,3 @@ private class IteratorImpl<T>(val collection: Array<T>) : Iterator<T> {
         return index < collection.size
     }
 }
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-@kotlin.internal.InlineOnly
-public inline operator fun <T> Array<T>.plus(elements: Array<T>): Array<T> {
-    val result = copyOfUninitializedElements(this.size + elements.size)
-    elements.copyRangeTo(result, 0, elements.size, this.size)
-    return result
-}
