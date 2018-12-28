@@ -44,7 +44,7 @@ fun createTopDownAnalyzerForJs(
         languageVersionSettings: LanguageVersionSettings,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
-        fallbackPackage: PackageFragmentProvider?
+        additionalPackages: List<PackageFragmentProvider>
 ): LazyTopDownAnalyzer {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatform) {
         configureModule(moduleContext, JsPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
@@ -62,7 +62,7 @@ fun createTopDownAnalyzerForJs(
     }.apply {
         val packagePartProviders = mutableListOf(get<KotlinCodeAnalyzer>().packageFragmentProvider)
         val moduleDescriptor = get<ModuleDescriptorImpl>()
-        fallbackPackage?.let { packagePartProviders += it }
+        packagePartProviders += additionalPackages
         moduleDescriptor.initialize(CompositePackageFragmentProvider(packagePartProviders))
     }
     return storageComponentContainer.get<LazyTopDownAnalyzer>()

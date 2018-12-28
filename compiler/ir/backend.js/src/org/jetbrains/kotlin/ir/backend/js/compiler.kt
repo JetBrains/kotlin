@@ -31,13 +31,14 @@ fun compile(
     builtInsModule: ModuleDescriptorImpl? = null
 ): Result {
     val analysisResult =
-        analyzeFiles(
+        TopDownAnalyzerFacadeForJS.analyzeFiles(
             files,
             project,
             configuration,
             dependencies.mapNotNull { it as? ModuleDescriptorImpl },
             emptyList(),
-            builtInsModule
+            thisIsBuiltInsModule = builtInsModule == null,
+            customBuiltInsModule = builtInsModule
         )
 
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

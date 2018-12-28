@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.js.analyze
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
+import org.jetbrains.kotlin.builtins.functions.FunctionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.js.di.createTopDownAnalyzerForJs
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -45,16 +49,44 @@ object TopDownAnalyzerFacadeForJS {
         project: Project,
         configuration: CompilerConfiguration,
         moduleDescriptors: List<ModuleDescriptorImpl>,
-        friendModuleDescriptors: List<ModuleDescriptorImpl>
+        friendModuleDescriptors: List<ModuleDescriptorImpl>,
+        thisIsBuiltInsModule: Boolean = false,
+        customBuiltInsModule: ModuleDescriptorImpl? = null
     ): JsAnalysisResult {
+        require(!thisIsBuiltInsModule || customBuiltInsModule == null) {
+            "Can't simultaneously use custom built-ins module and set current module as built-ins"
+        }
+        val projectContext = ProjectContext(project)
+        val builtIns = if (thisIsBuiltInsModule || customBuiltInsModule != null) {
+            object : KotlinBuiltIns(projectContext.storageManager) {}
+        } else {
+            JsPlatform.builtIns
+        }
 
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
-        val context = ContextForNewModule(ProjectContext(project), Name.special("<$moduleName>"), JsPlatform.builtIns, null)
+        val context = ContextForNewModule(
+            projectContext,
+            Name.special("<$moduleName>"),
+            builtIns,
+            multiTargetPlatform = null
+        )
+
+        val additionalPackages = mutableListOf<PackageFragmentProvider>()
+
+        if (customBuiltInsModule != null) {
+            builtIns.builtInsModule = customBuiltInsModule
+        }
+
+        if (thisIsBuiltInsModule) {
+            builtIns.builtInsModule = context.module
+            val classFactory = BuiltInFictitiousFunctionClassFactory(context.storageManager, context.module)
+            additionalPackages += FunctionInterfacePackageFragmentProvider(classFactory, context.module)
+        }
 
         context.module.setDependencies(
             listOf(context.module) +
                     moduleDescriptors +
-                    listOf(JsPlatform.builtIns.builtInsModule),
+                    listOf(builtIns.builtInsModule),
             friendModuleDescriptors.toSet()
         )
 
@@ -62,14 +94,15 @@ object TopDownAnalyzerFacadeForJS {
 
         val trace = BindingTraceContext()
         trace.record(MODULE_KIND, context.module, moduleKind)
-        return analyzeFilesWithGivenTrace(files, trace, context, configuration)
+        return analyzeFilesWithGivenTrace(files, trace, context, configuration, additionalPackages)
     }
 
     fun analyzeFilesWithGivenTrace(
         files: Collection<KtFile>,
         trace: BindingTrace,
         moduleContext: ModuleContext,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        additionalPackages: List<PackageFragmentProvider> = emptyList()
     ): JsAnalysisResult {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
@@ -91,7 +124,7 @@ object TopDownAnalyzerFacadeForJS {
                 languageVersionSettings,
                 lookupTracker,
                 expectActualTracker,
-                packageFragment
+                additionalPackages + listOfNotNull(packageFragment)
         )
         analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
         return JsAnalysisResult.success(trace, moduleContext.module)
