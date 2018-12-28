@@ -24,7 +24,8 @@ enum class LinkedSpecTestFileInfoElementType(
 ) : SpecTestInfoElementType {
     SPEC_VERSION(required = true),
     PLACE(valuePattern = placePattern, required = true),
-    RELEVANT_PLACES(valuePattern = relevantPlacesPattern)
+    RELEVANT_PLACES(valuePattern = relevantPlacesPattern),
+    UNSPECIFIED_BEHAVIOR
 }
 
 data class SpecPlace(
@@ -43,6 +44,7 @@ class LinkedSpecTest(
     description: String,
     cases: SpecTestCasesSet,
     unexpectedBehavior: Boolean,
+    private val unspecifiedBehavior: Boolean,
     issues: Set<String>,
     helpers: Set<String>?
 ) : AbstractSpecTest(testArea, testType, place.sections, testNumber, description, cases, unexpectedBehavior, issues, helpers) {
@@ -54,8 +56,22 @@ class LinkedSpecTest(
                 && place.sentenceNumber == pathMatcher.group("sentenceNumber").toInt()
                 && testNumber == pathMatcher.group("testNumber").toInt()
 
+    private fun getUnspecifiedBehaviourText(): String? {
+        val separatedTestCasesUnspecifiedBehaviorNumber = cases.byNumbers.count { it.value.unspecifiedBehavior }
+        val testCasesUnspecifiedBehaviorNumber = when {
+            unspecifiedBehavior -> cases.byNumbers.size
+            separatedTestCasesUnspecifiedBehaviorNumber != 0 -> separatedTestCasesUnspecifiedBehaviorNumber
+            else -> 0
+        }
+
+        return if (testCasesUnspecifiedBehaviorNumber != 0) {
+            "!!! HAS UNSPECIFIED BEHAVIOUR (in $testCasesUnspecifiedBehaviorNumber cases) !!!"
+        } else null
+    }
+
     override fun toString() = buildString {
         append("--------------------------------------------------$ls")
+        getUnspecifiedBehaviourText()?.let { append(it + ls) }
         super.getUnexpectedBehaviourText()?.let { append(it + ls) }
         append("${testArea.name.withSpaces()} $testType SPEC TEST (${testType.toString().withSpaces()})$ls")
         append("SPEC VERSION: $specVersion$ls")

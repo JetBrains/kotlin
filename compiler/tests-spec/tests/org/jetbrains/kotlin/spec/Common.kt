@@ -73,6 +73,7 @@ data class SpecTestCase(
     var code: String,
     var ranges: MutableList<IntRange>,
     var unexpectedBehavior: Boolean,
+    var unspecifiedBehavior: Boolean,
     val issues: MutableList<String>?
 )
 

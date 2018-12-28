@@ -70,6 +70,7 @@ object CommonParser {
             parsedTestFile.testDescription,
             parsedTestFile.testCasesSet,
             parsedTestFile.unexpectedBehavior,
+            LinkedSpecTestFileInfoElementType.UNSPECIFIED_BEHAVIOR in testInfoElements,
             parsedTestFile.issues,
             parsedTestFile.helpers
         )

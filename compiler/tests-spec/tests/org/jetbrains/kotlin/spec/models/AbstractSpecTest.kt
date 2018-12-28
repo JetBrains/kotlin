@@ -40,6 +40,7 @@ enum class SpecTestCaseInfoElementType(
 ) : SpecTestInfoElementType {
     TESTCASE_NUMBER(valuePattern = testCaseNumberPattern, required = true),
     RELEVANT_PLACES(valuePattern = relevantPlacesPattern),
+    UNSPECIFIED_BEHAVIOR
 }
 
 abstract class AbstractSpecTest(
