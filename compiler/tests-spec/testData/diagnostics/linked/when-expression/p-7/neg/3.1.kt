@@ -1,4 +1,3 @@
-// !WITH_BASIC_TYPES
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -7,10 +6,11 @@
  * PLACE: when-expression -> paragraph 7 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: 'When' with bound value and 'when condition' with range expression, but without containment checking operator.
+ * HELPERS: typesProvider
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(value_1: Int, value_2: _BasicTypesProvider): String {
+fun case_1(value_1: Int, value_2: TypesProvider): String {
     when (value_1) {
         <!INCOMPATIBLE_TYPES!>-1000L..100<!> -> return ""
         <!INCOMPATIBLE_TYPES!>value_2.getInt()..getLong()<!> -> return ""

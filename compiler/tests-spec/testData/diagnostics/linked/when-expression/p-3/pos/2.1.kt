@@ -1,6 +1,3 @@
-// !WITH_BASIC_TYPES
-// !WITH_SEALED_CLASSES
-// !WITH_ENUM_CLASSES
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
@@ -9,6 +6,7 @@
  * PLACE: when-expression -> paragraph 3 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: 'When' without bound value and different variants of the boolean conditions (logical, equality, comparison, type checking operator, containment operator).
+ * HELPERS: typesProvider, enumClasses, sealedClasses, classes
  */
 
 // TESTCASE NUMBER: 1
@@ -16,8 +14,8 @@ fun case_1(value_1: Boolean, value_2: Long): Int {
     return when {
         value_1 -> 1
         getBoolean() && value_1 -> 2
-        getChar(10) != 'a' -> 3
-        getList() === getAny() -> 4
+        getChar() != 'a' -> 3
+        Out<Int>() === getAny() -> 4
         value_2 <= 11 -> 5
         !value_1 -> 6
         else -> 7
@@ -28,12 +26,12 @@ fun case_1(value_1: Boolean, value_2: Long): Int {
  * TESTCASE NUMBER: 2
  * NOTE: for a potential analysys of exhaustiveness by enums in whens without a bound value.
  */
-fun case_2(value_1: _EnumClass) {
+fun case_2(value_1: EnumClass) {
     when {
-        value_1 == _EnumClass.NORTH -> {}
-        value_1 == _EnumClass.SOUTH -> {}
-        value_1 == _EnumClass.WEST -> {}
-        value_1 == _EnumClass.EAST -> {}
+        value_1 == EnumClass.NORTH -> {}
+        value_1 == EnumClass.SOUTH -> {}
+        value_1 == EnumClass.WEST -> {}
+        value_1 == EnumClass.EAST -> {}
     }
 }
 
@@ -105,11 +103,11 @@ fun case_7(value_1: Any) {
  * TESTCASE NUMBER: 8
  * NOTE: for a potential analysys of exhaustiveness by enums in whens without a bound value.
  */
-fun case_8(value_1: _SealedClass) {
+fun case_8(value_1: SealedClass) {
     when {
-        value_1 is _SealedChild1 -> {}
-        value_1 is _SealedChild2 -> {}
-        value_1 is _SealedChild3 -> {}
+        value_1 is SealedChild1 -> {}
+        value_1 is SealedChild2 -> {}
+        value_1 is SealedChild3 -> {}
     }
 }
 

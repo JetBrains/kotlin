@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.codegen
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.TestExceptionsComparator
+import org.jetbrains.kotlin.spec.models.AbstractSpecTest
 import org.jetbrains.kotlin.spec.parsers.CommonParser
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns.packagePattern
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
 import org.jetbrains.kotlin.spec.validators.BlackBoxTestTypeValidator
 import org.jetbrains.kotlin.spec.validators.SpecTestValidationException
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 import java.io.*
 
@@ -21,31 +21,25 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
         private const val CODEGEN_BOX_TESTDATA_PATH = "$TESTDATA_PATH/codegen/box"
         private const val HELPERS_PATH = "$CODEGEN_BOX_TESTDATA_PATH/helpers"
         private const val HELPERS_PACKAGE_VARIABLE = "<!PACKAGE!>"
-        private const val HELPERS_DIRECTIVE = "// HELPERS:"
-
-        // map of pairs: source helper filename - target helper filename
-        private val helperDirectives = mapOf(
-            "REFLECT" to "reflect.kt"
-        )
     }
 
     private fun addPackageDirectiveToHelperFile(helperContent: String, packageName: String?) =
         helperContent.replace(HELPERS_PACKAGE_VARIABLE, if (packageName == null) "" else "package $packageName")
 
-    private fun includeHelpers(wholeFile: File, files: MutableList<TestFile>) {
+    private fun includeHelpers(wholeFile: File, files: MutableList<TestFile>, specTest: AbstractSpecTest) {
+        if (specTest.helpers == null) return
+
         val fileContent = FileUtil.loadFile(wholeFile, true)
-        val helpersSpecified = InTextDirectivesUtils.findListWithPrefixes(fileContent, HELPERS_DIRECTIVE)
         val packageName = packagePattern.matcher(fileContent).let {
             if (it.find()) it.group("packageName") else null
         }
 
-        helpersSpecified.forEach {
-            if (helperDirectives.contains(it)) {
-                val helperContent = FileUtil.loadFile(File("$HELPERS_PATH/${helperDirectives[it]}"), true)
-                files.add(
-                    TestFile(helperDirectives[it]!!, addPackageDirectiveToHelperFile(helperContent, packageName))
-                )
-            }
+        specTest.helpers.forEach {
+            val filename = "$it.kt"
+            val helperContent = FileUtil.loadFile(File("$HELPERS_PATH/$filename"), true)
+            files.add(
+                TestFile(filename, addPackageDirectiveToHelperFile(helperContent, packageName))
+            )
         }
     }
 
@@ -65,7 +59,7 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
 
         println(specTest)
 
-        includeHelpers(wholeFile, files)
+        includeHelpers(wholeFile, files, specTest)
 
         TestExceptionsComparator(wholeFile).runAndCompareWithExpected {
             super.doMultiFileTest(wholeFile, files, javaFilesDir)

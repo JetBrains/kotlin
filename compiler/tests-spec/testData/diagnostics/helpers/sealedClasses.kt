@@ -1,36 +1,36 @@
-sealed class _SealedClass
-data class _SealedChild1(val number: Int) : _SealedClass()
-data class _SealedChild2(val e1: Int, val e2: Int) : _SealedClass()
-data class _SealedChild3(val m1: Int, val m2: Int) : _SealedClass()
+sealed class SealedClass
+data class SealedChild1(val number: Int) : SealedClass()
+data class SealedChild2(val e1: Int, val e2: Int) : SealedClass()
+data class SealedChild3(val m1: Int, val m2: Int) : SealedClass()
 
-sealed class _SealedClassWithObjects
-object _SealedWithObjectsChild1 : _SealedClassWithObjects()
-object _SealedWithObjectsChild2 : _SealedClassWithObjects()
-object _SealedWithObjectsChild3 : _SealedClassWithObjects()
+sealed class SealedClassWithObjects
+object SealedWithObjectsChild1 : SealedClassWithObjects()
+object SealedWithObjectsChild2 : SealedClassWithObjects()
+object SealedWithObjectsChild3 : SealedClassWithObjects()
 
-sealed class _SealedClassSingle
-data class _SealedSingleChild1(val number: Int) : _SealedClassSingle()
+sealed class SealedClassSingle
+data class SealedSingleChild1(val number: Int) : SealedClassSingle()
 
-sealed class _SealedClassSingleWithObject
-object _SealedSingleWithObjectChild1: Expr3() {}
+sealed class SealedClassSingleWithObject
+object SealedSingleWithObjectChild1: Expr3() {}
 
-sealed class _SealedClassEmpty
+sealed class SealedClassEmpty
 
-sealed class _SealedClassWithMethods
-class _SealedWithMethodsChild1() : _SealedClassWithMethods() {
+sealed class SealedClassWithMethods
+class SealedWithMethodsChild1() : SealedClassWithMethods() {
     fun m1() = this.hashCode().toString()
 }
-class _SealedWithMethodsChild2() : _SealedClassWithMethods() {
+class SealedWithMethodsChild2() : SealedClassWithMethods() {
     fun m2() = this.hashCode().toString()
 }
-class _SealedWithMethodsChild3() : _SealedClassWithMethods() {
+class SealedWithMethodsChild3() : SealedClassWithMethods() {
     fun m3() = this.hashCode().toString()
 }
 
-sealed class _SealedClassMixed
-data class _SealedMixedChild1(val number: Int) : _SealedClassMixed()
-data class _SealedMixedChild2(val e1: Int, val e2: Int) : _SealedClassMixed()
-data class _SealedMixedChild3(val m1: Int, val m2: Int) : _SealedClassMixed()
-object _SealedMixedChildObject1 : _SealedClassMixed()
-object _SealedMixedChildObject2 : _SealedClassMixed()
-object _SealedMixedChildObject3 : _SealedClassMixed()
+sealed class SealedClassMixed
+data class SealedMixedChild1(val number: Int) : SealedClassMixed()
+data class SealedMixedChild2(val e1: Int, val e2: Int) : SealedClassMixed()
+data class SealedMixedChild3(val m1: Int, val m2: Int) : SealedClassMixed()
+object SealedMixedChildObject1 : SealedClassMixed()
+object SealedMixedChildObject2 : SealedClassMixed()
+object SealedMixedChildObject3 : SealedClassMixed()

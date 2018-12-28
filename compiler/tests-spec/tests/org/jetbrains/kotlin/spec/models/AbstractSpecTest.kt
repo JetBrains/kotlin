@@ -30,7 +30,8 @@ enum class CommonSpecTestFileInfoElementType(
     override val required: Boolean = false
 ) : SpecTestInfoElementType {
     NUMBER(required = true),
-    DESCRIPTION(required = true)
+    DESCRIPTION(required = true),
+    HELPERS
 }
 
 enum class SpecTestCaseInfoElementType(
@@ -49,7 +50,8 @@ abstract class AbstractSpecTest(
     val description: String,
     val cases: SpecTestCasesSet,
     val unexpectedBehavior: Boolean,
-    val issues: Set<String>
+    val issues: Set<String>,
+    val helpers: Set<String>?
 ) {
     companion object {
         private fun issuesToString(issues: Set<String>) = issues.joinToString(", ") { CommonPatterns.ISSUE_TRACKER + it }

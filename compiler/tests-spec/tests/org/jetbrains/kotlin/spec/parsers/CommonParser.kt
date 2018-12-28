@@ -70,7 +70,8 @@ object CommonParser {
             parsedTestFile.testDescription,
             parsedTestFile.testCasesSet,
             parsedTestFile.unexpectedBehavior,
-            parsedTestFile.issues
+            parsedTestFile.issues,
+            parsedTestFile.helpers
         )
     }
 
@@ -87,7 +88,8 @@ object CommonParser {
             parsedTestFile.testDescription,
             parsedTestFile.testCasesSet,
             parsedTestFile.unexpectedBehavior,
-            parsedTestFile.issues
+            parsedTestFile.issues,
+            parsedTestFile.helpers
         )
     }
 

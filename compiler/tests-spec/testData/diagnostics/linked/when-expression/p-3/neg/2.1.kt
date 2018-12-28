@@ -1,4 +1,3 @@
-// !WITH_BASIC_TYPES
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -7,10 +6,11 @@
  * PLACE: when-expression -> paragraph 3 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: 'When' without bound value and with not boolean condition in 'when condition'.
+ * HELPERS: typesProvider
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(value_1: Int, value_2: String, value_3: _BasicTypesProvider): String {
+fun case_1(value_1: Int, value_2: String, value_3: TypesProvider): String {
     when {
         <!TYPE_MISMATCH!>.012f / value_1<!> -> return ""
         <!TYPE_MISMATCH!>"$value_2..."<!> -> return ""

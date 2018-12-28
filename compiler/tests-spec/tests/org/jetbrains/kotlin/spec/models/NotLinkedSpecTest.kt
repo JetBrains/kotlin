@@ -32,8 +32,9 @@ class NotLinkedSpecTest(
     description: String,
     cases: SpecTestCasesSet,
     unexpectedBehavior: Boolean,
-    issues: Set<String>
-) : AbstractSpecTest(testArea, testType, sections, testNumber, description, cases, unexpectedBehavior, issues) {
+    issues: Set<String>,
+    helpers: Set<String>?
+) : AbstractSpecTest(testArea, testType, sections, testNumber, description, cases, unexpectedBehavior, issues, helpers) {
     override fun checkPathConsistency(pathMatcher: Matcher) =
         testArea == TestArea.valueOf(pathMatcher.group("testArea").withUnderscores())
                 && testType == TestType.fromValue(pathMatcher.group("testType"))!!

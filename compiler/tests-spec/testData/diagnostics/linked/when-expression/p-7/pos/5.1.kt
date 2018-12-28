@@ -1,6 +1,3 @@
-// !WITH_BASIC_TYPES
-// !WITH_FUNCTIONS
-// !WITH_CLASSES
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
@@ -9,6 +6,7 @@
  * PLACE: when-expression -> paragraph 7 -> sentence 5
  * NUMBER: 1
  * DESCRIPTION: 'When' with enumeration of the different variants of expressions in 'when condition'.
+ * HELPERS: typesProvider, classes, functions
  */
 
 // TESTCASE NUMBER: 1
@@ -28,7 +26,7 @@ fun case_2(value_1: Number, value_2: Int) {
     when (value_1) {
         -.09 % 10L -> {}
         value_2 / -5 -> {}
-        getByte(99) - 11 + 90 -> {}
+        getByte() - 11 + 90 -> {}
     }
 }
 
@@ -38,7 +36,7 @@ fun case_3(value_1: Boolean, value_2: Boolean, value_3: Long) {
         value_2 -> {}
         !value_2 -> {}
         getBoolean() && value_2 -> {}
-        getChar(10) != 'a' -> {}
+        getChar() != 'a' -> {}
         getList() === getAny() -> {}
         value_3 <= 11 -> {}
     }
@@ -113,8 +111,8 @@ fun case_9(value_1: Any) {
 // TESTCASE NUMBER: 10
 fun case_10(value_1: Collection<Int>, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when (value_1) {
-        value_2 as MutableList<Int> -> {}
-        value_2 <!USELESS_CAST!>as? MutableList<Int><!> -> {}
+        value_2 as List<Int> -> {}
+        value_2 <!USELESS_CAST!>as? List<Int><!> -> {}
         value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!> -> {}
         (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int> -> {}
     }
@@ -153,11 +151,11 @@ fun case_13(value_1: Int, value_2: List<Int>, value_3: List<List<List<List<Int>>
 }
 
 // TESTCASE NUMBER: 14
-fun case_14(value_1: Any, value_2: _Class, value_3: _Class?, value_4: Int) {
+fun case_14(value_1: Any, value_2: Class, value_3: Class?, value_4: Int) {
     fun __fun_1(): () -> Any { return fun() { } }
 
     when (value_1) {
-        _funWithoutArgs() -> {}
+        funWithoutArgs() -> {}
         __fun_1()() -> {}
         value_2.fun_2(value_4) -> {}
         value_3?.fun_2(value_4) -> {}
@@ -166,7 +164,7 @@ fun case_14(value_1: Any, value_2: _Class, value_3: _Class?, value_4: Int) {
 }
 
 // TESTCASE NUMBER: 15
-fun case_15(value_1: Int, value_2: _Class, value_3: _Class?) {
+fun case_15(value_1: Int, value_2: Class, value_3: Class?) {
     when (value_1) {
         value_2.prop_1 -> {}
         value_3?.prop_2 -> {}

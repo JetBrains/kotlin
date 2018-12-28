@@ -1,7 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
-// !WITH_BASIC_TYPES
-// !WITH_FUNCTIONS
-// !WITH_CLASSES
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
@@ -10,6 +7,7 @@
  * PLACE: when-expression -> paragraph 6 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' with bound value and with different variants of expressions in the control structure body.
+ * HELPERS: typesProvider, classes, functions
  */
 
 // TESTCASE NUMBER: 1
@@ -25,11 +23,11 @@ fun case_1(value_1: Int) {
 }
 
 // TESTCASE NUMBER: 2
-fun case_2(value_1: Int, value_2: Byte, value_3: _BasicTypesProvider) {
+fun case_2(value_1: Int, value_2: Byte, value_3: TypesProvider) {
     when (value_1) {
         1 -> -.09 % 10L
         3 -> value_2 / -5
-        2 -> value_3.getChar(99) - 11 + 90
+        2 -> value_3.getChar() - 11 + 90
         4 -> 100
     }
 }
@@ -40,7 +38,7 @@ fun case_3(value_1: Int, value_2: Boolean, value_3: Long) {
         1 -> value_2
         2 -> !value_2
         3 -> getBoolean() && value_2
-        5 -> getChar(10) != 'a'
+        5 -> getChar() != 'a'
         6 -> getList() === getAny()
         7 -> value_3 <= 11
     }
@@ -148,8 +146,8 @@ fun case_11(value_1: Int) {
 // TESTCASE NUMBER: 12
 fun case_12(value_1: Int, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when (value_1) {
-        1 -> value_2 as MutableList<Int>
-        2 -> value_2 as? MutableList<Int>
+        1 -> value_2 as List<Int>
+        2 -> value_2 as? List<Int>
         3 -> value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>
         4 -> (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int>
     }
@@ -188,11 +186,11 @@ fun case_15(value_1: Int, value_2: List<Int>, value_3: List<List<List<List<Int>>
 }
 
 // TESTCASE NUMBER: 16
-fun case_16(value_1: Int, value_2: _Class, value_3: _Class?, value_4: Int) {
+fun case_16(value_1: Int, value_2: Class, value_3: Class?, value_4: Int) {
     fun __fun_1(): () -> Unit { return fun() { } }
 
     when (value_1) {
-        1 -> _funWithoutArgs()
+        1 -> funWithoutArgs()
         2 -> __fun_1()()
         3 -> value_2.fun_2(value_4)
         4 -> value_3?.fun_2(value_4)
@@ -201,7 +199,7 @@ fun case_16(value_1: Int, value_2: _Class, value_3: _Class?, value_4: Int) {
 }
 
 // TESTCASE NUMBER: 17
-fun case_17(value_1: Int, value_2: _Class, value_3: _Class?) {
+fun case_17(value_1: Int, value_2: Class, value_3: Class?) {
     when (value_1) {
         1 -> value_2.prop_1
         2 -> value_3?.prop_1

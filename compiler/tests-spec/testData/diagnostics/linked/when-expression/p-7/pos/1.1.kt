@@ -1,5 +1,3 @@
-// !WITH_CLASSES
-// !WITH_OBJECTS
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
@@ -8,6 +6,7 @@
  * PLACE: when-expression -> paragraph 7 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' with bound value and type test condition.
+ * HELPERS: classes, objects
  */
 
 // TESTCASE NUMBER: 1
@@ -61,8 +60,8 @@ fun case_5(value_1: Any?): String = when (value_1) {
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Any): String {
     when (value_1) {
-        is _EmptyObject -> return ""
-        is _ClassWithCompanionObject.Companion -> return ""
+        is EmptyObject -> return ""
+        is ClassWithCompanionObject.Companion -> return ""
     }
 
     return ""

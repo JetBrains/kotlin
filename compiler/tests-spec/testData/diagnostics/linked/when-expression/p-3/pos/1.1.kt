@@ -1,7 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -DEBUG_INFO_SMARTCAST
-// !WITH_BASIC_TYPES
-// !WITH_CLASSES
-// !WITH_FUNCTIONS
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
@@ -10,6 +7,7 @@
  * PLACE: when-expression -> paragraph 3 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' without bound value and with different variants of expressions in the control structure body.
+ * HELPERS: typesProvider, classes, functions
  */
 
 // TESTCASE NUMBER: 1
@@ -25,11 +23,11 @@ fun case_1(value_1: Int) {
 }
 
 // TESTCASE NUMBER: 2
-fun case_2(value_1: Int, value_2: Byte, value_3: _BasicTypesProvider) {
+fun case_2(value_1: Int, value_2: Byte, value_3: TypesProvider) {
     when {
         value_1 == 1 -> -.09 % 10L
         value_1 == 3 -> value_2 / -5
-        value_1 == 2 -> value_3.getChar(99) - 11 + 90
+        value_1 == 2 -> value_3.getChar() - 11 + 90
     }
 }
 
@@ -39,8 +37,8 @@ fun case_3(value_1: Int, value_2: Boolean, value_3: Long) {
         value_1 == 1 -> value_2
         value_1 == 2 -> !value_2
         value_1 == 3 -> getBoolean() && value_2
-        value_1 == 5 -> getChar(10) != 'a'
-        value_1 == 6 -> getList() === getAny()
+        value_1 == 5 -> getChar() != 'a'
+        value_1 == 6 -> Out<Int>() === getAny()
         value_1 == 7 -> value_3 <= 11
     }
 }
@@ -145,8 +143,8 @@ fun case_11(value_1: Int) {
 // TESTCASE NUMBER: 12
 fun case_12(value_1: Int, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when {
-        value_1 == 1 -> value_2 as MutableList<Int>
-        value_1 == 2 -> value_2 as? MutableList<Int>
+        value_1 == 1 -> value_2 as List<Int>
+        value_1 == 2 -> value_2 as? List<Int>
         value_1 == 3 -> value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>
         value_1 == 4 -> (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int>
     }
@@ -185,11 +183,11 @@ fun case_15(value_1: Int, value_2: List<Int>, value_3: List<List<List<List<Int>>
 }
 
 // TESTCASE NUMBER: 16
-fun case_16(value_1: Int, value_2: _Class, value_3: _Class?, value_4: Int) {
+fun case_16(value_1: Int, value_2: Class, value_3: Class?, value_4: Int) {
     fun __fun_1(): () -> Unit { return fun() { } }
 
     when {
-        value_1 == 1 -> _funWithoutArgs()
+        value_1 == 1 -> funWithoutArgs()
         value_1 == 2 -> __fun_1()()
         value_1 == 3 -> value_2.fun_2(value_4)
         value_1 == 4 -> value_3?.fun_2(value_4)
@@ -198,7 +196,7 @@ fun case_16(value_1: Int, value_2: _Class, value_3: _Class?, value_4: Int) {
 }
 
 // TESTCASE NUMBER: 17
-fun case_17(value_1: Int, value_2: _Class, value_3: _Class?) {
+fun case_17(value_1: Int, value_2: Class, value_3: Class?) {
     when {
         value_1 == 1 -> value_2.prop_1
         value_1 == 2 -> value_3?.prop_1

@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
-// !WITH_CLASSES
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -8,10 +7,11 @@
  * PLACE: when-expression -> paragraph 7 -> sentence 3
  * NUMBER: 2
  * DESCRIPTION: 'When' with bound value and 'when condition' with contains operator and type without defined contains operator.
+ * HELPERS: classes
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(value_1: Int, value_2: _EmptyClass, value_3: Int, value_4: Any): String {
+fun case_1(value_1: Int, value_2: EmptyClass, value_3: Int, value_4: Any): String {
     when (value_1) {
         <!TYPE_MISMATCH_IN_RANGE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>in<!> value_2  -> return ""
         <!TYPE_MISMATCH_IN_RANGE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>in<!> value_3  -> return ""

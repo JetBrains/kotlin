@@ -23,7 +23,8 @@ data class ParsedTestFile(
     val testInfoElements: SpecTestInfoElements<SpecTestInfoElementType>,
     val testCasesSet: SpecTestCasesSet,
     val unexpectedBehavior: Boolean,
-    val issues: Set<String>
+    val issues: Set<String>,
+    val helpers: Set<String>?
 )
 
 fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: SpecTestLinkedType): ParsedTestFile {
@@ -42,6 +43,7 @@ fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: Sp
         arrayOf(*CommonInfoElementType.values(), *CommonSpecTestFileInfoElementType.values(), *linkedTestType.infoElements.value),
         testInfoByContentMatcher.group("infoElements")
     )
+    val helpers = testInfoElements[CommonSpecTestFileInfoElementType.HELPERS]?.content?.splitByComma()?.toSet()
 
     return ParsedTestFile(
         testArea = TestArea.valueOf(testInfoByContentMatcher.group("testArea").withUnderscores()),
@@ -51,6 +53,7 @@ fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: Sp
         testInfoElements = testInfoElements,
         testCasesSet = parseTestCases(testFiles),
         unexpectedBehavior = testInfoElements.contains(CommonInfoElementType.UNEXPECTED_BEHAVIOUR),
-        issues = CommonParser.parseIssues(testInfoElements[CommonInfoElementType.ISSUES])
+        issues = CommonParser.parseIssues(testInfoElements[CommonInfoElementType.ISSUES]),
+        helpers = helpers
     )
 }

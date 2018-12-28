@@ -1,5 +1,4 @@
 // !CHECK_TYPE
-// !WITH_CLASSES
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
@@ -8,19 +7,20 @@
  * PLACE: when-expression -> paragraph 9 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' least upper bound of the types check (when exhaustive via else branch).
+ * HELPERS: classes
  */
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int): String {
     val whenValue = when {
-        value_1 == 0 -> _ClassLevel2()
-        value_1 > 0 && value_1 <= 10 -> _ClassLevel3()
-        value_1 > 10 && value_1 <= 100 -> _ClassLevel4()
-        else -> _ClassLevel5()
+        value_1 == 0 -> ClassLevel2()
+        value_1 > 0 && value_1 <= 10 -> ClassLevel3()
+        value_1 > 10 && value_1 <= 100 -> ClassLevel4()
+        else -> ClassLevel5()
     }
 
-    whenValue checkType { _<_ClassLevel2>() }
-    checkSubtype<_ClassLevel1>(whenValue)
+    whenValue checkType { _<ClassLevel2>() }
+    checkSubtype<ClassLevel1>(whenValue)
 
     return ""
 }
@@ -28,14 +28,14 @@ fun case_1(value_1: Int): String {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int): String {
     val whenValue = when (value_1) {
-        0 -> _ClassLevel2()
-        1 -> _ClassLevel3()
-        2 -> _ClassLevel4()
-        else -> _ClassLevel5()
+        0 -> ClassLevel2()
+        1 -> ClassLevel3()
+        2 -> ClassLevel4()
+        else -> ClassLevel5()
     }
 
-    whenValue checkType { _<_ClassLevel2>() }
-    checkSubtype<_ClassLevel1>(whenValue)
+    whenValue checkType { _<ClassLevel2>() }
+    checkSubtype<ClassLevel1>(whenValue)
 
     return ""
 }
