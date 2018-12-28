@@ -143,7 +143,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private val whatDiagnosticsToConsider: Condition<Diagnostic>
         val customLanguageVersionSettings: LanguageVersionSettings?
         val jvmTarget: JvmTarget?
-        val declareCheckType: Boolean
+        val declareCheckType: Boolean = CHECK_TYPE_DIRECTIVE in directives
         val declareFlexibleType: Boolean
         val checkLazyLog: Boolean
         private val markDynamicCalls: Boolean
@@ -153,7 +153,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val renderDiagnosticMessages: Boolean
 
         init {
-            this.declareCheckType = CHECK_TYPE_DIRECTIVE in directives
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives, declareCheckType)
             this.customLanguageVersionSettings = parseLanguageVersionSettings(directives)
             this.jvmTarget = parseJvmTarget(directives)
@@ -315,9 +314,11 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
                     fun updateUncheckedDiagnostics(diagnostic: TextDiagnostic, start: Int, end: Int) {
                         diagnostic.enhanceInferenceCompatibility(invertedInferenceCompatibilityOfTest)
-                        uncheckedDiagnostics.add(PositionalTextDiagnostic(diagnostic, start, end))
-                    }
-                })
+                        uncheckedDiagnostics.add(PositionalTextDiagnostic(diagnostic, start, end
+                    )
+                )
+                }
+            })
 
             actualText.append(
                 CheckerTestUtil.addDiagnosticMarkersToText(
@@ -348,7 +349,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val declarations = PsiTreeUtil.findChildrenOfType(ktFile, KtDeclaration::class.java)
             for (declaration in declarations) {
                 val diagnostics = getJvmSignatureDiagnostics(
-                    declaration, bindingContext.diagnostics,
+                    declaration,
+                    bindingContext.diagnostics,
                     GlobalSearchScope.allScope(project)
                 ) ?: continue
                 jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null, newInferenceEnabled) })
@@ -425,12 +427,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             if (!matcher.find()) {
                 Assert.fail(
                     "Wrong syntax in the '// !$DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
-                            "found: '$directives'\n" +
-                            "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
-                            "where '+' means 'include'\n" +
-                            "      '-' means 'exclude'\n" +
-                            "      '!' means 'exclude everything but this'\n" +
-                            "directives are applied in the order of appearance, i.e. !FOO +BAR means include only FOO and BAR"
+                                    "found: '$directives'\n" +
+                                    "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
+                                    "where '+' means 'include'\n" +
+                                    "      '-' means 'exclude'\n" +
+                                    "      '!' means 'exclude everything but this'\n" +
+                                    "directives are applied in the order of appearance, i.e. !FOO +BAR means include only FOO and BAR"
                 )
             }
 
@@ -451,7 +453,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         if (!first) {
                             Assert.fail(
                                 "'$operation$name' appears in a position rather than the first one, " +
-                                        "which effectively cancels all the previous filters in this directive"
+                                                "which effectively cancels all the previous filters in this directive"
                             )
                         }
                         condition = newCondition
