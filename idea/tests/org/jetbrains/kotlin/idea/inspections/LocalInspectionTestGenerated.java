@@ -1654,6 +1654,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/divSanityTest.kt");
             }
 
+            @TestMetadata("dynamicEquals.kt")
+            public void testDynamicEquals() throws Exception {
+                runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/dynamicEquals.kt");
+            }
+
             @TestMetadata("equals.kt")
             public void testEquals() throws Exception {
                 runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equals.kt");
