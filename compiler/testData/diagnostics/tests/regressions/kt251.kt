@@ -6,7 +6,7 @@ class A() {
             field = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>value<!>
         }
     val y: Int
-        get(): <!WRONG_GETTER_RETURN_TYPE(Int; String)!>String<!> = "s"
+        get(): <!WRONG_GETTER_RETURN_TYPE("Int", "String")!>String<!> = "s"
     val z: Int
         get() {
             return <!TYPE_MISMATCH!>"s"<!>

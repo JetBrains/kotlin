@@ -40,8 +40,8 @@ class B {
 }
 
 fun test3(a: A) {
-    a.<!INVISIBLE_MEMBER(v; private; 'A')!>v<!> //todo .bMethod()
-    a.<!INVISIBLE_MEMBER(f; private; 'A')!>f<!>(0, <!TOO_MANY_ARGUMENTS!>1<!>) //todo .bMethod()
+    a.<!INVISIBLE_MEMBER("v", "private", "'A'")!>v<!> //todo .bMethod()
+    a.<!INVISIBLE_MEMBER("f", "private", "'A'")!>f<!>(0, <!TOO_MANY_ARGUMENTS!>1<!>) //todo .bMethod()
 }
 
 interface T
@@ -54,7 +54,7 @@ open class C : T {
 }
 
 fun test4(c: C) {
-    c.<!INVISIBLE_MEMBER(i; protected; 'C')!>i<!>++
+    c.<!INVISIBLE_MEMBER("i", "protected", "'C'")!>i<!>++
 }
 
 class D : C() {
@@ -78,7 +78,7 @@ class F : C() {
 
 class G : T {
     fun test8(c: C) {
-        doSmth(c.<!INVISIBLE_MEMBER(i; protected; 'C')!>i<!>)
+        doSmth(c.<!INVISIBLE_MEMBER("i", "protected", "'C'")!>i<!>)
     }
 }
 
@@ -91,5 +91,5 @@ import test_visibility.*
 
 fun test() {
     internal_fun()
-    <!INVISIBLE_MEMBER(private_fun; private; file)!>private_fun<!>()
+    <!INVISIBLE_MEMBER("private_fun", "private", "file")!>private_fun<!>()
 }

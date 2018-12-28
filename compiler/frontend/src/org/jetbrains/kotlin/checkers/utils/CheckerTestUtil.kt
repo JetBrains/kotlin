@@ -41,10 +41,7 @@ object CheckerTestUtil {
     const val OLD_INFERENCE_PREFIX = "OI"
 
     private const val IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE"
-    val SHOULD_BE_ESCAPED = "\\)\\(;"
-    private val DIAGNOSTIC_PARAMETER = "(?:(?:\\\\[" + SHOULD_BE_ESCAPED + "])|[^" + SHOULD_BE_ESCAPED + "])+"
-    private val INDIVIDUAL_DIAGNOSTIC = "(\\w+;)?(\\w+:)?(\\w+)(\\(" + DIAGNOSTIC_PARAMETER + "(;\\s*" + DIAGNOSTIC_PARAMETER + ")*\\))?"
-    val INDIVIDUAL_PARAMETER_PATTERN = Pattern.compile(DIAGNOSTIC_PARAMETER)
+    private const val INDIVIDUAL_DIAGNOSTIC = """(\w+;)?(\w+:)?(\w+)(?:\(((?:".*?")(?:,\s*".*?")*)\))?"""
 
     private val rangeStartOrEndPattern = Pattern.compile("(<!$INDIVIDUAL_DIAGNOSTIC(,\\s*$INDIVIDUAL_DIAGNOSTIC)*!>)|(<!>)")
     val individualDiagnosticPattern: Pattern = Pattern.compile(INDIVIDUAL_DIAGNOSTIC)

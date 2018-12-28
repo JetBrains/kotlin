@@ -27,8 +27,8 @@ public class A<T> {
 
 fun main(a: A<String>, a1: A<String?>) {
     a.foo("", null)?.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS(String?)!>a.foo("", null)<!>.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS(String; Nothing?)!>null<!>, "")<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("String?")!>a.foo("", null)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("String", "Nothing?")!>null<!>, "")<!>.length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
