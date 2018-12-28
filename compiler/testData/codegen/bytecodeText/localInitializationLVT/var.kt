@@ -9,4 +9,4 @@ fun test(): Char {
 }
 
 // 1 ASTORE 0
-// 1 LOCALVARIABLE c Lkotlin/jvm/internal/Ref\$CharRef; L1 L10 0
+// 1 LOCALVARIABLE c Lkotlin/jvm/internal/Ref\$CharRef; L1 L11 0

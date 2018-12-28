@@ -12,5 +12,7 @@ fun test() {
     foo(0.0f)
 }
 
-// 2 ASTORE 1
-// 1 LOCALVARIABLE t\$iv Ljava/lang/Object; L2 L11 1
+// two in foo and two in test
+
+// 4 ASTORE 2
+// 1 LOCALVARIABLE t\$iv Ljava/lang/Object; L3 L13 2
