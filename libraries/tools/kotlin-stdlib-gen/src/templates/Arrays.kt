@@ -786,6 +786,53 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
+    val f_copyOfUninitializedElements_size = fn("copyOfUninitializedElements(newSize: Int)") {
+        include(InvariantArraysOfObjects)
+        include(ArraysOfPrimitives)
+        platforms(Platform.Native)
+    } builder {
+        visibility("internal")
+        annotation("@PublishedApi")
+        returns("SELF")
+        doc {
+            """
+            Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+            Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+            either throwing exception or returning some kind of implementation-specific default value.
+            """
+        }
+        body { "return copyOfUninitializedElements(0, newSize)" }
+    }
+
+    val f_copyOfUninitializedElements_range = fn("copyOfUninitializedElements(fromIndex: Int, toIndex: Int)") {
+        include(InvariantArraysOfObjects)
+        include(ArraysOfPrimitives)
+        platforms(Platform.Native)
+    } builder {
+        visibility("internal")
+        annotation("@PublishedApi")
+        returns("SELF")
+        doc {
+            """
+            Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+            and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+            Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+            either throwing exception or returning some kind of implementation-specific default value.
+            """
+        }
+        body {
+            """
+            val newSize = toIndex - fromIndex
+            if (newSize < 0) {
+                throw IllegalArgumentException("${'$'}fromIndex > ${'$'}toIndex")
+            }
+            val result = ${if (f == InvariantArraysOfObjects) "arrayOfUninitializedElements<T>" else "SELF"}(newSize)
+            this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+            return result
+            """
+        }
+    }
+
     val f_copyOf = fn("copyOf()") {
         include(InvariantArraysOfObjects)
         include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives)
