@@ -8,6 +8,7 @@ const val MaxUL = ULong.MAX_VALUE
 const val MinUL = ULong.MIN_VALUE
 
 val M = MaxUI.toULong()
+val N = Int.MAX_VALUE.toUInt()
 
 val range1 = 1u .. 6u
 fun testSimpleUIntLoop() {
@@ -87,6 +88,30 @@ fun testMaxULtoMinUL() {
     }
 }
 
+val MA = M - 1UL
+val MB = M + 1UL
+val range9 = MA..MB
+fun testWrappingULongLoop() {
+    val xs = ArrayList<ULong>()
+    for (i in range9) {
+        xs.add(i)
+        if (xs.size > 3) break
+    }
+    if (xs != listOf(MA, M, MB)) throw AssertionError("$xs")
+}
+
+val NA = N - 1u
+val NB = N + 1u
+val range10 = NA..NB
+fun testWrappingUIntLoop() {
+    val xs = ArrayList<UInt>()
+    for (i in range10) {
+        xs.add(i)
+        if (xs.size > 3) break
+    }
+    if (xs != listOf(NA, N, NB)) throw AssertionError("$xs")
+}
+
 fun box(): String {
     testSimpleUIntLoop()
     testEmptyUIntLoop()
@@ -96,6 +121,8 @@ fun box(): String {
     testEmptyULongLoop2()
     testMaxUItoMinUI()
     testMaxULtoMinUL()
+    testWrappingULongLoop()
+    testWrappingUIntLoop()
 
     return "OK"
 }
