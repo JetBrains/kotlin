@@ -36,47 +36,46 @@ private val PROGRESSION_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
     }
 
 fun isPrimitiveRange(rangeType: KotlinType) =
-    !rangeType.isMarkedNullable && getPrimitiveRangeElementType(rangeType) != null
+    isClassTypeWithFqn(rangeType, PRIMITIVE_RANGE_FQNS)
+
+fun isUnsignedRange(rangeType: KotlinType): Boolean =
+    isClassTypeWithFqn(rangeType, UNSIGNED_RANGE_FQNS)
 
 fun isPrimitiveProgression(rangeType: KotlinType) =
-    !rangeType.isMarkedNullable && getPrimitiveProgressionElementType(rangeType) != null
+    isClassTypeWithFqn(rangeType, PRIMITIVE_PROGRESSION_FQNS)
 
-fun getPrimitiveRangeElementType(rangeType: KotlinType): PrimitiveType? =
-    getPrimitiveRangeOrProgressionElementType(
-        rangeType,
-        RANGE_TO_ELEMENT_TYPE
-    )
+fun isUnsignedProgression(rangeType: KotlinType) =
+    isClassTypeWithFqn(rangeType, UNSIGNED_PROGRESSION_FQNS)
 
-private fun getPrimitiveProgressionElementType(rangeType: KotlinType) =
-    getPrimitiveRangeOrProgressionElementType(
-        rangeType,
-        PROGRESSION_TO_ELEMENT_TYPE
-    )
-
-private fun getPrimitiveRangeOrProgressionElementType(
-    rangeOrProgression: KotlinType,
-    map: Map<FqName, PrimitiveType>
-): PrimitiveType? {
-    val declarationDescriptor = rangeOrProgression.constructor.declarationDescriptor ?: return null
-    val fqName = DescriptorUtils.getFqName(declarationDescriptor).takeIf { it.isSafe } ?: return null
-    return map[fqName.toSafe()]
+private fun isClassTypeWithFqn(kotlinType: KotlinType, fqns: Set<String>): Boolean {
+    val declarationDescriptor = kotlinType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+    val fqName = DescriptorUtils.getFqName(declarationDescriptor).takeIf { it.isSafe } ?: return false
+    return fqName.asString() in fqns
 }
 
 private const val CHAR_RANGE_FQN = "kotlin.ranges.CharRange"
 private const val INT_RANGE_FQN = "kotlin.ranges.IntRange"
 private const val LONG_RANGE_FQN = "kotlin.ranges.LongRange"
+private val PRIMITIVE_RANGE_FQNS = setOf(CHAR_RANGE_FQN, INT_RANGE_FQN, LONG_RANGE_FQN)
+
 private const val CHAR_PROGRESSION_FQN = "kotlin.ranges.CharProgression"
 private const val INT_PROGRESSION_FQN = "kotlin.ranges.IntProgression"
 private const val LONG_PROGRESSION_FQN = "kotlin.ranges.LongProgression"
+private val PRIMITIVE_PROGRESSION_FQNS = setOf(CHAR_PROGRESSION_FQN, INT_PROGRESSION_FQN, LONG_PROGRESSION_FQN)
+
 private const val CLOSED_FLOAT_RANGE_FQN = "kotlin.ranges.ClosedFloatRange"
 private const val CLOSED_DOUBLE_RANGE_FQN = "kotlin.ranges.ClosedDoubleRange"
 private const val CLOSED_RANGE_FQN = "kotlin.ranges.ClosedRange"
 private const val CLOSED_FLOATING_POINT_RANGE_FQN = "kotlin.ranges.ClosedFloatingPointRange"
 private const val COMPARABLE_RANGE_FQN = "kotlin.ranges.ComparableRange"
+
 private const val UINT_RANGE_FQN = "kotlin.ranges.UIntRange"
 private const val ULONG_RANGE_FQN = "kotlin.ranges.ULongRange"
+private val UNSIGNED_RANGE_FQNS = setOf(UINT_RANGE_FQN, ULONG_RANGE_FQN)
+
 private const val UINT_PROGRESSION_FQN = "kotlin.ranges.UIntProgression"
 private const val ULONG_PROGRESSION_FQN = "kotlin.ranges.ULongProgression"
+private val UNSIGNED_PROGRESSION_FQNS = setOf(UINT_PROGRESSION_FQN, ULONG_PROGRESSION_FQN)
 
 fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
     val rangeClassDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null

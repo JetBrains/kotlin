@@ -35,6 +35,10 @@ interface ComparisonGenerator {
     fun jumpIfLess(v: InstructionAdapter, label: Label)
 }
 
+interface SignedIntegerComparisonGenerator : ComparisonGenerator {
+    fun jumpIfLessThanZero(v: InstructionAdapter, label: Label)
+}
+
 fun getComparisonGeneratorForKotlinType(kotlinType: KotlinType): ComparisonGenerator =
     when {
         KotlinBuiltIns.isChar(kotlinType) ->
