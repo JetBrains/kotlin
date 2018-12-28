@@ -3,14 +3,14 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.uast.test.common
+package org.jetbrains.uast.test.common.kotlin
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
-import org.jetbrains.uast.test.env.assertEqualsToFile
+import org.jetbrains.uast.test.env.kotlin.assertEqualsToFile
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import org.junit.ComparisonFailure
 import java.io.File

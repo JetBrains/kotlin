@@ -1,6 +1,6 @@
 package org.jetbrains.uast.test.kotlin
 
-import org.jetbrains.uast.test.common.IdentifiersTestBase
+import org.jetbrains.uast.test.common.kotlin.IdentifiersTestBase
 import java.io.File
 
 

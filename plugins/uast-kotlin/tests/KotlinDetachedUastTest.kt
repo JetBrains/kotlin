@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.uast.*
-import org.jetbrains.uast.test.env.findUElementByTextFromPsi
+import org.jetbrains.uast.test.env.kotlin.findUElementByTextFromPsi
 
 class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
 

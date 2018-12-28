@@ -20,7 +20,7 @@ import org.jetbrains.uast.kotlin.JvmDeclarationUElementPlaceholder
 import org.jetbrains.uast.kotlin.KOTLIN_CACHED_UELEMENT_KEY
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.sourcePsiElement
-import org.jetbrains.uast.test.common.RenderLogTestBase
+import org.jetbrains.uast.test.common.kotlin.RenderLogTestBase
 import org.jetbrains.uast.visitor.UastVisitor
 import org.junit.Assert
 import java.io.File
