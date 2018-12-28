@@ -11,7 +11,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.uast.UQualifiedReferenceExpression
-import org.jetbrains.uast.test.env.findUElementByTextFromPsi
+import org.jetbrains.uast.test.env.kotlin.findUElementByTextFromPsi
 
 class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
 

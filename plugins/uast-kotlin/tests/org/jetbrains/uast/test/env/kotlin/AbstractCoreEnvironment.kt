@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.uast.test.env
+package org.jetbrains.uast.test.env.kotlin
 
 import com.intellij.mock.MockProject
 import java.io.File

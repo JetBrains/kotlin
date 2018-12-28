@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.uast.test.common
+package org.jetbrains.uast.test.common.kotlin
 
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.asRecursiveLogString
-import org.jetbrains.uast.test.env.assertEqualsToFile
+import org.jetbrains.uast.test.env.kotlin.assertEqualsToFile
 import java.io.File
 
 interface RenderLogTestBase {

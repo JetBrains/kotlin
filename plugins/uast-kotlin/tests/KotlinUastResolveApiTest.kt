@@ -16,9 +16,9 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.getContainingUMethod
 import org.jetbrains.uast.kotlin.KotlinUFunctionCallExpression
-import org.jetbrains.uast.test.env.findElementByText
-import org.jetbrains.uast.test.env.findElementByTextFromPsi
-import org.jetbrains.uast.test.env.findUElementByTextFromPsi
+import org.jetbrains.uast.test.env.kotlin.findElementByText
+import org.jetbrains.uast.test.env.kotlin.findElementByTextFromPsi
+import org.jetbrains.uast.test.env.kotlin.findUElementByTextFromPsi
 import org.jetbrains.uast.toUElement
 
 class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
