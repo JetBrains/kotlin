@@ -34,7 +34,7 @@ public class MutableData constructor(capacity: Int = 16) {
         if (newSize > buffer.size) {
             val actualSize = maxOf(buffer.size * 3 / 2 + 1, newSize)
             val newBuffer = ByteArray(actualSize)
-            buffer.copyRangeTo(newBuffer, 0, size, 0)
+            buffer.copyInto(newBuffer, startIndex = 0, endIndex = size)
             newBuffer.share()
             buffer = newBuffer
         }
@@ -73,7 +73,7 @@ public class MutableData constructor(capacity: Int = 16) {
             throw IndexOutOfBoundsException("$fromIndex is bigger than $toIndex")
         if (toIndex == toIndex) return
         val where = resizeDataLocked(this.size + (toIndex - fromIndex))
-        data.copyRangeTo(buffer, fromIndex, toIndex, where)
+        data.copyInto(buffer, where, fromIndex, toIndex)
     }
 
     /**
@@ -91,7 +91,7 @@ public class MutableData constructor(capacity: Int = 16) {
      * Copies range of mutable data to the byte array.
      */
     public fun copyInto(output: ByteArray, destinationIndex: Int, startIndex: Int, endIndex: Int): Unit = locked(lock) {
-        buffer.copyRangeTo(output, startIndex, endIndex, destinationIndex)
+        buffer.copyInto(output, destinationIndex, startIndex, endIndex)
     }
 
     /**

@@ -168,7 +168,7 @@ actual class StringBuilder private constructor (
         val extraLength = end - start
         ensureExtraCapacity(extraLength)
 
-        array.copyRangeTo(array, index, _length, index + extraLength)
+        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + extraLength)
         var from = start
         var to = index
         while (from < end) {
@@ -183,8 +183,8 @@ actual class StringBuilder private constructor (
         checkInsertIndex(index)
         ensureExtraCapacity(chars.size)
 
-        array.copyRangeTo(array, index, _length, index + chars.size)
-        chars.copyRangeTo(array, 0, chars.size, index)
+        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + chars.size)
+        chars.copyInto(array, destinationOffset = index)
 
         _length += chars.size
         return this
@@ -193,7 +193,7 @@ actual class StringBuilder private constructor (
     fun insert(index: Int, string: String): StringBuilder {
         checkInsertIndex(index)
         ensureExtraCapacity(string.length)
-        array.copyRangeTo(array, index, _length, index + string.length)
+        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + string.length)
         _length += insertString(array, index, string)
         return this
     }
@@ -235,7 +235,7 @@ actual class StringBuilder private constructor (
 
     fun append(it: CharArray): StringBuilder {
         ensureExtraCapacity(it.size)
-        it.copyRangeTo(array, 0, it.size, _length)
+        it.copyInto(array, _length)
         _length += it.size
         return this
     }
@@ -262,7 +262,7 @@ actual class StringBuilder private constructor (
 
     fun deleteCharAt(index: Int) {
         checkIndex(index)
-        array.copyRangeTo(array, index + 1, _length, index)
+        array.copyInto(array, startIndex = index + 1, endIndex = _length, destinationOffset = index)
         --_length
     }
 
