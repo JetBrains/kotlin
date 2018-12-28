@@ -117,7 +117,7 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
     override fun startInWriteAction() = false
 
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
-        Companion.createFileFromTemplate(name, template, dir)
+        createFileFromTemplateWithStat(name, template, dir)
 
     companion object {
         private object NameValidator : InputValidatorEx {
@@ -193,9 +193,13 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
         private val FILE_SEPARATORS = charArrayOf('/', '\\')
         private val FQNAME_SEPARATORS = charArrayOf('/', '\\', '.')
 
-        fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
+        fun createFileFromTemplateWithStat(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
             KotlinStatisticsTrigger.trigger(KotlinIdeNewFileTemplateTrigger::class.java, template.name)
+            return createFileFromTemplate(name, template, dir)
+        }
 
+
+        fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
             val directorySeparators = if (template.name == "Kotlin File") FILE_SEPARATORS else FQNAME_SEPARATORS
             val (className, targetDir) = findOrCreateTarget(dir, name, directorySeparators)
 
