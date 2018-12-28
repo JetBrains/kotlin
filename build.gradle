@@ -462,10 +462,11 @@ task uploadBundle {
     }
 }
 
-task performance {
+// TODO return when problems with HostManagers will be solved
+/*task performance {
     dependsOn 'dist'
     dependsOn ':performance:bench'
-}
+}*/
 
 task teamcityKonanVersion {
     doLast {

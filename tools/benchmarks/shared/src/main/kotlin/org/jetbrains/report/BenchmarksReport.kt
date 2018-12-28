@@ -79,7 +79,7 @@ interface EntityFromJsonFactory<T>: ConvertedFromJson {
 }
 
 // Class for benchcmarks report with all information of run.
-data class BenchmarksReport(val env: Environment, val benchmarks: List<BenchmarkResult>, val compiler: Compiler):
+class BenchmarksReport(val env: Environment, benchmarksList: List<BenchmarkResult>, val compiler: Compiler):
         JsonSerializable {
 
     companion object: EntityFromJsonFactory<BenchmarksReport> {
@@ -88,8 +88,8 @@ data class BenchmarksReport(val env: Environment, val benchmarks: List<Benchmark
                 val env = Environment.create(getRequiredField(data, "env"))
                 val benchmarksObj = getRequiredField(data, "benchmarks")
                 val compiler = Compiler.create(getRequiredField(data, "kotlin"))
-                val benchmarks = parseBenchmarksArray(benchmarksObj)
-                return BenchmarksReport(env, benchmarks, compiler)
+                val benchmarksList = parseBenchmarksArray(benchmarksObj)
+                return BenchmarksReport(env, benchmarksList, compiler)
             } else {
                 error("Top level entity is expected to be an object. Please, check origin files.")
             }
@@ -107,14 +107,20 @@ data class BenchmarksReport(val env: Environment, val benchmarks: List<Benchmark
                 error("Benchmarks field is expected to be an array. Please, check origin files.")
             }
         }
+
+        // Made a map of becnhmarks with name as key from list.
+        private fun structBenchmarks(benchmarksList: List<BenchmarkResult>) =
+                benchmarksList.groupBy{ it.name }
     }
+
+    val benchmarks: Map<String, List<BenchmarkResult>> = structBenchmarks(benchmarksList)
 
     override fun toJson(): String {
         return """
         {
             "env": ${env.toJson()},
             "kotlin": ${compiler.toJson()},
-            "benchmarks": ${arrayToJson(benchmarks)}
+            "benchmarks": ${arrayToJson(benchmarks.flatMap{it.value})}
         }
         """
     }
@@ -278,6 +284,8 @@ data class Environment(val machine: Machine, val jdk: JDKInstance): JsonSerializ
 class BenchmarkResult(val name: String, val status: Status,
                       val score: Double, val runtimeInUs: Double,
                       val repeat: Int, val warmup: Int): JsonSerializable {
+
+    constructor(name: String, score: Double) : this(name, Status.PASSED, score, 0.0, 0, 0)
 
     companion object: EntityFromJsonFactory<BenchmarkResult> {
 

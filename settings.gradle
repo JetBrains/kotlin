@@ -29,12 +29,14 @@ include ':backend.native:tests'
 include ':backend.native:debugger-tests'
 include ':utilities'
 //include ':performance'    TODO: return when there is one HostManager class version
+//include ':tools:benchmarksAnalyzer'
 include ':platformLibs'
 
 includeBuild 'shared'
 includeBuild 'extracted/konan.metadata'
 includeBuild 'extracted/konan.serializer'
 includeBuild 'tools/kotlin-native-gradle-plugin'
+
 
 if (hasProperty("kotlinProjectPath")) {
     includeBuild(kotlinProjectPath) {
