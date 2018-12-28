@@ -51,19 +51,11 @@ class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun hasAnnotationRootsForFile(file: VirtualFile): Boolean {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun hasAnnotationRootsForFile(file: VirtualFile): Boolean = false
 
-    override fun findDefaultConstructorExternalAnnotations(aClass: PsiClass, annotationFQN: String): MutableList<PsiAnnotation> {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun findDefaultConstructorExternalAnnotations(aClass: PsiClass, annotationFQN: String): List<PsiAnnotation> = emptyList()
 
-    override fun findDefaultConstructorExternalAnnotations(aClass: PsiClass): MutableList<PsiAnnotation> {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun findDefaultConstructorExternalAnnotations(aClass: PsiClass): List<PsiAnnotation> = emptyList()
 
-    override fun findExternalAnnotations(listOwner: PsiModifierListOwner, annotationFQN: String): MutableList<PsiAnnotation> {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun findExternalAnnotations(listOwner: PsiModifierListOwner, annotationFQN: String): List<PsiAnnotation> = emptyList()
 }
