@@ -1,9 +1,8 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SECTIONS: constant-literals, integer-literals, hexadecimal-integer-literals
- * PARAGRAPH: 1
- * SENTENCE: [2] A sequence of decimal digit symbols (0 though 9) is a decimal integer literal.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, integer-literals, hexadecimal-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: Sequences with hexadecimal digit symbols separated by underscores.
  */

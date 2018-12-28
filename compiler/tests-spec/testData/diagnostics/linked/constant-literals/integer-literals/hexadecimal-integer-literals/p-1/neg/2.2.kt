@@ -1,9 +1,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, integer-literals, hexadecimal-integer-literals
- * PARAGRAPH: 1
- * SENTENCE: [2] Digits may be separated by an underscore symbol, but no underscore can be placed before the first digit or after the last one.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: constant-literals, integer-literals, hexadecimal-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 2
  * DESCRIPTION: Hexadecimal integer literals with an underscore in the first position (it's considered as identifiers).
  */

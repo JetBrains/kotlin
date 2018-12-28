@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 6
- * SENTENCE: [1] Note: this means there is no special suffix associated with type kotlin.Double.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, real-literals -> paragraph 6 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Real literals suffixed by not supported d/D (a double suffix).
  */

@@ -20,8 +20,8 @@ object TestsJsonMapBuilder {
 
     fun buildJsonElement(testInfo: LinkedSpecTest, testsMap: JsonObject) {
         val sectionElement = addJsonIfNotExist(testsMap, testInfo.sections[0])
-        val paragraphElement = addJsonIfNotExist(sectionElement, testInfo.paragraphNumber)
-        val sentenceElement = addJsonIfNotExist(paragraphElement, testInfo.sentenceNumber)
+        val paragraphElement = addJsonIfNotExist(sectionElement, testInfo.place.paragraphNumber)
+        val sentenceElement = addJsonIfNotExist(paragraphElement, testInfo.place.sentenceNumber)
         val testAreaElement = addJsonIfNotExist(sentenceElement, testInfo.testArea.name.toLowerCase())
         val testTypeElement = addJsonIfNotExist(testAreaElement, testInfo.testType.type)
         val testNumberElement = addJsonIfNotExist(testTypeElement, testInfo.testNumber)

@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 2
- * SENTENCE: [3] When expression has two different forms: with bound value and without it.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: when-expression -> paragraph 2 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: Empty 'when' with missed bound value.
  */

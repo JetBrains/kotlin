@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (POSITIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 3
- * SENTENCE: [2] The fraction part may be omitted only together with the decimal point, if the whole-number part and either the exponent part or the type suffix are present.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, real-literals -> paragraph 3 -> sentence 2
  * NUMBER: 2
  * DESCRIPTION: Real literals with omitted a fraction part and an exponent mark.
  */

@@ -3,9 +3,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 11
- * SENTENCE: [7] The bound expression is of an Enum classes type and all enumerated values are checked for equality using constant conditions;
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 11 -> sentence 7
  * NUMBER: 1
  * DESCRIPTION: Check when exhaustive when all enumerated values are checked.
  */

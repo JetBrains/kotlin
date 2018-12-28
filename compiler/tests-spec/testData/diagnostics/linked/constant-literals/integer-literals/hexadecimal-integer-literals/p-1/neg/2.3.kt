@@ -1,9 +1,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, integer-literals, hexadecimal-integer-literals
- * PARAGRAPH: 1
- * SENTENCE: [2] A sequence of hexadecimal digit symbols (0 through 9, a through f, A through F) prefixed by 0x or 0X is a hexadecimal integer literal.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: constant-literals, integer-literals, hexadecimal-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 3
  * DESCRIPTION: Hexadecimal integer literals with an underscore in the last position.
  */

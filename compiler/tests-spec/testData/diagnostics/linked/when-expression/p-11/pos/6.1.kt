@@ -4,9 +4,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 11
- * SENTENCE: [6] The bound valueession is of a sealed class type and all its possible subtypes are covered using type test conditions of this valueession;
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 11 -> sentence 6
  * NUMBER: 1
  * DESCRIPTION: Check when exhaustive when possible subtypes of the sealed class are covered.
  */

@@ -4,9 +4,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 9
- * SENTENCE: [1] The type of the resulting expression is the least upper bound of the types of all the entries.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 9 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' least upper bound of the types check (when exhaustive via else branch).
  */

@@ -18,7 +18,6 @@ import java.io.File
 data class ParsedTestFile(
     val testArea: TestArea,
     val testType: TestType,
-    val sections: List<String>,
     val testNumber: Int,
     val testDescription: String,
     val testInfoElements: SpecTestInfoElements<SpecTestInfoElementType>,
@@ -47,7 +46,6 @@ fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: Sp
     return ParsedTestFile(
         testArea = TestArea.valueOf(testInfoByContentMatcher.group("testArea").withUnderscores()),
         testType = TestType.valueOf(testInfoByContentMatcher.group("testType")),
-        sections = testInfoElements[CommonSpecTestFileInfoElementType.SECTIONS]!!.content.splitByComma(),
         testNumber = testInfoElements[CommonSpecTestFileInfoElementType.NUMBER]!!.content.toInt(),
         testDescription = testInfoElements[CommonSpecTestFileInfoElementType.DESCRIPTION]!!.content,
         testInfoElements = testInfoElements,

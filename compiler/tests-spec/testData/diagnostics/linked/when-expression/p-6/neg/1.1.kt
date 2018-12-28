@@ -1,9 +1,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 6
- * SENTENCE: [1] When expression with bound value (the form where the expression enclosed in parantheses is present) are very similar to the form without bound value, but use different syntax for conditions.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 6 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' with bound value and not allowed break and continue expression (without labels) in the control structure body.
  */

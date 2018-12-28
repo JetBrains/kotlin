@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 3
- * SENTENCE: [2] Each entry consists of a boolean condition (or a special else condition), each of which is checked and evaluated in order of appearance.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: when-expression -> paragraph 3 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: 'When' without bound value and with invalid 'else' branch.
  */

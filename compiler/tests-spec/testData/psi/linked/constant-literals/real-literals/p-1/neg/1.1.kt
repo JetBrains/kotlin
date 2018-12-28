@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 1
- * SENTENCE: [1] A real literal consists of the following parts: the whole-number part, the decimal point (ASCII period character .), the fraction part and the exponent.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, real-literals -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Real literals with not allowed several dots.
  */

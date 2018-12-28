@@ -5,9 +5,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 7
- * SENTENCE: [1] Type test condition: type checking operator followed by type.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 7 -> sentence 1
  * NUMBER: 3
  * DESCRIPTION: 'When' with bound value and enumaration of type test conditions.
  */

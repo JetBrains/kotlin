@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, integer-literals, long-integer-literals
- * PARAGRAPH: 1
- * SENTENCE: [1] Any of the decimal, hexadecimal or binary literals may be suffixed by the long literal mark (symbol L).
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, integer-literals, long-integer-literals -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Various integer literals with a long literal mark doublicate.
  */

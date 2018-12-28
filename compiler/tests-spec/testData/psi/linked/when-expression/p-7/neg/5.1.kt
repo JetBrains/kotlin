@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 7
- * SENTENCE: [5] Any other expression.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: when-expression -> paragraph 7 -> sentence 5
  * NUMBER: 1
  * DESCRIPTION: 'When' with bound value and not allowed spread operator in 'when condition'.
  */

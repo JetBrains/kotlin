@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (POSITIVE)
  *
- * SECTIONS: constant-literals, integer-literals, decimal-integer-literals
- * PARAGRAPH: 1
- * SENTENCE: [2] Digits may be separated by an underscore symbol, but no underscore can be placed before the first digit or after the last one.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, integer-literals, decimal-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 3
  * DESCRIPTION: Integers with underscore symbols before the first digit (it's considered as identifiers).
  */

@@ -3,9 +3,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 11
- * SENTENCE: [1] It has an else entry;
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 11 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: Check when exhaustive via else entry (when with bound value).
  */

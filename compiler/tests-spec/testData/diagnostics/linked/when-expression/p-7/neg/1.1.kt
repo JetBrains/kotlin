@@ -3,9 +3,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 7
- * SENTENCE: [1] Type test condition: type checking operator followed by type.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 7 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' with bound value and type test condition (without companion object in classes), but without type checking operator.
  */

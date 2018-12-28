@@ -13,13 +13,16 @@ import org.jetbrains.kotlin.spec.parsers.CommonParser.splitByPathSeparator
 import org.jetbrains.kotlin.spec.parsers.CommonParser.withUnderscores
 import org.jetbrains.kotlin.spec.parsers.CommonParser.withSpaces
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns.ls
+import org.jetbrains.kotlin.spec.parsers.CommonPatterns.sectionsInFilePattern
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 enum class NotLinkedSpecTestFileInfoElementType(
     override val valuePattern: Pattern? = null,
     override val required: Boolean = false
-) : SpecTestInfoElementType
+) : SpecTestInfoElementType {
+    SECTIONS(valuePattern = sectionsInFilePattern, required = true)
+}
 
 class NotLinkedSpecTest(
     testArea: TestArea,
