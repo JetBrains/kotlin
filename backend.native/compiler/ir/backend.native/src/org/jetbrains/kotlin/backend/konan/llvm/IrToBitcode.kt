@@ -1853,11 +1853,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private val IrElement.startLocation: LocationInfo?
-        get() = if (startOffset == UNDEFINED_OFFSET) null
+        get() = if (!context.shouldContainDebugInfo() || startOffset == UNDEFINED_OFFSET) null
             else currentCodeContext.location(startLine(), startColumn())
 
     private val IrElement.endLocation: LocationInfo?
-        get() = if (startOffset == UNDEFINED_OFFSET) null
+        get() = if (!context.shouldContainDebugInfo() || startOffset == UNDEFINED_OFFSET) null
             else currentCodeContext.location(endLine(), endColumn())
 
     //-------------------------------------------------------------------------//
