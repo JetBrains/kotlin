@@ -100,7 +100,9 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 ktFiles.add(KotlinTestUtils.createFile("EXPLICIT_FLEXIBLE_TYPES.kt", EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS, project))
             }
             if (declareCheckType) {
-                ktFiles.add(KotlinTestUtils.createFile("CHECK_TYPE.kt", CHECK_TYPE_DECLARATIONS, project))
+                val checkTypeDeclarations = File("$HELPERS_PATH/types/checkType.kt").readText()
+
+                ktFiles.add(KotlinTestUtils.createFile("CHECK_TYPE.kt", checkTypeDeclarations, project))
             }
         }
 
@@ -338,6 +340,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     }
 
     companion object {
+        private const val HELPERS_PATH = "./compiler/testData/diagnostics/helpers"
         val DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS"
         val DIAGNOSTICS_PATTERN: Pattern = Pattern.compile("([\\+\\-!])(\\w+)\\s*")
         val DIAGNOSTICS_TO_INCLUDE_ANYWAY: Set<DiagnosticFactory<*>> = setOf(
@@ -355,11 +358,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         val CHECK_TYPE_DIRECTIVE = "CHECK_TYPE"
         val CHECK_TYPE_PACKAGE = "tests._checkType"
-        private val CHECK_TYPE_DECLARATIONS = "\npackage " + CHECK_TYPE_PACKAGE +
-                "\nfun <T> checkSubtype(t: T) = t" +
-                "\nclass Inv<T>" +
-                "\nfun <E> Inv<E>._() {}" +
-                "\ninfix fun <T> T.checkType(f: Inv<T>.() -> Unit) {}"
         val CHECK_TYPE_IMPORT = "import $CHECK_TYPE_PACKAGE.*"
 
         val EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE = "EXPLICIT_FLEXIBLE_TYPES"
