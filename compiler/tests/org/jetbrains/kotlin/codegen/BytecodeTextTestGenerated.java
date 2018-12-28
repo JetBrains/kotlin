@@ -2885,6 +2885,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/ranges/inOptimizableRange.kt");
         }
 
+        @TestMetadata("inOptimizableUnsignedRange.kt")
+        public void testInOptimizableUnsignedRange() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/ranges/inOptimizableUnsignedRange.kt");
+        }
+
         @TestMetadata("inUntil.kt")
         public void testInUntil() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/ranges/inUntil.kt");
