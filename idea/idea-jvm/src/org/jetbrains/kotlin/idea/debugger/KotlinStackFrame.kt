@@ -26,6 +26,8 @@ import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
 import com.intellij.debugger.ui.impl.watch.ThisDescriptorImpl
 import com.intellij.xdebugger.frame.XValue
 import com.intellij.xdebugger.frame.XValueChildrenList
+import com.sun.jdi.ReferenceType
+import com.sun.jdi.Type
 import com.sun.jdi.Value
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
@@ -86,12 +88,13 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
         val thisObject = evaluationContext.frameProxy?.thisObject() ?: return
         val variable = ExistingInstanceThis.find(children) ?: return
 
-        val thisLabel = thisObject.referenceType().name().substringAfterLast('.').substringAfterLast('$')
-        if (thisLabel.isEmpty() || thisLabel in existingThisLabels || thisLabel.all { it.isDigit() }) {
+        val thisLabel = generateThisLabel(thisObject.referenceType())?.takeIf { it !in existingThisLabels }
+        if (thisLabel == null) {
             variable.remove()
             return
         }
 
+        // add additional checks?
         variable.remapName(getThisName(thisLabel))
     }
 
@@ -181,37 +184,76 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
             }
         }
 
+        val inlineDepth = VariableFinder.getInlineDepth(allVisibleVariables)
+
         val (thisVariables, otherVariables) = allVisibleVariables.asSequence()
-            .filter { !isHidden(it) }
-            .partition { it.name() == AsmUtil.THIS || it.name().startsWith(AsmUtil.LABELED_THIS_PARAMETER) }
+            .filter { !isHidden(it, inlineDepth) }
+            .partition {
+                it.name() == AsmUtil.THIS
+                        || it.name().startsWith(AsmUtil.LABELED_THIS_PARAMETER)
+                        || (VariableFinder.inlinedThisRegex.matches(it.name()))
+            }
 
         val (mainThis, otherThis) = thisVariables
             .sortedByDescending { it.variable }
             .let { it.firstOrNull() to it.drop(1) }
 
         val remappedMainThis = mainThis?.clone(AsmUtil.THIS, null)
-        val remappedOtherThis = otherThis.map { it.remapThisName() }
-
-        return (listOfNotNull(remappedMainThis) + remappedOtherThis + otherVariables)
-            .sortedBy { it.variable }
+        val remappedOther = (otherThis + otherVariables).map { it.remapVariableNameIfNeeded() }
+        return (listOfNotNull(remappedMainThis) + remappedOther).sortedBy { it.variable }
     }
 
-    private fun isHidden(variable: LocalVariableProxyImpl): Boolean {
+    private fun isHidden(variable: LocalVariableProxyImpl, inlineDepth: Int): Boolean {
         val name = variable.name()
         return isFakeLocalVariableForInline(name)
-                || name.endsWith(INLINE_FUN_VAR_SUFFIX)
-                || name == CONTINUATION_PARAMETER_NAME.asString()
+                || VariableFinder.getInlineDepth(variable.name()) != inlineDepth
+                || name == CONTINUATION_VARIABLE_NAME
     }
 
-    private fun LocalVariableProxyImpl.remapThisName(): LocalVariableProxyImpl {
+    private fun LocalVariableProxyImpl.remapVariableNameIfNeeded(): LocalVariableProxyImpl {
+        val name = this.name().dropInlineSuffix()
+
         return when {
             isLabeledThisReference() -> {
-                val label = this@remapThisName.name().drop(AsmUtil.LABELED_THIS_PARAMETER.length)
+                val label = name.drop(AsmUtil.LABELED_THIS_PARAMETER.length)
                 clone(getThisName(label), label)
             }
-            this@remapThisName.name() == AsmUtil.RECEIVER_PARAMETER_NAME -> clone(AsmUtil.THIS + " (receiver)", null)
-            else -> this@remapThisName
+            name == AsmUtil.RECEIVER_PARAMETER_NAME -> clone(AsmUtil.THIS + " (receiver)", null)
+            VariableFinder.inlinedThisRegex.matches(name) -> {
+                val label = generateThisLabel(frame.getValue(this)?.type())
+                if (label != null) {
+                    clone(getThisName(label), label)
+                } else {
+                    this@remapVariableNameIfNeeded
+                }
+            }
+            name != this.name() -> {
+                object : LocalVariableProxyImpl(frame, variable) {
+                    override fun name() = name
+                }
+            }
+            else -> this@remapVariableNameIfNeeded
         }
+    }
+
+    private fun generateThisLabel(type: Type?): String? {
+        val referenceType = type as? ReferenceType ?: return null
+        val label = referenceType.name().substringAfterLast('.').substringAfterLast('$')
+
+        if (label.isEmpty() || label.any { it.isDigit() }) {
+            return null
+        }
+
+        return label
+    }
+
+    private fun String.dropInlineSuffix(): String {
+        val depth = VariableFinder.getInlineDepth(this)
+        if (depth == 0) {
+            return this
+        }
+
+        return dropLast(depth * INLINE_FUN_VAR_SUFFIX.length)
     }
 
     private fun getThisName(label: String): String {

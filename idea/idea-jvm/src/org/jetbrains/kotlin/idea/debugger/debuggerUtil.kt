@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousCl
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmTypes
-import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -32,17 +31,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 import java.util.*
-
-fun calculateInlineDepth(variableName: String): Int {
-    var lastIndex = variableName.lastIndex
-    var depth = 0
-
-    while (variableName.lastIndexOf(INLINE_FUN_VAR_SUFFIX, startIndex = lastIndex) >= 0) {
-        lastIndex -= INLINE_FUN_VAR_SUFFIX.length
-        depth++
-    }
-    return depth
-}
 
 fun isInsideInlineArgument(
     inlineArgument: KtFunction,
