@@ -8,7 +8,7 @@ fun testBinary2() {
 }
 
 fun testElvis1() {
-    todo() <!USELESS_ELVIS, UNREACHABLE_CODE!>?: ""<!>
+    todo() <!UNREACHABLE_CODE, USELESS_ELVIS!>?: ""<!>
 }
 
 fun testElvis2(s: String?) {

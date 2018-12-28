@@ -14,9 +14,9 @@
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int, value_2: _EmptyClass, value_3: Int, value_4: Any): String {
     when (value_1) {
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER, TYPE_MISMATCH_IN_RANGE!>in<!> value_2  -> return ""
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER, TYPE_MISMATCH_IN_RANGE!>in<!> value_3  -> return ""
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER, TYPE_MISMATCH_IN_RANGE!>in<!> value_4  -> return ""
+        <!TYPE_MISMATCH_IN_RANGE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>in<!> value_2  -> return ""
+        <!TYPE_MISMATCH_IN_RANGE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>in<!> value_3  -> return ""
+        <!TYPE_MISMATCH_IN_RANGE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>in<!> value_4  -> return ""
     }
 
     return ""

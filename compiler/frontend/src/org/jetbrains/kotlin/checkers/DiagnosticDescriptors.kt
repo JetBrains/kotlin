@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.checkers
 
-import com.google.common.collect.Maps
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.checkers.diagnostics.AbstractTestDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.PositionalTextDiagnostic
@@ -21,7 +20,7 @@ class ActualDiagnosticDescriptor internal constructor(start: Int, end: Int, val 
 
     val textDiagnosticsMap: MutableMap<AbstractTestDiagnostic, TextDiagnostic>
         get() {
-            val diagnosticMap = Maps.newLinkedHashMap<AbstractTestDiagnostic, TextDiagnostic>()
+            val diagnosticMap = mutableMapOf<AbstractTestDiagnostic, TextDiagnostic>()
             for (diagnostic in diagnostics) {
                 diagnosticMap[diagnostic] = TextDiagnostic.asTextDiagnostic(diagnostic)
             }

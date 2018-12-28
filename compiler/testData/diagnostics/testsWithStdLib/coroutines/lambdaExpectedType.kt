@@ -43,7 +43,7 @@ fun foo() {
     <!NI;UNREACHABLE_CODE!>val s: String = manyArgumentsBuilder({}, { "" }) { 1 }<!>
 
     <!NI;UNREACHABLE_CODE!>manyArgumentsBuilder<String>({}, { "" }, { 1 })<!>
-    <!NI;UNREACHABLE_CODE!>manyArgumentsBuilder<String>({}, { <!NI;CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })<!>
+    <!NI;UNREACHABLE_CODE!>manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH, NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })<!>
 
     <!NI;UNREACHABLE_CODE!>severalParamsInLambda { <!NAME_SHADOWING!>x<!>, <!NAME_SHADOWING!>y<!> ->
         x checkType { _<String>() }

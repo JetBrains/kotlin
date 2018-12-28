@@ -13,7 +13,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(): Boolean {
-    contract { returns(true) implies (<!TYPE_MISMATCH, ERROR_IN_CONTRACT_DESCRIPTION!>-10<!>) }
+    contract { returns(true) implies (<!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_MISMATCH!>-10<!>) }
     return true
 }
 
@@ -25,7 +25,7 @@ fun case_2(): Boolean {
 
 // TESTCASE NUMBER: 3
 fun case_3(): Boolean {
-    contract { returns(false) implies (<!TYPE_MISMATCH, ERROR_IN_CONTRACT_DESCRIPTION!>"..." + "$<!UNRESOLVED_REFERENCE!>value_1<!>"<!>) }
+    contract { returns(false) implies (<!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_MISMATCH!>"..." + "$<!UNRESOLVED_REFERENCE!>value_1<!>"<!>) }
     return true
 }
 
@@ -41,12 +41,12 @@ fun case_4(): Boolean? {
 
 // TESTCASE NUMBER: 5
 fun case_5(): Boolean? {
-    contract { returns(null) implies <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, ERROR_IN_CONTRACT_DESCRIPTION!>listOf(0)<!> }
+    contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>listOf(0)<!> }
     return null
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Boolean): Boolean? {
-    contract { returns(null) implies <!TYPE_MISMATCH, ERROR_IN_CONTRACT_DESCRIPTION!>contract { returns(null) implies (!value_1) }<!> }
+    contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_MISMATCH!>contract { returns(null) implies (!value_1) }<!> }
     return null
 }

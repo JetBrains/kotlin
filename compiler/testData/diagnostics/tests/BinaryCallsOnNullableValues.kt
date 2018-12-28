@@ -23,7 +23,7 @@ fun f(): Unit {
     <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!><!DEBUG_INFO_CONSTANT!>x<!> !== 1<!>
 
     <!OI;DEBUG_INFO_CONSTANT!>x<!><!UNSAFE_OPERATOR_CALL!>..<!>2
-    <!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>x<!> in 1..2
+    <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!> in 1..2
 
     val y : Boolean? = true
     <!UNUSED_EXPRESSION!>false || <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>y<!><!>

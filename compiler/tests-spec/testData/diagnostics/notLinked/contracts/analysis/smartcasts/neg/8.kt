@@ -103,7 +103,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
     } else if (contracts.case_4(value_1, value_2) == false) {
         println(value_2)
     } else if (contracts.case_4(value_1, value_2) == null) {
-        <!UNSAFE_IMPLICIT_INVOKE_CALL, DEBUG_INFO_CONSTANT!>value_2<!>()
+        <!DEBUG_INFO_CONSTANT, UNSAFE_IMPLICIT_INVOKE_CALL!>value_2<!>()
     }
 }
 
