@@ -62,9 +62,9 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
             )
         }
 
-        isPrimitiveRange(rangeType) ->
+        isPrimitiveRange(rangeType) || isUnsignedRange(rangeType) ->
             PrimitiveRangeRangeValue(rangeExpression)
-        isPrimitiveProgression(rangeType) ->
+        isPrimitiveProgression(rangeType) || isUnsignedProgression(rangeType) ->
             PrimitiveProgressionRangeValue(rangeExpression)
         isSubtypeOfString(rangeType, builtIns) && isCharSequenceIteratorCall(loopRangeIteratorResolvedCall) ->
             CharSequenceRangeValue(true, AsmTypes.JAVA_STRING_TYPE)
@@ -75,6 +75,7 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     }
 }
 
+@Suppress("DEPRECATION")
 fun isLocalVarReference(rangeExpression: KtExpression, bindingContext: BindingContext): Boolean {
     if (rangeExpression !is KtSimpleNameExpression) return false
     val resultingDescriptor = rangeExpression.getResolvedCall(bindingContext)?.resultingDescriptor ?: return false
