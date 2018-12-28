@@ -47,7 +47,8 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
         resolvedCallForIn.resultingDescriptor.let {
             isPrimitiveRangeContains(it) ||
                     isClosedFloatingPointRangeContains(it) ||
-                    isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(it)
+                    isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(it) ||
+                    isUnsignedIntegerRangeContains(it)
         }
 
     override fun createIntrinsicInExpressionGenerator(

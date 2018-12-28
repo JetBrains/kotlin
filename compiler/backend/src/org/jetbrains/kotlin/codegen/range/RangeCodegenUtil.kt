@@ -224,6 +224,14 @@ fun isPrimitiveRangeContains(descriptor: CallableDescriptor): Boolean {
     return true
 }
 
+fun isUnsignedIntegerRangeContains(descriptor: CallableDescriptor): Boolean {
+    if (descriptor.name.asString() != "contains") return false
+    val dispatchReceiverType = descriptor.dispatchReceiverParameter?.type ?: return false
+    if (!isUnsignedRange(dispatchReceiverType)) return false
+
+    return true
+}
+
 fun isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(descriptor: CallableDescriptor): Boolean {
     if (descriptor.name.asString() != "contains") return false
 
