@@ -1052,6 +1052,249 @@ public actual inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): Ch
 }
 
 /**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun <T> Array<T>.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): Array<T> {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = arrayOfUninitializedElements<T>(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun ByteArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ByteArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = ByteArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun ShortArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ShortArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = ShortArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun IntArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): IntArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = IntArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun LongArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): LongArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = LongArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun FloatArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): FloatArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = FloatArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun DoubleArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): DoubleArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = DoubleArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun BooleanArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): BooleanArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = BooleanArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
+
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): CharArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = CharArray(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun ByteArray.copyOfUninitializedElements(newSize: Int): ByteArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun ShortArray.copyOfUninitializedElements(newSize: Int): ShortArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun LongArray.copyOfUninitializedElements(newSize: Int): LongArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun FloatArray.copyOfUninitializedElements(newSize: Int): FloatArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun DoubleArray.copyOfUninitializedElements(newSize: Int): DoubleArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun BooleanArray.copyOfUninitializedElements(newSize: Int): BooleanArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+@PublishedApi
+internal fun CharArray.copyOfUninitializedElements(newSize: Int): CharArray {
+    return copyOfUninitializedElements(0, newSize)
+}
+
+/**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public actual operator fun <T> Array<T>.plus(element: T): Array<T> {

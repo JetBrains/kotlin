@@ -19,37 +19,6 @@ internal fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     return Array<E>(size)
 }
 
-/**
- * Returns new array which is a copy of the original array with new elements filled with **lateinit** _uninitialized_ values.
- * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
- * either throwing exception or returning some kind of implementation-specific default value.
- */
-@PublishedApi
-internal fun <E> Array<E>.copyOfUninitializedElements(newSize: Int): Array<E> = copyOfUninitializedElements(0, newSize)
-
-@PublishedApi
-internal fun ByteArray.copyOfUninitializedElements(newSize: Int): ByteArray       = copyOfUninitializedElements(0, newSize)
-
-@PublishedApi
-internal fun ShortArray.copyOfUninitializedElements(newSize: Int): ShortArray     = copyOfUninitializedElements(0, newSize)
-
-@PublishedApi
-internal fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray         = copyOfUninitializedElements(0, newSize)
-
-@PublishedApi
-internal fun LongArray.copyOfUninitializedElements(newSize: Int): LongArray       = copyOfUninitializedElements(0, newSize)
-
-@PublishedApi
-internal fun CharArray.copyOfUninitializedElements(newSize: Int): CharArray       = copyOfUninitializedElements(0, newSize)
-
-@PublishedApi
-internal fun FloatArray.copyOfUninitializedElements(newSize: Int): FloatArray     = copyOfUninitializedElements(0, newSize)
-
-@PublishedApi
-internal fun DoubleArray.copyOfUninitializedElements(newSize: Int): DoubleArray   = copyOfUninitializedElements(0, newSize)
-
-@PublishedApi
-internal fun BooleanArray.copyOfUninitializedElements(newSize: Int): BooleanArray = copyOfUninitializedElements(0, newSize)
 
 /**
  * Returns a new array which is a copy of the original array with new elements filled with null values.
@@ -64,7 +33,7 @@ internal fun <E> Array<E>.copyOfNulls(fromIndex: Int, toIndex: Int): Array<E?> {
         throw IllegalArgumentException("$fromIndex > $toIndex")
     }
     val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") arrayOfNulls<E>(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
     return result
 }
 
@@ -94,111 +63,6 @@ internal fun <E, T> collectionToArray(collection: Collection<E>, array: Array<T>
  */
 internal fun <E> collectionToArray(collection: Collection<E>): Array<E>
         = collectionToArray(collection, arrayOfUninitializedElements(collection.size))
-
-/**
- * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
- * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
- * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
- * either throwing exception or returning some kind of implementation-specific default value.
- */
-@PublishedApi
-internal fun <E> Array<E>.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): Array<E> {
-    val newSize = toIndex - fromIndex
-    if (newSize < 0) {
-        throw IllegalArgumentException("$fromIndex > $toIndex")
-    }
-    val result = arrayOfUninitializedElements<E>(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
-    return result
-}
-
-@PublishedApi
-internal fun ByteArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ByteArray {
-    val newSize = toIndex - fromIndex
-    if (newSize < 0) {
-        throw IllegalArgumentException("$fromIndex > $toIndex")
-    }
-    val result = ByteArray(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
-    return result
-}
-
-@PublishedApi
-internal fun ShortArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ShortArray {
-    val newSize = toIndex - fromIndex
-    if (newSize < 0) {
-        throw IllegalArgumentException("$fromIndex > $toIndex")
-    }
-    val result = ShortArray(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
-    return result
-}
-
-@PublishedApi
-internal fun IntArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): IntArray {
-    val newSize = toIndex - fromIndex
-    if (newSize < 0) {
-        throw IllegalArgumentException("$fromIndex > $toIndex")
-    }
-    val result = IntArray(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
-    return result
-}
-
-@PublishedApi
-internal fun LongArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): LongArray {
-    val newSize = toIndex - fromIndex
-    if (newSize < 0) {
-        throw IllegalArgumentException("$fromIndex > $toIndex")
-    }
-    val result = LongArray(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
-    return result
-}
-
-@PublishedApi
-internal fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): CharArray {
-    val newSize = toIndex - fromIndex
-    if (newSize < 0) {
-        throw IllegalArgumentException("$fromIndex > $toIndex")
-    }
-    val result = CharArray(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
-    return result
-}
-
-@PublishedApi
-internal fun FloatArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): FloatArray {
-    val newSize = toIndex - fromIndex
-    if (newSize < 0) {
-        throw IllegalArgumentException("$fromIndex > $toIndex")
-    }
-    val result = FloatArray(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
-    return result
-}
-
-@PublishedApi
-internal fun DoubleArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): DoubleArray {
-    val newSize = toIndex - fromIndex
-    if (newSize < 0) {
-        throw IllegalArgumentException("$fromIndex > $toIndex")
-    }
-    val result = DoubleArray(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
-    return result
-}
-
-@PublishedApi
-internal fun BooleanArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): BooleanArray {
-    val newSize = toIndex - fromIndex
-    if (newSize < 0) {
-        throw IllegalArgumentException("$fromIndex > $toIndex")
-    }
-    val result = BooleanArray(newSize)
-    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
-    return result
-}
 
 
 /**
