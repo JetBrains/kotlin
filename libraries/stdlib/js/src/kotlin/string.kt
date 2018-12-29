@@ -11,17 +11,29 @@ import kotlin.js.RegExp
  * Converts the characters in the specified array to a string.
  */
 @SinceKotlin("1.2")
-@kotlin.internal.InlineOnly
-public actual inline fun String(chars: CharArray): String {
-    return js("String.fromCharCode").apply(null, chars)
+public actual fun String(chars: CharArray): String {
+    var result = ""
+    for (char in chars) {
+        result += char
+    }
+    return result
 }
 
 /**
  * Converts the characters from a portion of the specified array to a string.
+ *
+ * @throws IndexOutOfBoundsException if either [offset] or [length] are less than zero
+ * or `offset + length` is out of [chars] array bounds.
  */
 @SinceKotlin("1.2")
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
-    return String(chars.copyOfRange(offset, offset + length))
+    if (offset < 0 || length < 0 || chars.size - offset < length)
+        throw IndexOutOfBoundsException("size: ${chars.size}; offset: $offset; length: $length")
+    var result = ""
+    for (index in offset until offset + length) {
+        result += chars[index]
+    }
+    return result
 }
 
 /**
