@@ -100,6 +100,9 @@ public expect fun String(chars: CharArray): String
 
 /**
  * Converts the characters from a portion of the specified array to a string.
+ *
+ * @throws IndexOutOfBoundsException if either [offset] or [length] are less than zero
+ * or `offset + length` is out of [chars] array bounds.
  */
 @SinceKotlin("1.2")
 public expect fun String(chars: CharArray, offset: Int, length: Int): String
