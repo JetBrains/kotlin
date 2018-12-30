@@ -448,7 +448,7 @@ public class KtPsiUtil {
             }
         }
 
-        if (innerExpression instanceof KtLambdaExpression) {
+        if (innerExpression instanceof KtLambdaExpression || innerExpression.getFirstChild() instanceof KtLambdaExpression) {
             PsiElement prevSibling = PsiTreeUtil.skipWhitespacesAndCommentsBackward(currentInner);
             if (prevSibling != null && prevSibling.getText().endsWith(KtTokens.RPAR.getValue())) return true;
         }
