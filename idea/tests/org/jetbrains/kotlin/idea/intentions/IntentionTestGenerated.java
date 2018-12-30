@@ -14274,6 +14274,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/removeUnnecessaryParentheses/elvisRhsEmptyReturn.kt");
         }
 
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("idea/testData/intentions/removeUnnecessaryParentheses/lambda.kt");
+        }
+
+        @TestMetadata("lambda2.kt")
+        public void testLambda2() throws Exception {
+            runTest("idea/testData/intentions/removeUnnecessaryParentheses/lambda2.kt");
+        }
+
+        @TestMetadata("lambda3.kt")
+        public void testLambda3() throws Exception {
+            runTest("idea/testData/intentions/removeUnnecessaryParentheses/lambda3.kt");
+        }
+
         @TestMetadata("necessaryParentheses1.kt")
         public void testNecessaryParentheses1() throws Exception {
             runTest("idea/testData/intentions/removeUnnecessaryParentheses/necessaryParentheses1.kt");
