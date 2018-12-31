@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.builtins.functions
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 
 class FunctionInterfaceMemberScope(
@@ -62,13 +62,11 @@ class FunctionInterfaceMemberScope(
 
 class FunctionInterfacePackageFragmentImpl(
     classDescriptorFactory: ClassDescriptorFactory,
-    private val containingModule: ModuleDescriptor
+    private val containingModule: ModuleDescriptor,
+    override val fqName: FqName
 ) : FunctionInterfacePackageFragment {
 
-    private val memberScopeObj = FunctionInterfaceMemberScope(classDescriptorFactory, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
-
-    override val fqName: FqName
-        get() = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+    private val memberScopeObj = FunctionInterfaceMemberScope(classDescriptorFactory, fqName)
 
     private val shortName = fqName.shortName()
 
@@ -91,18 +89,16 @@ class FunctionInterfacePackageFragmentImpl(
     override fun getMemberScope() = memberScopeObj
 }
 
-class FunctionInterfacePackageFragmentProvider(
-    classFactory: BuiltInFictitiousFunctionClassFactory,
+fun functionInterfacePackageFragmentProvider(
+    storageManager: StorageManager,
     module: ModuleDescriptor
-) : PackageFragmentProvider {
-    private val packageFragment = FunctionInterfacePackageFragmentImpl(classFactory, module)
-
-    override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
-        if (fqName != KOTLIN_REFLECT_FQ_NAME && fqName != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
-            return emptyList()
-        return listOf(packageFragment)
+): PackageFragmentProvider {
+    val classFactory = BuiltInFictitiousFunctionClassFactory(storageManager, module)
+    val fragments = listOf(
+        KOTLIN_REFLECT_FQ_NAME,
+        KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+    ).map { fqName ->
+        FunctionInterfacePackageFragmentImpl(classFactory, module, fqName)
     }
-
-    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> =
-        emptyList()
+    return PackageFragmentProviderImpl(fragments)
 }

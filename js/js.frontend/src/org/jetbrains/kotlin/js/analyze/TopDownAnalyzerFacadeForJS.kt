@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.js.analyze
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
-import org.jetbrains.kotlin.builtins.functions.FunctionInterfacePackageFragmentProvider
+import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -79,8 +78,7 @@ object TopDownAnalyzerFacadeForJS {
 
         if (thisIsBuiltInsModule) {
             builtIns.builtInsModule = context.module
-            val classFactory = BuiltInFictitiousFunctionClassFactory(context.storageManager, context.module)
-            additionalPackages += FunctionInterfacePackageFragmentProvider(classFactory, context.module)
+            additionalPackages += functionInterfacePackageFragmentProvider(context.storageManager, context.module)
         }
 
         context.module.setDependencies(
