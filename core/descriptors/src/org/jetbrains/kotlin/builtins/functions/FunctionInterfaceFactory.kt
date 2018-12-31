@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -50,42 +50,19 @@ class FunctionInterfaceMemberScope(
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = when {
-        classDescriptorFactory.shouldCreateClass(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, name) ->
-            classDescriptorFactory.createClass(ClassId.topLevel(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(name)))
-
-        classDescriptorFactory.shouldCreateClass(KOTLIN_REFLECT_FQ_NAME, name) ->
-            classDescriptorFactory.createClass(ClassId.topLevel(KOTLIN_REFLECT_FQ_NAME.child(name)))
-
+        classDescriptorFactory.shouldCreateClass(packageName, name) ->
+            classDescriptorFactory.createClass(ClassId.topLevel(packageName.child(name)))
         else -> null
     }
 }
 
 class FunctionInterfacePackageFragmentImpl(
     classDescriptorFactory: ClassDescriptorFactory,
-    private val containingModule: ModuleDescriptor,
-    override val fqName: FqName
-) : FunctionInterfacePackageFragment {
-
+    module: ModuleDescriptor,
+    name: FqName
+) : FunctionInterfacePackageFragment,
+    PackageFragmentDescriptorImpl(module, name) {
     private val memberScopeObj = FunctionInterfaceMemberScope(classDescriptorFactory, fqName)
-
-    private val shortName = fqName.shortName()
-
-    override fun getName(): Name = shortName
-
-    override fun getContainingDeclaration(): ModuleDescriptor = containingModule
-
-    override fun getOriginal(): DeclarationDescriptorWithSource = this
-    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
-    override val annotations: Annotations = Annotations.EMPTY
-
-    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
-        return visitor.visitPackageFragmentDescriptor(this, data)
-    }
-
-    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>) {
-        visitor.visitPackageFragmentDescriptor(this, null)
-    }
-
     override fun getMemberScope() = memberScopeObj
 }
 
