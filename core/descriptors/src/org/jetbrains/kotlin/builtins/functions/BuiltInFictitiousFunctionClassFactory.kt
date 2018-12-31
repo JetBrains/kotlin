@@ -85,12 +85,9 @@ class BuiltInFictitiousFunctionClassFactory(
 
         val builtInsFragments = module.getPackage(packageFqName).fragments.filterIsInstance<BuiltInsPackageFragment>()
 
-        val containingPackageFragment = when {
-            builtInsFragments.size == 1 -> builtInsFragments.single()
-            // JS IR backend uses separate FunctionInterfacePackageFragment for function interfaces
-            // TODO: Why first? Should be single
-            else -> builtInsFragments.filterIsInstance<FunctionInterfacePackageFragment>().first()
-        }
+        // JS IR backend uses separate FunctionInterfacePackageFragment for function interfaces
+        val containingPackageFragment =
+            builtInsFragments.filterIsInstance<FunctionInterfacePackageFragment>().firstOrNull() ?: builtInsFragments.first()
 
         return FunctionClassDescriptor(storageManager, containingPackageFragment, kind, arity)
     }
