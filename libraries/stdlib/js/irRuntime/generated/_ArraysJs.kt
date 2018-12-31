@@ -985,21 +985,30 @@ public actual operator fun <T> Array<out T>.plus(elements: Collection<T>): Array
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun ByteArray.plus(elements: Collection<Byte>): ByteArray {
-    return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)
+    var index = size
+    val result = this.copyOf(size + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun ShortArray.plus(elements: Collection<Short>): ShortArray {
-    return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)
+    var index = size
+    val result = this.copyOf(size + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun IntArray.plus(elements: Collection<Int>): IntArray {
-    return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)
+    var index = size
+    val result = this.copyOf(size + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
@@ -1013,14 +1022,20 @@ public actual operator fun LongArray.plus(elements: Collection<Long>): LongArray
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun FloatArray.plus(elements: Collection<Float>): FloatArray {
-    return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)
+    var index = size
+    val result = this.copyOf(size + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun DoubleArray.plus(elements: Collection<Double>): DoubleArray {
-    return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)
+    var index = size
+    val result = this.copyOf(size + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
@@ -1034,15 +1049,11 @@ public actual operator fun BooleanArray.plus(elements: Collection<Boolean>): Boo
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun CharArray.plus(elements: Collection<Char>): CharArray {
-    return fillFromCharCollection(this.copyOf(size + elements.size), this.size, elements)
+    var index = size
+    val result = this.copyOf(size + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
-
-internal fun fillFromCharCollection(dst: CharArray, startIndex: Int, collection: Collection<Char>): CharArray {
-    var index = startIndex
-    for (element in collection) dst[index++] = element
-    return dst
-}
-
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
