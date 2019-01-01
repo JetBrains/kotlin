@@ -553,6 +553,7 @@ internal class CAdapterGenerator(
     }
 
     override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, ignored: Void?): Boolean {
+        if (descriptor.isExpect) return true
         descriptor.getter?.let { visitChildren(it) }
         descriptor.setter?.let { visitChildren(it) }
         return true
