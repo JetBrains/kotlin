@@ -191,4 +191,21 @@ class Strings {
         assertPrints("Hot_Tea".commonSuffixWith("Hot_Coffee"), "")
     }
 
+    @Sample
+    fun indexOf() {
+        val word = "Brandy Brandy"
+
+        assertPrints(word.indexOf("Bra"), "0")
+        assertPrints(word.indexOf("dy"), "4")
+        assertPrints(word.indexOf("w"), "-1")
+
+        assertPrints(word.indexOf("Bra", 4), "7")
+
+        assertPrints(word.indexOf('B'), "0")
+        assertPrints(word.indexOf('r'), "1")
+        assertPrints(word.indexOf('b'), "-1")
+        assertPrints(word.indexOf('b', ignoreCase = true), "0")
+
+        assertPrints(word.indexOf('b', 4, true), "7")
+    }
 }
