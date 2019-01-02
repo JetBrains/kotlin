@@ -118,7 +118,10 @@ abstract class CLITool<A : CommonToolArguments> {
     }
 
     private fun reportArgumentParseProblems(collector: MessageCollector, arguments: A) {
-        val errors = arguments.errors
+        reportUnsafeInternalArgumentsIfAny(arguments, collector)
+
+        val errors = arguments.errors ?: return
+
         for (flag in errors.unknownExtraFlags) {
             collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
         }
@@ -139,7 +142,6 @@ abstract class CLITool<A : CommonToolArguments> {
             collector.report(STRONG_WARNING, argfileError)
         }
 
-        reportUnsafeInternalArgumentsIfAny(arguments, collector)
         for (internalArgumentsError in errors.internalArgumentsParsingProblems) {
             collector.report(STRONG_WARNING, internalArgumentsError)
         }
