@@ -418,12 +418,15 @@ class MethodInliner(
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
             private fun getNewIndex(`var`: Int): Int {
-                if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
+                val lambdaInfo = inliningContext.lambdaInfo
+                if (inliningContext.isInliningLambda && lambdaInfo is IrExpressionLambda) {
                     if (`var` < parameters.argsSizeOnStack) {
-                        if (`var` < capturedParamsSize) {
-                            return `var` + realParametersSize
-                        }
-                        else {
+                        val capturedParamsStartIndex =
+                            if (lambdaInfo.isExtensionLambda) lambdaInfo.invokeMethod.argumentTypes[0].size else 0 //shift by extension
+                        val capturedParamsEndIndex = capturedParamsSize + capturedParamsStartIndex - 1
+                        if (`var` in capturedParamsStartIndex..capturedParamsEndIndex) {
+                            return `var` + realParametersSize - capturedParamsStartIndex //subtract extension
+                        } else if (`var` >= capturedParamsStartIndex) {
                             return `var` - capturedParamsSize
                         }
                     }
