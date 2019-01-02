@@ -16,7 +16,7 @@ class SequenceCallCheckerWithNameHeuristics(nestedChecker: StreamCallChecker) : 
             "distinctBy", "elementAt", "elementAtOrElse", "elementAtOrNull", "find", "findLast", "first", "firstOrNull", "fold",
             "foldIndexed", "forEach", "forEachIndexed", "groupBy", "groupByTo", "indexOf", "indexOfFirst", "indexOfLast", "joinToString",
             "joinTo", "last", "lastIndexOf", "lastOrNull", "max", "maxBy", "maxWith", "min", "minBy", "minWith", "none", "partition",
-            "reduce", "reduceIndexed", "single", "singleOrNull", "sum", "sumBy", "sumByLong", "sumByDouble", "toCollection", "toHashSet",
+            "reduce", "reduceIndexed", "single", "singleOrNull", "sum", "sumBy", "sumByDouble", "sumByLong", "toCollection", "toHashSet",
             "toList", "toMutableList", "toMutableSet", "toSet", "toSortedSet", "unzip"
         )
     }
