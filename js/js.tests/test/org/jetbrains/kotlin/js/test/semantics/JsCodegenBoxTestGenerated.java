@@ -13146,11 +13146,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/jvmName/clashingErasure.kt");
         }
 
-        @TestMetadata("classMembers.kt")
-        public void testClassMembers() throws Exception {
-            runTest("compiler/testData/codegen/box/jvmName/classMembers.kt");
-        }
-
         @TestMetadata("fakeJvmNameInJava.kt")
         public void testFakeJvmNameInJava() throws Exception {
             runTest("compiler/testData/codegen/box/jvmName/fakeJvmNameInJava.kt");
@@ -13341,11 +13336,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("companionObject.kt")
         public void testCompanionObject() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/companionObject.kt");
-        }
-
-        @TestMetadata("convention.kt")
-        public void testConvention() throws Exception {
-            runTest("compiler/testData/codegen/box/jvmStatic/convention.kt");
         }
 
         @TestMetadata("default.kt")
