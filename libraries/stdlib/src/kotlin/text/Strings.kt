@@ -984,6 +984,7 @@ public fun CharSequence.lastIndexOfAny(strings: Collection<String>, startIndex: 
  *
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
  * @return An index of the first occurrence of [char] or -1 if none is found.
+ * @sample samples.text.Strings.indexOf
  */
 public fun CharSequence.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
@@ -998,6 +999,7 @@ public fun CharSequence.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boo
  *
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @return An index of the first occurrence of [string] or `-1` if none is found.
+ * @sample samples.text.Strings.indexOf
  */
 public fun CharSequence.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)

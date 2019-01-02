@@ -204,6 +204,7 @@ class Strings {
         val noPadding = "abcde".padEnd(3)
         assertPrints("'$noPadding'", "'abcde'")
     }
+
     @Sample
     fun clearStringBuilder() {
         val builder = StringBuilder()
@@ -357,4 +358,15 @@ class Strings {
         assertPrints(string.map { it.toUpperCase() }, "[K, O, T, L, I, N]")
     }
 
+    @Sample
+    fun indexOf() {
+        fun getSubstringDetails(str: String, toFind: String): String {
+            return "Found $toFind in $str at position ${str.indexOf(toFind)}"
+        }
+
+        val str = "Kotlin"
+        val toFind = "otli"
+
+        assertPrints(getSubstringDetails(str, toFind), "Found otli in Kotlin at position 1")
+    }
 }
