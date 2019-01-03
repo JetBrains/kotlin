@@ -74,7 +74,7 @@ public abstract class KotlinBuiltIns {
     public static final FqNames FQ_NAMES = new FqNames();
     public static final Name BUILTINS_MODULE_NAME = Name.special("<built-ins module>");
 
-    protected KotlinBuiltIns(@NotNull final StorageManager storageManager) {
+    protected KotlinBuiltIns(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
 
         this.packageFragments = storageManager.createLazyValue(new Function0<PackageFragments>() {
@@ -87,10 +87,10 @@ public abstract class KotlinBuiltIns {
                 createPackage(provider, null, COROUTINES_PACKAGE_FQ_NAME_RELEASE);
                 PackageFragmentDescriptor kotlinCollections = createPackage(provider, nameToFragment, COLLECTIONS_PACKAGE_FQ_NAME);
                 createPackage(provider, nameToFragment, RANGES_PACKAGE_FQ_NAME);
-                PackageFragmentDescriptor kotlinAnnotation = createPackage(provider, nameToFragment, ANNOTATION_PACKAGE_FQ_NAME);
+                createPackage(provider, nameToFragment, ANNOTATION_PACKAGE_FQ_NAME);
                 Set<PackageFragmentDescriptor> allImportedByDefault = new LinkedHashSet<PackageFragmentDescriptor>(nameToFragment.values());
 
-                return new PackageFragments(kotlin, kotlinCollections, kotlinAnnotation, allImportedByDefault);
+                return new PackageFragments(kotlin, kotlinCollections, allImportedByDefault);
             }
         });
 
@@ -218,39 +218,22 @@ public abstract class KotlinBuiltIns {
         }
     }
 
-    private static class UnsignedPrimitives {
-        public final Map<KotlinType, SimpleType> unsignedKotlinTypeToKotlinArrayType;
-        public final Map<SimpleType, SimpleType> kotlinArrayTypeToUnsignedKotlinType;
-
-        private UnsignedPrimitives(
-                @NotNull Map<KotlinType, SimpleType> unsignedKotlinTypeToKotlinArrayType,
-                @NotNull Map<SimpleType, SimpleType> kotlinArrayTypeToUnsignedKotlinType
-        ) {
-            this.unsignedKotlinTypeToKotlinArrayType = unsignedKotlinTypeToKotlinArrayType;
-            this.kotlinArrayTypeToUnsignedKotlinType = kotlinArrayTypeToUnsignedKotlinType;
-        }
-    }
-
     private static class PackageFragments {
         public final PackageFragmentDescriptor builtInsPackageFragment;
         public final PackageFragmentDescriptor collectionsPackageFragment;
-        public final PackageFragmentDescriptor annotationPackageFragment;
         public final Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments;
 
         private PackageFragments(
                 @NotNull PackageFragmentDescriptor builtInsPackageFragment,
                 @NotNull PackageFragmentDescriptor collectionsPackageFragment,
-                @NotNull PackageFragmentDescriptor annotationPackageFragment,
                 @NotNull Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments
         ) {
             this.builtInsPackageFragment = builtInsPackageFragment;
             this.collectionsPackageFragment = collectionsPackageFragment;
-            this.annotationPackageFragment = annotationPackageFragment;
             this.allImportedByDefaultBuiltInsPackageFragments = allImportedByDefaultBuiltInsPackageFragments;
         }
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static class FqNames {
         public final FqNameUnsafe any = fqNameUnsafe("Any");
         public final FqNameUnsafe nothing = fqNameUnsafe("Nothing");
@@ -278,7 +261,6 @@ public abstract class KotlinBuiltIns {
         public final FqName throwable = fqName("Throwable");
         public final FqName comparable = fqName("Comparable");
 
-        public final FqNameUnsafe charRange = rangesFqName("CharRange");
         public final FqNameUnsafe intRange = rangesFqName("IntRange");
         public final FqNameUnsafe longRange = rangesFqName("LongRange");
 
@@ -424,11 +406,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public MemberScope getBuiltInsPackageScope() {
         return packageFragments.invoke().builtInsPackageFragment.getMemberScope();
-    }
-
-    @NotNull
-    private ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
-        return getBuiltInClassByName(simpleName, packageFragments.invoke().annotationPackageFragment);
     }
 
     @NotNull
@@ -946,7 +923,7 @@ public abstract class KotlinBuiltIns {
         return getPrimitiveType(descriptor) != null;
     }
 
-    public static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
+    private static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor instanceof ClassDescriptor && classFqNameEquals(descriptor, fqName);
     }
@@ -991,10 +968,6 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNumber(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.number);
-    }
-
-    public static boolean isNumberOrNullableNumber(@NotNull KotlinType type) {
-        return isConstructedFromGivenClass(type, FQ_NAMES.number);
     }
 
     public static boolean isChar(@NotNull KotlinType type) {
