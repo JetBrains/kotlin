@@ -211,11 +211,16 @@ private val TailrecPhase = makeJvmPhase(
     description = "Handle tailrec calls"
 )
 
-
 private val ToArrayPhase = makeJvmPhase(
     { context, file -> ToArrayLowering(context).lower(file) },
     name = "ToArray",
     description = "Handle toArray functions"
+)
+
+private val NegatedExpressionLowering = makeJvmPhase(
+    { context, file -> NegatedExpressionLowering(context).lower(file) },
+    name = "NegatedExpression",
+    description = "Handle negated expressions"
 )
 
 object IrFileEndPhase : CompilerPhase<BackendContext, IrFile> {
@@ -268,6 +273,7 @@ val jvmPhases = listOf(
 
     TailrecPhase,
     ToArrayPhase,
+    NegatedExpressionLowering,
 
     makePatchParentsPhase(3),
 
