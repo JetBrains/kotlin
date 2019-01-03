@@ -36,8 +36,7 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
             if (!info.isSkippedOrRemapped) {
                 remapValues[shift] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE)
                 realSize += info.getType().size
-            }
-            else {
+            } else {
                 remapValues[shift] = if (info.isRemapped) info.remapValue else null
                 if (CapturedParamInfo.isSynthetic(info)) {
                     realSize += info.getType().size
@@ -59,12 +58,10 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
             }
             if (info.isRemapped) {
                 return RemapInfo(info, remapped, REMAPPED)
-            }
-            else {
+            } else {
                 remappedIndex = (remapped as StackValue.Local).index
             }
-        }
-        else {
+        } else {
             //captured params are not used directly in this inlined method, they are used in closure
             //except captured ones for default lambdas, they are generated in default body
             remappedIndex = actualParamsSize - params.argsSizeOnStack + index
@@ -115,8 +112,7 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
             if (remapInfo.parameterInfo != null && !isStore) {
                 StackValue.coerce(value.type, remapInfo.parameterInfo.type, mv)
             }
-        }
-        else {
+        } else {
             assert(remapInfo.parameterInfo != null) { "Non local value should have parameter info" }
             value!!.put(remapInfo.parameterInfo!!.type, mv)
         }
@@ -129,8 +125,8 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
     }
 
     class RemapInfo(
-            @JvmField val parameterInfo: ParameterInfo?,
-            @JvmField val value: StackValue? = null,
-            @JvmField val status: RemapStatus = FAIL
+        @JvmField val parameterInfo: ParameterInfo?,
+        @JvmField val value: StackValue? = null,
+        @JvmField val status: RemapStatus = FAIL
     )
 }

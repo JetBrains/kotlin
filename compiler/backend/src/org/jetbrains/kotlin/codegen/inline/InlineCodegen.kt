@@ -224,10 +224,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             val originalSuspendLambdaDescriptor =
                 parentContext.originalSuspendLambdaDescriptor ?: error("No original lambda descriptor found")
             codegen.genCoroutineInstanceForSuspendLambda(originalSuspendLambdaDescriptor)
-                    ?: error("No stack value for coroutine instance of lambda found")
+                ?: error("No stack value for coroutine instance of lambda found")
         } else
             codegen.getContinuationParameterFromEnclosingSuspendFunctionDescriptor(codegen.context.functionDescriptor)
-                    ?: error("No stack value for continuation parameter of suspend function")
+                ?: error("No stack value for continuation parameter of suspend function")
     }
 
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
@@ -514,10 +514,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
             val resultInCache = state.inlineCache.methodNodeById.getOrPut(methodId) {
                 val result = doCreateMethodNodeFromCompiled(directMember, state, asmMethod)
-                        ?: if (functionDescriptor.isSuspend)
-                            doCreateMethodNodeFromCompiled(directMember, state, jvmSignature.asmMethod)
-                        else
-                            null
+                    ?: if (functionDescriptor.isSuspend)
+                        doCreateMethodNodeFromCompiled(directMember, state, jvmSignature.asmMethod)
+                    else
+                        null
                 result ?: throw IllegalStateException("Couldn't obtain compiled function body for $functionDescriptor")
             }
 
@@ -567,7 +567,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
             val bytes = state.inlineCache.classBytes.getOrPut(containerId) {
                 findVirtualFile(state, containerId)?.contentsToByteArray()
-                        ?: throw IllegalStateException("Couldn't find declaration file for " + containerId)
+                    ?: throw IllegalStateException("Couldn't find declaration file for " + containerId)
             }
 
             val methodNode =

@@ -133,8 +133,7 @@ class IntervalMetaInfo<T : SplittableInterval<T>>(private val processor: Coverin
         val split = interval.split(by, keepStart)
         if (!keepStart) {
             remapStartLabel(split.newPart.startLabel, split.patchedPart)
-        }
-        else {
+        } else {
             remapEndLabel(split.newPart.endLabel, split.patchedPart)
         }
         addNewInterval(split.newPart)
@@ -149,7 +148,7 @@ class IntervalMetaInfo<T : SplittableInterval<T>>(private val processor: Coverin
     }
 
     private fun getInterval(curIns: LabelNode, isOpen: Boolean) =
-            if (isOpen) intervalStarts.get(curIns) else intervalEnds.get(curIns)
+        if (isOpen) intervalStarts.get(curIns) else intervalEnds.get(curIns)
 }
 
 fun TryCatchBlockNode.isMeaningless() = SimpleInterval(start, end).isMeaningless()
@@ -191,15 +190,16 @@ class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, SplittableInt
             val oldEnd = endLabel
             node.end = splitBy.startLabel
             Pair(splitBy.endLabel, oldEnd)
-        }
-        else {
+        } else {
             val oldStart = startLabel
             node.start = splitBy.endLabel
             Pair(oldStart, splitBy.startLabel)
         }
 
-        return SplitPair(this, LocalVarNodeWrapper(
+        return SplitPair(
+            this, LocalVarNodeWrapper(
                 LocalVariableNode(node.name, node.desc, node.signature, newPartInterval.first, newPartInterval.second, node.index)
-        ))
+            )
+        )
     }
 }
