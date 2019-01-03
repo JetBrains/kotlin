@@ -469,8 +469,10 @@ internal fun isAfterSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn
 internal fun isReturnsUnitMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_RETURNS_UNIT)
 internal fun isFakeContinuationMarker(insn: AbstractInsnNode) =
     insn.previous != null && isSuspendMarker(insn.previous, INLINE_MARKER_FAKE_CONTINUATION) && insn.opcode == Opcodes.ACONST_NULL
+
 internal fun isBeforeFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
     isSuspendMarker(insn, INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
+
 internal fun isAfterFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
     isSuspendMarker(insn, INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
 
@@ -599,7 +601,7 @@ fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: Inc
     return when (source) {
         is KotlinJvmBinaryPackageSourceElement -> {
             val directMember = JvmCodegenUtil.getDirectMember(this) as? DeserializedCallableMemberDescriptor
-                    ?: throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
+                ?: throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
             val kotlinClass =
                 source.getContainingBinaryClass(directMember) ?: throw AssertionError("Descriptor $this is not found, in: $source")
             if (kotlinClass !is VirtualFileKotlinClass) {

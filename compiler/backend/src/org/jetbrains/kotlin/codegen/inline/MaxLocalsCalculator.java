@@ -86,5 +86,4 @@ public class MaxLocalsCalculator extends MethodVisitor {
             maxLocals = nextFreeSlotNumber;
         }
     }
-
 }

@@ -61,6 +61,7 @@ import java.util.*;
  */
 public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     private static final int[] FRAME_SIZE_CHANGE_BY_OPCODE;
+
     static {
         // copy-pasted from org.jetbrains.org.objectweb.asm.Frame
         int i;
@@ -375,7 +376,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
             @NotNull Label handler, String type
     ) {
         ExceptionHandler exceptionHandler = new ExceptionHandler(
-            getLabelWrapper(start), getLabelWrapper(end), getLabelWrapper(handler)
+                getLabelWrapper(start), getLabelWrapper(end), getLabelWrapper(handler)
         );
 
         exceptionHandlers.add(exceptionHandler);
@@ -418,6 +419,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
 
         private int outputStackMax = 0;
         private int inputStackSize = 0;
+
         public LabelWrapper(Label label) {
             this.label = label;
         }

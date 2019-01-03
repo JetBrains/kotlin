@@ -21,8 +21,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class DeferredMethodVisitor(
-        val intermediate: MethodNode,
-        private val resultNode: () -> MethodVisitor
+    val intermediate: MethodNode,
+    private val resultNode: () -> MethodVisitor
 ) : MethodVisitor(Opcodes.API_VERSION, intermediate) {
 
     override fun visitEnd() {
