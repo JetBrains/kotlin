@@ -83,14 +83,14 @@ public abstract class KotlinBuiltIns {
                 PackageFragmentProvider provider = builtInsModule.getPackageFragmentProvider();
 
                 Map<FqName, PackageFragmentDescriptor> nameToFragment = new LinkedHashMap<FqName, PackageFragmentDescriptor>();
-                PackageFragmentDescriptor kotlin = createPackage(provider, nameToFragment, BUILT_INS_PACKAGE_FQ_NAME);
+                createPackage(provider, nameToFragment, BUILT_INS_PACKAGE_FQ_NAME);
                 createPackage(provider, null, COROUTINES_PACKAGE_FQ_NAME_RELEASE);
                 createPackage(provider, nameToFragment, COLLECTIONS_PACKAGE_FQ_NAME);
                 createPackage(provider, nameToFragment, RANGES_PACKAGE_FQ_NAME);
                 createPackage(provider, nameToFragment, ANNOTATION_PACKAGE_FQ_NAME);
                 Set<PackageFragmentDescriptor> allImportedByDefault = new LinkedHashSet<PackageFragmentDescriptor>(nameToFragment.values());
 
-                return new PackageFragments(kotlin, allImportedByDefault);
+                return new PackageFragments(allImportedByDefault);
             }
         });
 
@@ -117,8 +117,7 @@ public abstract class KotlinBuiltIns {
         this.builtInClassesByName = storageManager.createMemoizedFunction(new Function1<Name, ClassDescriptor>() {
             @Override
             public ClassDescriptor invoke(Name name) {
-                ClassifierDescriptor classifier =
-                        getBuiltInsPackageFragment().getMemberScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
+                ClassifierDescriptor classifier = getBuiltInsPackageScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
                 if (classifier == null) {
                     throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(name) + " is not found");
                 }
@@ -227,14 +226,9 @@ public abstract class KotlinBuiltIns {
     }
 
     private static class PackageFragments {
-        public final PackageFragmentDescriptor builtInsPackageFragment;
         public final Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments;
 
-        private PackageFragments(
-                @NotNull PackageFragmentDescriptor builtInsPackageFragment,
-                @NotNull Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments
-        ) {
-            this.builtInsPackageFragment = builtInsPackageFragment;
+        private PackageFragments(@NotNull Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments) {
             this.allImportedByDefaultBuiltInsPackageFragments = allImportedByDefaultBuiltInsPackageFragments;
         }
     }
@@ -376,11 +370,6 @@ public abstract class KotlinBuiltIns {
         return packageFragments.invoke().allImportedByDefaultBuiltInsPackageFragments;
     }
 
-    @NotNull
-    public PackageFragmentDescriptor getBuiltInsPackageFragment() {
-        return packageFragments.invoke().builtInsPackageFragment;
-    }
-
     /**
      * Checks if the given descriptor is declared in the deserialized built-in package fragment, i.e. if it was loaded as a part of
      * loading .kotlin_builtins definition files.
@@ -410,7 +399,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public MemberScope getBuiltInsPackageScope() {
-        return packageFragments.invoke().builtInsPackageFragment.getMemberScope();
+        return builtInsModule.getPackage(BUILT_INS_PACKAGE_FQ_NAME).getMemberScope();
     }
 
     @NotNull
