@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.builtins;
 
-import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -17,9 +16,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory;
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter;
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -27,7 +24,6 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -65,7 +61,7 @@ public abstract class KotlinBuiltIns {
     private ModuleDescriptorImpl builtInsModule;
 
     private final NotNullLazyValue<Primitives> primitives;
-    private final NotNullLazyValue<PackageFragments> packageFragments;
+    private final NotNullLazyValue<Collection<PackageViewDescriptor>> builtInPackagesImportedByDefault;
 
     private final MemoizedFunctionToNotNull<Name, ClassDescriptor> builtInClassesByName;
 
@@ -77,20 +73,15 @@ public abstract class KotlinBuiltIns {
     protected KotlinBuiltIns(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
 
-        this.packageFragments = storageManager.createLazyValue(new Function0<PackageFragments>() {
+        this.builtInPackagesImportedByDefault = storageManager.createLazyValue(new Function0<Collection<PackageViewDescriptor>>() {
             @Override
-            public PackageFragments invoke() {
-                PackageFragmentProvider provider = builtInsModule.getPackageFragmentProvider();
-
-                Map<FqName, PackageFragmentDescriptor> nameToFragment = new LinkedHashMap<FqName, PackageFragmentDescriptor>();
-                createPackage(provider, nameToFragment, BUILT_INS_PACKAGE_FQ_NAME);
-                createPackage(provider, null, COROUTINES_PACKAGE_FQ_NAME_RELEASE);
-                createPackage(provider, nameToFragment, COLLECTIONS_PACKAGE_FQ_NAME);
-                createPackage(provider, nameToFragment, RANGES_PACKAGE_FQ_NAME);
-                createPackage(provider, nameToFragment, ANNOTATION_PACKAGE_FQ_NAME);
-                Set<PackageFragmentDescriptor> allImportedByDefault = new LinkedHashSet<PackageFragmentDescriptor>(nameToFragment.values());
-
-                return new PackageFragments(allImportedByDefault);
+            public Collection<PackageViewDescriptor> invoke() {
+                return Arrays.asList(
+                    builtInsModule.getPackage(BUILT_INS_PACKAGE_FQ_NAME),
+                    builtInsModule.getPackage(COLLECTIONS_PACKAGE_FQ_NAME),
+                    builtInsModule.getPackage(RANGES_PACKAGE_FQ_NAME),
+                    builtInsModule.getPackage(ANNOTATION_PACKAGE_FQ_NAME)
+                );
             }
         });
 
@@ -169,42 +160,6 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    private PackageFragmentDescriptor createPackage(
-            @NotNull PackageFragmentProvider fragmentProvider,
-            @Nullable Map<FqName, PackageFragmentDescriptor> packageNameToPackageFragment,
-            @NotNull final FqName packageFqName
-    ) {
-        final List<PackageFragmentDescriptor> packageFragments = fragmentProvider.getPackageFragments(packageFqName);
-
-        PackageFragmentDescriptor result =
-                packageFragments.isEmpty()
-                ? new EmptyPackageFragmentDescriptor(builtInsModule, packageFqName)
-                : packageFragments.size() == 1
-                ? packageFragments.iterator().next()
-                : new PackageFragmentDescriptorImpl(builtInsModule, packageFqName) {
-                    @NotNull
-                    @Override
-                    public MemberScope getMemberScope() {
-                        return new ChainedMemberScope(
-                                "built-in package " + packageFqName,
-                                CollectionsKt.map(
-                                        packageFragments,
-                                        new Function1<PackageFragmentDescriptor, MemberScope>() {
-                                            @Override
-                                            public MemberScope invoke(PackageFragmentDescriptor descriptor) {
-                                                return descriptor.getMemberScope();
-                                            }
-                                        }
-                                )
-                        );
-                    }
-                };
-
-        if (packageNameToPackageFragment != null) packageNameToPackageFragment.put(packageFqName, result);
-        return result;
-    }
-
-    @NotNull
     protected StorageManager getStorageManager() {
         return storageManager;
     }
@@ -222,14 +177,6 @@ public abstract class KotlinBuiltIns {
             this.primitiveTypeToArrayKotlinType = primitiveTypeToArrayKotlinType;
             this.primitiveKotlinTypeToKotlinArrayType = primitiveKotlinTypeToKotlinArrayType;
             this.kotlinArrayTypeToPrimitiveKotlinType = kotlinArrayTypeToPrimitiveKotlinType;
-        }
-    }
-
-    private static class PackageFragments {
-        public final Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments;
-
-        private PackageFragments(@NotNull Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments) {
-            this.allImportedByDefaultBuiltInsPackageFragments = allImportedByDefaultBuiltInsPackageFragments;
         }
     }
 
@@ -366,8 +313,8 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public Set<PackageFragmentDescriptor> getBuiltInsPackageFragmentsImportedByDefault() {
-        return packageFragments.invoke().allImportedByDefaultBuiltInsPackageFragments;
+    public Collection<PackageViewDescriptor> getBuiltInPackagesImportedByDefault() {
+        return builtInPackagesImportedByDefault.invoke();
     }
 
     /**
