@@ -52,7 +52,7 @@ or set it via the `JAVA_OPTS` environment variable.
 
 ### Q: How do I specify a custom Objective-C prefix/name for my Kotlin framework?
 
-A: Use the `-module_name` compiler option or matching Gradle DSL statement, i.e.
+A: Use the `-module-name` compiler option or matching Gradle DSL statement, i.e.
 
 <div class="sample" markdown="1" theme="idea" mode="groovy">
 
@@ -60,7 +60,7 @@ A: Use the `-module_name` compiler option or matching Gradle DSL statement, i.e.
 targets {
     fromPreset(presets.iosArm64, 'myapp') {
        compilations.main.outputKinds 'FRAMEWORK'
-       compilations.main.extraOpts '-module_name', 'TheName'
+       compilations.main.extraOpts '-module-name', 'TheName'
     }
 }
 ```
