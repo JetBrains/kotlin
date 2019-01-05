@@ -12394,6 +12394,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/typeMismatch/when3.kt");
         }
 
+        @TestMetadata("wrapWithArrayLiteral.kt")
+        public void testWrapWithArrayLiteral() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/wrapWithArrayLiteral.kt");
+        }
+
         @TestMetadata("idea/testData/quickfix/typeMismatch/casts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
