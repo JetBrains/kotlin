@@ -1,4 +1,4 @@
 cla<caret>
 
 // ORDER: class
-// ORDER: class TopLevelKeyword
+// ORDER: class TopLevelKeywordWithClassName
