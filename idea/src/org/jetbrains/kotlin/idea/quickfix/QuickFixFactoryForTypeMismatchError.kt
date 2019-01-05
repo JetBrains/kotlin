@@ -22,6 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.FqName
@@ -239,6 +241,9 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                 || KotlinBuiltIns.isPrimitiveArray(expectedType)
             ) {
                 actions.add(AddArrayOfTypeFix(diagnosticElement, expectedType))
+                if (diagnosticElement.languageVersionSettings.supportsFeature(LanguageFeature.ArrayLiteralsInAnnotations)) {
+                    actions.add(WrapWithArrayLiteralFix(diagnosticElement))
+                }
             }
         }
 
