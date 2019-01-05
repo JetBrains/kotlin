@@ -9,11 +9,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -46,6 +44,8 @@ class WrapWithCollectionLiteralCallFix private constructor(
 
     companion object {
         fun create(expectedType: KotlinType, expressionType: KotlinType, element: KtExpression): List<WrapWithCollectionLiteralCallFix> {
+            if (element.getStrictParentOfType<KtAnnotationEntry>() != null) return emptyList()
+
             val collectionType =
                 with(ConvertCollectionFix) {
                     expectedType.getCollectionType(acceptNullableTypes = true)
