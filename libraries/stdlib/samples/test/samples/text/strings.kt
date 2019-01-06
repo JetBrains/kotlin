@@ -191,4 +191,12 @@ class Strings {
         assertPrints("Hot_Tea".commonSuffixWith("Hot_Coffee"), "")
     }
 
+    @Sample
+    fun isNotBlank() {
+        val notBlank = "isNotBlank"
+        assertPrints(notBlank.isNotBlank(), "true")
+
+        val blank = " "
+        assertPrints(blank.isNotBlank(), "false")
+    }
 }
