@@ -16594,6 +16594,95 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/underscoresInNumericLiteral")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnderscoresInNumericLiteral extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInUnderscoresInNumericLiteral() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/underscoresInNumericLiteral"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AddUnderscores extends AbstractIntentionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInAddUnderscores() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("binaries.kt")
+            public void testBinaries() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores/binaries.kt");
+            }
+
+            @TestMetadata("double.kt")
+            public void testDouble() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores/double.kt");
+            }
+
+            @TestMetadata("float.kt")
+            public void testFloat() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores/float.kt");
+            }
+
+            @TestMetadata("hexadecimals.kt")
+            public void testHexadecimals() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores/hexadecimals.kt");
+            }
+
+            @TestMetadata("int.kt")
+            public void testInt() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores/int.kt");
+            }
+
+            @TestMetadata("int2.kt")
+            public void testInt2() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores/int2.kt");
+            }
+
+            @TestMetadata("long.kt")
+            public void testLong() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores/long.kt");
+            }
+
+            @TestMetadata("uInt.kt")
+            public void testUInt() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/addUnderscores/uInt.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/underscoresInNumericLiteral/removeUnderscores")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RemoveUnderscores extends AbstractIntentionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInRemoveUnderscores() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/underscoresInNumericLiteral/removeUnderscores"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("int.kt")
+            public void testInt() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/removeUnderscores/int.kt");
+            }
+
+            @TestMetadata("noUnderscores.kt")
+            public void testNoUnderscores() throws Exception {
+                runTest("idea/testData/intentions/underscoresInNumericLiteral/removeUnderscores/noUnderscores.kt");
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/usePropertyAccessSyntax")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
