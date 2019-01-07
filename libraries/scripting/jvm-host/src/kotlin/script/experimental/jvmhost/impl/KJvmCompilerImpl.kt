@@ -43,6 +43,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.starProjectedType
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.host.getScriptingClass
@@ -136,13 +137,9 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
             val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
             val scriptText = getMergedScriptText(script, updatedConfiguration)
             val scriptFileName = script.name ?: "script.${updatedConfiguration[ScriptCompilationConfiguration.fileExtension]}"
-            val virtualFile = LightVirtualFile(
-                scriptFileName,
-                KotlinLanguage.INSTANCE,
-                StringUtil.convertLineSeparators(scriptText)
-            ).apply {
-                charset = CharsetToolkit.UTF8_CHARSET
-            }
+
+            val virtualFile = ScriptLightVirtualFile(scriptFileName, (script as? FileScriptSource)?.file?.path, scriptText)
+
             val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
                 ?: return failure("Unable to make PSI file from script")
 
@@ -321,4 +318,15 @@ internal class BridgeScriptDefinition(
             KotlinScriptDefinition::class, // Assuming that the KotlinScriptDefinition class is loaded in the proper classloader
             hostConfiguration
         )
+}
+
+internal class ScriptLightVirtualFile(name: String, private val _path: String?, text: String) :
+    LightVirtualFile(name, KotlinLanguage.INSTANCE, StringUtil.convertLineSeparators(text)) {
+
+    init {
+        charset = CharsetToolkit.UTF8_CHARSET
+    }
+
+    override fun getPath(): String = _path ?: super.getPath()
+    override fun getCanonicalPath(): String? = path
 }

@@ -7,6 +7,7 @@
 
 package kotlin.script.experimental.api
 
+import kotlin.reflect.KClass
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptEvaluationConfigurationKeys
@@ -47,10 +48,26 @@ val ScriptEvaluationConfigurationKeys.providedProperties by PropertiesCollection
 val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.key<List<Any?>>()
 
 /**
+ * A map that is used to store evaluated script instances; if provided - the evaluator will try to get imported script from the map and
+ * only create/evaluate instances if not found, and evaluator will put newly created instances into the map
+ * This allows to have a single instance of the script if it is imported several times via different import paths.
+ */
+val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, Any>>()
+
+/**
+ * A helper to enable scriptsInstancesSharingMap with default implementation
+ */
+fun ScriptEvaluationConfiguration.Builder.enableScriptsInstancesSharing() {
+    this {
+        scriptsInstancesSharingMap(HashMap())
+    }
+}
+
+/**
  * The script evaluation result value
  */
 sealed class ResultValue {
-    class Value(val name: String, val value: Any?, val type: String) : ResultValue() {
+    class Value(val name: String, val value: Any?, val type: String, val scriptInstance: Any) : ResultValue() {
         override fun toString(): String = "$name: $type = $value"
     }
 
