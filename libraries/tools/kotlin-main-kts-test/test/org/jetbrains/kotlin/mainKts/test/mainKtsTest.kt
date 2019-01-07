@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.mainKts.test
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.junit.Assert
 import org.junit.Test
+import java.io.ByteArrayOutputStream
 import java.io.File
-import kotlin.script.experimental.api.EvaluationResult
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.ScriptEvaluationConfiguration
-import kotlin.script.experimental.api.constructorArgs
+import java.io.PrintStream
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
@@ -22,6 +21,7 @@ fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
 
     val evaluationEnv = ScriptEvaluationConfiguration {
         constructorArgs(emptyArray<String>())
+        enableScriptsInstancesSharing()
     }
 
     return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), scriptDefinition, evaluationEnv)
@@ -60,4 +60,32 @@ class MainKtsTest {
                     ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
             res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unknown set of arguments to maven resolver: abracadabra") })
     }
+
+    @Test
+    fun testImport() {
+
+        val out = captureOut {
+            val res = evalFile(File("testData/import-test.main.kts"))
+
+            Assert.assertTrue(
+                "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
+                res is ResultWithDiagnostics.Success
+            )
+        }.lines()
+
+        Assert.assertEquals(listOf("Hi from common", "Hi from middle", "sharedVar == 5"), out)
+    }
+}
+
+private fun captureOut(body: () -> Unit): String {
+    val outStream = ByteArrayOutputStream()
+    val prevOut = System.out
+    System.setOut(PrintStream(outStream))
+    try {
+        body()
+    } finally {
+        System.out.flush()
+        System.setOut(prevOut)
+    }
+    return outStream.toString().trim()
 }
