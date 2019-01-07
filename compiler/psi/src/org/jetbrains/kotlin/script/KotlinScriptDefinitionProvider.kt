@@ -128,7 +128,9 @@ private class CachingSequence<T>(from: Sequence<T>) : Sequence<T> {
         private var cacheCursor = 0
 
         override fun hasNext(): Boolean =
-            lock.read { cacheCursor < cache.size } || lock.write { cacheCursor < cache.size || sequenceIterator.hasNext() }
+            lock.read { cacheCursor < cache.size }
+                    // iterator's hasNext can mutate the iterator's state, therefore write lock is needed
+                    || lock.write { cacheCursor < cache.size || sequenceIterator.hasNext() }
 
         override fun next(): T {
             lock.read {
