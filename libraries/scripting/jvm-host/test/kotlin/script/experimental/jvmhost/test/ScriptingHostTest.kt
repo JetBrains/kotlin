@@ -53,7 +53,7 @@ class ScriptingHostTest : TestCase() {
 
     @Test
     fun testSimpleImport() {
-        val greeting = "Hello from helloWithVal script!\nHello from imported helloWithVal script!"
+        val greeting = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
         val script = "println(\"Hello from imported \$helloScriptName script!\")"
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
             refineConfiguration {
@@ -71,7 +71,7 @@ class ScriptingHostTest : TestCase() {
         }
         val output = captureOut {
             BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure()
-        }
+        }.lines()
         Assert.assertEquals(greeting, output)
     }
 
