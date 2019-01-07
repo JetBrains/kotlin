@@ -76,6 +76,49 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
+    fun testDiamondImportWithoutSharing() {
+        val greeting = listOf("Hi from common", "Hi from middle", "Hi from common", "sharedVar == 3")
+        val output = doDiamondImportTest()
+        Assert.assertEquals(greeting, output)
+    }
+
+    @Test
+    fun testDiamondImportWithSharing() {
+        val greeting = listOf("Hi from common", "Hi from middle", "sharedVar == 5")
+        val output = doDiamondImportTest(
+            ScriptEvaluationConfiguration {
+                enableScriptsInstancesSharing()
+            }
+        )
+        Assert.assertEquals(greeting, output)
+    }
+
+    private fun doDiamondImportTest(evaluationConfiguration: ScriptEvaluationConfiguration? = null): List<String> {
+        val mainScript = "sharedVar += 1\nprintln(\"sharedVar == \$sharedVar\")".toScriptSource("main.kts")
+        val middleScript = File(TEST_DATA_DIR, "importTest/diamondImportMiddle.kts").toScriptSource()
+        val commonScript = File(TEST_DATA_DIR, "importTest/diamondImportCommon.kts").toScriptSource()
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    when (ctx.script.name) {
+                        "main.kts" -> ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                            importScripts(middleScript, commonScript)
+                        }
+                        "diamondImportMiddle.kts" -> ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                            importScripts(commonScript)
+                        }
+                        else -> ctx.compilationConfiguration
+                    }.asSuccess()
+                }
+            }
+        }
+        val output = captureOut {
+            BasicJvmScriptingHost().eval(mainScript, compilationConfiguration, evaluationConfiguration).throwOnFailure()
+        }.lines()
+        return output
+    }
+
+    @Test
     fun testImportError() {
         val script = "println(\"Hello from imported \$helloScriptName script!\")"
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
