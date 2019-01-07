@@ -20,6 +20,8 @@ import com.google.common.collect.LinkedListMultimap
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
+import kotlin.collections.HashSet
+import kotlin.collections.LinkedHashSet
 
 abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
     val tryBlocksMetaInfo: IntervalMetaInfo<TryCatchBlockNodeInfo> = IntervalMetaInfo(this)
@@ -114,7 +116,7 @@ class IntervalMetaInfo<T : SplittableInterval<T>>(private val processor: Coverin
     }
 
     fun splitAndRemoveCurrentIntervals(by: Interval, keepStart: Boolean) {
-        currentIntervals.map { splitAndRemoveInterval(it, by, keepStart) }
+        currentIntervals.toList().forEach { splitAndRemoveIntervalFromCurrents(it, by, keepStart) }
     }
 
     fun processCurrent(curIns: LabelNode, directOrder: Boolean) {
@@ -140,7 +142,7 @@ class IntervalMetaInfo<T : SplittableInterval<T>>(private val processor: Coverin
         return split
     }
 
-    fun splitAndRemoveInterval(interval: T, by: Interval, keepStart: Boolean): SplitPair<T> {
+    fun splitAndRemoveIntervalFromCurrents(interval: T, by: Interval, keepStart: Boolean): SplitPair<T> {
         val splitPair = split(interval, by, keepStart)
         val removed = currentIntervals.remove(splitPair.patchedPart)
         assert(removed) { "Wrong interval structure: $splitPair" }
