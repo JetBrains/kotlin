@@ -391,7 +391,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         // so we should split original interval by inserted finally one
         for (TryCatchBlockNodeInfo block : updatingClusterBlocks) {
             //update exception mapping
-            SplitPair<TryCatchBlockNodeInfo> split = tryBlocksMetaInfo.splitAndRemoveInterval(block, splitBy, false);
+            SplitPair<TryCatchBlockNodeInfo> split = tryBlocksMetaInfo.splitAndRemoveIntervalFromCurrents(block, splitBy, false);
             checkFinally(split.getNewPart());
             checkFinally(split.getPatchedPart());
             //block patched in split method
