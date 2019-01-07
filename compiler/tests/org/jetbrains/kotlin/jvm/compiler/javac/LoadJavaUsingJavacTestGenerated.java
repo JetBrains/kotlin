@@ -293,9 +293,39 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
                 runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedMethod.java");
             }
 
+            @TestMetadata("AnnotatedParameterInEnumClassConstructor.java")
+            public void testAnnotatedParameterInEnumClassConstructor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInEnumClassConstructor.java");
+            }
+
             @TestMetadata("AnnotatedParameterInInnerClassConstructor.java")
             public void testAnnotatedParameterInInnerClassConstructor() throws Exception {
                 runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInInnerClassConstructor.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInEnumClassConstructor.java")
+            public void testAnnotatedTypeInEnumClassConstructor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInEnumClassConstructor.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInEnumClassConstructor2.java")
+            public void testAnnotatedTypeInEnumClassConstructor2() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInEnumClassConstructor2.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInFun.java")
+            public void testAnnotatedTypeInFun() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInFun.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInInnerClassConstructor.java")
+            public void testAnnotatedTypeInInnerClassConstructor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInInnerClassConstructor.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInInnerClassConstructor2.java")
+            public void testAnnotatedTypeInInnerClassConstructor2() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInInnerClassConstructor2.java");
             }
 
             @TestMetadata("AnnotatedValueParameter.java")
