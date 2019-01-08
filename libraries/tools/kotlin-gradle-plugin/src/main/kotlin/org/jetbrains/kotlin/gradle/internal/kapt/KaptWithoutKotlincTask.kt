@@ -82,7 +82,12 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
         val kaptClasspath = kaptJars + findKotlinStdlibClasspath(project)
 
         workerExecutor.submit(KaptExecution::class.java) { config ->
-            config.isolationMode = IsolationMode.PROCESS
+            val isolationModeStr = project.findProperty("kapt.workers.isolation") as String? ?: "none"
+            config.isolationMode = when(isolationModeStr.toLowerCase()) {
+                "process" -> IsolationMode.PROCESS
+                "none" -> IsolationMode.NONE
+                else -> IsolationMode.NONE
+            }
             config.params(optionsForWorker, findToolsJar(), kaptClasspath)
             if (project.findProperty("kapt.workers.log.classloading") == "true") {
                 // for tests
