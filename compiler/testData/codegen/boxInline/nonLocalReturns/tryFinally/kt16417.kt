@@ -1,5 +1,7 @@
 // IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
+package test
+
 class A {
     var field = 0
 
@@ -28,6 +30,9 @@ class A {
 
 // FILE: 2.kt
 // NO_CHECK_LAMBDA_INLINING
+
+import test.*
+
 fun box(): String {
     val a = A()
     a.c ({ "OK" })
