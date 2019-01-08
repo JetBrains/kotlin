@@ -56,7 +56,7 @@ import java.util.*
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
-    private val performanceManager: K2JVMCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
+    override val performanceManager = K2JVMCompilerPerformanceManager()
 
     override fun doExecute(
         arguments: K2JVMCompilerArguments,
@@ -220,8 +220,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
-    override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
-
     private fun loadPlugins(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
         var pluginClasspaths: Iterable<String> = arguments.pluginClasspaths?.asIterable() ?: emptyList()
         val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
@@ -340,7 +338,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = JvmMetadataVersion(*versionArray)
 
-    private class K2JVMCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JVM Compiler")
+    protected class K2JVMCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JVM Compiler")
 
     companion object {
         @JvmStatic
