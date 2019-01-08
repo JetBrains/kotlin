@@ -136,6 +136,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt14011_3.kt");
         }
 
+        @TestMetadata("kt15751.kt")
+        public void testKt15751() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt15751.kt");
+        }
+
         @TestMetadata("kt16193.kt")
         public void testKt16193() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt16193.kt");
@@ -712,6 +717,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("kt15449.kt")
         public void testKt15449() throws Exception {
             runTest("compiler/testData/codegen/boxInline/callableReference/kt15449.kt");
+        }
+
+        @TestMetadata("kt15751_2.kt")
+        public void testKt15751_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/kt15751_2.kt");
         }
 
         @TestMetadata("kt16411.kt")
@@ -2010,6 +2020,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("kt16417.kt")
+            public void testKt16417() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt16417.kt");
+            }
+
             @TestMetadata("kt20433.kt")
             public void testKt20433() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433.kt");
@@ -2541,6 +2556,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("kt11677.kt")
         public void testKt11677() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt11677.kt");
+        }
+
+        @TestMetadata("kt15956.kt")
+        public void testKt15956() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt15956.kt");
         }
 
         @TestMetadata("kt15997.kt")
