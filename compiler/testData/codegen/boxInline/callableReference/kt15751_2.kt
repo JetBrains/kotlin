@@ -1,6 +1,8 @@
 // FILE: 1.kt
 // IGNORE_BACKEND: JS
 // WITH_RUNTIME
+package test
+
 public inline fun <T> T.myalso(block: (T) -> Unit): T {
     block(this)
     return this
@@ -12,6 +14,8 @@ public inline fun <T, R : Any> Iterable<T>.mymapNotNull(transform: (T) -> R?): L
 
 // FILE: 2.kt
 // NO_CHECK_LAMBDA_INLINING
+import test.*
+
 var result = -1;
 
 fun box(): String {
