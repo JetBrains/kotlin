@@ -54,6 +54,11 @@ public class CallableReferenceInlineTestsGenerated extends AbstractCallableRefer
         runTest("compiler/testData/codegen/boxInline/callableReference/kt15449.kt");
     }
 
+    @TestMetadata("kt15751_2.kt")
+    public void testKt15751_2() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/callableReference/kt15751_2.kt");
+    }
+
     @TestMetadata("kt16411.kt")
     public void testKt16411() throws Exception {
         runTest("compiler/testData/codegen/boxInline/callableReference/kt16411.kt");

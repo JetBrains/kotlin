@@ -129,6 +129,11 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
         }
 
+        @TestMetadata("kt16417.kt")
+        public void testKt16417() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt16417.kt");
+        }
+
         @TestMetadata("kt20433.kt")
         public void testKt20433() throws Exception {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433.kt");
