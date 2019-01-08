@@ -1,5 +1,7 @@
 // FILE: 1.kt
 // NO_CHECK_LAMBDA_INLINING
+package test
+
 class A {
     val foo = fun(call: () -> Unit) =
         ext {
@@ -24,6 +26,7 @@ class A {
 }
 
 // FILE: 2.kt
+import test.*
 
 fun box(): String {
     var result = "fail"
