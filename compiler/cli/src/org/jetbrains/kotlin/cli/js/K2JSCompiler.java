@@ -77,6 +77,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
 import static org.jetbrains.kotlin.cli.common.UtilsKt.checkKotlinPackageUsage;
+import static org.jetbrains.kotlin.cli.common.UtilsKt.getLibraryFromHome;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
@@ -460,7 +461,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     ) {
         List<String> libraries = new SmartList<>();
         if (!arguments.getNoStdlib()) {
-            File stdlibJar = Companion.getLibraryFromHome(
+            File stdlibJar = getLibraryFromHome(
                     paths, KotlinPaths::getJsStdLibJarPath, PathUtil.JS_LIB_JAR_NAME, messageCollector, "'-no-stdlib'");
             if (stdlibJar != null) {
                 libraries.add(stdlibJar.getAbsolutePath());

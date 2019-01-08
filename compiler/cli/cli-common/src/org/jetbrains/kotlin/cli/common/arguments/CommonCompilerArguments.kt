@@ -331,7 +331,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
     }
 
-    fun configureLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
+    fun toLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
 
         // If only "-api-version" is specified, language version is assumed to be the latest stable
         val languageVersion = parseVersion(collector, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
