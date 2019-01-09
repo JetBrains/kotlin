@@ -323,30 +323,27 @@ fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent()
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
 fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>) {
-    val savedIsShouldMarkLineNumbers = codegen.isShouldMarkLineNumbers
     // Do not write line numbers until destructuring happens
     // (otherwise destructuring variables will be uninitialized in the beginning of lambda)
-    codegen.isShouldMarkLineNumbers = false
+    codegen.runWithShouldMarkLineNumbers(false) {
+        for (parameterDescriptor in valueParameters) {
+            if (parameterDescriptor !is ValueParameterDescriptorImpl.WithDestructuringDeclaration) continue
 
-    for (parameterDescriptor in valueParameters) {
-        if (parameterDescriptor !is ValueParameterDescriptorImpl.WithDestructuringDeclaration) continue
+            for (entry in parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()) {
+                codegen.myFrameMap.enter(entry, codegen.typeMapper.mapType(entry.type))
+            }
 
-        for (entry in parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()) {
-            codegen.myFrameMap.enter(entry, codegen.typeMapper.mapType(entry.type))
+            val destructuringDeclaration =
+                (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
+                    ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
+
+            codegen.initializeDestructuringDeclarationVariables(
+                destructuringDeclaration,
+                TransientReceiver(parameterDescriptor.type),
+                codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
+            )
         }
-
-        val destructuringDeclaration =
-            (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
-                ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
-
-        codegen.initializeDestructuringDeclarationVariables(
-            destructuringDeclaration,
-            TransientReceiver(parameterDescriptor.type),
-            codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
-        )
     }
-
-    codegen.isShouldMarkLineNumbers = savedIsShouldMarkLineNumbers
 }
 
 fun <D : CallableDescriptor> D.unwrapFrontendVersion() = unwrapInitialDescriptorForSuspendFunction()

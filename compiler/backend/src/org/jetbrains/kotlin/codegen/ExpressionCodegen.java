@@ -89,6 +89,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
@@ -1434,12 +1435,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         });
     }
 
-    public boolean isShouldMarkLineNumbers() {
-        return shouldMarkLineNumbers;
-    }
-
-    public void setShouldMarkLineNumbers(boolean shouldMarkLineNumbers) {
-        this.shouldMarkLineNumbers = shouldMarkLineNumbers;
+    public <T> T runWithShouldMarkLineNumbers(boolean enable, Supplier<T> operation) {
+        boolean originalStatus = shouldMarkLineNumbers;
+        this.shouldMarkLineNumbers = enable;
+        try {
+            return operation.get();
+        } finally {
+            this.shouldMarkLineNumbers = originalStatus;
+        }
     }
 
     public void markStartLineNumber(@NotNull KtElement element) {
