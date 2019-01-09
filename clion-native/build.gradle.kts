@@ -1,33 +1,20 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
+import org.jetbrains.kotlin.ultimate.*
 
 plugins {
     kotlin("jvm")
-    id("com.github.jk1.tcdeps") version "0.18"
 }
 
 repositories {
     maven("https://dl.bintray.com/jetbrains/markdown")
-    teamcityServer {
-        setUrl("http://buildserver.labs.intellij.net")
-        credentials {
-            username = "guest"
-            password = "guest"
-        }
+}
+
+dependencies {
+    compile(ultimateProjectDep(":cidr-native"))
+    compileOnly(ultimateProjectDep(":prepare-deps:platform-deps", configuration = "clionUnscrambledJar"))
+
+    if (!isStandaloneBuild) {
+        compileOnly("org.jetbrains:markdown:$markdownVersion")
     }
 }
 
-val clionVersion = rootProject.extra["versions.clion"] as String
-val clionVersionRepo = rootProject.extra["versions.clion.repo"] as String
-
-dependencies {
-    compile(project(":kotlin-ultimate:cidr-native"))
-    compile(project(":idea:idea-gradle-native"))
-    compileOnly(tc("$clionVersionRepo:$clionVersion:unscrambled/clion.jar"))
-    compileOnly(commonDep("org.jetbrains", "markdown"))
-}
-
-sourceSets {
-    "main" { projectDefault() }
-    "test" { none() }
-}
+defaultSourceSets()

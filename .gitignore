@@ -1,1 +1,6 @@
 build/
+.gradle/
+dist/
+.idea
+*.iml
+.DS_Store

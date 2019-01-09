@@ -143,8 +143,7 @@ class KonanTemplate(
 
 private fun <T> withTemplateDirectory(f: (Path) -> T): T {
     val id = PluginManager.getPluginByClassName(KonanTemplate::class.java.name)
-    val pluginFile = PluginManager.getPlugin(id)?.path
-    check(pluginFile != null)
+    val pluginFile = PluginManager.getPlugin(id)!!.path
     val templatesDir = Paths.get(pluginFile.path, "templates/")
     FileUtil.ensureExists(templatesDir.toFile())
     return f(templatesDir)
