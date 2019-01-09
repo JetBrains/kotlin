@@ -84,5 +84,14 @@ task checkBinaryGetters {
     doLast {
         println("Wasm binary file: ${kotlin.targets.wasm32.compilations.main.getBinary("EXECUTABLE", "RELEASE").name}")
         println("Wasm link task: ${kotlin.targets.wasm32.compilations.main.getLinkTask("EXECUTABLE", "RELEASE").name}")
+
+        println("Windows test file: ${kotlin.targets.mingw64.compilations.test.getBinary("EXECUTABLE", "DEBUG").name}")
+        println("Windows test link task: ${kotlin.targets.mingw64.compilations.test.getLinkTask("EXECUTABLE", "DEBUG").name}")
+
+        println("MacOS test file: ${kotlin.targets.macos64.compilations.test.getBinary("EXECUTABLE", "DEBUG").name}")
+        println("MacOS test link task: ${kotlin.targets.macos64.compilations.test.getLinkTask("EXECUTABLE", "DEBUG").name}")
+
+        println("Linux test file: ${kotlin.targets.linux64.compilations.test.getBinary("EXECUTABLE", "DEBUG").name}")
+        println("Linux test link task: ${kotlin.targets.linux64.compilations.test.getLinkTask("EXECUTABLE", "DEBUG").name}")
     }
 }

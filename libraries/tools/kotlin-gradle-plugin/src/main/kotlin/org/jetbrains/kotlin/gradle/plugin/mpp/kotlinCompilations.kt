@@ -320,7 +320,7 @@ class KotlinNativeCompilation(
         }
 
      // Used only to support the old APIs. TODO: Remove when the old APIs are removed.
-    internal val binaryTasks = mutableMapOf<Pair<NativeOutputKind, NativeBuildType>, NativeBinary>()
+    internal val binaries = mutableMapOf<Pair<NativeOutputKind, NativeBuildType>, NativeBinary>()
 
     // Native-specific DSL.
     var extraOpts = mutableListOf<String>()
@@ -375,7 +375,7 @@ class KotlinNativeCompilation(
     }
 
     // Task accessors.
-    fun findLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeLink? = binaryTasks[kind to buildType]?.linkTask
+    fun findLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeLink? = binaries[kind to buildType]?.linkTask
 
     fun getLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeLink =
         findLinkTask(kind, buildType)

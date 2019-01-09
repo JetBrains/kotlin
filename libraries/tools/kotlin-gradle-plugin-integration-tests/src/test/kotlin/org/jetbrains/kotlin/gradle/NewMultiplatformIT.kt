@@ -183,6 +183,26 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("checkBinaryGetters") {
                 assertTrue(output.contains("Wasm binary file: main.wasm"))
                 assertTrue(output.contains("Wasm link task: linkMainReleaseExecutableWasm32"))
+
+                val testFiles = listOf(
+                    "MacOS" to "test.kexe",
+                    "Windows" to "test.exe",
+                    "Linux" to "test.kexe"
+                )
+
+                val testLinkTasks = listOf(
+                    "MacOS" to "linkTestDebugExecutableMacos64",
+                    "Windows" to "linkTestDebugExecutableMingw64",
+                    "Linux" to "linkTestDebugExecutableLinux64"
+                )
+
+                testFiles.forEach { (platform, file) ->
+                    assertTrue(output.contains("$platform test file: $file"), "Cannot get test binary for platform $platform")
+                }
+
+                testLinkTasks.forEach { (platform, task) ->
+                    assertTrue(output.contains("$platform test link task: $task"), "Cannot get test link task for platform $platform")
+                }
             }
         }
 
