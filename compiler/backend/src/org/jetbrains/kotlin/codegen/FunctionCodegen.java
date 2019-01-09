@@ -1313,8 +1313,14 @@ public class FunctionCodegen {
                 Label loadArg = new Label();
                 iv.ifeq(loadArg);
 
-                StackValue.local(parameterIndex, type, parameterDescriptor.getType())
-                        .store(loadStrategy.genValue(parameterDescriptor, codegen), iv);
+                CallableDescriptor containingDeclaration = parameterDescriptor.getContainingDeclaration();
+                codegen.runWithShouldMarkLineNumbers(
+                        !(containingDeclaration instanceof MemberDescriptor) || !((MemberDescriptor) containingDeclaration).isExpect(),
+                        () -> {
+                            StackValue.local(parameterIndex, type, parameterDescriptor.getType())
+                                    .store(loadStrategy.genValue(parameterDescriptor, codegen), iv);
+                            return null;
+                        });
 
                 iv.mark(loadArg);
             }
