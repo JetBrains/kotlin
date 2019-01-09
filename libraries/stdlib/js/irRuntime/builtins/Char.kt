@@ -9,7 +9,8 @@ package kotlin
  * Represents a 16-bit Unicode character.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
-inline public class Char(val value: Int) : Comparable<Char> {
+@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+public inline class Char internal constructor (val value: Int) : Comparable<Char> {
     
     /**
      * Compares this value with the specified value for order.
