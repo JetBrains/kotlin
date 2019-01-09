@@ -14,8 +14,32 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
+
+// Required to compile native builtins with the rest of runtime
+private const val builtInsHeader = """@file:Suppress(
+    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
+    "MUST_BE_INITIALIZED_OR_BE_ABSTRACT",
+    "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE",
+    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
+    "WRONG_MODIFIER_TARGET"
+)
+"""
+
+// Native builtins that were not implemented in JS IR runtime
+private val unimplementedNativeBuiltInsDir = KotlinTestUtils.tmpDir("unimplementedBuiltins").also { tmpDir ->
+    val allBuiltins = listOfKtFilesFrom("core/builtins/native/kotlin").map { File(it).name }
+    val implementedBuiltIns = listOfKtFilesFrom("libraries/stdlib/js/irRuntime/builtins/").map { File(it).name }
+    val unimplementedBuiltIns = allBuiltins - implementedBuiltIns
+    for (filename in unimplementedBuiltIns) {
+        val originalFile = File("core/builtins/native/kotlin", filename)
+        val newFile = File(tmpDir, filename)
+        val sourceCode = builtInsHeader + originalFile.readText()
+        newFile.writeText(sourceCode)
+    }
+}
 
 private val runtimeSources = listOfKtFilesFrom(
     "core/builtins/src/kotlin",
@@ -25,7 +49,7 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/irRuntime",
     "libraries/stdlib/js/runtime",
     "libraries/stdlib/unsigned",
-
+    unimplementedNativeBuiltInsDir.path,
     BasicBoxTest.COMMON_FILES_DIR_PATH
 ) - listOfKtFilesFrom(
     "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
