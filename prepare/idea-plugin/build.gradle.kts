@@ -14,6 +14,7 @@ repositories {
 // Do not rename, used in pill importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
+        ":core:type-system",
         ":compiler:backend",
         ":compiler:backend-common",
         ":compiler:backend.jvm",

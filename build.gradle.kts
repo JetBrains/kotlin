@@ -225,7 +225,8 @@ extra["compilerModules"] = arrayOf(
         ":core:descriptors",
         ":core:descriptors.jvm",
         ":core:deserialization",
-        ":core:util.runtime"
+        ":core:util.runtime",
+        ":core:type-system"
 )
 
 val coreLibProjects = listOf(
