@@ -69,6 +69,11 @@ public class IrLineNumberTestGenerated extends AbstractIrLineNumberTest {
         runTest("compiler/testData/lineNumber/inlineSimpleCall.kt");
     }
 
+    @TestMetadata("lineNumberAfterInline.kt")
+    public void testLineNumberAfterInline() throws Exception {
+        runTest("compiler/testData/lineNumber/lineNumberAfterInline.kt");
+    }
+
     @TestMetadata("localFunction.kt")
     public void testLocalFunction() throws Exception {
         runTest("compiler/testData/lineNumber/localFunction.kt");
