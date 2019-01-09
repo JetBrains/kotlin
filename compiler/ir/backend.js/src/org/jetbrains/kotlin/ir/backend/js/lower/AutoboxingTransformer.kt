@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isOverridable
-import org.jetbrains.kotlin.backend.common.ir.target
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.utils.isPrimitiveArray
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
@@ -37,7 +37,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
                 if (this.symbol.owner.let { it is IrSimpleFunction && it.isSuspend }) {
                     irBuiltIns.anyNType
                 } else {
-                    this.symbol.owner.target.returnType
+                    this.symbol.owner.realOverride.returnType
                 }
             }
             is IrGetField -> this.symbol.owner.type
@@ -133,7 +133,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             // A virtual call.
             symbol.owner
         } else {
-            symbol.owner.target
+            symbol.owner.realOverride
         }
 
 
@@ -174,4 +174,15 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             return false
         }
 
+    private val IrFunction.realOverride: IrFunction
+        get() = when (this) {
+            is IrSimpleFunction -> this.realOverride
+            is IrConstructor -> this
+            else -> error(this)
+        }
+
+    private val IrSimpleFunction.realOverride: IrSimpleFunction
+        get() = if (modality == Modality.ABSTRACT) this else resolveFakeOverride()!!
+
 }
+
