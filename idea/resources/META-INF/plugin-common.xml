@@ -4,6 +4,9 @@
       <implementation-class>org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Factory</implementation-class>
     </component>
     <component>
+      <implementation-class>org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Companion$Factory</implementation-class>
+    </component>
+    <component>
       <implementation-class>org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory</implementation-class>
       <skipForDefaultProject/>
     </component>
@@ -25,6 +28,9 @@
     </component>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsModel</implementation-class>
     </component>
   </project-components>
 
@@ -378,6 +384,7 @@
     <lang.psiStructureViewFactory language="kotlin" implementationClass="org.jetbrains.kotlin.idea.structureView.KotlinStructureViewFactory"/>
     <structureViewBuilder order="first" key="CLASS" factoryClass="org.jetbrains.kotlin.idea.structureView.KtClsStructureViewBuilderProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.script.configutation.MultipleScriptDefinitionsChecker"/>
+    <editor.linePainter order="first" implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.ReturnHintLinePainter"/>
 
     <lang.foldingBuilder language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinFoldingBuilder"/>
     <lang.formatter language="kotlin" implementationClass="org.jetbrains.kotlin.idea.formatter.KotlinFormattingModelBuilder"/>
@@ -1692,6 +1699,10 @@
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ConvertLateinitPropertyToNullableIntention</className>
       <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.parameterInfo.custom.DisableReturnLambdaHintOptionAction</className>
     </intentionAction>
 
     <intentionAction>
