@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cfg.TailRecursionKind.*
 import org.jetbrains.kotlin.cfg.VariableUseState.*
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
+import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -141,20 +143,32 @@ class ControlFlowInformationProvider private constructor(
      *               // isn't actually returned
      *   }
      */
-    private fun collectReturnExpressions(returnedExpressions: MutableCollection<KtElement>) {
+    private fun collectReturnExpressions(): ReturnedExpressionsInfo {
         val instructions = pseudocode.instructions.toHashSet()
         val exitInstruction = pseudocode.exitInstruction
+
+        val returnedExpressions = arrayListOf<KtElement>()
+        var hasReturnsInInlinedLambda = false
+
         for (previousInstruction in exitInstruction.previousInstructions) {
             previousInstruction.accept(object : InstructionVisitor() {
                 override fun visitReturnValue(instruction: ReturnValueInstruction) {
                     if (instructions.contains(instruction)) { //exclude non-local return expressions
                         returnedExpressions.add(instruction.element)
                     }
+
+                    if (instruction.owner.isInlined) {
+                        hasReturnsInInlinedLambda = true
+                    }
                 }
 
                 override fun visitReturnNoValue(instruction: ReturnNoValueInstruction) {
                     if (instructions.contains(instruction)) {
                         returnedExpressions.add(instruction.element)
+                    }
+
+                    if (instruction.owner.isInlined) {
+                        hasReturnsInInlinedLambda = true
                     }
                 }
 
@@ -195,6 +209,8 @@ class ControlFlowInformationProvider private constructor(
                 }
             })
         }
+
+        return ReturnedExpressionsInfo(returnedExpressions, hasReturnsInInlinedLambda)
     }
 
     private fun checkLocalFunctions() {
@@ -220,8 +236,7 @@ class ControlFlowInformationProvider private constructor(
 
         if (!function.hasBody()) return
 
-        val returnedExpressions = arrayListOf<KtElement>()
-        collectReturnExpressions(returnedExpressions)
+        val (returnedExpressions, hasReturnsInInlinedLambdas) = collectReturnExpressions()
 
         val blockBody = function.hasBlockBody()
 
@@ -239,16 +254,24 @@ class ControlFlowInformationProvider private constructor(
 
                     if (blockBody && !noExpectedType(expectedReturnType)
                         && !KotlinBuiltIns.isUnit(expectedReturnType)
-                        && !unreachableCode.elements.contains(element)) {
+                        && !unreachableCode.elements.contains(element)
+                    ) {
                         noReturnError = true
                     }
                 }
             })
         }
+
         if (noReturnError) {
-            trace.report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(function))
+            if (hasReturnsInInlinedLambdas) {
+                trace.report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY_MIGRATION.on(function))
+            } else {
+                trace.report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(function))
+            }
         }
     }
+
+    private data class ReturnedExpressionsInfo(val returnedExpressions: Collection<KtElement>, val hasReturnsInInlinedLambda: Boolean)
 
     private fun reportUnreachableCode(unreachableCode: UnreachableCode) {
         for (element in unreachableCode.elements) {
