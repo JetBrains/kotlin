@@ -6051,6 +6051,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertParameterToReceiver/functionExpressionWithThisConflict.kt");
         }
 
+        @TestMetadata("hasVararg.kt")
+        public void testHasVararg() throws Exception {
+            runTest("idea/testData/intentions/convertParameterToReceiver/hasVararg.kt");
+        }
+
         @TestMetadata("lambdaParameter.kt")
         public void testLambdaParameter() throws Exception {
             runTest("idea/testData/intentions/convertParameterToReceiver/lambdaParameter.kt");
