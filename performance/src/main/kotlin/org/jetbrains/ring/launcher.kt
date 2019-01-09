@@ -27,7 +27,6 @@ val BENCHMARK_SIZE = 100
 class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     class Results(val mean: Double, val variance: Double)
 
-    val results = mutableMapOf<String, Results>()
     val benchmarkResults = mutableListOf<BenchmarkResult>()
 
     fun launch(benchmark: () -> Any?, name: String) {                          // If benchmark runs too long - use coeff to speed it up.
@@ -66,10 +65,6 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
                                 scaledTime / 1000, scaledTime / 1000,
                                 k + 1, numWarmIterations))
         }
-        val mean = samples.sum() / numberOfAttempts
-        val variance = samples.indices.sumByDouble { (samples[it] - mean) * (samples[it] - mean) } / numberOfAttempts
-
-        results[name] = Results(mean, variance)
     }
 
     //-------------------------------------------------------------------------//
@@ -101,40 +96,7 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
         runWithIndiciesBenchmark()
         runOctoTest()
 
-        printResultsNormalized()
         return benchmarkResults
-    }
-
-    //-------------------------------------------------------------------------//
-
-    fun printResultsAsTime() {
-        results.forEach {
-            val niceName = "\"${it.key}\"".padEnd(51)
-            val niceTime = "${it.value}".padStart(10)
-            println("    $niceName to ${niceTime}L,")
-        }
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private val zStar = 1.96 // For 95% confidence interval.
-
-    fun printResultsNormalized() {
-        var totalMean = 0.0
-        var totalVariance = 0.0
-        results.asSequence().sortedBy { it.key }.forEach {
-            val niceName  = it.key.padEnd(50, ' ')
-            val mean = it.value.mean
-            val variance = it.value.variance
-            val confidenceInterval = sqrt(variance / numberOfAttempts) * zStar
-            println("$niceName : ${mean.toString(9)} : ${confidenceInterval.toString(9)}")
-
-            totalMean += mean
-            totalVariance += variance
-        }
-        val averageMean = totalMean / results.size
-        val averageConfidenceInterval = sqrt(totalVariance / numberOfAttempts) * zStar / results.size
-        println("\nRingAverage: ${averageMean.toString(9)} : ${averageConfidenceInterval.toString(9)}")
     }
 
     //-------------------------------------------------------------------------//
@@ -492,18 +454,5 @@ class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
 
     fun runOctoTest() {
         launch(::octoTest, "OctoTest")
-    }
-
-    //-------------------------------------------------------------------------//
-
-    fun Double.toString(n: Int): String {
-        val str = this.toString()
-        if (str.contains('e', ignoreCase = true)) return str
-
-        val len      = str.length
-        val pointIdx = str.indexOf('.')
-        val dropCnt  = len - pointIdx - n - 1
-        if (dropCnt < 1) return str
-        return str.dropLast(dropCnt)
     }
 }

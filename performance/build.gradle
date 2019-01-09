@@ -32,6 +32,8 @@ repositories {
 
 }
 
+defaultTasks 'bench'
+
 private def determinePreset() {
     def preset = MPPTools.defaultHostPreset(project)
     println("$project has been configured for ${preset.name} platform.")
@@ -63,7 +65,6 @@ kotlin {
 
     targets {
         fromPreset(presets.jvm, 'jvm') {
-            def mainOutput = compilations.main.output
             compilations.all {
                 tasks[compileKotlinTaskName].kotlinOptions {
                     jvmTarget = '1.8'
@@ -80,12 +81,13 @@ kotlin {
     }
 }
 
+MPPTools.addTimeListener(project)
+
 MPPTools.createRunTask(project, 'konanRun', kotlin.targets.native) {
     workingDir = project.provider {
         kotlin.targets.native.compilations.main.getBinary('EXECUTABLE', buildType).parentFile
     }
     args("$nativeWarmup", "$attempts", "${buildDir.absolutePath}/${nativeBenchResults}")
-    outputFileName("${buildDir.absolutePath}/${nativeTextReport}")
 }
 
 task jvmRun(type: JavaExec)  {
@@ -98,19 +100,17 @@ task jvmRun(type: JavaExec)  {
     classpath runtimeClasspath
     main = "MainKt"
     args "$jvmWarmup", "$attempts",  "${buildDir.absolutePath}/${jvmBenchResults}"
-    standardOutput = output
-    doLast {
-        dumpReport("${buildDir.absolutePath}/${jvmTextReport}", output)
-    }
 }
 
 task konanJsonReport {
     doLast {
+        def nativeCompileTime = MPPTools.getNativeCompileTime('Ring')
         String benchContents = new File("${buildDir.absolutePath}/${nativeBenchResults}").text
         def properties = getCommonProperties() + ['type'           : 'native',
                                                   'compilerVersion': "${konanVersion}".toString(),
                                                   'flags'          : kotlin.targets.native.compilations.main.extraOpts.collect{ '"' + it + '"'},
-                                                  'benchmarks'     : benchContents]
+                                                  'benchmarks'     : benchContents,
+                                                  'compileTime'    : nativeCompileTime]
         def output = MPPTools.createJsonReport(properties)
         new File("${buildDir.absolutePath}/${nativeJson}").write(output)
     }
@@ -118,11 +118,12 @@ task konanJsonReport {
 
 task jvmJsonReport {
     doLast {
+        def jvmCompileTime = MPPTools.getJvmCompileTime('Ring')
         String benchContents = new File("${buildDir.absolutePath}/${jvmBenchResults}").text
         def properties = getCommonProperties() + ['type'           : 'jvm',
                                                   'compilerVersion': "${buildKotlinVersion}".toString(),
-                                                  'benchmarks'     : benchContents]
-        println(properties['compilerVersion'])
+                                                  'benchmarks'     : benchContents,
+                                                  'compileTime'    : jvmCompileTime]
         def output = MPPTools.createJsonReport(properties)
         new File("${buildDir.absolutePath}/${jvmJson}").write(output)
     }
@@ -145,58 +146,14 @@ private def getCommonProperties() {
             'kotlinVersion': "${kotlinVersion}".toString()]
 }
 
-task bench(type:DefaultTask) {
+task bench(type:Exec) {
     dependsOn jvmRun
     dependsOn konanRun
-
-    doLast {
-        def jvmReport = new Report(project.file("${buildDir.absolutePath}/${jvmTextReport}"))
-        def konanReport = new Report(project.file("${buildDir.absolutePath}/${nativeTextReport}"))
-        def average = "none"
-        def absoluteAverage = "none"
-        jvmReport.report
-                .sort { konanReport.report[it.key].mean / it.value.mean }
-                .each { k, v ->
-            def konanValue = konanReport.report[k]
-            def ratio = konanValue.mean / v.mean
-            // This is a hack since neither mean nor variance of ratio of two distributions is known.
-            def minRatio = (konanValue.mean - konanValue.stdDev) / (v.mean + v.stdDev)
-            def maxRatio = (konanValue.mean + konanValue.stdDev) / (v.mean - v.stdDev)
-            def ratioConfInt = Math.min(Math.abs(minRatio - ratio), Math.abs(maxRatio - ratio))
-            def formattedKonanValue = String.format('%.4f us +- %.4f us', konanValue.mean / 1000, konanValue.stdDev / 1000)
-            def formattedRatio = String.format('%.2f +- %.2f', ratio, ratioConfInt)
-            if (k == 'RingAverage') {
-                average = formattedRatio
-                absoluteAverage = formattedKonanValue
-            } else {
-                println("$k : absolute = $formattedKonanValue, ratio = $formattedRatio")
-            }
-            if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null)
-                println("##teamcity[buildStatisticValue key='$k' value='$ratio']")
-        }
-
-        println()
-        println("Average Ring score: absolute = $absoluteAverage, ratio = $average")
-    }
-}
-
-class Results {
-    def Double mean
-    def Double stdDev
-
-    Results(Double mean, Double stdDev) {
-        this.mean = mean
-        this.stdDev = stdDev
-    }
-}
-
-class Report {
-    Map<String, Results> report = new TreeMap()
-
-    Report(File path) {
-        path.readLines().drop(3).findAll { it.split(':').length == 3 }.each {
-            def p = it.split(':')
-            report.put(p[0].trim(), new Results(Double.parseDouble(p[1].trim()), Double.parseDouble(p[2].trim())))
-        }
+    def extension = MPPTools.getNativeProgramExtension()
+    def analyzer = MPPTools.findFile("${analyzerTool}${extension}", "${rootBuildDirectory}/${analyzerToolDirectory}")
+    if (analyzer != null) {
+        commandLine "${analyzer}", "${buildDir.absolutePath}/${nativeJson}", "${buildDir.absolutePath}/${jvmJson}"
+    } else {
+        println("No analyzer $analyzerTool found in subdirectories of ${rootBuildDirectory}/${analyzerToolDirectory}")
     }
 }

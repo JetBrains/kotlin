@@ -123,3 +123,8 @@ fun collectMeanResults(benchmarks: Map<String, List<BenchmarkResult>>): Benchmar
         name to MeanVarianceBenchmark(meanBenchmark, varianceBenchmark)
     }.toMap()
 }
+
+fun collectBenchmarksDurations(benchmarks: Map<String, List<BenchmarkResult>>): Map<String, Double> =
+        benchmarks.map { (name, resultsSet) ->
+            name to resultsSet.sumByDouble { it.runtimeInUs }
+        }.toMap()

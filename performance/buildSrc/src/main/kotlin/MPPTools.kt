@@ -8,11 +8,14 @@
 import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskState
+import org.gradle.api.execution.TaskExecutionListener
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.report.*
 import org.jetbrains.report.json.*
 import java.nio.file.Paths
+import java.io.File
 
 /*
  * This file includes short-cuts that may potentially be implemented in Kotlin MPP Gradle plugin in the future.
@@ -60,9 +63,16 @@ fun defaultHostPreset(
         throw Exception("Host OS '$hostOs' is not supported in Kotlin/Native ${subproject.displayName}.")
 }
 
+fun getNativeProgramExtension(): String = when {
+    isMacos -> ".kexe"
+    isLinux -> ".kexe"
+    isWindows -> ".exe"
+    else -> error("Unknown host")
+}
+
 // Create benchmarks json report based on information get from gradle project
 fun createJsonReport(projectProperties: Map<String, Any>): String {
-    fun getValue(key: String): String = projectProperties[key] as? String ?: "uknown"
+    fun getValue(key: String): String = projectProperties[key] as? String ?: "unknown"
     val machine = Environment.Machine(getValue("cpu"), getValue("os"))
     val jdk = Environment.JDKInstance(getValue("jdkVersion"), getValue("jdkVendor"))
     val env = Environment(machine, jdk)
@@ -73,9 +83,14 @@ fun createJsonReport(projectProperties: Map<String, Any>): String {
     val benchDesc = getValue("benchmarks")
     val benchmarksArray = JsonTreeParser.parse(benchDesc)
     val benchmarks = BenchmarksReport.parseBenchmarksArray(benchmarksArray)
+            .union(listOf<BenchmarkResult>(projectProperties["compileTime"] as BenchmarkResult)).toList()
     val report = BenchmarksReport(env, benchmarks, kotlin)
     return report.toJson()
 }
+
+// Find file with set name in directory.
+fun findFile(fileName: String, directory: String): String? =
+    File(directory).walkBottomUp().find { it.name == fileName }?.getAbsolutePath()
 
 // A short-cut to add a Kotlin/Native run task.
 @JvmOverloads
@@ -88,4 +103,41 @@ fun createRunTask(
     val task = subproject.tasks.create(name, RunKotlinNativeTask::class.java, target)
     task.configure(configureClosure ?: task.emptyConfigureClosure())
     return task
+}
+
+fun getJvmCompileTime(programName: String): BenchmarkResult =
+        TaskTimerListener.getBenchmarkResult(programName, listOf("compileKotlinMetadata", "jvmJar"))
+
+fun getNativeCompileTime(programName: String): BenchmarkResult =
+        TaskTimerListener.getBenchmarkResult(programName, listOf("compileKotlinNative", "linkReleaseExecutableNative"))
+
+// Class time tracker for all tasks.
+class TaskTimerListener: TaskExecutionListener {
+    companion object {
+        val tasksTimes = mutableMapOf<String, Double>()
+
+        fun getBenchmarkResult(programName: String, tasksNames: List<String>): BenchmarkResult {
+            val time = tasksNames.map { tasksTimes[it] ?: 0.0 }.sum()
+            // TODO get this info from gradle plugin with exit code end stacktrace.
+            val status = tasksNames.map { tasksTimes.containsKey(it) }.reduce { a, b -> a && b }
+            return BenchmarkResult("$programName.compileTime",
+                                    if (status) BenchmarkResult.Status.PASSED else BenchmarkResult.Status.FAILED,
+                                    time, time, 1, 0)
+        }
+
+    }
+
+    private var startTime = System.currentTimeMillis()
+
+    override fun beforeExecute(task: Task) {
+        startTime = System.nanoTime()
+    }
+
+     override fun afterExecute(task: Task, taskState: TaskState) {
+         tasksTimes[task.name] = (System.nanoTime() - startTime) / 1000.0
+     }
+}
+
+fun addTimeListener(subproject: Project) {
+    subproject.gradle.addListener(TaskTimerListener())
 }

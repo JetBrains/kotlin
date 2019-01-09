@@ -34,6 +34,7 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
                                val meaningfulChangesValue: Double = 0.5) {
     // Report created by joining comparing reports.
     val mergedReport: Map<String, SummaryBenchmark>
+    val benchmarksDurations: Map<String, Pair<Double?, Double?>>
 
     // Lists of benchmarks in different status.
     private val benchmarksWithChangedStatus = mutableListOf<FieldChange<BenchmarkResult.Status>>()
@@ -70,6 +71,9 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
     val currentMeanVarianceBenchmarks: List<MeanVarianceBenchmark>
         get() = mergedReport.filter { it.value.first != null }.map { it.value.first!! }
 
+    val currentBenchmarksDuration: Map<String, Double>
+        get() = benchmarksDurations.filter{ it.value.first != null }.map { it.key to it.value.first!! }.toMap()
+
     init {
         // Count avarage values for each benchmark.
         val currentBenchmarksTable = collectMeanResults(currentReport.benchmarks)
@@ -77,6 +81,7 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
             collectMeanResults(previousReport.benchmarks)
         }
         mergedReport = createMergedReport(currentBenchmarksTable, previousBenchmarksTable)
+        benchmarksDurations = calculateBenchmarksDuration(currentReport, previousReport)
         geoMeanBenchmark = calculateGeoMeanBenchmark(currentBenchmarksTable, previousBenchmarksTable)
         if (previousReport != null) {
             // Check changes in environment and tools.
@@ -99,6 +104,17 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
         val meanBenchmark = BenchmarkResult(geoMeanBenchmarkName, geoMean)
         val varianceBenchmark = BenchmarkResult(geoMeanBenchmarkName, varianceGeoMean)
         return MeanVarianceBenchmark(meanBenchmark, varianceBenchmark)
+    }
+
+    // Generate map with summary durations of each benchmark.
+    private fun calculateBenchmarksDuration(currentReport: BenchmarksReport, previousReport: BenchmarksReport?):
+            Map<String, Pair<Double?, Double?>> {
+        val currentDurations = collectBenchmarksDurations(currentReport.benchmarks)
+        val previousDurations = previousReport?.let {
+            collectBenchmarksDurations(previousReport.benchmarks)
+        } ?: mapOf<String, Double>()
+        return currentDurations.keys.union(previousDurations.keys)
+                .map { it to Pair(currentDurations[it], previousDurations[it]) }.toMap()
     }
 
     // Merge current and compare to report.
