@@ -94,7 +94,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                     file.extension == "kt" -> {
                         val text = FileUtil.loadFile(file, true)
                         val fileText =
-                            if (text.startsWith("package"))
+                            if (text.lines().any { it.startsWith("package") })
                                 text
                             else
                                 "package ${file.nameWithoutExtension};$text"
