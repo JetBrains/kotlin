@@ -16,6 +16,7 @@ import com.intellij.util.containers.Stack;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -1412,11 +1413,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private void addLeaveTaskToRemoveNamedFunctionFromFrameMap(
-            @NotNull KtNamedFunction statement,
+            @NotNull KtNamedFunction localFunction,
             Label blockEnd,
             @NotNull List<Function<StackValue, Void>> leaveTasks
     ) {
-        FunctionDescriptor functionDescriptor = (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, statement);
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, localFunction);
         assert functionDescriptor != null;
 
         Type type = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
@@ -1427,8 +1428,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         leaveTasks.add(answer -> {
             int index = myFrameMap.leave(functionDescriptor);
 
-            assert !functionDescriptor.getName().isSpecial() : "Local variable should be generated only for function with name: " + statement.getText();
-            v.visitLocalVariable(functionDescriptor.getName().asString() + "$", type.getDescriptor(), null, scopeStart, blockEnd, index);
+            assert !functionDescriptor.getName().isSpecial()
+                    : "Local variable should be generated only for function with name: " + localFunction.getText();
+
+            String functionIndex = StringsKt.substringAfterLast(type.getInternalName(), '$', "");
+            assert !functionIndex.isEmpty();
+
+            String localVariableName = "$fun$"
+                    + VariableAsmNameManglingUtils.mangleNameIfNeeded(functionDescriptor.getName().asString())
+                    + "$" + functionIndex;
+
+            v.visitLocalVariable(localVariableName, type.getDescriptor(), null, scopeStart, blockEnd, index);
             return null;
         });
     }

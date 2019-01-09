@@ -265,9 +265,8 @@ class VariableFinder private constructor(private val context: EvaluationContextI
         val canBeLocalFunction = kind is VariableKind.Ordinary
 
         if (canBeLocalFunction && kind.type?.isFunctionType() == true) {
-            @Suppress("ConvertToStringTemplate")
             variables.namedEntitySequence()
-                .filter { it.name == name + "$" && kind.typeMatches(it.type) }
+                .filter { isLocalFunctionName(it.name, name) && kind.typeMatches(it.type) }
                 .firstOrNull()
                 ?.let { return Result(it.value()) }
         }
@@ -289,6 +288,11 @@ class VariableFinder private constructor(private val context: EvaluationContextI
         }
 
         return null
+    }
+
+    private fun isLocalFunctionName(name: String, functionName: String): Boolean {
+        @Suppress("ConvertToStringTemplate")
+        return name == functionName + "$" || name.startsWith(AsmUtil.LOCAL_FUNCTION_VARIABLE_PREFIX + name + "$")
     }
 
     private fun findCoroutineContext(): ObjectReference? {

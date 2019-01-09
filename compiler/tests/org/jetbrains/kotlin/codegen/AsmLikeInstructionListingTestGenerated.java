@@ -86,6 +86,11 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
             runTest("compiler/testData/codegen/asmLike/receiverMangling/innerClass.kt");
         }
 
+        @TestMetadata("localFunctions.kt")
+        public void testLocalFunctions() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/receiverMangling/localFunctions.kt");
+        }
+
         @TestMetadata("mangledNames.kt")
         public void testMangledNames() throws Exception {
             runTest("compiler/testData/codegen/asmLike/receiverMangling/mangledNames.kt");
