@@ -303,6 +303,7 @@ class QuickFixRegistrar : QuickFixContributor {
         val changeFunctionReturnTypeFix = ChangeCallableReturnTypeFix.ChangingReturnTypeToUnitFactory
         RETURN_TYPE_MISMATCH.registerFactory(changeFunctionReturnTypeFix)
         NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.registerFactory(changeFunctionReturnTypeFix)
+        NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY_MIGRATION.registerFactory(changeFunctionReturnTypeFix)
         RETURN_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(ChangeCallableReturnTypeFix.ReturnTypeMismatchOnOverrideFactory)
         COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.registerFactory(ChangeCallableReturnTypeFix.ComponentFunctionReturnTypeMismatchFactory)
         HAS_NEXT_FUNCTION_TYPE_MISMATCH.registerFactory(ChangeCallableReturnTypeFix.HasNextFunctionTypeMismatchFactory)
