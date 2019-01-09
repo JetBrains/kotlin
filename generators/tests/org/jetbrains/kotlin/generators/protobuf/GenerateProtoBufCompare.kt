@@ -76,7 +76,7 @@ class GenerateProtoBufCompare {
     fun generate(): String {
         val sb = StringBuilder()
         val p = Printer(sb)
-        p.println(File("license/LICENSE.txt").readText())
+        p.println(File("license/COPYRIGHT.txt").readText())
         p.println("package org.jetbrains.kotlin.incremental")
         p.println()
 
