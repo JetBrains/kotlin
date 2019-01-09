@@ -299,24 +299,23 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         val localSerialDesc = irTemporary(irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol), "desc")
 
         // workaround due to unavailability of labels (KT-25386)
-        val flagVar = irTemporaryVar(irBoolean(true), "flag", parent = loadFunc)
+        val flagVar = irTemporaryVar(irBoolean(true), "flag")
 
-        val indexVar = irTemporaryVar(irInt(0), "index", parent = loadFunc)
+        val indexVar = irTemporaryVar(irInt(0), "index")
 //        val readAll = irTemporaryVar(irBoolean(false), "readAll", parent = loadFunc)
 //
         // calculating bit mask vars
         val blocksCnt = orderedProperties.size / 32 + 1
 
         // var bitMask0 = 0, bitMask1 = 0...
-        val bitMasks = (0 until blocksCnt).map { irTemporaryVar(irInt(0), "bitMask$it", parent = loadFunc) }
+        val bitMasks = (0 until blocksCnt).map { irTemporaryVar(irInt(0), "bitMask$it") }
         // var local0 = null, local1 = null ...
         val localProps = orderedProperties.mapIndexed { i, prop ->
             val (expr, type) = defaultValueAndType(prop)
             irTemporaryVar(
                 expr,
                 "local$i",
-                typeHint = type,
-                parent = loadFunc
+                typeHint = type
             )
         }
 

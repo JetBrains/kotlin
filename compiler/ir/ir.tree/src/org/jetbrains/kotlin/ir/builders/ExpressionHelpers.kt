@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
+val IrBuilderWithScope.parent get() = scope.getLocalDeclarationParent()
 
 inline fun IrBuilderWithScope.irLet(
     value: IrExpression,
@@ -68,11 +69,9 @@ fun <T : IrElement> IrStatementsBuilder<T>.defineTemporary(value: IrExpression, 
 fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVar(
     value: IrExpression,
     nameHint: String? = null,
-    typeHint: KotlinType? = null,
-    parent: IrDeclarationParent? = null
+    typeHint: KotlinType? = null
 ): IrVariable {
     val temporary = scope.createTemporaryVariable(value, nameHint, isMutable = true, type = typeHint)
-    parent?.let { temporary.parent = it }
     +temporary
     return temporary
 }

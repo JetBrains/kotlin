@@ -305,6 +305,11 @@ fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
     declaration.accept(SetDeclarationsParentVisitor, this)
 }
 
+fun <T: IrElement> T.setDeclarationsParent(parent: IrDeclarationParent): T {
+    accept(SetDeclarationsParentVisitor, parent)
+    return this
+}
+
 object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {
     override fun visitElement(element: IrElement, data: IrDeclarationParent) {
         if (element !is IrDeclarationParent) {
