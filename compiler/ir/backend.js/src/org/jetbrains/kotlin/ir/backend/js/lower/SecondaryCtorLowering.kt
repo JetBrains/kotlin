@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -160,7 +161,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
             val retStmt = JsIrBuilder.buildReturn(it.symbol, JsIrBuilder.buildGetValue(thisParam.symbol), context.irBuiltIns.nothingType)
             val statements = (declaration.body!!.deepCopyWithSymbols(it) as IrStatementContainer).statements
 
-            it.copyTypeParametersFrom(declaration)
+            it.copyTypeParametersFrom(declaration.parentAsClass)
 
             val newValueParameters = declaration.valueParameters.map { p -> p.copyTo(it) }
             it.valueParameters += (newValueParameters + thisParam)
@@ -192,7 +193,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
             declaration.isInline,
             declaration.isExternal
         ).also {
-            it.copyTypeParametersFrom(declaration)
+            it.copyTypeParametersFrom(declaration.parentAsClass)
             it.valueParameters += declaration.valueParameters.map { p -> p.copyTo(it) }
 
             val createFunctionIntrinsic = context.intrinsics.jsObjectCreate
