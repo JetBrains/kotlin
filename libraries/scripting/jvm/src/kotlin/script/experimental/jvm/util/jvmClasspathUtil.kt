@@ -124,7 +124,7 @@ fun scriptCompilationClasspathFromContextOrNull(
         ?: classpathFromClasspathProperty()?.takeAndFilter()
 }
 
-fun scriptCompilationClasspathFromContextOrStlib(
+fun scriptCompilationClasspathFromContextOrStdlib(
     vararg keyNames: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false
