@@ -29,6 +29,11 @@ buildscript {
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("net.sf.proguard:proguard-gradle:6.0.3")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
+
+        // a workaround to add another one buildSrc with Cidr-specific tools to Gradle classpath
+        if (findProperty("cidrPluginsEnabled")?.toString()?.toBoolean() == true) {
+            classpath("org.jetbrains.kotlin.ultimate:buildSrc:1.0")
+        }
     }
 }
 
@@ -73,20 +78,7 @@ allprojects {
 
 extra["kotlin_root"] = rootDir
 
-val cidrKotlinPlugin by configurations.creating
-val appcodeKotlinPlugin by configurations.creating
-val clionKotlinPlugin by configurations.creating
-
-val includeCidr by extra(project.getBooleanProperty("cidrPluginsEnabled") ?: false)
 val jpsBootstrap by configurations.creating
-
-dependencies {
-    if (includeCidr) {
-        cidrKotlinPlugin(project(":prepare:cidr-plugin", "runtimeJar"))
-        appcodeKotlinPlugin(project(":prepare:appcode-plugin", "runtimeJar"))
-        clionKotlinPlugin(project(":prepare:clion-plugin", "runtimeJar"))
-    }
-}
 
 val commonBuildDir = File(rootDir, "build")
 val distDir by extra("$rootDir/dist")
@@ -95,13 +87,9 @@ val distLibDir = "$distKotlinHomeDir/lib"
 val commonLocalDataDir = "$rootDir/local"
 val ideaSandboxDir = "$commonLocalDataDir/ideaSandbox"
 val ideaUltimateSandboxDir = "$commonLocalDataDir/ideaUltimateSandbox"
-val clionSandboxDir = "$commonLocalDataDir/clionSandbox"
-val appcodeSandboxDir = "$commonLocalDataDir/appcodeSandbox"
-val ideaPluginDir = "$distDir/artifacts/ideaPlugin/Kotlin"
-val ideaUltimatePluginDir = "$distDir/artifacts/ideaUltimatePlugin/Kotlin"
-val cidrPluginDir = "$distDir/artifacts/cidrPlugin/Kotlin"
-val appcodePluginDir = "$distDir/artifacts/appcodePlugin/Kotlin"
-val clionPluginDir = "$distDir/artifacts/clionPlugin/Kotlin"
+val artifactsDir = "$distDir/artifacts"
+val ideaPluginDir = "$artifactsDir/ideaPlugin/Kotlin"
+val ideaUltimatePluginDir = "$artifactsDir/ideaUltimatePlugin/Kotlin"
 
 // TODO: use "by extra()" syntax where possible
 extra["distLibDir"] = project.file(distLibDir)
@@ -109,13 +97,8 @@ extra["libsDir"] = project.file(distLibDir)
 extra["commonLocalDataDir"] = project.file(commonLocalDataDir)
 extra["ideaSandboxDir"] = project.file(ideaSandboxDir)
 extra["ideaUltimateSandboxDir"] = project.file(ideaUltimateSandboxDir)
-extra["clionSandboxDir"] = project.file(ideaSandboxDir)
-extra["appcodeSandboxDir"] = project.file(ideaSandboxDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
 extra["ideaUltimatePluginDir"] = project.file(ideaUltimatePluginDir)
-extra["cidrPluginDir"] = project.file(cidrPluginDir)
-extra["appcodePluginDir"] = project.file(appcodePluginDir)
-extra["clionPluginDir"] = project.file(clionPluginDir)
 extra["isSonatypeRelease"] = false
 
 // Work-around necessary to avoid setting null javaHome. Will be removed after support of lazy task configuration
@@ -448,11 +431,7 @@ tasks {
 
     create("cleanupArtifacts") {
         doLast {
-            delete(ideaPluginDir)
-            delete(ideaUltimatePluginDir)
-            delete(cidrPluginDir)
-            delete(appcodePluginDir)
-            delete(clionPluginDir)
+            delete(artifactsDir)
         }
     }
 
@@ -662,66 +641,6 @@ val zipPlugin by task<Zip> {
     doLast {
         logger.lifecycle("Plugin artifacts packed to $archivePath")
     }
-}
-
-fun cidrPlugin(product: String, pluginDir: String) = tasks.creating(Copy::class.java) {
-    if (!includeCidr) {
-        throw GradleException("CIDR plugins require 'cidrPluginsEnabled' property turned on")
-    }
-    val prepareCidrPlugin = getTasksByName("cidrPlugin", true)
-    val prepareCurrentPlugin = (getTasksByName(product.toLowerCase() + "Plugin", true) - this)
-    prepareCurrentPlugin.forEach { it.mustRunAfter(prepareCidrPlugin) }
-
-    dependsOn(ideaPlugin)
-    dependsOn(prepareCidrPlugin)
-    dependsOn(prepareCurrentPlugin)
-
-    into(pluginDir)
-    from(ideaPluginDir) {
-        exclude("lib/kotlin-plugin.jar")
-
-        exclude("lib/android-lint.jar")
-        exclude("lib/android-ide.jar")
-        exclude("lib/android-output-parser-ide.jar")
-        exclude("lib/android-extensions-ide.jar")
-        exclude("lib/android-extensions-compiler.jar")
-        exclude("lib/kapt3-idea.jar")
-        exclude("lib/jps-ide.jar")
-        exclude("lib/jps/**")
-        exclude("kotlinc/**")
-        exclude("lib/maven-ide.jar")
-    }
-    from(cidrKotlinPlugin) { into("lib") }
-    from(configurations[product.toLowerCase() + "KotlinPlugin"]) { into("lib") }
-}
-
-fun zipCidrPlugin(product: String, productVersion: String) = tasks.creating(Zip::class.java) {
-    // Note: "cidrPluginVersion" has different format and semantics from "pluginVersion" used in IJ and AS plugins.
-    val cidrPluginVersion = project.findProperty("cidrPluginVersion") as String? ?: "beta-1"
-    val destPath = project.findProperty("pluginZipPath") as String?
-            ?: "$distDir/artifacts/kotlin-plugin-$kotlinVersion-$product-$cidrPluginVersion-$productVersion.zip"
-    val destFile = File(destPath)
-
-    destinationDir = destFile.parentFile
-    archiveName = destFile.name
-
-    from(tasks[product.toLowerCase() + "Plugin"])
-    into("Kotlin")
-    setExecutablePermissions()
-
-    doLast {
-        logger.lifecycle("Plugin artifacts packed to $archivePath")
-    }
-}
-
-if (includeCidr) {
-    val appcodePlugin by cidrPlugin("AppCode", appcodePluginDir)
-    val appcodeVersion = extra["versions.appcode"] as String
-    val zipAppCodePlugin by zipCidrPlugin("AppCode", appcodeVersion)
-
-    val clionPlugin by cidrPlugin("CLion", clionPluginDir)
-    val clionVersion = extra["versions.clion"] as String
-    val zipCLionPlugin by zipCidrPlugin("CLion", clionVersion)
 }
 
 configure<IdeaModel> {
