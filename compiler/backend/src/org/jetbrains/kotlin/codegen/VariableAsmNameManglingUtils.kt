@@ -25,7 +25,6 @@ fun getNameForDestructuredParameterOrNull(valueParameterDescriptor: ValueParamet
     }
 }
 
-
 fun mangleNameIfNeeded(name: String): String {
     if (name.all { it.isValidCharacter() }) {
         return name
@@ -35,11 +34,20 @@ fun mangleNameIfNeeded(name: String): String {
         for (c in name) {
             if (c.isValidCharacter()) {
                 append(c)
-                continue
+            } else {
+                append('-').append(c.toHex())
             }
-
-            append("_u").append(Integer.toHexString(c.toInt()))
         }
+    }
+}
+
+private fun Char.toHex(): String {
+    val hexString = Integer.toHexString(this.toInt())
+    assert(hexString.length <= 4)
+    return if (hexString.length == 4) {
+        hexString
+    } else {
+        "0".repeat(4 - hexString.length) + hexString
     }
 }
 
