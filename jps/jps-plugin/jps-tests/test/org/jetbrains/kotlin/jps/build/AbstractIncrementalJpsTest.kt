@@ -575,7 +575,7 @@ abstract class AbstractIncrementalJpsTest(
                 else -> error("Unknown cache manager $cacheManager")
             }
 
-            logLine("$cacheTitle are $attributesDiff")
+            logLine("$cacheTitle are ${attributesDiff.status}")
         }
 
         override fun markedAsDirtyBeforeRound(files: Iterable<File>) {
