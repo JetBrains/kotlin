@@ -25,9 +25,8 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.testing.Test
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.gradle.nativeplatform.test.tasks.RunTestExecutable
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
@@ -38,8 +37,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.util.*
 import java.util.concurrent.Callable
@@ -587,6 +584,8 @@ open class KotlinNativeTargetConfigurator(
     override fun configureTest(target: KotlinNativeTarget) {
         target.binaries.defaultTestExecutable {
             compilation = target.compilations.maybeCreate(KotlinCompilation.TEST_COMPILATION_NAME)
+            // Allow accessing the test binary using the old getters (e.g. compilations.test.getBinary('EXECUTABLE', 'DEBUG'))
+            compilation.binaries[NativeOutputKind.EXECUTABLE to KotlinNativeBinaryContainer.DEFAULT_TEST_BUILD_TYPE] = this
         }
     }
 
@@ -652,7 +651,7 @@ open class KotlinNativeTargetConfigurator(
                     if (this is Executable) {
                         entryPoint = compilation.entryPoint
                     }
-                    compilation.binaryTasks[outputKind to buildType] = this
+                    compilation.binaries[outputKind to buildType] = this
                 }
 
                 for (kind in availableOutputKinds) {
