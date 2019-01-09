@@ -77,6 +77,19 @@ fun getResourcePathForClass(aClass: Class<*>): File {
     return File(resourceRoot).absoluteFile
 }
 
+fun tryGetResourcePathForClassByName(name: String, classLoader: ClassLoader): File? = try {
+    classLoader.loadClass(name)?.let {
+        val path = "/" + name.replace('.', '/') + ".class"
+        getResourceRoot(it, path)
+    }?.let {
+        File(it).absoluteFile
+    }
+} catch (_: ClassNotFoundException) {
+    null
+} catch (_: NoClassDefFoundError) {
+    null
+}
+
 internal fun URL.toFile() =
     try {
         File(toURI().schemeSpecificPart)

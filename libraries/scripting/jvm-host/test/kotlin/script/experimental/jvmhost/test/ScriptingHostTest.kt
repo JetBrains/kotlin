@@ -33,7 +33,7 @@ class ScriptingHostTest : TestCase() {
     fun testSimpleUsage() {
         val greeting = "Hello from script!"
         val output = captureOut {
-            evalScript("println(\"$greeting\")")
+            evalScript("println(\"$greeting\")").throwOnFailure()
         }
         Assert.assertEquals(greeting, output)
     }
@@ -137,6 +137,41 @@ class ScriptingHostTest : TestCase() {
         assertEquals("/script.kts", report?.sourcePath)
     }
 
+    @Test
+    fun testCompileOptionsLanguageVersion() {
+        val script = "typealias MyInt = Int\nval x: MyInt = 3"
+        val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            compilerOptions("-language-version", "1.0")
+        }
+        val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
+        assertTrue(res is ResultWithDiagnostics.Failure)
+        res.reports.find { it.message.startsWith("The feature \"type aliases\" is only available since language version 1.1") }
+            ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
+    }
+
+    @Test
+    fun testCompileOptionsNoStdlib() {
+        val script = "println(\"Hi\")"
+
+        val res1 = evalScriptWithConfiguration(script) {
+            compilerOptions("-no-stdlib")
+        }
+        assertTrue(res1 is ResultWithDiagnostics.Failure)
+        res1.reports.find { it.message.startsWith("Unresolved reference: println") }
+            ?: fail("Expected unresolved reference report. Reported:\n  ${res1.reports.joinToString("\n  ") { it.message }}")
+
+        val res2 = evalScriptWithConfiguration(script) {
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                        compilerOptions("-no-stdlib")
+                    }.asSuccess()
+                }
+            }
+        }
+        // -no-stdlib in refined configuration has no effect
+        assertTrue(res2 is ResultWithDiagnostics.Success)
+    }
 
     @Test
     fun testMemoryCache() {
@@ -147,7 +182,7 @@ class ScriptingHostTest : TestCase() {
         val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
         Assert.assertTrue(cache.data.isEmpty())
 
-        val output = captureOut { evalScript(script, host) }
+        val output = captureOut { evalScript(script, host).throwOnFailure() }
         Assert.assertEquals("x = 1", output)
 
         Assert.assertEquals(1, cache.data.size)
@@ -157,7 +192,7 @@ class ScriptingHostTest : TestCase() {
         Assert.assertEquals(output, output2)
 
         // TODO: check if cached script is actually used
-        val output3 = captureOut { evalScript(script, host) }.trim()
+        val output3 = captureOut { evalScript(script, host).throwOnFailure() }.trim()
         Assert.assertEquals(output, output3)
     }
 
@@ -205,7 +240,7 @@ class ScriptingHostTest : TestCase() {
             Assert.assertEquals(output, output2)
 
             // TODO: check if cached script is actually used
-            val output3 = captureOut { evalScript(script, host) }.trim()
+            val output3 = captureOut { evalScript(script, host).throwOnFailure() }.trim()
             Assert.assertEquals(output, output3)
         } finally {
             cacheDir.deleteRecursively()
@@ -255,9 +290,16 @@ fun ResultWithDiagnostics<*>.throwOnFailure(): ResultWithDiagnostics<*> = apply 
     }
 }
 
-private fun evalScript(script: String, host: BasicScriptingHost = BasicJvmScriptingHost()) {
-    val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
-    host.eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure()
+private fun evalScript(script: String, host: BasicScriptingHost = BasicJvmScriptingHost()): ResultWithDiagnostics<*> =
+    evalScriptWithConfiguration(script, host)
+
+private fun evalScriptWithConfiguration(
+    script: String,
+    host: BasicScriptingHost = BasicJvmScriptingHost(),
+    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+): ResultWithDiagnostics<EvaluationResult> {
+    val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = body)
+    return host.eval(script.toScriptSource(), compilationConfiguration, null)
 }
 
 
