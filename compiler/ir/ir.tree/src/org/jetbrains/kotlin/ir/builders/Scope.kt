@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class Scope(val scopeOwnerSymbol: IrSymbol) {
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
-    private fun getVariableParent(): IrDeclarationParent {
+    fun getLocalDeclarationParent(): IrDeclarationParent {
         if (!scopeOwnerSymbol.isBound) throw AssertionError("Unbound symbol: $scopeOwner")
         val scopeOwnerElement = scopeOwnerSymbol.owner
         return when (scopeOwnerElement) {
@@ -87,7 +87,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
             irType ?: irExpression.type,
             irExpression
         ).apply {
-            parent = getVariableParent()
+            parent = getLocalDeclarationParent()
         }
     }
 }
