@@ -74,10 +74,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.liftToExpected
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -263,7 +260,7 @@ fun <T, E : PsiElement> getPsiElementPopup(
         }
     }
 
-    return with(PopupChooserBuilder<E>(list)) {
+    return with(PopupChooserBuilderWrapper<E>(list)) {
         title?.let { setTitle(it) }
         renderer.installSpeedSearch(this, true)
         setItemChoosenCallback {

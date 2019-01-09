@@ -115,6 +115,7 @@
           <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#extensions(com.intellij.openapi.extensions.AreaInstance)" reason="Absent in 182." />
           <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#getPoint" reason="Absent in 182." />
           <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#findExtensionOrFail" reason="Absent in 182." />
+          <Problem reference="com.intellij.openapi.ui.popup.PopupChooserBuilder#PopupChooserBuilder(javax.swing.JList)" reason="Generified in 182. Use PopupChooserBuilderWrapper instead." />
         </list>
       </option>
     </inspection_tool>
