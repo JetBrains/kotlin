@@ -86,6 +86,11 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
             runTest("compiler/testData/codegen/asmLike/receiverMangling/innerClass.kt");
         }
 
+        @TestMetadata("mangledNames.kt")
+        public void testMangledNames() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/receiverMangling/mangledNames.kt");
+        }
+
         @TestMetadata("nonInlineReceivers_after.kt")
         public void testNonInlineReceivers_after() throws Exception {
             runTest("compiler/testData/codegen/asmLike/receiverMangling/nonInlineReceivers_after.kt");

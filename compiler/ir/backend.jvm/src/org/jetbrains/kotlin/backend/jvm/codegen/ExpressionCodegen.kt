@@ -183,8 +183,12 @@ class ExpressionCodegen(
 
     private fun writeValueParameterInLocalVariableTable(param: IrValueParameter, startLabel: Label) {
         val descriptor = param.descriptor
-        val nameForDestructuredParameter = if (descriptor is ValueParameterDescriptor)
-            ValueParameterDescriptorImpl.getNameForDestructuredParameterOrNull(descriptor) else null
+        val nameForDestructuredParameter = if (descriptor is ValueParameterDescriptor) {
+            getNameForDestructuredParameterOrNull(descriptor)
+        } else {
+            null
+        }
+
         val type = typeMapper.mapType(descriptor)
         // NOTE: we expect all value parameters to be present in the frame.
         mv.visitLocalVariable(

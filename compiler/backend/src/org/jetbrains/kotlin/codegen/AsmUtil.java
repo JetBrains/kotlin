@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.*;
-import org.jetbrains.kotlin.resolve.jvm.checkers.DalvikIdentifierUtils;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
@@ -205,26 +204,7 @@ public class AsmUtil {
             return defaultName;
         }
 
-        if (!DalvikIdentifierUtils.isValidDalvikIdentifier(callableName)) {
-            return prefix + mangleLabel(callableName);
-        }
-
-        return prefix + callableName;
-    }
-
-    private static String mangleLabel(String label) {
-        StringBuilder sb = new StringBuilder();
-
-        for (char c : label.toCharArray()) {
-            if (DalvikIdentifierUtils.isValidDalvikCharacter(c)) {
-                sb.append(c);
-                continue;
-            }
-
-            sb.append("_u").append(Integer.toHexString(c));
-        }
-
-        return sb.toString();
+        return prefix + VariableAsmNameManglingUtils.mangleNameIfNeeded(callableName);
     }
 
     @NotNull

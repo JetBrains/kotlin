@@ -9,7 +9,7 @@ suspend fun test() = foo(A("O", "K")) { (x_param, y_param) -> x_param + y_param 
 // METHOD : InlineKt.test(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 // VARIABLE : NAME=<name for destructuring parameter 0> TYPE=LA; INDEX=4
 // VARIABLE : NAME=continuation TYPE=Lkotlin/coroutines/Continuation; INDEX=3
-// VARIABLE : NAME=$x_param_y_param TYPE=LA; INDEX=6
+// VARIABLE : NAME=$dstr$x_param$y_param TYPE=LA; INDEX=6
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=7
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=8
 // VARIABLE : NAME=$i$a$-foo-InlineKt$test$2 TYPE=I INDEX=5

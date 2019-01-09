@@ -7,7 +7,7 @@ Compile bytecode for y
  frame    = invoke:12, DestructuringParamKt$main$1 {destructuringParam}
    this     = this = {destructuringParam.DestructuringParamKt$main$1@uniqueID}Function1<destructuringParam.A, java.lang.String>
      field    = arity: int = 1 (sp = Lambda.!EXT!)
-   local    = $x_y: destructuringParam.A = {destructuringParam.A@uniqueID}A(x=O, y=K) (sp = null)
+   local    = $dstr$x$y: destructuringParam.A = {destructuringParam.A@uniqueID}A(x=O, y=K) (sp = null)
      field    = x: java.lang.String = O (sp = destructuringParam.kt, 2)
        field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
          element  = 0 = 'O' 79
