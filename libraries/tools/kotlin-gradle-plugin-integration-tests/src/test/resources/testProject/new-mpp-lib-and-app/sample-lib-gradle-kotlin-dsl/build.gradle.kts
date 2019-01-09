@@ -54,3 +54,13 @@ publishing {
 		maven { setUrl("file://${projectDir.absolutePath.replace('\\', '/')}/repo") }
 	}
 }
+
+// Check that a compilation may be created after project evaluation, KT-28896:
+afterEvaluate {
+    kotlin {
+        jvm("jvm6").compilations.create("benchmark") {
+            defaultSourceSet.dependsOn(sourceSets["jvm6Main"])
+            tasks["assemble"].dependsOn(compileKotlinTask)
+        }
+    }
+}
