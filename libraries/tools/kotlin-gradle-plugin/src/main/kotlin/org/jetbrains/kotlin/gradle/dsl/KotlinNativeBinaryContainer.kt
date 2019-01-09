@@ -140,12 +140,16 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         "test",
         "test",
         NativeOutputKind.EXECUTABLE,
-        listOf(NativeBuildType.DEBUG),
+        listOf(DEFAULT_TEST_BUILD_TYPE),
         { name, baseName, buildType, compilation ->
             Executable(name, baseName, buildType, compilation, true)
         },
         configure
     )
+
+    companion object {
+        internal val DEFAULT_TEST_BUILD_TYPE = NativeBuildType.DEBUG
+    }
     // endregion.
 
     internal inner class PrefixGroup(
