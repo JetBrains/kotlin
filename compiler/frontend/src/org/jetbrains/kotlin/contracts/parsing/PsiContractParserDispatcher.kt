@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.contracts.description.BooleanExpression
 import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.EffectDeclaration
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.contracts.description.expressions.*
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CALLS_IN_PLACE_EFFECT
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CONDITIONAL_EFFECT
@@ -38,11 +39,20 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.parents
+
+interface PsiContractVariableParserDispatcher {
+    fun parseVariable(expression: KtExpression?): VariableReference?
+    fun parseLambdaReceiver(expression: KtExpression?): LambdaParameterReceiverReference?
+    fun parseFunction(expression: KtExpression?): FunctionReference?
+    fun parseKind(expression: KtExpression?): InvocationKind?
+}
 
 internal class PsiContractParserDispatcher(
     private val collector: ContractParsingDiagnosticsCollector,
     private val callContext: ContractCallContext
-) {
+) : PsiContractVariableParserDispatcher {
     private val conditionParser = PsiConditionParser(collector, callContext, this)
     private val constantParser = PsiConstantParser(callContext)
     private val effectsParsers: Map<Name, PsiEffectParser> = mapOf(
@@ -108,7 +118,7 @@ internal class PsiContractParserDispatcher(
         return expression.accept(constantParser, Unit)
     }
 
-    fun parseVariable(expression: KtExpression?): VariableReference? {
+    override fun parseVariable(expression: KtExpression?): VariableReference? {
         if (expression == null) return null
         val descriptor = expression.getResolvedCall(callContext.bindingContext)?.resultingDescriptor ?: return null
         if (descriptor !is ParameterDescriptor) {
@@ -134,7 +144,7 @@ internal class PsiContractParserDispatcher(
         return parseConstant(expression)
     }
 
-    fun parseReceiver(expression: KtExpression?): LambdaParameterReceiverReference? {
+    override fun parseLambdaReceiver(expression: KtExpression?): LambdaParameterReceiverReference? {
         if (expression == null) return null
         val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return null
         val descriptor = resolvedCall.resultingDescriptor
@@ -151,11 +161,25 @@ internal class PsiContractParserDispatcher(
         return LambdaParameterReceiverReference(variable)
     }
 
-    fun parseFunction(expression: KtExpression?): FunctionReference? {
+    override fun parseFunction(expression: KtExpression?): FunctionReference? {
         if (expression == null) return null
         val reference = expression as? KtCallableReferenceExpression ?: return null
         val descriptor =
             callContext.bindingContext[BindingContext.REFERENCE_TARGET, reference.callableReference] as? FunctionDescriptor ?: return null
         return FunctionReferenceImpl(descriptor)
+    }
+
+    override fun parseKind(expression: KtExpression?): InvocationKind? {
+        if (expression == null) return null
+        val descriptor = expression.getResolvedCall(callContext.bindingContext)?.resultingDescriptor ?: return null
+        if (!descriptor.parents.first().isInvocationKindEnum()) return null
+
+        return when (descriptor.fqNameSafe.shortName()) {
+            ContractsDslNames.AT_MOST_ONCE_KIND -> InvocationKind.AT_MOST_ONCE
+            ContractsDslNames.EXACTLY_ONCE_KIND -> InvocationKind.EXACTLY_ONCE
+            ContractsDslNames.AT_LEAST_ONCE_KIND -> InvocationKind.AT_LEAST_ONCE
+            ContractsDslNames.UNKNOWN_KIND -> InvocationKind.UNKNOWN
+            else -> null
+        }
     }
 }
