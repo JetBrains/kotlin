@@ -863,6 +863,20 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testDefaultKotlinVersionIsNotAffectedByTransitiveDependencies() =
+        with(Project("simpleProject", GradleVersionRequired.AtLeast("4.4"))) {
+            setupWorkingDir()
+            // Add a dependency with an explicit lower Kotlin version that has a kotlin-stdlib transitive dependency:
+            gradleBuildScript().appendText("\ndependencies { compile 'org.jetbrains.kotlin:kotlin-reflect:1.2.71' }")
+            testResolveAllConfigurations {
+                assertSuccessful()
+                assertContains(">> :compile --> kotlin-reflect-1.2.71.jar")
+                // Check that the default newer Kotlin version still wins for 'kotlin-stdlib':
+                assertContains(">> :compile --> kotlin-stdlib-${defaultBuildOptions().kotlinVersion}.jar")
+            }
+        }
+
+    @Test
     fun testNoTaskConfigurationForcing() {
         val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.9")
         val projects = listOf(

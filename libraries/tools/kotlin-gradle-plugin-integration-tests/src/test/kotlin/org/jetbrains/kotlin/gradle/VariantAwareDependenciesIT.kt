@@ -73,7 +73,10 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
         val innerProject = Project("simpleProject").apply {
             setupWorkingDir()
-            gradleBuildScript().modify { it.replace("apply plugin: \"kotlin\"", "") }
+            gradleBuildScript().modify {
+                it.replace("apply plugin: \"kotlin\"", "")
+                    .replace("\"org.jetbrains.kotlin:kotlin-stdlib\"", "\"org.jetbrains.kotlin:kotlin-stdlib:\$kotlin_version\"")
+            }
         }
 
         with(outerProject) {
