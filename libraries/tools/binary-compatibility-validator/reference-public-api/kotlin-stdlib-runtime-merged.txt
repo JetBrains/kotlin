@@ -253,6 +253,7 @@ public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal
 	public static fun iterator-impl ([B)Lkotlin/collections/UByteIterator;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeIf (Ljava/util/function/Predicate;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
 	public static final fun set-VurrAj0 ([BIB)V
 	public final fun size ()I
@@ -313,6 +314,7 @@ public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/
 	public static fun iterator-impl ([I)Lkotlin/collections/UIntIterator;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeIf (Ljava/util/function/Predicate;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
 	public static final fun set-VXSXFK8 ([III)V
 	public final fun size ()I
@@ -373,6 +375,7 @@ public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal
 	public static fun iterator-impl ([J)Lkotlin/collections/ULongIterator;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeIf (Ljava/util/function/Predicate;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
 	public static final fun set-k8EXiF4 ([JIJ)V
 	public final fun size ()I
@@ -433,6 +436,7 @@ public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/interna
 	public static fun iterator-impl ([S)Lkotlin/collections/UShortIterator;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeIf (Ljava/util/function/Predicate;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
 	public static final fun set-01HTLdE ([SIS)V
 	public final fun size ()I
@@ -529,6 +533,7 @@ public abstract class kotlin/collections/AbstractCollection : java/util/Collecti
 	public abstract fun iterator ()Ljava/util/Iterator;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeIf (Ljava/util/function/Predicate;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
 	public final fun size ()I
 	public fun toArray ()[Ljava/lang/Object;
@@ -561,7 +566,9 @@ public abstract class kotlin/collections/AbstractList : kotlin/collections/Abstr
 	public fun listIterator ()Ljava/util/ListIterator;
 	public fun listIterator (I)Ljava/util/ListIterator;
 	public fun remove (I)Ljava/lang/Object;
+	public fun replaceAll (Ljava/util/function/UnaryOperator;)V
 	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public fun sort (Ljava/util/Comparator;)V
 	public fun subList (II)Ljava/util/List;
 }
 
@@ -569,6 +576,9 @@ public abstract class kotlin/collections/AbstractMap : java/util/Map, kotlin/jvm
 	public static final field Companion Lkotlin/collections/AbstractMap$Companion;
 	protected fun <init> ()V
 	public fun clear ()V
+	public fun compute (Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;
+	public fun computeIfAbsent (Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;
+	public fun computeIfPresent (Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;
 	public fun containsKey (Ljava/lang/Object;)Z
 	public fun containsValue (Ljava/lang/Object;)Z
 	public final fun entrySet ()Ljava/util/Set;
@@ -581,9 +591,15 @@ public abstract class kotlin/collections/AbstractMap : java/util/Map, kotlin/jvm
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public final fun keySet ()Ljava/util/Set;
+	public fun merge (Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;
 	public fun put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun putAll (Ljava/util/Map;)V
+	public fun putIfAbsent (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun remove (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun remove (Ljava/lang/Object;Ljava/lang/Object;)Z
+	public fun replace (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun replace (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z
+	public fun replaceAll (Ljava/util/function/BiFunction;)V
 	public final fun size ()I
 	public fun toString ()Ljava/lang/String;
 	public final fun values ()Ljava/util/Collection;
@@ -4995,4 +5011,3 @@ public final class kotlin/text/UStringsKt {
 	public static final fun toUShortOrNull (Ljava/lang/String;)Lkotlin/UShort;
 	public static final fun toUShortOrNull (Ljava/lang/String;I)Lkotlin/UShort;
 }
-
