@@ -7,33 +7,25 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.deepCopyWithWrappedDescriptors
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.addMember
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
-import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
 
 internal val jvmOverloadsAnnotationPhase = makeIrFilePhase(
     ::JvmOverloadsAnnotationLowering,
@@ -41,11 +33,13 @@ internal val jvmOverloadsAnnotationPhase = makeIrFilePhase(
     description = "Handle JvmOverloads annotations"
 )
 
+// TODO: `IrValueParameter.defaultValue` property does not track default values in super-parameters. See KT-28637.
+
 private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
         val functions = irClass.declarations.filterIsInstance<IrFunction>().filter {
-            it.descriptor.findJvmOverloadsAnnotation() != null
+            it.hasAnnotation(JVM_OVERLOADS_FQ_NAME)
         }
 
         functions.forEach {
@@ -54,7 +48,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
     }
 
     private fun generateWrappers(target: IrFunction, irClass: IrClass) {
-        val numDefaultParameters = target.symbol.descriptor.valueParameters.count { it.hasDefaultValue() }
+        val numDefaultParameters = target.valueParameters.count { it.defaultValue != null }
         for (i in 0 until numDefaultParameters) {
             val wrapper = generateWrapper(target, i)
             irClass.addMember(wrapper)
@@ -62,24 +56,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
     }
 
     private fun generateWrapper(target: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
-        val wrapperSymbol = generateWrapperSymbol(target.symbol, numDefaultParametersToExpect)
-        val wrapperIrFunction = when (wrapperSymbol) {
-            is IrConstructorSymbol -> IrConstructorImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
-                wrapperSymbol,
-                returnType = target.returnType
-            )
-            is IrSimpleFunctionSymbol -> IrFunctionImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
-                wrapperSymbol,
-                returnType = target.returnType
-            )
-            else -> error("expected IrConstructorSymbol or IrSimpleFunctionSymbol")
-        }
-
-        wrapperIrFunction.createParameterDeclarations()
+        val wrapperIrFunction = generateWrapperHeader(target, numDefaultParametersToExpect)
 
         val call = if (target is IrConstructor)
             IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol, target.descriptor)
@@ -101,7 +78,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         var parametersCopied = 0
         var defaultParametersCopied = 0
         for ((i, valueParameter) in target.valueParameters.withIndex()) {
-            if ((valueParameter.descriptor as ValueParameterDescriptor).hasDefaultValue()) {
+            if (valueParameter.defaultValue != null) {
                 if (defaultParametersCopied < numDefaultParametersToExpect) {
                     defaultParametersCopied++
                     call.putValueArgument(
@@ -130,78 +107,80 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, call
         )
 
-        target.annotations.mapTo(wrapperIrFunction.annotations) { it.deepCopyWithSymbols() }
-
         return wrapperIrFunction
     }
 
-    private fun generateWrapperSymbol(oldSymbol: IrFunctionSymbol, numDefaultParametersToExpect: Int): IrFunctionSymbol {
-        val oldDescriptor = oldSymbol.descriptor
-        val newDescriptor = if (oldDescriptor is ClassConstructorDescriptor) {
-            oldDescriptor.copyWithModifiedParameters(numDefaultParametersToExpect)
-        } else {
-            val newParameters = generateNewValueParameters(oldDescriptor, numDefaultParametersToExpect)
-            oldDescriptor.newCopyBuilder()
-                .setValueParameters(newParameters)
-                .setOriginal(null)
-                .setKind(CallableMemberDescriptor.Kind.SYNTHESIZED)
-                .build()!!
+    private fun generateWrapperHeader(oldFunction: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
+        val res = when (oldFunction) {
+            is IrConstructor -> {
+                val descriptor = WrappedClassConstructorDescriptor(oldFunction.descriptor.annotations)
+                IrConstructorImpl(
+                    oldFunction.startOffset, oldFunction.endOffset,
+                    JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
+                    IrConstructorSymbolImpl(descriptor),
+                    oldFunction.name,
+                    oldFunction.visibility,
+                    returnType = oldFunction.returnType,
+                    isInline = oldFunction.isInline,
+                    isExternal = false,
+                    isPrimary = false
+                ).apply {
+                    descriptor.bind(this)
+                }
+            }
+            is IrSimpleFunction -> {
+                val descriptor = WrappedSimpleFunctionDescriptor(oldFunction.descriptor.annotations)
+                IrFunctionImpl(
+                    oldFunction.startOffset, oldFunction.endOffset,
+                    JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
+                    IrSimpleFunctionSymbolImpl(descriptor),
+                    oldFunction.name,
+                    oldFunction.visibility,
+                    oldFunction.modality,
+                    returnType = oldFunction.returnType,
+                    isInline = oldFunction.isInline,
+                    isExternal = false,
+                    isTailrec = false,
+                    isSuspend = oldFunction.isSuspend
+                ).apply {
+                    descriptor.bind(this)
+                }
+            }
+            else -> error("Unknown kind of IrFunction: $oldFunction")
         }
 
-        return createFunctionSymbol(newDescriptor)
+        res.parent = oldFunction.parent
+        res.annotations.addAll(oldFunction.annotations.map { it.deepCopyWithWrappedDescriptors(res) })
+        res.copyTypeParametersFrom(oldFunction)
+        res.dispatchReceiverParameter = oldFunction.dispatchReceiverParameter?.copyTo(res)
+        res.extensionReceiverParameter = oldFunction.extensionReceiverParameter?.copyTo(res)
+        res.valueParameters.addAll(res.generateNewValueParameters(oldFunction, numDefaultParametersToExpect))
+        return res
     }
 
-    private fun ClassConstructorDescriptor.copyWithModifiedParameters(numDefaultParametersToExpect: Int): ClassConstructorDescriptor {
-        val result = ClassConstructorDescriptorImpl.createSynthesized(
-            this.containingDeclaration,
-            annotations,
-            /* isPrimary = */ false,
-            source
-        )
-        // Call the long version of `initialize()`, because otherwise default implementation inserts
-        // an unwanted `dispatchReceiverParameter`.
-        result.initialize(
-            extensionReceiverParameter?.copy(result),
-            dispatchReceiverParameter,
-            typeParameters,
-            generateNewValueParameters(this, numDefaultParametersToExpect),
-            returnType,
-            modality,
-            visibility
-        )
-        return result
-    }
-
-    private fun generateNewValueParameters(
-        oldDescriptor: FunctionDescriptor,
+    private fun IrFunction.generateNewValueParameters(
+        oldFunction: IrFunction,
         numDefaultParametersToExpect: Int
-    ): List<ValueParameterDescriptor> {
+    ): List<IrValueParameter> {
         var parametersCopied = 0
         var defaultParametersCopied = 0
-        val result = mutableListOf<ValueParameterDescriptor>()
-        for (oldValueParameter in oldDescriptor.valueParameters) {
-            if (oldValueParameter.hasDefaultValue() &&
+        val result = mutableListOf<IrValueParameter>()
+        for (oldValueParameter in oldFunction.valueParameters) {
+            if (oldValueParameter.defaultValue != null &&
                 defaultParametersCopied < numDefaultParametersToExpect
             ) {
                 defaultParametersCopied++
                 result.add(
-                    ValueParameterDescriptorImpl(
-                        oldDescriptor,      // to be substituted with newDescriptor
-                        null,
-                        parametersCopied++,
-                        oldValueParameter.annotations,
-                        oldValueParameter.name,
-                        oldValueParameter.type,
-                        declaresDefaultValue = false,
-                        isCrossinline = false,
-                        isNoinline = false,
-                        varargElementType = oldValueParameter.varargElementType,
-                        source = oldValueParameter.source
+                    oldValueParameter.copyTo(
+                        this,
+                        index = parametersCopied++,
+                        defaultValue = null,
+                        isCrossinline = oldValueParameter.isCrossinline,
+                        isNoinline = oldValueParameter.isNoinline
                     )
                 )
-            } else if (!oldValueParameter.hasDefaultValue()) {
-                result.add(oldValueParameter.copy(oldDescriptor, oldValueParameter.name, parametersCopied++))
-
+            } else if (oldValueParameter.defaultValue == null) {
+                result.add(oldValueParameter.copyTo(this, index = parametersCopied++))
             }
         }
         return result
