@@ -6,6 +6,7 @@ import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.artifacts.MutableVersionConstraint
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
@@ -502,11 +503,21 @@ internal abstract class AbstractKotlinPlugin(
 internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlinPluginVersion: String) {
     project.configurations.all { configuration ->
         if (isGradleVersionAtLeast(4, 4)) {
+            fun MutableVersionConstraint.chooseVersion(version: String) {
+                if (isGradleVersionAtLeast(5, 0)) {
+                    // In Gradle 5.0, the semantics of 'prefer' has changed to be much less imperative, and now it's 'require' that we need:
+                    val requireMethod = javaClass.getMethod("require", String::class.java)
+                    requireMethod(this, version)
+                } else {
+                    prefer(version)
+                }
+            }
+
             // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
             configuration.withDependencies { dependencySet ->
                 dependencySet.filterIsInstance<ExternalDependency>()
                     .filter { it.group == "org.jetbrains.kotlin" && it.version.isNullOrEmpty() }
-                    .forEach { it.version { constraint -> constraint.prefer(kotlinPluginVersion) } }
+                    .forEach { it.version { constraint -> constraint.chooseVersion(kotlinPluginVersion) } }
             }
         } else {
             configuration.resolutionStrategy.eachDependency { details ->
