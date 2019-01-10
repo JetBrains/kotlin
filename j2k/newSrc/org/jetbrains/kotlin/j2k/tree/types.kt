@@ -259,13 +259,7 @@ fun JKJavaPrimitiveType.isNumberType() =
 
 inline fun <reified T : JKType> T.addTypeParametersToRawProjectionType(typeParameter: JKType): T =
     if (this is JKClassType && parameters.isEmpty()) {
-        val resolvedClass = classReference.target
-        val parametersCount =
-            when (resolvedClass) {
-                is PsiClass -> resolvedClass.typeParameters.size
-                is KtClass -> resolvedClass.typeParameters.size
-                else -> 0
-            }
+        val parametersCount = classReference.expectedTypeParametersCount()
         val typeParameters = List(parametersCount) { typeParameter }
         JKClassTypeImpl(
             classReference,
@@ -273,6 +267,15 @@ inline fun <reified T : JKType> T.addTypeParametersToRawProjectionType(typeParam
             nullability
         ) as T
     } else this
+
+fun JKClassSymbol.expectedTypeParametersCount(): Int {
+    val resolvedClass = target
+    return when (resolvedClass) {
+        is PsiClass -> resolvedClass.typeParameters.size
+        is KtClass -> resolvedClass.typeParameters.size
+        else -> 0
+    }
+}
 
 fun JKClassSymbol.isArrayType(): Boolean =
     fqName in

@@ -41,16 +41,34 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
                 JKTypeElementImpl(newType)
             }
             is JKJavaNewExpression -> {
+                val newClassSymbol = element.classSymbol.mapClassSymbol(null)
                 recurse(
                     JKJavaNewExpressionImpl(
-                        element.classSymbol.mapClassSymbol(null),
+                        newClassSymbol,
                         element::arguments.detached(),
-                        element::typeArgumentList.detached(),
+                        element::typeArgumentList.detached().fixTypeArguments(newClassSymbol),
                         element::classBody.detached()
                     )
                 )
             }
             else -> recurse(element)
+        }
+    }
+
+    private fun JKTypeArgumentList.fixTypeArguments(classSymbol: JKClassSymbol): JKTypeArgumentList {
+        if (typeArguments.isNotEmpty()) return this
+        val typeParametersCount = classSymbol.expectedTypeParametersCount()
+        return when (typeParametersCount) {
+            0 -> this
+            else -> JKTypeArgumentListImpl(List(typeParametersCount) {
+                JKTypeElementImpl(
+                    kotlinTypeByName(
+                        KotlinBuiltIns.FQ_NAMES.any.toSafe().asString(),
+                        context.symbolProvider,
+                        Nullability.Nullable
+                    )
+                )
+            })
         }
     }
 
