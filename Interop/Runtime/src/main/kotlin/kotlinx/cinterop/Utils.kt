@@ -107,7 +107,11 @@ class Arena(parent: NativeFreeablePlacement = nativeHeap) : ArenaBase(parent) {
  * @param T must not be abstract
  */
 inline fun <reified T : CVariable> NativePlacement.alloc(): T =
-        alloc(sizeOf<T>(), alignOf<T>()).reinterpret()
+        alloc(typeOf<T>()).reinterpret()
+
+@PublishedApi
+internal fun NativePlacement.alloc(type: CVariable.Type): NativePointed =
+        alloc(type.size, type.align)
 
 /**
  * Allocates variable of given type and initializes it applying given block.
@@ -263,9 +267,12 @@ fun <T : CVariable> CPointed.readValue(size: Long, align: Int): CValue<T> {
     }
 }
 
+@PublishedApi internal fun <T : CVariable> CPointed.readValue(type: CVariable.Type): CValue<T> =
+    readValue(type.size, type.align)
+
 // Note: can't be declared as property due to possible clash with a struct field.
 // TODO: find better name.
-inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(sizeOf<T>(), alignOf<T>())
+inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(typeOf<T>())
 
 fun CValue<*>.write(location: NativePtr) {
     // TODO: probably CValue must be redesigned.

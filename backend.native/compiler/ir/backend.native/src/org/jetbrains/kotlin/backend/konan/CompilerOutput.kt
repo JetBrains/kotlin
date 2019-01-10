@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMLinkModules2
+import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
@@ -25,6 +26,12 @@ internal fun produceOutput(context: Context, phaser: PhaseManager) {
     val config = context.config.configuration
     val tempFiles = context.config.tempFiles
     val produce = config.get(KonanConfigKeys.PRODUCE)
+
+    phaser.phase(KonanPhase.C_STUBS) {
+        context.cStubsManager.compile(context.config.clang, context.messageCollector, context.phase!!.verbose)?.let {
+            parseAndLinkBitcodeFile(llvmModule, it.absolutePath)
+        }
+    }
 
     when (produce) {
         CompilerOutputKind.STATIC,
@@ -50,11 +57,7 @@ internal fun produceOutput(context: Context, phaser: PhaseManager) {
 
             phaser.phase(KonanPhase.BITCODE_LINKER) {
                 for (library in nativeLibraries) {
-                    val libraryModule = parseBitcodeFile(library)
-                    val failed = LLVMLinkModules2(llvmModule, libraryModule)
-                    if (failed != 0) {
-                        throw Error("failed to link $library") // TODO: retrieve error message from LLVM.
-                    }
+                    parseAndLinkBitcodeFile(llvmModule, library)
                 }
             }
 
@@ -99,4 +102,10 @@ internal fun produceOutput(context: Context, phaser: PhaseManager) {
     }
 }
 
-
+private fun parseAndLinkBitcodeFile(llvmModule: LLVMModuleRef, path: String) {
+    val parsedModule = parseBitcodeFile(path)
+    val failed = LLVMLinkModules2(llvmModule, parsedModule)
+    if (failed != 0) {
+        throw Error("failed to link $path") // TODO: retrieve error message from LLVM.
+    }
+}

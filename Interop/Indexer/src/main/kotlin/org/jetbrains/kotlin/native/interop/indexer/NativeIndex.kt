@@ -85,15 +85,24 @@ interface TypeDeclaration {
     val location: Location
 }
 
+sealed class StructMember(val name: String, val type: Type) {
+    abstract val offset: Long?
+}
+
 /**
  * C struct field.
  */
-class Field(val name: String, val type: Type, val offset: Long, val typeAlign: Long)
+class Field(name: String, type: Type, override val offset: Long, val typeSize: Long, val typeAlign: Long)
+    : StructMember(name, type)
 
 val Field.isAligned: Boolean
     get() = offset % (typeAlign * 8) == 0L
 
-class BitField(val name: String, val type: Type, val offset: Long, val size: Int)
+class BitField(name: String, type: Type, override val offset: Long, val size: Int) : StructMember(name, type)
+
+class IncompleteField(name: String, type: Type) : StructMember(name, type) {
+    override val offset: Long? get() = null
+}
 
 /**
  * C struct declaration.
@@ -109,13 +118,17 @@ abstract class StructDecl(val spelling: String) : TypeDeclaration {
  * @param hasNaturalLayout must be `false` if the struct has unnatural layout, e.g. it is `packed`.
  * May be `false` even if the struct has natural layout.
  */
-abstract class StructDef(val size: Long, val align: Int,
-                         val decl: StructDecl,
-                         val hasNaturalLayout: Boolean) {
+abstract class StructDef(val size: Long, val align: Int, val decl: StructDecl) {
 
-    abstract val fields: List<Field>
-    // TODO: merge two lists to preserve declaration order.
-    abstract val bitFields: List<BitField>
+    enum class Kind {
+        STRUCT, UNION
+    }
+
+    abstract val members: List<StructMember>
+    abstract val kind: Kind
+
+    val fields: List<Field> get() = members.filterIsInstance<Field>()
+    val bitFields: List<BitField> get() = members.filterIsInstance<BitField>()
 }
 
 /**

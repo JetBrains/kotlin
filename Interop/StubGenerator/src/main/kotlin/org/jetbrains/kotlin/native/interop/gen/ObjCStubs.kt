@@ -342,8 +342,13 @@ private fun Type.isIntegerLikeType(): Boolean = when (this) {
             false
         } else {
             def.size <= 4 &&
-                    def.bitFields.all { it.type.isIntegerLikeType() } &&
-                    def.fields.all { it.offset == 0L && it.type.isIntegerLikeType() }
+                    def.members.all {
+                        when (it) {
+                            is BitField -> it.type.isIntegerLikeType()
+                            is Field -> it.offset == 0L && it.type.isIntegerLikeType()
+                            is IncompleteField -> false
+                        }
+                    }
         }
     }
     is ObjCPointer, is PointerType, CharType, BoolType -> true

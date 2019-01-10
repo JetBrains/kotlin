@@ -33,6 +33,18 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: 
 
     val nativePointed = packageScope.getContributedClass(InteropFqNames.nativePointedName)
 
+    val cValuesRef = this.packageScope.getContributedClass("CValuesRef")
+    val cValues = this.packageScope.getContributedClass("CValues")
+    val cValue = this.packageScope.getContributedClass("CValue")
+    val cValueWrite = this.packageScope.getContributedFunctions("write")
+            .single { it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == cValue }
+    val cValueRead = this.packageScope.getContributedFunctions("readValue")
+            .single { it.valueParameters.size == 1 }
+
+    val allocType = this.packageScope.getContributedFunctions("alloc")
+            .single { it.extensionReceiverParameter != null
+                    && it.valueParameters.singleOrNull()?.name?.toString() == "type" }
+
     val cPointer = this.packageScope.getContributedClass(InteropFqNames.cPointerName)
 
     val cPointerRawValue = cPointer.unsubstitutedMemberScope.getContributedVariables("rawValue").single()
@@ -42,6 +54,10 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: 
         extensionReceiverParameter != null &&
                 TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == cPointer
     }
+
+    val cstr = packageScope.getContributedVariables("cstr").single()
+    val wcstr = packageScope.getContributedVariables("wcstr").single()
+    val memScope = packageScope.getContributedClass("MemScope")
 
     val nativePointedRawPtrGetter =
             nativePointed.unsubstitutedMemberScope.getContributedVariables("rawPtr").single().getter!!
@@ -60,24 +76,6 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: 
 
     private fun KonanBuiltIns.getUnsignedClass(unsignedType: UnsignedType): ClassDescriptor =
             this.builtInsModule.findClassAcrossModuleDependencies(unsignedType.classId)!!
-
-    val invokeImpls = mapOf(
-            builtIns.unit to "invokeImplUnitRet",
-            builtIns.boolean to "invokeImplBooleanRet",
-            builtIns.byte to "invokeImplByteRet",
-            builtIns.short to "invokeImplShortRet",
-            builtIns.int to "invokeImplIntRet",
-            builtIns.long to "invokeImplLongRet",
-            builtIns.getUnsignedClass(UnsignedType.UBYTE) to "invokeImplUByteRet",
-            builtIns.getUnsignedClass(UnsignedType.USHORT) to "invokeImplUShortRet",
-            builtIns.getUnsignedClass(UnsignedType.UINT) to "invokeImplUIntRet",
-            builtIns.getUnsignedClass(UnsignedType.ULONG) to "invokeImplULongRet",
-            builtIns.float to "invokeImplFloatRet",
-            builtIns.double to "invokeImplDoubleRet",
-            cPointer to "invokeImplPointerRet"
-    ).mapValues { (_, name) ->
-        packageScope.getContributedFunctions(name).single()
-    }.toMap()
 
     val objCObject = packageScope.getContributedClass("ObjCObject")
 

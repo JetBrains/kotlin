@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.SyntheticModulesOrigin
 import org.jetbrains.kotlin.descriptors.konan.konanModuleOrigin
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal interface LlvmImports {
     fun add(origin: CompiledKonanModuleOrigin)
+    fun isImported(library: KonanLibrary): Boolean
 }
 
 internal val DeclarationDescriptor.llvmSymbolOrigin: CompiledKonanModuleOrigin

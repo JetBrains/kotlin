@@ -354,8 +354,12 @@ class StubGenerator(
         }
 
         if (platform == KotlinPlatform.JVM) {
-            if (def.hasNaturalLayout) {
-                out("@CNaturalStruct(${def.fields.joinToString { it.name.quoteAsKotlinLiteral() }})")
+            if (def.kind == StructDef.Kind.STRUCT && def.fieldsHaveDefaultAlignment()) {
+                out("@CNaturalStruct(${def.members.joinToString { it.name.quoteAsKotlinLiteral() }})")
+            }
+        } else {
+            tryRenderStructOrUnion(def)?.let {
+                out("@CStruct".applyToStrings(it))
             }
         }
 
@@ -368,8 +372,6 @@ class StubGenerator(
             for (field in def.fields) {
                 try {
                     assert(field.name.isNotEmpty())
-
-                    if (field.offset < 0) throw NotImplementedError();
                     assert(field.offset % 8 == 0L)
                     val offset = field.offset / 8
                     val fieldRefType = mirror(field.type)
@@ -588,16 +590,13 @@ class StubGenerator(
         return stubs
     }
 
-    private fun FunctionDecl.generateAsFfiVarargs(): Boolean = (platform == KotlinPlatform.NATIVE && this.isVararg &&
-            // Neither takes nor returns structs by value:
-            !this.returnsRecord() && this.parameters.all { it.type.unwrapTypedefs() !is RecordType })
-
-    private fun FunctionDecl.returnsRecord(): Boolean = this.returnType.unwrapTypedefs() is RecordType
     private fun FunctionDecl.returnsVoid(): Boolean = this.returnType.unwrapTypedefs() is VoidType
 
     private inner class KotlinFunctionStub(val func: FunctionDecl) : KotlinStub, NativeBacked {
         override fun generate(context: StubGenerationContext): Sequence<String> =
-                if (context.nativeBridges.isSupported(this)) {
+                if (isCCall) {
+                    sequenceOf("@CCall".applyToStrings(cCallSymbolName!!), "external $header")
+                } else if (context.nativeBridges.isSupported(this)) {
                     block(header, bodyLines)
                 } else {
                     sequenceOf(
@@ -608,6 +607,8 @@ class StubGenerator(
 
         private val header: String
         private val bodyLines: List<String>
+        private val isCCall: Boolean
+        private val cCallSymbolName: String?
 
         init {
             // TODO: support dumpShims
@@ -627,11 +628,19 @@ class StubGenerator(
                 val representAsValuesRef = representCFunctionParameterAsValuesRef(parameter.type)
 
                 val bridgeArgument = if (representCFunctionParameterAsString(func, parameter.type)) {
-                    kotlinParameters.add(parameterName to KotlinTypes.string.makeNullable())
+                    val annotations = when (platform) {
+                        KotlinPlatform.JVM -> ""
+                        KotlinPlatform.NATIVE -> "@CCall.CString "
+                    }
+                    kotlinParameters.add(annotations + parameterName to KotlinTypes.string.makeNullable())
                     bodyGenerator.pushMemScoped()
                     "$parameterName?.cstr?.getPointer(memScope)"
                 } else if (representCFunctionParameterAsWString(func, parameter.type)) {
-                    kotlinParameters.add(parameterName to KotlinTypes.string.makeNullable())
+                    val annotations = when (platform) {
+                        KotlinPlatform.JVM -> ""
+                        KotlinPlatform.NATIVE -> "@CCall.WCString "
+                    }
+                    kotlinParameters.add(annotations + parameterName to KotlinTypes.string.makeNullable())
                     bodyGenerator.pushMemScoped()
                     "$parameterName?.wcstr?.getPointer(memScope)"
                 } else if (representAsValuesRef != null) {
@@ -647,7 +656,7 @@ class StubGenerator(
                 bridgeArguments.add(TypedKotlinValue(parameter.type, bridgeArgument))
             }
 
-            if (!func.generateAsFfiVarargs()) {
+            if (!func.isVararg || platform != KotlinPlatform.NATIVE) {
                 val result = mappingBridgeGenerator.kotlinToNative(
                         bodyGenerator,
                         this,
@@ -657,37 +666,19 @@ class StubGenerator(
                     "${func.name}(${nativeValues.joinToString()})"
                 }
                 bodyGenerator.out("return $result")
+                isCCall = false
+                cCallSymbolName = null
             } else {
-                val returnTypeKind = getFfiTypeKind(func.returnType)
-
                 kotlinParameters.add("vararg variadicArguments" to KotlinTypes.any.makeNullable())
-                bodyGenerator.pushMemScoped()
+                isCCall = true // TODO: don't generate unused body in this case.
+                cCallSymbolName = "knifunptr_" + pkgName.replace('.', '_') + nextUniqueId()
 
-                val resultVar = "kniResult"
-
-                val resultPtr = if (!func.returnsVoid()) {
-                    val returnType = mirror(func.returnType).pointedType.render(kotlinFile)
-                    bodyGenerator.out("val $resultVar = allocFfiReturnValueBuffer<$returnType>(typeOf<$returnType>())")
-                    "$resultVar.rawPtr"
-                } else {
-                    "nativeNullPtr"
-                }
-                val fixedArguments = bridgeArguments.joinToString(", ") { it.value }
-
-                val functionPtr = simpleBridgeGenerator.kotlinToNative(
+                simpleBridgeGenerator.insertNativeBridge(
                         this,
-                        BridgedType.NATIVE_PTR,
-                        emptyList()
-                ) {
-                    func.name
-                }
-
-                bodyGenerator.out("callWithVarargs($functionPtr, $resultPtr, $returnTypeKind, " +
-                        "arrayOf($fixedArguments), variadicArguments, memScope)")
-
-                if (!func.returnsVoid()) {
-                    bodyGenerator.out("return $resultVar.value")
-                }
+                        emptyList(),
+                        listOf("extern const void* $cCallSymbolName __asm(${cCallSymbolName.quoteAsKotlinLiteral()});",
+                                "extern const void* $cCallSymbolName = &${func.name};")
+                )
             }
 
             val returnType = if (func.returnsVoid()) {
@@ -702,28 +693,6 @@ class StubGenerator(
             this.header = "fun ${func.name.asSimpleName()}($joinedKotlinParameters): $returnType"
 
             this.bodyLines = bodyGenerator.build()
-        }
-    }
-
-    private fun getFfiTypeKind(type: Type): String {
-        val unwrappedType = type.unwrapTypedefs()
-        return when (unwrappedType) {
-            is VoidType -> "FFI_TYPE_KIND_VOID"
-            is PointerType -> "FFI_TYPE_KIND_POINTER"
-            is IntegerType -> when (unwrappedType.size) {
-                1 -> "FFI_TYPE_KIND_SINT8"
-                2 -> "FFI_TYPE_KIND_SINT16"
-                4 -> "FFI_TYPE_KIND_SINT32"
-                8 -> "FFI_TYPE_KIND_SINT64"
-                else -> TODO(unwrappedType.toString())
-            }
-            is FloatingType -> when (unwrappedType.size) {
-                4 -> "FFI_TYPE_KIND_FLOAT"
-                8 -> "FFI_TYPE_KIND_DOUBLE"
-                else -> TODO(unwrappedType.toString())
-            }
-            is EnumType -> getFfiTypeKind(unwrappedType.def.baseType)
-            else -> TODO(unwrappedType.toString())
         }
     }
 
@@ -943,6 +912,7 @@ class StubGenerator(
         }
         if (platform == KotlinPlatform.NATIVE) {
             out("import kotlin.native.SymbolName")
+            out("import kotlinx.cinterop.internal.*")
         }
         out("import kotlinx.cinterop.*")
 

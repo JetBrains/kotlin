@@ -69,7 +69,10 @@ open class Command(initialCommand: List<String>) {
     /**
      * If withErrors is true then output from error stream will be added
      */
-    fun getOutputLines(withErrors: Boolean = false): List<String> {
+    fun getOutputLines(withErrors: Boolean = false): List<String> =
+            getResult(withErrors, handleError = true).outputLines
+
+    fun getResult(withErrors: Boolean, handleError: Boolean = false): Result {
         log()
 
         val outputFile = createTempFile()
@@ -80,7 +83,7 @@ open class Command(initialCommand: List<String>) {
 
             builder.redirectInput(Redirect.INHERIT)
             builder.redirectError(Redirect.INHERIT)
-            builder.redirectOutput(ProcessBuilder.Redirect.to(outputFile))
+            builder.redirectOutput(Redirect.to(outputFile))
                     .redirectErrorStream(withErrors)
             // Note: getting process output could be done without redirecting to temporary file,
             // however this would require managing a thread to read `process.inputStream` because
@@ -88,13 +91,15 @@ open class Command(initialCommand: List<String>) {
 
             val process = builder.start()
             val code = process.waitFor()
-            handleExitCode(code)
+            if (handleError) handleExitCode(code)
 
-            return outputFile.readLines()
+            return Result(code, outputFile.readLines())
         } finally {
             outputFile.delete()
         }
     }
+
+    class Result(val exitCode: Int, val outputLines: List<String>)
 
     private fun handleExitCode(code: Int) {
         if (code != 0) throw KonanExternalToolFailure("The ${command[0]} command returned non-zero exit code: $code.", command[0])

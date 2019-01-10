@@ -2882,6 +2882,10 @@ kotlinNativeInterop {
         defFile 'interop/basics/ctypes.def'
     }
 
+    ccallbacksAndVarargs {
+        defFile 'interop/basics/ccallbacksAndVarargs.def'
+    }
+
     if (isMac()) {
         objcSmoke {
             defFile 'interop/objc/objcSmoke.def'
@@ -2980,6 +2984,12 @@ task interop_types(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/types.kt"
     interop = 'ctypes'
+}
+
+task interop_callbacksAndVarargs(type: RunInteropKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/callbacksAndVarargs.kt"
+    interop = 'ccallbacksAndVarargs'
 }
 
 task interop_echo_server(type: RunInteropKonanTest) {

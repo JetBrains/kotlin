@@ -314,9 +314,12 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         }
 
     lateinit var llvm: Llvm
+    val llvmImports: LlvmImports = Llvm.ImportsImpl(this)
     lateinit var llvmDeclarations: LlvmDeclarations
     lateinit var bitcodeFileName: String
     lateinit var library: KonanLibraryWriter
+
+    val cStubsManager = CStubsManager()
 
     var phase: KonanPhase? = null
     var depth: Int = 0

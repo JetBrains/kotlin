@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManager
+import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.kotlinNativeInternal
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -19,6 +20,9 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.ir.builders.IrBuilder
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.name.Name
 
 abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBackendContext {
@@ -49,14 +53,23 @@ abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBac
         )
     }
 
-    private fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? {
-        val sourceRangeInfo = containingFile.fileEntry.getSourceRangeInfo(this.startOffset, this.endOffset)
-        return CompilerMessageLocation.create(
-                path = sourceRangeInfo.filePath,
-                line = sourceRangeInfo.startLineNumber + 1,
-                column = sourceRangeInfo.startColumnNumber + 1,
-                lineContent = null // TODO: retrieve the line content.
-        )
-    }
+}
 
+internal fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? =
+        createCompilerMessageLocation(containingFile, this.startOffset, this.endOffset)
+
+internal fun IrBuilderWithScope.getCompilerMessageLocation(): CompilerMessageLocation? {
+    val declaration = this.scope.scopeOwnerSymbol.owner as? IrDeclaration ?: return null
+    val file = declaration.findPackage() as? IrFile ?: return null
+    return createCompilerMessageLocation(file, startOffset, endOffset)
+}
+
+private fun createCompilerMessageLocation(containingFile: IrFile, startOffset: Int, endOffset: Int): CompilerMessageLocation? {
+    val sourceRangeInfo = containingFile.fileEntry.getSourceRangeInfo(startOffset, endOffset)
+    return CompilerMessageLocation.create(
+            path = sourceRangeInfo.filePath,
+            line = sourceRangeInfo.startLineNumber + 1,
+            column = sourceRangeInfo.startColumnNumber + 1,
+            lineContent = null // TODO: retrieve the line content.
+    )
 }

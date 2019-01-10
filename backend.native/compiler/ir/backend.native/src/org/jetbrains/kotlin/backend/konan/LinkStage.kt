@@ -181,8 +181,7 @@ internal class LinkStage(val context: Context, val phaser: PhaseManager) {
         try {
             File(executable).delete()
             linker.linkCommands(objectFiles = objectFiles, executable = executable,
-                    libraries = linker.targetLibffi + linker.linkStaticLibraries(includedBinaries) +
-                            context.config.defaultSystemLibraries,
+                    libraries = linker.linkStaticLibraries(includedBinaries) + context.config.defaultSystemLibraries,
                     linkerArgs = entryPointSelector +
                             asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                             BitcodeEmbedding.getLinkerOptions(context.config) +

@@ -27,14 +27,11 @@ private class StructDeclImpl(spelling: String, override val location: Location) 
 
 private class StructDefImpl(
         size: Long, align: Int, decl: StructDecl,
-        hasNaturalLayout: Boolean
+        override val kind: Kind
 ) : StructDef(
-        size, align, decl,
-        hasNaturalLayout = hasNaturalLayout
+        size, align, decl
 ) {
-
-    override val fields = mutableListOf<Field>()
-    override val bitFields = mutableListOf<BitField>()
+    override val members = mutableListOf<StructMember>()
 }
 
 private class EnumDefImpl(spelling: String, type: Type, override val location: Location) : EnumDef(spelling, type) {
@@ -196,39 +193,56 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 
     private fun createStructDef(structDecl: StructDeclImpl, cursor: CValue<CXCursor>) {
         val type = clang_getCursorType(cursor)
+
+        val fields = mutableListOf<StructMember>()
+        addDeclaredFields(fields, type, type)
+
         val size = clang_Type_getSizeOf(type)
         val align = clang_Type_getAlignOf(type).toInt()
 
         val structDef = StructDefImpl(
                 size, align, structDecl,
-                hasNaturalLayout = structHasNaturalLayout(cursor)
+                when (cursor.kind) {
+                    CXCursorKind.CXCursor_UnionDecl -> StructDef.Kind.UNION
+                    CXCursorKind.CXCursor_StructDecl -> StructDef.Kind.STRUCT
+                    else -> error(cursor.kind)
+                }
         )
 
-        structDecl.def = structDef
+        structDef.members += fields
 
-        addDeclaredFields(structDef, type, type)
+        structDecl.def = structDef
     }
 
-    private fun addDeclaredFields(structDef: StructDefImpl, structType: CValue<CXType>, containerType: CValue<CXType>) {
+    private fun addDeclaredFields(result: MutableList<StructMember>, structType: CValue<CXType>, containerType: CValue<CXType>) {
         getFields(containerType).forEach { fieldCursor ->
             val name = getCursorSpelling(fieldCursor)
             if (name.isNotEmpty()) {
                 val fieldType = convertCursorType(fieldCursor)
                 val offset = clang_Type_getOffsetOf(structType, name)
-                if (clang_Cursor_isBitField(fieldCursor) == 0) {
-                    val typeAlign = clang_Type_getAlignOf(clang_getCursorType(fieldCursor))
-                    structDef.fields.add(Field(name, fieldType, offset, typeAlign))
+                val member = if (offset < 0) {
+                    IncompleteField(name, fieldType)
+                } else if (clang_Cursor_isBitField(fieldCursor) == 0) {
+                    val canonicalFieldType = clang_getCanonicalType(clang_getCursorType(fieldCursor))
+                    Field(
+                            name,
+                            fieldType,
+                            offset,
+                            clang_Type_getSizeOf(canonicalFieldType),
+                            clang_Type_getAlignOf(canonicalFieldType)
+                    )
                 } else {
                     val size = clang_getFieldDeclBitWidth(fieldCursor)
-                    structDef.bitFields.add(BitField(name, fieldType, offset, size))
+                    BitField(name, fieldType, offset, size)
                 }
+                result.add(member)
             } else {
                 // Unnamed field.
                 val fieldType = clang_getCursorType(fieldCursor)
                 when (fieldType.kind) {
                     CXTypeKind.CXType_Record -> {
                         // Unnamed struct fields also contribute their fields:
-                        addDeclaredFields(structDef, structType, fieldType)
+                        addDeclaredFields(result, structType, fieldType)
                     }
                     else -> {
                         // Nothing.
@@ -445,33 +459,6 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         }
 
         return Typedef(typedefDef)
-    }
-
-    /**
-     * Computes [StructDef.hasNaturalLayout] property.
-     */
-    fun structHasNaturalLayout(structDefCursor: CValue<CXCursor>): Boolean {
-        val defKind = structDefCursor.kind
-
-        when (defKind) {
-
-            CXCursorKind.CXCursor_UnionDecl -> return false
-
-            CXCursorKind.CXCursor_StructDecl -> {
-                var hasAttributes = false
-
-                visitChildren(structDefCursor) { cursor, _ ->
-                    if (clang_isAttribute(cursor.kind) != 0) {
-                        hasAttributes = true
-                    }
-                    CXChildVisitResult.CXChildVisit_Continue
-                }
-
-                return !hasAttributes
-            }
-
-            else -> throw IllegalArgumentException(defKind.toString())
-        }
     }
 
     private fun convertCursorType(cursor: CValue<CXCursor>) =

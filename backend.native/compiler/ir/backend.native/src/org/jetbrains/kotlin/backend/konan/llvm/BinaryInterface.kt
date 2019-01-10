@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.externalSymbolOrThrow
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationValue
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
@@ -102,11 +103,11 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
     return true
 }
 
-private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
+private val symbolNameAnnotation = RuntimeNames.symbolName
 
 private val cnameAnnotation = FqName("kotlin.native.CName")
 
-private val exportForCppRuntimeAnnotation = FqName("kotlin.native.internal.ExportForCppRuntime")
+private val exportForCppRuntimeAnnotation = RuntimeNames.exportForCppRuntime
 
 private val exportForCompilerAnnotation = FqName("kotlin.native.internal.ExportForCompiler")
 

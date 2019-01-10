@@ -11,12 +11,17 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.cgen.KotlinStubs
+import org.jetbrains.kotlin.backend.konan.cgen.generateCCall
+import org.jetbrains.kotlin.backend.konan.cgen.generateCFunctionPointer
 import org.jetbrains.kotlin.backend.konan.getInlinedClass
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.backend.konan.objcexport.namePrefix
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
+import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
@@ -29,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -38,6 +44,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -743,13 +750,52 @@ internal class InteropLoweringPart2(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = InteropTransformer(context, irFile)
         irFile.transformChildrenVoid(transformer)
+
+        irFile.addChildren(transformer.newTopLevelDeclarations)
     }
 }
 
 private class InteropTransformer(val context: Context, val irFile: IrFile) : IrBuildingTransformer(context) {
 
+    val newTopLevelDeclarations = mutableListOf<IrDeclaration>()
+
     val interop = context.interopBuiltIns
     val symbols = context.ir.symbols
+
+    private inline fun <T> generateWithStubs(element: IrElement? = null, block: KotlinStubs.() -> T): T =
+            createKotlinStubs(element).block()
+
+    private fun createKotlinStubs(element: IrElement?): KotlinStubs {
+        val location = if (element != null) {
+            element.getCompilerMessageLocation(irFile)
+        } else {
+            builder.getCompilerMessageLocation()
+        }
+
+        return object : KotlinStubs {
+            override val irBuiltIns get() = context.irBuiltIns
+            override val symbols get() = context.ir.symbols
+
+            override fun addKotlin(declaration: IrDeclaration) {
+                newTopLevelDeclarations += declaration
+            }
+
+            override fun addC(lines: List<String>) {
+                context.cStubsManager.addStub(location, lines)
+            }
+
+            override fun getUniqueCName(prefix: String) =
+                    "_${context.moduleDescriptor.namePrefix}_${context.cStubsManager.getUniqueName(prefix)}"
+
+            override val target get() = context.config.target
+
+            override fun reportError(location: IrElement, message: String): Nothing =
+                    context.reportCompilationError(message, irFile, location)
+        }
+    }
+
+    private fun generateCFunctionPointer(function: IrSimpleFunction, expression: IrExpression): IrExpression =
+            generateWithStubs { generateCFunctionPointer(function, function, false, expression) }
 
     override fun visitCall(expression: IrCall): IrExpression {
 
@@ -774,7 +820,10 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
             }
         }
 
-        fun reportError(message: String): Nothing = context.reportCompilationError(message, irFile, expression)
+        if (function.descriptor.annotations.hasAnnotation(RuntimeNames.cCall)) {
+            context.llvmImports.add(function.descriptor.llvmSymbolOrigin)
+            return generateWithStubs { generateCCall(expression, builder, isInvoke = false) }
+        }
 
         val intrinsicType = tryGetIntrinsicType(expression)
 
@@ -801,7 +850,8 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
                     val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(0)!!)
 
-                    if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()) {
+                    if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()
+                            || irCallableReference.symbol !is IrSimpleFunctionSymbol) {
                         context.reportCompilationError(
                                 "${descriptor.fqNameSafe} must take an unbound, non-capturing function or lambda",
                                 irFile, expression
@@ -812,13 +862,6 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                     val targetSymbol = irCallableReference.symbol
                     val target = targetSymbol.owner
                     val signatureTypes = target.allParameters.map { it.type } + target.returnType
-
-                    signatureTypes.forEachIndexed { index, type ->
-                        type.ensureSupportedInCallbacks(
-                                isReturnType = (index == signatureTypes.lastIndex),
-                                reportError = ::reportError
-                        )
-                    }
 
                     descriptor.typeParameters.forEachIndexed { index, typeParameterDescriptor ->
                         val typeArgument = expression.getTypeArgument(typeParameterDescriptor)!!.toKotlinType()
@@ -832,39 +875,10 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                         }
                     }
 
-                    IrFunctionReferenceImpl(
-                            builder.startOffset, builder.endOffset,
-                            expression.type,
-                            targetSymbol, target.descriptor,
-                            typeArgumentsCount = 0)
+                    generateCFunctionPointer(target as IrSimpleFunction, expression)
                 }
                 IntrinsicType.INTEROP_FUNPTR_INVOKE -> {
-                    // Replace by `invokeImpl${type}Ret`:
-
-                    val returnType =
-                            expression.getTypeArgument(descriptor.typeParameters.single { it.name.asString() == "R" })!!
-
-                    returnType.checkCTypeNullability(::reportError)
-
-                    val invokeImpl = symbols.interopInvokeImpls[returnType.getClass()?.descriptor] ?:
-                    context.reportCompilationError(
-                            "Invocation of C function pointer with return type '${returnType.toKotlinType()}' is not supported yet",
-                            irFile, expression
-                    )
-
-                    builder.irCall(invokeImpl).apply {
-                        putValueArgument(0, expression.extensionReceiver)
-
-                        val varargParameter = invokeImpl.owner.valueParameters[1]
-                        val varargArgument = IrVarargImpl(
-                                startOffset, endOffset, varargParameter.type, varargParameter.varargElementType!!
-                        ).apply {
-                            descriptor.valueParameters.forEach {
-                                this.addElement(expression.getValueArgument(it)!!)
-                            }
-                        }
-                        putValueArgument(varargParameter.index, varargArgument)
-                    }
+                    generateWithStubs { generateCCall(expression, builder, isInvoke = true) }
                 }
                 IntrinsicType.INTEROP_SIGN_EXTEND, IntrinsicType.INTEROP_NARROW -> {
 

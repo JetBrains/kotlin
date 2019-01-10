@@ -302,7 +302,10 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
         val found = LLVMGetNamedFunction(llvmModule, name)
         if (found != null) {
-            assert(getFunctionType(found) == type)
+            assert(getFunctionType(found) == type) {
+                "Expected: ${LLVMPrintTypeToString(type)!!.toKString()} " +
+                        "found: ${LLVMPrintTypeToString(getFunctionType(found))!!.toKString()}"
+            }
             assert(LLVMGetLinkage(found) == LLVMLinkage.LLVMExternalLinkage)
             return found
         } else {
@@ -330,11 +333,13 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return function
     }
 
-    private val usedLibraries = mutableSetOf<KonanLibrary>()
+    val imports get() = context.llvmImports
 
-    val imports = object : LlvmImports {
+    class ImportsImpl(private val context: Context) : LlvmImports {
 
-        private val allLibraries = context.librariesWithDependencies.toSet()
+        private val usedLibraries = mutableSetOf<KonanLibrary>()
+
+        private val allLibraries by lazy { context.librariesWithDependencies.toSet() }
 
         override fun add(origin: CompiledKonanModuleOrigin) {
             val library = when (origin) {
@@ -348,11 +353,13 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
             usedLibraries.add(library)
         }
+
+        override fun isImported(library: KonanLibrary): Boolean = library in usedLibraries
     }
 
     val librariesToLink: List<KonanLibrary> by lazy {
         context.config.resolvedLibraries
-                .filterRoots { (!it.isDefault && !context.config.purgeUserLibs) || it.library in usedLibraries }
+                .filterRoots { (!it.isDefault && !context.config.purgeUserLibs) || imports.isImported(it.library) }
                 .getFullList(TopologicalLibraryOrder)
     }
 

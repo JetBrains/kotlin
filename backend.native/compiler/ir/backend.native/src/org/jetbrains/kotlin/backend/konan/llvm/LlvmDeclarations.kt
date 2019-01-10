@@ -398,9 +398,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         }
 
         val llvmFunction = if (descriptor.isExternal) {
-            if (descriptor.isTypedIntrinsic || descriptor.isObjCBridgeBased()) {
-                return
-            }
+            if (descriptor.isTypedIntrinsic || descriptor.isObjCBridgeBased()
+                    || descriptor.annotations.hasAnnotation(RuntimeNames.cCall)) return
 
             context.llvm.externalFunction(descriptor.symbolName, llvmFunctionType,
                     // Assume that `external fun` is defined in native libs attached to this module:

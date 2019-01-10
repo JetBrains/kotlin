@@ -44,9 +44,6 @@ abstract class LinkerFlags(val configurables: Configurables)
         else -> error("Don't know libLTO location for this platform.")
     }
 
-    val targetLibffi = configurables.libffiDir?.let { listOf("${configurables.absoluteLibffiDir}/lib/libffi.a") }
-            ?: emptyList()
-
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
     abstract fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,

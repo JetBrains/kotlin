@@ -183,6 +183,23 @@ internal fun getFields(type: CValue<CXType>): List<CValue<CXCursor>> {
     return result
 }
 
+fun StructDef.fieldsHaveDefaultAlignment(): Boolean {
+    fun alignUp(x: Long, alignment: Long): Long = (x + alignment - 1) and (alignment - 1).inv()
+
+    var offset = 0L
+    this.members.forEach {
+        when (it) {
+            is Field -> {
+                if (alignUp(offset, it.typeAlign) * 8 != it.offset) return false
+                offset = it.offset / 8 + it.typeSize
+            }
+            is BitField -> return false
+        }
+    }
+
+    return true
+}
+
 internal fun CValue<CXCursor>.isLeaf(): Boolean {
     var hasChildren = false
 

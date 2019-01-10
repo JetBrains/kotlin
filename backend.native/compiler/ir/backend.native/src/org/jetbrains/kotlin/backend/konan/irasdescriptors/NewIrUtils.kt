@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
@@ -33,6 +34,16 @@ val IrDeclarationParent.fqNameSafe: FqName get() = when (this) {
 
     else -> error(this)
 }
+
+val IrClass.classId: ClassId?
+    get() {
+        val parent = this.parent
+        return when (parent) {
+            is IrClass -> parent.classId?.createNestedClassId(this.name)
+            is IrPackageFragment -> ClassId.topLevel(parent.fqName.child(this.name))
+            else -> null
+        }
+    }
 
 val IrDeclaration.name: Name
     get() = when (this) {

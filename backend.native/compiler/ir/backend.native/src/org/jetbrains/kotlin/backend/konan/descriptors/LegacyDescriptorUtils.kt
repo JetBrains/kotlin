@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.backend.konan.serialization.isExported
@@ -16,10 +17,12 @@ import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -270,5 +273,16 @@ fun CallableMemberDescriptor.externalSymbolOrThrow(): String? {
 
     if (this.annotations.hasAnnotation(TypedIntrinsic)) return null
 
+    if (this.annotations.hasAnnotation(RuntimeNames.cCall)) return null
+
     throw Error("external function ${this} must have @TypedIntrinsic, @SymbolName or @ObjCMethod annotation")
 }
+
+fun createAnnotation(
+        descriptor: ClassDescriptor,
+        vararg values: Pair<String, String>
+): AnnotationDescriptor = AnnotationDescriptorImpl(
+        descriptor.defaultType,
+        values.map { (name, value) -> Name.identifier(name) to StringValue(value) }.toMap(),
+        SourceElement.NO_SOURCE
+)
