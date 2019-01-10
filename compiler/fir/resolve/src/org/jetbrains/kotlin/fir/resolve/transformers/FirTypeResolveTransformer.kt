@@ -18,13 +18,16 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedFunctionTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
-open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
+open class FirTypeResolveTransformer(
+    private val traversedClassifiers: Set<FirMemberDeclaration> = setOf()
+) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E).compose()
@@ -53,7 +56,7 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
 
     private fun resolveSuperTypesAndExpansions(element: FirMemberDeclaration) {
         try {
-            element.transformChildren(SuperTypeResolver(), null)
+            element.transformChildren(SuperTypeResolver(traversedClassifiers + listOfNotNull(element)), null)
         } catch (e: Exception) {
             class SuperTypeResolveException(cause: Exception) : Exception(element.render(), cause)
             throw SuperTypeResolveException(e)
@@ -179,14 +182,17 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
         return typeProjectionWithVariance.compose()
     }
 
-    private class SuperTypeResolveTransformer(val elementIterator: Iterator<FirElement>) : FirTypeResolveTransformer() {
+    private class SuperTypeResolveTransformer(
+        val elementIterator: Iterator<FirElement>,
+        traversedClassifiers: Set<FirMemberDeclaration>
+    ) : FirTypeResolveTransformer(traversedClassifiers) {
         override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
             if (elementIterator.hasNext()) elementIterator.next().transformSingle(this, data)
             return element.compose()
         }
     }
 
-    private inner class SuperTypeResolver : FirTransformer<Nothing?>() {
+    private inner class SuperTypeResolver(val traversedClassifiers: Set<FirMemberDeclaration>) : FirTransformer<Nothing?>() {
         override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
             return element.compose()
         }
@@ -208,7 +214,7 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
                     }
 
                     val transformer = SuperTypeResolveTransformer(
-                        firElementsToVisit.iterator()
+                        firElementsToVisit.iterator(), traversedClassifiers
                     )
                     file.transformSingle(transformer, null)
 
@@ -227,7 +233,13 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
             val symbol = typeResolver.resolveToSymbol(type, scope, position = FirPosition.SUPER_TYPE_OR_EXPANSION)
             val myTransformer = this@FirTypeResolveTransformer
 
-            if (symbol != null) walkSymbols(symbol)
+            if (symbol != null) {
+                if (symbol is AbstractFirBasedSymbol<*> && symbol.fir in traversedClassifiers) {
+                    return FirErrorTypeImpl(type.session, type.psi, "Recursion detected: ${type.render()}").compose()
+                } else {
+                    walkSymbols(symbol)
+                }
+            }
 
             if (type !is FirUserType) return type.transform(myTransformer, data)
 
@@ -245,7 +257,7 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
     }
 
     private tailrec fun ConeClassLikeSymbol.collectSuperTypes(list: MutableList<ConeClassLikeType>) {
-        return when (this) {
+        when (this) {
             is ConeClassSymbol -> {
                 val superClassType =
                     this.superTypes
