@@ -27,9 +27,9 @@ class InfoCollector(private val observedEffect: ESEffect) : ESExpressionVisitor<
     private var isInverted: Boolean = false
 
     fun collectFromSchema(schema: List<ESEffect>): MutableContextInfo =
-        schema.mapNotNull { collectFromEffect(it) }.fold(
-            MutableContextInfo.EMPTY,
-            { resultingInfo, clauseInfo -> resultingInfo.and(clauseInfo) })
+        schema.mapNotNull { collectFromEffect(it) }.fold(MutableContextInfo.EMPTY) { resultingInfo, clauseInfo ->
+            resultingInfo.and(clauseInfo)
+        }
 
     private fun collectFromEffect(effect: ESEffect): MutableContextInfo? {
         if (effect !is ConditionalEffect) {
@@ -38,10 +38,10 @@ class InfoCollector(private val observedEffect: ESEffect) : ESExpressionVisitor<
 
         // Check for information from conditional effects
         return when (observedEffect.isImplies(effect.simpleEffect)) {
-        // observed effect implies clause's effect => clause's effect was fired => clause's condition is true
+            // observed effect implies clause's effect => clause's effect was fired => clause's condition is true
             true -> effect.condition.accept(this)
 
-        // Observed effect *may* or *doesn't* implies clause's - no useful information
+            // Observed effect *may* or *doesn't* implies clause's - no useful information
             null, false -> null
         }
     }
