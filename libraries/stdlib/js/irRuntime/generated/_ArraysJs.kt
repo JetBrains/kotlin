@@ -1272,7 +1272,7 @@ public actual fun IntArray.toTypedArray(): Array<Int> {
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public actual fun LongArray.toTypedArray(): Array<Long> {
-    return copyOf().unsafeCast<Array<Long>>()
+    return js("[]").slice.call(this)
 }
 
 /**
@@ -1293,7 +1293,7 @@ public actual fun DoubleArray.toTypedArray(): Array<Double> {
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public actual fun BooleanArray.toTypedArray(): Array<Boolean> {
-    return copyOf().unsafeCast<Array<Boolean>>()
+    return js("[]").slice.call(this)
 }
 
 /**
