@@ -12,9 +12,8 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
 open class KotlinMultiplatformExtension : KotlinProjectExtension(), KotlinTargetContainerWithPresetFunctions {
     override lateinit var presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
@@ -44,6 +43,14 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension(), KotlinTarget
     fun targetFromPreset(preset: KotlinTargetPreset<*>) = targetFromPreset(preset, preset.name) { }
     fun targetFromPreset(preset: KotlinTargetPreset<*>, name: String) = targetFromPreset(preset, name) { }
     fun targetFromPreset(preset: KotlinTargetPreset<*>, configure: Closure<*>) = targetFromPreset(preset, preset.name, configure)
+
+    internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
+        if (isGradleVersionAtLeast(4, 7)) {
+            KotlinSoftwareComponentWithCoordinatesAndPublication("kotlin", targets)
+        } else {
+            KotlinSoftwareComponent("kotlin", targets)
+        }
+    }
 }
 
 internal fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPreset<*>): Boolean =
