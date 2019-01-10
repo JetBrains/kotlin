@@ -542,6 +542,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/unsafeRemoving.kt");
         }
 
+        @TestMetadata("unsignedRangeIteratorSpecialization.kt")
+        public void testUnsignedRangeIteratorSpecialization() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/unsignedRangeIteratorSpecialization.kt");
+        }
+
         @TestMetadata("variableClash.kt")
         public void testVariableClash() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/variableClash.kt");

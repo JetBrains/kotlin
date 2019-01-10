@@ -16,57 +16,62 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
-import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.codegen.intrinsics.IteratorNext
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
-import org.jetbrains.kotlin.codegen.range.getPrimitiveRangeOrProgressionElementType
-import org.jetbrains.kotlin.codegen.range.supportedRangeTypes
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.codegen.range.*
 import org.jetbrains.org.objectweb.asm.Type
 
 class ProgressionIteratorBasicValue
-private constructor(private val valuesPrimitiveTypeName: String) :
-    StrictBasicValue(IteratorNext.getPrimitiveIteratorType(Name.identifier(valuesPrimitiveTypeName))) {
+private constructor(
+    val nextMethodName: String,
+    iteratorType: Type,
+    private val primitiveElementType: Type,
+    val boxedElementType: Type
+) : StrictBasicValue(iteratorType) {
 
-    val valuesPrimitiveType: Type = VALUES_TYPENAME_TO_TYPE[valuesPrimitiveTypeName] ?: error("Unexpected type $valuesPrimitiveTypeName")
-
-    val nextMethodName: String
-        get() = "next$valuesPrimitiveTypeName"
+    private constructor(typeName: String, valuesPrimitiveType: Type, valuesBoxedType: Type = AsmUtil.boxType(valuesPrimitiveType)) :
+            this("next$typeName", Type.getObjectType("kotlin/collections/${typeName}Iterator"), valuesPrimitiveType, valuesBoxedType)
 
     val nextMethodDesc: String
-        get() = "()" + valuesPrimitiveType.descriptor
+        get() = "()" + primitiveElementType.descriptor
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
         if (!super.equals(other)) return false
-
-        val value = other as ProgressionIteratorBasicValue?
-
-        return valuesPrimitiveType == value!!.valuesPrimitiveType
+        val value = other as ProgressionIteratorBasicValue
+        return primitiveElementType == value.primitiveElementType
     }
 
     override fun hashCode(): Int =
-        super.hashCode() * 31 + valuesPrimitiveType.hashCode()
+        super.hashCode() * 31 + nextMethodName.hashCode()
 
     companion object {
-        private val VALUES_TYPENAME_TO_TYPE: Map<String, Type> =
-            supportedRangeTypes.associate { primitiveType ->
-                primitiveType.typeName.asString() to Type.getType(JvmPrimitiveType.get(primitiveType).desc)
-            }
+        private val CHAR_PROGRESSION_ITERATOR_VALUE = ProgressionIteratorBasicValue("Char", Type.CHAR_TYPE)
+        private val INT_PROGRESSION_ITERATOR_VALUE = ProgressionIteratorBasicValue("Int", Type.INT_TYPE)
+        private val LONG_PROGRESSION_ITERATOR_VALUE = ProgressionIteratorBasicValue("Long", Type.LONG_TYPE)
 
-        private val ITERATOR_VALUE_BY_ELEMENT_PRIMITIVE_TYPE: Map<PrimitiveType, ProgressionIteratorBasicValue> =
-            supportedRangeTypes.associate { elementType ->
-                elementType to ProgressionIteratorBasicValue(elementType.typeName.asString())
-            }
+        private val UINT_PROGRESSION_ITERATOR_VALUE =
+            ProgressionIteratorBasicValue("UInt", Type.INT_TYPE, Type.getObjectType("kotlin/UInt"))
+        private val ULONG_PROGRESSION_ITERATOR_VALUE =
+            ProgressionIteratorBasicValue("ULong", Type.LONG_TYPE, Type.getObjectType("kotlin/ULong"))
 
-        fun byProgressionClassType(progressionClassType: Type): ProgressionIteratorBasicValue? {
-            val classFqName = FqName(progressionClassType.className)
-            val elementType = getPrimitiveRangeOrProgressionElementType(classFqName)
-            return ITERATOR_VALUE_BY_ELEMENT_PRIMITIVE_TYPE[elementType]
-        }
+        private val PROGRESSION_CLASS_NAME_TO_ITERATOR_VALUE: Map<String, ProgressionIteratorBasicValue> =
+            hashMapOf(
+                CHAR_RANGE_FQN to CHAR_PROGRESSION_ITERATOR_VALUE,
+                CHAR_PROGRESSION_FQN to CHAR_PROGRESSION_ITERATOR_VALUE,
+                INT_RANGE_FQN to INT_PROGRESSION_ITERATOR_VALUE,
+                INT_PROGRESSION_FQN to INT_PROGRESSION_ITERATOR_VALUE,
+                LONG_RANGE_FQN to LONG_PROGRESSION_ITERATOR_VALUE,
+                LONG_PROGRESSION_FQN to LONG_PROGRESSION_ITERATOR_VALUE,
+                UINT_RANGE_FQN to UINT_PROGRESSION_ITERATOR_VALUE,
+                UINT_PROGRESSION_FQN to UINT_PROGRESSION_ITERATOR_VALUE,
+                ULONG_RANGE_FQN to ULONG_PROGRESSION_ITERATOR_VALUE,
+                ULONG_PROGRESSION_FQN to ULONG_PROGRESSION_ITERATOR_VALUE
+            )
+
+        fun byProgressionClassType(progressionClassType: Type): ProgressionIteratorBasicValue? =
+            PROGRESSION_CLASS_NAME_TO_ITERATOR_VALUE[progressionClassType.className]
     }
 }
 

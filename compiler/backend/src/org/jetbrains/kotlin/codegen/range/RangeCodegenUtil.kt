@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -22,18 +19,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
-
-val supportedRangeTypes = listOf(PrimitiveType.CHAR, PrimitiveType.INT, PrimitiveType.LONG)
-
-private val RANGE_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
-    supportedRangeTypes.associateBy {
-        RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Range"))
-    }
-
-private val PROGRESSION_TO_ELEMENT_TYPE: Map<FqName, PrimitiveType> =
-    supportedRangeTypes.associateBy {
-        RANGES_PACKAGE_FQ_NAME.child(Name.identifier(it.typeName.toString() + "Progression"))
-    }
 
 fun isPrimitiveRange(rangeType: KotlinType) =
     isClassTypeWithFqn(rangeType, PRIMITIVE_RANGE_FQNS)
@@ -53,14 +38,14 @@ private fun isClassTypeWithFqn(kotlinType: KotlinType, fqns: Set<String>): Boole
     return fqName.asString() in fqns
 }
 
-private const val CHAR_RANGE_FQN = "kotlin.ranges.CharRange"
-private const val INT_RANGE_FQN = "kotlin.ranges.IntRange"
-private const val LONG_RANGE_FQN = "kotlin.ranges.LongRange"
+internal const val CHAR_RANGE_FQN = "kotlin.ranges.CharRange"
+internal const val INT_RANGE_FQN = "kotlin.ranges.IntRange"
+internal const val LONG_RANGE_FQN = "kotlin.ranges.LongRange"
 private val PRIMITIVE_RANGE_FQNS = setOf(CHAR_RANGE_FQN, INT_RANGE_FQN, LONG_RANGE_FQN)
 
-private const val CHAR_PROGRESSION_FQN = "kotlin.ranges.CharProgression"
-private const val INT_PROGRESSION_FQN = "kotlin.ranges.IntProgression"
-private const val LONG_PROGRESSION_FQN = "kotlin.ranges.LongProgression"
+internal const val CHAR_PROGRESSION_FQN = "kotlin.ranges.CharProgression"
+internal const val INT_PROGRESSION_FQN = "kotlin.ranges.IntProgression"
+internal const val LONG_PROGRESSION_FQN = "kotlin.ranges.LongProgression"
 private val PRIMITIVE_PROGRESSION_FQNS = setOf(CHAR_PROGRESSION_FQN, INT_PROGRESSION_FQN, LONG_PROGRESSION_FQN)
 
 private const val CLOSED_FLOAT_RANGE_FQN = "kotlin.ranges.ClosedFloatRange"
@@ -69,12 +54,12 @@ private const val CLOSED_RANGE_FQN = "kotlin.ranges.ClosedRange"
 private const val CLOSED_FLOATING_POINT_RANGE_FQN = "kotlin.ranges.ClosedFloatingPointRange"
 private const val COMPARABLE_RANGE_FQN = "kotlin.ranges.ComparableRange"
 
-private const val UINT_RANGE_FQN = "kotlin.ranges.UIntRange"
-private const val ULONG_RANGE_FQN = "kotlin.ranges.ULongRange"
+internal const val UINT_RANGE_FQN = "kotlin.ranges.UIntRange"
+internal const val ULONG_RANGE_FQN = "kotlin.ranges.ULongRange"
 private val UNSIGNED_RANGE_FQNS = setOf(UINT_RANGE_FQN, ULONG_RANGE_FQN)
 
-private const val UINT_PROGRESSION_FQN = "kotlin.ranges.UIntProgression"
-private const val ULONG_PROGRESSION_FQN = "kotlin.ranges.ULongProgression"
+internal const val UINT_PROGRESSION_FQN = "kotlin.ranges.UIntProgression"
+internal const val ULONG_PROGRESSION_FQN = "kotlin.ranges.ULongProgression"
 private val UNSIGNED_PROGRESSION_FQNS = setOf(UINT_PROGRESSION_FQN, ULONG_PROGRESSION_FQN)
 
 fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
@@ -112,12 +97,6 @@ fun BindingContext.getElementType(forExpression: KtForExpression): KotlinType {
         ?: throw AssertionError("No next() function " + PsiDiagnosticUtils.atLocation(loopRange))
     return nextCall.resultingDescriptor.returnType!!
 }
-
-fun getPrimitiveRangeOrProgressionElementType(rangeOrProgressionName: FqName): PrimitiveType? =
-    RANGE_TO_ELEMENT_TYPE[rangeOrProgressionName] ?: PROGRESSION_TO_ELEMENT_TYPE[rangeOrProgressionName]
-
-fun isRangeOrProgression(className: FqName) =
-    getPrimitiveRangeOrProgressionElementType(className) != null
 
 fun isPrimitiveNumberRangeTo(rangeTo: CallableDescriptor) =
     "rangeTo" == rangeTo.name.asString() && isPrimitiveNumberClassDescriptor(rangeTo.containingDeclaration) ||
