@@ -34,7 +34,8 @@ val projectsToShadow by extra(listOf(
                 ":compiler:fir:cones",
                 ":compiler:fir:resolve",
                 ":compiler:fir:tree",
-                ":compiler:fir:psi2fir"
+                ":compiler:fir:psi2fir",
+                ":idea:fir-view"
             )
         } else {
             emptyArray()
@@ -46,7 +47,6 @@ val projectsToShadow by extra(listOf(
         ":idea:ide-common",
         ":idea",
         ":idea:idea-native",
-        ":idea:fir-view",
         ":idea:idea-core",
         ":idea:idea-gradle",
         ":idea:idea-gradle-native",
