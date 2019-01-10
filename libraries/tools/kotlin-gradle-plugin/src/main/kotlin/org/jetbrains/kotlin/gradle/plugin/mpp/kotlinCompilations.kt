@@ -61,6 +61,9 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
+    override val allKotlinSourceSets: Set<KotlinSourceSet>
+        get() = kotlinSourceSets.flatMapTo(mutableSetOf()) { it.getSourceSetHierarchy() }
+
     override val defaultSourceSet: KotlinSourceSet
         get() = target.project.kotlinExtension.sourceSets.getByName(defaultSourceSetName)
 
@@ -177,9 +180,6 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override fun toString(): String = "compilation '$compilationName' ($target)"
 }
-
-val KotlinCompilation<*>.allKotlinSourceSets: Set<KotlinSourceSet>
-    get() = kotlinSourceSets.flatMapTo(mutableSetOf()) { it.getSourceSetHierarchy() }
 
 abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>(
     target: KotlinTarget,
