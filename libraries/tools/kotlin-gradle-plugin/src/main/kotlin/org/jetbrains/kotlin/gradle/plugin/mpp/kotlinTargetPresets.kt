@@ -215,11 +215,6 @@ class KotlinJvmWithJavaTargetPreset(
             Kotlin2JvmSourceSetProcessor(project, KotlinTasksProvider(name), compilation, kotlinPluginVersion)
         }
 
-        target.compilations.all { compilation ->
-            // Set up dependency resolution using platforms:
-            AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, target, project.configurations)
-        }
-
         target.compilations.getByName("test").run {
             val main = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 

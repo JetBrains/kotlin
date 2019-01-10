@@ -230,6 +230,12 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
     }
 
     @Test
+    fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations() =
+        with(Project("new-mpp-jvm-with-java-multi-module", GradleVersionRequired.AtLeast("4.7"))) {
+            testResolveAllConfigurations("app")
+        }
+
+    @Test
     fun testConfigurationsWithNoExplicitUsageResolveRuntime() =
     // Starting with Gradle 5.0, plain Maven dependencies are represented as two variants, and resolving them to the API one leads
     // to transitive dependencies left out of the resolution results. We need to ensure that our attributes schema does not lead to the API
