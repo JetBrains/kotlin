@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
+import groovy.util.Node
+import groovy.util.NodeList
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.XmlProvider
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.FeaturePreviews
@@ -156,7 +160,7 @@ class KotlinMultiplatformPlugin(
         }
 
         val targets = project.multiplatformExtension!!.targets
-        val kotlinSoftwareComponent = KotlinSoftwareComponent("kotlin", targets)
+        val kotlinSoftwareComponent = project.multiplatformExtension!!.rootSoftwareComponent
 
         project.extensions.configure(PublishingExtension::class.java) { publishing ->
 
@@ -203,6 +207,8 @@ class KotlinMultiplatformPlugin(
                     }
                     (this as MavenPublicationInternal).publishWithOriginalFileName()
                     artifactId = variant.defaultArtifactId
+
+                    pom.withXml { xml -> project.rewritePomMppDependenciesToActualTargetModules(xml, variant) }
                 }
 
                 (variant as? KotlinTargetComponentWithPublication)?.publicationDelegate = variantPublication
@@ -308,3 +314,62 @@ internal fun compilationsBySourceSet(project: Project): Map<KotlinSourceSet, Set
             }
         }
     }
+
+private fun Project.rewritePomMppDependenciesToActualTargetModules(
+    pomXml: XmlProvider,
+    component: KotlinTargetComponent
+) {
+    if (component !is SoftwareComponentInternal)
+        return
+
+    val dependenciesNodeList = pomXml.asNode().get("dependencies") as NodeList
+    val dependencyNodes = dependenciesNodeList.filterIsInstance<Node>().flatMap {
+        (it.get("dependency") as? NodeList).orEmpty()
+    }.filterIsInstance<Node>()
+
+    val dependencyByNode = mutableMapOf<Node, ModuleDependency>()
+
+    // Collect all the dependencies from the nodes:
+    val dependencies = dependencyNodes.map { dependencyNode ->
+        fun Node.getSingleChildValueOrNull(childName: String): String? =
+            ((get(childName) as NodeList?)?.singleOrNull() as Node?)?.text()
+
+        val groupId = dependencyNode.getSingleChildValueOrNull("groupId")
+        val artifactId = dependencyNode.getSingleChildValueOrNull("artifactId")
+        val version = dependencyNode.getSingleChildValueOrNull("version")
+        (project.dependencies.module("$groupId:$artifactId:$version") as ModuleDependency)
+            .also { dependencyByNode[dependencyNode] = it }
+    }.toSet()
+
+    // Get the dependencies mapping according to the component's UsageContexts:
+    val resultDependenciesForEachUsageContext =
+        component.usages.mapNotNull { usage ->
+            if (usage is KotlinUsageContext)
+                rewriteDependenciesToActualModuleDependencies(usage, dependencies)
+                    // We are only interested in dependencies that are mapped to some other dependencies:
+                    .filter { (from, to) -> Triple(from.group, from.name, from.version) != Triple(to.group, to.name, to.version) }
+            else null
+        }
+
+    // Rewrite the dependency nodes according to the mapping:
+    dependencyNodes.forEach { dependencyNode ->
+        val moduleDependency = dependencyByNode[dependencyNode]
+        val mapDependencyTo = resultDependenciesForEachUsageContext.find { moduleDependency in it }?.get(moduleDependency)
+
+        if (mapDependencyTo != null) {
+
+            fun Node.setChildNodeByName(name: String, value: String?) {
+                val childNode: Node? = (get(name) as NodeList?)?.firstOrNull() as Node?
+                if (value != null) {
+                    (childNode ?: appendNode(name)).setValue(value)
+                } else {
+                    childNode?.let { remove(it) }
+                }
+            }
+
+            dependencyNode.setChildNodeByName("groupId", mapDependencyTo.group)
+            dependencyNode.setChildNodeByName("artifactId", mapDependencyTo.name)
+            dependencyNode.setChildNodeByName("version", mapDependencyTo.version)
+        }
+    }
+}

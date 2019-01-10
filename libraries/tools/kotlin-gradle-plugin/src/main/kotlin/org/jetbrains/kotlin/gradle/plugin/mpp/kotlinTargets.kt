@@ -95,9 +95,6 @@ abstract class AbstractKotlinTarget(
         componentName: String,
         artifactNameAppendix: String
     ): Set<DefaultKotlinUsageContext> {
-        val publishWithKotlinMetadata = (project.kotlinExtension as? KotlinMultiplatformExtension)?.isGradleMetadataAvailable
-            ?: true // In non-MPP project, these usage contexts do not get published anyway
-
         val sourcesJarArtifact = sourcesJarArtifact(producingCompilation, componentName, artifactNameAppendix)
 
         // Here, `JAVA_API` and `JAVA_RUNTIME_JARS` are used intentionally as Gradle needs this for
@@ -111,7 +108,6 @@ abstract class AbstractKotlinTarget(
                 producingCompilation,
                 project.usageByName(usageName),
                 dependenciesConfigurationName,
-                publishWithKotlinMetadata,
                 sourcesJarArtifact
             )
         }
@@ -295,9 +291,6 @@ open class KotlinAndroidTarget(
             classifierPrefix = artifactClassifier
         )
 
-        val publishWithKotlinMetadata = (project.kotlinExtension as? KotlinMultiplatformExtension)?.isGradleMetadataAvailable
-            ?: true // In non-MPP project, these usage contexts do not get published anyway
-
         val variantName = getVariantName(variant)
         val outputTask = getLibraryOutputTask(variant) ?: return emptySet()
         val artifact = run {
@@ -325,7 +318,6 @@ open class KotlinAndroidTarget(
                 compilation,
                 project.usageByName(usageName),
                 dependencyConfigurationName,
-                publishWithKotlinMetadata,
                 sourcesJarArtifact,
                 overrideConfigurationArtifacts = setOf(artifact)
             )

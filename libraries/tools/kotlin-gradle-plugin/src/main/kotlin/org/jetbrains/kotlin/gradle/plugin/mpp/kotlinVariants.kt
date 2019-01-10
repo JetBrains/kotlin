@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.ExcludeRule
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ModuleIdentifier
@@ -26,30 +27,35 @@ internal interface KotlinTargetComponentWithPublication : KotlinTargetComponent 
     var publicationDelegate: MavenPublication?
 }
 
-private interface KotlinTargetComponentWithCoordinatesAndPublication :
-    KotlinTargetComponentWithPublication,
-    ComponentWithCoordinates /* Gradle 4.7+ API, don't use with older versions */
-{
-    override fun getCoordinates() = object : ModuleVersionIdentifier {
-        private val project get() = target.project
-
+internal fun getCoordinatesFromPublicationDelegateAndProject(
+    publication: MavenPublication?,
+    project: Project,
+    target: KotlinTarget?
+): ModuleVersionIdentifier =
+    object : ModuleVersionIdentifier {
         private val moduleName: String
             get() =
-                publicationDelegate?.artifactId ?: "${project.name}-${target.name.toLowerCase()}"
+                publication?.artifactId ?: lowerSpinalCaseName(project.name, target?.name)
 
         private val moduleGroup: String
             get() =
-                publicationDelegate?.groupId ?: project.group.toString()
+                publication?.groupId ?: project.group.toString()
 
         override fun getGroup() = moduleGroup
         override fun getName() = moduleName
-        override fun getVersion() = publicationDelegate?.version ?: project.version.toString()
+        override fun getVersion() = publication?.version ?: project.version.toString()
 
         override fun getModule(): ModuleIdentifier = object : ModuleIdentifier {
             override fun getGroup(): String = moduleGroup
             override fun getName(): String = moduleName
         }
     }
+
+private interface KotlinTargetComponentWithCoordinatesAndPublication :
+    KotlinTargetComponentWithPublication,
+    ComponentWithCoordinates /* Gradle 4.7+ API, don't use with older versions */
+{
+    override fun getCoordinates() = getCoordinatesFromPublicationDelegateAndProject(publicationDelegate, target.project, target)
 }
 
 open class KotlinVariant(

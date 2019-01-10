@@ -10,15 +10,17 @@ import org.gradle.api.artifacts.*
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
+import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
+import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.utils.ifEmpty
 
-class KotlinSoftwareComponent(
+open class KotlinSoftwareComponent(
     private val name: String,
-    private val kotlinTargets: Iterable<KotlinTarget>
+    protected val kotlinTargets: Iterable<KotlinTarget>
 ) : SoftwareComponentInternal, ComponentWithVariants {
 
     override fun getUsages(): Set<UsageContext> = emptySet()
@@ -27,6 +29,18 @@ class KotlinSoftwareComponent(
         kotlinTargets.flatMap { it.components }.toSet()
 
     override fun getName(): String = name
+
+    // This property is declared in the parent type to allow the usages to reference it without forcing the subtypes to load,
+    // which is needed for compatibility with older Gradle versions
+    var publicationDelegate: MavenPublication? = null
+}
+
+class KotlinSoftwareComponentWithCoordinatesAndPublication(name: String, kotlinTargets: Iterable<KotlinTarget>) :
+    KotlinSoftwareComponent(name, kotlinTargets), ComponentWithCoordinates {
+
+    override fun getCoordinates(): ModuleVersionIdentifier = getCoordinatesFromPublicationDelegateAndProject(
+        publicationDelegate, kotlinTargets.first().project, null
+    )
 }
 
 // At the moment all KN artifacts have JAVA_API usage.
@@ -45,7 +59,6 @@ class DefaultKotlinUsageContext(
     override val compilation: KotlinCompilation<*>,
     private val usage: Usage,
     override val dependencyConfigurationName: String,
-    private val publishWithGradleMetadata: Boolean,
     override val sourcesArtifact: PublishArtifact? = null,
     private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null
 ) : KotlinUsageContext {
@@ -65,10 +78,7 @@ class DefaultKotlinUsageContext(
         get() = project.configurations.getByName(dependencyConfigurationName)
 
     override fun getDependencies(): MutableSet<out ModuleDependency> =
-        if (publishWithGradleMetadata)
-            configuration.incoming.dependencies.withType(ModuleDependency::class.java)
-        else
-            rewriteMppDependenciesToTargetModuleDependencies(this, configuration).toMutableSet()
+        configuration.incoming.dependencies.withType(ModuleDependency::class.java)
 
     override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> =
         configuration.incoming.dependencyConstraints
@@ -86,14 +96,14 @@ class DefaultKotlinUsageContext(
     override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
 }
 
-private fun rewriteMppDependenciesToTargetModuleDependencies(
+internal fun rewriteDependenciesToActualModuleDependencies(
     usageContext: KotlinUsageContext,
-    fromConfiguration: Configuration
-): Set<ModuleDependency> = with(usageContext.compilation.target.project) {
+    moduleDependencies: Set<ModuleDependency>
+): Map<ModuleDependency, ModuleDependency> {
     val compilation = usageContext.compilation
-    val moduleDependencies = fromConfiguration.incoming.dependencies.withType(ModuleDependency::class.java).ifEmpty { return emptySet() }
+    val project = compilation.target.project
 
-    val targetCompileDependenciesConfiguration = project.configurations.getByName(
+    val targetDependenciesConfiguration = project.configurations.getByName(
         when (compilation) {
             is KotlinJvmAndroidCompilation -> {
                 // TODO handle Android configuration names in a general way once we drop AGP < 3.0.0
@@ -112,52 +122,86 @@ private fun rewriteMppDependenciesToTargetModuleDependencies(
         }
     )
 
-    val resolvedCompileDependencies by lazy {
+    val resolvedDependencies by lazy {
         // don't resolve if no project dependencies on MPP projects are found
-        targetCompileDependenciesConfiguration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.associateBy {
+        targetDependenciesConfiguration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.associateBy {
             Triple(it.moduleGroup, it.moduleName, it.moduleVersion)
         }
     }
 
-    moduleDependencies.map { dependency ->
-        when (dependency) {
-            !is ProjectDependency -> dependency
-            else -> {
-                val dependencyProject = dependency.dependencyProject
-                val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtension
-                    ?: return@map dependency
+    val resolvedModulesByRootModuleCoordinates = targetDependenciesConfiguration
+        .allDependencies.withType(ModuleDependency::class.java)
+        .associate { dependency ->
+            when (dependency) {
+                is ProjectDependency -> {
+                    val dependencyProject = dependency.dependencyProject
+                    val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtension
+                        ?: return@associate dependency to dependency
 
-                if (dependencyProjectKotlinExtension.isGradleMetadataAvailable)
-                    return@map dependency
+                    val resolved = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
+                        ?: return@associate dependency to dependency
 
-                val resolved = resolvedCompileDependencies[Triple(dependency.group, dependency.name, dependency.version)]
-                    ?: return@map dependency
-
-                val resolvedToConfiguration = resolved.configuration
-
-                val dependencyTargetComponent: KotlinTargetComponent = run {
-                    dependencyProjectKotlinExtension.targets.forEach { target ->
-                        target.components.forEach { component ->
-                            if (component.findUsageContext(resolvedToConfiguration) != null)
-                                return@run component
+                    val resolvedToConfiguration = resolved.configuration
+                    val dependencyTargetComponent: KotlinTargetComponent = run {
+                        dependencyProjectKotlinExtension.targets.forEach { target ->
+                            target.components.forEach { component ->
+                                if (component.findUsageContext(resolvedToConfiguration) != null)
+                                    return@run component
+                            }
                         }
+                        // Failed to find a matching component:
+                        return@associate dependency to dependency
                     }
-                    // Failed to find a matching component:
-                    return@map dependency
+
+                    val targetModulePublication = (dependencyTargetComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate
+                    val rootModulePublication = dependencyProjectKotlinExtension.rootSoftwareComponent.publicationDelegate
+
+                    // During Gradle POM generation, a project dependency is already written as the root module's coordinates. In the
+                    // dependencies mapping, map the root module to the target's module:
+
+                    val rootModule = project.dependencies.module(
+                        listOf(
+                            rootModulePublication?.groupId ?: dependency.group,
+                            rootModulePublication?.artifactId ?: dependencyProject.name,
+                            rootModulePublication?.version ?: dependency.version
+                        ).joinToString(":")
+                    ) as ModuleDependency
+
+                    rootModule to project.dependencies.module(
+                        listOf(
+                            targetModulePublication?.groupId ?: dependency.group,
+                            targetModulePublication?.artifactId ?: dependencyTargetComponent.defaultArtifactId,
+                            targetModulePublication?.version ?: dependency.version
+                        ).joinToString(":")
+                    ) as ModuleDependency
                 }
+                else -> {
+                    val resolvedDependency = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
+                        ?: return@associate dependency to dependency
 
-                val publicationDelegate = (dependencyTargetComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate
+                    if (resolvedDependency.moduleArtifacts.isEmpty() && resolvedDependency.children.size == 1) {
+                        // This is a dependency on a module that resolved to another module; map the original dependency to the target module
+                        val targetModule = resolvedDependency.children.single()
+                        dependency to project.dependencies.module(
+                            listOf(
+                                targetModule.moduleGroup,
+                                targetModule.moduleName,
+                                targetModule.moduleVersion
+                            ).joinToString(":")
+                        ) as ModuleDependency
 
-                dependencies.module(
-                    listOf(
-                        publicationDelegate?.groupId ?: dependency.group,
-                        publicationDelegate?.artifactId ?: dependencyTargetComponent.defaultArtifactId,
-                        publicationDelegate?.version ?: dependency.version
-                    ).joinToString(":")
-                ) as ModuleDependency
+                    } else {
+                        dependency to dependency
+                    }
+                }
             }
-        }
-    }.toSet()
+        }.mapKeys { (key, _) -> Triple(key.group, key.name, key.version) }
+
+    return moduleDependencies.associate { dependency ->
+        val key = Triple(dependency.group, dependency.name, dependency.version)
+        val value = resolvedModulesByRootModuleCoordinates[key] ?: dependency
+        dependency to value
+    }
 }
 
 internal fun KotlinTargetComponent.findUsageContext(configurationName: String): UsageContext? {
