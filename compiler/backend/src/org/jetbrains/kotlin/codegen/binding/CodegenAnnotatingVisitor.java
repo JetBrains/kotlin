@@ -881,6 +881,9 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         DeclarationDescriptor operationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         if (!(operationDescriptor instanceof FunctionDescriptor)) return;
 
+        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
+        if (resolvedCall != null) recordSamValueForNewInference(resolvedCall);
+
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);
         if (original == null) return;
 
@@ -902,6 +905,9 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         DeclarationDescriptor operationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (!(operationDescriptor instanceof FunctionDescriptor)) return;
+
+        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
+        if (resolvedCall != null) recordSamValueForNewInference(resolvedCall);
 
         boolean isSetter = operationDescriptor.getName().asString().equals("set");
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);
