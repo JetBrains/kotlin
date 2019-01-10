@@ -1,0 +1,14 @@
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+	sourceSets {
+		commonMain.dependencies {
+			api kotlin('stdlib-common')
+		}
+	}
+	targetFromPreset(presets.jvmWithJava, 'jvm') {
+		compilations.main.defaultSourceSet.dependencies {
+			api kotlin('stdlib')
+		}
+	}
+}
