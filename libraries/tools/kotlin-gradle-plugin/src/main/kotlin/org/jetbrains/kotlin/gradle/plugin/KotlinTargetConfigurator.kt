@@ -99,7 +99,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         val project = target.project
 
         target.compilations.all { compilation ->
-            defineConfigurationsForCompilation(compilation, target, project.configurations)
+            defineConfigurationsForCompilation(compilation)
 
             if (createDefaultSourceSets) {
                 project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName).also { sourceSet ->
@@ -233,10 +233,11 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         const val testTaskNameSuffix = "test"
 
         fun defineConfigurationsForCompilation(
-            compilation: KotlinCompilation<*>,
-            target: KotlinTarget,
-            configurations: ConfigurationContainer
+            compilation: KotlinCompilation<*>
         ) {
+            val target = compilation.target
+            val configurations = target.project.configurations
+
             val compileConfiguration = configurations.maybeCreate(compilation.deprecatedCompileConfigurationName).apply {
                 setupAsLocalTargetSpecificConfigurationIfSupported(target)
                 isVisible = false
