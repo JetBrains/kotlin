@@ -66,6 +66,8 @@ class OptimizationMethodVisitor(
             optimizationTransformer.transform("fake", methodNode)
         }
 
+        DeadCodeEliminationMethodTransformer().transform("fake", methodNode)
+
         methodNode.prepareForEmitting()
     }
 

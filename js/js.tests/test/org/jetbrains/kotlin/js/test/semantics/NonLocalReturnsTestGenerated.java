@@ -164,6 +164,11 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt26384_2.kt");
         }
 
+        @TestMetadata("kt28546.kt")
+        public void testKt28546() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt28546.kt");
+        }
+
         @TestMetadata("kt6956.kt")
         public void testKt6956() throws Exception {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt6956.kt");
