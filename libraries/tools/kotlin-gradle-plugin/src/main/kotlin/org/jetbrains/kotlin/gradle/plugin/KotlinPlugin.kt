@@ -454,6 +454,18 @@ internal abstract class AbstractKotlinPlugin(
                 val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.defaultSourceSetName)
                 kotlinCompilation.source(kotlinSourceSet)
             }
+
+            // Since the 'java' plugin (as opposed to 'java-library') doesn't known anything about the 'api' configurations,
+            // add the API dependencies of the main compilation directly to the 'apiElements' configuration, so that the 'api' dependencies
+            // are properly published with the 'compile' scope (KT-28355):
+            project.whenEvaluated {
+                project.configurations.apply {
+                    val apiElementsConfiguration = getByName(kotlinTarget.apiElementsConfigurationName)
+                    val mainCompilation = kotlinTarget.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+                    val compilationApiConfiguration = getByName(mainCompilation.apiConfigurationName)
+                    apiElementsConfiguration.extendsFrom(compilationApiConfiguration)
+                }
+            }
         }
 
         private fun configureAttributes(
