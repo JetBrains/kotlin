@@ -1,8 +1,5 @@
 package
 
-public fun case_1(): kotlin.Unit
-public fun case_2(): kotlin.Unit
-
 public final class _Class {
     public constructor _Class()
     public final val prop_1: kotlin.Int = 1
@@ -94,29 +91,25 @@ public final class _EmptyClass {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class case_4 : _ClassLevel3 {
-    public constructor case_4()
-    public final fun case_4_5(): kotlin.Unit
+public object case_3 {
+    private constructor case_3()
+    public final fun case_3(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+        CallsInPlace(block, EXACTLY_ONCE)
+
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun </*0*/ T : kotlin.Number?> T.case_4_1(): kotlin.Boolean
-    public final fun </*0*/ T : kotlin.Boolean> T.case_4_4(): kotlin.Unit
-    public final fun </*0*/ T> T.case_4_5_wrap(): kotlin.Unit
 }
 
-public final class case_5</*0*/ T> : _ClassLevel5 {
-    public constructor case_5</*0*/ T>()
+public final class case_4 : _ClassLevel3 {
+    public constructor case_4()
+    public final fun case_4_2(/*0*/ number: kotlin.Int?): kotlin.Boolean
+        Returns(FALSE) -> number != null
+
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun </*0*/ T> T?.case_4_3(): kotlin.Boolean
+        Returns(FALSE) -> <this> !is Number
 
-    public final inner class case_5_1 /*captured type parameters: /*0*/ T*/ {
-        public constructor case_5_1()
-        public final fun case_5_1_2(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        public final fun </*0*/ K : kotlin.Number?> K.case_5_1_1(): kotlin.Unit
-    }
 }

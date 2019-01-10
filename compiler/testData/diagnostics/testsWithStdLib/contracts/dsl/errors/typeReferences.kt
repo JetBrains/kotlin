@@ -12,8 +12,8 @@ inline fun <reified T> referToReifiedGeneric(x: Any?) {
 
 class Generic<T> {
     fun referToCaptured(x: Any?) {
-        <!CONTRACT_NOT_ALLOWED(Contracts are allowed only for top-level functions)!>contract<!> {
-            returns() implies (x is <!CANNOT_CHECK_FOR_ERASED!>T<!>)
+        contract {
+            returns() implies (x is <!CANNOT_CHECK_FOR_ERASED, ERROR_IN_CONTRACT_DESCRIPTION!>T<!>)
         }
     }
 }

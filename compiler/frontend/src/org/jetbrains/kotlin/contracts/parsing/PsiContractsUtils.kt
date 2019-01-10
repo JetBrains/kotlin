@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -104,3 +105,9 @@ fun ResolvedCall<*>.argumentAsExpressionOrNull(index: Int): KtExpression? =
     this.valueArgumentsByIndex?.getOrNull(index)?.safeAs<ExpressionValueArgument>()?.valueArgument?.getArgumentExpression()
 
 fun DeclarationDescriptor.equalsDslDescriptor(dslName: Name): Boolean = this.name == dslName && this.isFromContractDsl()
+
+val FunctionDescriptor.isAnonymous: Boolean
+    get() = name == SpecialNames.NO_NAME_PROVIDED
+
+val FunctionDescriptor.isLambda: Boolean
+    get() = name == SpecialNames.ANONYMOUS_FUNCTION
