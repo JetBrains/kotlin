@@ -64,6 +64,7 @@ kotlin {
         doLast {
             println("Wasm binary file: ${wasm32.compilations.getByName("main").getBinary("EXECUTABLE", "RELEASE").name}")
             println("Wasm link task: ${wasm32.compilations.getByName("main").getLinkTask("EXECUTABLE", "RELEASE").name}")
+            println("Wasm link task name: ${wasm32.compilations.getByName("main").linkTaskName("EXECUTABLE", "RELEASE")}")
 
             println("Windows test file: ${mingw64.compilations.getByName("test").getBinary("EXECUTABLE", "DEBUG").name}")
             println("Windows test link task: ${mingw64.compilations.getByName("test").getLinkTask("EXECUTABLE", "DEBUG").name}")

@@ -36,16 +36,13 @@ open class KotlinNativeBinaryContainer @Inject constructor(
     internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = WrapUtil.toNamedDomainObjectSet(PrefixGroup::class.java)
 
     // region DSL getters.
-    private fun generateName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
-        lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
-
     private inline fun <reified T : NativeBinary> getBinary(
         namePrefix: String,
         buildType: NativeBuildType,
         outputKind: NativeOutputKind
     ): T {
         val classifier = outputKind.taskNameClassifier
-        val name = generateName(namePrefix, buildType, classifier)
+        val name = generateBinaryName(namePrefix, buildType, classifier)
         val binary = getByName(name)
         require(binary is T && binary.buildType == buildType) {
             "Binary $name has incorrect outputKind or build type.\n" +
@@ -60,7 +57,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         outputKind: NativeOutputKind
     ): T? {
         val classifier = outputKind.taskNameClassifier
-        val name = generateName(namePrefix, buildType, classifier)
+        val name = generateBinaryName(namePrefix, buildType, classifier)
         val binary = findByName(name)
         return if (binary is T && binary.buildType == buildType) {
             binary
@@ -112,7 +109,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         }
 
         buildTypes.forEach { buildType ->
-            val name = generateName(namePrefix, buildType, outputKind.taskNameClassifier)
+            val name = generateBinaryName(namePrefix, buildType, outputKind.taskNameClassifier)
 
             require(name !in nameToBinary) {
                 "Cannot create binary $name: binary with such a name already exists"
@@ -149,6 +146,9 @@ open class KotlinNativeBinaryContainer @Inject constructor(
 
     companion object {
         internal val DEFAULT_TEST_BUILD_TYPE = NativeBuildType.DEBUG
+
+        internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
+            lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
     }
     // endregion.
 
