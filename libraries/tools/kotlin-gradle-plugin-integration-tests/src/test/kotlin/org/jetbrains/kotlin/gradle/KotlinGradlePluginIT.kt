@@ -877,6 +877,39 @@ class KotlinGradleIT : BaseGradleIT() {
         }
 
     @Test
+    fun testKotlinJvmProjectPublishesKotlinApiDependenciesAsCompile() =
+        with(Project("simpleProject", GradleVersionRequired.AtLeast("4.4"))) {
+            setupWorkingDir()
+            gradleBuildScript().appendText(
+                "\n" + """
+                dependencies {
+                    api 'org.jetbrains.kotlin:kotlin-reflect'
+                }
+                apply plugin: 'maven-publish'
+                group "com.example"
+                version "1.0"
+                publishing {
+                    repositories { maven { url file("${'$'}buildDir/repo").toURI() } }
+                    publications { maven(MavenPublication) { from components.java } }
+                }
+                """.trimIndent()
+            )
+            build("publish") {
+                assertSuccessful()
+                val pomText = projectDir.resolve("build/repo/com/example/simpleProject/1.0/simpleProject-1.0.pom").readText()
+                    .replace("\\s+|\\n".toRegex(), "")
+                assertTrue {
+                    pomText.contains(
+                        "<groupId>org.jetbrains.kotlin</groupId>" +
+                                "<artifactId>kotlin-reflect</artifactId>" +
+                                "<version>${defaultBuildOptions().kotlinVersion}</version>" +
+                                "<scope>compile</scope>"
+                    )
+                }
+            }
+        }
+
+    @Test
     fun testNoTaskConfigurationForcing() {
         val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.9")
         val projects = listOf(
