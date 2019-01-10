@@ -183,6 +183,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("checkBinaryGetters") {
                 assertTrue(output.contains("Wasm binary file: main.wasm"))
                 assertTrue(output.contains("Wasm link task: linkMainReleaseExecutableWasm32"))
+                assertTrue(output.contains("Wasm link task name: linkMainReleaseExecutableWasm32"))
 
                 val testFiles = listOf(
                     "MacOS" to "test.kexe",

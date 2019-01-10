@@ -404,10 +404,8 @@ class KotlinNativeCompilation(
     fun linkTaskName(kind: NativeOutputKind, buildType: NativeBuildType): String =
         lowerCamelCaseName(
             "link",
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
-            buildType.name.toLowerCase(),
-            kind.taskNameClassifier,
-            target.disambiguationClassifier
+            KotlinNativeBinaryContainer.generateBinaryName(compilationName, buildType, kind.taskNameClassifier),
+            target.targetName
         )
 
     fun linkTaskName(kind: String, buildType: String) =
