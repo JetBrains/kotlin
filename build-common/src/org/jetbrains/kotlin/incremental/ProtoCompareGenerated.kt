@@ -1152,6 +1152,21 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsExpressionOrArgument(old, new)) return false
 
+        if (old.hasFunctionReference() != new.hasFunctionReference()) return false
+        if (old.hasFunctionReference()) {
+            if (old.functionReference != new.functionReference) return false
+        }
+
+        if (old.hasFunctionOwnerClassName() != new.hasFunctionOwnerClassName()) return false
+        if (old.hasFunctionOwnerClassName()) {
+            if (old.functionOwnerClassName != new.functionOwnerClassName) return false
+        }
+
+        if (old.hasIsReceiverReference() != new.hasIsReceiverReference()) return false
+        if (old.hasIsReceiverReference()) {
+            if (old.isReceiverReference != new.isReceiverReference) return false
+        }
+
         return true
     }
 
@@ -2357,6 +2372,18 @@ fun ProtoBuf.Expression.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (In
 
     for(i in 0..orArgumentCount - 1) {
         hashCode = 31 * hashCode + getOrArgument(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasFunctionReference()) {
+        hashCode = 31 * hashCode + functionReference.hashCode()
+    }
+
+    if (hasFunctionOwnerClassName()) {
+        hashCode = 31 * hashCode + functionOwnerClassName.hashCode()
+    }
+
+    if (hasIsReceiverReference()) {
+        hashCode = 31 * hashCode + isReceiverReference
     }
 
     return hashCode

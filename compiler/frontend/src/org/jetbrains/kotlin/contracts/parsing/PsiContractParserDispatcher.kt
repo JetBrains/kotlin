@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.contracts.parsing
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.contracts.description.BooleanExpression
 import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.EffectDeclaration
-import org.jetbrains.kotlin.contracts.description.expressions.BooleanVariableReference
-import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
-import org.jetbrains.kotlin.contracts.description.expressions.ContractDescriptionValue
-import org.jetbrains.kotlin.contracts.description.expressions.VariableReference
+import org.jetbrains.kotlin.contracts.description.expressions.*
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CALLS_IN_PLACE_EFFECT
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CONDITIONAL_EFFECT
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.RETURNS_EFFECT
@@ -31,13 +29,13 @@ import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.RETURNS_NOT_NULL
 import org.jetbrains.kotlin.contracts.parsing.effects.PsiCallsEffectParser
 import org.jetbrains.kotlin.contracts.parsing.effects.PsiConditionalEffectParser
 import org.jetbrains.kotlin.contracts.parsing.effects.PsiReturnsEffectParser
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
@@ -134,5 +132,30 @@ internal class PsiContractParserDispatcher(
         if (variable != null) return variable
 
         return parseConstant(expression)
+    }
+
+    fun parseReceiver(expression: KtExpression?): LambdaParameterReceiverReference? {
+        if (expression == null) return null
+        val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return null
+        val descriptor = resolvedCall.resultingDescriptor
+
+        if (!descriptor.isReceiverOf()) return null
+
+        val argument = resolvedCall.firstArgumentAsExpressionOrNull() ?: return null
+        val argumentDescriptor = argument.getResolvedCall(callContext.bindingContext)?.resultingDescriptor as? ValueParameterDescriptor ?: return null
+        if (!argumentDescriptor.type.isExtensionFunctionType) {
+            collector.badDescription("Argument of receiverOf must be lambda with receiver", argument)
+        }
+        val variable = parseVariable(argument) ?: return null
+
+        return LambdaParameterReceiverReference(variable)
+    }
+
+    fun parseFunction(expression: KtExpression?): FunctionReference? {
+        if (expression == null) return null
+        val reference = expression as? KtCallableReferenceExpression ?: return null
+        val descriptor =
+            callContext.bindingContext[BindingContext.REFERENCE_TARGET, reference.callableReference] as? FunctionDescriptor ?: return null
+        return FunctionReferenceImpl(descriptor)
     }
 }

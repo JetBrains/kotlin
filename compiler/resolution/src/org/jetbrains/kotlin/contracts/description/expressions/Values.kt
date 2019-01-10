@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.contracts.description.expressions
 import org.jetbrains.kotlin.contracts.description.BooleanExpression
 import org.jetbrains.kotlin.contracts.description.ContractDescriptionElement
 import org.jetbrains.kotlin.contracts.description.ContractDescriptionVisitor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 
 
@@ -51,9 +52,35 @@ class BooleanConstantReference(name: String) : ConstantReference(name), BooleanE
 open class VariableReference(val descriptor: ParameterDescriptor) : ContractDescriptionValue {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D) =
         contractDescriptionVisitor.visitVariableReference(this, data)
+
+    override fun toString(): String {
+        return descriptor.name.toString()
+    }
 }
 
 class BooleanVariableReference(descriptor: ParameterDescriptor) : VariableReference(descriptor), BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitBooleanVariableReference(this, data)
+}
+
+interface FunctionReference : ContractDescriptionValue {
+    val descriptor: FunctionDescriptor
+
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitFunctionReference(this, data)
+}
+
+class FunctionReferenceImpl(override val descriptor: FunctionDescriptor) : FunctionReference {
+    override fun toString(): String {
+        return descriptor.name.toString()
+    }
+}
+
+class LambdaParameterReceiverReference(val variableReference: VariableReference) : ContractDescriptionValue {
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitLambdaParameterReceiverReference(this, data)
+
+    override fun toString(): String {
+        return "receiver of $variableReference"
+    }
 }

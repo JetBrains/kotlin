@@ -18,13 +18,18 @@ package org.jetbrains.kotlin.contracts.interpretation
 
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
+import org.jetbrains.kotlin.contracts.description.expressions.FunctionReference
+import org.jetbrains.kotlin.contracts.description.expressions.LambdaParameterReceiverReference
 import org.jetbrains.kotlin.contracts.description.expressions.VariableReference
-import org.jetbrains.kotlin.contracts.model.functors.SubstitutingFunctor
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.structure.ESVariable
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.ESExpression
 import org.jetbrains.kotlin.contracts.model.Functor
+import org.jetbrains.kotlin.contracts.model.functors.SubstitutingFunctor
+import org.jetbrains.kotlin.contracts.model.structure.ESConstant
+import org.jetbrains.kotlin.contracts.model.structure.ESFunction
+import org.jetbrains.kotlin.contracts.model.structure.ESLambdaParameterReceiverReference
+import org.jetbrains.kotlin.contracts.model.structure.ESVariable
+import org.jetbrains.kotlin.contracts.model.visitors.AdditionalReducer
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 /**
@@ -39,12 +44,15 @@ class ContractInterpretationDispatcher {
         CallsEffectInterpreter(this)
     )
 
-    fun resolveFunctor(functionDescriptor: FunctionDescriptor): Functor? {
+    fun resolveFunctor(functionDescriptor: FunctionDescriptor, additionalReducer: AdditionalReducer): Functor? {
         val contractDescriptor = functionDescriptor.getUserData(ContractProviderKey)?.getContractDescription() ?: return null
-        return convertContractDescriptorToFunctor(contractDescriptor)
+        return convertContractDescriptorToFunctor(contractDescriptor, additionalReducer)
     }
 
-    private fun convertContractDescriptorToFunctor(contractDescription: ContractDescription): Functor? {
+    private fun convertContractDescriptorToFunctor(
+        contractDescription: ContractDescription,
+        additionalReducer: AdditionalReducer
+    ): Functor? {
         val resultingClauses = contractDescription.effects.map { effect ->
             if (effect is ConditionalEffectDeclaration) {
                 conditionalEffectInterpreter.interpret(effect) ?: return null
@@ -53,7 +61,7 @@ class ContractInterpretationDispatcher {
             }
         }
 
-        return SubstitutingFunctor(resultingClauses, contractDescription.ownerFunction)
+        return SubstitutingFunctor(resultingClauses, contractDescription.ownerFunction, additionalReducer)
     }
 
     internal fun interpretEffect(effectDeclaration: EffectDeclaration): ESEffect? {
@@ -68,4 +76,11 @@ class ContractInterpretationDispatcher {
         booleanExpression.accept(conditionInterpreter, Unit)
 
     internal fun interpretVariable(variableReference: VariableReference): ESVariable? = ESVariable(variableReference.descriptor)
+
+    internal fun interpretFunction(functionReference: FunctionReference): ESFunction? = ESFunction(functionReference.descriptor)
+
+    internal fun interpretLambdaParameterReceiverReference(receiverReference: LambdaParameterReceiverReference): ESLambdaParameterReceiverReference? {
+        val variableReference = interpretVariable(receiverReference.variableReference) ?: return null
+        return ESLambdaParameterReceiverReference(variableReference)
+    }
 }

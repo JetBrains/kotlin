@@ -2395,6 +2395,10 @@ public final class kotlin/contracts/ContractBuilder$DefaultImpls {
 	public static synthetic fun callsInPlace$default (Lkotlin/contracts/ContractBuilder;Lkotlin/Function;Lkotlin/contracts/InvocationKind;ILjava/lang/Object;)Lkotlin/contracts/CallsInPlace;
 }
 
+public final class kotlin/contracts/ContractBuilderKt {
+	public static final fun receiverOf (Lkotlin/Function;)Lkotlin/contracts/ReceiverOf;
+}
+
 public abstract interface class kotlin/contracts/Effect {
 }
 
@@ -2408,6 +2412,10 @@ public final class kotlin/contracts/InvocationKind : java/lang/Enum {
 	public static final field UNKNOWN Lkotlin/contracts/InvocationKind;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/contracts/InvocationKind;
 	public static fun values ()[Lkotlin/contracts/InvocationKind;
+}
+
+public final class kotlin/contracts/ReceiverOf {
+	public fun <init> ()V
 }
 
 public abstract interface class kotlin/contracts/Returns : kotlin/contracts/SimpleEffect {
@@ -5011,3 +5019,4 @@ public final class kotlin/text/UStringsKt {
 	public static final fun toUShortOrNull (Ljava/lang/String;)Lkotlin/UShort;
 	public static final fun toUShortOrNull (Ljava/lang/String;I)Lkotlin/UShort;
 }
+

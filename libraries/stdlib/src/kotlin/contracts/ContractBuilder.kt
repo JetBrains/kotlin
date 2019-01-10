@@ -147,3 +147,14 @@ public enum class InvocationKind {
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 public inline fun contract(builder: ContractBuilder.() -> Unit) { }
+
+@ContractsDsl
+@ExperimentalContracts
+@SinceKotlin("1.3")
+public class ReceiverOf
+
+@ContractsDsl
+@ExperimentalContracts
+@SinceKotlin("1.3")
+@Suppress("UNUSED_PARAMETER")
+public fun receiverOf(func: Function<*>): ReceiverOf = ReceiverOf()

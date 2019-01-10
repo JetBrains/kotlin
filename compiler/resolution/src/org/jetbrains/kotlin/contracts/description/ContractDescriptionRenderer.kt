@@ -35,7 +35,6 @@ class ContractDescriptionRenderer(private val builder: StringBuilder) : Contract
         builder.append("CallsInPlace(")
         callsEffect.variableReference.accept(this, data)
         builder.append(", ${callsEffect.kind})")
-
     }
 
     override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit) {
@@ -71,6 +70,14 @@ class ContractDescriptionRenderer(private val builder: StringBuilder) : Contract
 
     override fun visitVariableReference(variableReference: VariableReference, data: Unit) {
         builder.append(variableReference.descriptor.name)
+    }
+
+    override fun visitFunctionReference(functionReference: FunctionReference, data: Unit) {
+        builder.append(functionReference.descriptor.name)
+    }
+
+    override fun visitLambdaParameterReceiverReference(receiverReference: LambdaParameterReceiverReference, data: Unit) {
+        builder.append("receiver of ${receiverReference.variableReference.descriptor.name}")
     }
 
     private fun ContractDescriptionElement.isAtom(): Boolean =

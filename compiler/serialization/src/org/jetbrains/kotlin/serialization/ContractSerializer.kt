@@ -18,13 +18,26 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class ContractSerializer {
+    companion object {
+        fun invocationKindProtobufEnum(kind: InvocationKind): ProtoBuf.Effect.InvocationKind? = when (kind) {
+            InvocationKind.AT_MOST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE
+            InvocationKind.EXACTLY_ONCE -> ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE
+            InvocationKind.AT_LEAST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE
+            InvocationKind.ZERO -> null
+            InvocationKind.UNKNOWN -> null
+        }
+    }
+
     fun serializeContractOfFunctionIfAny(
         functionDescriptor: FunctionDescriptor,
         proto: ProtoBuf.Function.Builder,
@@ -167,6 +180,8 @@ class ContractSerializer {
 
                     val descriptor = variableReference.descriptor
                     val indexOfParameter = when (descriptor) {
+                        is LazyClassReceiverParameterDescriptor -> -1
+
                         is ReceiverParameterDescriptor -> 0
 
                         is ValueParameterDescriptor ->
@@ -179,6 +194,24 @@ class ContractSerializer {
 
                     return builder
                 }
+
+                override fun visitLambdaParameterReceiverReference(receiverReference: LambdaParameterReceiverReference, data: Unit): ProtoBuf.Expression.Builder {
+                    val builder = visitVariableReference(receiverReference.variableReference, Unit)
+                    builder.isReceiverReference = 1
+                    return builder
+                }
+
+                override fun visitFunctionReference(functionReference: FunctionReference, data: Unit): ProtoBuf.Expression.Builder {
+                    val builder = ProtoBuf.Expression.newBuilder()
+                    val descriptor = functionReference.descriptor
+                    val functionName = descriptor.name.asString()
+                    builder.functionReference = functionName
+                    val parentClassDescriptor = descriptor.containingDeclaration as? ClassDescriptor
+                    if (parentClassDescriptor != null) {
+                        builder.functionOwnerClassName = parentClassDescriptor.fqNameSafe.asString()
+                    }
+                    return builder
+                }
             }, Unit)
         }
 
@@ -186,14 +219,6 @@ class ContractSerializer {
             if (flags != newFlagsValue) {
                 flags = newFlagsValue
             }
-        }
-
-        private fun invocationKindProtobufEnum(kind: InvocationKind): ProtoBuf.Effect.InvocationKind? = when (kind) {
-            InvocationKind.AT_MOST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE
-            InvocationKind.EXACTLY_ONCE -> ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE
-            InvocationKind.AT_LEAST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE
-            InvocationKind.ZERO -> null
-            InvocationKind.UNKNOWN -> null
         }
 
         private fun constantValueProtobufEnum(constantReference: ConstantReference): ProtoBuf.Expression.ConstantValue? =

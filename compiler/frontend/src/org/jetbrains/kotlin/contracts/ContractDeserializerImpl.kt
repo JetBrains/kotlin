@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
@@ -146,18 +147,40 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
 
         private fun BooleanExpression.invertIfNecessary(shouldInvert: Boolean) = if (shouldInvert) LogicalNot(this) else this
 
+        fun extractExpression(proto: ProtoBuf.Expression): ContractDescriptionValue? {
+            if (proto.hasFunctionReference()) return extractFunction(proto)
+            if (proto.hasIsReceiverReference()) return extractReceiver(proto)
+            return extractVariable(proto)
+        }
+
         private fun extractVariable(proto: ProtoBuf.Expression): VariableReference? {
             if (!proto.hasValueParameterReference()) return null
 
-            val parameterDescriptor = if (proto.valueParameterReference == 0)
-                ownerFunction.extensionReceiverParameter ?: return null
-            else
-                ownerFunction.valueParameters.getOrNull(proto.valueParameterReference - 1) ?: return null
+            // TODO: i'm not sure is that absolutely correct
+            val parameterDescriptor: ParameterDescriptor = when (proto.valueParameterReference) {
+                -1 -> ownerFunction.dispatchReceiverParameter ?: return null
+                0 -> ownerFunction.extensionReceiverParameter ?: return null
+                else -> ownerFunction.valueParameters.getOrNull(proto.valueParameterReference - 1) ?: return null
+            }
 
             return if (!KotlinBuiltIns.isBoolean(parameterDescriptor.type))
                 VariableReference(parameterDescriptor)
             else
                 BooleanVariableReference(parameterDescriptor)
+        }
+
+        fun extractReceiver(proto: ProtoBuf.Expression): LambdaParameterReceiverReference? {
+            if (!proto.hasIsReceiverReference()) return null
+            val variableReference = extractVariable(proto) ?: return null
+            return LambdaParameterReceiverReference(variableReference)
+        }
+
+        fun extractFunction(proto: ProtoBuf.Expression): FunctionReference? {
+            if (!proto.hasFunctionReference()) return null
+            val funcName = proto.functionReference ?: return null
+            val ownerClassName: String? = if (proto.hasFunctionOwnerClassName()) proto.functionOwnerClassName else null
+
+            return LazyFunctionReference(ownerFunction, funcName, ownerClassName)
         }
 
         private fun ProtoBuf.Effect.InvocationKind.toDescriptorInvocationKind(): InvocationKind? = when (this) {
@@ -166,8 +189,14 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
             ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE -> InvocationKind.AT_LEAST_ONCE
         }
 
+        fun extractInvocationKind(kind: ProtoBuf.Effect.InvocationKind): InvocationKind? = kind.toDescriptorInvocationKind()
+
         private fun extractType(proto: ProtoBuf.Expression): KotlinType? {
             return typeDeserializer.type(proto.isInstanceType(typeTable) ?: return null)
+        }
+
+        fun extractType(proto: ProtoBuf.Type): KotlinType? {
+            return typeDeserializer.type(proto)
         }
 
         private fun deserializeConstant(value: ProtoBuf.Expression.ConstantValue): ConstantReference? = when (value) {

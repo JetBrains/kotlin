@@ -16,22 +16,22 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
+import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.ESCalls
-import org.jetbrains.kotlin.contracts.model.structure.ESReturns
 import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.ESValue
+import org.jetbrains.kotlin.contracts.model.structure.ESReturns
 import org.jetbrains.kotlin.contracts.model.structure.ESVariable
-import org.jetbrains.kotlin.contracts.model.ConditionalEffect
-import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.SimpleEffect
-import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.visitors.AdditionalReducer
 import org.jetbrains.kotlin.contracts.model.visitors.Substitutor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class SubstitutingFunctor(private val basicEffects: List<ESEffect>, private val ownerFunction: FunctionDescriptor) :
-    AbstractReducingFunctor() {
+class SubstitutingFunctor(
+    private val basicEffects: List<ESEffect>,
+    private val ownerFunction: FunctionDescriptor,
+    additionalReducer: AdditionalReducer
+) : AbstractReducingFunctor(additionalReducer) {
     override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
         if (basicEffects.isEmpty()) return emptyList()
 

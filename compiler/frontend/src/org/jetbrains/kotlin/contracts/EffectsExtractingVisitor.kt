@@ -180,7 +180,7 @@ class EffectsExtractingVisitor(
     private fun FunctionDescriptor.getFunctor(): Functor? {
         trace[BindingContext.FUNCTOR, this]?.let { return it }
 
-        val functor = ContractInterpretationDispatcher().resolveFunctor(this) ?: return null
+        val functor = ContractInterpretationDispatcher().resolveFunctor(this, AdditionalReducerImpl()) ?: return null
         trace.record(BindingContext.FUNCTOR, this, functor)
         return functor
     }
