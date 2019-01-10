@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.gradle.util.isWindows
+import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
@@ -603,7 +606,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testPublishWithoutGradleMetadata() {
         val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
 
-        with (libProject) {
+        with(libProject) {
             setupWorkingDir()
             projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview", "// enableFeaturePreview") }
 
@@ -1160,8 +1163,34 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testPublishMultimoduleProjectWithNoMetadata() {
-        val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+    fun testPublishMultimoduleProjectWithNoMetadata() = doTestPublishMultimoduleProject(withMetadata = false)
+
+    @Test
+    fun testPublishMultimoduleProjectWithMetadata() = doTestPublishMultimoduleProject(withMetadata = true)
+
+    private fun doTestPublishMultimoduleProject(withMetadata: Boolean) {
+        val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app").apply {
+            if (withMetadata) {
+                setupWorkingDir()
+                // Make another publication that will be consumed as a module with metadata, see a similar conditional block below:
+                projectDir.resolve("settings.gradle").writeText("rootProject.name = 'external'; enableFeaturePreview 'GRADLE_METADATA'")
+                gradleBuildScript().appendText(
+                    "\n" + """
+                    group = "com.external.dependency"
+                    version = "1.2.3"
+                    publishing {
+                        repositories {
+                            maven { url "file://${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/repo" }
+                        }
+                    }
+                    """.trimIndent()
+                )
+                build("publish") {
+                    assertSuccessful()
+                    gradleBuildScript().appendText("\ngroup = 'com.example'; version = '1.0'")
+                }
+            }
+        }
         val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
 
         with(libProject) {
@@ -1169,7 +1198,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             appProject.setupWorkingDir()
             appProject.projectDir.copyRecursively(projectDir.resolve("sample-app"))
 
-            projectDir.resolve("settings.gradle").writeText("include 'sample-app'") // also disables feature preview 'GRADLE_METADATA'
+            gradleSettingsScript().writeText("include 'sample-app'") // disables feature preview 'GRADLE_METADATA', resets rootProject name
             gradleBuildScript("sample-app").modify {
                 it.replace("'com.example:sample-lib:1.0'", "project(':')") + "\n" + """
                 apply plugin: 'maven-publish'
@@ -1181,6 +1210,20 @@ class NewMultiplatformIT : BaseGradleIT() {
                     }
                 }
                 """.trimIndent()
+            }
+            if (withMetadata) {
+                gradleSettingsScript().appendText("\nenableFeaturePreview(\"GRADLE_METADATA\")")
+                // Add a dependency that is resolved with metadata:
+                gradleBuildScript("sample-app").appendText(
+                    "\n" + """
+                    repositories {
+                        maven { url "file://${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/repo" }
+                    }
+                    dependencies {
+                        commonMainApi 'com.external.dependency:external:1.2.3'
+                    }
+                    """.trimIndent()
+                )
             }
 
             gradleBuildScript().appendText("\n" + """
@@ -1195,7 +1238,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
             """.trimIndent())
 
-            build("publish") {
+            build("clean", "publish") {
                 assertSuccessful()
                 assertFileContains(
                     "repo/com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom",
@@ -1209,6 +1252,22 @@ class NewMultiplatformIT : BaseGradleIT() {
                     "<artifactId>bar</artifactId>",
                     "<version>42</version>"
                 )
+                if (withMetadata) {
+                    // Check that the external dependency that was resolved with metadata is written to the POM as the artifactId it
+                    // resolved to:
+                    assertFileContains(
+                        "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
+                        "<groupId>com.external.dependency</groupId>",
+                        "<artifactId>external-jvm6</artifactId>",
+                        "<version>1.2.3</version>"
+                    )
+
+                    // Check that, despite the rewritten POM, the module metadata contains the original dependency:
+                    val moduleMetadata = projectDir.resolve("repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.module").readText()
+                        .replace("\\s+".toRegex(), "").replace("\n", "")
+                    assertTrue { "\"group\":\"com.example\",\"module\":\"sample-lib\"" in moduleMetadata }
+                    assertTrue { "\"group\":\"com.external.dependency\",\"module\":\"external\"" in moduleMetadata }
+                }
                 assertFileExists("repo/foo/bar/42/bar-42.jar")
             }
         }
@@ -1285,10 +1344,10 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertFileContains("build/classes/kotlin/nodeJs/main/sample-lib.js", "Override")
 
             val (compilerPluginArgsBySourceSet, compilerPluginClasspathBySourceSet) =
-                    listOf(compilerPluginArgsRegex, compilerPluginClasspathRegex)
-                        .map { marker ->
-                            marker.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }
-                        }
+                listOf(compilerPluginArgsRegex, compilerPluginClasspathRegex)
+                    .map { marker ->
+                        marker.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }
+                    }
 
             // TODO once Kotlin/Native properly supports compiler plugins, expand this to all source sets:
             listOf("commonMain", "commonTest", "jvm6Main", "jvm6Test", "nodeJsMain", "nodeJsTest").forEach {
