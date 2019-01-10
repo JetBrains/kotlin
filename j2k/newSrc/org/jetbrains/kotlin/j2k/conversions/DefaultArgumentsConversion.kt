@@ -5,14 +5,25 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.jvmAnnotation
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKFieldAccessExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKUniverseMethodSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.psi
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DefaultArgumentsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+
+
+    private fun JKMethod.canNotBeMerged(): Boolean =
+        modality == Modality.ABSTRACT ||
+                modality == Modality.OVERRIDE ||
+                context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi()!!) ||
+                annotationList.annotations.isNotEmpty()
+
+
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         // TODO: Declaration list owner
         if (element !is JKClass) return recurse(element)
@@ -22,6 +33,7 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
         checkMethod@ for (method in methods) {
             val block = method.block as? JKBlock ?: continue
             val singleStatement = block.statements.singleOrNull() ?: continue
+            if (method.canNotBeMerged()) continue
 
             val call = lookupCall(singleStatement) ?: continue
             val callee = call.identifier as? JKUniverseMethodSymbol ?: continue
@@ -37,6 +49,8 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
 
             // TODO: Filter by annotations, visibility, modality, modifiers like synchronized
             if (calledMethod.visibility != method.visibility) continue@checkMethod
+            if (calledMethod.canNotBeMerged()) continue
+
             for (i in method.parameters.indices) {
                 val parameter = method.parameters[i]
                 val targetParameter = calledMethod.parameters[i]
