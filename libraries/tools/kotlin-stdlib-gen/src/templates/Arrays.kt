@@ -1070,8 +1070,6 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.JS) {
                 when (primitive) {
                     PrimitiveType.Char -> {}
-                    PrimitiveType.Boolean, PrimitiveType.Long ->
-                        body { "return copyOf().unsafeCast<Array<T>>()" }
                     else ->
                         body { "return js(\"[]\").slice.call(this)" }
                 }
