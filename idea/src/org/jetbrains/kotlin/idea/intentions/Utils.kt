@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -340,3 +341,12 @@ val FunctionDescriptor.isOperatorOrCompatible: Boolean
         }
         return isOperator
     }
+
+fun KtPsiFactory.appendSemicolonBeforeLambdaContainingElement(element: PsiElement) {
+    val previousElement = KtPsiUtil.skipSiblingsBackwardByPredicate(element) {
+        it!!.node.elementType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
+    }
+    if (previousElement != null && previousElement is KtExpression) {
+        previousElement.parent.addAfter(createSemicolon(), previousElement)
+    }
+}
