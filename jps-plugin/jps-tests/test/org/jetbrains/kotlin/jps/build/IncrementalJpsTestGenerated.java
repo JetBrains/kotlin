@@ -594,6 +594,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             runTest("jps-plugin/testData/incremental/multiModule/multiplatform/custom/commonSourcesCompilerArg/");
         }
 
+        @TestMetadata("complementaryFiles")
+        public void testComplementaryFiles() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/custom/complementaryFiles/");
+        }
+
         @TestMetadata("notSameCompiler")
         public void testNotSameCompiler() throws Exception {
             runTest("jps-plugin/testData/incremental/multiModule/multiplatform/custom/notSameCompiler/");
@@ -635,6 +640,19 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
 
             public void testAllFilesPresentInCommonSourcesCompilerArg() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/custom/commonSourcesCompilerArg"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/custom/complementaryFiles")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ComplementaryFiles extends AbstractIncrementalJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInComplementaryFiles() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/custom/complementaryFiles"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
