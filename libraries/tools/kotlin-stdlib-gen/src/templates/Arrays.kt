@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -781,10 +781,7 @@ object ArrayOps : TemplateGroupBase() {
         returns("Unit")
         on(Platform.JS) {
             body {
-                """
-                if (size > 1)
-                    sort { a: T, b: T -> a.compareTo(b) }
-                """
+                """if (size > 1) sortArray(this)"""
             }
             specialFor(ArraysOfPrimitives) {
                 if (primitive != PrimitiveType.Long) {
@@ -794,6 +791,10 @@ object ArrayOps : TemplateGroupBase() {
                     }
                     on(Backend.IR) {
                         body { "this.asDynamic().sort()" }
+                    }
+                } else {
+                    body {
+                        """if (size > 1) sort { a: T, b: T -> a.compareTo(b) }"""
                     }
                 }
             }
@@ -828,23 +829,26 @@ object ArrayOps : TemplateGroupBase() {
         }
         on(Platform.JS) {
             body {
-                """
-                if (size > 1)
-                    sort { a, b -> comparator.compare(a, b) }
-                """
+                """if (size > 1) sortArrayWith(this, comparator)"""
             }
         }
     }
 
-    val f_sort_comparison = fn("sort(noinline comparison: (a: T, b: T) -> Int)") {
+    val f_sort_comparison = fn("sort(comparison: (a: T, b: T) -> Int)") {
         platforms(Platform.JS)
         include(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
     } builder {
-        inlineOnly()
         returns("Unit")
         doc { "Sorts the array in-place according to the order specified by the given [comparison] function." }
-        body { "asDynamic().sort(comparison)" }
+        specialFor(ArraysOfPrimitives) {
+            inlineOnly()
+            signature("sort(noinline comparison: (a: T, b: T) -> Int)")
+            body { "asDynamic().sort(comparison)" }
+        }
+        specialFor(ArraysOfObjects) {
+            body { """if (size > 1) sortArrayWith(this, comparison)""" }
+        }
     }
 
     val f_sort_objects = fn("sort()") {

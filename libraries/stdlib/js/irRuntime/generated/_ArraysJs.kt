@@ -1128,8 +1128,7 @@ public actual fun IntArray.sort(): Unit {
  * Sorts the array in-place.
  */
 public actual fun LongArray.sort(): Unit {
-    if (size > 1)
-        sort { a: Long, b: Long -> a.compareTo(b) }
+    if (size > 1) sort { a: Long, b: Long -> a.compareTo(b) }
 }
 
 /**
@@ -1171,16 +1170,14 @@ public actual fun CharArray.sort(): Unit {
  * Sorts the array in-place according to the natural order of its elements.
  */
 public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
-    if (size > 1)
-        sort { a: T, b: T -> a.compareTo(b) }
+    if (size > 1) sortArray(this)
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<out T>.sort(noinline comparison: (a: T, b: T) -> Int): Unit {
-    asDynamic().sort(comparison)
+public fun <T> Array<out T>.sort(comparison: (a: T, b: T) -> Int): Unit {
+    if (size > 1) sortArrayWith(this, comparison)
 }
 
 /**
@@ -1243,8 +1240,7 @@ public inline fun CharArray.sort(noinline comparison: (a: Char, b: Char) -> Int)
  * Sorts the array in-place according to the order specified by the given [comparator].
  */
 public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1)
-        sort { a, b -> comparator.compare(a, b) }
+    if (size > 1) sortArrayWith(this, comparator)
 }
 
 /**
