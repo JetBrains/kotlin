@@ -117,11 +117,11 @@ abstract class KotlinExtractSuperDialogBase(
             add(fileNameField, BorderLayout.CENTER)
         }
 
-        return FormBuilder
-                .createFormBuilder()
-                .addComponent(targetDirectoryPanel)
-                .addComponent(targetFileNamePanel)
-                .panel
+        val formBuilder = FormBuilder.createFormBuilder()
+        if (targetDirectoryPanel != null) {
+            formBuilder.addComponent(targetDirectoryPanel)
+        }
+        return formBuilder.addComponent(targetFileNamePanel).panel
     }
 
     override fun createNorthPanel(): JComponent? {
