@@ -1,0 +1,35 @@
+package org.jetbrains.kotlin.metadata.extension.contracts.subplugin;
+
+import "core/metadata/src/metadata.proto";
+import "plugins/contracts/contracts-plugin/src/contracts_metadata.proto";
+
+option java_outer_classname = "ContractSubpluginsProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+// Checked exceptions: 100 to 104
+// Safe builders: 105 to 109
+// Transactions: 110 to 114
+// DSL Marker: 115 to 119
+
+extend ContextProvider {
+  // Checked exceptions
+  optional Type providerExceptionType = 100;
+}
+
+extend ContextVerifier {
+  // Checked exceptions
+  optional Type verifierExceptionType = 100;
+
+  // Safe builders
+  optional Effect.InvocationKind verifierCallKind = 104;
+
+  // Transactions
+  //   1 -> ClosedTransactionVerifierDeclaration
+  //   2 -> OpenedTransactionVerifierDeclaration
+  optional int32 transactionVerifierType = 110;
+}
+
+extend ContextCleaner {
+  // Safe builders
+  optional Effect.InvocationKind cleanerCallKind = 104;
+}
