@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.replaceThisByStaticReference
@@ -14,9 +17,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmFunctionDescriptorImpl
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
-import org.jetbrains.org.objectweb.asm.Opcodes
 
 internal val jvmStaticAnnotationPhase = makeIrFilePhase(
     ::JvmStaticAnnotationLowering,
@@ -66,7 +64,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
         companion?.declarations?.filter(::isJvmStaticFunction)?.forEach {
             val jvmStaticFunction = it as IrSimpleFunction
             val newName = Name.identifier(context.state.typeMapper.mapFunctionName(jvmStaticFunction.symbol.descriptor, null))
-            if (AsmUtil.getVisibilityAccessFlag(jvmStaticFunction.descriptor) != Opcodes.ACC_PUBLIC) {
+            if (!jvmStaticFunction.visibility.isPublicAPI) {
                 // TODO: Synthetic accessor creation logic should be supported in SyntheticAccessorLowering in the future.
                 val accessorName = Name.identifier("access\$$newName")
                 val accessor = createProxy(
@@ -90,26 +88,40 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
     }
 
     private fun createProxy(
-        target: IrFunction,
+        target: IrSimpleFunction,
         irClass: IrClass,
         companion: IrClass,
         name: Name,
         visibility: Visibility,
         isSynthetic: Boolean
-    ): IrFunction {
-        val proxyFunctionSymbol = makeJvmStaticFunctionSymbol(irClass, target.symbol, name, visibility, isSynthetic)
-
-        val proxyIrFunction = IrFunctionImpl(
+    ): IrSimpleFunction {
+        val origin =
+            if (isSynthetic) JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER_SYNTHETIC else JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
+        val descriptor = WrappedSimpleFunctionDescriptor(target.descriptor.annotations)
+        return IrFunctionImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER,
-            proxyFunctionSymbol,
-            returnType = target.returnType
-        )
-        proxyIrFunction.createParameterDeclarations()
+            origin,
+            IrSimpleFunctionSymbolImpl(descriptor),
+            name,
+            visibility,
+            // FINAL on static interface members makes JVM unhappy, so remove it.
+            if (irClass.isInterface) Modality.OPEN else target.modality,
+            returnType = target.returnType,
+            isInline = false,
+            isExternal = false,
+            isTailrec = false,
+            isSuspend = target.isSuspend
+        ).apply {
+            descriptor.bind(this)
+            parent = irClass
+            copyTypeParametersFrom(target)
+            target.extensionReceiverParameter?.let { extensionReceiverParameter = it.copyTo(this) }
+            target.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
 
-        proxyIrFunction.body = createProxyBody(target, proxyIrFunction, companion)
-        target.annotations.mapTo(proxyIrFunction.annotations) { it.deepCopyWithSymbols() }
-        return proxyIrFunction
+            target.annotations.mapTo(annotations) { it.deepCopyWithSymbols() }
+
+            body = createProxyBody(target, this, companion)
+        }
     }
 
     private fun createProxyBody(target: IrFunction, proxy: IrFunction, companion: IrClass): IrBody {
@@ -198,34 +210,3 @@ private fun isJvmStaticFunction(declaration: IrDeclaration): Boolean =
     declaration is IrSimpleFunction &&
             (declaration.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
                     declaration.correspondingProperty?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true)
-
-private fun makeJvmStaticFunctionSymbol(
-    ownerClass: IrClass,
-    oldFunctionSymbol: IrFunctionSymbol,
-    newName: Name,
-    visibility: Visibility,
-    isSynthetic: Boolean
-): IrSimpleFunctionSymbol {
-    val proxyDescriptorForIrFunction = JvmFunctionDescriptorImpl(
-        ownerClass.descriptor,
-        null,
-        oldFunctionSymbol.descriptor.annotations,
-        newName,
-        CallableMemberDescriptor.Kind.SYNTHESIZED,
-        oldFunctionSymbol.descriptor.source,
-        extraFlags = if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0
-    )
-
-    proxyDescriptorForIrFunction.initialize(
-        oldFunctionSymbol.descriptor.extensionReceiverParameter?.copy(proxyDescriptorForIrFunction),
-        null,
-        oldFunctionSymbol.descriptor.typeParameters,
-        oldFunctionSymbol.descriptor.valueParameters.map { it.copy(proxyDescriptorForIrFunction, it.name, it.index) },
-        oldFunctionSymbol.descriptor.returnType,
-        // FINAL on static interface members makes JVM unhappy, so remove it.
-        if (ownerClass.isInterface) Modality.OPEN else oldFunctionSymbol.descriptor.modality,
-        visibility
-    )
-
-    return IrSimpleFunctionSymbolImpl(proxyDescriptorForIrFunction)
-}
