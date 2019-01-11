@@ -2748,6 +2748,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/notNullAsNotNullable.kt");
         }
 
+        @TestMetadata("nullCompareSideEffectingExpression.kt")
+        public void testNullCompareSideEffectingExpression() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/nullCompareSideEffectingExpression.kt");
+        }
+
         @TestMetadata("redundantSafeCall.kt")
         public void testRedundantSafeCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/redundantSafeCall.kt");

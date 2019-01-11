@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi2ir.transformations.InsertImplicitCasts
 
@@ -30,7 +31,7 @@ class JvmCoercionToUnitPatcher(val context: JvmBackendContext) :
 
     override fun IrExpression.coerceToUnit(): IrExpression {
         if (type.isSubtypeOf(context.irBuiltIns.unitType) && this is IrCall) {
-            return coerceToUnitIfNeeded(symbol.owner.returnType.toKotlinType())
+            return coerceToUnitIfNeeded(symbol.owner.returnType.toKotlinType(), context.irBuiltIns)
         }
 
         return this

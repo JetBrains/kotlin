@@ -15937,6 +15937,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/nullCheckOptimization/kt7774.kt");
         }
 
+        @TestMetadata("nullCompareSideEffectingExpression.kt")
+        public void testNullCompareSideEffectingExpression() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/nullCompareSideEffectingExpression.kt");
+        }
+
         @TestMetadata("trivialInstanceOf.kt")
         public void testTrivialInstanceOf() throws Exception {
             runTest("compiler/testData/codegen/box/nullCheckOptimization/trivialInstanceOf.kt");
