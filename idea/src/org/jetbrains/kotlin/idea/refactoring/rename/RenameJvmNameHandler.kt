@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.psi.psiUtil.plainContent
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 class RenameJvmNameHandler : PsiElementRenameHandler() {
     private fun getStringTemplate(dataContext: DataContext): KtStringTemplateExpression? {
@@ -77,11 +75,9 @@ class RenameJvmNameHandler : PsiElementRenameHandler() {
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext) {
         super.invoke(project, editor, file, wrapDataContext(dataContext) ?: return)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         super.invoke(project, elements, wrapDataContext(dataContext) ?: return)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 }

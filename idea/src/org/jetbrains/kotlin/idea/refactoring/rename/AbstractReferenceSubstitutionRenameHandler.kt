@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 abstract class AbstractReferenceSubstitutionRenameHandler(
         private val delegateHandler: RenameHandler = MemberInplaceRenameHandler()
@@ -65,9 +63,6 @@ abstract class AbstractReferenceSubstitutionRenameHandler(
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
         val elementToRename = getElementToRename(dataContext) ?: return
-
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
-
         val wrappingContext = DataContext { id ->
             if (CommonDataKeys.PSI_ELEMENT.`is`(id)) return@DataContext elementToRename
             dataContext.getData(id)
@@ -82,6 +77,5 @@ abstract class AbstractReferenceSubstitutionRenameHandler(
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         // Can't be invoked outside of a text editor
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 }
