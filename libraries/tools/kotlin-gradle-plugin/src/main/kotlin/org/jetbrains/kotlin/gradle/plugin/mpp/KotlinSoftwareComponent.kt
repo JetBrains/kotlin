@@ -16,7 +16,6 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.utils.ifEmpty
 
 open class KotlinSoftwareComponent(
     private val name: String,
@@ -52,14 +51,12 @@ object NativeUsage {
 interface KotlinUsageContext : UsageContext {
     val compilation: KotlinCompilation<*>
     val dependencyConfigurationName: String
-    val sourcesArtifact: PublishArtifact?
 }
 
 class DefaultKotlinUsageContext(
     override val compilation: KotlinCompilation<*>,
     private val usage: Usage,
     override val dependencyConfigurationName: String,
-    override val sourcesArtifact: PublishArtifact? = null,
     private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null
 ) : KotlinUsageContext {
 

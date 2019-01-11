@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.lowerSpinalCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class AbstractKotlinTarget(
@@ -53,10 +53,18 @@ abstract class AbstractKotlinTarget(
 
     override val components: Set<KotlinTargetComponent> by lazy {
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-        val usageContexts = createUsageContexts(mainCompilation, targetName, targetName.toLowerCase())
+        val usageContexts = createUsageContexts(mainCompilation)
         setOf(
             if (isGradleVersionAtLeast(4, 7)) {
-                createKotlinVariant(mainCompilation.target.name, mainCompilation, usageContexts)
+                val componentName = mainCompilation.target.name
+                createKotlinVariant(componentName, mainCompilation, usageContexts).apply {
+                    sourcesArtifacts = setOf(
+                        sourcesJarArtifact(
+                            mainCompilation, componentName,
+                            dashSeparatedName(target.name.toLowerCase(), componentName.toLowerCase())
+                        )
+                    )
+                }
             } else {
                 KotlinVariant(mainCompilation, usageContexts)
             }
@@ -91,12 +99,8 @@ abstract class AbstractKotlinTarget(
     }
 
     private fun createUsageContexts(
-        producingCompilation: KotlinCompilation<*>,
-        componentName: String,
-        artifactNameAppendix: String
+        producingCompilation: KotlinCompilation<*>
     ): Set<DefaultKotlinUsageContext> {
-        val sourcesJarArtifact = sourcesJarArtifact(producingCompilation, componentName, artifactNameAppendix)
-
         // Here, `JAVA_API` and `JAVA_RUNTIME_JARS` are used intentionally as Gradle needs this for
         // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
         // These Java usages should not be replaced with the custom Kotlin usages.
@@ -107,8 +111,7 @@ abstract class AbstractKotlinTarget(
             DefaultKotlinUsageContext(
                 producingCompilation,
                 project.usageByName(usageName),
-                dependenciesConfigurationName,
-                sourcesJarArtifact
+                dependenciesConfigurationName
             )
         }
     }
@@ -121,7 +124,7 @@ abstract class AbstractKotlinTarget(
     ): PublishArtifact {
         val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
         val sourceArtifactConfigurationName = producingCompilation.disambiguateName("sourceArtifacts")
-        val sourcesJarArtifact = producingCompilation.target.project.run {
+        return producingCompilation.target.project.run {
             (configurations.findByName(sourceArtifactConfigurationName) ?: run {
                 val configuration = configurations.create(sourceArtifactConfigurationName) {
                     it.isCanBeResolved = false
@@ -131,10 +134,9 @@ abstract class AbstractKotlinTarget(
                 configuration
             }).artifacts.single().apply {
                 this as ConfigurablePublishArtifact
-                classifier = lowerSpinalCaseName(classifierPrefix, "sources")
+                classifier = dashSeparatedName(classifierPrefix, "sources")
             }
         }
-        return sourcesJarArtifact
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -182,6 +184,8 @@ open class KotlinAndroidTarget(
      * If set to null, which can also be done with [publishAllLibraryVariants],
      * all library variants will be published, but not test or application variants. */
     var publishLibraryVariants: List<String>? = listOf()
+        // Workaround for Groovy GString items in a list:
+        set(value) { field = value?.map(Any::toString) }
 
     /** Add Android library variant names to [publishLibraryVariants]. */
     fun publishLibraryVariants(vararg names: String) {
@@ -200,21 +204,27 @@ open class KotlinAndroidTarget(
 
     private fun checkPublishLibraryVariantsExist() {
         // Capture type parameter T
-        fun <T> AbstractAndroidProjectHandler<T>.getVariantNames() =
-            mutableSetOf<String>().apply { forEachVariant(project) { add(getVariantName(it)) } }
+        fun <T> AbstractAndroidProjectHandler<T>.getLibraryVariantNames() =
+            mutableSetOf<String>().apply {
+                forEachVariant(project) {
+                    if (getLibraryOutputTask(it) != null)
+                        add(getVariantName(it))
+                }
+            }
 
         val variantNames =
             KotlinAndroidPlugin.androidTargetHandler(project.getKotlinPluginVersion()!!, this)
-                .getVariantNames()
+                .getLibraryVariantNames()
 
         val missingVariants =
             publishLibraryVariants?.minus(variantNames).orEmpty()
 
         if (missingVariants.isNotEmpty())
             throw InvalidUserDataException(
-                "Kotlin target '$targetName' tried to set up publishing for Android library variants that are not present " +
-                        "in the project:\n" + missingVariants.joinToString("\n") { "* $it" } +
-                        "\nCheck the 'publishLibraryVariants' property, it should point to existing Android build variants."
+                "Kotlin target '$targetName' tried to set up publishing for Android build variants that are not library variants " +
+                        "or do not exist:\n" + missingVariants.joinToString("\n") { "* $it" } +
+                        "\nCheck the 'publishLibraryVariants' property, it should point to existing Android library variants. Publishing " +
+                        "of application and test variants is not supported."
             )
     }
 
@@ -250,17 +260,36 @@ open class KotlinAndroidTarget(
             val nestedVariants = androidVariants.mapTo(mutableSetOf()) { androidVariant ->
                 val androidVariantName = getVariantName(androidVariant)
                 val compilation = compilations.getByName(androidVariantName)
+
+                val flavorNames = getFlavorNames(androidVariant)
                 val buildTypeName = getBuildTypeName(androidVariant)
-                val usageContexts = createAndroidUsageContexts(androidVariant, compilation, getFlavorNames(androidVariant), buildTypeName)
+
+                val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }
+
+                val usageContexts = createAndroidUsageContexts(androidVariant, compilation, artifactClassifier)
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
                     compilation,
                     usageContexts
                 ).apply {
+                    sourcesArtifacts = setOf(
+                        sourcesJarArtifact(
+                            compilation, compilation.disambiguateName(""),
+                            dashSeparatedName(
+                                compilation.target.name.toLowerCase(),
+                                *flavorNames.map { it.toLowerCase() }.toTypedArray(),
+                                buildTypeName.takeIf { it != "release" }?.toLowerCase()
+                            ),
+                            classifierPrefix = artifactClassifier
+                        )
+                    )
+
                     if (!publishLibraryVariantsGroupedByFlavor) {
                         defaultArtifactIdSuffix =
-                            lowerSpinalCaseName(getFlavorNames(androidVariant) + getBuildTypeName(androidVariant).takeIf { it != "release" })
-                                .takeIf { it.isNotEmpty() }
+                            dashSeparatedName(
+                                (getFlavorNames(androidVariant) + getBuildTypeName(androidVariant).takeIf { it != "release" })
+                                    .map { it?.toLowerCase() }
+                            ).takeIf { it.isNotEmpty() }
                     }
                 }
             }
@@ -269,7 +298,8 @@ open class KotlinAndroidTarget(
                 JointAndroidKotlinTargetComponent(
                     this@KotlinAndroidTarget,
                     nestedVariants,
-                    flavorGroupNameParts
+                    flavorGroupNameParts,
+                    nestedVariants.flatMap { it.sourcesArtifacts }.toSet()
                 )
             } else {
                 nestedVariants.single()
@@ -280,17 +310,8 @@ open class KotlinAndroidTarget(
     private fun <T> AbstractAndroidProjectHandler<T>.createAndroidUsageContexts(
         variant: T,
         compilation: KotlinCompilation<*>,
-        flavorNames: List<String>,
-        buildTypeName: String
+        artifactClassifier: String?
     ): Set<DefaultKotlinUsageContext> {
-        val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }
-
-        val sourcesJarArtifact = sourcesJarArtifact(
-            compilation, compilation.disambiguateName(""),
-            lowerSpinalCaseName(compilation.target.name, *flavorNames.toTypedArray(), buildTypeName.takeIf { it != "release" }),
-            classifierPrefix = artifactClassifier
-        )
-
         val variantName = getVariantName(variant)
         val outputTask = getLibraryOutputTask(variant) ?: return emptySet()
         val artifact = run {
@@ -318,7 +339,6 @@ open class KotlinAndroidTarget(
                 compilation,
                 project.usageByName(usageName),
                 dependencyConfigurationName,
-                sourcesJarArtifact,
                 overrideConfigurationArtifacts = setOf(artifact)
             )
         }

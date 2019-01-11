@@ -166,7 +166,6 @@ class KotlinMultiplatformPlugin(
 
             // The root publication that references the platform specific publications as its variants:
             val rootPublication = publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
-                artifactId = project.name.toLowerCase()
                 from(kotlinSoftwareComponent)
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
             }
@@ -200,9 +199,8 @@ class KotlinMultiplatformPlugin(
                     // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
                     project.whenEvaluated {
                         from(variant)
-                        if (variant is SoftwareComponentInternal) {
-                            variant.usages.filterIsInstance<KotlinUsageContext>().map { it.sourcesArtifact }.distinct()
-                                .forEach { artifact(it) }
+                        variant.sourcesArtifacts.forEach { sourceArtifact ->
+                            artifact(sourceArtifact)
                         }
                     }
                     (this as MavenPublicationInternal).publishWithOriginalFileName()

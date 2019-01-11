@@ -14,12 +14,9 @@ internal fun lowerCamelCaseName(vararg nameParts: String?): String {
     )
 }
 
-internal fun lowerSpinalCaseName(nameParts: Iterable<String?>) = lowerSpinalCaseName(*nameParts.toList().toTypedArray())
+internal fun dashSeparatedName(nameParts: Iterable<String?>) = dashSeparatedName(*nameParts.toList().toTypedArray())
 
-internal fun lowerSpinalCaseName(vararg nameParts: String?): String {
+internal fun dashSeparatedName(vararg nameParts: String?): String {
     val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
-    return nonEmptyParts.joinToString(
-        separator = "-",
-        transform = String::toLowerCase
-    )
+    return nonEmptyParts.joinToString(separator = "-")
 }
