@@ -56,12 +56,15 @@ internal class IntrinsicsMap {
     }
 
     fun getIntrinsic(descriptor: CallableMemberDescriptor): IntrinsicMethod? =
-        intrinsicsMap[Key(
+        intrinsicsMap[getKey(descriptor)]?.takeIf { it.isApplicableToOverload(descriptor.original) }
+
+    private fun getKey(descriptor: CallableMemberDescriptor): Key =
+        Key(
             DescriptorUtils.getFqName(descriptor.containingDeclaration),
             getReceiverParameterFqName(descriptor),
             descriptor.name.asString(),
             valueParameterCountForKey(descriptor)
-        )]
+        )
 
     private fun getReceiverParameterFqName(descriptor: CallableMemberDescriptor): FqNameUnsafe? {
         val receiverParameter = descriptor.extensionReceiverParameter ?: return null
@@ -72,4 +75,6 @@ internal class IntrinsicsMap {
         else
             DescriptorUtils.getFqName(classifier)
     }
+
 }
+

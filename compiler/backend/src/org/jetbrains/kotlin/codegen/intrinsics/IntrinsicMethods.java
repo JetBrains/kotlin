@@ -41,6 +41,8 @@ public class IntrinsicMethods {
     private static final FqName KOTLIN_JVM = new FqName("kotlin.jvm");
     /* package */ static final FqNameUnsafe RECEIVER_PARAMETER_FQ_NAME = new FqNameUnsafe("T");
 
+    private static final FqNameUnsafe KOTLIN_ULONG = new FqNameUnsafe("kotlin.ULong");
+
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
     private static final IntrinsicMethod UNARY_PLUS = new UnaryPlus();
     private static final IntrinsicMethod NUMBER_CAST = new NumberCast();
@@ -153,6 +155,16 @@ public class IntrinsicMethods {
         }
 
         declareArrayMethods();
+
+        if (jvmTarget.compareTo(JvmTarget.JVM_1_8) >= 0) {
+            Java8ULongDivide java8ULongDivide = new Java8ULongDivide();
+            Java8ULongRemainder java8ULongRemainder = new Java8ULongRemainder();
+
+            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "div", 1, java8ULongDivide);
+            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "rem", 1, java8ULongRemainder);
+            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongDivide", 2, java8ULongDivide);
+            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongRemainder", 2, java8ULongRemainder);
+        }
     }
 
     private void declareArrayMethods() {
