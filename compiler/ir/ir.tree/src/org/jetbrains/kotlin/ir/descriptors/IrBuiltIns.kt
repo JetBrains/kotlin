@@ -128,6 +128,8 @@ class IrBuiltIns(
     val stringType = string.toIrType()
     val stringClass = builtIns.string.toIrSymbol()
 
+    val collectionClass = builtIns.collection.toIrSymbol()
+
     val arrayClass = builtIns.array.toIrSymbol()
 
     val throwableType = builtIns.throwable.defaultType.toIrType()
