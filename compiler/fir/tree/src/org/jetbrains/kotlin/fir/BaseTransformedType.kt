@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+// This annotation marks FIR interfaces which may be used as transformer function results
+// In case some interface is not marked, transformer function returns closest parent marked with this annotation
+
 annotation class BaseTransformedType
