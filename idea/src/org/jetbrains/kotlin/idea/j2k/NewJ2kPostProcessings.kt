@@ -141,6 +141,11 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             registerGeneralInspectionBasedProcessing(ReplaceCallWithBinaryOperatorInspection()),
             registerGeneralInspectionBasedProcessing(MayBeConstantInspection()),
 
+            registerDiagnosticBasedProcessing(Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) { element: KtDotQualifiedExpression, diagnostic ->
+                val parent = element.parent as? KtImportDirective ?: return@registerDiagnosticBasedProcessing
+                parent.delete()
+            },
+
             SingleProcessing(object : J2kPostProcessing {
                 override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? =
                     {
