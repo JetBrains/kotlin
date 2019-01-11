@@ -5,26 +5,20 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
 
-class InternalClassConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class InternalClassConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKClass) return recurse(element)
-        return recurseArmed(element, element.visibility == Visibility.INTERNAL)
-    }
+        if (element !is JKVisibilityOwner || element !is JKModalityOwner) return recurse(element)
+        val containingClass = element.parentOfType<JKClass>() ?: return recurse(element)
 
-    private fun recurseArmed(element: JKTreeElement, parentIsInternal: Boolean): JKTreeElement {
-        return applyRecursive(element, parentIsInternal, ::applyArmed)
-    }
-
-    private fun applyArmed(element: JKTreeElement, parentIsInternal: Boolean): JKTreeElement {
-        if (element is JKClass) return recurseArmed(element, parentIsInternal)
-        if (element !is JKVisibilityOwner) return recurseArmed(element, parentIsInternal)
-        val isInternal = element.visibility == Visibility.INTERNAL
-        if (isInternal && parentIsInternal && context.converter.settings.noInternalForMembersOfInternal) {
+        if (containingClass.visibility == Visibility.INTERNAL
+            && element.visibility == Visibility.INTERNAL
+            && element.modality == Modality.FINAL
+            && (element is JKMethod || element is JKField)
+        ) {
             element.visibility = Visibility.PUBLIC
         }
-        return recurseArmed(element, isInternal)
+        return recurse(element)
     }
 }
