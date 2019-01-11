@@ -24293,6 +24293,26 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsWithSignedOverflow.kt");
         }
 
+        @TestMetadata("unsignedLongDivide_jvm16.kt")
+        public void testUnsignedLongDivide_jvm16() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongDivide_jvm16.kt");
+        }
+
+        @TestMetadata("unsignedLongDivide_jvm18.kt")
+        public void testUnsignedLongDivide_jvm18() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongDivide_jvm18.kt");
+        }
+
+        @TestMetadata("unsignedLongRemainder_jvm16.kt")
+        public void testUnsignedLongRemainder_jvm16() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongRemainder_jvm16.kt");
+        }
+
+        @TestMetadata("unsignedLongRemainder_jvm18.kt")
+        public void testUnsignedLongRemainder_jvm18() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongRemainder_jvm18.kt");
+        }
+
         @TestMetadata("unsignedTypePrefixIncrementDecrementBoxing.kt")
         public void testUnsignedTypePrefixIncrementDecrementBoxing() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedTypePrefixIncrementDecrementBoxing.kt");

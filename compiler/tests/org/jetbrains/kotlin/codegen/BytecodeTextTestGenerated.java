@@ -3106,6 +3106,39 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/unsignedTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnsignedTypes extends AbstractBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInUnsignedTypes() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("unsignedLongDivide_jvm16.kt")
+        public void testUnsignedLongDivide_jvm16() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongDivide_jvm16.kt");
+        }
+
+        @TestMetadata("unsignedLongDivide_jvm18.kt")
+        public void testUnsignedLongDivide_jvm18() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongDivide_jvm18.kt");
+        }
+
+        @TestMetadata("unsignedLongRemainder_jvm16.kt")
+        public void testUnsignedLongRemainder_jvm16() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongRemainder_jvm16.kt");
+        }
+
+        @TestMetadata("unsignedLongRemainder_jvm18.kt")
+        public void testUnsignedLongRemainder_jvm18() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongRemainder_jvm18.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/varargs")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
