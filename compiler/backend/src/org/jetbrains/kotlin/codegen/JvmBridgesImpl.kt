@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.bridges.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -27,7 +26,7 @@ class DescriptorBasedFunctionHandleForJvm(
         For non-@JvmDefault interfaces function, its body is generated in a separate place (DefaultImpls) and
         the method in the interface is abstract so we must not generate bridges for such cases.
     */
-    override val isAbstract: Boolean = super.isAbstract || isAbstractOnJvmIgnoringActualModality(state, descriptor)
+    override val isAbstract: Boolean = super.isAbstract || isAbstractOnJvmIgnoringActualModality(descriptor)
 
     override val mayBeUsedAsSuperImplementation: Boolean =
         super.mayBeUsedAsSuperImplementation || descriptor.isJvmDefaultOrPlatformDependent()
@@ -52,9 +51,8 @@ private fun needToGenerateDelegationToDefaultImpls(descriptor: FunctionDescripto
 /**
  * @return return true for interface method not annotated with @JvmDefault or @PlatformDependent
  */
-fun isAbstractOnJvmIgnoringActualModality(state: GenerationState, descriptor: FunctionDescriptor): Boolean {
+fun isAbstractOnJvmIgnoringActualModality(descriptor: FunctionDescriptor): Boolean {
     if (!DescriptorUtils.isInterface(descriptor.containingDeclaration)) return false
-    if (state.target == JvmTarget.JVM_1_6) return true
 
     return !descriptor.isJvmDefaultOrPlatformDependent()
 }
