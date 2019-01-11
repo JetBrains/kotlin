@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
@@ -21,6 +22,7 @@ interface KotlinTargetComponent : SoftwareComponent {
     val target: KotlinTarget
     val publishable: Boolean
     val defaultArtifactId: String
+    val sourcesArtifacts: Set<PublishArtifact>
 }
 
 interface KotlinTarget : Named, HasAttributes {

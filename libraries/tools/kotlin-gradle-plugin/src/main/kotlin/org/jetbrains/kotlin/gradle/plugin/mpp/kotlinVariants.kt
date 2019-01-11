@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ExcludeRule
-import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.ModuleIdentifier
-import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.*
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
@@ -18,8 +15,8 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.lowerSpinalCaseName
 
 internal interface KotlinTargetComponentWithPublication : KotlinTargetComponent {
     // This property is declared in the separate parent type to allow the usages to reference it without forcing the subtypes to load,
@@ -35,7 +32,7 @@ internal fun getCoordinatesFromPublicationDelegateAndProject(
     object : ModuleVersionIdentifier {
         private val moduleName: String
             get() =
-                publication?.artifactId ?: lowerSpinalCaseName(project.name, target?.name)
+                publication?.artifactId ?: dashSeparatedName(project.name, target?.name?.toLowerCase())
 
         private val moduleGroup: String
             get() =
@@ -74,10 +71,13 @@ open class KotlinVariant(
     override val publishable: Boolean
         get() = target.publishable
 
+    override var sourcesArtifacts: Set<PublishArtifact> = emptySet()
+        internal set
+
     internal var defaultArtifactIdSuffix: String? = null
 
     override val defaultArtifactId: String
-        get() = lowerSpinalCaseName(target.project.name, target.targetName, defaultArtifactIdSuffix)
+        get() = dashSeparatedName(target.project.name, target.targetName.toLowerCase(), defaultArtifactIdSuffix)
 
     override var publicationDelegate: MavenPublication? = null
 }
@@ -126,8 +126,9 @@ class KotlinVariantWithMetadataDependency(
 class JointAndroidKotlinTargetComponent(
     override val target: KotlinAndroidTarget,
     private val nestedVariants: Set<KotlinVariant>,
-    val flavorNames: List<String>
-) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
+    val flavorNames: List<String>,
+    override val sourcesArtifacts: Set<PublishArtifact>
+    ) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
 
     override fun getUsages(): Set<UsageContext> = nestedVariants.flatMap { it.usages }.toSet()
 
@@ -137,7 +138,11 @@ class JointAndroidKotlinTargetComponent(
         get() = target.publishable
 
     override val defaultArtifactId: String =
-        lowerSpinalCaseName(target.project.name, target.targetName, *flavorNames.toTypedArray())
+        dashSeparatedName(
+            target.project.name,
+            target.targetName.toLowerCase(),
+            *flavorNames.map { it.toLowerCase() }.toTypedArray()
+        )
 
     override var publicationDelegate: MavenPublication? = null
 }
