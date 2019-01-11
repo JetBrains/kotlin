@@ -173,14 +173,15 @@ class JavaToJKTreeBuilder(
 
         fun PsiLambdaExpression.toJK(): JKExpression {
             return JKLambdaExpressionImpl(
-                with(declarationMapper) { parameterList.parameters.map { it.toJK() } },
                 body.let {
                     when (it) {
                         is PsiExpression -> JKExpressionStatementImpl(it.toJK())
                         is PsiCodeBlock -> JKBlockStatementImpl(with(declarationMapper) { it.toJK() })
                         else -> JKBlockStatementImpl(JKBodyStub)
                     }
-                })
+                },
+                with(declarationMapper) { parameterList.parameters.map { it.toJK() } }
+            )
         }
 
         private fun JKExpression.qualified(qualifier: JKExpression?) =

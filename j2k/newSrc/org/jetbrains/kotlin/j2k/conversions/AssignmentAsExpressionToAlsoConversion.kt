@@ -21,7 +21,11 @@ class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : R
             ), context.symbolProvider.provideByFqName("kotlin/also")
         ).also {
             it.statement.cast<JKBlockStatement>().block.statements.first().cast<JKKtAssignmentStatement>().expression =
-                    JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it.parameter))
+                    JKFieldAccessExpressionImpl(
+                        context.symbolProvider.provideUniverseSymbol(
+                            JKParameterImpl(JKTypeElementImpl(JKContextType), JKNameIdentifierImpl("it"))
+                        )
+                    )//TODO introduce symbol
         }
 
         return recurse(

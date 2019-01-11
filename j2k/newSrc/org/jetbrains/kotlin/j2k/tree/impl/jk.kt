@@ -358,9 +358,9 @@ class JKClassAccessExpressionImpl(override var identifier: JKClassSymbol) : JKCl
 }
 
 class JKLambdaExpressionImpl(
-    parameters: List<JKParameter> = listOf(
-        JKParameterImpl(JKTypeElementImpl(JKJavaVoidType), JKNameIdentifierImpl("it"))
-    ), statement: JKStatement, returnType: JKTypeElement = JKTypeElementImpl(JKContextType)
+    statement: JKStatement,
+    parameters: List<JKParameter>,
+    returnType: JKTypeElement = JKTypeElementImpl(JKContextType)//TODO use function type
 ) : JKLambdaExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var statement by child(statement)
     override val returnType by child(returnType)

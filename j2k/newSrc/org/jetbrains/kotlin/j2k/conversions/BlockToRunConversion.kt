@@ -33,8 +33,8 @@ class BlockToRunConversion(private val context: ConversionContext) : RecursiveAp
 
         element.invalidate()
         val lambda = JKLambdaExpressionImpl(
-            emptyList(),
-            JKBlockStatementImpl(element.block)
+            JKBlockStatementImpl(element.block),
+            emptyList()
         )
         val call = JKKtCallExpressionImpl(runSymbol as JKMethodSymbol, JKExpressionListImpl(listOf(lambda)))
         return recurse(call)

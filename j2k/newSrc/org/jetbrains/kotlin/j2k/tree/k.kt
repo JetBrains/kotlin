@@ -58,7 +58,6 @@ interface JKKtMethodCallExpression : JKMethodCallExpression
 
 interface JKKtAlsoCallExpression : JKKtMethodCallExpression {
     var statement: JKStatement
-    val parameterName: String
 }
 
 interface JKKtLiteralExpression : JKLiteralExpression

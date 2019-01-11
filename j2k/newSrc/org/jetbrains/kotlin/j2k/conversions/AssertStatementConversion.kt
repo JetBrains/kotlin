@@ -19,8 +19,8 @@ class AssertStatementConversion(private val context: ConversionContext) : Recurs
         val messageExpression =
             if (element.description is JKStubExpression) null
             else JKLambdaExpressionImpl(
-                emptyList(),
-                JKExpressionStatementImpl(element::description.detached())
+                JKExpressionStatementImpl(element::description.detached()),
+                emptyList()
             )
         return recurse(
             JKExpressionStatementImpl(

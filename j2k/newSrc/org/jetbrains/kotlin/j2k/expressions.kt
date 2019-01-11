@@ -208,8 +208,8 @@ fun useExpression(
         JKParameterImpl(JKTypeElementImpl(JKNoTypeImpl), variableIdentifier)
 
     val lambda = JKLambdaExpressionImpl(
-        listOf(lambdaParameter),
-        body
+        body,
+        listOf(lambdaParameter)
     )
     val methodCall =
         JKJavaMethodCallExpressionImpl(

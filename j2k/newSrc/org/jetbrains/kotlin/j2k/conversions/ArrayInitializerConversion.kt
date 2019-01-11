@@ -59,7 +59,8 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
                 JKExpressionListImpl(
                     dimensions[0],
                     JKLambdaExpressionImpl(
-                        statement = JKExpressionStatementImpl(buildArrayInitializer(dimensions.subList(1, dimensions.size), type))
+                        JKExpressionStatementImpl(buildArrayInitializer(dimensions.subList(1, dimensions.size), type)),
+                        emptyList()
                     )
                 )
             )
@@ -67,7 +68,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
         var resultType = JKClassTypeImpl(
             context.symbolProvider.provideByFqName(arrayFqName(type)),
             if (type is JKJavaPrimitiveType) emptyList() else listOf(type),
-            Nullability.NotNull
+            Nullability.Default
         )
         for (i in 0 until dimensions.size - 2) {
             resultType = JKClassTypeImpl(

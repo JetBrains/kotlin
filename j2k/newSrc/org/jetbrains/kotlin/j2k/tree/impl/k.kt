@@ -118,7 +118,6 @@ class JKKtOperatorImpl(override val token: JKKtOperatorToken, val methodSymbol: 
 class JKKtAlsoCallExpressionImpl(
     statement: JKStatement,
     override val identifier: JKMethodSymbol,
-    override val parameterName: String = "it",
     typeArgumentList: JKTypeArgumentList = JKTypeArgumentListImpl()
 ) : JKKtAlsoCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAlsoCallExpression(this, data)
@@ -127,19 +126,10 @@ class JKKtAlsoCallExpressionImpl(
         set(it) {
             arguments.expressions.first().cast<JKLambdaExpressionImpl>().statement = it
         }
-    val parameter
-        get() = arguments.expressions.first().cast<JKLambdaExpression>().parameters.first()
     override var arguments: JKExpressionList by child(
         JKExpressionListImpl(
             listOf(
-                JKLambdaExpressionImpl(
-                    listOf(
-                        JKParameterImpl(
-                            JKTypeElementImpl(JKJavaVoidType),
-                            JKNameIdentifierImpl(parameterName)
-                        )
-                    ), statement
-                )
+                JKLambdaExpressionImpl(statement, emptyList())
             )
         )
     )
