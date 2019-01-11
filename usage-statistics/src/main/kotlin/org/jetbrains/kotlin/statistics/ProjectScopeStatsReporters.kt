@@ -30,16 +30,6 @@ class KotlinProjectLibraryUsageTrigger : KotlinGradlePluginStatisticsTrigger("li
 
 open class KotlinIdeActionTrigger(groupIdSufix: String? = null) : KotlinIdeStatisticsTrigger("action" + (if (groupIdSufix != null) ".$groupIdSufix" else ""))
 
-class KotlinIdeUndoTrigger : KotlinIdeActionTrigger("undo")
-
-class KotlinIdeQuickfixTrigger : KotlinIdeActionTrigger("quickfix")
-
 class KotlinIdeRefactoringTrigger : KotlinIdeActionTrigger("refactoring")
-
-class KotlinIdeIntentionTrigger : KotlinIdeActionTrigger("intention")
-
-class KotlinIdeInspectionTrigger : KotlinIdeActionTrigger("inspection")
-
-class KotlinIdeExceptionTrigger : KotlinIdeStatisticsTrigger("exception")
 
 class KotlinIdeNewFileTemplateTrigger : KotlinIdeStatisticsTrigger("newFileTempl")
