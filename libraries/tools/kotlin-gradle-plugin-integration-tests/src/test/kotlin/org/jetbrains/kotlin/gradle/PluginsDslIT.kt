@@ -50,12 +50,11 @@ class PluginsDslIT : BaseGradleIT() {
     }
 
     companion object {
-        private val GRADLE_VERSION = GradleVersionRequired.AtLeast("4.0")
         private const val DIRECTORY_PREFIX = "pluginsDsl"
 
         private fun BaseGradleIT.projectWithMavenLocalPlugins(
             projectName: String,
-            wrapperVersion: GradleVersionRequired = GRADLE_VERSION,
+            wrapperVersion: GradleVersionRequired = GradleVersionRequired.None,
             directoryPrefix: String? = DIRECTORY_PREFIX,
             minLogLevel: LogLevel = LogLevel.DEBUG
         ): Project = transformProjectWithPluginsDsl(projectName, wrapperVersion, directoryPrefix, minLogLevel)

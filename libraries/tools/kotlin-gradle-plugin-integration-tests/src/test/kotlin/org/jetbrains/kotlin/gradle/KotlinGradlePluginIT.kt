@@ -517,7 +517,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testSrcDirTaskDependency() {
-        Project("simpleProject", GradleVersionRequired.AtLeast("4.1")).apply {
+        Project("simpleProject").apply {
             setupWorkingDir()
             File(projectDir, "build.gradle").appendText(
                 """${'\n'}

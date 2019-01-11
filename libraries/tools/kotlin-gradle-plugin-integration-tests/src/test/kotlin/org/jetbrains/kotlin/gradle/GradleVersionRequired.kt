@@ -21,7 +21,7 @@ import org.junit.Assume
 
 sealed class GradleVersionRequired(val minVersion: String, val maxVersion: String?) {
     companion object {
-        const val OLDEST_SUPPORTED = "4.0"
+        const val OLDEST_SUPPORTED = "4.1"
     }
 
     class Exact(version: String) : GradleVersionRequired(version, version)
@@ -29,6 +29,8 @@ sealed class GradleVersionRequired(val minVersion: String, val maxVersion: Strin
     class AtLeast(version: String) : GradleVersionRequired(version, null)
 
     class InRange(minVersion: String, maxVersion: String) : GradleVersionRequired(minVersion, maxVersion)
+
+    class Until(maxVersion: String) : GradleVersionRequired(OLDEST_SUPPORTED, maxVersion)
 
     object None : GradleVersionRequired(GradleVersionRequired.OLDEST_SUPPORTED, null)
 }
