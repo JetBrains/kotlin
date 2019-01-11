@@ -46,9 +46,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.I
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
 import org.jetbrains.kotlin.idea.j2k.postProcessing.ConvertDataClass
 import org.jetbrains.kotlin.idea.j2k.postProcessing.ConvertGettersAndSetters
-import org.jetbrains.kotlin.idea.quickfix.QuickFixActionBase
-import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
-import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
+import org.jetbrains.kotlin.idea.quickfix.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -144,6 +142,13 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             registerDiagnosticBasedProcessing(Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) { element: KtDotQualifiedExpression, diagnostic ->
                 val parent = element.parent as? KtImportDirective ?: return@registerDiagnosticBasedProcessing
                 parent.delete()
+            },
+
+            registerDiagnosticBasedProcessing(Errors.CAST_NEVER_SUCCEEDS) { element: KtSimpleNameExpression, diagnostic ->
+                val action =
+                    ReplacePrimitiveCastWithNumberConversionFix.createActionsForAllProblems(listOf(diagnostic)).singleOrNull()
+                        ?: return@registerDiagnosticBasedProcessing
+                action.invoke(element.project, null, element.containingKtFile)
             },
 
             SingleProcessing(object : J2kPostProcessing {
