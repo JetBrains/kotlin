@@ -1143,18 +1143,32 @@ class ExperimentalPluginTests {
     @Test
     fun `Plugin should support symbol exporting for frameworks`() {
         assumeTrue(HostManager.hostIsMac)
+        val transitiveDir = tmpFolder.newFolder("transitive")
+        val transitiveProject = KonanProject.createEmpty(transitiveDir).apply {
+            buildFile.writeText("""
+                plugins { id 'kotlin-native' }
+                components.main.targets = [ 'ios_x64' ]
+            """)
+            generateSrcFile("transitive.kt", "fun transitive() = 42")
+        }
+
         val libraryDir = tmpFolder.newFolder("library")
         val libraryProject = KonanProject.createEmpty(libraryDir).apply {
             buildFile.writeText("""
                 plugins { id 'kotlin-native' }
                 components.main.targets = [ 'ios_x64' ]
+
+                dependencies {
+                    implementation project(':transitive')
+                }
             """.trimIndent())
-            generateSrcFile("library.kt", "fun foo() = 42")
+            generateSrcFile("library.kt", "fun foo() = transitive()")
         }
 
         val project = KonanProject.createEmpty(projectDirectory).apply {
             settingsFile.writeText("""
                 include ':library'
+                include ':transitive'
                 rootProject.name = 'test'
             """.trimIndent())
             buildFile.writeText("""
@@ -1176,9 +1190,12 @@ class ExperimentalPluginTests {
             assertEquals(TaskOutcome.SUCCESS, task(":compileDebugKotlinNative")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":library:compileDebugKotlinNative")?.outcome)
             assertTrue(projectDirectory.resolve("build/lib/main/debug/test.framework").exists())
+
             val header = projectDirectory.resolve("build/lib/main/debug/test.framework/Headers/test.h")
             assertTrue(header.exists())
             assertTrue(header.readText().contains("+ (int32_t)foo "))
+            assertFalse(header.readText().contains("+ (int32_t)transitive")) // By default export is non-transitive.
+
             checkFrameworkCompilationCommandLine {
                 assertTrue(it.contains("-Xembed-bitcode-marker"))
                 assertTrue(it.contains("-g"))
@@ -1191,6 +1208,15 @@ class ExperimentalPluginTests {
                 assertTrue(it.contains("-Xembed-bitcode"))
                 assertTrue(it.contains("-opt"))
             }
+        }
+
+        // Check that transitive export works too.
+        project.buildFile.appendText("\ncomponents.main.dependencies.transitiveExport = true")
+        with(project.createRunner().withArguments("compileDebugKotlinNative").build()) {
+            val header = projectDirectory.resolve("build/lib/main/debug/test.framework/Headers/test.h")
+            assertTrue(header.exists())
+            assertTrue(header.readText().contains("+ (int32_t)foo "))
+            assertTrue(header.readText().contains("+ (int32_t)transitive"))
         }
     }
 }

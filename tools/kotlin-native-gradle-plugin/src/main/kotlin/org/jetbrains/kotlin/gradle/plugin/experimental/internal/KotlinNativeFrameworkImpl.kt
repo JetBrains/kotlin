@@ -60,6 +60,7 @@ open class KotlinNativeFrameworkImpl @Inject constructor(
     // A configuration containing exported klibs.
     override val export = configurations.create(names.withPrefix("export")).apply {
         isCanBeConsumed = false
+        isTransitive = component.dependencies.transitiveExport
         attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
         attributes.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, debuggable)
         attributes.attribute(CppBinary.OPTIMIZED_ATTRIBUTE, optimized)

@@ -43,11 +43,7 @@ open class KotlinNativeDependenciesImpl @Inject constructor(
         implementationDependencies.extendsFrom(this)
     }
 
-    override var transitiveExport: Boolean
-        get() = exportDependencies.isTransitive
-        set(value) {
-            exportDependencies.isTransitive = value
-        }
+    override var transitiveExport: Boolean = false
 
     override fun export(notation: Any) {
         exportDependencies.dependencies.add(dependencyHandler.create(notation))
