@@ -181,6 +181,11 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/AnnotationModifiers.kt");
         }
 
+        @TestMetadata("EnumNameOverride.kt")
+        public void testEnumNameOverride() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/EnumNameOverride.kt");
+        }
+
         @TestMetadata("ExpectClass.kt")
         public void testExpectClass() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/ExpectClass.kt");
@@ -234,6 +239,11 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         @TestMetadata("TraitClassObjectField.kt")
         public void testTraitClassObjectField() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/TraitClassObjectField.kt");
+        }
+
+        @TestMetadata("TwoOverrides.kt")
+        public void testTwoOverrides() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/TwoOverrides.kt");
         }
 
         @TestMetadata("WrongAnnotations.kt")
