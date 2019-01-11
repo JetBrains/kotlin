@@ -3,6 +3,7 @@
 enum class Foo(n: Int, i: Int) {
     A(1, 2),
     B(3, 2),
-    C(),
-    D
+    C(3, 4),
+    D(, 2),
+    E
 }
