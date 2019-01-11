@@ -73,20 +73,17 @@ object KotlinUsages {
                 chooseCandidateByName(KOTLIN_RUNTIME)
             }
 
-            // The consumer value is available and can be used for disambiguation in Gradle 4.1+
-            if (isGradleVersionAtLeast(4, 1)) {
-                val javaRuntimeUsages = setOf(JAVA_RUNTIME_JARS, JAVA_RUNTIME)
+            val javaRuntimeUsages = setOf(JAVA_RUNTIME_JARS, JAVA_RUNTIME)
 
-                if (JAVA_API in candidateNames &&
-                    javaRuntimeUsages.any { it in candidateNames } &&
-                    values.none { it in candidateNames }
-                ) {
-                    when (consumerValue?.name) {
-                        KOTLIN_API, JAVA_API ->
-                            chooseCandidateByName(JAVA_API)
-                        null, KOTLIN_RUNTIME, in javaRuntimeUsages ->
-                            chooseCandidateByName(javaRuntimeUsages.first { it in candidateNames })
-                    }
+            if (JAVA_API in candidateNames &&
+                javaRuntimeUsages.any { it in candidateNames } &&
+                values.none { it in candidateNames }
+            ) {
+                when (consumerValue?.name) {
+                    KOTLIN_API, JAVA_API ->
+                        chooseCandidateByName(JAVA_API)
+                    null, KOTLIN_RUNTIME, in javaRuntimeUsages ->
+                        chooseCandidateByName(javaRuntimeUsages.first { it in candidateNames })
                 }
             }
 

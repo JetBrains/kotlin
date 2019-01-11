@@ -24,7 +24,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
         get() = AGPVersion.v3_0_0
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.InRange("4.1", "4.10.2")
+        get() = GradleVersionRequired.Until("4.10.2")
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(

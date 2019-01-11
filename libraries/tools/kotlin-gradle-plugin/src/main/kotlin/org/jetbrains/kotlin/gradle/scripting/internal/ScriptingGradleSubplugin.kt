@@ -31,9 +31,6 @@ class ScriptingGradleSubplugin : Plugin<Project> {
         fun isEnabled(project: Project) = project.plugins.findPlugin(ScriptingGradleSubplugin::class.java) != null
 
         fun configureForSourceSet(project: Project, sourceSetName: String) {
-
-            if (!org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(4, 0)) return
-
             val discoveryConfiguration = project.configurations.maybeCreate(getDiscoveryClasspathConfigurationName(sourceSetName)).apply {
                 isVisible = false
                 isCanBeConsumed = false
@@ -45,9 +42,6 @@ class ScriptingGradleSubplugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-
-        if (!org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(4, 0)) return
-
         project.afterEvaluate {
 
             val javaPluginConvention = project.convention.findPlugin(JavaPluginConvention::class.java)

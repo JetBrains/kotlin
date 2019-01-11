@@ -142,7 +142,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
     @Test
     fun testJsCustomSourceSet() {
-        val project = Project("kotlin2JsProjectWithCustomSourceset", GradleVersionRequired.AtLeast("4.0"))
+        val project = Project("kotlin2JsProjectWithCustomSourceset")
 
         project.build("build") {
             assertSuccessful()
@@ -341,7 +341,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
     }
 
     @Test
-    fun testIncrementalCompilationDisabled() = Project("kotlin2JsICProject", GradleVersionRequired.AtLeast("4.0")).run {
+    fun testIncrementalCompilationDisabled() = Project("kotlin2JsICProject").run {
         val options = defaultBuildOptions().copy(incrementalJs = false)
 
         build("build", options = options) {

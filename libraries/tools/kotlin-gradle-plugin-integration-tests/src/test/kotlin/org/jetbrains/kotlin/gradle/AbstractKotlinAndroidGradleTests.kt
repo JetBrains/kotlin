@@ -233,7 +233,7 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
 
 class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = AGPVersion.v3_0_0) {
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.InRange("4.1", "4.10.2")
+        get() = GradleVersionRequired.Until("4.10.2")
 }
 
 abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: AGPVersion) : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion) {
