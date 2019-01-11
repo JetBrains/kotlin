@@ -32,6 +32,7 @@ dependencies {
     testCompile(project(":kotlin-stdlib-jdk8"))
     testCompile(project(":kotlin-reflect"))
     testCompile(project(":kotlin-android-extensions"))
+    testCompile(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 
     testCompile(gradleApi())
 
