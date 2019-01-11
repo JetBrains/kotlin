@@ -15982,6 +15982,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/nullCheckOptimization/kt7774.kt");
         }
 
+        @TestMetadata("primitiveCheckWithSideEffect.kt")
+        public void testPrimitiveCheckWithSideEffect() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/primitiveCheckWithSideEffect.kt");
+        }
+
         @TestMetadata("trivialInstanceOf.kt")
         public void testTrivialInstanceOf() throws Exception {
             runTest("compiler/testData/codegen/box/nullCheckOptimization/trivialInstanceOf.kt");

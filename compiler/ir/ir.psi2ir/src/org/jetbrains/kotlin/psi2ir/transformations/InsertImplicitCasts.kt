@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -259,27 +260,11 @@ open class InsertImplicitCasts(
 
     protected open fun IrExpression.coerceToUnit(): IrExpression {
         val valueType = getKotlinType(this)
-        return coerceToUnitIfNeeded(valueType)
+        return coerceToUnitIfNeeded(valueType, irBuiltIns)
     }
 
     protected fun getKotlinType(irExpression: IrExpression) =
         irExpression.type.originalKotlinType!!
-
-    protected fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType): IrExpression {
-        return if (isUnitSubtype(valueType))
-            this
-        else
-            IrTypeOperatorCallImpl(
-                startOffset, endOffset,
-                irBuiltIns.unitType,
-                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-                irBuiltIns.unitType, irBuiltIns.unitType.classifierOrFail,
-                this
-            )
-    }
-
-    protected fun isUnitSubtype(valueType: KotlinType) =
-        KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, builtIns.unitType)
 
     private fun KotlinType.isBuiltInIntegerType(): Boolean =
         KotlinBuiltIns.isByte(this) ||

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun almostAlwaysTrue() = true
 
 fun runNoInline(f: () -> Unit) = f()

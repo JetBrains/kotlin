@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     var result = 0
     if (1 == 1) {

@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
@@ -24,6 +26,8 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -139,6 +143,20 @@ fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDescriptor, I
     this.addArguments(args.toMap())
 
 fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
+
+
+fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType, irBuiltIns: IrBuiltIns): IrExpression {
+    return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, irBuiltIns.unitType.toKotlinType()))
+        this
+    else
+        IrTypeOperatorCallImpl(
+            startOffset, endOffset,
+            irBuiltIns.unitType,
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+            irBuiltIns.unitType, irBuiltIns.unitType.classifierOrFail,
+            this
+        )
+}
 
 fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
     this.descriptor.valueParameters.any { this.getValueArgument(it) == null }

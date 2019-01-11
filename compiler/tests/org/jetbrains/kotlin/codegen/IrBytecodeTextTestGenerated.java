@@ -2798,6 +2798,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/notNullAsNotNullable.kt");
         }
 
+        @TestMetadata("primitiveCheck.kt")
+        public void testPrimitiveCheck() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/primitiveCheck.kt");
+        }
+
         @TestMetadata("redundantSafeCall.kt")
         public void testRedundantSafeCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/redundantSafeCall.kt");
