@@ -116,11 +116,11 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
 
         // Add one flavor dimension with two flavors, check that the flavors produce grouped publications:
         gradleBuildScript("lib").appendText(
-            "\nandroid { flavorDimensions('foo'); productFlavors { foo1 { dimension 'foo' }; foo2 { dimension 'foo' } } }"
+            "\nandroid { flavorDimensions('foo'); productFlavors { fooBar { dimension 'foo' }; fooBaz { dimension 'foo' } } }"
         )
         build("publish") {
             assertSuccessful()
-            listOf("foo1", "foo2").forEach { flavor ->
+            listOf("foobar", "foobaz").forEach { flavor ->
                 assertFileExists(groupDir + "lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0.aar")
                 assertFileExists(groupDir + "lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-sources.jar")
                 assertFileExists(groupDir + "lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-debug.aar")
@@ -135,7 +135,7 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
         )
         build("publish") {
             assertSuccessful()
-            listOf("foo1", "foo2").forEach { flavor ->
+            listOf("foobar", "foobaz").forEach { flavor ->
                 listOf("-debug", "").forEach { buildType ->
                     assertFileExists(groupDir + "lib-androidlib-$flavor$buildType/1.0/lib-androidlib-$flavor$buildType-1.0.aar")
                     assertFileExists(groupDir + "lib-androidlib-$flavor$buildType/1.0/lib-androidlib-$flavor$buildType-1.0-sources.jar")
@@ -153,13 +153,13 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
                     apply plugin: 'maven-publish'
                     publishing { repositories { maven { url = uri("${'$'}buildDir/repo") } } }
                     kotlin.android('androidApp') { publishAllLibraryVariants() }
-                    android { flavorDimensions('foo'); productFlavors { foo1 { dimension 'foo' }; foo2 { dimension 'foo' } } }
+                    android { flavorDimensions('foo'); productFlavors { fooBar { dimension 'foo' }; fooBaz { dimension 'foo' } } }
                 """.trimIndent()
         }
         build("publish") {
             assertSuccessful()
             val appGroupDir = "app/build/repo/com/example/"
-            listOf("foo1", "foo2").forEach { flavor ->
+            listOf("foobar", "foobaz").forEach { flavor ->
                 listOf("-debug", "").forEach { buildType ->
                     assertFileExists(appGroupDir + "app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0.aar")
                     assertFileExists(appGroupDir + "app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0-sources.jar")
