@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.addRemoveModifier.setModifierList
 import org.jetbrains.kotlin.psi.psiUtil.asAssignment
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class ConvertDataClass : J2kPostProcessing {
     override val writeActionNeeded: Boolean = true
@@ -55,8 +56,9 @@ class ConvertDataClass : J2kPostProcessing {
                         ?.takeIf {
                             it.containingClass() == klass && !it.hasValOrVar()
                         } ?: return@mapNotNull null
-
-                if (constructorParameter.type() != property.type()) return@mapNotNull null
+                val constructorParameterType = constructorParameter.type() ?: return@mapNotNull null
+                val propertyType = property.type() ?: return@mapNotNull null
+                if (!constructorParameterType.isSubtypeOf(propertyType)) return@mapNotNull null
 
                 DataClassInfo(constructorParameter, property, statement)
             }.toList()
