@@ -42,7 +42,7 @@ class NewJavaToKotlinConverter(
     fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): List<String> {
         val symbolProvider = JKSymbolProvider()
         symbolProvider.preBuildTree(files)
-        val treeBuilder = JavaToJKTreeBuilder(symbolProvider)
+        val treeBuilder = JavaToJKTreeBuilder(symbolProvider, converterServices)
         val fileTrees = files.mapNotNull(treeBuilder::buildTree)
 
         println(fileTrees.prettyPrintTrees())

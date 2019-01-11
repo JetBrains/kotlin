@@ -21,6 +21,8 @@ import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.*
+import com.intellij.psi.util.InheritanceUtil
+import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.j2k.ast.Nullability
@@ -30,12 +32,18 @@ import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
+class JavaToJKTreeBuilder(
+    var symbolProvider: JKSymbolProvider,
+    private val converterServices: NewJavaToKotlinServices
+) {
 
     private val expressionTreeMapper = ExpressionTreeMapper()
+
+    val referenceSearcher: ReferenceSearcher = converterServices.oldServices.referenceSearcher
 
     private val declarationMapper = DeclarationMapper(expressionTreeMapper)
 
@@ -433,10 +441,45 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 modifierList == null -> Visibility.PACKAGE_PRIVATE
                 hasModifierProperty(PsiModifier.PACKAGE_LOCAL) -> Visibility.PACKAGE_PRIVATE
                 hasModifierProperty(PsiModifier.PRIVATE) -> Visibility.PRIVATE
-                hasModifierProperty(PsiModifier.PROTECTED) -> Visibility.PROTECTED
+                hasModifierProperty(PsiModifier.PROTECTED) -> handleProtectedVisibility()
                 hasModifierProperty(PsiModifier.PUBLIC) -> Visibility.PUBLIC
                 else -> Visibility.PACKAGE_PRIVATE
             }
+
+        private fun PsiMember.handleProtectedVisibility(): Visibility {
+            val originalClass = containingClass ?: return Visibility.PROTECTED
+            // Search for usages only in Java because java-protected member cannot be used in Kotlin from same package
+            val usages = referenceSearcher.findUsagesForExternalCodeProcessing(this, true, false)
+
+            return if (usages.any { !allowProtected(it.element, this, originalClass) })
+                Visibility.PUBLIC
+            else Visibility.PROTECTED
+        }
+
+        private fun allowProtected(element: PsiElement, member: PsiMember, originalClass: PsiClass): Boolean {
+            if (element.parent is PsiNewExpression && member is PsiMethod && member.isConstructor) {
+                // calls to for protected constructors are allowed only within same class or as super calls
+                return element.parentsWithSelf.contains(originalClass)
+            }
+
+            return element.parentsWithSelf.filterIsInstance<PsiClass>().any { accessContainingClass ->
+                if (!InheritanceUtil.isInheritorOrSelf(accessContainingClass, originalClass, true)) return@any false
+
+                if (element !is PsiReferenceExpression) return@any true
+
+                val qualifierExpression = element.qualifierExpression ?: return@any true
+
+                // super.foo is allowed if 'foo' is protected
+                if (qualifierExpression is PsiSuperExpression) return@any true
+
+                val receiverType = qualifierExpression.type ?: return@any true
+                val resolvedClass = PsiUtil.resolveGenericsClassInType(receiverType).element ?: return@any true
+
+                // receiver type should be subtype of containing class
+                InheritanceUtil.isInheritorOrSelf(resolvedClass, accessContainingClass, true)
+            }
+        }
+
 
         fun PsiMember.modifiers() =
             if (modifierList == null) emptyList()
