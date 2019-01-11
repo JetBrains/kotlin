@@ -1064,7 +1064,7 @@ public class FunctionCodegen {
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
-        if (JvmBridgesImplKt.isAbstractOnJvmIgnoringActualModality(state, descriptor)) return;
+        if (JvmBridgesImplKt.isAbstractOnJvmIgnoringActualModality(descriptor)) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;
