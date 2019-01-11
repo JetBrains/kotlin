@@ -18,7 +18,9 @@ class LowerNullabilityInFunctionParametersConversion(private val context: Conver
             listOfNotNull(
                 element.block,
                 (element as? JKKtConstructor)?.delegationCall
-            )
+            ) + element.parameters.mapNotNull {
+                if (it.initializer !is JKStubExpression) it.initializer else null
+            }
         for (parameter in element.parameters) {
             if (parameter.type.type.nullability != Nullability.Default) continue
             if (parameter.hasNotNullUsages(scopes)) {
