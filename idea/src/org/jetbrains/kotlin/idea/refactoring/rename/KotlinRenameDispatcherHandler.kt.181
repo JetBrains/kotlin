@@ -26,8 +26,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.RenameHandler
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
-import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 class KotlinRenameDispatcherHandler : RenameHandler {
     companion object {
@@ -49,11 +47,9 @@ class KotlinRenameDispatcherHandler : RenameHandler {
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
         getRenameHandler(dataContext)?.invoke(project, editor, file, dataContext)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
         getRenameHandler(dataContext)?.invoke(project, elements, dataContext)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
     }
 }

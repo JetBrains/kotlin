@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 class AutomaticOverloadsRenamer(function: KtNamedFunction, newName: String) : AutomaticRenamer() {
     companion object {
@@ -61,21 +58,6 @@ class AutomaticOverloadsRenamer(function: KtNamedFunction, newName: String) : Au
     override fun getDialogDescription() = "Rename overloads to:"
     override fun entityName() = "Overload"
     override fun isSelectedByDefault(): Boolean = true
-
-    override fun findUsages(result: MutableList<UsageInfo>?, searchInStringsAndComments: Boolean, searchInNonJavaFiles: Boolean) {
-        super.findUsages(result, searchInStringsAndComments, searchInNonJavaFiles)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
-    }
-
-    override fun findUsages(result: MutableList<UsageInfo>?, searchInStringsAndComments: Boolean, searchInNonJavaFiles: Boolean, unresolvedUsages: MutableList<UnresolvableCollisionUsageInfo>?) {
-        super.findUsages(result, searchInStringsAndComments, searchInNonJavaFiles, unresolvedUsages)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
-    }
-
-    override fun findUsages(result: MutableList<UsageInfo>?, searchInStringsAndComments: Boolean, searchInNonJavaFiles: Boolean, unresolvedUsages: MutableList<UnresolvableCollisionUsageInfo>?, allRenames: MutableMap<PsiElement, String>?) {
-        super.findUsages(result, searchInStringsAndComments, searchInNonJavaFiles, unresolvedUsages, allRenames)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
-    }
 }
 
 private fun KtNamedFunction.getOverloads(): Collection<FunctionDescriptor> {
