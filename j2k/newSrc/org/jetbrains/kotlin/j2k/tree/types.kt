@@ -297,3 +297,16 @@ fun JKType.arrayInnerType(): JKType? =
 val namesOfPrimitiveTypes by lazy {
     KotlinBuiltIns.FQ_NAMES.primitiveTypeShortNames.map { it.identifier.decapitalize() }
 }
+
+fun JKClassSymbol.isInterface(): Boolean {
+    val target = target
+    return when (target) {
+        is PsiClass -> target.isInterface
+        is KtClass -> target.isInterface()
+        is JKClass -> target.classKind == JKClass.ClassKind.INTERFACE
+        else -> false
+    }
+}
+
+fun JKType.isInterface(): Boolean =
+    (this as? JKClassType)?.classReference?.isInterface() ?: false

@@ -204,16 +204,16 @@ class NewCodeBuilder {
             if (isInInterface) {
                 renderList(extendTypes) { renderType(it) }
             } else {
-                extendTypes.singleOrNull()?.also {
-                    renderType(it)
+                extendTypes.singleOrNull()?.also { superType ->
+                    renderType(superType)
+                    val primaryConstructor = parentClass.primaryConstructor()
                     val delegationCall =
-                        parentClass
-                            .primaryConstructor()
+                        primaryConstructor
                             ?.delegationCall
                             ?.let { it as? JKDelegationConstructorCall }
                     if (delegationCall != null) {
                         printer.par { delegationCall.arguments.accept(this) }
-                    } else {
+                    } else if (!superType.isInterface()) {
                         printer.printWithNoIndent("()")
                     }
                 }
@@ -608,7 +608,7 @@ class NewCodeBuilder {
             }
             printer.printWithNoIndent(javaNewExpression.classSymbol.displayName().escapedAsQualifiedName())
             javaNewExpression.typeArgumentList.accept(this)
-            if (javaNewExpression.constructorIsPresent() || !javaNewExpression.isAnonymousClass()) {
+            if (!javaNewExpression.classSymbol.isInterface()) {
                 printer.par(ROUND) {
                     javaNewExpression.arguments.accept(this)
                 }
@@ -709,6 +709,8 @@ class NewCodeBuilder {
             printer.printWithNoIndent(" constructor ")
             if (ktPrimaryConstructor.parameters.isNotEmpty()) {
                 renderParameterList(ktPrimaryConstructor.parameters)
+            } else {
+                printer.print("()")
             }
         }
 

@@ -44,17 +44,6 @@ interface JKJavaNewExpression : JKExpression, JKTypeArgumentListOwner, PsiOwner 
 fun JKJavaNewExpression.isAnonymousClass() =
     classBody !is JKEmptyClassBody
 
-fun JKJavaNewExpression.constructorIsPresent(): Boolean {
-    if (arguments.expressions.isNotEmpty()) return true
-    val symbol = classSymbol
-    return when (symbol) {
-        is JKMultiverseClassSymbol -> symbol.target.constructors.isNotEmpty()
-        is JKMultiverseKtClassSymbol -> symbol.target.constructor != null
-        is JKUniverseClassSymbol -> symbol.target.classBody.declarations.any { it is JKKtConstructor }
-        is JKUnresolvedClassSymbol -> true //TODO ???
-        else -> TODO(symbol::class.toString())
-    }
-}
 
 interface JKJavaDefaultNewExpression : JKExpression {
     val classSymbol: JKClassSymbol
