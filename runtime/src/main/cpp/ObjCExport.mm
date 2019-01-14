@@ -794,6 +794,20 @@ static void insertOrReplace(KStdVector<MethodTableRecord>& methodTable, MethodNa
   methodTable.insert(methodTable.begin(), record);
 }
 
+static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter* adapter) {
+  if (adapter->kotlinImpl == nullptr) {
+    NSString* reason;
+    switch (adapter->vtableIndex) {
+      case -1: reason = @"it is final"; break;
+      case -2: reason = @"original Kotlin method has more than one selector"; break;
+      default: reason = @""; break;
+    }
+    [NSException raise:NSGenericException
+        format:@"[%s %s] can't be overridden: %@",
+        class_getName(clazz), adapter->selector, reason];
+  }
+}
+
 static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
   Class superClass = class_getSuperclass(clazz);
 
@@ -852,12 +866,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
       const KotlinToObjCMethodAdapter* adapter = &typeAdapter->reverseAdapters[i];
       if (definedSelectors.find(sel_registerName(adapter->selector)) == definedSelectors.end()) continue;
 
-      if (adapter->kotlinImpl == nullptr) {
-        [NSException raise:NSGenericException
-              format:@"[%s %s] can't be implemented",
-              class_getName(clazz), adapter->selector];
-        // TODO: describe the reasons
-      }
+      throwIfCantBeOverridden(clazz, adapter);
 
       insertOrReplace(methodTable, adapter->nameSignature, const_cast<void*>(adapter->kotlinImpl));
       if (adapter->vtableIndex != -1) vtable[adapter->vtableIndex] = adapter->kotlinImpl;
@@ -870,11 +879,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
 
     for (int i = 0; i < typeAdapter->reverseAdapterNum; ++i) {
       const KotlinToObjCMethodAdapter* adapter = &typeAdapter->reverseAdapters[i];
-      if (adapter->kotlinImpl == nullptr) {
-        [NSException raise:NSGenericException
-              format:@"[%s %s] can't be implemented",
-              class_getName(clazz), adapter->selector];
-      }
+      throwIfCantBeOverridden(clazz, adapter);
 
       insertOrReplace(methodTable, adapter->nameSignature, const_cast<void*>(adapter->kotlinImpl));
       RuntimeAssert(adapter->vtableIndex == -1, "");
