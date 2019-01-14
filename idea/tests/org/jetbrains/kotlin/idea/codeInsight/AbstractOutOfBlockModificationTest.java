@@ -55,16 +55,6 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
         boolean expectedOutOfBlock = getExpectedOutOfBlockResult();
         boolean isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), "SKIP_ANALYZE_CHECK");
 
-        // Special behaviour in 173, should be dropped after abandoning this version.
-        // BUNCH: 181
-        if ("InGlobalPropertyWithGetter".equals(getTestName(false))) {
-            String apiVersion = ApplicationInfo.getInstance().getApiVersion();
-            if (apiVersion != null && apiVersion.contains("-173.")) {
-                expectedOutOfBlock = true;
-                isSkipCheckDefined = true;
-            }
-        }
-
         assertTrue("It's allowed to skip check with analyze only for tests where out-of-block is expected",
                    !isSkipCheckDefined || expectedOutOfBlock);
 

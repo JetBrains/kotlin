@@ -87,8 +87,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                 }
             })
         }
-
-        fixTemplates()
     }
 
     override fun tearDown() {
