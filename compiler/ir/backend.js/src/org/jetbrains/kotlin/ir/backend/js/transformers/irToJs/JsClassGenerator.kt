@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -105,7 +106,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             return translatedFunction!!.makeStmt()
         }
 
-        val memberName = context.getNameForSymbol(declaration.symbol)
+        val memberName = context.getNameForSymbol(declaration.realOverrideTarget.symbol)
         val memberRef = JsNameRef(memberName, classPrototypeRef)
 
         translatedFunction?.let { return jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
@@ -115,7 +116,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // interface II : I
         // II.prototype.foo = I.prototype.foo
         if (!irClass.isInterface) {
-            declaration.resolveFakeOverride()?.let {
+            declaration.realOverrideTarget.let { it ->
                 var implClassDeclaration = it.parent as IrClass
 
                 // special case

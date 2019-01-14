@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.utils.isPrimitiveArray
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -34,10 +33,11 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
         val actualType = when (this) {
             is IrCall -> {
-                if (this.symbol.owner.let { it is IrSimpleFunction && it.isSuspend }) {
+                val function = this.symbol.owner
+                if (function.let { it is IrSimpleFunction && it.isSuspend }) {
                     irBuiltIns.anyNType
                 } else {
-                    this.symbol.owner.realOverride.returnType
+                    function.realOverrideTarget.returnType
                 }
             }
             is IrGetField -> this.symbol.owner.type
@@ -129,12 +129,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         }
 
     private val IrCall.callTarget: IrFunction
-        get() = if (superQualifier == null && symbol.owner.isOverridable) {
-            // A virtual call.
-            symbol.owner
-        } else {
-            symbol.owner.realOverride
-        }
+        get() = symbol.owner.realOverrideTarget
 
 
     override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
@@ -173,16 +168,6 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
                 return true
             return false
         }
-
-    private val IrFunction.realOverride: IrFunction
-        get() = when (this) {
-            is IrSimpleFunction -> this.realOverride
-            is IrConstructor -> this
-            else -> error(this)
-        }
-
-    private val IrSimpleFunction.realOverride: IrSimpleFunction
-        get() = if (modality == Modality.ABSTRACT) this else resolveFakeOverride()!!
 
 }
 
