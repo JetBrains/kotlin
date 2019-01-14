@@ -3238,6 +3238,7 @@
     <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinTargetTrigger"/>
     <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger"/>
     <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinIdeNewFileTemplateTrigger"/>
+    <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinPluginVersionCollector"/>
 
   </extensions>
 </idea-plugin>

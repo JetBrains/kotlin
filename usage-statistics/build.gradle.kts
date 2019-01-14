@@ -8,7 +8,7 @@ jvmTarget = "1.6"
 
 dependencies {
     compile(intellijDep()) {
-        includeJars("platform-api", "platform-impl", rootProject = rootProject)
+        includeJars("platform-api", "platform-impl", "extensions", rootProject = rootProject)
         isTransitive = false
     }
 }
