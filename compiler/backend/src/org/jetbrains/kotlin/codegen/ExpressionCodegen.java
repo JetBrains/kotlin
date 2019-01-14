@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -4043,7 +4043,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         else if (property.hasModifier(KtTokens.LATEINIT_KEYWORD)) {
             initializeLocalVariable(property, null);
         }
-        else if (!property.isVar()) {
+        else {
             initializeLocalVariableWithFakeDefaultValue(property);
         }
 
@@ -4196,10 +4196,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private void initializeLocalVariableWithFakeDefaultValue(@NotNull KtProperty variableDeclaration) {
         LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) getVariableDescriptorNotNull(variableDeclaration);
 
-        // For this kind of variables we generate boxes, i.e. we regard them as
-        if (isCapturedInClosureWithExactlyOnceEffect(bindingContext, variableDescriptor)) return;
+        // Boxed variables already have a value
+        if (isBoxedLocalCapturedInClosure(bindingContext, variableDescriptor)) return;
 
-        assert !variableDeclaration.isVar() && !variableDeclaration.hasDelegateExpressionOrInitializer() &&
+        assert !variableDeclaration.hasDelegateExpressionOrInitializer() &&
                 !variableDescriptor.isLateInit() : variableDeclaration.getText() + " in not variable declaration without initializer";
 
         KotlinType kotlinType = variableDescriptor.getType();
