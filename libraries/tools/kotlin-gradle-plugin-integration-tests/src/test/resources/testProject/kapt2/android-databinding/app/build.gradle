@@ -24,10 +24,6 @@ android {
     }
 }
 
-repositories {
-    maven { url 'https://maven.google.com' }
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
