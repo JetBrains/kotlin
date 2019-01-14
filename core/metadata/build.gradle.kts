@@ -20,11 +20,6 @@ sourceSets {
 }
 
 tasks.withType<JavaCompile> {
-    dependsOn(protobufLiteTask)
     sourceCompatibility = "1.6"
     targetCompatibility = "1.6"
-}
-
-tasks.withType<KotlinCompile> {
-    dependsOn(protobufLiteTask)
 }

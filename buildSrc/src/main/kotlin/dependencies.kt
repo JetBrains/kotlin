@@ -64,15 +64,8 @@ fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = proje
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
 fun DependencyHandler.projectClasses(name: String): ProjectDependency = project(name, configuration = "classes-dirs")
 
-val protobufLiteProject = ":custom-dependencies:protobuf:protobuf-lite"
-val protobufRelocatedProject = ":custom-dependencies:protobuf:protobuf-relocated"
-
-fun DependencyHandler.protobufLite(): ProjectDependency =
-        project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
-val protobufLiteTask = "$protobufLiteProject:prepare"
-
-fun DependencyHandler.protobufFull(): ProjectDependency =
-        project(protobufRelocatedProject, configuration = "default").apply { isTransitive = false }
+fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:" + findProperty("versions.protobuf-java") as String
+fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:" + findProperty("versions.protobuf-java") as String
 
 fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 
