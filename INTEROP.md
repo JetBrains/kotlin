@@ -23,7 +23,7 @@ separate document [OBJC_INTEROP.md](OBJC_INTEROP.md).
 ## Platform libraries ##
 
  Note that in many cases there's no need to use custom interoperability library creation mechanisms described below,
-as for APIs available on the platform standartized bindings called [platform libraries](PLATFORM_LIBS.md)
+as for APIs available on the platform standardized bindings called [platform libraries](PLATFORM_LIBS.md)
 could be used. For example, POSIX on Linux/macOS platforms, Win32 on Windows platform, or Apple frameworks
 on macOS/iOS are available this way.
 
