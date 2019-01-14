@@ -204,6 +204,8 @@ class SimpleNameGenerator : NameGenerator {
                         joinTo(nameBuilder, "") { "_${it.type.asString()}" }
                     }
                     declaration.returnType.let {
+                        // Return type is only used in signature for inline class types because
+                        // they are binary incompatible with supertypes.
                         if (it.isInlined()) {
                             nameBuilder.append("_ret$${it.asString()}")
                         }
