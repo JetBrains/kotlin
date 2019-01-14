@@ -137,8 +137,8 @@ internal class TestProcessor (val context: KonanBackendContext) {
             override val runtimeKindName: Name get() = throw NotImplementedError()
         },
 
-        BEFORE_EACH("kotlin.test.BeforeEach", "BEFORE_EACH"),
-        AFTER_EACH("kotlin.test.AfterEach", "AFTER_EACH"),
+        BEFORE_TEST("kotlin.test.BeforeTest", "BEFORE_TEST"),
+        AFTER_TEST("kotlin.test.AfterTest", "AFTER_TEST"),
         BEFORE_CLASS("kotlin.test.BeforeClass", "BEFORE_CLASS"),
         AFTER_CLASS("kotlin.test.AfterClass", "AFTER_CLASS");
 
@@ -146,7 +146,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
         open val runtimeKindName = Name.identifier(runtimeKindString)
 
         companion object {
-            val INSTANCE_KINDS = listOf(TEST, BEFORE_EACH, AFTER_EACH)
+            val INSTANCE_KINDS = listOf(TEST, BEFORE_TEST, AFTER_TEST)
             val COMPANION_KINDS = listOf(BEFORE_CLASS, AFTER_CLASS)
         }
     }
