@@ -17,6 +17,7 @@ import com.intellij.ui.components.Label
 import com.intellij.ui.layout.*
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.HtmlPanel
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.plugins.gradle.service.project.GradleProjectOpenProcessor
 import javax.swing.*
@@ -143,8 +144,13 @@ private class TemplateListPanel {
     val component: JComponent get() = listWithFilter
 }
 
-private fun htmlPanel(body: String): JEditorPane {
-    val textArea = JEditorPane("text/html", html(body))
+private fun htmlPanel(body: String): HtmlPanel {
+    val textArea = object : HtmlPanel() {
+        override fun getBody(): String {
+            return body
+        }
+    }
+    textArea.setBody(body)
     textArea.background = UIUtil.getPanelBackground()
     textArea.isEditable = false
     return textArea
