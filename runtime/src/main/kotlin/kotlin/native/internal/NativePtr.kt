@@ -29,15 +29,16 @@ class NativePtr @PublishedApi internal constructor(private val value: NonNullNat
 }
 
 @PublishedApi
-internal inline class NonNullNativePtr(val value: NotNullPointerValue) { // TODO: refactor to use this type widely.
+internal class NonNullNativePtr private constructor() { // TODO: refactor to use this type widely.
     @Suppress("NOTHING_TO_INLINE")
     inline fun toNativePtr() = NativePtr(this)
-    // TODO: fixme.
-    override fun toString() = ""
 
-    override fun hashCode() = 0
+    override fun toString() = toNativePtr().toString()
 
-    override fun equals(other: Any?) = false
+    override fun hashCode() = toNativePtr().hashCode()
+
+    override fun equals(other: Any?) = other is NonNullNativePtr
+            && kotlin.native.internal.areEqualByValue(this.toNativePtr(), other.toNativePtr())
 }
 
 @ExportTypeInfo("theNativePtrArrayTypeInfo")

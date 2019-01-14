@@ -826,7 +826,7 @@ abstract class ObjCExportHeaderGenerator(
 
     internal fun mapReferenceType(kotlinType: KotlinType): ObjCReferenceType =
             mapReferenceTypeIgnoringNullability(kotlinType).let {
-                if (kotlinType.unwrapInlinedClasses().isNullable()) {
+                if (kotlinType.binaryRepresentationIsNullable()) {
                     ObjCNullableReferenceType(it)
                 } else {
                     it

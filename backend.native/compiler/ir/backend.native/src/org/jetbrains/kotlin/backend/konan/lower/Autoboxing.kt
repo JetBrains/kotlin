@@ -8,25 +8,27 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.target
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.containsNull
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.isOverridable
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.isSuspend
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -215,6 +217,10 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
         if (declaration.isInlined()) {
             if (declaration.isUsedAsBoxClass()) {
+                if (KonanPrimitiveType.byFqName[declaration.fqNameSafe.toUnsafe()] != null) {
+                    buildBoxField(declaration)
+                }
+
                 buildBoxFunction(declaration, context.getBoxFunction(declaration))
                 buildUnboxFunction(declaration, context.getUnboxFunction(declaration))
             }
@@ -274,13 +280,10 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         super.visitConstructor(declaration)
 
-        val classIsInlined = declaration.constructedClass.isInlined()
-
-        if (classIsInlined && !declaration.isPrimary) {
-            buildLoweredSecondaryConstructor(declaration)
-        }
-
-        if (classIsInlined || !declaration.returnType.binaryTypeIsReference()) {
+        if (declaration.constructedClass.isInlined()) {
+            if (!declaration.isPrimary) {
+                buildLoweredSecondaryConstructor(declaration)
+            }
             // TODO: fix DFG building and nullify the body instead.
             (declaration.body as IrBlockBody).statements.clear()
         }
@@ -364,6 +367,45 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         }
 
         irClass.declarations += function
+    }
+
+    private fun buildBoxField(declaration: IrClass) {
+        val startOffset = declaration.startOffset
+        val endOffset = declaration.endOffset
+        val descriptor = WrappedPropertyDescriptor()
+
+        val irField = IrFieldImpl(
+                startOffset,
+                endOffset,
+                IrDeclarationOrigin.DEFINED,
+                IrFieldSymbolImpl(descriptor),
+                Name.identifier("value"),
+                declaration.defaultType,
+                Visibilities.PRIVATE,
+                isFinal = true,
+                isExternal = false,
+                isStatic = false
+        )
+        irField.parent = declaration
+
+        val irProperty = IrPropertyImpl(
+                startOffset,
+                endOffset,
+                IrDeclarationOrigin.DEFINED,
+                descriptor,
+                irField.name,
+                irField.visibility,
+                Modality.FINAL,
+                isVar = false,
+                isConst = false,
+                isLateinit = false,
+                isDelegated = false,
+                isExternal = false
+        )
+        descriptor.bind(irProperty)
+        irProperty.backingField = irField
+
+        declaration.addChild(irProperty)
     }
 
     private fun IrBuilderWithScope.lowerConstructorCallToValue(

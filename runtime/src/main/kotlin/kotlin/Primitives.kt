@@ -14,7 +14,7 @@ import kotlin.native.internal.IntrinsicType
 /**
  * Represents a 8-bit signed integer.
  */
-public final class Byte private constructor(private val value: kotlin.native.internal.ByteValue) : Number(), Comparable<Byte> {
+public final class Byte private constructor() : Number(), Comparable<Byte> {
 
     companion object {
         /**
@@ -240,7 +240,7 @@ public final class Byte private constructor(private val value: kotlin.native.int
 /**
  * Represents a 16-bit signed integer.
  */
-public final class Short private constructor(private val value: kotlin.native.internal.ShortValue) : Number(), Comparable<Short> {
+public final class Short private constructor() : Number(), Comparable<Short> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Short can have.
@@ -466,7 +466,7 @@ public final class Short private constructor(private val value: kotlin.native.in
 /**
  * Represents a 32-bit signed integer.
  */
-public final class Int private constructor(private val value: kotlin.native.internal.IntValue) : Number(), Comparable<Int> {
+public final class Int private constructor() : Number(), Comparable<Int> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Int can have.
@@ -714,7 +714,7 @@ public final class Int private constructor(private val value: kotlin.native.inte
 /**
  * Represents a 64-bit signed integer.
  */
-public final class Long private constructor(private val value: kotlin.native.internal.LongValue) : Number(), Comparable<Long> {
+public final class Long private constructor() : Number(), Comparable<Long> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.
@@ -962,7 +962,7 @@ public final class Long private constructor(private val value: kotlin.native.int
 /**
  * Represents a single-precision 32-bit IEEE 754 floating point number.
  */
-public final class Float private constructor(private val value: kotlin.native.internal.FloatValue) : Number(), Comparable<Float> {
+public final class Float private constructor() : Number(), Comparable<Float> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
@@ -1182,7 +1182,7 @@ public final class Float private constructor(private val value: kotlin.native.in
 /**
  * Represents a double-precision 64-bit IEEE 754 floating point number.
  */
-public final class Double private constructor(private val value: kotlin.native.internal.DoubleValue) : Number(), Comparable<Double> {
+public final class Double private constructor() : Number(), Comparable<Double> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.

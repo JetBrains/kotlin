@@ -12,8 +12,7 @@ import kotlin.native.internal.IntrinsicType
 /**
  * Represents a 16-bit Unicode character.
  */
-public class Char private constructor(
-        private val value: kotlin.native.internal.ShortValue) : Comparable<Char> {
+public class Char private constructor() : Comparable<Char> {
     /**
      * Compares this value with the specified value for order.
      *

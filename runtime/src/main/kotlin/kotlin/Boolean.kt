@@ -12,8 +12,7 @@ import kotlin.native.internal.IntrinsicType
  * Represents a value which is either `true` or `false`. On the JVM, non-nullable values of this type are
  * represented as values of the primitive type `boolean`.
  */
-public class Boolean private constructor(
-        private val value: kotlin.native.internal.BooleanValue) : Comparable<Boolean> {
+public class Boolean private constructor() : Comparable<Boolean> {
 
     @SinceKotlin("1.3")
     companion object {}
