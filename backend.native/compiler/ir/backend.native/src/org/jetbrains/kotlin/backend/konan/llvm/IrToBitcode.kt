@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
-private val threadLocalAnnotationFqName = FqName("kotlin.native.ThreadLocal")
-private val sharedAnnotationFqName = FqName("kotlin.native.SharedImmutable")
+private val threadLocalAnnotationFqName = FqName("kotlin.native.concurrent.ThreadLocal")
+private val sharedAnnotationFqName = FqName("kotlin.native.concurrent.SharedImmutable")
 private val frozenAnnotationFqName = FqName("kotlin.native.internal.Frozen")
 
 val IrField.propertyDescriptor: PropertyDescriptor

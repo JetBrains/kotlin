@@ -468,11 +468,11 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
 
     val threadLocal =
             context.builtIns.builtInsModule.findClassAcrossModuleDependencies(
-                    ClassId.topLevel(FqName("kotlin.native.ThreadLocal")))!!
+                    ClassId.topLevel(FqName("kotlin.native.concurrent.ThreadLocal")))!!
 
     val sharedImmutable =
             context.builtIns.builtInsModule.findClassAcrossModuleDependencies(
-                    ClassId.topLevel(FqName("kotlin.native.SharedImmutable")))!!
+                    ClassId.topLevel(FqName("kotlin.native.concurrent.SharedImmutable")))!!
 
     private fun internalFunction(name: String): IrSimpleFunctionSymbol =
             symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
