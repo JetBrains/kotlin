@@ -211,21 +211,18 @@ fun IrClass.createParameterDeclarations() {
 fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null) {
     assert(dispatchReceiverParameter == null)
 
-    dispatchReceiverParameter = WrappedReceiverParameterDescriptor().let {
-        IrValueParameterImpl(
-                startOffset, endOffset,
-                origin ?: parentAsClass.origin,
-                IrValueParameterSymbolImpl(it),
-                Name.special("<this>"),
-                0,
-                parentAsClass.defaultType,
-                null,
-                false,
-                false
-        ).apply {
-            it.bind(this)
-            parent = this@createDispatchReceiverParameter
-        }
+    dispatchReceiverParameter = IrValueParameterImpl(
+            startOffset, endOffset,
+            origin ?: parentAsClass.origin,
+            IrValueParameterSymbolImpl(parentAsClass.thisReceiver!!.descriptor),
+            Name.special("<this>"),
+            0,
+            parentAsClass.defaultType,
+            null,
+            false,
+            false
+    ).apply {
+        parent = this@createDispatchReceiverParameter
     }
 }
 
