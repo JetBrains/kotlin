@@ -12,6 +12,7 @@ package kotlin.collections
  */
 public expect abstract class AbstractMutableList<E> : MutableList<E> {
     protected constructor()
+    protected var modCount: Int
 
     // From List
 
