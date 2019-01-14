@@ -38,16 +38,12 @@ internal fun showMigrationNotification(project: Project, migrationInfo: Migratio
             null
         )
         .also { notification ->
-            notification.addAction(object : NotificationAction("Run migrations") {
-                // Replace with NotificationAction.createSimple after abandoning 173 and as31
-                // BUNCH: 181
-                override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-                    val projectContext = SimpleDataContext.getProjectContext(project)
-                    val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
-                    Notification.fire(notification, action, projectContext)
+            notification.addAction(NotificationAction.createSimple("Run migrations") {
+                val projectContext = SimpleDataContext.getProjectContext(project)
+                val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
+                Notification.fire(notification, action, projectContext)
 
-                    notification.expire()
-                }
+                notification.expire()
             })
         }
         .notify(project)

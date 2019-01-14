@@ -21,7 +21,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.idea.core.formatter.CompatibilityKt;
 import org.jetbrains.kotlin.idea.util.FormatterUtilKt;
 import org.jetbrains.kotlin.idea.util.ReflectionUtil;
 
@@ -237,7 +236,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
 
     public void restore() {
         if (settingsAgainstPreviousDefaults != null) {
-            CompatibilityKt.copyFromEx(this, settingsAgainstPreviousDefaults);
+            copyFrom(settingsAgainstPreviousDefaults);
         }
     }
 
