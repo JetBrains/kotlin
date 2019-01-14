@@ -2612,9 +2612,19 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/boxing.kt");
         }
 
+        @TestMetadata("boxingVar.kt")
+        public void testBoxingVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/boxingVar.kt");
+        }
+
         @TestMetadata("contract.kt")
         public void testContract() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/contract.kt");
+        }
+
+        @TestMetadata("contractVar.kt")
+        public void testContractVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/contractVar.kt");
         }
 
         @TestMetadata("generics.kt")
@@ -2622,9 +2632,19 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/generics.kt");
         }
 
+        @TestMetadata("genericsVar.kt")
+        public void testGenericsVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/genericsVar.kt");
+        }
+
         @TestMetadata("ifStatement.kt")
         public void testIfStatement() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/ifStatement.kt");
+        }
+
+        @TestMetadata("ifStatementVar.kt")
+        public void testIfStatementVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/ifStatementVar.kt");
         }
 
         @TestMetadata("ifStatementWithoutBlock.kt")
@@ -2632,9 +2652,19 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/ifStatementWithoutBlock.kt");
         }
 
+        @TestMetadata("ifStatementWithoutBlockVar.kt")
+        public void testIfStatementWithoutBlockVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/ifStatementWithoutBlockVar.kt");
+        }
+
         @TestMetadata("inlineClass.kt")
         public void testInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/inlineClass.kt");
+        }
+
+        @TestMetadata("inlineClassVar.kt")
+        public void testInlineClassVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/inlineClassVar.kt");
         }
 
         @TestMetadata("lateinit.kt")
@@ -2647,19 +2677,29 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/run.kt");
         }
 
+        @TestMetadata("runVar.kt")
+        public void testRunVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/runVar.kt");
+        }
+
         @TestMetadata("singleBlock.kt")
         public void testSingleBlock() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/singleBlock.kt");
         }
 
-        @TestMetadata("var.kt")
-        public void testVar() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/var.kt");
+        @TestMetadata("singleBlockVar.kt")
+        public void testSingleBlockVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/singleBlockVar.kt");
         }
 
         @TestMetadata("whenStatement.kt")
         public void testWhenStatement() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/whenStatement.kt");
+        }
+
+        @TestMetadata("whenStatementVar.kt")
+        public void testWhenStatementVar() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/localInitializationLVT/whenStatementVar.kt");
         }
     }
 
