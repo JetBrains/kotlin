@@ -64,8 +64,9 @@ fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = proje
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
 fun DependencyHandler.projectClasses(name: String): ProjectDependency = project(name, configuration = "classes-dirs")
 
-val protobufLiteProject = ":custom-dependencies:protobuf-lite"
-val protobufRelocatedProject = ":custom-dependencies:protobuf-relocated"
+val protobufLiteProject = ":custom-dependencies:protobuf:protobuf-lite"
+val protobufRelocatedProject = ":custom-dependencies:protobuf:protobuf-relocated"
+
 fun DependencyHandler.protobufLite(): ProjectDependency =
         project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
 val protobufLiteTask = "$protobufLiteProject:prepare"
