@@ -860,6 +860,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                     runTest("compiler/testData/psi/annotation/at/expressionJustAtTyped.kt");
                 }
 
+                @TestMetadata("kt21055.kt")
+                public void testKt21055() throws Exception {
+                    runTest("compiler/testData/psi/annotation/at/kt21055.kt");
+                }
+
                 @TestMetadata("modifierAtFileStart.kt")
                 public void testModifierAtFileStart() throws Exception {
                     runTest("compiler/testData/psi/annotation/at/modifierAtFileStart.kt");
@@ -873,6 +878,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 @TestMetadata("recoveryWhitespaceBeforeColon.kt")
                 public void testRecoveryWhitespaceBeforeColon() throws Exception {
                     runTest("compiler/testData/psi/annotation/at/recoveryWhitespaceBeforeColon.kt");
+                }
+
+                @TestMetadata("recoveryWhitespaceBeforeColon_ERR.kt")
+                public void testRecoveryWhitespaceBeforeColon_ERR() throws Exception {
+                    runTest("compiler/testData/psi/annotation/at/recoveryWhitespaceBeforeColon_ERR.kt");
                 }
 
                 @TestMetadata("validDeclarations.kt")
