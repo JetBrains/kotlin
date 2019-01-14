@@ -70,12 +70,12 @@ internal class ParametersInfo {
 }
 
 internal fun ExtractionData.inferParametersInfo(
-        virtualBlock: KtBlockExpression,
-        commonParent: PsiElement,
-        pseudocode: Pseudocode,
-        bindingContext: BindingContext,
-        targetScope: LexicalScope,
-        modifiedVarDescriptors: Set<VariableDescriptor>
+    virtualBlock: KtBlockExpression,
+    commonParent: PsiElement,
+    pseudocode: Pseudocode,
+    bindingContext: BindingContext,
+    targetScope: LexicalScope,
+    modifiedVarDescriptors: Set<VariableDescriptor>
 ): ParametersInfo {
     val info = ParametersInfo()
 
@@ -95,8 +95,7 @@ internal fun ExtractionData.inferParametersInfo(
         val extensionReceiver = resolvedCall?.extensionReceiver
         val receiverToExtract = (if (extensionReceiver == null || isSynthesizedInvoke(refInfo.resolveResult.descriptor)) {
             resolvedCall?.dispatchReceiver
-        }
-        else {
+        } else {
             extensionReceiver
         })
 
@@ -105,36 +104,60 @@ internal fun ExtractionData.inferParametersInfo(
         if (options.canWrapInWith
             && twoReceivers
             && resolvedCall!!.extensionReceiver is ExpressionReceiver
-            && DescriptorUtils.isObject(dispatchReceiverDescriptor)) {
-            info.replacementMap.putValue(refInfo.resolveResult.originalRefExpr,
-                                         WrapObjectInWithReplacement(dispatchReceiverDescriptor as ClassDescriptor))
+            && DescriptorUtils.isObject(dispatchReceiverDescriptor)
+        ) {
+            info.replacementMap.putValue(
+                refInfo.resolveResult.originalRefExpr,
+                WrapObjectInWithReplacement(dispatchReceiverDescriptor as ClassDescriptor)
+            )
             continue
         }
 
         if (!refInfo.shouldSkipPrimaryReceiver) {
-            extractReceiver(receiverToExtract, info, targetScope, refInfo, extractedDescriptorToParameter, pseudocode, bindingContext, false)
+            extractReceiver(
+                receiverToExtract,
+                info,
+                targetScope,
+                refInfo,
+                extractedDescriptorToParameter,
+                pseudocode,
+                bindingContext,
+                false
+            )
         }
 
         if (options.canWrapInWith && twoReceivers) {
-            extractReceiver(resolvedCall!!.dispatchReceiver, info, targetScope, refInfo, extractedDescriptorToParameter, pseudocode, bindingContext, true)
+            extractReceiver(
+                resolvedCall!!.dispatchReceiver,
+                info,
+                targetScope,
+                refInfo,
+                extractedDescriptorToParameter,
+                pseudocode,
+                bindingContext,
+                true
+            )
         }
     }
 
     val varNameValidator = NewDeclarationNameValidator(
-            commonParent.getNonStrictParentOfType<KtExpression>()!!,
-            physicalElements.firstOrNull(),
-            NewDeclarationNameValidator.Target.VARIABLES
+        commonParent.getNonStrictParentOfType<KtExpression>()!!,
+        physicalElements.firstOrNull(),
+        NewDeclarationNameValidator.Target.VARIABLES
     )
 
     val existingParameterNames = hashSetOf<String>()
     for ((descriptorToExtract, parameter) in extractedDescriptorToParameter) {
         if (!parameter
                 .getParameterType(options.allowSpecialClassNames)
-                .processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options, targetScope)) continue
+                .processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options, targetScope)
+        ) continue
 
-        with (parameter) {
+        with(parameter) {
             if (currentName == null) {
-                currentName = KotlinNameSuggester.suggestNamesByType(getParameterType(options.allowSpecialClassNames), varNameValidator, "p").first()
+                currentName =
+                        KotlinNameSuggester.suggestNamesByType(getParameterType(options.allowSpecialClassNames), varNameValidator, "p")
+                            .first()
             }
 
             require(currentName != null)
@@ -147,7 +170,10 @@ internal fun ExtractionData.inferParametersInfo(
                 currentName = "$currentName$index"
             }
 
-            mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) KotlinNameSuggester.suggestNameByName(name, varNameValidator) else null
+            mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) KotlinNameSuggester.suggestNameByName(
+                name,
+                varNameValidator
+            ) else null
             info.parameters.add(this)
             currentName?.let { existingParameterNames += it }
         }
@@ -162,14 +188,14 @@ internal fun ExtractionData.inferParametersInfo(
 }
 
 private fun ExtractionData.extractReceiver(
-        receiverToExtract: ReceiverValue?,
-        info: ParametersInfo,
-        targetScope: LexicalScope,
-        refInfo: ResolvedReferenceInfo,
-        extractedDescriptorToParameter: HashMap<DeclarationDescriptor, MutableParameter>,
-        pseudocode: Pseudocode,
-        bindingContext: BindingContext,
-        isMemberExtension: Boolean
+    receiverToExtract: ReceiverValue?,
+    info: ParametersInfo,
+    targetScope: LexicalScope,
+    refInfo: ResolvedReferenceInfo,
+    extractedDescriptorToParameter: HashMap<DeclarationDescriptor, MutableParameter>,
+    pseudocode: Pseudocode,
+    bindingContext: BindingContext,
+    isMemberExtension: Boolean
 ) {
     val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
 
@@ -178,14 +204,15 @@ private fun ExtractionData.extractReceiver(
     val thisExpr = refInfo.refExpr.parent as? KtThisExpression
 
     if (hasThisReceiver
-        && DescriptorToSourceUtilsIde.getAllDeclarations(project, thisDescriptor!!).all { it.isInsideOf(physicalElements) }) {
+        && DescriptorToSourceUtilsIde.getAllDeclarations(project, thisDescriptor!!).all { it.isInsideOf(physicalElements) }
+    ) {
         return
     }
 
     val referencedClassifierDescriptor: ClassifierDescriptor? = (thisDescriptor ?: originalDescriptor).let {
         when (it) {
             is ClassDescriptor ->
-                when(it.kind) {
+                when (it.kind) {
                     ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it
                     ClassKind.ENUM_ENTRY -> it.containingDeclaration as? ClassDescriptor
                     else -> if (refInfo.refExpr.getNonStrictParentOfType<KtTypeReference>() != null) it else null
@@ -202,29 +229,30 @@ private fun ExtractionData.extractReceiver(
     if (referencedClassifierDescriptor != null) {
         if (!referencedClassifierDescriptor.defaultType.processTypeIfExtractable(
                 info.typeParameters, info.nonDenotableTypes, options, targetScope, referencedClassifierDescriptor is TypeParameterDescriptor
-        )) return
+            )
+        ) return
 
         if (options.canWrapInWith
             && resolvedCall != null
             && resolvedCall.hasBothReceivers()
-            && DescriptorUtils.isObject(referencedClassifierDescriptor)) {
+            && DescriptorUtils.isObject(referencedClassifierDescriptor)
+        ) {
             info.replacementMap.putValue(originalRef, WrapObjectInWithReplacement(referencedClassifierDescriptor as ClassDescriptor))
         } else if (referencedClassifierDescriptor is ClassDescriptor) {
             info.replacementMap.putValue(originalRef, FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe))
         }
-    }
-    else {
+    } else {
         val extractThis = (hasThisReceiver && refInfo.smartCast == null) || thisExpr != null
         val extractOrdinaryParameter =
-                originalDeclaration is KtDestructuringDeclarationEntry ||
-                originalDeclaration is KtProperty ||
-                originalDeclaration is KtParameter
+            originalDeclaration is KtDestructuringDeclarationEntry ||
+                    originalDeclaration is KtProperty ||
+                    originalDeclaration is KtParameter
 
         val extractFunctionRef =
-                options.captureLocalFunctions
-                && originalRef.getReferencedName() == originalDescriptor.name.asString() // to forbid calls by convention
-                && originalDeclaration is KtNamedFunction && originalDeclaration.isLocal
-                && targetScope.findFunction(originalDescriptor.name, NoLookupLocation.FROM_IDE) { it == originalDescriptor } == null
+            options.captureLocalFunctions
+                    && originalRef.getReferencedName() == originalDescriptor.name.asString() // to forbid calls by convention
+                    && originalDeclaration is KtNamedFunction && originalDeclaration.isLocal
+                    && targetScope.findFunction(originalDescriptor.name, NoLookupLocation.FROM_IDE) { it == originalDescriptor } == null
 
         val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
 
@@ -240,32 +268,46 @@ private fun ExtractionData.extractReceiver(
                 else -> (originalRef.parent as? KtThisExpression) ?: originalRef
             }
 
-            val parameterType = suggestParameterType(extractFunctionRef, originalDescriptor, parameterExpression, receiverToExtract, resolvedCall, true, bindingContext)
+            val parameterType = suggestParameterType(
+                extractFunctionRef,
+                originalDescriptor,
+                parameterExpression,
+                receiverToExtract,
+                resolvedCall,
+                true,
+                bindingContext
+            )
 
             val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
                 var argumentText =
-                        if (hasThisReceiver && extractThis) {
-                            val label = if (descriptorToExtract is ClassDescriptor) "@${descriptorToExtract.name.asString()}" else ""
-                            "this$label"
-                        }
-                        else {
-                            val argumentExpr = (thisExpr ?: refInfo.refExpr).getQualifiedExpressionForSelectorOrThis()
-                            if (argumentExpr is KtOperationReferenceExpression) {
-                                val nameElement = argumentExpr.getReferencedNameElement()
-                                val nameElementType = nameElement.node.elementType
-                                (nameElementType as? KtToken)?.let {
-                                    OperatorConventions.getNameForOperationSymbol(it)?.asString()
-                                } ?: nameElement.text
-                            }
-                            else argumentExpr.text
-                                 ?: throw AssertionError("reference shouldn't be empty: code fragment = $codeFragmentText")
-                        }
+                    if (hasThisReceiver && extractThis) {
+                        val label = if (descriptorToExtract is ClassDescriptor) "@${descriptorToExtract.name.asString()}" else ""
+                        "this$label"
+                    } else {
+                        val argumentExpr = (thisExpr ?: refInfo.refExpr).getQualifiedExpressionForSelectorOrThis()
+                        if (argumentExpr is KtOperationReferenceExpression) {
+                            val nameElement = argumentExpr.getReferencedNameElement()
+                            val nameElementType = nameElement.node.elementType
+                            (nameElementType as? KtToken)?.let {
+                                OperatorConventions.getNameForOperationSymbol(it)?.asString()
+                            } ?: nameElement.text
+                        } else argumentExpr.text
+                            ?: throw AssertionError("reference shouldn't be empty: code fragment = $codeFragmentText")
+                    }
                 if (extractFunctionRef) {
                     val receiverTypeText = (originalDeclaration as KtCallableDeclaration).receiverTypeReference?.text ?: ""
                     argumentText = "$receiverTypeText::$argumentText"
                 }
 
-                val originalType = suggestParameterType(extractFunctionRef, originalDescriptor, parameterExpression, receiverToExtract, resolvedCall, false, bindingContext)
+                val originalType = suggestParameterType(
+                    extractFunctionRef,
+                    originalDescriptor,
+                    parameterExpression,
+                    receiverToExtract,
+                    resolvedCall,
+                    false,
+                    bindingContext
+                )
 
                 MutableParameter(argumentText, descriptorToExtract, extractThis, targetScope, originalType, refInfo.possibleTypes)
             }
@@ -287,13 +329,17 @@ private fun ExtractionData.extractReceiver(
                 val instruction = pseudocode.getElementValue(callElement)?.createdAt as? InstructionWithReceivers
                 val receiverValue = instruction?.receiverValues?.entries?.singleOrNull { it.value == receiverToExtract }?.key
                 if (receiverValue != null) {
-                    parameter.addTypePredicate(getExpectedTypePredicate(receiverValue, bindingContext, targetScope.ownerDescriptor.builtIns))
+                    parameter.addTypePredicate(
+                        getExpectedTypePredicate(
+                            receiverValue,
+                            bindingContext,
+                            targetScope.ownerDescriptor.builtIns
+                        )
+                    )
                 }
-            }
-            else if (extractFunctionRef) {
+            } else if (extractFunctionRef) {
                 parameter.addTypePredicate(SingleType(parameterType))
-            }
-            else {
+            } else {
                 pseudocode.getElementValuesRecursively(originalRef).forEach {
                     parameter.addTypePredicate(getExpectedTypePredicate(it, bindingContext, targetScope.ownerDescriptor.builtIns))
                 }
@@ -310,50 +356,50 @@ private fun ExtractionData.extractReceiver(
 }
 
 private fun suggestParameterType(
-        extractFunctionRef: Boolean,
-        originalDescriptor: DeclarationDescriptor,
-        parameterExpression: KtExpression?,
-        receiverToExtract: ReceiverValue?,
-        resolvedCall: ResolvedCall<*>?,
-        useSmartCastsIfPossible: Boolean, bindingContext: BindingContext
+    extractFunctionRef: Boolean,
+    originalDescriptor: DeclarationDescriptor,
+    parameterExpression: KtExpression?,
+    receiverToExtract: ReceiverValue?,
+    resolvedCall: ResolvedCall<*>?,
+    useSmartCastsIfPossible: Boolean, bindingContext: BindingContext
 ): KotlinType {
     val builtIns = originalDescriptor.builtIns
     return when {
-               extractFunctionRef -> {
-                   originalDescriptor as FunctionDescriptor
-                   createFunctionType(
-                           builtIns,
-                           Annotations.EMPTY,
-                           originalDescriptor.extensionReceiverParameter?.type,
-                           originalDescriptor.valueParameters.map { it.type },
-                           originalDescriptor.valueParameters.map { it.name },
-                           originalDescriptor.returnType ?: builtIns.defaultReturnType
-                   )
-               }
+        extractFunctionRef -> {
+            originalDescriptor as FunctionDescriptor
+            createFunctionType(
+                builtIns,
+                Annotations.EMPTY,
+                originalDescriptor.extensionReceiverParameter?.type,
+                originalDescriptor.valueParameters.map { it.type },
+                originalDescriptor.valueParameters.map { it.name },
+                originalDescriptor.returnType ?: builtIns.defaultReturnType
+            )
+        }
 
-               parameterExpression != null ->
-                   (if (useSmartCastsIfPossible) bindingContext[BindingContext.SMARTCAST, parameterExpression]?.defaultType else null)
-                   ?: bindingContext.getType(parameterExpression)
-                   ?: (parameterExpression as? KtReferenceExpression)?.let {
-                       (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.returnType
-                   }
-                   ?: receiverToExtract?.type
+        parameterExpression != null ->
+            (if (useSmartCastsIfPossible) bindingContext[BindingContext.SMARTCAST, parameterExpression]?.defaultType else null)
+                ?: bindingContext.getType(parameterExpression)
+                ?: (parameterExpression as? KtReferenceExpression)?.let {
+                    (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.returnType
+                }
+                ?: receiverToExtract?.type
 
-               receiverToExtract is ImplicitReceiver -> {
-                   val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
-                       val callElement = resolvedCall!!.call.callElement
-                       val dataFlowInfo = bindingContext.getDataFlowInfoAfter(callElement)
+        receiverToExtract is ImplicitReceiver -> {
+            val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
+                val callElement = resolvedCall!!.call.callElement
+                val dataFlowInfo = bindingContext.getDataFlowInfoAfter(callElement)
 
-                       val dataFlowValueFactory = callElement.getResolutionFacade().frontendService<DataFlowValueFactory>()
-                       val possibleTypes = dataFlowInfo.getCollectedTypes(
-                           dataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract),
-                           callElement.languageVersionSettings
-                       )
-                       if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
-                   } else null
-                   typeByDataFlowInfo ?: receiverToExtract.type
-               }
+                val dataFlowValueFactory = callElement.getResolutionFacade().frontendService<DataFlowValueFactory>()
+                val possibleTypes = dataFlowInfo.getCollectedTypes(
+                    dataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract),
+                    callElement.languageVersionSettings
+                )
+                if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
+            } else null
+            typeByDataFlowInfo ?: receiverToExtract.type
+        }
 
-               else -> receiverToExtract?.type
-           } ?: builtIns.defaultParameterType
+        else -> receiverToExtract?.type
+    } ?: builtIns.defaultParameterType
 }
