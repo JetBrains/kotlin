@@ -16,8 +16,8 @@ val protobufJarPrefix = "protobuf-$protobufVersion"
 val outputJarPath = "$buildDir/libs/$protobufJarPrefix-lite.jar"
 
 dependencies {
-    relocatedProtobuf(project(":custom-dependencies:protobuf-relocated", configuration = "default"))
-    relocatedProtobufSources(project(":custom-dependencies:protobuf-relocated", configuration = "sources"))
+    relocatedProtobuf(project(":custom-dependencies:protobuf:protobuf-relocated", configuration = "default"))
+    relocatedProtobufSources(project(":custom-dependencies:protobuf:protobuf-relocated", configuration = "sources"))
 }
 
 task("prepare") {
