@@ -9,15 +9,17 @@ import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 internal interface CustomTypeMapper {
-    val mappedClassDescriptor: ClassDescriptor
+    val mappedClassId: ClassId
     fun mapType(mappedSuperType: KotlinType): ObjCNonNullReferenceType
 
     class Simple(
-            override val mappedClassDescriptor: ClassDescriptor,
+            override val mappedClassId: ClassId,
             private val objCClassName: String
     ) : CustomTypeMapper {
 
@@ -27,9 +29,12 @@ internal interface CustomTypeMapper {
 
     class Collection(
             private val generator: ObjCExportHeaderGenerator,
-            override val mappedClassDescriptor: ClassDescriptor,
+            mappedClassDescriptor: ClassDescriptor,
             private val objCClassName: String
     ) : CustomTypeMapper {
+
+        override val mappedClassId = mappedClassDescriptor.classId!!
+
         override fun mapType(mappedSuperType: KotlinType): ObjCNonNullReferenceType {
             val typeArguments = mappedSuperType.arguments.map {
                 val argument = it.type
@@ -49,7 +54,7 @@ internal interface CustomTypeMapper {
             private val generator: ObjCExportHeaderGenerator,
             parameterCount: Int
     ) : CustomTypeMapper {
-        override val mappedClassDescriptor = generator.builtIns.getFunction(parameterCount)
+        override val mappedClassId: ClassId = generator.builtIns.getFunction(parameterCount).classId!!
 
         override fun mapType(mappedSuperType: KotlinType): ObjCNonNullReferenceType {
             val functionType = mappedSuperType

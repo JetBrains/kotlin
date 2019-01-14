@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
@@ -50,7 +49,7 @@ abstract class ObjCExportHeaderGenerator(
         override fun isSpecialMapped(descriptor: ClassDescriptor): Boolean {
             // TODO: this method duplicates some of the [mapReferenceType] logic.
             return descriptor == builtIns.any ||
-                   descriptor.getAllSuperClassifiers().any { it in customTypeMappers }
+                   descriptor.getAllSuperClassifiers().any { it.classId in customTypeMappers }
         }
     }
 
@@ -59,19 +58,12 @@ abstract class ObjCExportHeaderGenerator(
     internal val generatedClasses = mutableSetOf<ClassDescriptor>()
     internal val topLevel = mutableMapOf<SourceFile, MutableList<CallableMemberDescriptor>>()
 
-    private val stdlibModule = moduleDescriptors.first().allDependencyModules.single { it.isKonanStdlib() }
-
-    private val mappedToNSNumber: List<ClassDescriptor> = with(builtIns) {
-        val result = mutableListOf(boolean, byte, short, int, long, float, double)
-
-        UnsignedType.values().mapTo(result) { unsignedType ->
-            stdlibModule.findClassAcrossModuleDependencies(unsignedType.classId)!!
-        }
-
-        result
-    }
-
-    private val customTypeMappers: Map<ClassDescriptor, CustomTypeMapper> = with(builtIns) {
+    /**
+     * Custom type mappers.
+     *
+     * Don't forget to update [hiddenTypes] after adding new one.
+     */
+    private val customTypeMappers: Map<ClassId, CustomTypeMapper> = with(builtIns) {
         val result = mutableListOf<CustomTypeMapper>()
 
         val generator = this@ObjCExportHeaderGenerator
@@ -85,32 +77,39 @@ abstract class ObjCExportHeaderGenerator(
 
         NSNumberKind.values().forEach {
             // TODO: NSNumber seem to have different equality semantics.
-            if (it.mappedKotlinClassId != null) {
-                val descriptor = stdlibModule.findClassAcrossModuleDependencies(it.mappedKotlinClassId)!!
-                result += CustomTypeMapper.Simple(descriptor, namer.numberBoxName(descriptor).objCName)
+            val classId = it.mappedKotlinClassId
+            if (classId != null) {
+                result += CustomTypeMapper.Simple(classId, namer.numberBoxName(classId).objCName)
             }
 
         }
 
-        result += CustomTypeMapper.Simple(string, "NSString")
+        result += CustomTypeMapper.Simple(string.classId!!, "NSString")
 
         (0..mapper.maxFunctionTypeParameterCount).forEach {
             result += CustomTypeMapper.Function(generator, it)
         }
 
-        result.associateBy { it.mappedClassDescriptor }
+        result.associateBy { it.mappedClassId }
     }
 
-    private val hiddenTypes: Set<ClassDescriptor> = run {
-        val customMappedTypes = customTypeMappers.keys
-
-        customMappedTypes
-                .asSequence()
-                .flatMap { it.getAllSuperClassifiers().asSequence() }
-                .map { it as ClassDescriptor }
-                .filter { !customMappedTypes.contains(it) }
-                .toSet()
-    }
+    /**
+     * Types to be "hidden" during mapping, i.e. represented as `id`.
+     *
+     * Currently contains super types of classes handled by [customTypeMappers].
+     * Note: can be generated programmatically, but requires stdlib in this case.
+     */
+    private val hiddenTypes: Set<ClassId> = listOf(
+            "kotlin.Any",
+            "kotlin.CharSequence",
+            "kotlin.Comparable",
+            "kotlin.Function",
+            "kotlin.Number",
+            "kotlin.collections.Collection",
+            "kotlin.collections.Iterable",
+            "kotlin.collections.MutableCollection",
+            "kotlin.collections.MutableIterable"
+    ).map { ClassId.topLevel(FqName(it)) }.toSet()
 
     private val kotlinAnyName = namer.kotlinAnyName
 
@@ -294,8 +293,7 @@ abstract class ObjCExportHeaderGenerator(
     }
 
     private fun genKotlinNumber(kotlinClassId: ClassId, kind: NSNumberKind): ObjCInterface {
-        val descriptor = stdlibModule.findClassAcrossModuleDependencies(kotlinClassId)!!
-        val name = namer.numberBoxName(descriptor)
+        val name = namer.numberBoxName(kotlinClassId)
 
         val members = buildMembers {
             +nsNumberFactory(kind)
@@ -834,26 +832,25 @@ abstract class ObjCExportHeaderGenerator(
             }
 
     internal fun mapReferenceTypeIgnoringNullability(kotlinType: KotlinType): ObjCNonNullReferenceType {
-        val typeToMapper = (listOf(kotlinType) + kotlinType.supertypes()).mapNotNull { type ->
-            val mapper = customTypeMappers[type.constructor.declarationDescriptor]
-            if (mapper != null) {
-                type to mapper
-            } else {
-                null
-            }
-        }.toMap()
+        class TypeMappingMatch(val type: KotlinType, val descriptor: ClassDescriptor, val mapper: CustomTypeMapper)
 
-        val mostSpecificTypeToMapper = typeToMapper.filter { (_, mapper) ->
-            typeToMapper.values.all {
-                it.mappedClassDescriptor == mapper.mappedClassDescriptor ||
-                !it.mappedClassDescriptor.isSubclassOf(mapper.mappedClassDescriptor)
+        val typeMappingMatches = (listOf(kotlinType) + kotlinType.supertypes()).mapNotNull { type ->
+            (type.constructor.declarationDescriptor as? ClassDescriptor)?.let { descriptor ->
+                customTypeMappers[descriptor.classId]?.let { mapper ->
+                    TypeMappingMatch(type, descriptor, mapper)
+                }
             }
-
-            // E.g. if both List and MutableList are present, then retain only MutableList.
         }
 
-        if (mostSpecificTypeToMapper.size > 1) {
-            val types = mostSpecificTypeToMapper.keys.toList()
+        val mostSpecificMatches = typeMappingMatches.filter { match ->
+            typeMappingMatches.all { otherMatch ->
+                otherMatch.descriptor == match.descriptor ||
+                        !otherMatch.descriptor.isSubclassOf(match.descriptor)
+            }
+        }
+
+        if (mostSpecificMatches.size > 1) {
+            val types = mostSpecificMatches.map { it.type }
             val firstType = types[0]
             val secondType = types[1]
 
@@ -863,8 +860,8 @@ abstract class ObjCExportHeaderGenerator(
             // TODO: the same warning for such classes.
         }
 
-        mostSpecificTypeToMapper.entries.firstOrNull()?.let { (type, mapper) ->
-            return mapper.mapType(type)
+        mostSpecificMatches.firstOrNull()?.let {
+            return it.mapper.mapType(it.type)
         }
 
         val classDescriptor = kotlinType.getErasedTypeClass()
@@ -872,7 +869,7 @@ abstract class ObjCExportHeaderGenerator(
         // TODO: translate `where T : BaseClass, T : SomeInterface` to `BaseClass* <SomeInterface>`
 
         // TODO: expose custom inline class boxes properly.
-        if (classDescriptor == builtIns.any || classDescriptor in hiddenTypes || classDescriptor.isInlined()) {
+        if (classDescriptor == builtIns.any || classDescriptor.classId in hiddenTypes || classDescriptor.isInlined()) {
             return ObjCIdType
         }
 

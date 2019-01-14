@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
@@ -70,8 +71,8 @@ internal class ObjCExportNamerImpl(
     val mutableSetName = "MutableSet".toSpecialStandardClassOrProtocolName()
     val mutableMapName = "MutableDictionary".toSpecialStandardClassOrProtocolName()
 
-    fun numberBoxName(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName =
-            descriptor.name.asString().toSpecialStandardClassOrProtocolName()
+    fun numberBoxName(classId: ClassId): ObjCExportNamer.ClassOrProtocolName =
+            classId.shortClassName.asString().toSpecialStandardClassOrProtocolName()
 
     val kotlinNumberName = "Number".toSpecialStandardClassOrProtocolName()
 
