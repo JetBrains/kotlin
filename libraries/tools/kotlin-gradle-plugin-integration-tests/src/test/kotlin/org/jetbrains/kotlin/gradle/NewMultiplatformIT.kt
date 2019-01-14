@@ -117,6 +117,14 @@ class NewMultiplatformIT : BaseGradleIT() {
             setupWorkingDir()
             gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
 
+            fun CompiledProject.checkProgramCompilationCommandLine(check: (String) -> Unit) {
+                output.lineSequence().filter {
+                    it.contains("Run tool: konanc") && it.contains("-p program")
+                }.toList().also {
+                    assertTrue(it.isNotEmpty())
+                }.forEach(check)
+            }
+
             fun CompiledProject.checkAppBuild() {
                 assertSuccessful()
                 assertTasksExecuted(*compileTasksNames.toTypedArray())
@@ -154,12 +162,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertFileExists("build/bin/$nativeHostTargetName/mainReleaseExecutable/$nativeExeName")
                 assertFileExists("build/bin/$nativeHostTargetName/mainDebugExecutable/$nativeExeName")
 
-                // Check that linker options was correctly passed to the K/N compiler.
-                output.lineSequence().filter {
-                    it.contains("Run tool: konanc") && it.contains("-p program")
-                }.toList().also {
-                    assertTrue(it.isNotEmpty())
-                }.forEach {
+                // Check that linker options were correctly passed to the K/N compiler.
+                checkProgramCompilationCommandLine {
                     assertTrue(it.contains("-linker-options -L."))
                 }
             }

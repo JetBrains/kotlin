@@ -30,6 +30,7 @@ kotlin {
             // Check that linker options are correctly passed to the compiler.
             linkerOpts = mutableListOf("-L.")
 	    }
+        compilations["test"].linkerOpts = mutableListOf("-L.")
     }
 
     sourceSets {

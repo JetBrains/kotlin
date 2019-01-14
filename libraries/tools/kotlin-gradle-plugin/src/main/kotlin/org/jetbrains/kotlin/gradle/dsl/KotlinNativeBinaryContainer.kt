@@ -134,7 +134,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
     internal fun defaultTestExecutable(
         configure: Executable.() -> Unit
     ) = createBinaries(
-        "test",
+        DEFAULT_TEST_NAME_PREFIX,
         "test",
         NativeOutputKind.EXECUTABLE,
         listOf(DEFAULT_TEST_BUILD_TYPE),
@@ -144,8 +144,12 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         configure
     )
 
+    internal fun getDefaultTestExecutable(): Executable =
+        getExecutable(DEFAULT_TEST_NAME_PREFIX, DEFAULT_TEST_BUILD_TYPE)
+
     companion object {
         internal val DEFAULT_TEST_BUILD_TYPE = NativeBuildType.DEBUG
+        internal val DEFAULT_TEST_NAME_PREFIX = "test"
 
         internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
             lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
