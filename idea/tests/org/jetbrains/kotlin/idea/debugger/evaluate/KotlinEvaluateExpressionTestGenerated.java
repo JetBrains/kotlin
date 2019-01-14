@@ -745,6 +745,16 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/hideSyntheticThis.kt");
             }
 
+            @TestMetadata("lambdaParameterMangling.kt")
+            public void testLambdaParameterMangling() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/lambdaParameterMangling.kt");
+            }
+
+            @TestMetadata("localFunctionMangling.kt")
+            public void testLocalFunctionMangling() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/localFunctionMangling.kt");
+            }
+
             @TestMetadata("remapThis.kt")
             public void testRemapThis() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/remapThis.kt");

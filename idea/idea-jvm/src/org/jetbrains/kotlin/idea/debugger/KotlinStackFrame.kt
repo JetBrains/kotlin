@@ -30,6 +30,7 @@ import com.sun.jdi.ReferenceType
 import com.sun.jdi.Type
 import com.sun.jdi.Value
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.DESTRUCTURED_LAMBDA_ARGUMENT_VARIABLE_PREFIX
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.isFakeLocalVariableForInline
@@ -206,6 +207,8 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
     private fun isHidden(variable: LocalVariableProxyImpl, inlineDepth: Int): Boolean {
         val name = variable.name()
         return isFakeLocalVariableForInline(name)
+                || name.startsWith(DESTRUCTURED_LAMBDA_ARGUMENT_VARIABLE_PREFIX)
+                || name.startsWith(AsmUtil.LOCAL_FUNCTION_VARIABLE_PREFIX)
                 || VariableFinder.getInlineDepth(variable.name()) != inlineDepth
                 || name == CONTINUATION_VARIABLE_NAME
     }

@@ -118,6 +118,8 @@ public class AsmUtil {
     // For non-inlined callable references ('kotlin.jvm.internal.CallableReference' has a 'receiver' field)
     public static final String BOUND_REFERENCE_RECEIVER = "receiver";
 
+    public static final String LOCAL_FUNCTION_VARIABLE_PREFIX = "$fun$";
+
     private static final ImmutableMap<Integer, JvmPrimitiveType> primitiveTypeByAsmSort;
     private static final ImmutableMap<Type, Type> primitiveTypeByBoxedType;
 

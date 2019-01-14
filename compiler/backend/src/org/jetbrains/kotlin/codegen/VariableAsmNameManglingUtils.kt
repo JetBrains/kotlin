@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.jvm.checkers.isValidDalvikCharacter
 
+const val DESTRUCTURED_LAMBDA_ARGUMENT_VARIABLE_PREFIX = "\$dstr\$"
+
 fun getNameForDestructuredParameterOrNull(valueParameterDescriptor: ValueParameterDescriptor): String? {
     val variables = ValueParameterDescriptorImpl.getDestructuringVariablesOrNull(valueParameterDescriptor) ?: return null
 
     @Suppress("SpellCheckingInspection")
-    return "\$dstr\$" + variables.joinToString(separator = "$") { descriptor ->
+    return DESTRUCTURED_LAMBDA_ARGUMENT_VARIABLE_PREFIX + variables.joinToString(separator = "$") { descriptor ->
         val name = descriptor.name
         mangleNameIfNeeded(
             when {
