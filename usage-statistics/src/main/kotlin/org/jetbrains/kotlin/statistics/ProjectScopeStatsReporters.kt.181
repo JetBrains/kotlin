@@ -13,6 +13,8 @@ open class KotlinStatisticsTrigger(private val groupIdSufix: String) {
     }
 }
 
+abstract class KotlinStatisticsStateCollector(private val groupIdSufix: String)
+
 open class KotlinIdeStatisticsTrigger(groupIdSufix: String) : KotlinStatisticsTrigger("ide.$groupIdSufix")
 
 open class KotlinGradlePluginStatisticsTrigger(groupIdSufix: String) : KotlinStatisticsTrigger("gradle.$groupIdSufix")
@@ -28,3 +30,5 @@ open class KotlinIdeActionTrigger(groupIdSufix: String? = null) : KotlinIdeStati
 class KotlinIdeRefactoringTrigger : KotlinIdeActionTrigger("refactoring")
 
 class KotlinIdeNewFileTemplateTrigger : KotlinIdeStatisticsTrigger("newFileTempl")
+
+class KotlinPluginVersionCollector : KotlinStatisticsStateCollector("pluginVersion")
