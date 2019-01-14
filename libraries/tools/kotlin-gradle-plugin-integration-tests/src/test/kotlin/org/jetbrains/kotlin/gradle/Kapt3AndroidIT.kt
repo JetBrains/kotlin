@@ -192,14 +192,6 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
                             // With new AGP, there's no need in the Databinding kapt dependency:
                             configurations.kapt.exclude group: "com.android.databinding", module: "compiler"
-
-                            // Workaround for KT-24915
-                            afterEvaluate {
-                                def dataBindingExportTask = tasks.findByName('dataBindingExportFeaturePackageIdsDebug')
-                                if (dataBindingExportTask != null) {
-                                    kaptDebugKotlin.dependsOn dataBindingExportTask
-                                }
-                            }
                         }
                     }
                 """.trimIndent()
