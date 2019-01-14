@@ -222,6 +222,9 @@ public actual fun String(chars: CharArray): String = fromCharArray(chars, 0, cha
 
 /**
  * Converts the characters from a portion of the specified array to a string.
+ *
+ * @throws IndexOutOfBoundsException if either [offset] or [length] are less than zero
+ * or `offset + length` is out of [chars] array bounds.
  */
 public actual fun String(chars: CharArray, offset: Int, length: Int): String = fromCharArray(chars, offset, length)
 
