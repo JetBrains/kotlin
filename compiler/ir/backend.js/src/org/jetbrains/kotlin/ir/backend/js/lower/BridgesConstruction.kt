@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
+import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -60,11 +61,6 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
             .filter { !it.isStaticMethodOfClass }
             .toList()
             .forEach { generateBridges(it, irClass) }
-
-        irClass.declarations
-            .filterIsInstance<IrProperty>()
-            .flatMap { listOfNotNull(it.getter, it.setter) }
-            .forEach { generateBridges(it, irClass) }
     }
 
     private fun generateBridges(function: IrSimpleFunction, irClass: IrClass) {
@@ -106,7 +102,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         val irFunction = JsIrBuilder.buildFunction(
             bridge.name,
             bridge.returnType,
-            delegateTo.parent,
+            function.parent,
             bridge.visibility,
             bridge.modality, // TODO: should copy modality?
             bridge.isInline,
@@ -167,7 +163,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 // Handle for common.bridges
 data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandle {
 
-    override val isDeclaration: Boolean = true
+    override val isDeclaration: Boolean = function.isReal || findInterfaceImplementation(function.descriptor) != null
 
     override val isAbstract: Boolean =
         function.modality == Modality.ABSTRACT
