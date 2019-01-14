@@ -19,6 +19,15 @@ open class Kapt3Android32IT : Kapt3AndroidIT() {
         get() = GradleVersionRequired.AtLeast("4.6")
 }
 
+class Kapt3Android31IT : Kapt3AndroidIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_1_0
+
+    // there is a weird validation exception in testICWithAnonymousClasses with 5.0 todo: fix it
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.InRange("4.4", "4.10.2")
+}
+
 open class Kapt3AndroidIT : Kapt3BaseIT() {
     protected open val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_0_0
@@ -150,13 +159,20 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/BR.java")
 
-            if (output.contains("-Aandroid.databinding.enableV2=1")) {
-                // databinding compiler v2 was introduced in AGP 3.1.0, was enabled by default in AGP 3.2.0
-                assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
-                assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBindingImpl.java")
-            } else {
-                assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapper.java")
-                assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
+            when {
+                output.contains("-Aandroid.databinding.enableV2=1") -> {
+                    // databinding compiler v2 was introduced in AGP 3.1.0, was enabled by default in AGP 3.2.0
+                    assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+                    assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBindingImpl.java")
+                }
+                androidGradlePluginVersion == AGPVersion.v3_1_0 -> {
+                    assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+                    assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
+                }
+                else -> {
+                    assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapper.java")
+                    assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
+                }
             }
 
             // KT-23866
