@@ -1,7 +1,7 @@
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JVM_IR
 
-class IC(val x: Int)
+inline class IC(val x: Int)
 
 interface I<T> {
     fun foo(t: T): T
