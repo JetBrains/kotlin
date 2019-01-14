@@ -664,6 +664,11 @@ open class KotlinNativeTargetConfigurator(
                     }
                 }
             }
+            // Allow setting linker options for the default test executable using the
+            // corresponding properties of the test compilation.
+            target.binaries.getDefaultTestExecutable().apply {
+                linkerOpts.addAll(target.compilations.getByName(TEST_COMPILATION_NAME).linkerOpts)
+            }
         }
     }
 

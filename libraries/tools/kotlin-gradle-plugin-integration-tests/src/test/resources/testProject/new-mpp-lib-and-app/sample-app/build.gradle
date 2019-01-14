@@ -68,6 +68,7 @@ kotlin {
             compilations.main.entryPoint = "com.example.app.native.main"
             // Check that linker options are correctly passed to the compiler.
             compilations.main.linkerOpts = ['-L.']
+            compilations.test.linkerOpts = ['-L.']
         }
     }
 }
