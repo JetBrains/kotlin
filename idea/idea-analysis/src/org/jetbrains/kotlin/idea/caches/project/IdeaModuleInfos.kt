@@ -16,7 +16,6 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.ResolveScopeEnlarger
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.PathUtil
@@ -170,7 +169,9 @@ data class ModuleProductionSourceInfo internal constructor(
 
     override val stableName: Name = module.getStableName()
 
-    override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleProductionSourceScope(module), module.moduleFile)
+    override fun contentScope(): GlobalSearchScope {
+        return enlargedSearchScope(ModuleProductionSourceScope(module), module, isTestScope = false)
+    }
 
     override fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>) = CachedValueProvider { f() }
 }
@@ -186,7 +187,7 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
 
     override val displayedName get() = module.name + " (test)"
 
-    override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module.moduleFile)
+    override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module, isTestScope = true)
 
     override fun modulesWhoseInternalsAreVisible() = module.cached(CachedValueProvider {
         val list = SmartList<ModuleInfo>()

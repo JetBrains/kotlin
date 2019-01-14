@@ -46,6 +46,9 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.syntheticScopeProviderExtension"
                         interface="org.jetbrains.kotlin.synthetic.SyntheticScopeProviderExtension"
                         area="IDEA_PROJECT"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.resolveScopeEnlarger"
+                        interface="org.jetbrains.kotlin.idea.caches.resolve.util.KotlinResolveScopeEnlarger"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
