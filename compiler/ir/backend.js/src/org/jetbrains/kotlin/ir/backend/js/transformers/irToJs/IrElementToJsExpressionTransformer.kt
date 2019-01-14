@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -137,8 +136,12 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         }
 
         expression.superQualifierSymbol?.let {
-            val qualifierName = context.getNameForSymbol(it).makeRef()
-            val targetName = context.getNameForSymbol(symbol)
+            val (target, owner) = if (it.owner.isInterface) {
+                val impl = (symbol.owner as IrSimpleFunction).resolveFakeOverride()!!
+                Pair(impl, impl.parentAsClass)
+            } else Pair(symbol.owner, it.owner)
+            val qualifierName = context.getNameForSymbol(owner.symbol).makeRef()
+            val targetName = context.getNameForSymbol(target.symbol)
             val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName))
             val callRef = JsNameRef(Namer.CALL_FUNCTION, qPrototype)
             return JsInvocation(callRef, jsDispatchReceiver?.let { listOf(it) + arguments } ?: arguments)
