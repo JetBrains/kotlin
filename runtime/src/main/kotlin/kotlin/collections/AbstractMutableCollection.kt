@@ -14,7 +14,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
 
     // Bulk Modification Operations
     /**
-     * Adds all of the elements in the specified collection to this collection.
+     * Adds all of the elements of the specified collection to this collection.
      *
      * @return `true` if any of the specified elements was added to the collection, `false` if the collection was not modified.
      */

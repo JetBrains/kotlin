@@ -24,13 +24,13 @@ public annotation class BeforeClass
 public annotation class AfterClass
 
 /**
- * Marks a function to be executed before a test.
+ * Marks a function to be invoked before each test.
  */
 @Target(AnnotationTarget.FUNCTION)
 public actual annotation class BeforeTest
 
 /**
- * Marks a function to be executed after a test.
+ * Marks a function to be invoked after each test.
  */
 @Target(AnnotationTarget.FUNCTION)
 public actual annotation class AfterTest

@@ -6,9 +6,10 @@
 package kotlin.native.concurrent
 
 /**
- * Top level variable or object is thread local, and so could be mutable.
- * One may use this annotation as the stopgap measure for singleton
- * object immutability.
+ * Marks a top level variable with a backing field or an object as thread local.
+ * The object remains mutable and it is possible to change its state,
+ * but every thread will have a distinct copy of this object,
+ * so changes in one thread are not reflected in another.
  *
  * PLEASE NOTE THAT THIS ANNOTATION MAY GO AWAY IN UPCOMING RELEASES.
  */
@@ -17,7 +18,9 @@ package kotlin.native.concurrent
 public actual annotation class ThreadLocal
 
 /**
- * Top level variable is immutable and so could be shared.
+ * Marks a top level variable with a backing field or an object as immutable.
+ * It is possible to share such object between multiple threads, but it becomes deeply frozen,
+ * so no changes can be made to its state or the state of objects it refers to.
  *
  * PLEASE NOTE THAT THIS ANNOTATION MAY GO AWAY IN UPCOMING RELEASES.
  */
