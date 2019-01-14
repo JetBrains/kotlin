@@ -121,7 +121,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     @Test
     fun testICWithAnonymousClasses() {
         val project = Project("icAnonymousTypes", directoryPrefix = "kapt2")
-        setupDataBinding(project, null)
+        setupDataBinding(project)
 
         project.build("assembleDebug") {
             assertSuccessful()
@@ -141,43 +141,53 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @Test
-    open fun testDatabinding() {
+    fun testDatabinding() {
         val project = Project("android-databinding", directoryPrefix = "kapt2")
-        setupDataBinding(project, "app")
+        setupDataBinding(project)
 
         project.build("assembleDebug", "assembleAndroidTest") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/BR.java")
 
-            assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
-
-            assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBindingImpl.java")
+            if (output.contains("-Aandroid.databinding.enableV2=1")) {
+                // databinding compiler v2 was introduced in AGP 3.1.0, was enabled by default in AGP 3.2.0
+                assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+                assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBindingImpl.java")
+            } else {
+                assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapper.java")
+                assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
+            }
 
             // KT-23866
             assertNotContains("The following options were not recognized by any processor")
         }
     }
 
-    private fun setupDataBinding(project: Project, projectName: String?) {
+    private fun setupDataBinding(project: Project) {
+        project.setupWorkingDir()
+
         if (androidGradlePluginVersion >= AGPVersion.v3_2_0) {
-            project.setupWorkingDir()
+            project.gradleBuildScript().modify {
+                it + "\n\n" + """
+                    allprojects {
+                        plugins.withId("kotlin-kapt") {
+                            println("${'$'}project android.databinding.enableV2=${'$'}{project.findProperty('android.databinding.enableV2')}")
 
-            // With new AGP, there's no need in the Databinding kapt dependency:
-            project.gradleBuildScript(projectName).modify {
-                it.lines().filterNot {
-                    it.contains("kapt \"com.android.databinding:compiler")
-                }.joinToString("\n")
+                            // With new AGP, there's no need in the Databinding kapt dependency:
+                            configurations.kapt.exclude group: "com.android.databinding", module: "compiler"
+
+                            // Workaround for KT-24915
+                            afterEvaluate {
+                                def dataBindingExportTask = tasks.findByName('dataBindingExportFeaturePackageIdsDebug')
+                                if (dataBindingExportTask != null) {
+                                    kaptDebugKotlin.dependsOn dataBindingExportTask
+                                }
+                            }
+                        }
+                    }
+                """.trimIndent()
             }
-
-            // Workaround for KT-24915
-            project.gradleBuildScript(projectName).appendText(
-                "\n" + """
-               afterEvaluate {
-                    kaptDebugKotlin.dependsOn dataBindingExportFeaturePackageIdsDebug
-               }
-            """.trimIndent()
-            )
         }
     }
 }
