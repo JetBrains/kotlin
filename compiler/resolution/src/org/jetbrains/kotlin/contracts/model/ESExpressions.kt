@@ -16,16 +16,32 @@
 
 package org.jetbrains.kotlin.contracts.model
 
-import org.jetbrains.kotlin.types.KotlinType
 
+/**
+ * [ESExpression] is entity used by Effect System
+ *
+ * All those entities can be visited by [ESExpressionVisitor], so
+ *   they can be:
+ *   - reduced by [org.jetbrains.kotlin.contracts.model.visitors.Reducer]
+ *   - substituted with real values by [org.jetbrains.kotlin.contracts.model.visitors.Substitutor]
+ *   - collected to [MutableContextInfo] by [org.jetbrains.kotlin.contracts.model.visitors.InfoCollector]
+ */
 interface ESExpression {
     fun <T> accept(visitor: ESExpressionVisitor<T>): T
 }
 
+/**
+ * [ESOperator] is [ESExpression] represents operator on
+ *   one or more ESExpressions
+ */
 interface ESOperator : ESExpression {
+    /**
+     * [Functor] that contains logic of concrete operator
+     */
     val functor: Functor
 }
 
-abstract class ESValue(override val type: KotlinType?) : Computation, ESExpression {
-    override val effects: List<ESEffect> = listOf()
-}
+/**
+ * [ESValue] is [ESExpression] that can be a [Computation]
+ */
+interface ESValue : Computation, ESExpression

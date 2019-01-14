@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.UnsignedErrorValueTypeConstant
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -155,7 +156,16 @@ class EffectsExtractingVisitor(
 
     private fun ReceiverValue.toComputation(): Computation = when (this) {
         is ExpressionReceiver -> extractOrGetCached(expression)
+        is ExtensionReceiver -> ESDataFlowReceiver(this, createDataFlowValue())
         else -> UNKNOWN_COMPUTATION
+    }
+
+    private fun ExtensionReceiver.createDataFlowValue(): DataFlowValue {
+        return dataFlowValueFactory.createDataFlowValue(
+            receiverValue = this,
+            bindingContext = trace.bindingContext,
+            containingDeclarationOrModule = this.declarationDescriptor
+        )
     }
 
     private fun KtExpression.createDataFlowValue(): DataFlowValue? {
@@ -212,7 +222,12 @@ class EffectsExtractingVisitor(
 
     private fun ValueArgument.toComputation(): Computation? {
         return when (this) {
-            is KtLambdaArgument -> getLambdaExpression()?.let { ESLambda(it) }
+            is KtLambdaArgument -> getLambdaExpression()?.let {
+                val functionLiteral = it.functionLiteral
+                val literal = trace.bindingContext[BindingContext.FUNCTION, functionLiteral]
+                val receiverParameter = literal?.extensionReceiverParameter
+                ESLambda(it, receiverParameter?.value)
+            }
             is KtValueArgument -> getArgumentExpression()?.let { extractOrGetCached(it) }
             else -> null
         }

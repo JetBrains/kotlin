@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.contracts.model.visitors
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.contracts.model.*
+import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.ESExpression
+import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
 import org.jetbrains.kotlin.contracts.model.structure.*
 
 /**
@@ -57,4 +59,6 @@ class Substitutor(private val substitutions: Map<ESVariable, Computation>) : ESE
     override fun visitVariable(esVariable: ESVariable): Computation? = substitutions[esVariable] ?: esVariable
 
     override fun visitConstant(esConstant: ESConstant): Computation? = esConstant
+
+    override fun visitReceiver(esReceiver: ESReceiver): ESReceiver = esReceiver
 }

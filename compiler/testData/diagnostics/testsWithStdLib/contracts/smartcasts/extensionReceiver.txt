@@ -1,0 +1,7 @@
+package
+
+public fun mixedReceiver(/*0*/ x: kotlin.Int?): kotlin.Int
+public fun smartcastOnReceiver(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun kotlin.Any?.isNull(): kotlin.Boolean
+    Returns(FALSE) -> <this> != null
+

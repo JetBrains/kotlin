@@ -30,7 +30,6 @@ class Reducer : ESExpressionVisitor<ESExpression?> {
 
     private fun reduceEffect(effect: ESEffect): ESEffect? {
         when (effect) {
-            is SimpleEffect -> return effect
             is ConditionalEffect -> {
                 // Reduce condition
                 val reducedCondition = effect.condition.accept(this) ?: return null
@@ -44,6 +43,7 @@ class Reducer : ESExpressionVisitor<ESExpression?> {
                 // Leave everything else as is
                 return effect
             }
+            else -> return effect
         }
     }
 
@@ -108,4 +108,6 @@ class Reducer : ESExpressionVisitor<ESExpression?> {
     override fun visitVariable(esVariable: ESVariable): ESVariable = esVariable
 
     override fun visitConstant(esConstant: ESConstant): ESConstant = esConstant
+
+    override fun visitReceiver(esReceiver: ESReceiver): ESReceiver = esReceiver
 }

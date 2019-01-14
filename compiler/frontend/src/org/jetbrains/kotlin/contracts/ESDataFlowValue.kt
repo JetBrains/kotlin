@@ -16,31 +16,69 @@
 
 package org.jetbrains.kotlin.contracts
 
-import org.jetbrains.kotlin.contracts.model.ESValue
-import org.jetbrains.kotlin.contracts.model.structure.ESVariable
 import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
+import org.jetbrains.kotlin.contracts.model.structure.AbstractESValue
+import org.jetbrains.kotlin.contracts.model.structure.ESReceiverValue
+import org.jetbrains.kotlin.contracts.model.structure.ESVariable
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-class ESDataFlowValue(descriptor: ValueDescriptor, val dataFlowValue: DataFlowValue) : ESVariable(descriptor) {
-    override fun equals(other: Any?): Boolean {
+
+/**
+ * [ESDataFlow] is an interface represents some entity that holds [DataFlowValue] for DFA.
+ *   All [ESDataFlow] must implement [equals] by [dataFlowValue], so for that there is
+ *   a function [dataFlowEquals] to avoid copy-paste.
+
+ * Actually that interfaces must be sealed.
+ */
+interface ESDataFlow {
+    val dataFlowValue: DataFlowValue
+
+    fun dataFlowEquals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other !is ESDataFlow) return false
 
-        other as ESDataFlowValue
-
-        if (dataFlowValue != other.dataFlowValue) return false
-
-        return true
+        return dataFlowValue == other.dataFlowValue
     }
+}
+
+
+/**
+ * [ESDataFlowValue] is [ESVariable] with data flow information.
+ */
+class ESDataFlowValue(
+    descriptor: ValueDescriptor,
+    override val dataFlowValue: DataFlowValue
+) : ESVariable(descriptor), ESDataFlow {
+    override fun equals(other: Any?): Boolean = dataFlowEquals(other)
 
     override fun hashCode(): Int {
         return dataFlowValue.hashCode()
     }
 }
 
-class ESLambda(val lambda: KtLambdaExpression) : ESValue(null) {
+
+/**
+ * [ESDataFlowReceiver] is [ESReceiverValue] with data flow information.
+ */
+class ESDataFlowReceiver(
+    receiverValue: ReceiverValue,
+    override val dataFlowValue: DataFlowValue
+) : ESReceiverValue(receiverValue), ESDataFlow {
+    override fun equals(other: Any?): Boolean = dataFlowEquals(other)
+
+    override fun hashCode(): Int {
+        return dataFlowValue.hashCode()
+    }
+}
+
+
+/**
+ * [ESLambda] represents lambda functions in Effect System
+ */
+class ESLambda(val lambda: KtLambdaExpression, val receiverValue: ReceiverValue?) : AbstractESValue(null) {
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T {
         throw IllegalStateException("Lambdas shouldn't be visited by ESExpressionVisitor")
     }
