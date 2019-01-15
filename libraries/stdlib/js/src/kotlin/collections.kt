@@ -109,8 +109,7 @@ private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in 
     if (list.size <= 1) return
 
     val array = copyToArray(list)
-
-    array.asDynamic().sort(comparator.asDynamic().compare.bind(comparator))
+    sortArrayWith(array, comparator)
 
     for (i in 0 until array.size) {
         list[i] = array[i]
