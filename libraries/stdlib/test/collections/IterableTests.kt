@@ -508,3 +508,17 @@ fun <T> Iterator<T>.assertSorted(isInOrder: (T, T) -> Boolean) {
     return
 }
 
+data class Sortable<K : Comparable<K>>(val key: K, val index: Int) : Comparable<Sortable<K>> {
+    override fun compareTo(other: Sortable<K>): Int = this.key.compareTo(other.key)
+}
+
+
+fun <K : Comparable<K>> Iterator<Sortable<K>>.assertStableSorted(descending: Boolean = false) {
+    assertSorted { a, b ->
+        val relation = a.key.compareTo(b.key)
+        (if (descending) relation > 0 else relation < 0) || relation == 0 && a.index < b.index
+    }
+}
+
+fun <K : Comparable<K>> Iterable<Sortable<K>>.assertStableSorted(descending: Boolean = false) =
+    iterator().assertStableSorted(descending = descending)
