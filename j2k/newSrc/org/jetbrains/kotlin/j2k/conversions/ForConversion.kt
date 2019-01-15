@@ -42,7 +42,9 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                 loopStatement::initializer.detached(),
                 whileStatement
             )
-        return if (loopStatement.parent!! is JKBlock) convertedFromForLoopSyntheticWhileStatement
+        val notNeedParentBlock = loopStatement.parent is JKBlock
+                || loopStatement.parent is JKLabeledStatement && loopStatement.parent?.parent is JKBlock
+        return if (notNeedParentBlock) convertedFromForLoopSyntheticWhileStatement
         else blockStatement(convertedFromForLoopSyntheticWhileStatement)
     }
 
