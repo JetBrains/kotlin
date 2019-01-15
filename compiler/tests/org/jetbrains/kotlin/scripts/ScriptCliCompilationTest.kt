@@ -30,10 +30,7 @@ import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
-import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.*
 
 private const val testDataPath = "compiler/testData/script/cliCompilation"
 
@@ -136,7 +133,7 @@ object TestScriptWithRequireConfiguration : ScriptCompilationConfiguration(
                     }
                 ScriptCompilationConfiguration(context.compilationConfiguration) {
                     if (sources?.isNotEmpty() == true) importScripts.append(sources)
-                    if (deps?.isNotEmpty() == true) dependencies.append(JvmDependency(deps))
+                    if (deps != null) updateClasspath(deps)
                 }.asSuccess()
             }
         }

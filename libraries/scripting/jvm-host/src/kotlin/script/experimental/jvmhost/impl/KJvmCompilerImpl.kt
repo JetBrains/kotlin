@@ -51,6 +51,7 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.withUpdatedClasspath
 import kotlin.script.experimental.jvmhost.KJvmCompilerProxy
 import kotlin.script.experimental.util.getOrError
 
@@ -79,11 +80,8 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
 
             fun updateClasspath(classpath: List<File>) {
                 environment!!.updateClasspath(classpath.map(::JvmClasspathRoot))
-                if (classpath.isNotEmpty()) {
-                    updatedConfiguration = ScriptCompilationConfiguration(updatedConfiguration) {
-                        dependencies.append(JvmDependency(classpath))
-                    }
-                }
+
+                updatedConfiguration = updatedConfiguration.withUpdatedClasspath(classpath)
             }
 
             val disposable = Disposer.newDisposable()
@@ -122,9 +120,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                         add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
                     }
                 }
-                updatedConfiguration = ScriptCompilationConfiguration(updatedConfiguration) {
-                    dependencies.append(JvmDependency(standardLibs.map { it.second }))
-                }
+                updatedConfiguration = updatedConfiguration.withUpdatedClasspath(standardLibs.map { it.second })
 
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script") // TODO" take meaningful and valid name from somewhere
                 languageVersionSettings = LanguageVersionSettingsImpl(

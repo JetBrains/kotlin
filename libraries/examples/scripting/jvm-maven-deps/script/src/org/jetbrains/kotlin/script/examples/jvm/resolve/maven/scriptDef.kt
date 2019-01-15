@@ -18,6 +18,7 @@ import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.withUpdatedClasspath
 
 @KotlinScript(
     fileExtension = "scriptwithdeps.kts",
@@ -66,9 +67,7 @@ fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContex
             ?: return context.compilationConfiguration.asSuccess(diagnostics)
         val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
             ?: return context.compilationConfiguration.asSuccess(diagnostics)
-        ScriptCompilationConfiguration(context.compilationConfiguration) {
-            dependencies.append(JvmDependency(resolvedClasspath))
-        }.asSuccess(diagnostics)
+        context.compilationConfiguration.withUpdatedClasspath(resolvedClasspath).asSuccess(diagnostics)
     } catch (e: Throwable) {
         ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics(path = context.script.locationId))
     }

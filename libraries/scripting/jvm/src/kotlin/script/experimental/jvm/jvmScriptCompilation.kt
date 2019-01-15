@@ -38,9 +38,40 @@ fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassloader(
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false
 ) {
-    ScriptCompilationConfiguration.dependencies.append(
-        JvmDependency(scriptCompilationClasspathFromContext(*libraries, classLoader = classLoader, wholeClasspath = wholeClasspath))
+    updateClasspath(
+        scriptCompilationClasspathFromContext(*libraries, classLoader = classLoader, wholeClasspath = wholeClasspath)
     )
+}
+
+fun ScriptCompilationConfiguration.withUpdatedClasspath(classpath: Collection<File>): ScriptCompilationConfiguration {
+
+    val newClasspath = classpath.filterNewClasspath(this[ScriptCompilationConfiguration.dependencies])
+        ?: return this
+
+    return ScriptCompilationConfiguration(this) {
+        dependencies.append(JvmDependency(newClasspath))
+    }
+}
+
+fun ScriptCompilationConfiguration.Builder.updateClasspath(classpath: Collection<File>) = updateClasspathImpl(classpath)
+
+fun JvmScriptCompilationConfigurationBuilder.updateClasspath(classpath: Collection<File>) = updateClasspathImpl(classpath)
+
+private fun PropertiesCollection.Builder.updateClasspathImpl(classpath: Collection<File>) {
+    val newClasspath = classpath.filterNewClasspath(this[ScriptCompilationConfiguration.dependencies])
+        ?: return
+
+    ScriptCompilationConfiguration.dependencies.append(JvmDependency(newClasspath))
+}
+
+private fun Collection<File>.filterNewClasspath(known: Collection<ScriptDependency>?): List<File>? {
+
+    if (isEmpty()) return null
+
+    val knownClasspath = known?.flatMapTo(hashSetOf<File>()) {
+        (it as? JvmDependency)?.classpath ?: emptyList()
+    }
+    return filterNot { knownClasspath?.contains(it) == true }.takeIf { it.isNotEmpty() }
 }
 
 @Deprecated("Unused")
