@@ -1451,8 +1451,8 @@ class ArraysTest {
         for (size in listOf(10, 100, 2000)) {
             val array = Array(size) { index -> Sortable(keyRange.random(), index) }
 
-            array.sortedBy { it.key }.iterator().assertStableSorted()
-            array.sortedByDescending { it.key }.iterator().assertStableSorted(descending = true)
+            array.sortedBy { it.key }.assertStableSorted()
+            array.sortedByDescending { it.key }.assertStableSorted(descending = true)
 
             array.sortBy { it.key }
             array.assertStableSorted()
@@ -1488,19 +1488,9 @@ class ArraysTest {
     }
 }
 
-private data class Sortable<K : Comparable<K>>(val key: K, val index: Int) : Comparable<Sortable<K>> {
-    override fun compareTo(other: Sortable<K>): Int = this.key.compareTo(other.key)
-}
 
-private fun <K : Comparable<K>> Array<out Sortable<K>>.assertStableSorted(descending: Boolean = false) =
+fun <K : Comparable<K>> Array<out Sortable<K>>.assertStableSorted(descending: Boolean = false) =
     iterator().assertStableSorted(descending = descending)
-
-private fun <K : Comparable<K>> Iterator<Sortable<K>>.assertStableSorted(descending: Boolean = false) {
-    assertSorted { a, b ->
-        val relation = a.key.compareTo(b.key)
-        (if (descending) relation > 0 else relation < 0) || relation == 0 && a.index < b.index
-    }
-}
 
 private class ArraySortedChecker<A, T>(val array: A, val comparator: Comparator<in T>) {
     public fun <R> checkSorted(sorted: A.() -> R, sortedDescending: A.() -> R, iterator: R.() -> Iterator<T>) {
