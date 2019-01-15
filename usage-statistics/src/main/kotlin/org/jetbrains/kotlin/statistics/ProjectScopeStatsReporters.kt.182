@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.statistics
 open class KotlinStatisticsTrigger(private val groupIdSufix: String) {
     companion object {
         public fun trigger(clazz: Class<out KotlinStatisticsTrigger>, event: String) {
-            // FUS is not working for 181
+            // FUS is not working for 182
         }
     }
 }
