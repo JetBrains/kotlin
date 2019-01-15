@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.mainKts
 
 import org.jetbrains.kotlin.mainKts.impl.FilesAndIvyResolver
 import org.jetbrains.kotlin.script.util.DependsOn
-import org.jetbrains.kotlin.script.util.Repository
 import org.jetbrains.kotlin.script.util.Import
+import org.jetbrains.kotlin.script.util.Repository
 import java.io.File
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileScriptSource
-import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvm.dependenciesFromClassContext
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.updateClasspath
 
 @Suppress("unused")
 @KotlinScript(fileExtension = "main.kts", compilationConfiguration = MainKtsScriptDefinition::class)
@@ -79,7 +79,7 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
         }
 
         return ScriptCompilationConfiguration(context.compilationConfiguration) {
-            if (resolvedClassPath?.isNotEmpty() == true) dependencies.append(JvmDependency(resolvedClassPath))
+            if (resolvedClassPath != null) updateClasspath(resolvedClassPath)
             if (importedSources.isNotEmpty()) importScripts.append(importedSources)
         }.asSuccess(diagnostics)
     }
