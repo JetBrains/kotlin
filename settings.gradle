@@ -348,5 +348,5 @@ project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kot
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
 project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
 
-
-includeBuild("custom-dependencies/protobuf")
+// Uncomment to use locally built protobuf-relocated
+// includeBuild("custom-dependencies/protobuf")
