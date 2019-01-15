@@ -13,13 +13,18 @@ import java.io.PrintStream
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.baseClassLoader
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
+import kotlin.script.experimental.jvmhost.jvm
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
 
     val scriptDefinition = createJvmCompilationConfigurationFromTemplate<MainKtsScript>()
 
     val evaluationEnv = ScriptEvaluationConfiguration {
+        jvm {
+            baseClassLoader(null)
+        }
         constructorArgs(emptyArray<String>())
         enableScriptsInstancesSharing()
     }
@@ -59,6 +64,16 @@ class MainKtsTest {
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
                     ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
             res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unknown set of arguments to maven resolver: abracadabra") })
+    }
+
+    @Test
+    fun testResolveLog4jAndDocopt() {
+        val res = evalFile(File("testData/resolve-log4j-and-docopt.main.kts"))
+
+        Assert.assertTrue(
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
+            res is ResultWithDiagnostics.Success
+        )
     }
 
     @Test
