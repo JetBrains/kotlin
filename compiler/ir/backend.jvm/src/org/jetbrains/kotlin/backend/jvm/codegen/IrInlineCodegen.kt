@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.JvmKotlinType
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.ValueKind
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -32,7 +29,7 @@ class IrInlineCodegen(
 ) : InlineCodegen<ExpressionCodegen>(codegen, state, function, typeParameterMappings, sourceCompiler), IrCallGenerator {
 
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
-        val lambdaInfo = next as IrExpressionLambda
+        val lambdaInfo = next as IrExpressionLambdaImpl
         activeLambda = lambdaInfo
 
         lambdaInfo.reference.getArguments().forEachIndexed { index, (_, ir) ->
@@ -52,7 +49,7 @@ class IrInlineCodegen(
         if (valueParameterDescriptor?.let { isInlineParameter(it) } == true && isInlineIrExpression(argumentExpression)) {
             val irReference: IrFunctionReference =
                 (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
-            rememberClosure(irReference, parameterType, valueParameterDescriptor) as IrExpressionLambda
+            rememberClosure(irReference, parameterType, valueParameterDescriptor) as IrExpressionLambdaImpl
         } else {
             putValueOnStack(argumentExpression, parameterType, valueParameterDescriptor?.index ?: -1)
         }
@@ -94,7 +91,7 @@ class IrInlineCodegen(
     private fun rememberClosure(irReference: IrFunctionReference, type: Type, parameter: ValueParameterDescriptor): LambdaInfo {
         //assert(InlineUtil.isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
         val expression = irReference.symbol.owner as IrFunction
-        return IrExpressionLambda(
+        return IrExpressionLambdaImpl(
             irReference, expression, typeMapper, parameter.isCrossinline, false/*TODO*/,
             parameter.type.isExtensionFunctionType
         ).also { lambda ->
@@ -105,14 +102,14 @@ class IrInlineCodegen(
     }
 }
 
-class IrExpressionLambda(
+class IrExpressionLambdaImpl(
     val reference: IrFunctionReference,
     val function: IrFunction,
     typeMapper: KotlinTypeMapper,
     isCrossInline: Boolean,
     override val isBoundCallableReference: Boolean,
-    val isExtensionLambda: Boolean
-) : ExpressionLambda(typeMapper, isCrossInline) {
+    override val isExtensionLambda: Boolean
+) : ExpressionLambda(typeMapper, isCrossInline), IrExpressionLambda {
 
     override fun isMyLabel(name: String): Boolean {
         //TODO("not implemented")
