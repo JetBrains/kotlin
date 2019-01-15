@@ -11,7 +11,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.KotlinType
 
-open class PropertiesCollection(private val properties: Map<Key<*>, Any> = emptyMap()) : Serializable {
+open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = emptyMap()) : Serializable {
 
     class Key<T>(val name: String, @Transient val defaultValue: T? = null) : Serializable {
 
@@ -36,13 +36,17 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any> = empty
 
     @Suppress("UNCHECKED_CAST")
     operator fun <T> get(key: PropertiesCollection.Key<T>): T? =
-        properties[key]?.let { it as T } ?: key.defaultValue
+        if (key.defaultValue == null) properties[key] as T?
+        else properties.getOrDefault(key, key.defaultValue) as T?
 
     @Suppress("UNCHECKED_CAST")
     fun <T> getNoDefault(key: PropertiesCollection.Key<T>): T? =
         properties[key]?.let { it as T }
 
-    fun entries(): Set<Map.Entry<Key<*>, Any>> = properties.entries
+    fun <T> containsKey(key: PropertiesCollection.Key<T>): Boolean =
+        properties.containsKey(key)
+
+    fun entries(): Set<Map.Entry<Key<*>, Any?>> = properties.entries
 
     companion object {
         fun <T> key(defaultValue: T? = null) = PropertyKeyDelegate(defaultValue)
@@ -56,13 +60,13 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any> = empty
 
     open class Builder(baseProperties: Iterable<PropertiesCollection> = emptyList()) {
 
-        val data: MutableMap<PropertiesCollection.Key<*>, Any> = LinkedHashMap<PropertiesCollection.Key<*>, Any>().apply {
+        val data: MutableMap<PropertiesCollection.Key<*>, Any?> = LinkedHashMap<PropertiesCollection.Key<*>, Any?>().apply {
             baseProperties.forEach { putAll(it.properties) }
         }
 
         // generic for all properties
 
-        operator fun <T : Any> PropertiesCollection.Key<T>.invoke(v: T) {
+        operator fun <T> PropertiesCollection.Key<T>.invoke(v: T) {
             data[this] = v
         }
 
@@ -137,8 +141,12 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any> = empty
 
         // direct manipulation - public - for usage in inline dsl methods and for extending dsl
 
-        operator fun <T : Any> set(key: PropertiesCollection.Key<in T>, value: T) {
+        operator fun <T> set(key: PropertiesCollection.Key<in T>, value: T) {
             data[key] = value
+        }
+
+        fun <T> reset(key: PropertiesCollection.Key<in T>) {
+            data.remove(key)
         }
 
         @Suppress("UNCHECKED_CAST")
