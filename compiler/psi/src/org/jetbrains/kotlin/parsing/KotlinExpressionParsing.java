@@ -1816,7 +1816,15 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                     if (at(COLON) && lookahead(1) == IDENTIFIER) {
                         errorAndAdvance("Unexpected type specification", 2);
                     }
-                    if (!at(COMMA)) break;
+                    if (!at(COMMA)) {
+                        if (atSet(EXPRESSION_FIRST)) {
+                            error("Expecting ','");
+                            continue;
+                        }
+                        else {
+                            break;
+                        }
+                    }
                     advance(); // COMMA
                     if (at(RPAR)) {
                         error("Expecting an argument");

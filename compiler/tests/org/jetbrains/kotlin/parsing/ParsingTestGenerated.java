@@ -521,6 +521,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/NewlinesInParentheses.kt");
         }
 
+        @TestMetadata("noCommaBetweenArguments.kt")
+        public void testNoCommaBetweenArguments() throws Exception {
+            runTest("compiler/testData/psi/noCommaBetweenArguments.kt");
+        }
+
         @TestMetadata("NonTypeBeforeDotInBaseClass.kt")
         public void testNonTypeBeforeDotInBaseClass() throws Exception {
             runTest("compiler/testData/psi/NonTypeBeforeDotInBaseClass.kt");
