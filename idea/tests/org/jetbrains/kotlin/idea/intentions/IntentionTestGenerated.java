@@ -2499,6 +2499,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/branched/ifThenToElvis/ifAsPartOfExpression.kt");
             }
 
+            @TestMetadata("ifToElvisSwallowComments.kt")
+            public void testIfToElvisSwallowComments() throws Exception {
+                runTest("idea/testData/intentions/branched/ifThenToElvis/ifToElvisSwallowComments.kt");
+            }
+
             @TestMetadata("implicitReceiver.kt")
             public void testImplicitReceiver() throws Exception {
                 runTest("idea/testData/intentions/branched/ifThenToElvis/implicitReceiver.kt");
