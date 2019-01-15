@@ -9945,6 +9945,29 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/nothingType")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NothingType extends AbstractDiagnosticsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInNothingType() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/nothingType"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("complexDependancyOnVariableWithTrivialConstraint.kt")
+                public void testComplexDependancyOnVariableWithTrivialConstraint() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/complexDependancyOnVariableWithTrivialConstraint.kt");
+                }
+
+                @TestMetadata("nothingWithCallableReference.kt")
+                public void testNothingWithCallableReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/nothingWithCallableReference.kt");
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/inference/recursiveCalls")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
