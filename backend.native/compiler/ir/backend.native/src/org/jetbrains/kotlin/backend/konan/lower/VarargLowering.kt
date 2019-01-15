@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrElement
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class VarargInjectionLowering constructor(val context: CommonBackendContext): DeclarationContainerLoweringPass {
+internal class VarargInjectionLowering constructor(val context: KonanBackendContext): DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.forEach{
             when (it) {
@@ -134,12 +134,12 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
                                 +incrementVariable(indexTmpVariable, kIntOne)
                         } else {
                             val arraySizeVariable = irTemporary(irArraySize(arrayHandle, irGet(dst)), "length".synthesizedString)
-                            +irCall(arrayHandle.copyRangeToSymbol.owner).apply {
+                            +irCall(arrayHandle.copyIntoSymbol.owner).apply {
                                 extensionReceiver = irGet(dst)
                                 putValueArgument(0, irGet(arrayTmpVariable))  /* destination */
-                                putValueArgument(1, kIntZero)                            /* fromIndex */
-                                putValueArgument(2, irGet(arraySizeVariable)) /* toIndex */
-                                putValueArgument(3, irGet(indexTmpVariable))  /* destinationIndex */
+                                putValueArgument(1, irGet(indexTmpVariable))  /* destinationOffset */
+                                putValueArgument(2, kIntZero)                 /* startIndex */
+                                putValueArgument(3, irGet(arraySizeVariable)) /* endIndex */
                             }
                             +incrementVariable(indexTmpVariable, irGet(arraySizeVariable))
                             log { "element:$i:spread element> ${ir2string(element.expression)}" }
@@ -203,7 +203,7 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
     abstract inner class ArrayHandle(val arraySymbol: IrClassSymbol) {
         val setMethodSymbol = arraySymbol.functions.single { it.descriptor.name == OperatorNameConventions.SET }
         val sizeGetterSymbol = arraySymbol.getPropertyGetter("size")!!
-        val copyRangeToSymbol = symbols.copyRangeTo[arraySymbol.descriptor]!!
+        val copyIntoSymbol = symbols.copyInto[arraySymbol.descriptor]!!
         protected val singleParameterConstructor =
             arraySymbol.owner.constructors.find { it.valueParameters.size == 1 }!!
 

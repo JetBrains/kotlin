@@ -308,12 +308,15 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
                 } ?: error(descriptor.toString())
         return symbolTable.referenceSimpleFunction(functionDescriptor)
     }
-    override val copyRangeTo = arrays.map { symbol ->
+    override val copyRangeTo get() = TODO()
+
+    val copyInto = arrays.map { symbol ->
         val packageViewDescriptor = builtIns.builtInsModule.getPackage(KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME)
         val functionDescriptor = packageViewDescriptor.memberScope
-                .getContributedFunctions(Name.identifier("copyRangeTo"), NoLookupLocation.FROM_BACKEND)
-                .first {
-                    it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == symbol.descriptor
+                .getContributedFunctions(Name.identifier("copyInto"), NoLookupLocation.FROM_BACKEND)
+                .single {
+                    !it.isExpect &&
+                            it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == symbol.descriptor
                 }
         symbol.descriptor to symbolTable.referenceSimpleFunction(functionDescriptor)
     }.toMap()
