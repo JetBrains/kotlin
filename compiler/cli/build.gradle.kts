@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -14,6 +13,7 @@ dependencies {
     compile(project(":compiler:frontend.script"))
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:backend"))
+    compile(project(":compiler:backend.jvm"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:serialization"))
     compile(project(":compiler:plugin-api"))
