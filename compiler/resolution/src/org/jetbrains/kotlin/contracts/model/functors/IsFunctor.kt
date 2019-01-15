@@ -29,22 +29,17 @@ class IsFunctor(val type: KotlinType, val isNegated: Boolean) : AbstractReducing
 
     fun invokeWithArguments(arg: Computation): List<ESEffect> {
         return if (arg is ESValue)
-            invokeWithValue(arg, null)
+            invokeWithValue(arg)
         else
-            arg.effects.flatMap {
-                if (it !is ConditionalEffect || it.simpleEffect !is ESReturns || it.simpleEffect.value == ESConstant.WILDCARD)
-                    listOf(it)
-                else
-                    invokeWithValue(it.simpleEffect.value, it.condition)
-            }
+            emptyList()
     }
 
-    private fun invokeWithValue(value: ESValue, additionalCondition: ESExpression?): List<ConditionalEffect> {
+    private fun invokeWithValue(value: ESValue): List<ConditionalEffect> {
         val trueIs = ESIs(value, this)
         val falseIs = ESIs(value, IsFunctor(type, isNegated.not()))
 
-        val trueResult = ConditionalEffect(trueIs.and(additionalCondition), ESReturns(true.lift()))
-        val falseResult = ConditionalEffect(falseIs.and(additionalCondition), ESReturns(false.lift()))
+        val trueResult = ConditionalEffect(trueIs, ESReturns(true.lift()))
+        val falseResult = ConditionalEffect(falseIs, ESReturns(false.lift()))
         return listOf(trueResult, falseResult)
     }
 }
