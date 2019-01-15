@@ -31,7 +31,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         val whileBody = createWhileBody(loopStatement)
         val condition =
             if (loopStatement.condition !is JKStubExpression) loopStatement::condition.detached()
-            else JKKtLiteralExpressionImpl("true", JKLiteralExpression.LiteralType.BOOLEAN)
+            else JKBooleanLiteral(true)
         val whileStatement = JKWhileStatementImpl(condition, whileBody)
 
         if (loopStatement.initializer is JKEmptyStatement) return whileStatement
