@@ -1685,6 +1685,8 @@ public actual fun CharArray.sort(): Unit {
 
 /**
  * Sorts the array in-place according to the natural order of its elements.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 @kotlin.internal.InlineOnly
 public actual inline fun <T : Comparable<T>> Array<out T>.sort(): Unit {
@@ -1695,6 +1697,8 @@ public actual inline fun <T : Comparable<T>> Array<out T>.sort(): Unit {
 /**
  * Sorts the array in-place according to the natural order of its elements.
  * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
  * @throws ClassCastException if any element of the array is not [Comparable].
  */
 public fun <T> Array<out T>.sort(): Unit {
@@ -1703,6 +1707,8 @@ public fun <T> Array<out T>.sort(): Unit {
 
 /**
  * Sorts a range in the array in-place.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1759,6 +1765,8 @@ public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
     if (size > 1) java.util.Arrays.sort(this, comparator)
@@ -1766,6 +1774,8 @@ public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit 
 
 /**
  * Sorts a range in the array in-place with the given [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex, comparator)
