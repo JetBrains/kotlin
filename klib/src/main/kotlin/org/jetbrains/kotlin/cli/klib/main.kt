@@ -143,7 +143,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
 
     fun contents(output: Appendable = out) {
 
-        val storageManager = LockBasedStorageManager()
+        val storageManager = LockBasedStorageManager("klib")
         val library = libraryInRepoOrCurrentDir(repository, name)
         val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
         val module = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, versionSpec, storageManager)
