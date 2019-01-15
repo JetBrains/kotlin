@@ -98,8 +98,8 @@ internal class TestProcessor (val context: KonanBackendContext) {
                     dispatchReceiver = irGet(receiver)
                     putValueArgument(0, irString(it.function.name.identifier))
                     putValueArgument(1, IrFunctionReferenceImpl(
-                            SYNTHETIC_OFFSET,
-                            SYNTHETIC_OFFSET,
+                            it.function.startOffset,
+                            it.function.endOffset,
                             registerTestCase.valueParameters[1].type,
                             it.function.symbol,
                             it.function.descriptor,
@@ -113,13 +113,14 @@ internal class TestProcessor (val context: KonanBackendContext) {
                     dispatchReceiver = irGet(receiver)
                     val testKindEntry = it.kind.runtimeKind
                     putValueArgument(0, IrGetEnumValueImpl(
-                            SYNTHETIC_OFFSET,
-                            SYNTHETIC_OFFSET,
+                            it.function.startOffset,
+                            it.function.endOffset,
                             symbols.testFunctionKind.typeWithoutArguments,
                             testKindEntry)
                     )
-                    putValueArgument(1, IrFunctionReferenceImpl(SYNTHETIC_OFFSET,
-                            SYNTHETIC_OFFSET,
+                    putValueArgument(1, IrFunctionReferenceImpl(
+                            it.function.startOffset,
+                            it.function.endOffset,
                             registerFunction.valueParameters[1].type,
                             it.function.symbol,
                             it.function.descriptor,
@@ -338,7 +339,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
                                   owner: IrClass,
                                   getterName: Name) = WrappedSimpleFunctionDescriptor().let { descriptor ->
         IrFunctionImpl(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                owner.startOffset, owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
                 IrSimpleFunctionSymbolImpl(descriptor),
                 getterName,
@@ -359,9 +360,8 @@ internal class TestProcessor (val context: KonanBackendContext) {
             createDispatchReceiverParameter()
             overriddenSymbols += superFunction.symbol
 
-            body = context.createIrBuilder(symbol).irBlockBody {
-                +irReturn(IrGetObjectValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                        objectSymbol.typeWithoutArguments, objectSymbol)
+            body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
+                +irReturn(irGetObjectValue(objectSymbol.typeWithoutArguments, objectSymbol)
                 )
             }
         }
@@ -375,7 +375,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
                                     owner: IrClass,
                                     getterName: Name) = WrappedSimpleFunctionDescriptor().let { descriptor ->
         IrFunctionImpl(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                owner.startOffset, owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
                 IrSimpleFunctionSymbolImpl(descriptor),
                 getterName,
@@ -396,7 +396,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
             createDispatchReceiverParameter()
             overriddenSymbols += superFunction.symbol
 
-            body = context.createIrBuilder(symbol).irBlockBody {
+            body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
                 val constructor = classSymbol.owner.constructors.single { it.valueParameters.isEmpty() }
                 +irReturn(irCall(constructor))
             }
@@ -422,7 +422,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
                                            functions: Collection<TestFunction>,
                                            ignored: Boolean) = WrappedClassConstructorDescriptor().let { descriptor ->
         IrConstructorImpl(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                testSuite.owner.startOffset, testSuite.owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
                 IrConstructorSymbolImpl(descriptor),
                 Name.special("<init>"),
@@ -450,7 +450,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
                         && it.valueParameters[1].type.isFunction()         // function: () -> Unit
             }
 
-            body = context.createIrBuilder(symbol).irBlockBody {
+            body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
                 +irDelegatingConstructorCall(baseClassSuiteConstructor).apply {
                     putTypeArgument(0, testClassType)
                     putTypeArgument(1, testCompanionType)
@@ -474,7 +474,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
                                 testCompanion: IrClass?,
                                 functions: Collection<TestFunction>) = WrappedClassDescriptor().let { descriptor ->
         IrClassImpl(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                testClass.startOffset, testClass.endOffset,
                 TEST_SUITE_CLASS,
                 IrClassSymbolImpl(descriptor),
                 testClass.name.synthesizeSuiteClassName(),
@@ -530,7 +530,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
             with(buildClassSuite(testClass.ownerClass, testClass.companion,testClass.functions)) {
                 irFile.addChild(this)
                 val irConstructor = constructors.single()
-                context.createIrBuilder(irFile.symbol).run {
+                context.createIrBuilder(irFile.symbol, testClass.ownerClass.startOffset, testClass.ownerClass.endOffset).run {
                     irFile.addTopLevelInitializer(
                             irCall(irConstructor),
                             this@TestProcessor.context,
