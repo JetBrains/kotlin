@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.visitors.generator
 
+import org.jetbrains.kotlin.fir.visitors.generator.DataCollector.NameWithTypeParameters
 import org.jetbrains.kotlin.utils.Printer
 
 class SimpleVisitorGenerator(referencesData: DataCollector.ReferencesData) : AbstractVisitorGenerator(referencesData) {
@@ -15,11 +16,12 @@ class SimpleVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abs
                 "visitElement",
                 parameters = mapOf(
                     "element" to FIR_ELEMENT_CLASS_NAME,
-                    "data" to DataCollector.NameWithTypeParameters("D")
+                    "data" to NameWithTypeParameters("D")
                 ),
                 returnType = "R",
                 body = null
             )
+
             referencesData.walkHierarchyTopDown(from = FIR_ELEMENT_CLASS_NAME) { parent, element ->
                 generateVisit(element, parent)
             }
@@ -27,9 +29,10 @@ class SimpleVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abs
         println("}")
     }
 
+
     private fun Printer.generateVisit(
-        className: DataCollector.NameWithTypeParameters,
-        parent: DataCollector.NameWithTypeParameters
+        className: NameWithTypeParameters,
+        parent: NameWithTypeParameters
     ) {
         val shortcutName = className.name.classNameWithoutFir
         val parameterName = shortcutName.decapitalize().safeName
@@ -37,10 +40,10 @@ class SimpleVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abs
             name = "visit$shortcutName",
             parameters = mapOf(
                 parameterName to className,
-                "data" to DataCollector.NameWithTypeParameters("D")
+                "data" to NameWithTypeParameters("D")
             ),
             returnType = "R",
-            typeParameters = className.typeParameters
+            typeParametersWithBounds = className.typeParametersWithBounds()
         ) {
             print("return ")
             generateCall("visit${parent.name.classNameWithoutFir}", listOf(parameterName, "data"))

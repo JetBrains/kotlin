@@ -11,16 +11,56 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 
 class DataCollector {
 
-    data class NameWithTypeParameters(val name: String, val typeParameters: List<String>) : Comparable<NameWithTypeParameters> {
+    class NameWithTypeParameters private constructor(
+        val name: String,
+        val typeParameters: List<String>,
+        private val typeParameterBounds: Map<String, String>
+    ) : Comparable<NameWithTypeParameters> {
+
         override fun compareTo(other: NameWithTypeParameters): Int = name.compareTo(other.name)
 
-        constructor(name: String, typeParameterString: String) :
-                this(name, typeParameterString.drop(1).dropLast(1).split(" ", "\t", ",").filter { it.isNotEmpty() })
+        private constructor(name: String, typeParameters: Pair<List<String>, Map<String, String>>) :
+                this(name, typeParameters.first, typeParameters.second)
 
-        constructor(name: String) : this(name, emptyList())
+        constructor(name: String, typeParameterString: String) :
+                this(name, typeParameterString.splitToParametersAndBounds())
+
+        constructor(name: String) : this(name, emptyList(), emptyMap())
+
+        fun typeParametersWithBounds(): List<String> =
+            typeParameters.map { parameter ->
+                parameter + (typeParameterBounds[parameter]?.let { " : $it" } ?: "")
+            }
+
+        fun asStringWithoutBounds(): String =
+            name + if (typeParameters.isEmpty()) "" else typeParameters.joinToString(prefix = "<", postfix = ">", separator = ", ")
+
+        override fun equals(other: Any?): Boolean =
+            other is NameWithTypeParameters && name == other.name
+
+        override fun hashCode(): Int = name.hashCode()
 
         override fun toString(): String =
-            name + if (typeParameters.isEmpty()) "" else typeParameters.joinToString(prefix = "<", postfix = ">", separator = ", ")
+            name + if (typeParameters.isEmpty()) "" else typeParameters.joinToString(prefix = "<", postfix = ">", separator = ", ") {
+                val bound = typeParameterBounds[it]
+                if (bound == null) it else "$it : $bound"
+            }
+
+        companion object {
+            private fun String.splitToParametersAndBounds(): Pair<List<String>, Map<String, String>> {
+                val typeParametersWithBounds = drop(1).dropLast(1).split(",").map { it.trim() }.filter { it.isNotBlank() }
+                val typeParameters = mutableListOf<String>()
+                val bounds = mutableMapOf<String, String>()
+                for (parameterWithBounds in typeParametersWithBounds) {
+                    val parts = parameterWithBounds.split(":").map { it.trim() }
+                    typeParameters += parts[0]
+                    if (parts.size > 1) {
+                        bounds[parts[0]] = parts[1]
+                    }
+                }
+                return typeParameters to bounds
+            }
+        }
     }
 
     private val references = mutableMapOf<NameWithTypeParameters, List<NameWithTypeParameters>>()
@@ -66,9 +106,9 @@ class DataCollector {
                         references[classNameWithParameters] = listOfNotNull(manual.toNameWithTypeParameters())
                     } else {
                         references[classNameWithParameters] =
-                                klass.superTypeListEntries.mapNotNull {
-                                    it.toNameWithTypeParameters()
-                                }
+                            klass.superTypeListEntries.mapNotNull {
+                                it.toNameWithTypeParameters()
+                            }
                     }
                 }
 

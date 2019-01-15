@@ -20,7 +20,7 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
                     "data" to NameWithTypeParameters("D")
                 ),
                 constructCompositeBoxType("E"),
-                typeParameters = listOf("E : $FIR_ELEMENT_CLASS_NAME"),
+                typeParametersWithBounds = listOf("E : $FIR_ELEMENT_CLASS_NAME"),
                 body = null
             )
 
@@ -63,7 +63,7 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
             returnType = constructCompositeBoxType(FIR_ELEMENT_CLASS_NAME.name),
             override = true,
             final = true,
-            typeParameters = className.typeParameters
+            typeParametersWithBounds = className.typeParametersWithBounds()
         ) {
             print("return ")
             generateCall("transform$shortcutName", listOf(parameterName, "data"))
@@ -87,7 +87,7 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
                     "data" to NameWithTypeParameters("D")
                 ),
                 constructCompositeBoxType("E"),
-                typeParameters = listOf("E : $parent") + className.typeParameters
+                typeParametersWithBounds = listOf("E : $parent") + className.typeParametersWithBounds()
             ) {
                 print("return ")
                 generateCall("transform${parent.name.classNameWithoutFir}", listOf(parameterName, "data"))
@@ -101,7 +101,7 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
                     "data" to NameWithTypeParameters("D")
                 ),
                 constructCompositeBoxType(baseType.name),
-                typeParameters = className.typeParameters
+                typeParametersWithBounds = className.typeParametersWithBounds()
             ) {
                 print("return ")
                 generateCall("transform${parent.name.classNameWithoutFir}", listOf(parameterName, "data"))
