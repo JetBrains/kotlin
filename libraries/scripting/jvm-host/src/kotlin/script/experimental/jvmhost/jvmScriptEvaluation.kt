@@ -10,16 +10,18 @@ package kotlin.script.experimental.jvmhost
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
 
-open class JvmScriptEvaluationConfiguration : PropertiesCollection.Builder() {
+interface JvmScriptEvaluationConfigurationKeys
 
-    companion object : JvmScriptEvaluationConfiguration()
+open class JvmScriptEvaluationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptEvaluationConfigurationKeys {
+
+    companion object : JvmScriptEvaluationConfigurationBuilder()
 }
 
-val JvmScriptEvaluationConfiguration.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
+val JvmScriptEvaluationConfigurationKeys.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
 
-val JvmScriptEvaluationConfiguration.actualClassLoader by PropertiesCollection.key<ClassLoader?>()
+val JvmScriptEvaluationConfigurationKeys.actualClassLoader by PropertiesCollection.key<ClassLoader?>()
 
-val ScriptEvaluationConfiguration.jvm get() = JvmScriptEvaluationConfiguration()
+val ScriptEvaluationConfigurationKeys.jvm get() = JvmScriptEvaluationConfigurationBuilder()
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
@@ -28,27 +30,23 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =
         try {
-            compiledScript.getClass(scriptEvaluationConfiguration).onSuccess { scriptClass ->
+            val actualEvaluationConfiguration = scriptEvaluationConfiguration ?: ScriptEvaluationConfiguration()
+            compiledScript.getClass(actualEvaluationConfiguration).onSuccess { scriptClass ->
                 // in the future, when (if) we'll stop to compile everything into constructor
                 // run as SAM
                 // return res
 
                 // for other scripts we need evaluation configuration with actualClassloader set,
                 // so they are loaded in the same classloader as the "main" script
-                val updatedEvalConfiguration = when {
-                    scriptEvaluationConfiguration == null -> ScriptEvaluationConfiguration {
-                        // TODO: find out why dsl syntax doesn't work here
-                        set(JvmScriptEvaluationConfiguration.actualClassLoader, scriptClass.java.classLoader)
-                    }
-                    scriptEvaluationConfiguration.getNoDefault(JvmScriptEvaluationConfiguration.actualClassLoader) == null ->
-                        ScriptEvaluationConfiguration(scriptEvaluationConfiguration) {
-                            // TODO: find out why dsl syntax doesn't work here
-                            set(JvmScriptEvaluationConfiguration.actualClassLoader, scriptClass.java.classLoader)
+                val updatedEvalConfiguration =
+                    if (actualEvaluationConfiguration.containsKey(ScriptEvaluationConfiguration.jvm.actualClassLoader))
+                        actualEvaluationConfiguration
+                    else
+                        ScriptEvaluationConfiguration(actualEvaluationConfiguration) {
+                            ScriptEvaluationConfiguration.jvm.actualClassLoader(scriptClass.java.classLoader)
                         }
-                    else -> scriptEvaluationConfiguration
-                }
 
-                val sharedScripts = scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.scriptsInstancesSharingMap)
+                val sharedScripts = actualEvaluationConfiguration[ScriptEvaluationConfiguration.scriptsInstancesSharingMap]
 
                 val instanceFromShared = sharedScripts?.get(scriptClass)
 
@@ -61,10 +59,10 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                     updatedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
                         args.addAll(it)
                     }
-                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.providedProperties)?.forEach {
+                    actualEvaluationConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
                         args.add(it.value)
                     }
-                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.implicitReceivers)?.let {
+                    actualEvaluationConfiguration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
                         args.addAll(it)
                     }
 
