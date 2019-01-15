@@ -107,6 +107,7 @@ open class AndroidLinker(targetProperties: AndroidConfigurables)
             if (optimize) +linkerOptimizationFlags
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
+            if (dynamic) +"-Wl,-soname,${File(executable).name}"
             +linkerKonanFlags
             +libraries
             +linkerArgs
