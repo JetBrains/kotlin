@@ -6,6 +6,8 @@
 package templates
 
 import templates.Family.*
+import templates.Ordering.stableSortNote
+import templates.Ordering.appendStableSortNote
 
 object ArrayOps : TemplateGroupBase() {
 
@@ -783,6 +785,7 @@ object ArrayOps : TemplateGroupBase() {
     } builder {
         typeParam("T : Comparable<T>")
         doc { "Sorts the array in-place according to the natural order of its elements." }
+        appendStableSortNote()
         specialFor(ArraysOfPrimitives) {
             doc { "Sorts the array in-place." }
         }
@@ -830,6 +833,7 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfObjects)
     } builder {
         doc { "Sorts the array in-place according to the order specified by the given [comparator]." }
+        appendStableSortNote()
         returns("Unit")
         on(Platform.JVM) {
             body {
@@ -856,6 +860,7 @@ object ArrayOps : TemplateGroupBase() {
             body { "asDynamic().sort(comparison)" }
         }
         specialFor(ArraysOfObjects) {
+            appendStableSortNote()
             body { """if (size > 1) sortArrayWith(this, comparison)""" }
         }
     }
@@ -868,6 +873,8 @@ object ArrayOps : TemplateGroupBase() {
         doc {
             """
             Sorts the array in-place according to the natural order of its elements.
+
+            $stableSortNote
 
             @throws ClassCastException if any element of the array is not [Comparable].
             """
@@ -884,6 +891,9 @@ object ArrayOps : TemplateGroupBase() {
         exclude(PrimitiveType.Boolean)
     } builder {
         doc { "Sorts a range in the array in-place." }
+        specialFor(ArraysOfObjects) {
+            appendStableSortNote()
+        }
         returns("Unit")
         body {
             "java.util.Arrays.sort(this, fromIndex, toIndex)"
@@ -895,6 +905,7 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfObjects)
     } builder {
         doc { "Sorts a range in the array in-place with the given [comparator]." }
+        appendStableSortNote()
         returns("Unit")
         body {
             "java.util.Arrays.sort(this, fromIndex, toIndex, comparator)"

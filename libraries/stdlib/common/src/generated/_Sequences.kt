@@ -502,6 +502,8 @@ public fun <T> Sequence<T>.takeWhile(predicate: (T) -> Boolean): Sequence<T> {
 
 /**
  * Returns a sequence that yields elements of this sequence sorted according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  *
  * The operation is _intermediate_ and _stateful_.
  */
@@ -517,6 +519,8 @@ public fun <T : Comparable<T>> Sequence<T>.sorted(): Sequence<T> {
 
 /**
  * Returns a sequence that yields elements of this sequence sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  *
  * The operation is _intermediate_ and _stateful_.
  */
@@ -526,6 +530,8 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.sortedBy(crossinline select
 
 /**
  * Returns a sequence that yields elements of this sequence sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  *
  * The operation is _intermediate_ and _stateful_.
  */
@@ -535,6 +541,8 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.sortedByDescending(crossinl
 
 /**
  * Returns a sequence that yields elements of this sequence sorted descending according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  *
  * The operation is _intermediate_ and _stateful_.
  */
@@ -544,6 +552,8 @@ public fun <T : Comparable<T>> Sequence<T>.sortedDescending(): Sequence<T> {
 
 /**
  * Returns a sequence that yields elements of this sequence sorted according to the specified [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  *
  * The operation is _intermediate_ and _stateful_.
  */
