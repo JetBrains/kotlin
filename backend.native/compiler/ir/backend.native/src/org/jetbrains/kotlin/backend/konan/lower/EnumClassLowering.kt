@@ -137,7 +137,11 @@ internal class EnumUsageLowering(val context: Context)
     private fun loadEnumEntry(startOffset: Int, endOffset: Int, enumClass: IrClass, name: Name): IrExpression {
         val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClass)
         val ordinal = loweredEnum.entriesMap[name]!!
-        return irCall(startOffset, endOffset, loweredEnum.itemGetterSymbol.owner, emptyList()).apply {
+        return IrCallImpl(
+                startOffset, endOffset, enumClass.defaultType,
+                loweredEnum.itemGetterSymbol.owner.symbol, loweredEnum.itemGetterSymbol.descriptor,
+                typeArgumentsCount = 0
+        ).apply {
             dispatchReceiver = IrCallImpl(startOffset, endOffset, loweredEnum.valuesGetter.returnType, loweredEnum.valuesGetter.symbol)
             putValueArgument(0, IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, ordinal))
         }
