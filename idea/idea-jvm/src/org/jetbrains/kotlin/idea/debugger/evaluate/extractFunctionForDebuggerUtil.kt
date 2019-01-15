@@ -44,26 +44,31 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
 
 fun getFunctionForExtractedFragment(
-        codeFragment: KtCodeFragment,
-        breakpointFile: PsiFile,
-        breakpointLine: Int
+    codeFragment: KtCodeFragment,
+    breakpointFile: PsiFile,
+    breakpointLine: Int
 ): ExtractionResult? {
 
     fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult, tmpFile: KtFile): String {
         if (ApplicationManager.getApplication().isInternal) {
-            val attachments = arrayOf(attachmentByPsiFile(tmpFile),
-                                      attachmentByPsiFile(breakpointFile),
-                                      attachmentByPsiFile(codeFragment),
-                                      Attachment("breakpoint.info", "line: $breakpointLine"),
-                                      Attachment("context.info", codeFragment.context?.text ?: "null"),
-                                      Attachment("errors.info", analysisResult.messages.joinToString("\n") { "$it: ${it.renderMessage()}" }))
-            LOG.error(LogMessageEx.createEvent(
+            val attachments = arrayOf(
+                attachmentByPsiFile(tmpFile),
+                attachmentByPsiFile(breakpointFile),
+                attachmentByPsiFile(codeFragment),
+                Attachment("breakpoint.info", "line: $breakpointLine"),
+                Attachment("context.info", codeFragment.context?.text ?: "null"),
+                Attachment("errors.info", analysisResult.messages.joinToString("\n") { "$it: ${it.renderMessage()}" })
+            )
+            LOG.error(
+                LogMessageEx.createEvent(
                     "Internal error during evaluate expression",
                     ExceptionUtil.getThrowableText(Throwable("Extract function fails with ${analysisResult.messages.joinToString { it.name }}")),
-                    mergeAttachments(*attachments)))
+                    mergeAttachments(*attachments)
+                )
+            )
         }
         return analysisResult.messages.joinToString(", ") { errorMessage ->
-            val message = when(errorMessage) {
+            val message = when (errorMessage) {
                 ErrorMessage.NO_EXPRESSION -> "Cannot perform an action without an expression"
                 ErrorMessage.NO_CONTAINER -> "Cannot perform an action at this breakpoint ${breakpointFile.name}:$breakpointLine"
                 ErrorMessage.SYNTAX_ERRORS -> "Cannot perform an action due to erroneous code"
@@ -93,11 +98,13 @@ fun getFunctionForExtractedFragment(
 
         val targetSibling = tmpFile.declarations.firstOrNull() ?: return null
 
-        val options = ExtractionOptions(inferUnitTypeForUnusedValues = false,
-                                        enableListBoxing = true,
-                                        allowSpecialClassNames = true,
-                                        captureLocalFunctions = true,
-                                        canWrapInWith = true)
+        val options = ExtractionOptions(
+            inferUnitTypeForUnusedValues = false,
+            enableListBoxing = true,
+            allowSpecialClassNames = true,
+            captureLocalFunctions = true,
+            canWrapInWith = true
+        )
         val extractionData = ExtractionData(tmpFile, newDebugExpressions.toRange(), targetSibling, null, options)
         try {
             val analysisResult = extractionData.performAnalysis()
@@ -107,12 +114,18 @@ fun getFunctionForExtractedFragment(
 
             val validationResult = analysisResult.descriptor!!.validate()
             if (!validationResult.conflicts.isEmpty) {
-                throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().joinToString(",") { it.text }}")
+                throw EvaluateExceptionUtil.createEvaluateException(
+                    "Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().joinToString(
+                        ","
+                    ) { it.text }}"
+                )
             }
 
-            val generatorOptions = ExtractionGeneratorOptions(inTempFile = true,
-                                                              dummyName = GENERATED_FUNCTION_NAME,
-                                                              allowExpressionBody = false)
+            val generatorOptions = ExtractionGeneratorOptions(
+                inTempFile = true,
+                dummyName = GENERATED_FUNCTION_NAME,
+                allowExpressionBody = false
+            )
             return ExtractionGeneratorConfiguration(validationResult.descriptor, generatorOptions).generateDeclaration()
         } finally {
             Disposer.dispose(extractionData)
@@ -154,7 +167,7 @@ private fun KtCodeFragment.clearContextElement() {
 }
 
 private fun KtFile.findContextElement(): KtElement? {
-    return this.findDescendantOfType { it.IS_CONTEXT_ELEMENT == true }
+    return this.findDescendantOfType { it.IS_CONTEXT_ELEMENT }
 }
 
 private var PsiElement.DEBUG_SMART_CAST: PsiElement? by CopyablePsiUserDataProperty(Key.create("DEBUG_SMART_CAST"))
@@ -167,8 +180,9 @@ private fun KtCodeFragment.markSmartCasts() {
         val smartCast = bindingContext.get(SMARTCAST, expression)?.defaultType
         if (smartCast != null) {
             val smartCastedExpression = factory.createExpressionByPattern(
-                    "($0 as ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)})",
-                    expression) as KtParenthesizedExpression
+                "($0 as ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)})",
+                expression
+            ) as KtParenthesizedExpression
 
             expression.DEBUG_SMART_CAST = smartCastedExpression
         }
@@ -194,8 +208,7 @@ private fun addImportsToFile(newImportList: KtImportList?, tmpFile: KtFile) {
             val packageDirective = tmpFile.packageDirective
             tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
             tmpFile.addAfter(newImportList, tmpFile.packageDirective)
-        }
-        else {
+        } else {
             newImportList.imports.forEach {
                 tmpFileImportList.add(psiFactory.createNewLine())
                 tmpFileImportList.add(it)
@@ -293,20 +306,17 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
             val delegateExpressionOrInitializer = contextElement.delegateExpressionOrInitializer
             if (delegateExpressionOrInitializer != null) {
                 wrapInLambdaCall(delegateExpressionOrInitializer)
-            }
-            else {
+            } else {
                 val getter = contextElement.getter
                 val bodyExpression = getter?.bodyExpression
 
                 if (getter != null && bodyExpression != null) {
                     if (!getter.hasBlockBody()) {
                         wrapInLambdaCall(bodyExpression)
-                    }
-                    else {
+                    } else {
                         (bodyExpression as KtBlockExpression).statements.first()
                     }
-                }
-                else {
+                } else {
                     contextElement
                 }
             }
@@ -343,8 +353,7 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
             val entryExpression = contextElement.expression
             if (entryExpression is KtBlockExpression) {
                 entryExpression.statements.firstOrNull() ?: entryExpression.lastChild
-            }
-            else {
+            } else {
                 wrapInLambdaCall(entryExpression!!)
             }
         }

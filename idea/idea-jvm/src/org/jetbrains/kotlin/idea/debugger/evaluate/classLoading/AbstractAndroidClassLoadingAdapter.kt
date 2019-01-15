@@ -29,15 +29,15 @@ abstract class AbstractAndroidClassLoadingAdapter : ClassLoadingAdapter {
     protected fun wrapToByteBuffer(bytes: ArrayReference, context: EvaluationContext, process: DebugProcessImpl): ObjectReference {
         val byteBufferClass = process.findClass(context, "java.nio.ByteBuffer", context.classLoader) as ClassType
         val wrapMethod = byteBufferClass.concreteMethodByName("wrap", "([B)Ljava/nio/ByteBuffer;")
-                         ?: error("'wrap' method not found")
+            ?: error("'wrap' method not found")
 
         return process.invokeMethod(context, byteBufferClass, wrapMethod, listOf(bytes)) as ObjectReference
     }
 
     protected fun DebugProcessImpl.tryLoadClass(
-            context: EvaluationContextImpl,
-            fqName: String,
-            classLoader: ClassLoaderReference?
+        context: EvaluationContextImpl,
+        fqName: String,
+        classLoader: ClassLoaderReference?
     ): ReferenceType? {
         return try {
             loadClass(context, fqName, classLoader)

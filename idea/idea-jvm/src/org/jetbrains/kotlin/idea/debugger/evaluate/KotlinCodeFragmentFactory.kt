@@ -168,10 +168,12 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                     else
                         debuggerContext.frameProxy?.stackFrame
 
-                    val visibleVariables = frame?.let {
-                        val values = it.getValues(it.visibleVariables())
+                    val visibleVariables = if (frame != null) {
+                        val values = frame.getValues(frame.visibleVariables())
                         values.filterValues { it != null }
-                    } ?: emptyMap()
+                    } else {
+                        emptyMap()
+                    }
 
                     frameInfo = FrameInfo(frame?.thisObject(), visibleVariables)
                 } catch (ignored: AbsentInformationException) {
@@ -315,7 +317,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
             // elementAt can be PsiWhiteSpace when codeFragment is created from line start offset (in case of first opening EE window)
             val lineStartOffset = if (elementAt is PsiWhiteSpace || elementAt is PsiComment) {
                 PsiTreeUtil.skipSiblingsForward(elementAt, PsiWhiteSpace::class.java, PsiComment::class.java)?.textOffset
-                        ?: elementAt.textOffset
+                    ?: elementAt.textOffset
             } else {
                 elementAt.textOffset
             }

@@ -73,46 +73,44 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
 
         val classLoader = try {
             ClassLoadingUtils.getClassLoader(context, process)
-        }
-        catch (e: Exception) {
-            throw EvaluateException("Error creating evaluation class loader: " + e, e)
+        } catch (e: Exception) {
+            throw EvaluateException("Error creating evaluation class loader: $e", e)
         }
 
         val debugProcessVersionString = process.virtualMachineProxy.version()
         val debugProcessVersion = JavaSdkVersion.fromVersionString(debugProcessVersionString)
-                ?: throw EvaluateException("Unable to parse java version from $debugProcessVersionString.")
+            ?: throw EvaluateException("Unable to parse java version from $debugProcessVersionString.")
 
         val ideaJavaVersion = JavaSdkVersion.fromVersionString(SystemInfo.JAVA_RUNTIME_VERSION)
-                ?: throw EvaluateException("Unable to parse java version from ${SystemInfo.JAVA_RUNTIME_VERSION}.")
+            ?: throw EvaluateException("Unable to parse java version from ${SystemInfo.JAVA_RUNTIME_VERSION}.")
 
         if (!ideaJavaVersion.isAtLeast(debugProcessVersion)) {
             throw EvaluateException(
-                    "Unable to compile for target level ${debugProcessVersion.description}. " +
-                    "Need to run IDEA on java version at least $debugProcessVersion, " +
-                    "currently running on $ideaJavaVersion")
+                "Unable to compile for target level ${debugProcessVersion.description}. " +
+                        "Need to run IDEA on java version at least $debugProcessVersion, " +
+                        "currently running on $ideaJavaVersion"
+            )
         }
 
         try {
             defineClasses(classes, context, process, classLoader)
-        }
-        catch (e: Exception) {
-            throw EvaluateException("Error during classes definition " + e, e)
+        } catch (e: Exception) {
+            throw EvaluateException("Error during classes definition $e", e)
         }
 
         return classLoader
     }
 
     private fun defineClasses(
-            classes: Collection<ClassToLoad>,
-            context: EvaluationContextImpl,
-            process: DebugProcessImpl,
-            classLoader: ClassLoaderReference
+        classes: Collection<ClassToLoad>,
+        context: EvaluationContextImpl,
+        process: DebugProcessImpl,
+        classLoader: ClassLoaderReference
     ) {
         val classesToLoad = if (classes.size == 1) {
             // No need in loading lambda superclass if there're no lambdas
             classes
-        }
-        else {
+        } else {
             val lambdaSuperclasses = LAMBDA_SUPERCLASSES.map {
                 ClassToLoad(it.name, it.name.replace('.', '/') + ".class", it.bytes)
             }
@@ -125,12 +123,12 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
         }
     }
 
-    fun defineClass(
-            name: String,
-            bytes: ByteArray,
-            context: EvaluationContextImpl,
-            process: DebugProcessImpl,
-            classLoader: ClassLoaderReference
+    private fun defineClass(
+        name: String,
+        bytes: ByteArray,
+        context: EvaluationContextImpl,
+        process: DebugProcessImpl,
+        classLoader: ClassLoaderReference
     ) {
         try {
             val vm = process.virtualMachineProxy
@@ -138,13 +136,15 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
             val defineMethod = classLoaderType.concreteMethodByName("defineClass", "(Ljava/lang/String;[BII)Ljava/lang/Class;")
             val nameObj = vm.mirrorOf(name)
 
+            // Still actual for older platform versions
+            @Suppress("DEPRECATION")
             DebuggerUtilsEx.keep(nameObj, context)
 
             process.invokeMethod(
-                    context, classLoader, defineMethod,
-                    listOf(nameObj, mirrorOfByteArray(bytes, context, process), vm.mirrorOf(0), vm.mirrorOf(bytes.size)))
-        }
-        catch (e: Exception) {
+                context, classLoader, defineMethod,
+                listOf(nameObj, mirrorOfByteArray(bytes, context, process), vm.mirrorOf(0), vm.mirrorOf(bytes.size))
+            )
+        } catch (e: Exception) {
             throw EvaluateException("Error during class $name definition: $e", e)
         }
 
@@ -153,7 +153,7 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
     private class ClassBytes(val name: String) {
         val bytes: ByteArray by lazy {
             val inputStream = this::class.java.classLoader.getResourceAsStream(name.replace('.', '/') + ".class")
-                              ?: throw EvaluateException("Couldn't find $name class in current class loader")
+                ?: throw EvaluateException("Couldn't find $name class in current class loader")
 
             inputStream.use {
                 it.readBytes()

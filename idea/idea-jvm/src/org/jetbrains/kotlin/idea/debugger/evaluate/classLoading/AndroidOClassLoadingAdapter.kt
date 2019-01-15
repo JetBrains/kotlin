@@ -29,11 +29,12 @@ class AndroidOClassLoadingAdapter : AbstractAndroidClassLoadingAdapter() {
     }
 
     private fun resolveClassLoaderClass(context: EvaluationContextImpl): ClassType? {
-        try {
-            return context.debugProcess.tryLoadClass(
-                    context, "dalvik.system.InMemoryDexClassLoader", context.classLoader) as? ClassType
+        return try {
+            context.debugProcess.tryLoadClass(
+                context, "dalvik.system.InMemoryDexClassLoader", context.classLoader
+            ) as? ClassType
         } catch (e: EvaluateException) {
-            return null
+            null
         }
     }
 
@@ -41,14 +42,17 @@ class AndroidOClassLoadingAdapter : AbstractAndroidClassLoadingAdapter() {
         val process = context.debugProcess
         val inMemoryClassLoaderClass = resolveClassLoaderClass(context) ?: error("InMemoryDexClassLoader class not found")
         val constructorMethod = inMemoryClassLoaderClass.concreteMethodByName(
-                JVMNameUtil.CONSTRUCTOR_NAME, "(Ljava/nio/ByteBuffer;Ljava/lang/ClassLoader;)V") ?: error("Constructor method not found")
+            JVMNameUtil.CONSTRUCTOR_NAME, "(Ljava/nio/ByteBuffer;Ljava/lang/ClassLoader;)V"
+        ) ?: error("Constructor method not found")
 
         val dexBytes = dex(context, classes) ?: error("Can't dex classes")
         val dexBytesMirror = mirrorOfByteArray(dexBytes, context, process)
         val dexByteBuffer = wrapToByteBuffer(dexBytesMirror, context, process)
 
-        val newClassLoader = process.newInstance(context, inMemoryClassLoaderClass, constructorMethod,
-                                                 listOf(dexByteBuffer, context.classLoader))
+        val newClassLoader = process.newInstance(
+            context, inMemoryClassLoaderClass, constructorMethod,
+            listOf(dexByteBuffer, context.classLoader)
+        )
 
         DebuggerUtilsEx.keep(newClassLoader, context)
 

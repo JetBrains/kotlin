@@ -95,12 +95,11 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 
-internal val THIS_NAME = "this"
 internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluator")
-internal val GENERATED_FUNCTION_NAME = "generated_for_debugger_fun"
-internal val GENERATED_CLASS_NAME = "Generated_for_debugger_class"
+internal const val GENERATED_FUNCTION_NAME = "generated_for_debugger_fun"
+internal const val GENERATED_CLASS_NAME = "Generated_for_debugger_class"
 
-private val DEBUG_MODE = false
+private const val DEBUG_MODE = false
 
 object KotlinEvaluationBuilder : EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -117,17 +116,23 @@ object KotlinEvaluationBuilder : EvaluatorBuilder {
             val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
             if (document == null || document.lineCount < position.line) {
                 throw EvaluateExceptionUtil.createEvaluateException(
-                        "Couldn't evaluate kotlin expression: breakpoint is placed outside the file. " +
-                        "It may happen when you've changed source file after starting a debug process.")
+                    "Couldn't evaluate kotlin expression: breakpoint is placed outside the file. " +
+                            "It may happen when you've changed source file after starting a debug process."
+                )
             }
         }
 
         if (codeFragment.context !is KtElement) {
-            val attachments = arrayOf(attachmentByPsiFile(position.file),
-                                      attachmentByPsiFile(codeFragment),
-                                      Attachment("breakpoint.info", "line: ${position.line}"))
+            val attachments = arrayOf(
+                attachmentByPsiFile(position.file),
+                attachmentByPsiFile(codeFragment),
+                Attachment("breakpoint.info", "line: ${position.line}")
+            )
 
-            LOG.error("Trying to evaluate ${codeFragment::class.java} with context ${codeFragment.context?.javaClass}", mergeAttachments(*attachments))
+            LOG.error(
+                "Trying to evaluate ${codeFragment::class.java} with context ${codeFragment.context?.javaClass}",
+                mergeAttachments(*attachments)
+            )
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 
@@ -147,8 +152,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         var isCompiledDataFromCache = true
         try {
-            val compiledData = KotlinDebuggerCaches.getOrCreateCompiledData(codeFragment, sourcePosition, context) {
-                fragment, position ->
+            val compiledData = KotlinDebuggerCaches.getOrCreateCompiledData(codeFragment, sourcePosition, context) { fragment, position ->
                 isCompiledDataFromCache = false
                 extractAndCompile(fragment, position, context)
             }
@@ -157,8 +161,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
             val result = if (classLoaderRef != null) {
                 evaluateWithCompilation(context, compiledData, classLoaderRef) ?: runEval4j(context, compiledData, classLoaderRef)
-            }
-            else {
+            } else {
                 runEval4j(context, compiledData, classLoaderRef)
             }
 
@@ -172,32 +175,33 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             } else {
                 result
             }
-        }
-        catch (e: EvaluateException) {
+        } catch (e: EvaluateException) {
             throw e
-        }
-        catch (e: ProcessCanceledException) {
+        } catch (e: ProcessCanceledException) {
             exception(e)
-        }
-        catch (e: Eval4JInterpretingException) {
+        } catch (e: Eval4JInterpretingException) {
             exception(e.cause)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             val isSpecialException = isSpecialException(e)
             if (isSpecialException) {
                 exception(e)
             }
 
             val text = runReadAction { codeFragment.context?.text ?: "null" }
-            val attachments = arrayOf(attachmentByPsiFile(sourcePosition.file),
-                                      attachmentByPsiFile(codeFragment),
-                                      Attachment("breakpoint.info", "line: ${runReadAction { sourcePosition.line }}"),
-                                      Attachment("context.info", text))
+            val attachments = arrayOf(
+                attachmentByPsiFile(sourcePosition.file),
+                attachmentByPsiFile(codeFragment),
+                Attachment("breakpoint.info", "line: ${runReadAction { sourcePosition.line }}"),
+                Attachment("context.info", text)
+            )
 
-            LOG.error(LogMessageEx.createEvent(
+            LOG.error(
+                LogMessageEx.createEvent(
                     "Couldn't evaluate expression",
                     ExceptionUtil.getThrowableText(e),
-                    mergeAttachments(*attachments)))
+                    mergeAttachments(*attachments)
+                )
+            )
 
             val cause = if (e.message != null) ": ${e.message}" else ""
             exception("An exception occurs during Evaluate Expression Action $cause")
@@ -223,7 +227,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
     }
 
     companion object {
-        private fun extractAndCompile(codeFragment: KtCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
+        private fun extractAndCompile(
+            codeFragment: KtCodeFragment,
+            sourcePosition: SourcePosition,
+            context: EvaluationContextImpl
+        ): CompiledDataDescriptor {
             var bindingContext = codeFragment.checkForErrors().bindingContext
 
             if (codeFragment.wrapToStringIfNeeded(bindingContext)) {
@@ -234,7 +242,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val variablesCrossingInlineBounds = ScopeCheckerForEvaluator.checkScopes(bindingContext, codeFragment)
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
-                                   ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
+                ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
             val (parametersDescriptor, extractedFunction) = try {
                 extractionResult.getParametersForDebugger(codeFragment, context) to extractionResult.declaration as KtNamedFunction
             } finally {
@@ -253,6 +261,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 if (LOG.isDebugEnabled) {
                     LOG.debug("Output file generated: ${file.relativePath}")
                 }
+                @Suppress("ConstantConditionIf")
                 if (DEBUG_MODE) {
                     println(file.asText())
                 }
@@ -297,7 +306,8 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         private val CompiledDataDescriptor.mainClass
             get() = classes.firstOrNull { it.isMainClass() } ?: error(
-                    "Can't find main class for " + sourcePosition.elementAt.getParentOfType<KtDeclaration>(strict = false))
+                "Can't find main class for " + sourcePosition.elementAt.getParentOfType<KtDeclaration>(strict = false)
+            )
 
         private fun evaluateWithCompilation(
             context: EvaluationContextImpl,
@@ -331,12 +341,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
                     val argumentTypes = Type.getArgumentTypes(methodToInvoke.desc)
                     val args = context.getArgumentsForEvaluation(compiledData.parameters, argumentTypes, compiledData)
-                            .zip(argumentTypes)
-                            .map { (value, type) ->
-                                // Make argument type classes prepared for sure
-                                eval.loadClassByName(type.className, classLoader)
-                                boxOrUnboxArgumentIfNeeded(eval, value, type).asJdiValue(vm, type)
-                            }
+                        .zip(argumentTypes)
+                        .map { (value, type) ->
+                            // Make argument type classes prepared for sure
+                            eval.loadClassByName(type.className, classLoader)
+                            boxOrUnboxArgumentIfNeeded(eval, value, type).asJdiValue(vm, type)
+                        }
 
 
                     mainClass.invokeMethod(thread, mainClass.methods().single(), args, invokePolicy)
@@ -359,8 +369,15 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val mainClassBytecode = compiledData.mainClass.bytes
 
             ClassReader(mainClassBytecode).accept(object : ClassVisitor(API_VERSION) {
-                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+                override fun visitMethod(
+                    access: Int,
+                    name: String,
+                    desc: String,
+                    signature: String?,
+                    exceptions: Array<out String>?
+                ): MethodVisitor? {
                     // Maybe just take the single method from the class, as it is done in 'evaluateWithCompilation'
+                    @Suppress("ConvertToStringTemplate")
                     if (name == GENERATED_FUNCTION_NAME || name.startsWith(GENERATED_FUNCTION_NAME + "-")) {
                         val argumentTypes = Type.getArgumentTypes(desc)
                         val args = context.getArgumentsForEvaluation(compiledData.parameters, argumentTypes, compiledData)
@@ -368,15 +385,25 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                         return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
                                 virtualMachine.executeWithBreakpointsDisabled {
-                                    val eval = JDIEval(virtualMachine,
-                                                       classLoader ?: context.classLoader,
-                                                       context.suspendContext.thread?.threadReference!!,
-                                                       context.suspendContext.getInvokePolicy())
+                                    val eval = JDIEval(
+                                        virtualMachine,
+                                        classLoader ?: context.classLoader,
+                                        context.suspendContext.thread?.threadReference!!,
+                                        context.suspendContext.getInvokePolicy()
+                                    )
 
                                     resultValue = interpreterLoop(
+                                        this,
+                                        makeInitialFrame(
                                             this,
-                                            makeInitialFrame(this, args.zip(argumentTypes).map { boxOrUnboxArgumentIfNeeded(eval, it.first, it.second) }),
-                                            eval
+                                            args.zip(argumentTypes).map {
+                                                boxOrUnboxArgumentIfNeeded(
+                                                    eval,
+                                                    it.first,
+                                                    it.second
+                                                )
+                                            }),
+                                        eval
                                     )
                                 }
                             }
@@ -387,7 +414,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 }
             }, 0)
 
-            return resultValue ?: throw IllegalStateException("resultValue is null: cannot find method " + GENERATED_FUNCTION_NAME)
+            return resultValue ?: throw IllegalStateException("resultValue is null: cannot find method $GENERATED_FUNCTION_NAME")
         }
 
         private inline fun <T> VirtualMachine.executeWithBreakpointsDisabled(block: () -> T): T {
@@ -410,8 +437,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     if (parameterType == unboxedType) {
                         return eval.unboxType(argumentValue, parameterType)
                     }
-                }
-                catch(ignored: UnsupportedOperationException) {
+                } catch (ignored: UnsupportedOperationException) {
                 }
             }
 
@@ -465,7 +491,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                         override fun visitProperty(property: KtProperty) {
                             val value = property.getUserData(KotlinCodeFragmentFactory.LABEL_VARIABLE_VALUE_KEY)
                             if (value != null) {
-                                valuesForLabels.put(property.name?.quoteIfNeeded()!!, value.asValue())
+                                valuesForLabels[property.name?.quoteIfNeeded()!!] = value.asValue()
                             }
                         }
                     })
@@ -474,7 +500,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val parameters = mutableListOf<Parameter>()
                 val receiver = config.descriptor.receiverParameter
                 if (receiver != null) {
-                    parameters += Parameter(THIS_NAME + "@" + config.descriptor.name, receiver.getParameterType(true))
+                    parameters += Parameter(AsmUtil.THIS + "@" + config.descriptor.name, receiver.getParameterType(true))
                 }
 
                 for (param in config.descriptor.parameters) {
@@ -537,10 +563,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         }
 
         private fun createClassFileFactory(
-                codeFragment: KtCodeFragment,
-                extractedFunction: KtNamedFunction,
-                context: EvaluationContextImpl,
-                parameters: List<Parameter>
+            codeFragment: KtCodeFragment,
+            extractedFunction: KtNamedFunction,
+            context: EvaluationContextImpl,
+            parameters: List<Parameter>
         ): ClassFileFactory {
             return runReadAction {
                 val fileForDebugger = createFileForDebugger(codeFragment, extractedFunction)
@@ -548,22 +574,28 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     LOG.debug("File for eval4j:\n${runReadAction { fileForDebugger.text }}")
                 }
 
-                val (bindingContext, moduleDescriptor, files) = fileForDebugger.checkForErrors(true, codeFragment.getContextContainingFile())
+                val (bindingContext, moduleDescriptor, files) = fileForDebugger.checkForErrors(
+                    true,
+                    codeFragment.getContextContainingFile()
+                )
 
                 val generateClassFilter = object : GenerationState.GenerateClassFilter() {
                     override fun shouldGeneratePackagePart(ktFile: KtFile) = ktFile == fileForDebugger
                     override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject) = true
-                    override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = processingClassOrObject.containingKtFile == fileForDebugger
+                    override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) =
+                        processingClassOrObject.containingKtFile == fileForDebugger
+
                     override fun shouldGenerateScript(script: KtScript) = false
                 }
 
+                @Suppress("ConstantConditionIf")
                 val state = GenerationState.Builder(
-                        fileForDebugger.project,
-                        if (!DEBUG_MODE) ClassBuilderFactories.BINARIES else ClassBuilderFactories.TEST,
-                        moduleDescriptor,
-                        bindingContext,
-                        files,
-                        CompilerConfiguration.EMPTY
+                    fileForDebugger.project,
+                    if (!DEBUG_MODE) ClassBuilderFactories.BINARIES else ClassBuilderFactories.TEST,
+                    moduleDescriptor,
+                    bindingContext,
+                    files,
+                    CompilerConfiguration.EMPTY
                 ).generateDeclaredClassFilter(generateClassFilter).build()
 
                 val variableFinder = VariableFinder.instance(context) ?: error("No stack frame available")
@@ -577,15 +609,16 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 }
 
                 val valueParameters = extractedFunction.valueParameters
-                var paramIndex = 0
-                for (param in parameters) {
-                    val valueParameter = valueParameters[paramIndex++]
+                for ((paramIndex, param) in parameters.withIndex()) {
+                    val valueParameter = valueParameters[paramIndex]
 
                     val paramRef = valueParameter.typeReference
                     if (paramRef == null) {
-                        LOG.error("Each parameter for extracted function should have a type reference",
-                                  Attachment("codeFragment.txt", codeFragment.text),
-                                  Attachment("extractedFunction.txt", extractedFunction.text))
+                        LOG.error(
+                            "Each parameter for extracted function should have a type reference",
+                            Attachment("codeFragment.txt", codeFragment.text),
+                            Attachment("extractedFunction.txt", extractedFunction.text)
+                        )
 
                         exception("An exception occurs during Evaluate Expression Action")
                     }
@@ -631,8 +664,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             return runInReadActionWithWriteActionPriorityWithPCE {
                 try {
                     AnalyzingUtils.checkForSyntacticErrors(this)
-                }
-                catch (e: IllegalArgumentException) {
+                } catch (e: IllegalArgumentException) {
                     throw EvaluateExceptionUtil.createEvaluateException(e.message)
                 }
 
@@ -655,18 +687,21 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 if (analyzeInlineFunctions) {
                     val (newBindingContext, files) = DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, this, false)
                     ExtendedAnalysisResult(newBindingContext, analysisResult.moduleDescriptor, files)
-                }
-                else {
+                } else {
                     ExtendedAnalysisResult(bindingContext, analysisResult.moduleDescriptor, Collections.singletonList(this))
                 }
             }
         }
 
-        private data class ExtendedAnalysisResult(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor, val files: List<KtFile>)
+        private data class ExtendedAnalysisResult(
+            val bindingContext: BindingContext,
+            val moduleDescriptor: ModuleDescriptor,
+            val files: List<KtFile>
+        )
     }
 }
 
-private val template = """
+private const val template = """
 @file:kotlin.jvm.JvmName("$GENERATED_CLASS_NAME")
 !PACKAGE!
 
@@ -675,24 +710,22 @@ private val template = """
 !FUNCTION!
 """
 
-private fun createFileForDebugger(codeFragment: KtCodeFragment,
-                                  extractedFunction: KtNamedFunction
+private fun createFileForDebugger(
+    codeFragment: KtCodeFragment,
+    extractedFunction: KtNamedFunction
 ): KtFile {
     val containingContextFile = codeFragment.getContextContainingFile()
     val importsFromContextFile = containingContextFile?.importList?.let { it.text + "\n" } ?: ""
 
     var fileText = template.replace(
-            "!IMPORT_LIST!",
-            importsFromContextFile + codeFragment.importsToString().split(KtCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
+        "!IMPORT_LIST!",
+        importsFromContextFile + codeFragment.importsToString().split(KtCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
     )
 
     val packageFromContextFile = containingContextFile?.packageFqName?.let {
         if (!it.isRoot) "package ${it.quoteSegmentsIfNeeded()}" else ""
     } ?: ""
     fileText = fileText.replace("!PACKAGE!", packageFromContextFile)
-
-    val extractedFunctionText = extractedFunction.text
-    assert(extractedFunctionText != null) { "Text of extracted function shouldn't be null" }
     fileText = fileText.replace("!FUNCTION!", extractedFunction.text!!)
 
     val jetFile = codeFragment.createKtFile("debugFile.kt", fileText)
@@ -717,7 +750,7 @@ private fun PsiElement.createKtFile(fileName: String, fileText: String): KtFile 
     val virtualFile = LightVirtualFile(fileName, KotlinLanguage.INSTANCE, fileText)
     virtualFile.charset = CharsetToolkit.UTF8_CHARSET
     val jetFile = (PsiFileFactory.getInstance(project) as PsiFileFactoryImpl)
-            .trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile
+        .trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile
     jetFile.analysisContext = this
     return jetFile
 }
@@ -733,7 +766,7 @@ fun Type.getClassDescriptor(scope: GlobalSearchScope): ClassDescriptor? {
 
     // TODO: use the correct built-ins from the module instead of DefaultBuiltIns here
     JavaToKotlinClassMap.mapJavaToKotlin(jvmName)?.let(
-            DefaultBuiltIns.Instance.builtInsModule::findClassAcrossModuleDependencies
+        DefaultBuiltIns.Instance.builtInsModule::findClassAcrossModuleDependencies
     )?.let { return it }
 
     return runReadAction {

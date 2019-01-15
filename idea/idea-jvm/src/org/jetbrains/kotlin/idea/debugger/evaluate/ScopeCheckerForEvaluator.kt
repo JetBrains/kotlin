@@ -51,7 +51,7 @@ object ScopeCheckerForEvaluator {
                     return true
                 }
             }
-            
+
             currentParent = when (currentParent) {
                 is KtCodeFragment -> currentParent.context
                 else -> currentParent.parent

@@ -59,31 +59,39 @@ import java.util.concurrent.ConcurrentHashMap
 class KotlinDebuggerCaches(project: Project) {
 
     private val cachedCompiledData = CachedValuesManager.getManager(project).createCachedValue(
-            {
-                CachedValueProvider.Result<MultiMap<String, CompiledDataDescriptor>>(
-                        MultiMap.create(), PsiModificationTracker.MODIFICATION_COUNT)
-            }, false)
+        {
+            CachedValueProvider.Result<MultiMap<String, CompiledDataDescriptor>>(
+                MultiMap.create(), PsiModificationTracker.MODIFICATION_COUNT
+            )
+        }, false
+    )
 
     private val cachedClassNames = CachedValuesManager.getManager(project).createCachedValue(
-            {
-                CachedValueProvider.Result<MutableMap<PsiElement, List<String>>>(
-                        ConcurrentHashMap<PsiElement, List<String>>(),
-                        PsiModificationTracker.MODIFICATION_COUNT)
-            }, false)
+        {
+            CachedValueProvider.Result<MutableMap<PsiElement, List<String>>>(
+                ConcurrentHashMap(),
+                PsiModificationTracker.MODIFICATION_COUNT
+            )
+        }, false
+    )
 
     private val cachedTypeMappers = CachedValuesManager.getManager(project).createCachedValue(
-            {
-                CachedValueProvider.Result<MutableMap<PsiElement, KotlinTypeMapper>>(
-                        ConcurrentHashMap<PsiElement, KotlinTypeMapper>(),
-                        PsiModificationTracker.MODIFICATION_COUNT)
-            }, false)
+        {
+            CachedValueProvider.Result<MutableMap<PsiElement, KotlinTypeMapper>>(
+                ConcurrentHashMap(),
+                PsiModificationTracker.MODIFICATION_COUNT
+            )
+        }, false
+    )
 
     private val debugInfoCache = CachedValuesManager.getManager(project).createCachedValue(
-            {
-                CachedValueProvider.Result(
-                        createWeakBytecodeDebugInfoStorage(),
-                        PsiModificationTracker.MODIFICATION_COUNT)
-            }, false)
+        {
+            CachedValueProvider.Result(
+                createWeakBytecodeDebugInfoStorage(),
+                PsiModificationTracker.MODIFICATION_COUNT
+            )
+        }, false
+    )
 
     companion object {
         private val LOG = Logger.getLogger(KotlinDebuggerCaches::class.java)!!
@@ -91,10 +99,10 @@ class KotlinDebuggerCaches(project: Project) {
         fun getInstance(project: Project) = ServiceManager.getService(project, KotlinDebuggerCaches::class.java)!!
 
         fun getOrCreateCompiledData(
-                codeFragment: KtCodeFragment,
-                sourcePosition: SourcePosition,
-                evaluationContext: EvaluationContextImpl,
-                create: (KtCodeFragment, SourcePosition) -> CompiledDataDescriptor
+            codeFragment: KtCodeFragment,
+            sourcePosition: SourcePosition,
+            evaluationContext: EvaluationContextImpl,
+            create: (KtCodeFragment, SourcePosition) -> CompiledDataDescriptor
         ): CompiledDataDescriptor {
             val evaluateExpressionCache = getInstance(codeFragment.project)
 
@@ -157,8 +165,7 @@ class KotlinDebuggerCaches(project: Project) {
 
             val newValue = if (!isInLibrary) {
                 createTypeMapperForSourceFile(file)
-            }
-            else {
+            } else {
                 val element = getElementToCreateTypeMapperForLibraryFile(psiElement)
                 createTypeMapperForLibraryFile(element, file)
             }
@@ -168,40 +175,42 @@ class KotlinDebuggerCaches(project: Project) {
         }
 
         fun getOrReadDebugInfoFromBytecode(
-                project: Project,
-                jvmName: JvmClassName,
-                file: VirtualFile): BytecodeDebugInfo? {
+            project: Project,
+            jvmName: JvmClassName,
+            file: VirtualFile
+        ): BytecodeDebugInfo? {
             val cache = getInstance(project)
             return cache.debugInfoCache.value[BinaryCacheKey(project, jvmName, file)]
         }
 
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
-                runReadAction { element as? KtElement ?: PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
+            runReadAction { element as? KtElement ?: PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
 
         private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): KotlinTypeMapper =
-                runInReadActionWithWriteActionPriorityWithPCE {
-                    createTypeMapper(file, element.analyzeAndGetResult())
-                }
+            runInReadActionWithWriteActionPriorityWithPCE {
+                createTypeMapper(file, element.analyzeAndGetResult())
+            }
 
         private fun createTypeMapperForSourceFile(file: KtFile): KotlinTypeMapper =
-                runInReadActionWithWriteActionPriorityWithPCE {
-                    createTypeMapper(file, file.analyzeWithAllCompilerChecks().apply(AnalysisResult::throwIfError))
-                }
+            runInReadActionWithWriteActionPriorityWithPCE {
+                createTypeMapper(file, file.analyzeWithAllCompilerChecks().apply(AnalysisResult::throwIfError))
+            }
 
         private fun createTypeMapper(file: KtFile, analysisResult: AnalysisResult): KotlinTypeMapper {
             val state = GenerationState.Builder(
-                    file.project,
-                    ClassBuilderFactories.THROW_EXCEPTION,
-                    analysisResult.moduleDescriptor,
-                    analysisResult.bindingContext,
-                    listOf(file),
-                    CompilerConfiguration.EMPTY
+                file.project,
+                ClassBuilderFactories.THROW_EXCEPTION,
+                analysisResult.moduleDescriptor,
+                analysisResult.bindingContext,
+                listOf(file),
+                CompilerConfiguration.EMPTY
             ).build()
             state.beforeCompile()
             return state.typeMapper
         }
 
-        @TestOnly fun addTypeMapper(file: KtFile, typeMapper: KotlinTypeMapper) {
+        @TestOnly
+        fun addTypeMapper(file: KtFile, typeMapper: KotlinTypeMapper) {
             getInstance(file.project).cachedTypeMappers.value[file] = typeMapper
         }
     }
@@ -216,7 +225,12 @@ class KotlinDebuggerCaches(project: Project) {
 
             val thisDescriptor = value.asmType.getClassDescriptor(context.debugProcess.searchScope)
             val superClassDescriptor = jetType.constructor.declarationDescriptor as? ClassDescriptor
-            return@all thisDescriptor != null && superClassDescriptor != null && runReadAction { DescriptorUtils.isSubclass(thisDescriptor, superClassDescriptor) }
+            return@all thisDescriptor != null && superClassDescriptor != null && runReadAction {
+                DescriptorUtils.isSubclass(
+                    thisDescriptor,
+                    superClassDescriptor
+                )
+            }
         }
     }
 
@@ -230,6 +244,7 @@ class KotlinDebuggerCaches(project: Project) {
     data class Parameter(val callText: String, val type: KotlinType, val value: Value? = null, val error: EvaluateException? = null)
 
     class ComputedClassNames(val classNames: List<String>, val shouldBeCached: Boolean) {
+        @Suppress("FunctionName")
         companion object {
             val EMPTY = ComputedClassNames.Cached(emptyList())
 
@@ -242,8 +257,7 @@ class KotlinDebuggerCaches(project: Project) {
         fun distinct() = ComputedClassNames(classNames.distinct(), shouldBeCached)
 
         operator fun plus(other: ComputedClassNames) = ComputedClassNames(
-                classNames + other.classNames, shouldBeCached && other.shouldBeCached)
+            classNames + other.classNames, shouldBeCached && other.shouldBeCached
+        )
     }
 }
-
-private fun String?.toList() = if (this == null) emptyList() else listOf(this)
