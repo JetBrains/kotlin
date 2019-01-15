@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1685,12 +1685,17 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
   *  - not 'marked' and not 'seen' as WHITE marker (object is unprocessed)
   * When we see GREY during DFS, it means we see cycle.
   */
-void depthFirstTraversal(ContainerHeader* container, bool* hasCycles,
-                         KRef* firstBlocker, KStdVector<ContainerHeader*>& order) {
-  // Mark GRAY.
-  container->setSeen();
+void depthFirstTraversal(ContainerHeader* start, bool* hasCycles,
+                         KRef* firstBlocker, KStdVector<ContainerHeader*>* order) {
+  ContainerHeaderDeque toVisit;
+  toVisit.push_back(start);
+  start->setSeen();
 
-  traverseContainerReferredObjects(container, [hasCycles, firstBlocker, &order](ObjHeader* obj) {
+  while (!toVisit.empty()) {
+    auto* container = toVisit.front();
+    toVisit.pop_front();
+
+    traverseContainerReferredObjects(container, [hasCycles, firstBlocker, &order, &toVisit](ObjHeader* obj) {
       if (*firstBlocker != nullptr)
         return;
       if (obj->has_meta_object() && ((obj->meta_object()->flags_ & MF_NEVER_FROZEN) != 0)) {
@@ -1704,26 +1709,39 @@ void depthFirstTraversal(ContainerHeader* container, bool* hasCycles,
 
         // Go deeper if WHITE.
         if (!objContainer->seen() && !objContainer->marked()) {
-          depthFirstTraversal(objContainer, hasCycles, firstBlocker, order);
+          // Mark GRAY.
+          objContainer->setSeen();
+          toVisit.push_front(objContainer);
         }
       }
-  });
-  // Mark BLACK.
-  container->resetSeen();
-  container->mark();
-  order.push_back(container);
+    });
+    // Mark BLACK.
+    container->resetSeen();
+    container->mark();
+    order->push_back(container);
+  }
 }
 
-void traverseStronglyConnectedComponent(ContainerHeader* container,
-                                        KStdUnorderedMap<ContainerHeader*, KStdVector<ContainerHeader*>> const& reversedEdges,
-                                        KStdVector<ContainerHeader*>& component) {
-  component.push_back(container);
-  container->mark();
-  auto it = reversedEdges.find(container);
-  RuntimeAssert(it != reversedEdges.end(), "unknown node during condensation building");
-  for (auto* nextContainer : it->second) {
-    if (!nextContainer->marked())
-      traverseStronglyConnectedComponent(nextContainer, reversedEdges, component);
+void traverseStronglyConnectedComponent(ContainerHeader* start,
+                                        KStdUnorderedMap<ContainerHeader*,
+                                            KStdVector<ContainerHeader*>> const* reversedEdges,
+                                        KStdVector<ContainerHeader*>* component) {
+  ContainerHeaderDeque toVisit;
+  toVisit.push_back(start);
+  start->mark();
+
+  while (!toVisit.empty()) {
+    auto* container = toVisit.front();
+    toVisit.pop_front();
+    component->push_back(container);
+    auto it = reversedEdges->find(container);
+    RuntimeAssert(it != reversedEdges->end(), "unknown node during condensation building");
+    for (auto* nextContainer : it->second) {
+      if (!nextContainer->marked()) {
+          nextContainer->mark();
+          toVisit.push_front(nextContainer);
+      }
+    }
   }
 }
 
@@ -1775,10 +1793,10 @@ void freezeCyclic(ContainerHeader* rootContainer, const KStdVector<ContainerHead
       auto* container = *it;
       if (container->marked()) continue;
       KStdVector<ContainerHeader*> component;
-      traverseStronglyConnectedComponent(container, reversedEdges, component);
+      traverseStronglyConnectedComponent(container, &reversedEdges, &component);
       MEMORY_LOG("SCC:\n");
   #if TRACE_MEMORY
-      for (auto c : component)
+      for (auto c: component)
         konan::consolePrintf("    %p\n", c);
   #endif
       components.push_back(std::move(component));
@@ -1832,7 +1850,7 @@ void freezeCyclic(ContainerHeader* rootContainer, const KStdVector<ContainerHead
  *   - put all objects in each strongly connected component into an artificial container
  *     (we assume that they all were in single element containers initially), single-object
  *     components remain in the same container
- *   - artifical container sums up outer reference counters of all its objects (i.e.
+ *   - artificial container sums up outer reference counters of all its objects (i.e.
  *     incoming references from the same strongly connected component are not counted)
  *   - mark all object's headers as frozen
  *
@@ -1851,7 +1869,7 @@ void FreezeSubgraph(ObjHeader* root) {
   KRef firstBlocker = root->has_meta_object() && ((root->meta_object()->flags_ & MF_NEVER_FROZEN) != 0) ?
     root : nullptr;
   KStdVector<ContainerHeader*> order;
-  depthFirstTraversal(rootContainer, &hasCycles, &firstBlocker, order);
+  depthFirstTraversal(rootContainer, &hasCycles, &firstBlocker, &order);
   if (firstBlocker != nullptr) {
     ThrowFreezingException(root, firstBlocker);
   }

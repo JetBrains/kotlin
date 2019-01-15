@@ -66,7 +66,7 @@ fun <T: Any> checkThrows(e: KClass<T>, string: String, action: () -> Unit) {
     assertTrue(e.isInstance(exception),"""
                 Wrong exception was thrown for string: $string
                 Expected: ${e.qualifiedName}
-                Actual: ${exception!!::class.qualifiedName}
+                Actual: ${exception::class.qualifiedName}
     """.trimIndent())
 }
 
