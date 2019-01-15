@@ -149,7 +149,7 @@ rootProject.apply {
 
 IdeVersionConfigurator.setCurrentIde(this)
 
-extra["versions.protobuf-java"] = "2.6.1"
+extra["versions.protobuf"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
 extra["versions.jsr305"] = "1.3.9"
 extra["versions.jansi"] = "1.16"
@@ -317,6 +317,7 @@ allprojects {
         mirrorRepo?.let(::maven)
         bootstrapKotlinRepo?.let(::maven)
         jcenter()
+        maven(protobufRepo)
     }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
