@@ -86,7 +86,7 @@ class DeclarationStubGenerator(
         descriptor: PropertyDescriptor,
         bindingContext: BindingContext? = null
     ): IrProperty = symbolTable.referenceProperty(descriptor) {
-        deserializer?.findDeserializedDeclaration(descriptor) as? IrProperty? ?:
+        deserializer?.findDeserializedDeclaration(descriptor) ?:
         IrLazyProperty(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor,
             this, typeTranslator, bindingContext
@@ -111,7 +111,7 @@ class DeclarationStubGenerator(
             descriptor.original,
             descriptor.type.toIrType()
         ) {
-            deserializer?.findDeserializedDeclaration(referenced) as? IrField? ?:
+            deserializer?.findDeserializedDeclaration(referenced) as? IrField ?:
             IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, descriptor.type.toIrType())
         }.apply {
             initializer = descriptor.compileTimeInitializer?.let {
@@ -149,7 +149,7 @@ class DeclarationStubGenerator(
             origin,
             descriptor.original
         ) {
-            deserializer?.findDeserializedDeclaration(referenced) as? IrSimpleFunction? ?:
+            deserializer?.findDeserializedDeclaration(referenced) as? IrSimpleFunction ?:
             IrLazyFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
         }
     }
@@ -163,7 +163,7 @@ class DeclarationStubGenerator(
         return symbolTable.declareConstructor(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original
         ) {
-            deserializer?.findDeserializedDeclaration(referenced) as? IrConstructor? ?:
+            deserializer?.findDeserializedDeclaration(referenced) as? IrConstructor ?:
             IrLazyConstructor(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
         }
     }
@@ -195,7 +195,7 @@ class DeclarationStubGenerator(
         return symbolTable.declareClass(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor
         ) {
-            deserializer?.findDeserializedDeclaration(referenceClass) as? IrClass? ?:
+            deserializer?.findDeserializedDeclaration(referenceClass) as? IrClass ?:
             IrLazyClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
         }
     }
@@ -206,7 +206,7 @@ class DeclarationStubGenerator(
             return referenced.owner
         }
         return symbolTable.declareEnumEntry(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
-            deserializer?.findDeserializedDeclaration(referenced) as? IrEnumEntry? ?:
+            deserializer?.findDeserializedDeclaration(referenced) as? IrEnumEntry ?:
             IrLazyEnumEntryImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
         }
     }
@@ -217,7 +217,7 @@ class DeclarationStubGenerator(
             return referenced.owner
         }
         return symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
-            deserializer?.findDeserializedDeclaration(referenced) as? IrTypeParameter? ?:
+            deserializer?.findDeserializedDeclaration(referenced) as? IrTypeParameter ?:
             IrLazyTypeParameter(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, this, typeTranslator
