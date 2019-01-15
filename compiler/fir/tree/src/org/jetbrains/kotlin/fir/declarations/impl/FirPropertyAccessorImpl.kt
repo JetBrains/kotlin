@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.expressions.FirBody
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -21,9 +21,8 @@ class FirPropertyAccessorImpl(
     psi: PsiElement?,
     override val isGetter: Boolean,
     visibility: Visibility,
-    override var returnType: FirType,
-    body: FirBody?
-) : FirAbstractFunction(session, psi, body), FirPropertyAccessor {
+    override var returnType: FirType
+) : FirAbstractFunction(session, psi), FirPropertyAccessor {
     override var status = FirDeclarationStatusImpl(
         session, visibility, Modality.FINAL
     )

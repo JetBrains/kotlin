@@ -11,5 +11,5 @@ FILE: derivedClass.kt
 
     }
     <T : R|kotlin/Any|> public final function create(x: R|T|): R|Derived<T>| {
-        STUB
+        return@@@create STUB
     }

@@ -3,4 +3,5 @@ FILE: concurrent.kt
         public get(): R|kotlin/Int|
         public set(value: R|kotlin/Int|): R|kotlin/Unit|
     @R|kotlin/jvm/Synchronized|() public final function foo(): R|kotlin/Unit| {
+        return@@@foo STUB
     }

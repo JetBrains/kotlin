@@ -23,8 +23,6 @@ interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMember, Fir
 
     val setter: FirPropertyAccessor
 
-    val delegate: FirExpression?
-
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitProperty(this, data)
 

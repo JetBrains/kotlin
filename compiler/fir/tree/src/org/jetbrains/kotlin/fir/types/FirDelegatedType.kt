@@ -19,5 +19,6 @@ interface FirDelegatedType : FirType {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         super.acceptChildren(visitor, data)
         delegate?.accept(visitor, data)
+        type.accept(visitor, data)
     }
 }

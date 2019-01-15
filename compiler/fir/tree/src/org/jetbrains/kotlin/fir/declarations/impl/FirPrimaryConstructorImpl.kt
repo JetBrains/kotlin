@@ -19,4 +19,4 @@ class FirPrimaryConstructorImpl(
     isActual: Boolean,
     delegatedSelfType: FirType,
     delegatedConstructor: FirDelegatedConstructorCall?
-) : FirConstructorImpl(session, psi, visibility, isExpect, isActual, delegatedSelfType, delegatedConstructor, body = null)
+) : FirConstructorImpl(session, psi, visibility, isExpect, isActual, delegatedSelfType, delegatedConstructor)

@@ -13,13 +13,15 @@ FILE: simpleClass.kt
             private get(): R|error: Not supported: FirImplicitTypeImpl|
 
         public final override function foo(x: R|kotlin/Int|, y: R|kotlin/String|): R|kotlin/String| {
+            return@@@foo STUB
         }
 
         public final override property bar(var): R|kotlin/Boolean|
             public get(): R|kotlin/Boolean| {
-                STUB
+                return STUB
             }
             public set(value: R|kotlin/Boolean|): R|kotlin/Unit| {
+                return STUB
             }
 
         public final property fau(var): R|kotlin/Double|

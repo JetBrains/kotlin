@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.TypeConversionUtil
-import com.intellij.util.text.LiteralFormatUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedTypes
@@ -40,7 +38,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.extractRadix
 import java.math.BigInteger
 import java.util.*
 
@@ -1053,92 +1050,6 @@ private class ConstantExpressionEvaluatorVisitor(
             )
         )
 }
-
-private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
-private fun hasUnsignedSuffix(text: String) = text.endsWith('u') || text.endsWith('U')
-private fun hasUnsignedLongSuffix(text: String) =
-    text.endsWith("ul") || text.endsWith("uL") ||
-            text.endsWith("Ul") || text.endsWith("UL")
-
-private fun parseNumericLiteral(text: String, type: IElementType): Any? {
-    val canonicalText = LiteralFormatUtil.removeUnderscores(text)
-    return when (type) {
-        KtNodeTypes.INTEGER_CONSTANT -> parseLong(canonicalText)
-        KtNodeTypes.FLOAT_CONSTANT -> parseFloatingLiteral(canonicalText)
-        else -> null
-    }
-}
-
-private fun parseLong(text: String): Long? {
-    fun String.removeSuffix(i: Int): String = this.substring(0, this.length - i)
-
-    return try {
-        val isUnsigned: Boolean
-        val numberWithoutSuffix: String
-        when {
-            hasUnsignedLongSuffix(text) -> {
-                isUnsigned = true
-                numberWithoutSuffix = text.removeSuffix(2)
-            }
-            hasUnsignedSuffix(text) -> {
-                isUnsigned = true
-                numberWithoutSuffix = text.removeSuffix(1)
-            }
-            hasLongSuffix(text) -> {
-                isUnsigned = false
-                numberWithoutSuffix = text.removeSuffix(1)
-            }
-            else -> {
-                isUnsigned = false
-                numberWithoutSuffix = text
-            }
-        }
-
-        val (number, radix) = extractRadix(numberWithoutSuffix)
-
-        if (isUnsigned) {
-            java.lang.Long.parseUnsignedLong(number, radix)
-        } else {
-            java.lang.Long.parseLong(number, radix)
-        }
-    } catch (e: NumberFormatException) {
-        null
-    }
-}
-
-private fun parseFloatingLiteral(text: String): Any? {
-    if (text.toLowerCase().endsWith('f')) {
-        return parseFloat(text)
-    }
-    return parseDouble(text)
-}
-
-private fun parseDouble(text: String): Double? {
-    try {
-        return java.lang.Double.parseDouble(text)
-    } catch (e: NumberFormatException) {
-        return null
-    }
-}
-
-private fun parseFloat(text: String): Float? {
-    try {
-        return java.lang.Float.parseFloat(text)
-    } catch (e: NumberFormatException) {
-        return null
-    }
-}
-
-private fun parseBoolean(text: String): Boolean {
-    if ("true".equals(text)) {
-        return true
-    } else if ("false".equals(text)) {
-        return false
-    }
-
-    throw IllegalStateException("Must not happen. A boolean literal has text: " + text)
-}
-
 
 private fun createCompileTimeConstantForEquals(result: Any?, operationReference: KtExpression): ConstantValue<*>? {
     if (result is Boolean) {

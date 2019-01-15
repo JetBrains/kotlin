@@ -20,13 +20,14 @@ class FirValueParameterImpl(
     psi: PsiElement?,
     name: Name,
     override var returnType: FirType,
-    override val defaultValue: FirExpression?,
+    override var defaultValue: FirExpression?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
     override val isVararg: Boolean
 ) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirValueParameter {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         returnType = returnType.transformSingle(transformer, data)
+        defaultValue = defaultValue?.transformSingle(transformer, data)
 
         return super<FirAbstractNamedAnnotatedDeclaration>.transformChildren(transformer, data)
     }

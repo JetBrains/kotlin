@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirBody
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.transformInplace
+import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
@@ -34,12 +35,11 @@ class FirMemberFunctionImpl(
     isExternal: Boolean,
     isSuspend: Boolean,
     receiverType: FirType?,
-    returnType: FirType,
-    override val body: FirBody?
+    returnType: FirType
 ) : FirAbstractCallableMember(
     session, psi, name, visibility, modality,
     isExpect, isActual, isOverride, receiverType, returnType
-), FirNamedFunction {
+), FirNamedFunction, FirModifiableFunction {
     init {
         status.isOperator = isOperator
         status.isInfix = isInfix
@@ -51,8 +51,11 @@ class FirMemberFunctionImpl(
 
     override val valueParameters = mutableListOf<FirValueParameter>()
 
+    override var body: FirBlock? = null
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         valueParameters.transformInplace(transformer, data)
+        body = body?.transformSingle(transformer, data)
 
         return super<FirAbstractCallableMember>.transformChildren(transformer, data)
     }

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // Is it necessary?
 interface FirErrorDeclaration : FirDeclaration {
+    val reason: String
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitErrorDeclaration(this, data)
 }

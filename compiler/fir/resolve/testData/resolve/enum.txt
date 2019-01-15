@@ -19,7 +19,7 @@ FILE: enum.kt
             public constructor(): super<R|SomeEnum|>()
 
             public final override function check(y: R|Some|): R|kotlin/Boolean| {
-                STUB
+                return@@@check STUB
             }
 
         }
@@ -28,7 +28,7 @@ FILE: enum.kt
             public constructor(): super<R|SomeEnum|>()
 
             public final override function check(y: R|Some|): R|kotlin/Boolean| {
-                STUB
+                return@@@check STUB
             }
 
         }

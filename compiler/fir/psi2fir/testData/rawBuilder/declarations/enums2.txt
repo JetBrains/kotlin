@@ -16,19 +16,19 @@ FILE: enums2.kt
             public? get(): Some
 
         public? final enum entry FIRST : SomeEnum {
-            public? constructor(): super<SomeEnum>()
+            public? constructor(): super<SomeEnum>(O1#)
 
             public? open? override function check(y: Some): Boolean {
-                STUB
+                return@@@check Boolean(true)
             }
 
         }
 
         public? final enum entry SECOND : SomeEnum {
-            public? constructor(): super<SomeEnum>()
+            public? constructor(): super<SomeEnum>(O2#)
 
             public? open? override function check(y: Some): Boolean {
-                STUB
+                return@@@check ==(y#, O2#)
             }
 
         }

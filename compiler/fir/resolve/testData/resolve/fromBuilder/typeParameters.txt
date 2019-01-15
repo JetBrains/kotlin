@@ -15,11 +15,11 @@ FILE: typeParameters.kt
         public constructor(): super<R|AbstractList<kotlin/Int>|>()
 
         public final override function get(index: R|kotlin/Int|): R|kotlin/Int| {
-            STUB
+            return@@@get STUB
         }
 
         public final override function concat(other: R|List<kotlin/Int>|): R|List<kotlin/Int>| {
-            STUB
+            return@@@concat STUB
         }
 
     }

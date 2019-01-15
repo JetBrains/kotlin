@@ -16,11 +16,12 @@ FILE: Annotations.kt
             public get(): R|kotlin/Char|
 
         public final override function foo(arg: R|kotlin/Double|): R|kotlin/Unit| {
+            return@@@foo STUB
         }
 
         public final override property v(val): R|kotlin/String|
             @R|annotations/Simple|() public get(): R|kotlin/String| {
-                STUB
+                return STUB
             }
 
         @R|annotations/WithString|(String(constructor)) public constructor(): this<R|test/Second|>()

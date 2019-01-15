@@ -44,14 +44,14 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
 
             var containerFqName: FqName = FqName.ROOT
 
-            override fun visitClass(klass: FirClass) {
-                val fqName = containerFqName.child(klass.name)
+            override fun visitRegularClass(regularClass: FirRegularClass) {
+                val fqName = containerFqName.child(regularClass.name)
                 val classId = ClassId(packageName, fqName, false)
-                classifierMap[classId] = klass
+                classifierMap[classId] = regularClass
                 classifierContainerFileMap[classId] = file
 
                 containerFqName = fqName
-                klass.acceptChildren(this)
+                regularClass.acceptChildren(this)
                 containerFqName = fqName.parent()
             }
 

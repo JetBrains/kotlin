@@ -130,5 +130,143 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
         public void testTypeParameters() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeParameters.kt");
         }
+
+        @TestMetadata("where.kt")
+        public void testWhere() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/where.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/psi2fir/testData/rawBuilder/expressions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Expressions extends AbstractRawFirBuilderTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doRawFirTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInExpressions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotated.kt")
+        public void testAnnotated() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/annotated.kt");
+        }
+
+        @TestMetadata("arrayAccess.kt")
+        public void testArrayAccess() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/arrayAccess.kt");
+        }
+
+        @TestMetadata("arrayAssignment.kt")
+        public void testArrayAssignment() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/arrayAssignment.kt");
+        }
+
+        @TestMetadata("branches.kt")
+        public void testBranches() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/branches.kt");
+        }
+
+        @TestMetadata("callableReferences.kt")
+        public void testCallableReferences() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/callableReferences.kt");
+        }
+
+        @TestMetadata("calls.kt")
+        public void testCalls() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/calls.kt");
+        }
+
+        @TestMetadata("classReference.kt")
+        public void testClassReference() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/classReference.kt");
+        }
+
+        @TestMetadata("collectionLiterals.kt")
+        public void testCollectionLiterals() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/collectionLiterals.kt");
+        }
+
+        @TestMetadata("destructuring.kt")
+        public void testDestructuring() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/destructuring.kt");
+        }
+
+        @TestMetadata("for.kt")
+        public void testFor() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/for.kt");
+        }
+
+        @TestMetadata("genericCalls.kt")
+        public void testGenericCalls() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/genericCalls.kt");
+        }
+
+        @TestMetadata("init.kt")
+        public void testInit() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/init.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/lambda.kt");
+        }
+
+        @TestMetadata("locals.kt")
+        public void testLocals() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/locals.kt");
+        }
+
+        @TestMetadata("modifications.kt")
+        public void testModifications() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/modifications.kt");
+        }
+
+        @TestMetadata("nullability.kt")
+        public void testNullability() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/nullability.kt");
+        }
+
+        @TestMetadata("simpleReturns.kt")
+        public void testSimpleReturns() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/simpleReturns.kt");
+        }
+
+        @TestMetadata("super.kt")
+        public void testSuper() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/super.kt");
+        }
+
+        @TestMetadata("these.kt")
+        public void testThese() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/these.kt");
+        }
+
+        @TestMetadata("try.kt")
+        public void testTry() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/try.kt");
+        }
+
+        @TestMetadata("typeOperators.kt")
+        public void testTypeOperators() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/typeOperators.kt");
+        }
+
+        @TestMetadata("unary.kt")
+        public void testUnary() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/unary.kt");
+        }
+
+        @TestMetadata("variables.kt")
+        public void testVariables() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/variables.kt");
+        }
+
+        @TestMetadata("while.kt")
+        public void testWhile() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/while.kt");
+        }
     }
 }

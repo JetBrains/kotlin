@@ -19,11 +19,14 @@ interface FirVariable : @VisitedSupertype FirDeclaration, FirTypedDeclaration, F
 
     val initializer: FirExpression?
 
+    val delegate: FirExpression?
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         initializer?.accept(visitor, data)
+        delegate?.accept(visitor, data)
         super<FirTypedDeclaration>.acceptChildren(visitor, data)
     }
 }

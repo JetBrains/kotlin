@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
@@ -32,7 +32,7 @@ open class FirClassImpl(
     isCompanion: Boolean,
     isData: Boolean,
     isInline: Boolean
-) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, isExpect, isActual), FirClass {
+) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, isExpect, isActual), FirRegularClass, FirModifiableClass {
 
     init {
         symbol.bind(this)
@@ -47,9 +47,9 @@ open class FirClassImpl(
     override val declarations = mutableListOf<FirDeclaration>()
 
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirClass {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClass {
         superTypes.transformInplace(transformer, data)
-        val result = super<FirAbstractMemberDeclaration>.transformChildren(transformer, data) as FirClass
+        val result = super<FirAbstractMemberDeclaration>.transformChildren(transformer, data) as FirRegularClass
 
         // Transform declarations in last turn
         declarations.transformInplace(transformer, data)

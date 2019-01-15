@@ -32,10 +32,10 @@ class FirMemberPropertyImpl(
     receiverType: FirType?,
     returnType: FirType,
     override val isVar: Boolean,
-    override val initializer: FirExpression?,
+    override var initializer: FirExpression?,
     override var getter: FirPropertyAccessor,
     override var setter: FirPropertyAccessor,
-    override val delegate: FirExpression?
+    override var delegate: FirExpression?
 ) : FirAbstractCallableMember(
     session, psi, name, visibility, modality, isExpect, isActual, isOverride, receiverType, returnType
 ), FirProperty {
@@ -47,6 +47,8 @@ class FirMemberPropertyImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         getter = getter.transformSingle(transformer, data)
         setter = setter.transformSingle(transformer, data)
+        initializer = initializer?.transformSingle(transformer, data)
+        delegate = delegate?.transformSingle(transformer, data)
 
         return super<FirAbstractCallableMember>.transformChildren(transformer, data)
     }

@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
-interface FirStatement : FirElement {
+interface FirStatement : FirElement, FirAnnotationContainer {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitStatement(this, data)
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        acceptAnnotations(visitor, data)
+    }
 }

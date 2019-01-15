@@ -7,6 +7,7 @@ FILE: functionX.kt
         public constructor(): super<R|kotlin/Any|>()
 
         public final override function invoke(p1: R|kotlin/Int|, p2: R|kotlin/String|): R|kotlin/Unit| {
+            return@@@invoke STUB
         }
 
     }

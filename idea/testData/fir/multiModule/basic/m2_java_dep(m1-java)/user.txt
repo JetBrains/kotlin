@@ -1,4 +1,4 @@
 FILE: user.kt
     public final function foo(hello: R|hello/Hello|): R|kotlin/String| {
-        STUB
+        return@@@foo STUB
     }

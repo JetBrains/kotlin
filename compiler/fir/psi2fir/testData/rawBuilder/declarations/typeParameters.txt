@@ -15,11 +15,11 @@ FILE: typeParameters.kt
         public? constructor(): super<AbstractList<Int>>()
 
         public? open? override function get(index: Int): Int {
-            STUB
+            return@@@get Int(42)
         }
 
         public? open? override function concat(other: List<Int>): List<Int> {
-            STUB
+            return@@@concat this#
         }
 
     }

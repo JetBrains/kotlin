@@ -22,6 +22,6 @@ class FirDelegatedConstructorCallImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         constructedType = constructedType.transformSingle(transformer, data)
 
-        return this
+        return super<FirAbstractCall>.transformChildren(transformer, data)
     }
 }

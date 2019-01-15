@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
 interface FirErrorExpression : FirExpression {
     val reason: String
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
+        return visitor.visitErrorExpression(this, data)
+    }
 }

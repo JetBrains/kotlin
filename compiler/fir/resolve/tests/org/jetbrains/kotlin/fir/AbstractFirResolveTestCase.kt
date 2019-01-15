@@ -29,7 +29,7 @@ abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCas
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val session = createSession(scope)
 
-        val builder = RawFirBuilder(session)
+        val builder = RawFirBuilder(session, stubMode = true)
 
         val transformer = FirTotalResolveTransformer()
         return ktFiles.map {

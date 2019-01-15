@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirBody
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
@@ -27,17 +27,19 @@ open class FirConstructorImpl(
     isExpect: Boolean,
     isActual: Boolean,
     delegatedSelfType: FirType,
-    final override var delegatedConstructor: FirDelegatedConstructorCall?,
-    override val body: FirBody?
+    final override var delegatedConstructor: FirDelegatedConstructorCall?
 ) : FirAbstractCallableMember(
     session, psi, NAME, visibility, Modality.FINAL,
     isExpect, isActual, isOverride = false, receiverType = null, returnType = delegatedSelfType
 ), FirConstructor {
     override val valueParameters = mutableListOf<FirValueParameter>()
 
+    override var body: FirBlock? = null
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         valueParameters.transformInplace(transformer, data)
         delegatedConstructor?.transformSingle(transformer, data)
+        body = body?.transformSingle(transformer, data)
 
         return super<FirAbstractCallableMember>.transformChildren(transformer, data)
     }

@@ -31,6 +31,7 @@ FILE: enums.kt
             public constructor(): super<R|Planet|>()
 
             public final override function sayHello(): R|kotlin/Unit| {
+                return@@@sayHello STUB
             }
 
         }
@@ -39,6 +40,7 @@ FILE: enums.kt
             public constructor(): super<R|Planet|>()
 
             public final override function sayHello(): R|kotlin/Unit| {
+                return@@@sayHello STUB
             }
 
         }
@@ -47,6 +49,7 @@ FILE: enums.kt
             public constructor(): super<R|Planet|>()
 
             public final override function sayHello(): R|kotlin/Unit| {
+                return@@@sayHello STUB
             }
 
         }

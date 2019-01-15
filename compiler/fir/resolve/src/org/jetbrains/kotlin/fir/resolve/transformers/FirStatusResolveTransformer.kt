@@ -24,7 +24,7 @@ class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
 
     private val declarationsWithStatuses = mutableListOf<FirDeclaration>()
 
-    private val classes = mutableListOf<FirClass>()
+    private val classes = mutableListOf<FirRegularClass>()
 
     private fun FirDeclaration.resolveVisibility(): Visibility {
         if (this is FirConstructor) {
@@ -39,7 +39,7 @@ class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
     private fun FirDeclaration.resolveModality(): Modality {
         return when (this) {
             is FirEnumEntry -> Modality.FINAL
-            is FirClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
+            is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
             is FirCallableMember -> {
                 val containingClass = classes.lastOrNull()
                 when {
@@ -94,7 +94,7 @@ class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
     }
 
     private inline fun storeClass(
-        klass: FirClass,
+        klass: FirRegularClass,
         computeResult: () -> CompositeTransformResult<FirDeclaration>
     ): CompositeTransformResult<FirDeclaration> {
         classes += klass
@@ -103,9 +103,9 @@ class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
         return result
     }
 
-    override fun transformClass(klass: FirClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return storeClass(klass) {
-            super.transformClass(klass, data)
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        return storeClass(regularClass) {
+            super.transformRegularClass(regularClass, data)
         }
     }
 

@@ -9,15 +9,16 @@ FILE: simpleClass.kt
     public? final? class SomeClass : SomeInterface {
         public? constructor(): super<kotlin.Any>()
 
-        private final? property baz(val): <implicit> = STUB
+        private final? property baz(val): <implicit> = Int(42)
             private get(): <implicit>
 
         public? open? override function foo(x: Int, y: String): String {
+            return@@@foo plus#(plus#(y#, x#), baz#)
         }
 
         public? open? override property bar(var): Boolean
             public? get(): Boolean {
-                STUB
+                return Boolean(true)
             }
             public? set(value: Boolean): kotlin.Unit {
             }

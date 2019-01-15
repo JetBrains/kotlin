@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
-interface FirEnumEntry : @VisitedSupertype FirClass, FirCall {
+interface FirEnumEntry : @VisitedSupertype FirRegularClass, FirCall {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitEnumEntry(this, data)
 
@@ -19,6 +19,6 @@ interface FirEnumEntry : @VisitedSupertype FirClass, FirCall {
         for (argument in arguments) {
             argument.accept(visitor, data)
         }
-        super<FirClass>.acceptChildren(visitor, data)
+        super<FirRegularClass>.acceptChildren(visitor, data)
     }
 }
