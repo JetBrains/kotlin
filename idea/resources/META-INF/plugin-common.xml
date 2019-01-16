@@ -3240,8 +3240,12 @@
 
     <checkinHandlerFactory implementation="org.jetbrains.kotlin.idea.vcs.BunchFileCheckInHandlerFactory"/>
 
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.framework.TargetRetrieveActivity"/>
+
     <!--FUS triggers-->
     <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinTargetTrigger"/>
+    <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinMavenTargetTrigger"/>
+    <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinJPSTargetTrigger"/>
     <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger"/>
     <statistics.applicationUsagesCollector implementation="org.jetbrains.kotlin.statistics.KotlinIdeNewFileTemplateTrigger"/>
 
