@@ -3,7 +3,6 @@ UFile (package = )
         UAnnotationMethod (name = bar)
             UBlockExpression
                 UReturnExpression
-                    UPolyadicExpression (operator = +)
-                        ULiteralExpression (value = "Hello!")
+                    ULiteralExpression (value = "Hello!")
     UClass (name = Baz)
         UAnnotationMethod (name = Baz)
