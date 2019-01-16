@@ -34,6 +34,11 @@ public class ForeignAnnotationsNoAnnotationInClasspathTestGenerated extends Abst
         runTest("compiler/testData/foreignAnnotations/tests/androidRecently.kt");
     }
 
+    @TestMetadata("androidSdk.kt")
+    public void testAndroidSdk() throws Exception {
+        runTest("compiler/testData/foreignAnnotations/tests/androidSdk.kt");
+    }
+
     @TestMetadata("android_support.kt")
     public void testAndroid_support() throws Exception {
         runTest("compiler/testData/foreignAnnotations/tests/android_support.kt");
