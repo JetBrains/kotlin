@@ -256,14 +256,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     }
 
     @TaskAction
-    open fun execute(inputs: IncrementalTaskInputs): Unit {
+    fun execute(inputs: IncrementalTaskInputs) {
         // Check that the JDK tools are available in Gradle (fail-fast, instead of a fail during the compiler run):
         findToolsJar()
 
         val sourceRoots = getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 
-        logger.kotlinDebug { "all kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(project.rootProject.projectDir)}" }
+        logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(project.rootProject.projectDir)}" }
 
         if (allKotlinSources.isEmpty()) {
             logger.kotlinDebug { "No Kotlin files found, skipping Kotlin compiler task" }
