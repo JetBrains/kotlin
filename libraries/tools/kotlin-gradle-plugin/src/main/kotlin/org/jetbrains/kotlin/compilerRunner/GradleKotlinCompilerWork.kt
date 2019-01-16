@@ -91,30 +91,17 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         get() = incrementalCompilationEnvironment != null
 
     override fun run() {
-        if (!isIncremental) {
-            clearLocalStateDirectories(log, localStateDirectories, "IC is disabled")
-        }
-
         val messageCollector = GradlePrintingMessageCollector(log)
         val exitCode = try {
             compileWithDaemonOrFallbackImpl(messageCollector)
-        } catch (e: Throwable) {
-            clearLocalStateDirectories(log, localStateDirectories, "exception when running compiler")
-            throw e
         } finally {
             if (buildFile != null && System.getProperty(DELETE_MODULE_FILE_PROPERTY) != "false") {
                 buildFile.delete()
             }
         }
 
-        if (incrementalCompilationEnvironment != null) {
-            if (incrementalCompilationEnvironment.disableMultiModuleIC) {
-                incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
-            }
-
-            if (exitCode != ExitCode.OK) {
-                clearLocalStateDirectories(log, localStateDirectories, "exit code: $exitCode")
-            }
+        if (incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
+            incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
         }
 
         throwGradleExceptionIfError(exitCode)

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.tasks.clearLocalStateDirectories
 import org.jetbrains.kotlin.gradle.tasks.localStateDirectories
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 
@@ -55,6 +56,7 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     fun compile() {
         logger.debug("Running kapt annotation processing using the Kotlin compiler")
         checkAnnotationProcessorClasspath()
+        clearLocalStateDirectories()
 
         val args = prepareCompilerArguments()
 

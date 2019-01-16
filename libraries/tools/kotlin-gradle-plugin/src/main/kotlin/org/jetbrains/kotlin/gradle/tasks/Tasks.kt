@@ -30,14 +30,12 @@ import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
-import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.LibraryUtils
+import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -257,6 +255,54 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs) {
+        // If task throws exception, but its outputs are changed during execution,
+        // then Gradle forces next build to be non-incremental (see Gradle's DefaultTaskArtifactStateRepository#persistNewOutputs)
+        // To prevent this, we backup outputs before incremental build and restore when exception is thrown
+        val prevOutputs: Map<File, ByteArray>? = if (incremental && inputs.isIncremental) {
+            val outputFiles = HashSet<File>()
+            outputsCompatible.files.forEach {
+                if (it.isDirectory) {
+                    it.walk().filterTo(outputFiles, File::isFile)
+                } else if (it.isFile) {
+                    outputFiles.add(it)
+                }
+            }
+
+            outputFiles.keysToMap { it.readBytes() }
+        } else null
+
+        if (!incremental) {
+            clearLocalStateDirectories("IC is disabled")
+        }
+
+        try {
+            executeImpl(inputs)
+        } catch (t: Throwable) {
+            outputsCompatible.files.forEach {
+                if (it.isDirectory) {
+                    it.deleteRecursively()
+                } else if (it.isFile) {
+                    it.delete()
+                }
+            }
+
+            if (prevOutputs != null) {
+                val dirs = HashSet<File>()
+
+                for ((file, bytes) in prevOutputs) {
+                    val dir = file.parentFile
+                    if (dirs.add(dir)) {
+                        dir.mkdirs()
+                    }
+                    file.writeBytes(bytes)
+                }
+            }
+
+            throw t
+        }
+    }
+
+    private fun executeImpl(inputs: IncrementalTaskInputs) {
         // Check that the JDK tools are available in Gradle (fail-fast, instead of a fail during the compiler run):
         findToolsJar()
 
