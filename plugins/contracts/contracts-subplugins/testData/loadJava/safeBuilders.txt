@@ -1,0 +1,25 @@
+package test
+
+public fun buildX(/*0*/ init: test.XBuilder.() -> kotlin.Unit): test.X
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setX, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setX, receiver of init], owner=init)
+
+public final data class X {
+    /*primary*/ public constructor X(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+        public final fun <get-x>(): kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ...): test.X
+}
+
+public final class XBuilder {
+    /*primary*/ public constructor XBuilder()
+    private final var x_: kotlin.Int?
+        private final fun <get-x_>(): kotlin.Int?
+        private final fun <set-x_>(/*0*/ <set-?>: kotlin.Int?): kotlin.Unit
+    public final fun buildX(): test.X
+    public final fun setX(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=func called EXACTLY_ONCE, references=[setX, <this>], owner=setX)
+
+}

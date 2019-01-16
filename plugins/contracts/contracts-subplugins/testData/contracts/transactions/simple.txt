@@ -1,0 +1,26 @@
+package
+
+public fun test_1(): kotlin.Unit
+public fun test_2(): kotlin.Unit
+public fun test_3(): kotlin.Unit
+public fun test_4(): kotlin.Unit
+public fun test_5(): kotlin.Unit
+public fun test_6(): kotlin.Unit
+
+public final class Transaction {
+    public constructor Transaction()
+    public final fun commit(): kotlin.Unit
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=opened transaction, references=[<this>], owner=commit)
+        ExtensionEffect:ContextCleanerEffectDeclaration(factory=opened transaction, references=[<this>], owner=commit)
+
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setData(): kotlin.Unit
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=opened transaction, references=[<this>], owner=setData)
+
+    public final fun start(): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=opened transaction, references=[<this>], owner=start)
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=no opened transaction, references=[<this>], owner=start)
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

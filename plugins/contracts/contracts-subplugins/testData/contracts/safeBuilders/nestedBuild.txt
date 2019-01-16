@@ -1,0 +1,119 @@
+package
+
+public fun buildX(/*0*/ init: XBuilder.() -> kotlin.Unit): X
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setValX, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setValX, receiver of init], owner=init)
+
+public fun buildXYZ(/*0*/ init: XYZBuilder.() -> kotlin.Unit): XYZ
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setValX, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setValX, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called AT_MOST_ONCE, references=[setDefaultValY, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called AT_MOST_ONCE, references=[setDefaultValY, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called AT_LEAST_ONCE, references=[setVarZ, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called AT_LEAST_ONCE, references=[setVarZ, receiver of init], owner=init)
+
+public fun buildY(/*0*/ init: YBuilder.() -> kotlin.Unit): Y
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setValY, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setValY, receiver of init], owner=init)
+
+public fun buildZ(/*0*/ init: ZBuilder.() -> kotlin.Unit): Z
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setValZ, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setValZ, receiver of init], owner=init)
+
+public fun test_1(): kotlin.Unit
+public fun test_2(): kotlin.Unit
+public fun test_3(): kotlin.Unit
+public fun test_4(): kotlin.Unit
+public fun test_5(): kotlin.Unit
+
+public final data class X {
+    public constructor X()
+    public final /*synthesized*/ fun copy(): X
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final class XBuilder {
+    public constructor XBuilder()
+    private final var x_: kotlin.Int?
+    public final fun buildX(): X
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setValX(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=func called EXACTLY_ONCE, references=[setValX, <this>], owner=setValX)
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final data class XYZ {
+    public constructor XYZ()
+    public final /*synthesized*/ fun copy(): XYZ
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final class XYZBuilder {
+    public constructor XYZBuilder()
+    private final var x_: kotlin.Int?
+    private final var y_: kotlin.Int?
+    private final var z_: kotlin.Int?
+    public final fun buildXYZ(): XYZ
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setDefaultValY(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=func called EXACTLY_ONCE, references=[setDefaultValY, <this>], owner=setDefaultValY)
+
+    public final fun setValX(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=func called EXACTLY_ONCE, references=[setValX, <this>], owner=setValX)
+
+    public final fun setVarZ(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=func called EXACTLY_ONCE, references=[setVarZ, <this>], owner=setVarZ)
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final data class Y {
+    public constructor Y()
+    public final /*synthesized*/ fun copy(): Y
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final class YBuilder {
+    public constructor YBuilder()
+    private final var y_: kotlin.Int?
+    public final fun buildY(): Y
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setValY(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=func called EXACTLY_ONCE, references=[setValY, <this>], owner=setValY)
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final data class Z {
+    public constructor Z()
+    public final /*synthesized*/ fun copy(): Z
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final class ZBuilder {
+    public constructor ZBuilder()
+    private final var z_: kotlin.Int?
+    public final fun buildZ(): Z
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setValZ(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=func called EXACTLY_ONCE, references=[setValZ, <this>], owner=setValZ)
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,0 +1,53 @@
+package
+
+public fun buildFoo(/*0*/ init: FooBuilder.() -> kotlin.Unit): Foo
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextProviderEffectDeclaration(factory=DSLMarker, references=[receiver of init], owner=init)
+
+public fun test_1(): kotlin.Unit
+public fun test_2(): kotlin.Unit
+
+public final data class Bar {
+    public constructor Bar()
+    public final /*synthesized*/ fun copy(): Bar
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final class BarBuilder {
+    public constructor BarBuilder()
+    private final var y_: kotlin.Int?
+    public final fun create(): Bar
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setY(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=DSLMarker, references=[<this>], owner=setY)
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final data class Foo {
+    public constructor Foo()
+    public final /*synthesized*/ fun copy(): Foo
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final class FooBuilder {
+    public constructor FooBuilder()
+    private final var x_: kotlin.Int?
+    public final fun buildBar(/*0*/ init: BarBuilder.() -> kotlin.Unit): Bar
+        CallsInPlace(init, EXACTLY_ONCE)
+        ExtensionEffect:LambdaContextProviderEffectDeclaration(factory=DSLMarker, references=[receiver of init], owner=init)
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=DSLMarker, references=[<this>], owner=buildBar)
+
+    public final fun create(): Foo
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setX(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=DSLMarker, references=[<this>], owner=setX)
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

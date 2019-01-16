@@ -1,0 +1,48 @@
+package test
+
+public fun buildFoo(/*0*/ init: test.FooBuilder.() -> kotlin.Unit): test.Foo
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextProviderEffectDeclaration(factory=DSLMarker, references=[receiver of init], owner=init)
+
+public final data class Bar {
+    /*primary*/ public constructor Bar(/*0*/ y: kotlin.Int)
+    public final val y: kotlin.Int
+        public final fun <get-y>(): kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ y: kotlin.Int = ...): test.Bar
+}
+
+public final class BarBuilder {
+    /*primary*/ public constructor BarBuilder()
+    private final var y_: kotlin.Int?
+        private final fun <get-y_>(): kotlin.Int?
+        private final fun <set-y_>(/*0*/ <set-?>: kotlin.Int?): kotlin.Unit
+    public final fun create(): test.Bar
+    public final fun setY(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=DSLMarker, references=[<this>], owner=setY)
+
+}
+
+public final data class Foo {
+    /*primary*/ public constructor Foo(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+        public final fun <get-x>(): kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ...): test.Foo
+}
+
+public final class FooBuilder {
+    /*primary*/ public constructor FooBuilder()
+    private final var x_: kotlin.Int?
+        private final fun <get-x_>(): kotlin.Int?
+        private final fun <set-x_>(/*0*/ <set-?>: kotlin.Int?): kotlin.Unit
+    public final fun buildBar(/*0*/ init: test.BarBuilder.() -> kotlin.Unit): test.Bar
+        CallsInPlace(init, EXACTLY_ONCE)
+        ExtensionEffect:LambdaContextProviderEffectDeclaration(factory=DSLMarker, references=[receiver of init], owner=init)
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=DSLMarker, references=[<this>], owner=buildBar)
+
+    public final fun create(): test.Foo
+    public final fun setX(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=DSLMarker, references=[<this>], owner=setX)
+
+}

@@ -1,0 +1,60 @@
+package
+
+public fun buildAtLeastOnce(/*0*/ init: ABuilder.() -> kotlin.Unit): A
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called AT_LEAST_ONCE, references=[setX, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called AT_LEAST_ONCE, references=[setX, receiver of init], owner=init)
+
+public fun buildAtMostOnce(/*0*/ init: ABuilder.() -> kotlin.Unit): A
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called AT_MOST_ONCE, references=[setX, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called AT_MOST_ONCE, references=[setX, receiver of init], owner=init)
+
+public fun buildExactlyOnce(/*0*/ init: ABuilder.() -> kotlin.Unit): A
+    CallsInPlace(init, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setX, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[setX, receiver of init], owner=init)
+
+public inline fun maybeRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, AT_MOST_ONCE)
+
+public inline fun multipleRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, AT_LEAST_ONCE)
+
+public inline fun onceRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun test_1(): kotlin.Unit
+public fun test_10(): kotlin.Unit
+public fun test_11(): kotlin.Unit
+public fun test_12(): kotlin.Unit
+public fun test_2(): kotlin.Unit
+public fun test_3(): kotlin.Unit
+public fun test_4(): kotlin.Unit
+public fun test_5(): kotlin.Unit
+public fun test_6(): kotlin.Unit
+public fun test_7(): kotlin.Unit
+public fun test_8(): kotlin.Unit
+public fun test_9(): kotlin.Unit
+
+public final data class A {
+    public constructor A(/*0*/ x: kotlin.Int?)
+    public final val x: kotlin.Int?
+    public final operator /*synthesized*/ fun component1(): kotlin.Int?
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int? = ...): A
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final class ABuilder {
+    public constructor ABuilder()
+    private final var x_: kotlin.Int?
+    public final fun buildA(): A
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setX(/*0*/ value: kotlin.Int = ...): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=func called EXACTLY_ONCE, references=[setX, <this>], owner=setX)
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,0 +1,19 @@
+package
+
+public inline fun myCatch(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+    ExtensionEffect:LambdaContextProviderEffectDeclaration(factory=Catches FileNotFoundException, references=[], owner=block)
+    ExtensionEffect:LambdaContextProviderEffectDeclaration(factory=Catches RuntimeException, references=[], owner=block)
+
+public fun test_1(): kotlin.Unit
+public fun test_2(): kotlin.Unit
+public fun test_3(): kotlin.Unit
+public fun test_4(): kotlin.Unit
+public fun throwsFileNotFoundException(): kotlin.Unit
+    ExtensionEffect:ContextVerifierEffectDeclaration(factory=Catches FileNotFoundException, references=[], owner=throwsFileNotFoundException)
+
+public fun throwsIOException(): kotlin.Unit
+    ExtensionEffect:ContextVerifierEffectDeclaration(factory=Catches IOException, references=[], owner=throwsIOException)
+
+public fun throwsNullPointerException(): kotlin.Unit
+    ExtensionEffect:ContextVerifierEffectDeclaration(factory=Catches NullPointerException, references=[], owner=throwsNullPointerException)

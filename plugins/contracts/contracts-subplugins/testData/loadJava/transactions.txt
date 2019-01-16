@@ -1,0 +1,16 @@
+package test
+
+public final class Transaction {
+    /*primary*/ public constructor Transaction()
+    public final fun commit(): kotlin.Unit
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=opened transaction, references=[<this>], owner=commit)
+        ExtensionEffect:ContextCleanerEffectDeclaration(factory=opened transaction, references=[<this>], owner=commit)
+
+    public final fun setData(): kotlin.Unit
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=opened transaction, references=[<this>], owner=setData)
+
+    public final fun start(): kotlin.Unit
+        ExtensionEffect:ContextProviderEffectDeclaration(factory=opened transaction, references=[<this>], owner=start)
+        ExtensionEffect:ContextVerifierEffectDeclaration(factory=no opened transaction, references=[<this>], owner=start)
+
+}

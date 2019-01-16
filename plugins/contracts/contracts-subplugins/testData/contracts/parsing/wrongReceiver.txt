@@ -1,0 +1,14 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun fooBad(/*0*/ init: () -> kotlin.Unit): kotlin.Unit
+public fun fooGood(/*0*/ init: A.() -> kotlin.Unit): kotlin.Unit
+    ExtensionEffect:LambdaContextVerifierEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[bar, receiver of init], owner=init)
+    ExtensionEffect:LambdaContextCleanerEffectDeclaration(factory=func needs to be called EXACTLY_ONCE, references=[bar, receiver of init], owner=init)
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
