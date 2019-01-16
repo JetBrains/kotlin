@@ -19,9 +19,11 @@ package org.jetbrains.uast.kotlin
 import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
@@ -394,6 +396,12 @@ internal object KotlinConverter {
         }
     }
 
+    var forceUInjectionHost = Registry.`is`("kotlin.uast.force.uinjectionhost", false)
+        @TestOnly
+        set(value) {
+            field = value
+        }
+
     internal fun convertExpression(expression: KtExpression,
                                    givenParent: UElement?,
                                    requiredType: Class<out UElement>? = null): UExpression? {
@@ -404,7 +412,19 @@ internal object KotlinConverter {
         return with (requiredType) { when (expression) {
             is KtVariableDeclaration -> expr<UDeclarationsExpression>(build(::convertVariablesDeclaration))
 
-            is KtStringTemplateExpression -> expr<UInjectionHost> { KotlinStringTemplateUPolyadicExpression(expression, givenParent) }
+            is KtStringTemplateExpression -> {
+                when {
+                    forceUInjectionHost || (requiredType != null && UInjectionHost::class.java.isAssignableFrom(requiredType)) ->
+                        expr<UInjectionHost> { KotlinStringTemplateUPolyadicExpression(expression, givenParent) }
+                    expression.entries.isEmpty() -> {
+                        expr<ULiteralExpression> { KotlinStringULiteralExpression(expression, givenParent, "") }
+                    }
+                    expression.entries.size == 1 -> convertEntry(expression.entries[0], givenParent, requiredType)
+                    else -> {
+                        expr<UInjectionHost> { KotlinStringTemplateUPolyadicExpression(expression, givenParent) }
+                    }
+                }
+            }
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
                 val declarationsExpression = KotlinUDestructuringDeclarationExpression(givenParent, expression)
                 declarationsExpression.apply {
