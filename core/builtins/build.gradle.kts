@@ -3,6 +3,7 @@ import java.io.File
 
 plugins {
     base
+    `maven-publish`
 }
 
 val builtinsSrc = fileFrom(rootDir, "core", "builtins", "src")
@@ -23,13 +24,23 @@ val serialize by tasks.creating(NoDebugJavaExec::class) {
 val builtinsJar by task<Jar> {
     dependsOn(serialize)
     from(serialize) { include("kotlin/**") }
-    baseName = "platform-builtins"
     destinationDir = File(buildDir, "libs")
 }
-
 
 val assemble by tasks.getting {
     dependsOn(serialize)
 }
 
-artifacts.add("default", builtinsJar)
+val builtinsJarArtifact = artifacts.add("default", builtinsJar)
+
+publishing {
+    publications {
+        create<MavenPublication>("internal") {
+            artifact(builtinsJarArtifact)
+        }
+    }
+
+    repositories {
+        maven("${rootProject.buildDir}/internal/repo")
+    }
+}
