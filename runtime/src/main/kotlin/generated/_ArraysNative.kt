@@ -1405,6 +1405,15 @@ public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit 
 }
 
 /**
+ * Sorts a range in the array in-place with the given [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ */
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    sortArrayWith(this, fromIndex, toIndex, comparator)
+}
+
+/**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public actual fun ByteArray.toTypedArray(): Array<Byte> {
