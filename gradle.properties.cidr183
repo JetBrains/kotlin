@@ -10,3 +10,5 @@ kotlin.compiler.newInferenceEnabled=true
 #signingRequired=true
 
 cidrPluginsEnabled=true
+
+#useBootstrapStdlib=true

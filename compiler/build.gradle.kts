@@ -37,19 +37,16 @@ fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
     }
 }
 
-val depDistProjects = listOf(
-        ":kotlin-script-runtime",
-        ":kotlin-stdlib",
-        ":kotlin-test:kotlin-test-jvm"
-)
 val antLauncherJar by configurations.creating
 
 dependencies {
     testRuntime(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
 
-    depDistProjects.forEach {
-        testCompile(project(it))
-    }
+    testCompile(project(":kotlin-script-runtime"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    
+    testCompile(kotlinStdlib())
+
     testCompile(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))

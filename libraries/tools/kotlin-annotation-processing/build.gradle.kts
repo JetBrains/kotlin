@@ -11,7 +11,7 @@ plugins {
 val packedJars by configurations.creating
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     packedJars(project(":kotlin-annotation-processing")) { isTransitive = false }
     runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
 }

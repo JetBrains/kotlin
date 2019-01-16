@@ -47,7 +47,7 @@ val compiledModulesSources = compilerModules.map {
 }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":kotlin-script-runtime"))
     compile(project(":kotlin-reflect"))
     compile(commonDep("org.jetbrains.intellij.deps", "trove4j"))

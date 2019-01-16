@@ -14,7 +14,7 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
-    runtime(project(":kotlin-stdlib"))
+    runtime(kotlinStdlib())
     testRuntimeOnly(intellijDep()) {
         includeJars("guava", rootProject = rootProject)
     }

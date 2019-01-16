@@ -7,7 +7,7 @@ plugins {
 jvmTarget = "1.6"
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":compiler:frontend"))
     compile(project(":idea")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling"))

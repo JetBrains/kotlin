@@ -17,7 +17,7 @@ sourceSets {
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
-    compile project(':kotlin-stdlib')
+    compile kotlinStdlib()
     testCompile project(":kotlin-test:kotlin-test-junit")
     testCompile('junit:junit:4.12')
 }

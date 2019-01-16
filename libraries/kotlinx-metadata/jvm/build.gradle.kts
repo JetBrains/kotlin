@@ -36,7 +36,7 @@ configurations.getByName("compileOnly").extendsFrom(shadows)
 configurations.getByName("testCompile").extendsFrom(shadows)
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     shadows(project(":kotlinx-metadata"))
     shadows(project(":core:metadata"))
     shadows(project(":core:metadata.jvm"))

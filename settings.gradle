@@ -112,7 +112,6 @@ include ":kotlin-build-common",
         ":plugins:uast-kotlin-idea",
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":kotlin-script-runtime",
-        ":kotlin-runtime",
         ":kotlin-test",
         ":kotlin-test:kotlin-test-common",
         ":kotlin-test:kotlin-test-annotations-common",
@@ -122,15 +121,6 @@ include ":kotlin-build-common",
         ":kotlin-test:kotlin-test-testng",
         ":kotlin-test:kotlin-test-js",
         ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
-        ":kotlin-stdlib-common",
-        ":kotlin-stdlib",
-        ":kotlin-stdlib-js",
-        ":kotlin-stdlib-jre7",
-        ":kotlin-stdlib-jre8",
-        ":kotlin-stdlib-jdk7",
-        ":kotlin-stdlib-jdk8",
-        ":kotlin-stdlib:samples",
-        ":kotlin-stdlib:jvm-minimal-for-test",
         ":kotlinx-metadata",
         ":kotlinx-metadata-jvm",
         ":prepare:build.version",
@@ -151,9 +141,6 @@ include ":kotlin-build-common",
         ":compiler:tests-spec",
         ":generators",
         ":generators:test-generator",
-        ":tools:binary-compatibility-validator",
-        ":tools:kotlin-stdlib-js-merger",
-        ":tools:kotlin-stdlib-gen",
         ":tools:kotlinp",
         ":kotlin-gradle-plugin-api",
         ":kotlin-gradle-plugin-dsl-codegen",
@@ -196,7 +183,6 @@ include ":kotlin-build-common",
         ":libraries:kotlin-prepush-hook",
         ":libraries:tools:mutability-annotations-compat",
         ":include:kotlin-compiler",
-        ":include:kotlin-stdlib-common-sources",
         ":plugins:jvm-abi-gen",
         ":usage-statistics",
 
@@ -232,9 +218,45 @@ if (isTeamcityBuild || includeUltimate) {
     )
 }
 
+def includeStdlib = !hasProperty("useBootstrapStdlib") || useBootstrapStdlib == 'false'
+if (includeStdlib) {
+    include ":kotlin-stdlib-common",
+            ":kotlin-stdlib",
+            ":kotlin-stdlib-js",
+            ":kotlin-stdlib-jre7",
+            ":kotlin-stdlib-jre8",
+            ":kotlin-stdlib-jdk7",
+            ":kotlin-stdlib-jdk8",
+            ":kotlin-stdlib:samples",
+            ":kotlin-stdlib:jvm-minimal-for-test",
+            ":tools:binary-compatibility-validator",
+            ":tools:kotlin-stdlib-js-merger",
+            ":tools:kotlin-stdlib-gen",
+            ":kotlin-runtime",
+
+            ":include:kotlin-stdlib-common-sources"
+}
+
 rootProject.name = "kotlin"
 
-project(':kotlin-runtime').projectDir = "$rootDir/libraries/stdlib/runtime" as File
+if (includeStdlib) {
+    project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
+    project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
+    project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js" as File
+    project(':kotlin-stdlib-jre7').projectDir = "$rootDir/libraries/stdlib/jre7" as File
+    project(':kotlin-stdlib-jre8').projectDir = "$rootDir/libraries/stdlib/jre8" as File
+    project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
+    project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
+    project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
+    project(":kotlin-stdlib:jvm-minimal-for-test").projectDir = "$rootDir/libraries/stdlib/jvm-minimal-for-test" as File
+
+    project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
+    project(':tools:kotlin-stdlib-js-merger').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-js-merger" as File
+    project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
+
+    project(':kotlin-runtime').projectDir = "$rootDir/libraries/stdlib/runtime" as File
+}
+
 project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-runtime" as File
 project(':kotlin-test').projectDir = "$rootDir/libraries/kotlin.test" as File
 project(':kotlin-test:kotlin-test-common').projectDir = "$rootDir/libraries/kotlin.test/common" as File
@@ -245,15 +267,6 @@ project(':kotlin-test:kotlin-test-junit5').projectDir = "$rootDir/libraries/kotl
 project(':kotlin-test:kotlin-test-testng').projectDir = "$rootDir/libraries/kotlin.test/testng" as File
 project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
 project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
-project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
-project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
-project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js" as File
-project(':kotlin-stdlib-jre7').projectDir = "$rootDir/libraries/stdlib/jre7" as File
-project(':kotlin-stdlib-jre8').projectDir = "$rootDir/libraries/stdlib/jre8" as File
-project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
-project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
-project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
-project(":kotlin-stdlib:jvm-minimal-for-test").projectDir = "$rootDir/libraries/stdlib/jvm-minimal-for-test" as File
 project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
 project(':kotlin-reflect-api').projectDir = "$rootDir/libraries/reflect/api" as File
 project(':kotlinx-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" as File
@@ -291,9 +304,6 @@ project(':noarg-ide-plugin').projectDir = "$rootDir/plugins/noarg/noarg-ide" as 
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
 project(':sam-with-receiver-ide-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-ide" as File
 project(':kotlin-source-sections-compiler-plugin').projectDir = "$rootDir/plugins/source-sections/source-sections-compiler" as File
-project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
-project(':tools:kotlin-stdlib-js-merger').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-js-merger" as File
-project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
 project(':kotlin-gradle-plugin-dsl-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen" as File

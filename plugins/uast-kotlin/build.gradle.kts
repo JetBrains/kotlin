@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":core:util.runtime"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:frontend"))

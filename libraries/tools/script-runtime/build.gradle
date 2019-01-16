@@ -12,7 +12,7 @@ pill {
 }
 
 dependencies {
-    compileOnly project(':kotlin-stdlib')
+    compileOnly kotlinStdlib()
 }
 
 configurations {

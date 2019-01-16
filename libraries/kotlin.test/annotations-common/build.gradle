@@ -8,7 +8,7 @@ configurePublishing(project)
 
 
 dependencies {
-    compile project(':kotlin-stdlib-common')
+    compile kotlinStdlib("common")
     testCompile project(":kotlin-test:kotlin-test-common")
 }
 

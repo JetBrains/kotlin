@@ -8,7 +8,7 @@ configurePublishing(project)
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
-    compile project(':kotlin-stdlib-js')
+    compile kotlinStdlib("js")
 }
 
 compileKotlin2Js {
