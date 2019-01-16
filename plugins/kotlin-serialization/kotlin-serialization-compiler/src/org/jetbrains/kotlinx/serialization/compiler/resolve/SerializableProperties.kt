@@ -19,6 +19,7 @@ package org.jetbrains.kotlinx.serialization.compiler.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.hasBackingField
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext) {
@@ -40,7 +41,8 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
             .filterIsInstance<PropertyDescriptor>()
             .filter { it.kind == CallableMemberDescriptor.Kind.DECLARATION }
             .filter(this::isPropSerializable)
-            .map { prop -> SerializableProperty(prop, primaryConstructorProperties[prop] ?: false) }
+            .map { prop -> SerializableProperty(prop, primaryConstructorProperties[prop] ?: false, prop.hasBackingField(bindingContext)) }
+            .filterNot { it.transient }
             .partition { primaryConstructorProperties.contains(it.descriptor) }
             .run {
                 val supers = serializableClass.getSuperClassNotAny()
@@ -66,7 +68,6 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
         serializableProperties.minus(serializableConstructorProperties)
 
     val size = serializableProperties.size
-    val indices = serializableProperties.indices
     operator fun get(index: Int) = serializableProperties[index]
     operator fun iterator() = serializableProperties.iterator()
 
