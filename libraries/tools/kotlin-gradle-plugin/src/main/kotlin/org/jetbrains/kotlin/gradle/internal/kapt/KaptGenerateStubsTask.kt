@@ -83,24 +83,10 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         args.destinationAsFile = this.destinationDir
     }
 
-    override fun execute(inputs: IncrementalTaskInputs) {
-        val sourceRoots = kotlinCompileTask.getSourceRoots().let {
+    override fun getSourceRoots(): SourceRoots.ForJvm =
+        kotlinCompileTask.getSourceRoots().let {
             val javaSourceRoots = it.javaSourceRoots.filterTo(HashSet()) { isSourceRootAllowed(it) }
             val kotlinSourceFiles = it.kotlinSourceFiles
             SourceRoots.ForJvm(kotlinSourceFiles, javaSourceRoots)
         }
-        val allKotlinSources = sourceRoots.kotlinSourceFiles
-
-        logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(project.rootProject.projectDir)}" }
-
-        if (allKotlinSources.isEmpty()) {
-            logger.kotlinDebug { "No Kotlin files found, skipping KaptGenerateStubs task" }
-            return
-        }
-
-        sourceRoots.log(this.name, logger)
-        val args = prepareCompilerArguments()
-
-        callCompilerAsync(args, sourceRoots, ChangedFiles(inputs))
-    }
 }
