@@ -3182,6 +3182,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testUnsignedLongRemainder_jvm18() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongRemainder_jvm18.kt");
         }
+
+        @TestMetadata("whenByUnsigned.kt")
+        public void testWhenByUnsigned() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/whenByUnsigned.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/varargs")
