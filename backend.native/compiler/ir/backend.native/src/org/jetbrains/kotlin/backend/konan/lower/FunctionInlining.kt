@@ -283,7 +283,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         return IrReturnableBlockImpl(
             startOffset    = startOffset,
             endOffset      = endOffset,
-            type           = copiedCallee.returnType,
+            type           = callSite.type,
             symbol         = irReturnableBlockSymbol,
             origin         = if (isCoroutineIntrinsicCall) CoroutineIntrinsicLambdaOrigin else null,
             statements     = statements,
