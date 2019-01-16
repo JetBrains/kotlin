@@ -4,13 +4,17 @@ description = "Kotlin Mock Runtime for Tests"
 
 plugins {
     kotlin("jvm")
+    `maven-publish`
 }
 
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
+val builtins by configurations.creating
+
 dependencies {
     compileOnly(project(":kotlin-stdlib"))
+    builtins(project(":core:builtins"))
 }
 
 sourceSets {
@@ -57,10 +61,24 @@ tasks.withType<KotlinCompile> {
 }
 
 val jar = runtimeJar {
-    dependsOn(":core:builtins:serialize")
-    from(fileTree("${rootProject.extra["distDir"]}/builtins")) { include("kotlin/**") }
+    dependsOn(builtins)
+    from(provider { zipTree(builtins.asPath) }) { include("kotlin/**") }
 }
 
 val distDir: String by rootProject.extra
 
-dist(targetName = "kotlin-stdlib-minimal-for-test.jar", targetDir = File(distDir))
+dist(targetName = "kotlin-stdlib-minimal-for-test.jar", targetDir = File(distDir), fromTask = jar)
+
+publishing {
+    publications {
+        create<MavenPublication>("internal") {
+            artifactId = "kotlin-stdlib-minimal-for-test"
+            artifact(jar)
+        }
+    }
+
+    repositories {
+        maven("${rootProject.buildDir}/internal/repo")
+    }
+}
+
