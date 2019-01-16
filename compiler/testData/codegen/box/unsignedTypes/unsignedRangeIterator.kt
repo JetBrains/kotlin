@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 fun testUIntRangeForEach() {
     var s = 0
