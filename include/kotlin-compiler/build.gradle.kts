@@ -15,7 +15,7 @@ dependencies {
         compile(project(module)) { isTransitive = false }
     }
 
-    fatJarContents(project(":core:builtins", configuration = "builtins"))
+    fatJarContents(project(":core:builtins"))
     fatJarContents(commonDep("javax.inject"))
     fatJarContents(commonDep("org.jline", "jline"))
     fatJarContents(commonDep("org.fusesource.jansi", "jansi"))

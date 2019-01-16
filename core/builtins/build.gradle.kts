@@ -8,8 +8,6 @@ plugins {
 val builtinsSrc = fileFrom(rootDir, "core", "builtins", "src")
 val builtinsNative = fileFrom(rootDir, "core", "builtins", "native")
 
-val builtins by configurations.creating
-
 val serialize by tasks.creating(NoDebugJavaExec::class) {
     val outDir = "$buildDir/$name"
     val inDirs = arrayOf(builtinsSrc, builtinsNative)
@@ -34,4 +32,4 @@ val assemble by tasks.getting {
     dependsOn(serialize)
 }
 
-artifacts.add(builtins.name, builtinsJar)
+artifacts.add("default", builtinsJar)
