@@ -126,6 +126,8 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                 languageVersionSettings = LanguageVersionSettingsImpl(
                     LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlags.skipMetadataVersionCheck to true)
                 )
+
+                put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
             }
             environment = KotlinCoreEnvironment.createForProduction(
                 disposable,
