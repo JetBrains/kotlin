@@ -541,6 +541,11 @@ inline ContainerHeader* markAsRemoved(ContainerHeader* container) {
   return reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1);
 }
 
+inline ContainerHeader* clearRemoved(ContainerHeader* container) {
+  return reinterpret_cast<ContainerHeader*>(
+    reinterpret_cast<uintptr_t>(container) & ~static_cast<uintptr_t>(1));
+}
+
 inline void processFinalizerQueue(MemoryState* state) {
   // TODO: reuse elements of finalizer queue for new allocations.
   while (state->finalizerQueue != nullptr) {
@@ -1694,7 +1699,15 @@ void depthFirstTraversal(ContainerHeader* start, bool* hasCycles,
   while (!toVisit.empty()) {
     auto* container = toVisit.front();
     toVisit.pop_front();
-
+    if (isMarkedAsRemoved(container)) {
+      container = clearRemoved(container);
+      // Mark BLACK.
+      container->resetSeen();
+      container->mark();
+      order->push_back(container);
+      continue;
+    }
+    toVisit.push_front(markAsRemoved(container));
     traverseContainerReferredObjects(container, [hasCycles, firstBlocker, &order, &toVisit](ObjHeader* obj) {
       if (*firstBlocker != nullptr)
         return;
@@ -1715,10 +1728,6 @@ void depthFirstTraversal(ContainerHeader* start, bool* hasCycles,
         }
       }
     });
-    // Mark BLACK.
-    container->resetSeen();
-    container->mark();
-    order->push_back(container);
   }
 }
 
