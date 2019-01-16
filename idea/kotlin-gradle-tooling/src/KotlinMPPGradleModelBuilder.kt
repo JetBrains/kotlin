@@ -273,7 +273,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     private fun safelyGetArguments(compileKotlinTask: Task, accessor: Method?) = try {
         accessor?.invoke(compileKotlinTask) as? List<String>
     } catch (e: Exception) {
-        logger.info(e.message, e)
+        logger.info(e.message ?: "Unexpected exception: $e", e)
         null
     } ?: emptyList()
 
