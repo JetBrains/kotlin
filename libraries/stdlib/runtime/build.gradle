@@ -6,8 +6,13 @@ apply plugin: 'kotlin'
 
 configureJvm6Project(project)
 
+configurations {
+    builtins
+}
+
 dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
+    builtins project(':core:builtins')
 }
 
 sourceSets {
@@ -23,8 +28,11 @@ sourceSets {
 }
 
 jar {
+    dependsOn(configurations.builtins)
     manifestAttributes(manifest, project, 'Main')
-    from("${rootDir}/dist/builtins")
+    from {
+        zipTree(configurations.builtins.asPath)
+    }
 }
 
 sourcesJar {

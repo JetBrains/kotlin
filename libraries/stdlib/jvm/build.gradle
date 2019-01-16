@@ -65,6 +65,7 @@ configurations {
     coroutinesExperimentalTestCompile.extendsFrom(testCompile)
     coroutinesExperimentalMigrationTestCompile.extendsFrom(coroutinesExperimentalTestCompile)
     longRunningTestCompile.extendsFrom(testCompile)
+    builtins
 }
 
 dependencies {
@@ -79,11 +80,16 @@ dependencies {
 
     coroutinesExperimentalCompile sourceSets.main.output
     coroutinesExperimentalTestCompile sourceSets.test.output
+
+    builtins project(':core:builtins')
 }
 
 jar {
+    dependsOn(configurations.builtins)
     manifestAttributes(manifest, project, 'Main' /*true*/)
-    from("${rootDir}/dist/builtins")
+    from {
+        zipTree(configurations.builtins.asPath)
+    }
     from sourceSets.experimental.output
     from sourceSets.coroutinesExperimental.output
     // TODO: enable as soon as this doesn't cause D8/DX to crash
@@ -152,8 +158,8 @@ task dexMethodCount(type: DexMethodCount) {
 check.dependsOn(dexMethodCount)
 
 compileKotlin {
-    dependsOn(":core:builtins:serialize")
-    classpath += files("${rootDir}/dist/builtins")
+    dependsOn(configurations.builtins)
+    classpath += configurations.builtins
     kotlinOptions {
         freeCompilerArgs = [
                 "-version",
