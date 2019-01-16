@@ -210,15 +210,27 @@ function instantiateAndRunSync(arraybuffer, args) {
     return invokeModule(instance, args)
 }
 
+
+// Instantiate module in Browser as a promise of streaming instantiation.
+function instantiateAndRunStreaming(filename) {
+    linkJavaScriptLibraries();
+    WebAssembly.instantiateStreaming(fetch(filename), konan_dependencies)
+      .then(resultObject => invokeModule(resultObject.instance, [filename]));
+}
+
 konan.moduleEntry = function (args) {
     if (isBrowser()) {
         if (!document.currentScript.hasAttribute("wasm")) {
             throw new Error('Could not find the wasm attribute pointing to the WebAssembly binary.');
         }
         const filename = document.currentScript.getAttribute("wasm");
-        fetch(filename)
-            .then(response => response.arrayBuffer())
-            .then(arraybuffer => instantiateAndRun(arraybuffer, [filename]));
+        if (typeof WebAssembly.instantiateStreaming === 'function') {
+            instantiateAndRunStreaming(filename);
+        } else {
+            fetch(filename)
+              .then(response => response.arrayBuffer())
+              .then(arraybuffer => instantiateAndRun(arraybuffer, [filename]));
+        }
     } else {
         // Invoke from d8.
         const arrayBuffer = readbuffer(args[0]);
