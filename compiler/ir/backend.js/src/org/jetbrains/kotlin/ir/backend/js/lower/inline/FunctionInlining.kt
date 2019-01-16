@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.builders.Scope
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -29,9 +26,7 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -134,8 +129,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerWithC
         return transformedModule
     }
 
-    //-------------------------------------------------------------------------//
-
     override fun visitFunctionNew(declaration: IrFunction, data: Ref<Boolean>): IrStatement {
         val descriptor = declaration.descriptor
 
@@ -160,15 +153,14 @@ internal class FunctionInlining(val context: Context): IrElementTransformerWithC
         if (callee == null) {                                                  // We failed to get the declaration.
             val message = "Inliner failed to obtain function declaration: " +
                     functionDescriptor.fqNameSafe.toString()
-            callee
             context.reportWarning(message, currentFile, callSite)                             // Report warning.
             return callSite
         }
         data.value = data.value or callee.second
 
         val childIsBad = Ref(inlineFunctions[functionDescriptor] ?: false)
-        callee.first.transformChildren(this, childIsBad)
-        inlineFunctions[functionDescriptor] = childIsBad.value// Process recursive inline.
+        callee.first.transformChildren(this, childIsBad)                            // Process recursive inline.
+        inlineFunctions[functionDescriptor] = childIsBad.value
         data.value = data.value or childIsBad.value
 
         val currentCalleeIsBad = argsAreBad.value or childIsBad.value or callee.second
@@ -194,7 +186,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerWithC
 }
 
 // TODO: should we keep this at all?
-private val inlineConstructor = FqName("konan.internal.InlineConstructor")
+private val inlineConstructor = FqName("kotlin.native.internal.InlineConstructor")
 private val FunctionDescriptor.isInlineConstructor get() = annotations.hasAnnotation(inlineConstructor)
 
 //-----------------------------------------------------------------------------//
@@ -328,7 +320,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             if (functionArgument == null)
                 return super.visitCall(expression)
             val dispatchDescriptor = dispatchReceiver.descriptor
-            if (dispatchDescriptor is ValueParameterDescriptor && dispatchDescriptor.isNoinline) return super.visitCall(expression)
+            if (dispatchDescriptor is ValueParameterDescriptor &&
+                    dispatchDescriptor.isNoinline) return super.visitCall(expression)
 
             if (functionArgument is IrFunctionReference) {
                 if (!functionArgument.isLambda) return super.visitCall(expression)
@@ -378,7 +371,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         override fun visitElement(element: IrElement) = element.accept(this, null)
     }
 
-    private fun isLambdaCall(irCall: IrCall) = irCall.descriptor.isFunctionInvoke && irCall.dispatchReceiver is IrGetValue
+    private fun isLambdaCall(irCall: IrCall)  = irCall.descriptor.isFunctionInvoke && irCall.dispatchReceiver is IrGetValue
 
     private fun createTypeSubstitutor(irCall: IrCall): TypeSubstitutor? {
         if (irCall.typeArgumentsCount == 0) return null

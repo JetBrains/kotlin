@@ -15,6 +15,8 @@ node {
 val antLauncherJar by configurations.creating
 val testJsRuntime by configurations.creating
 
+val generateIrRuntimeKlib by generator("org.jetbrains.kotlin.generators.tests.GenerateIrRuntimeKt")
+
 dependencies {
     testRuntime(intellijDep())
 
@@ -53,6 +55,7 @@ sourceSets {
 projectTest {
     dependsOn(":dist")
     dependsOn(testJsRuntime)
+    dependsOn(generateIrRuntimeKlib)
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
     if (findProperty("kotlin.compiler.js.ir.tests.skip")?.toString()?.toBoolean() == true) {
@@ -66,7 +69,7 @@ projectTest {
     val prefixForPpropertiesToForward = "fd."
     for ((key, value) in properties) {
         if (key.startsWith(prefixForPpropertiesToForward)) {
-            systemProperty(key.substring(prefixForPpropertiesToForward.length), value)
+            systemProperty(key.substring(prefixForPpropertiesToForward.length), value!!)
         }
     }
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
@@ -116,6 +117,7 @@ abstract class BasicIrBoxTest(
             filesToCompile,
             config.configuration,
             listOf(FqName((testPackage?.let { "$it." } ?: "") + testFunction)),
+            false,
             dependencies,
             runtimeResult,
             moduleType = if (isMainModule) ModuleType.MAIN else ModuleType.SECONDARY

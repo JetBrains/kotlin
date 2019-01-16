@@ -45,6 +45,7 @@ fun compile(
     files: List<KtFile>,
     configuration: CompilerConfiguration,
     export: List<FqName> = emptyList(),
+    isKlibCompilation: Boolean = false,
     dependencies: List<CompiledModule> = emptyList(),
     builtInsModule: CompiledModule? = null,
     moduleType: ModuleType
@@ -82,24 +83,36 @@ fun compile(
         moduleType
     )
 
-    // TODO: Split compilation into two steps: kt -> ir, ir -> js
-    val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
-    when (moduleType) {
-        ModuleType.MAIN -> {
-            val moduleDependencies: List<CompiledModule> =
-                DFS.topologicalOrder(dependencies, CompiledModule::dependencies)
-                    .filter { it.moduleType == ModuleType.SECONDARY }
 
-            val fileDependencies = moduleDependencies.flatMap { it.moduleFragment!!.files }
+    if (isKlibCompilation) {
+//        val declarationTable = DeclarationTable(moduleFragment.irBuiltins, DescriptorTable())
+//        val serializedIr = IrModuleSerializer(context, declarationTable/*, onlyForInlines = false*/).serializedIrModule(moduleFragment)
+//        val serializer = KonanSerializationUtil(context, configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, declarationTable)
+//        val serializedData = serializer.serializeModule(analysisResult.moduleDescriptor, serializedIr)
+//        buildLibrary(serializedData)
+//
+        TODO("Implemenet IrSerialization")
+    } else {
 
-            moduleFragment.files.addAll(0, fileDependencies)
-        }
+        // TODO: Split compilation into two steps: kt -> ir, ir -> js
+        val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
+        when (moduleType) {
+            ModuleType.MAIN -> {
+                val moduleDependencies: List<CompiledModule> =
+                    DFS.topologicalOrder(dependencies, CompiledModule::dependencies)
+                        .filter { it.moduleType == ModuleType.SECONDARY }
 
-        ModuleType.SECONDARY -> {
-            return CompiledModule(moduleName, null, moduleFragment, moduleType, dependencies)
-        }
+                val fileDependencies = moduleDependencies.flatMap { it.moduleFragment!!.files }
 
-        ModuleType.TEST_RUNTIME -> {
+                moduleFragment.files.addAll(0, fileDependencies)
+            }
+
+            ModuleType.SECONDARY -> {
+                return CompiledModule(moduleName, null, moduleFragment, moduleType, dependencies)
+            }
+
+            ModuleType.TEST_RUNTIME -> {
+            }
         }
     }
 
