@@ -44,6 +44,7 @@ class StaticsToCompanionExtractConversion : RecursiveApplicableConversionBase() 
             JKClass.ClassKind.COMPANION,
             JKTypeParameterListImpl(),
             JKClassBodyImpl(),
+            JKAnnotationListImpl(),
             emptyList(),
             Visibility.PUBLIC,
             Modality.FINAL

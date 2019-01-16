@@ -38,6 +38,7 @@ class ClassToObjectPromotionConversion(private val context: ConversionContext) :
                         companion.classBody.also {
                             it.handleDeclarationsModifiers()
                         },
+                        JKAnnotationListImpl(),
                         element.extraModifiers,
                         element.visibility,
                         Modality.FINAL

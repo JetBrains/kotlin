@@ -243,6 +243,19 @@ fun throwAnnotation(throws: List<JKType>, symbolProvider: JKSymbolProvider) =
         )
     )
 
+fun JKAnnotationList.annotationByFqName(fqName: String): JKAnnotation? =
+    annotations.firstOrNull { it.classSymbol.fqName == fqName }
+
+fun stringLiteral(content: String, symbolProvider: JKSymbolProvider): JKExpression {
+    val lines = content.split('\n')
+    return lines.mapIndexed { i, line ->
+        val newlineSeparator = if (i == lines.size - 1) "" else "\\n"
+        JKKtLiteralExpressionImpl("\"$line$newlineSeparator\"", JKLiteralExpression.LiteralType.STRING)
+    }.reduce { acc: JKExpression, literalExpression: JKKtLiteralExpression ->
+        kotlinBinaryExpression(acc, literalExpression, JKKtSingleValueOperatorToken(KtTokens.PLUS), symbolProvider)!!
+    }
+}
+
 fun JKVariable.findUsages(scope: JKTreeElement, context: ConversionContext): List<JKFieldAccessExpression> {
     val symbol = context.symbolProvider.provideUniverseSymbol(this)
     val usages = mutableListOf<JKFieldAccessExpression>()

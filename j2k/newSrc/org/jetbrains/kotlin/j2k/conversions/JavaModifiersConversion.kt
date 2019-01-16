@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.annotationByFqName
 import org.jetbrains.kotlin.j2k.jvmAnnotation
 import org.jetbrains.kotlin.j2k.tree.*
 
@@ -18,6 +19,13 @@ class JavaModifiersConversion(private val context: ConversionContext) : Recursiv
                 } else {
                     element.visibility = Visibility.INTERNAL
                 }
+            }
+        }
+        if (element is JKModalityOwner && element is JKAnnotationListOwner) {
+            val overrideAnnotation = element.annotationList.annotationByFqName("java.lang.Override")
+            if (overrideAnnotation != null) {
+                element.annotationList.annotations -= overrideAnnotation
+                //TODO change modality to OVERRIDE???
             }
         }
         if (element is JKExtraModifiersOwner && element is JKAnnotationListOwner) {

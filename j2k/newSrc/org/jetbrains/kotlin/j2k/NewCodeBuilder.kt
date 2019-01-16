@@ -173,6 +173,10 @@ class NewCodeBuilder {
         }
 
         override fun visitClass(klass: JKClass) {
+            klass.annotationList.accept(this)
+            if (klass.annotationList.annotations.isNotEmpty()) {
+                printer.println()
+            }
             renderModifiersList(klass)
             builder.append(" ")
             printer.print(classKindString(klass.classKind))
@@ -688,6 +692,10 @@ class NewCodeBuilder {
         }
 
         override fun visitKtConstructor(ktConstructor: JKKtConstructor) {
+            ktConstructor.annotationList.accept(this)
+            if (ktConstructor.annotationList.annotations.isNotEmpty()) {
+                printer.println()
+            }
             renderModifiersList(ktConstructor)
             printer.print(" constructor")
             renderParameterList(ktConstructor.parameters)

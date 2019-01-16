@@ -16,15 +16,18 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.lang.jvm.JvmAnnotatedElement
 import com.intellij.psi.*
 import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.*
+import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.idea.j2k.content
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
@@ -392,6 +395,7 @@ class JavaToJKTreeBuilder(
                 classKind,
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
                 createClassBody(),
+                annotationList(),
                 modifiers(),
                 visibility(),
                 modality()
@@ -512,7 +516,7 @@ class JavaToJKTreeBuilder(
                 with(expressionTreeMapper) { typeElement?.toJK() } ?: JKTypeElementImpl(JKNoTypeImpl),
                 JKNameIdentifierImpl(name),
                 with(expressionTreeMapper) { initializer.toJK() },
-                JKAnnotationListImpl(annotations.map { it.toJK() }),
+                annotationList(),
                 modifiers(),
                 visibility(),
                 modality(),
@@ -523,6 +527,16 @@ class JavaToJKTreeBuilder(
             }
         }
 
+        fun <T> T.annotationList(): JKAnnotationList where T : JvmAnnotatedElement, T: PsiDocCommentOwner {
+            val plainAnnotations = annotations.map { it.toJK() }
+            val deprecatedAnnotation = docComment?.deprecatedAnnotation() ?: return JKAnnotationListImpl(plainAnnotations)
+            return JKAnnotationListImpl(
+                plainAnnotations.mapNotNull { annotation ->
+                    if (annotation.classSymbol.fqName == "java.lang.Deprecated") null else annotation
+                } + deprecatedAnnotation
+            )
+        }
+
         fun PsiAnnotation.toJK(): JKAnnotation =
             JKAnnotationImpl(
                 symbolProvider.provideSymbol(nameReferenceElement!!),
@@ -530,6 +544,16 @@ class JavaToJKTreeBuilder(
                     JKExpressionListImpl(parameterList.attributes.map { (it.value as? PsiExpression).toJK() })
                 }
             )
+
+        fun PsiDocComment.deprecatedAnnotation(): JKAnnotation? =
+            findTagByName("deprecated")?.let { tag ->
+                JKAnnotationImpl(
+                    symbolProvider.provideByFqName("kotlin.Deprecated"),
+                    JKExpressionListImpl(
+                        stringLiteral(tag.content(), symbolProvider)
+                    )
+                )
+            }
 
 
         fun PsiMethod.toJK(): JKJavaMethod {
@@ -543,7 +567,7 @@ class JavaToJKTreeBuilder(
                 parameterList.parameters.map { it.toJK() },
                 body?.toJK() ?: JKBodyStub,
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
-                JKAnnotationListImpl(),//TODO get real annotations
+                annotationList(),
                 throwsList.referencedTypes.map { JKTypeElementImpl(it.toJK(symbolProvider)) },
                 modifiers(),
                 visibility(),

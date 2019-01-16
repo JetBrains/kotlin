@@ -51,6 +51,7 @@ class JKClassImpl(
     override var classKind: JKClass.ClassKind,
     typeParameterList: JKTypeParameterList,
     classBody: JKClassBody,
+    annotationList: JKAnnotationList,
     override var extraModifiers: List<ExtraModifier>,
     override var visibility: Visibility,
     override var modality: Modality
@@ -61,6 +62,7 @@ class JKClassImpl(
     override val inheritance by child(inheritance)
     override var typeParameterList: JKTypeParameterList by child(typeParameterList)
     override var classBody: JKClassBody by child(classBody)
+    override var annotationList: JKAnnotationList by child(annotationList)
 }
 
 class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {
