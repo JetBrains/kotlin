@@ -11,8 +11,12 @@ pill {
     importAsLibrary = true
 }
 
+def jpsBuild = findProperty("jpsBuild")?.toString() == "true"
+
 sourceSets {
-    java9
+    if (!jpsBuild) {
+        java9
+    }
 }
 
 dependencies {
@@ -36,7 +40,9 @@ task modularJar(type: Jar) {
     classifier = 'modular'
 
     from zipTree(jar.outputs.files.singleFile)
-    from sourceSets.java9.output
+    if (!jpsBuild) {
+        from sourceSets.java9.output
+    }
 }
 
 artifacts {
@@ -59,4 +65,6 @@ compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
 
-compileJava9Sources(project, 'kotlin.test')
+if (!jpsBuild) {
+    compileJava9Sources(project, 'kotlin.test')
+}

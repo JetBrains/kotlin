@@ -13,3 +13,4 @@ intellijUltimateEnabled=false
 intellijEnforceCommunitySdk=true
 
 #useBootstrapStdlib=true
+#jpsBuild=true

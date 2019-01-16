@@ -12,3 +12,4 @@ kotlin.compiler.newInferenceEnabled=true
 cidrPluginsEnabled=true
 
 #useBootstrapStdlib=true
+#jpsBuild=true
