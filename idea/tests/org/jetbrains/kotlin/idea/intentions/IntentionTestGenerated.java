@@ -13257,6 +13257,59 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/removeConstructorKeyword")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveConstructorKeyword extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("abstractClass.kt")
+        public void testAbstractClass() throws Exception {
+            runTest("idea/testData/intentions/removeConstructorKeyword/abstractClass.kt");
+        }
+
+        public void testAllFilesPresentInRemoveConstructorKeyword() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeConstructorKeyword"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotatedParam.kt")
+        public void testAnnotatedParam() throws Exception {
+            runTest("idea/testData/intentions/removeConstructorKeyword/annotatedParam.kt");
+        }
+
+        @TestMetadata("annotationClass.kt")
+        public void testAnnotationClass() throws Exception {
+            runTest("idea/testData/intentions/removeConstructorKeyword/annotationClass.kt");
+        }
+
+        @TestMetadata("comments.kt")
+        public void testComments() throws Exception {
+            runTest("idea/testData/intentions/removeConstructorKeyword/comments.kt");
+        }
+
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            runTest("idea/testData/intentions/removeConstructorKeyword/dataClass.kt");
+        }
+
+        @TestMetadata("inParameters.kt")
+        public void testInParameters() throws Exception {
+            runTest("idea/testData/intentions/removeConstructorKeyword/inParameters.kt");
+        }
+
+        @TestMetadata("varargVal.kt")
+        public void testVarargVal() throws Exception {
+            runTest("idea/testData/intentions/removeConstructorKeyword/varargVal.kt");
+        }
+
+        @TestMetadata("withProperties.kt")
+        public void testWithProperties() throws Exception {
+            runTest("idea/testData/intentions/removeConstructorKeyword/withProperties.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/removeCurlyBracesFromTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
