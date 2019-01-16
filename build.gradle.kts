@@ -5,6 +5,8 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.gradle.ext.ActionDelegationConfig.TestRunner.*
 
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
@@ -35,6 +37,7 @@ plugins {
     `build-scan` version "1.15"
     idea
     id("jps-compatible")
+    id("org.jetbrains.gradle.plugin.idea-ext")
 }
 
 pill {
@@ -804,6 +807,40 @@ allprojects {
         if (cacheRedirectorEnabled()) {
             logger.info("Redirecting repositories for $displayName")
             repositories.redirect()
+        }
+    }
+}
+
+allprojects {
+    apply(mapOf("plugin" to "idea"))
+}
+
+val isJpsBuildEnabled = findProperty("jpsBuild")?.toString() == "true"
+if (isJpsBuildEnabled) {
+    afterEvaluate {
+        allprojects {
+            idea {
+                module {
+                    inheritOutputDirs = true
+                }
+            }
+        }
+
+        rootProject.idea {
+            project {
+                settings {
+                    compiler {
+                        processHeapSize = 2000
+                        addNotNullAssertions = true
+                        parallelCompilation = true
+                    }
+
+                    delegateActions {
+                        delegateBuildRunToGradle = false
+                        testRunner = PLATFORM
+                    }
+                }
+            }
         }
     }
 }
