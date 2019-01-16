@@ -57,6 +57,15 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
 
 fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
 
+val Project.useBootstrapStdlib: Boolean get() = findProperty("useBootstrapStdlib")?.let { it.toString() != "false" } ?: false
+
+fun Project.kotlinStdlib(suffix: String? = null): Any {
+    return if (useBootstrapStdlib)
+        kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion)
+    else
+        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"))
+}
+
 @Deprecated("Depend on the default configuration instead", ReplaceWith("project(name)"))
 fun DependencyHandler.projectDist(name: String): ProjectDependency = project(name)
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")

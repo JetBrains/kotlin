@@ -18,7 +18,7 @@ project.sourceSets.main.antlr.srcDirs = ["src/main/antlr4"]
 dependencies {
     antlr "org.antlr:antlr4:$antlr4_version"
     implementation "org.antlr:antlr4-runtime:$antlr4_version"
-    implementation project(':kotlin-stdlib')
+    implementation kotlinStdlib()
     implementation "org.jsoup:jsoup:1.8.2"
 
     testImplementation "junit:junit:4.12"

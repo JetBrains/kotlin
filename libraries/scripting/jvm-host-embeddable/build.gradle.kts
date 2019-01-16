@@ -11,7 +11,7 @@ val packedJars by configurations.creating
 dependencies {
     packedJars(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
     runtime(project(":kotlin-script-runtime"))
-    runtime(project(":kotlin-stdlib"))
+    runtime(kotlinStdlib())
     runtime(project(":kotlin-scripting-common"))
     runtime(project(":kotlin-scripting-jvm"))
     runtime(project(":kotlin-script-util"))

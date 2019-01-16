@@ -9,7 +9,7 @@ jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
-    compileOnly(project(":kotlin-stdlib"))
+    compileOnly(kotlinStdlib())
     compileOnly("org.jetbrains:annotations:13.0")
 }
 

@@ -10,7 +10,7 @@ standardPublicJars()
 publish()
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
 }
 
 tasks {

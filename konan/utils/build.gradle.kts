@@ -8,7 +8,7 @@ description = "Kotlin/Native utils"
 jvmTarget = "1.6"
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
 }
 
 sourceSets {

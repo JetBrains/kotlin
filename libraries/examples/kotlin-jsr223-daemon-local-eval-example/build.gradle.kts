@@ -8,7 +8,7 @@ plugins {
 val compilerClasspath by configurations.creating
 
 dependencies {
-    testCompile(project(":kotlin-stdlib"))
+    testCompile(kotlinStdlib())
     testCompile(project(":kotlin-script-runtime"))
     testCompile(project(":kotlin-script-util"))
     testCompile(projectRuntimeJar(":kotlin-daemon-client"))
@@ -18,7 +18,7 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
     compilerClasspath(projectRuntimeJar(":kotlin-compiler-embeddable"))
     compilerClasspath(project(":kotlin-reflect"))
-    compilerClasspath(project(":kotlin-stdlib"))
+    compilerClasspath(kotlinStdlib())
     compilerClasspath(project(":kotlin-script-runtime"))
     compilerClasspath(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     compileOnly(project(":compiler:cli-common")) // TODO: fix import (workaround for jps build)

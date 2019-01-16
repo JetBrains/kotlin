@@ -11,7 +11,7 @@ standardPublicJars()
 publish()
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":kotlin-native:kotlin-native-utils"))
 
     compileOnly(gradleApi())

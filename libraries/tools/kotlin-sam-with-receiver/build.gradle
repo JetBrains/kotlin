@@ -18,7 +18,7 @@ dependencies {
     compile project(':kotlin-gradle-plugin-api')
     compile project(':kotlin-gradle-plugin-model')
 
-    compile project(':kotlin-stdlib')
+    compile kotlinStdlib()
     compileOnly project(':compiler')
     compileOnly project(':kotlin-sam-with-receiver-compiler-plugin')
 

@@ -12,7 +12,7 @@ dependencies {
     val compileOnly by configurations
 
 
-    compile(projectDist(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":compiler:fir:tree"))
