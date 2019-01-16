@@ -1978,6 +1978,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inline/inlineReturnsNothing3.kt");
         }
 
+        @TestMetadata("inlineSuspendReifiedNoSpilling.kt")
+        public void testInlineSuspendReifiedNoSpilling() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/inlineSuspendReifiedNoSpilling.kt");
+        }
+
         @TestMetadata("linenumberForOneParametersArgumentCall.kt")
         public void testLinenumberForOneParametersArgumentCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inline/linenumberForOneParametersArgumentCall.kt");
