@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization.common
 
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.IincInsnNode
@@ -78,11 +79,13 @@ private fun useVar(
 ) {
     val index = node.instructions.indexOf(insn)
     node.localVariables.filter {
-        node.instructions.indexOf(it.start) < index && index < node.instructions.indexOf(it.end) &&
+        // Inliner fake variables, despite being present in LVT, are not read, thus are always dead
+        !it.name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) && !it.name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) &&
+                node.instructions.indexOf(it.start) < index && index < node.instructions.indexOf(it.end) &&
                 Type.getType(it.desc).sort == typeAnnotatedFrame?.getLocal(it.index)?.type?.sort
     }.forEach {
-            frame.markAlive(it.index)
-        }
+        frame.markAlive(it.index)
+    }
 
     if (insn is VarInsnNode && insn.isLoadOperation()) {
         frame.markAlive(insn.`var`)
