@@ -195,8 +195,7 @@ include ":kotlin-build-common",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
-        ":kotlin-serialization-unshaded",
-        ":kotlin-idl2k"
+        ":kotlin-serialization-unshaded"
 
 
 def includeCidr = hasProperty("cidrPluginsEnabled") && cidrPluginsEnabled != 'false'
@@ -218,7 +217,16 @@ if (isTeamcityBuild || includeUltimate) {
     )
 }
 
+def isJpsBuild = hasProperty("jpsBuild") && jpsBuild == 'true'
 def includeStdlib = !hasProperty("useBootstrapStdlib") || useBootstrapStdlib == 'false'
+if (isJpsBuild) {
+    includeStdlib = false
+} else {
+    // modules that we are currently cannot compile with jps
+    include ":kotlin-idl2k"
+    project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
+}
+
 if (includeStdlib) {
     include ":kotlin-stdlib-common",
             ":kotlin-stdlib",
@@ -358,7 +366,6 @@ project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/pl
 project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-ide")
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
-project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("custom-dependencies/protobuf")
