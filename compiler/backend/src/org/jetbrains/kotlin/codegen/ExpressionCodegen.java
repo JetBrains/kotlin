@@ -2783,7 +2783,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             );
         }
 
-        return context.generateReceiver(descriptor, state, false);
+        StackValue result = context.generateReceiver(descriptor, state, false);
+        if (result == null) {
+            throw new NullPointerException("Extension receiver was null for callable " + descriptor);
+        }
+
+        return result;
     }
 
     @NotNull
