@@ -47,6 +47,9 @@ import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.debugOrInfoIfTestMode
+import org.jetbrains.kotlin.idea.util.PsiPrecedences
 
 var DataNode<ModuleData>.isResolved
         by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("IS_RESOLVED"), false)
@@ -69,6 +72,7 @@ var DataNode<out ModuleData>.dependenciesCache
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
     val isAndroidProjectKey = Key.findKeyByName("IS_ANDROID_PROJECT_KEY")
+    private val LOG = Logger.getInstance(PsiPrecedences::class.java)
 
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
         return setOf(KotlinGradleModelBuilder::class.java, Unit::class.java)
@@ -190,6 +194,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule: DataNode<ModuleData>,
         ideProject: DataNode<ProjectData>
     ) {
+        LOG.debugOrInfoIfTestMode { "Start populate module dependencies. Gradle module: [$gradleModule], Ide module: [$ideModule], Ide project: [$ideProject]" }
         val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
         if (mppModel != null) {
             mppModel.targets.filterNot { it.name == "metadata" }.forEach { target ->
@@ -227,6 +232,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         if (useModulePerSourceSet()) {
             super.populateModuleDependencies(gradleModule, ideModule, ideProject)
         }
+        LOG.debugOrInfoIfTestMode { "Finish populating module dependencies. Gradle module: [$gradleModule], Ide module: [$ideModule], Ide project: [$ideProject]" }
     }
 
     private fun addImplementedModuleNames(
