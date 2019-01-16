@@ -80,7 +80,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
 
             val factory = KtPsiFactory(element)
 
-            val commentSaver = CommentSaver(element, saveLineBreaks = false)
+            val commentSaver = CommentSaver(element)
 
             val elvis = runWriteAction {
                 val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
