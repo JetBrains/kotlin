@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKKtCallExpressionImpl
 class StringMethodsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKQualifiedExpression) return recurse(element)
-        val receiverType = element.receiver.type(context) ?: return recurse(element)
+        val receiverType = element.receiver.type(context.symbolProvider) ?: return recurse(element)
         if (!receiverType.isStringType()) return recurse(element)
 
         convertLengthCall(element.selector)?.also {

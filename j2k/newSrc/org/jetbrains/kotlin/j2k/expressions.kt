@@ -118,31 +118,31 @@ fun kotlinBinaryExpression(
     left: JKExpression,
     right: JKExpression,
     token: JKKtOperatorToken,
-    context: ConversionContext
+    symbolProvider: JKSymbolProvider
 ): JKBinaryExpression? {
-    val leftType = left.type(context) ?: return null
-    val rightType = right.type(context) ?: return null
-    val methodSymbol = token.binaryExpressionMethodSymbol(leftType, rightType, context.symbolProvider)
+    val leftType = left.type(symbolProvider) ?: return null
+    val rightType = right.type(symbolProvider) ?: return null
+    val methodSymbol = token.binaryExpressionMethodSymbol(leftType, rightType, symbolProvider)
     return JKBinaryExpressionImpl(left, right, JKKtOperatorImpl(token, methodSymbol))
 }
 
 fun kotlinPrefixExpression(
     operand: JKExpression,
     token: JKKtOperatorToken,
-    context: ConversionContext
+    symbolProvider: JKSymbolProvider
 ): JKPrefixExpression? {
-    val operandType = operand.type(context) ?: return null
-    val methodSymbol = token.unaryExpressionMethodSymbol(operandType, context.symbolProvider)
+    val operandType = operand.type(symbolProvider) ?: return null
+    val methodSymbol = token.unaryExpressionMethodSymbol(operandType, symbolProvider)
     return JKPrefixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
 }
 
 fun kotlinPostfixExpression(
     operand: JKExpression,
     token: JKKtOperatorToken,
-    context: ConversionContext
+    symbolProvider: JKSymbolProvider
 ): JKPostfixExpression? {
-    val operandType = operand.type(context) ?: return null
-    val methodSymbol = token.unaryExpressionMethodSymbol(operandType, context.symbolProvider)
+    val operandType = operand.type(symbolProvider) ?: return null
+    val methodSymbol = token.unaryExpressionMethodSymbol(operandType, symbolProvider)
     return JKPostfixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
 }
 
@@ -275,10 +275,10 @@ fun JKFieldAccessExpression.asAssignmentFromTarget(): JKKtAssignmentStatement? =
 fun JKFieldAccessExpression.isInDecrementOrIncrement(): Boolean =
     (parent as? JKUnaryExpression)?.operator?.token?.text in listOf("++", "--")
 
-fun JKExpression.bangedBangedExpr(context: ConversionContext): JKExpression =
+fun JKExpression.bangedBangedExpr(symbolProvider: JKSymbolProvider): JKExpression =
     JKPostfixExpressionImpl(
         this,
-        JKKtOperatorImpl(KtTokens.EXCLEXCL, JKExclExclMethod(type(context)!!))
+        JKKtOperatorImpl(KtTokens.EXCLEXCL, JKExclExclMethod(type(symbolProvider)!!))
     )
 
 fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: ConversionContext): Boolean =

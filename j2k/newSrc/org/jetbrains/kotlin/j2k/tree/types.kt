@@ -26,40 +26,40 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-fun JKExpression.type(context: ConversionContext): JKType? =
+fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
     when (this) {
-        is JKLiteralExpression -> type.toJkType(context.symbolProvider)
+        is JKLiteralExpression -> type.toJkType(symbolProvider)
         is JKOperatorExpression -> {
             if (operator !is JKKtOperatorImpl) {
                 error("Cannot get type of ${operator::class}, it should be first converted to KtOperator")
             }
             val operatorSymbol = (operator as JKKtOperatorImpl).methodSymbol
             if (operatorSymbol.name == "compareTo") {
-                kotlinTypeByName("kotlin.Boolean", context.symbolProvider)
+                kotlinTypeByName("kotlin.Boolean", symbolProvider)
             } else operatorSymbol.returnType
         }
         is JKMethodCallExpression -> identifier.returnType
         is JKFieldAccessExpressionImpl -> identifier.fieldType
-        is JKQualifiedExpressionImpl -> this.selector.type(context)
-        is JKKtThrowExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.nothing.asString(), context.symbolProvider)
+        is JKQualifiedExpressionImpl -> this.selector.type(symbolProvider)
+        is JKKtThrowExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.nothing.asString(), symbolProvider)
         is JKClassAccessExpression -> null
         is JKJavaNewExpression -> JKClassTypeImpl(classSymbol)
-        is JKKtIsExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES._boolean.asString(), context.symbolProvider)
-        is JKParenthesizedExpression -> expression.type(context)
+        is JKKtIsExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES._boolean.asString(), symbolProvider)
+        is JKParenthesizedExpression -> expression.type(symbolProvider)
         is JKTypeCastExpression -> type.type
         is JKThisExpression -> null// TODO return actual type
         is JKSuperExpression -> null// TODO return actual type
         is JKStubExpression -> null
-        is JKIfElseExpression -> thenBranch.type(context)// TODO return actual type
+        is JKIfElseExpression -> thenBranch.type(symbolProvider)// TODO return actual type
         is JKArrayAccessExpression ->
-            (expression.type(context) as? JKParametrizedType)?.parameters?.lastOrNull()
+            (expression.type(symbolProvider) as? JKParametrizedType)?.parameters?.lastOrNull()
         is JKClassLiteralExpression -> {
             val symbol = when (literalType) {
                 JKClassLiteralExpression.LiteralType.KOTLIN_CLASS ->
-                    context.symbolProvider.provideByFqName<JKClassSymbol>("kotlin.reflect.KClass")
+                    symbolProvider.provideByFqName<JKClassSymbol>("kotlin.reflect.KClass")
                 JKClassLiteralExpression.LiteralType.JAVA_CLASS,
                 JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS, JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE ->
-                    context.symbolProvider.provideByFqName("java.lang.Class")
+                    symbolProvider.provideByFqName("java.lang.Class")
             }
             JKClassTypeImpl(symbol, listOf(classType.type), Nullability.NotNull)
         }

@@ -32,14 +32,14 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
     }
 
     private fun convertForInStatement(forInStatement: JKForInStatement) {
-        val notNullType = forInStatement.iterationExpression.type(context)?.updateNullability(Nullability.NotNull) ?: return
+        val notNullType = forInStatement.iterationExpression.type(context.symbolProvider)?.updateNullability(Nullability.NotNull) ?: return
         forInStatement.iterationExpression.addBangBang(notNullType)?.also {
             forInStatement.iterationExpression = it
         }
     }
 
     private fun convertAssignmentStatement(statement: JKKtAssignmentStatement) {
-        val expressionType = statement.field.type(context) ?: return
+        val expressionType = statement.field.type(context.symbolProvider) ?: return
         statement.expression.castTo(expressionType)?.also {
             statement.expression = it
         }
@@ -67,18 +67,19 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
 
 
     private fun JKExpression.addBangBang(toType: JKType): JKExpression? {
-        val expressionType = type(context) as? JKClassType ?: return null
+        if (this is JKJavaNewExpression) return null
+        val expressionType = type(context.symbolProvider) as? JKClassType ?: return null
         if (toType !is JKClassType) return null
         if (expressionType.classReference == toType.classReference
             && expressionType.isNullable() && !toType.isNullable()
         ) {
-            return this.copyTreeAndDetach().bangedBangedExpr(context)
+            return this.copyTreeAndDetach().bangedBangedExpr(context.symbolProvider)
         }
         return null
     }
 
     private fun JKExpression.castToAsPrimitiveTypes(toType: JKType): JKExpression? {
-        val expressionTypeAsPrimitive = type(context)?.asPrimitiveType() ?: return null
+        val expressionTypeAsPrimitive = type(context.symbolProvider)?.asPrimitiveType() ?: return null
         val toTypeAsPrimitive = toType.asPrimitiveType() ?: return null
         if (toTypeAsPrimitive == expressionTypeAsPrimitive) return null
 
@@ -112,7 +113,7 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
 
 
     private fun JKExpression.castTo(toType: JKType): JKExpression? {
-        val expressionType = type(context)
+        val expressionType = type(context.symbolProvider)
         if (expressionType == toType) return null
         castToAsPrimitiveTypes(toType)?.also { return it }
         return addBangBang(toType)

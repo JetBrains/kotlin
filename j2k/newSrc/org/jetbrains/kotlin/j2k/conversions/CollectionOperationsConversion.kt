@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKFieldAccessExpressionImpl
 class CollectionOperationsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKQualifiedExpression) return recurse(element)
-        val receiverType = element.receiver.type(context) ?: return recurse(element)
+        val receiverType = element.receiver.type(context.symbolProvider) ?: return recurse(element)
         if (!receiverType.isCollectionType(context.symbolProvider)) return recurse(element)
 
         convertSizeCall(element.selector)?.also {
@@ -25,7 +25,7 @@ class CollectionOperationsConversion(private val context: ConversionContext) : R
 
     private fun convertSizeCall(selector: JKExpression): JKFieldAccessExpressionImpl? {
         if (selector !is JKMethodCallExpression) return null
-        return if (selector.identifier.name =="size")  {
+        return if (selector.identifier.name == "size") {
             JKFieldAccessExpressionImpl(context.symbolProvider.provideByFqName("kotlin.collections.Collection.size"))
         } else null
     }

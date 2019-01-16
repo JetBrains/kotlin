@@ -38,7 +38,7 @@ class PolyadicExpressionConversion(private val context: ConversionContext) : Rec
             val index = operators.indexOf(operator)
             val left = convertPolyadic(operands.subList(0, index + 1), operators.subList(0, index))
             val right = convertPolyadic(operands.subList(index + 1, operands.size), operators.subList(index + 1, operators.size))
-            kotlinBinaryExpression(left, right, token, context)!!
+            kotlinBinaryExpression(left, right, token, context.symbolProvider)!!
         }
     }
 }

@@ -15,12 +15,12 @@ class NullableQualifierConversion(private val context: ConversionContext) : Recu
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKQualifiedExpression) return recurse(element)
         if (element.isSystemCall()) return recurse(element)// we don't want to have `System.err!!.println()` like expressions :)
-        if (element.receiver.type(context)?.nullability in listOf(Nullability.Nullable, Nullability.Default)
+        if (element.receiver.type(context.symbolProvider)?.nullability in listOf(Nullability.Nullable, Nullability.Default)
             && element.operator == JKJavaQualifierImpl.DOT || element.operator == JKKtQualifierImpl.DOT
         ) {
             return recurse(
                 JKQualifiedExpressionImpl(
-                    element::receiver.detached().bangedBangedExpr(context),
+                    element::receiver.detached().bangedBangedExpr(context.symbolProvider),
                     element.operator,
                     element::selector.detached()
                 )

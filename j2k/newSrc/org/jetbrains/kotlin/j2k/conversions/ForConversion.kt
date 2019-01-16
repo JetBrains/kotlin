@@ -175,7 +175,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                 start,
                 convertBound(bound, if (inclusiveComparison) 0 else -1),
                 JKKtSingleValueOperatorToken(KtTokens.RANGE),
-                context
+                context.symbolProvider
             )!!
         }
     }
@@ -193,7 +193,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             bound,
             JKKtLiteralExpressionImpl(Math.abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
             JKKtSingleValueOperatorToken(sign),
-            context
+            context.symbolProvider
         )!!
     }
 
@@ -239,7 +239,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 
     private fun indicesByCollectionSize(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         val methodCall = javaSizeCall.selector as? JKMethodCallExpression ?: return null
-        val receiverType = javaSizeCall.receiver.type(context) ?: return null
+        val receiverType = javaSizeCall.receiver.type(context.symbolProvider) ?: return null
         if (methodCall.identifier.name == "size"
             && methodCall.arguments.expressions.isEmpty()
             && receiverType.isCollectionType(context.symbolProvider)
@@ -251,7 +251,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 
     private fun indicesByArrayLength(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         val methodCall = javaSizeCall.selector as? JKFieldAccessExpression ?: return null
-        val receiverType = javaSizeCall.receiver.type(context)
+        val receiverType = javaSizeCall.receiver.type(context.symbolProvider)
         if (methodCall.identifier.name == "length" && receiverType is JKJavaArrayType) {
             return toIndicesCall(javaSizeCall)
         }

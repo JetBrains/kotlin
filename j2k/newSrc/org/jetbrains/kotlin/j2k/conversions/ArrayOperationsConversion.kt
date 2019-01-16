@@ -22,7 +22,7 @@ class ArrayOperationsConversion(private val context: ConversionContext) : Recurs
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKQualifiedExpression) return recurse(element)
         val selector = element.selector as? JKFieldAccessExpression ?: return recurse(element)
-        if (element.receiver.type(context) !is JKJavaArrayType) return recurse(element)
+        if (element.receiver.type(context.symbolProvider) !is JKJavaArrayType) return recurse(element)
         if (selector.identifier.name == "length") {
             val sizeCall =
                     JKFieldAccessExpressionImpl(
