@@ -463,3 +463,14 @@ fun JKClass.getOrCreateCompainonObject(): JKClass =
             Visibility.PUBLIC,
             Modality.FINAL
         ).also { classBody.declarations += it }
+
+fun runExpression(body: JKStatement, symbolProvider: JKSymbolProvider): JKExpression {
+    val lambda = JKLambdaExpressionImpl(
+        body,
+        emptyList()
+    )
+    return JKKtCallExpressionImpl(
+        symbolProvider.provideByFqNameMulti("kotlin.run"),
+        JKExpressionListImpl(listOf(lambda))
+    )
+}

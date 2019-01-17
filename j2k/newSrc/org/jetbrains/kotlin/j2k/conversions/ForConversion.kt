@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import com.intellij.psi.*
+import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.j2k.*
-import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -42,10 +42,21 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                 loopStatement::initializer.detached(),
                 whileStatement
             )
+
         val notNeedParentBlock = loopStatement.parent is JKBlock
                 || loopStatement.parent is JKLabeledStatement && loopStatement.parent?.parent is JKBlock
-        return if (notNeedParentBlock) convertedFromForLoopSyntheticWhileStatement
-        else blockStatement(convertedFromForLoopSyntheticWhileStatement)
+
+        return when {
+            loopStatement.hasNameConflict() ->
+                JKExpressionStatementImpl(
+                    runExpression(
+                        convertedFromForLoopSyntheticWhileStatement,
+                        context.symbolProvider
+                    )
+                )
+            !notNeedParentBlock -> blockStatement(convertedFromForLoopSyntheticWhileStatement)
+            else -> convertedFromForLoopSyntheticWhileStatement
+        }
     }
 
     private fun createWhileBody(loopStatement: JKJavaForLoopStatement): JKStatement {
@@ -70,15 +81,14 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                 initializer is JKDeclarationStatement && initializer.declaredStatements.any { loopVar ->
                     loopVar is JKLocalVariable && body.statements.any { statement ->
                         statement is JKDeclarationStatement && statement.declaredStatements.any {
-                            it is JKLocalVariable && it.name == loopVar.name
+                            it is JKLocalVariable && it.name.value == loopVar.name.value
                         }
                     }
                 }
 
             val statements =
                 if (hasNameConflict) {
-
-                    listOf(body) + loopStatement::updaters.detached()
+                    listOf(JKExpressionStatementImpl(runExpression(body, context.symbolProvider))) + loopStatement::updaters.detached()
                 } else {
                     body.block::statements.detached() + loopStatement::updaters.detached()
                 }
@@ -261,6 +271,36 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         val selector = JKFieldAccessExpressionImpl(indiciesSymbol)
         return JKQualifiedExpressionImpl(javaSizeCall::receiver.detached(), javaSizeCall.operator, selector)
     }
+
+    private fun JKJavaForLoopStatement.hasNameConflict(): Boolean {
+        val names = initializer.declaredVariableNames()
+        if (names.isEmpty()) return false
+
+        val factory = PsiElementFactory.SERVICE.getInstance(context.project)
+        for (name in names) {
+            val refExpr = try {
+                factory.createExpressionFromText(name, psi) as? PsiReferenceExpression ?: return true
+            } catch (e: IncorrectOperationException) {
+                return true
+            }
+            if (refExpr.resolve() != null) return true
+        }
+
+        return (parent as? JKBlock)
+            ?.statements
+            ?.takeLastWhile { it != this }
+            ?.any {
+                it.declaredVariableNames().any { it in names }
+            } == true
+    }
+
+    private fun JKStatement.declaredVariableNames(): Collection<String> =
+        when (this) {
+            is JKDeclarationStatement ->
+                declaredStatements.filterIsInstance<JKVariable>().map { it.name.value }
+            is JKJavaForLoopStatement -> initializer.declaredVariableNames()
+            else -> emptyList()
+        }
 
 
     private fun JKExpression.isVariableIncrementOrDecrement(variable: JKLocalVariable): JKOperator? {
