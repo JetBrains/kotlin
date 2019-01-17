@@ -38,6 +38,7 @@ object ConversionsRunner {
             +EnumClassConversion()
             +ArrayInitializerConversion(context)
             +TryStatementConversion(context)
+            +SynchronizedStatementConversion(context)
             +DefaultArgumentsConversion(context)
             +ConstructorConversion(context)
             +ImplicitInitializerConversion(context)

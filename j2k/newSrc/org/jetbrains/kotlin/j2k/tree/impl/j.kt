@@ -373,3 +373,12 @@ class JKJavaTryCatchSectionImpl(
     override var block: JKBlock by child(block)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaTryCatchSection(this, data)
 }
+
+class JKJavaSynchronizedStatementImpl(
+    lockExpression: JKExpression,
+    body: JKBlock
+) : JKJavaSynchronizedStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override val lockExpression: JKExpression by child(lockExpression)
+    override val body: JKBlock by child(body)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaSynchronizedStatement(this, data)
+}

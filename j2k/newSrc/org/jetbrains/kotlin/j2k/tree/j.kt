@@ -128,3 +128,8 @@ interface JKJavaLabelSwitchCase : JKJavaSwitchCase {
 }
 
 interface JKJavaContinueStatement: JKStatement
+
+interface JKJavaSynchronizedStatement : JKStatement, JKBranchElement {
+    val lockExpression: JKExpression
+    val body: JKBlock
+}

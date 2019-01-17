@@ -197,6 +197,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitJavaLabelSwitchCase(javaLabelSwitchCase: JKJavaLabelSwitchCase, data: Nothing?) = visitJavaLabelSwitchCase(javaLabelSwitchCase)
     fun visitJavaContinueStatement(javaContinueStatement: JKJavaContinueStatement) = visitStatement(javaContinueStatement, null)
     override fun visitJavaContinueStatement(javaContinueStatement: JKJavaContinueStatement, data: Nothing?) = visitJavaContinueStatement(javaContinueStatement)
+    fun visitJavaSynchronizedStatement(javaSynchronizedStatement: JKJavaSynchronizedStatement) = visitStatement(javaSynchronizedStatement, null)
+    override fun visitJavaSynchronizedStatement(javaSynchronizedStatement: JKJavaSynchronizedStatement, data: Nothing?) = visitJavaSynchronizedStatement(javaSynchronizedStatement)
     fun visitKtGetterOrSetter(ktGetterOrSetter: JKKtGetterOrSetter) = visitTreeElement(ktGetterOrSetter, null)
     override fun visitKtGetterOrSetter(ktGetterOrSetter: JKKtGetterOrSetter, data: Nothing?) = visitKtGetterOrSetter(ktGetterOrSetter)
     fun visitKtEmptyGetterOrSetter(ktEmptyGetterOrSetter: JKKtEmptyGetterOrSetter) = visitKtGetterOrSetter(ktEmptyGetterOrSetter, null)

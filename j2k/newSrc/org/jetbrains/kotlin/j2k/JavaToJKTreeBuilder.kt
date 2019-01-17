@@ -710,6 +710,11 @@ class JavaToJKTreeBuilder(
                         finallyBlock?.toJK() ?: JKBodyStub,
                         catchSections.map { it.toJK() }
                     )
+                is PsiSynchronizedStatement ->
+                    JKJavaSynchronizedStatementImpl(
+                        with(expressionTreeMapper) { lockExpression?.toJK() } ?: JKStubExpressionImpl(),
+                        body?.toJK() ?: JKBodyStub
+                    )
                 else -> TODO("for ${this::class}")
             }.also {
                 if (this != null) (it as PsiOwner).psi = this
