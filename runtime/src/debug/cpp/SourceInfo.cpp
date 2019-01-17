@@ -18,6 +18,7 @@
 
 #ifdef KONAN_CORE_SYMBOLICATION
 
+#include <dlfcn.h>
 #include <limits.h>
 #include <stdint.h>
 #include <unistd.h>
@@ -41,39 +42,61 @@ typedef unsigned long long CSArchitecture;
 
 #define kCSNow LONG_MAX
 
-extern "C" {
+namespace {
 
-CSSymbolicatorRef CSSymbolicatorCreateWithPid(pid_t pid);
+CSSymbolicatorRef (*CSSymbolicatorCreateWithPid)(pid_t pid);
 
-CSSymbolOwnerRef CSSymbolicatorGetSymbolOwnerWithAddressAtTime(
+CSSymbolOwnerRef (*CSSymbolicatorGetSymbolOwnerWithAddressAtTime)(
     CSSymbolicatorRef symbolicator,
     unsigned long long address,
     long time
 );
 
-CSSourceInfoRef CSSymbolOwnerGetSourceInfoWithAddress(
+CSSourceInfoRef (*CSSymbolOwnerGetSourceInfoWithAddress)(
     CSSymbolOwnerRef owner,
     unsigned long long address
 );
 
 
-const char* CSSourceInfoGetPath(CSSourceInfoRef info);
+const char* (*CSSourceInfoGetPath)(CSSourceInfoRef info);
 
-uint32_t CSSourceInfoGetLineNumber(CSSourceInfoRef info);
+uint32_t (*CSSourceInfoGetLineNumber)(CSSourceInfoRef info);
 
-uint32_t CSSourceInfoGetColumn(CSSourceInfoRef info);
+uint32_t (*CSSourceInfoGetColumn)(CSSourceInfoRef info);
 
 
-bool CSIsNull(CSTypeRef);
+bool (*CSIsNull)(CSTypeRef);
 
-} // extern "C"
+CSSymbolicatorRef symbolicator;
+
+bool TryInitializeCoreSymbolication() {
+  void* cs = dlopen("/System/Library/PrivateFrameworks/CoreSymbolication.framework/CoreSymbolication", RTLD_LAZY);
+  if (!cs) return false;
+
+#define KONAN_CS_LOOKUP(name) name = (decltype(name)) dlsym(cs, #name); if (!name) return false;
+
+  KONAN_CS_LOOKUP(CSSymbolicatorCreateWithPid)
+  KONAN_CS_LOOKUP(CSSymbolicatorGetSymbolOwnerWithAddressAtTime)
+  KONAN_CS_LOOKUP(CSSymbolOwnerGetSourceInfoWithAddress)
+  KONAN_CS_LOOKUP(CSSourceInfoGetPath)
+  KONAN_CS_LOOKUP(CSSourceInfoGetLineNumber)
+  KONAN_CS_LOOKUP(CSSourceInfoGetColumn)
+  KONAN_CS_LOOKUP(CSIsNull)
+
+#undef KONAN_CS_LOOKUP
+
+  symbolicator = CSSymbolicatorCreateWithPid(getpid());
+  return !CSIsNull(symbolicator);
+}
+
+} // namespace
 
 extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
   SourceInfo result = { .fileName = nullptr, .lineNumber = -1, .column = -1 };
 
-  static CSSymbolicatorRef symbolicator = CSSymbolicatorCreateWithPid(getpid());
+  static bool csIsAvailable = TryInitializeCoreSymbolication();
 
-  if (!CSIsNull(symbolicator)) {
+  if (csIsAvailable) {
     unsigned long long address = static_cast<unsigned long long>((uintptr_t)addr);
 
     CSSymbolOwnerRef symbolOwner = CSSymbolicatorGetSymbolOwnerWithAddressAtTime(symbolicator, address, kCSNow);

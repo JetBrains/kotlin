@@ -123,15 +123,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val includeBinaries: List<String> = 
         configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
 
-    internal val defaultSystemLibraries: List<String> = when (target) {
-        KonanTarget.MACOS_X64, KonanTarget.IOS_X64 -> if (debug) {
-            listOf(File(distribution.tbdDirectory(target)).child("CoreSymbolication.tbd").absolutePath)
-        } else {
-            emptyList()
-        }
-
-        else -> emptyList()
-    }
+    internal val defaultSystemLibraries: List<String> = emptyList()
 
     internal val languageVersionSettings =
             configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
