@@ -395,3 +395,11 @@ private fun convertIntegerLiteral(element: JKLiteralExpression): JKKtLiteralExpr
         element.type
     )
 }
+
+fun equalsExpression(left: JKExpression, right: JKExpression, symbolProvider: JKSymbolProvider) =
+    kotlinBinaryExpression(
+        left,
+        right,
+        KtTokens.EQEQ,
+        symbolProvider
+    )

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.*
 import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToSafeAccessInspection
-import org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceCallWithBinaryOperatorInspection
 import org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceGetOrSetInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention
@@ -138,7 +137,6 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             registerInspectionBasedProcessing(SimplifyAssertNotNullInspection()),
             registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention()),
             registerGeneralInspectionBasedProcessing(LiftReturnOrAssignmentInspection()),
-            registerGeneralInspectionBasedProcessing(ReplaceCallWithBinaryOperatorInspection()),
             registerGeneralInspectionBasedProcessing(MayBeConstantInspection()),
             registerIntentionBasedProcessing(RemoveEmptyPrimaryConstructorIntention()),
             registerDiagnosticBasedProcessing(Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) { element: KtDotQualifiedExpression, diagnostic ->
