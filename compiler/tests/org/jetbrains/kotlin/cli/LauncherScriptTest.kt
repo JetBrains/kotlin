@@ -83,7 +83,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
                 "kotlinc-js",
                 "$testDataDirectory/emptyMain.kt",
-                "-no-stdlib",
                 "-output", File(tmpdir, "out.js").path
         )
     }
