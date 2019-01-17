@@ -239,14 +239,9 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 
     private fun indicesByCollectionSize(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         val methodCall = javaSizeCall.selector as? JKMethodCallExpression ?: return null
-        val receiverType = javaSizeCall.receiver.type(context.symbolProvider) ?: return null
-        if (methodCall.identifier.name == "size"
+        return if (methodCall.identifier.deepestFqName() == "java.util.Collection.size"
             && methodCall.arguments.expressions.isEmpty()
-            && receiverType.isCollectionType(context.symbolProvider)
-        ) {
-            return toIndicesCall(javaSizeCall)
-        }
-        return null
+        ) toIndicesCall(javaSizeCall) else null
     }
 
     private fun indicesByArrayLength(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
