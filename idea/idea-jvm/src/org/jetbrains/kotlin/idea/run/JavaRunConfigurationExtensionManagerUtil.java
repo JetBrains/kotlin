@@ -10,7 +10,7 @@ import com.intellij.execution.JavaRunConfigurationExtensionManager;
 // Introduced for compatibility reasons only.
 // Method JavaRunConfigurationExtensionManager.getInstance() was rewritten to Kotlin in 191 and
 // can't be called from Kotlin anymore.
-// BUNCH: 191
+// BUNCH: 183
 public class JavaRunConfigurationExtensionManagerUtil {
     public static JavaRunConfigurationExtensionManager getInstance() {
         //noinspection IncompatibleAPI

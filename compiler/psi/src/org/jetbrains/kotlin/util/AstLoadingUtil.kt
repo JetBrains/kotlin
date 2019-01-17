@@ -12,7 +12,7 @@ import com.intellij.util.AstLoadingFilter
 /**
  * Absent in 181. Methods were renamed in 183.
  *
- * BUNCH: 183
+ * BUNCH: 182
  */
 @Suppress("IncompatibleAPI")
 object AstLoadingFilter {

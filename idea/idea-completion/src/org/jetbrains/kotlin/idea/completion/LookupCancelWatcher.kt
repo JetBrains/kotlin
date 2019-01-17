@@ -93,12 +93,12 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
         }
 
         override fun itemSelected(event: LookupEvent) {
-            // BUNCH: 183
+            // BUNCH: 182
             // Has default implementation since 183
         }
 
         override fun currentItemChanged(event: LookupEvent) {
-            // BUNCH: 183
+            // BUNCH: 182
             // Has default implementation since 183
         }
     }
@@ -113,7 +113,7 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
                 }
 
                 override fun editorCreated(event: EditorFactoryEvent) {
-                    // BUNCH: 183 Has default implementation since 183
+                    // BUNCH: 182 Has default implementation since 183
                     // Do nothing
                 }
             },

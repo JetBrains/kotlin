@@ -7,5 +7,6 @@ package org.jetbrains.kotlin.test
 
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture
 
+// BUNCH: 181
 @Suppress("IncompatibleAPI")
 class HierarchyViewTestFixture : HierarchyViewTestFixture()

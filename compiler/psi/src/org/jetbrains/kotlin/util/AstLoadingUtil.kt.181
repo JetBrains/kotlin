@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile
 /**
  * Absent in 181. Methods were renamed in 183.
  *
- * BUNCH: 183
+ * BUNCH: 182
  */
 @Suppress("IncompatibleAPI")
 object AstLoadingFilter {

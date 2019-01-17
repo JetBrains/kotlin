@@ -9,6 +9,6 @@ import com.intellij.util.Processor
 
 /**
  * Processor<T> till IDEA 181 and Processor<in T> since 182.
- * BUNCH: 182
+ * BUNCH: 181
  */
 typealias ExecutorProcessor<T> = Processor<T>
