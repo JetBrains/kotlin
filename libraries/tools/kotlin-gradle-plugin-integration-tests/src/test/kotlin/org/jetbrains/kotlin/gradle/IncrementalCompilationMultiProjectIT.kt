@@ -1,9 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.allKotlinFiles
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.getFilesByNames
-import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -283,6 +280,32 @@ open class A {
                 "BB.kt", "fooUseB.kt"
             )
             assertCompiledKotlinSources(project.relativize(affectedFiles))
+        }
+    }
+
+    @Test
+    fun testRemoveLibFromClasspath() {
+        val project = defaultProject()
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val appBuildGradle = project.projectDir.resolve("app/build.gradle")
+        val appBuildGradleContent = appBuildGradle.readText()
+        appBuildGradle.modify { it.checkedReplace("compile project(':lib')", "") }
+        val aaKt = project.projectDir.getFileByName("AA.kt")
+        aaKt.addNewLine()
+
+        project.build("build") {
+            assertFailed()
+        }
+
+        appBuildGradle.writeText(appBuildGradleContent)
+        aaKt.addNewLine()
+
+        project.build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(aaKt))
         }
     }
 }
