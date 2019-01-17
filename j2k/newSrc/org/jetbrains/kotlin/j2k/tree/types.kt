@@ -284,6 +284,13 @@ fun JKClassSymbol.isArrayType(): Boolean =
                 .map { PrimitiveType.valueOf(it.jvmPrimitiveType.name).arrayTypeFqName.asString() } +
             KotlinBuiltIns.FQ_NAMES.array.asString()
 
+fun JKType.isArrayType() =
+    when (this) {
+        is JKClassType -> classReference.isArrayType()
+        is JKJavaArrayType -> true
+        else -> false
+    }
+
 
 fun JKType.arrayInnerType(): JKType? =
     when (this) {

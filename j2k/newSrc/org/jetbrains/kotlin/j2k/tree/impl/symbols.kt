@@ -264,3 +264,15 @@ class JKUnresolvedClassSymbol(override val target: String) : JKClassSymbol, JKUn
     override val name: String
         get() = target.substringAfterLast('.')
 }
+
+
+fun JKSymbol.deepestFqName(): String? {
+    fun Any.deepestFqNameForTarget(): String? =
+        when (this) {
+            is PsiMethod -> (findDeepestSuperMethods().firstOrNull() ?: this).getKotlinFqName()?.asString()
+            is KtNamedFunction -> findDeepestSuperMethodsNoWrapping(this).firstOrNull()?.getKotlinFqName()?.asString()
+            is JKMethod -> psi()?.deepestFqNameForTarget()
+            else -> null
+        }
+    return target.deepestFqNameForTarget() ?: fqName
+}
