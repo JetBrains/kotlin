@@ -74,7 +74,11 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
                 if (shortText != text) {
                     printToToolWindow(file, expression, output)
                 }
-                editor.inlayModel.addInlineElement(lineEndOffset, InlayScratchFileRenderer(" ".repeat(spaceCount) + shortText, output.type))
+                editor.inlayModel.addInlineElement(
+                    lineEndOffset,
+                    true,
+                    InlayScratchFileRenderer(" ".repeat(spaceCount) + shortText, output.type)
+                )
             }
 
             val existing = editor.inlayModel
