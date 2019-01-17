@@ -22,8 +22,7 @@ fun test(f1: (Int) -> Unit, f2: kotlin.Function1<Int, Unit>) {
     dependantSelect2(null, ::foo)
     dependantSelect3(null, ::foo, ::cloneFoo)
     dependantSelect3(null, f1, ::bar)
-    // Here we have LOWER(Nothing?), UPPER(Function1) and therefore type variable is fixed to the former
-    dependantSelect3(null, <!TYPE_MISMATCH!>::bar<!>, f1)
+    dependantSelect3(null, ::bar, f1)
 
     // These errors are actually can be fixed (and, probably, should) if we force resolution of callable reference
     dependantSelect3(null, ::foo, <!TYPE_MISMATCH!>::bar<!>)

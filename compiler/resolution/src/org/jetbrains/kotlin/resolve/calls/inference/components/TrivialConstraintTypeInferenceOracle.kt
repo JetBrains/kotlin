@@ -19,6 +19,13 @@ class TrivialConstraintTypeInferenceOracle {
         // TODO: probably we also can take into account `T <: Any(?)` constraints
         return constraint.kind == ConstraintKind.LOWER && constraint.type.isNothingOrNullableNothing()
     }
+
+    // This function controls the choice between sub and super result type
+    // Even that Nothing(?) is the most specific type for subtype, it doesn't bring valuable information to the user,
+    // therefore it is discriminated in favor of supertype
+    fun isSuitableResultedType(resultType: UnwrappedType): Boolean {
+        return !resultType.isNothingOrNullableNothing()
+    }
 }
 
 private fun UnwrappedType.isNothingOrNullableNothing(): Boolean =
