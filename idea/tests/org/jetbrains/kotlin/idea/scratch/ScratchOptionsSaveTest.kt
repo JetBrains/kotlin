@@ -33,14 +33,17 @@ class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
 
         Assert.assertEquals(
             "This test checks that checkbox options are restored after file closing. Not all checkboxes are checked in this test",
-            2,
+            3,
             ScratchTopPanel::class.declaredMemberProperties.filter { it.returnType == JCheckBox::class.createType() }.size
         )
 
         val newIsReplValue = !scratchPanelBeforeClosingFile.scratchFile.options.isRepl
         val newIsMakeBeforeRunValue = !scratchPanelBeforeClosingFile.scratchFile.options.isMakeBeforeRun
+        val newIsInteractiveModeValue = !scratchPanelBeforeClosingFile.scratchFile.options.isInteractiveMode
+
         scratchPanelBeforeClosingFile.setReplMode(newIsReplValue)
         scratchPanelBeforeClosingFile.setMakeBeforeRun(newIsMakeBeforeRunValue)
+        scratchPanelBeforeClosingFile.setInteractiveMode(newIsInteractiveModeValue)
 
         myManager.closeFile(scratchFile)
         myManager.openFile(scratchFile, true)
@@ -52,6 +55,11 @@ class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
             "Wrong value for isMakeBeforeRun checkbox",
             newIsMakeBeforeRunValue,
             scratchPanelAfterClosingFile.scratchFile.options.isMakeBeforeRun
+        )
+        Assert.assertEquals(
+            "Wrong value for isInteractiveMode checkbox",
+            newIsInteractiveModeValue,
+            scratchPanelAfterClosingFile.scratchFile.options.isInteractiveMode
         )
     }
 }

@@ -50,11 +50,13 @@ abstract class ScratchFile(val project: Project, val editor: TextEditor) {
     }
 
     abstract fun getExpressions(psiFile: PsiFile): List<ScratchExpression>
+    abstract fun hasErrors(): Boolean
 }
 
 data class ScratchExpression(val element: PsiElement, val lineStart: Int, val lineEnd: Int = lineStart)
 
 data class ScratchFileOptions(
     val isRepl: Boolean = false,
-    val isMakeBeforeRun: Boolean = false
+    val isMakeBeforeRun: Boolean = false,
+    val isInteractiveMode: Boolean = true
 )
