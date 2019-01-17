@@ -31,7 +31,7 @@ fun KtCodeStyleSettings.restore() {
 }
 
 fun ktCodeStyleSettings(project: Project): KtCodeStyleSettings? {
-    @Suppress("DEPRECATION") // Suggested update is not supported in 173. BUNCH: 181
+    @Suppress("DEPRECATION") // Suggested update is not supported in 173. BUNCH: 173
     val settings = CodeStyleSettingsManager.getSettings(project)
 
     val ktCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE) as KotlinCommonCodeStyleSettings

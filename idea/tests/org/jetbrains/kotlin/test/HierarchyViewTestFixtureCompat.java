@@ -20,7 +20,7 @@ import java.util.*;
  *
  * Use org.jetbrains.kotlin.test.HierarchyViewTestFixture typealias instead.
  *
- * BUNCH: 182
+ * BUNCH: 181
  */
 @SuppressWarnings("ALL")
 public class HierarchyViewTestFixtureCompat {

@@ -13,17 +13,17 @@ import com.intellij.execution.configurations.RunConfigurationBase
 import org.jdom.Element
 
 // Generalized in 183
-// BUNCH: 183
+// BUNCH: 182
 typealias RunConfigurationBaseAny = RunConfigurationBase<*>
 
 // Generalized in 183
-// BUNCH: 183
+// BUNCH: 182
 typealias ModuleBasedConfigurationAny = ModuleBasedConfiguration<*, *>
 
 // Generalized in 183
-// BUNCH: 183
+// BUNCH: 182
 typealias LocatableConfigurationBaseAny = LocatableConfigurationBase<Any>
 
 // Generalized in 183
-// BUNCH: 183
+// BUNCH: 182
 typealias ModuleBasedConfigurationElement<T> = ModuleBasedConfiguration<T, Element>
