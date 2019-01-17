@@ -79,6 +79,10 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             kaptFlagsForWorker
         )
 
+        // Skip annotation processing if no annotation processors were provided.
+        if (annotationProcessorFqNames.isEmpty() && kaptClasspath.isEmpty())
+            return
+
         val kaptClasspath = kaptJars + findKotlinStdlibClasspath(project)
 
         workerExecutor.submit(KaptExecution::class.java) { config ->

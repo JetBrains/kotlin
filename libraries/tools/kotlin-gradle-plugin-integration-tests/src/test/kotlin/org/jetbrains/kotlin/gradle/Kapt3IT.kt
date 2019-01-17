@@ -56,6 +56,17 @@ class Kapt3WorkersIT : Kapt3IT() {
             assertSubstringCount("Loaded com.sun.tools.javac.util.Context from", 1)
         }
     }
+
+    @Test
+    fun testKaptSkipped() {
+        val gradleVersionRequired = GradleVersionRequired.AtLeast("4.3")
+
+        val project =
+            Project("kaptSkipped", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
 }
 
 open class Kapt3IT : Kapt3BaseIT() {
