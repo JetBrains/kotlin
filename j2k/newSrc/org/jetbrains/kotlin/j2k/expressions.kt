@@ -449,3 +449,17 @@ fun equalsExpression(left: JKExpression, right: JKExpression, symbolProvider: JK
         KtTokens.EQEQ,
         symbolProvider
     )
+
+fun JKClass.getOrCreateCompainonObject(): JKClass =
+    (declarationList.firstOrNull { it is JKClass && it.classKind == JKClass.ClassKind.COMPANION } as? JKClass)
+        ?: JKClassImpl(
+            JKNameIdentifierImpl(""),
+            JKInheritanceInfoImpl(emptyList(), emptyList()),
+            JKClass.ClassKind.COMPANION,
+            JKTypeParameterListImpl(),
+            JKClassBodyImpl(),
+            JKAnnotationListImpl(),
+            emptyList(),
+            Visibility.PUBLIC,
+            Modality.FINAL
+        ).also { classBody.declarations += it }

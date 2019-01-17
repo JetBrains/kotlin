@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.getOrCreateCompainonObject
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
@@ -16,38 +17,14 @@ class StaticsToCompanionExtractConversion : RecursiveApplicableConversionBase() 
             declaration is JKExtraModifiersOwner &&
                     declaration.extraModifiers.any { it == ExtraModifier.STATIC }
         }
-
         if (statics.isEmpty()) return recurse(element)
-        val companion = findOrCreateCompanion(element)
-
+        val companion = element.getOrCreateCompainonObject()
 
         element.classBody.declarations -= statics
         companion.classBody.declarations += statics.onEach { declaration ->
             (declaration as JKExtraModifiersOwner)
             declaration.extraModifiers -= ExtraModifier.STATIC
         }
-
         return recurse(element)
-    }
-
-    fun findOrCreateCompanion(element: JKClass): JKClass {
-        val companion = element.declarationList
-            .asSequence()
-            .filterIsInstance<JKClass>()
-            .firstOrNull { it.classKind == JKClass.ClassKind.COMPANION }
-
-        if (companion != null) return companion
-
-        return JKClassImpl(
-            JKNameIdentifierImpl(""),
-            JKInheritanceInfoImpl(emptyList(), emptyList()),
-            JKClass.ClassKind.COMPANION,
-            JKTypeParameterListImpl(),
-            JKClassBodyImpl(),
-            JKAnnotationListImpl(),
-            emptyList(),
-            Visibility.PUBLIC,
-            Modality.FINAL
-        ).also { element.classBody.declarations += it }
     }
 }
