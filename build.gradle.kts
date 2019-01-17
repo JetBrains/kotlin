@@ -811,12 +811,36 @@ allprojects {
     }
 }
 
-allprojects {
-    apply(mapOf("plugin" to "idea"))
+val ideaSdkPath: String
+    get() = IntellijRootUtils.getIntellijRootDir(rootProject).absolutePath
+
+// todo: use buildsrc/tasks.kt
+fun org.jetbrains.gradle.ext.JUnit.configureForKotlin() {
+    vmParameters = listOf(
+        "-ea",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-Xmx1600m",
+        "-XX:+UseCodeCacheFlushing",
+        "-XX:ReservedCodeCacheSize=128m",
+        "-Djna.nosys=true",
+        "-Didea.is.unit.test=true",
+        "-Didea.home.path=$ideaSdkPath",
+        "-Djps.kotlin.home=$ideaPluginDir",
+        "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false"
+    ).joinToString(" ")
+    envs = mapOf(
+        "NO_FS_ROOTS_ACCESS_CHECK" to "true",
+        "PROJECT_CLASSES_DIRS" to "out/test/org.jetbrains.kotlin.compiler.test"
+    )
+    workingDirectory = rootDir.toString()
 }
 
 val isJpsBuildEnabled = findProperty("jpsBuild")?.toString() == "true"
-if (isJpsBuildEnabled) {
+if (isJpsBuildEnabled && System.getProperty("idea.active") != null) {
+    allprojects {
+        apply(mapOf("plugin" to "idea"))
+    }
+
     afterEvaluate {
         allprojects {
             idea {
@@ -838,6 +862,70 @@ if (isJpsBuildEnabled) {
                     delegateActions {
                         delegateBuildRunToGradle = false
                         testRunner = PLATFORM
+                    }
+
+                    runConfigurations {
+                        application("[JPS] IDEA") {
+                            // todo: use buildsrc/intellijDependencies.kt
+                            moduleName = "org.jetbrains.kotlin.idea-runner.main"
+                            workingDirectory = File(intellijRootDir(), "bin").toString()
+                            mainClass = "com.intellij.idea.Main"
+                            jvmArgs = listOf(
+                                "-Xmx1250m",
+                                "-XX:ReservedCodeCacheSize=240m",
+                                "-XX:+HeapDumpOnOutOfMemoryError",
+                                "-ea",
+                                "-Didea.is.internal=true",
+                                "-Didea.debug.mode=true",
+                                "-Didea.system.path=$ideaSandboxDir",
+                                "-Didea.config.path=$ideaSandboxDir/config",
+                                "-Dapple.laf.useScreenMenuBar=true",
+                                "-Dapple.awt.graphics.UseQuartz=true",
+                                "-Dsun.io.useCanonCaches=false",
+                                "-Dplugin.path=${ideaPluginDir}"
+                            ).joinToString(" ")
+                        }
+
+                        application("[JPS] Generate All Tests") {
+                            moduleName = "org.jetbrains.kotlin.generate-all-tests.test"
+                            workingDirectory = rootDir.toString()
+                            mainClass = "org.jetbrains.kotlin.pill.generateAllTests.Main"
+                        }
+
+                        defaults<org.jetbrains.gradle.ext.JUnit> {
+                            configureForKotlin()
+                        }
+
+                        // todo: replace `pattern` with `package`, when `com.intellij.execution.junit.JUnitRunConfigurationImporter#process` will be fixed
+                        junit("[JPS] All IDEA Plugin Tests") {
+                            moduleName = "org.jetbrains.kotlin.idea.test"
+                            pattern = "org.jetbrains.kotlin.*"
+                            configureForKotlin()
+                        }
+
+                        junit("[JPS] Compiler Tests") {
+                            moduleName = "org.jetbrains.kotlin.compiler.test"
+                            pattern = "org.jetbrains.kotlin.*"
+                            configureForKotlin()
+                        }
+
+                        junit("[JPS] JVM Backend Tests") {
+                            moduleName = "org.jetbrains.kotlin.idea.test"
+                            pattern = "org.jetbrains.kotlin.codegen.*"
+                            configureForKotlin()
+                        }
+
+                        junit("[JPS] JS Backend Tests") {
+                            moduleName = "org.jetbrains.kotlin.js.tests.test"
+                            pattern = "org.jetbrains.kotlin.js.test.*"
+                            configureForKotlin()
+                        }
+
+                        junit("[JPS] Java 8 Tests") {
+                            moduleName = "org.jetbrains.kotlin.tests-java8.test"
+                            pattern = "org.jetbrains.kotlin.*"
+                            configureForKotlin()
+                        }
                     }
                 }
             }
