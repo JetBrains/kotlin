@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.I
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
 import org.jetbrains.kotlin.idea.j2k.postProcessing.ConvertDataClass
 import org.jetbrains.kotlin.idea.j2k.postProcessing.ConvertGettersAndSetters
+import org.jetbrains.kotlin.idea.j2k.postProcessing.resolve
+import org.jetbrains.kotlin.idea.j2k.postProcessing.topLevelContainingClassOrObject
 import org.jetbrains.kotlin.idea.quickfix.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -160,6 +162,9 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
 
                 override val writeActionNeeded: Boolean = true
             }),
+
+            SingleProcessing(RemoveRedundantTypeQualifierProcessing()),
+            SingleProcessing(RemoveRedundantExpressionQualifierProcessing()),
 
             registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
                 val expression = RemoveUselessCastFix.invoke(element)
@@ -665,6 +670,50 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
                 }
             }
         }
+    }
+
+    private class RemoveRedundantExpressionQualifierProcessing : J2kPostProcessing {
+        private fun check(qualifiedExpression: KtQualifiedExpression): Boolean {
+            val qualifier = (qualifiedExpression.receiverExpression as? KtNameReferenceExpression)
+                ?.referenceExpression()
+                ?.resolve() as? KtClassOrObject ?: return false
+            val topLevelClass = qualifiedExpression.getStrictParentOfType<KtClassOrObject>() ?: return false
+            return topLevelClass == qualifier
+        }
+
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtQualifiedExpression) return null
+            if (!check(element)) return null
+            return {
+                if (element.isValid() && check(element)) {
+                    element.replace(element.selectorExpression!!)
+                }
+            }
+        }
+
+        override val writeActionNeeded: Boolean = true
+    }
+
+    private class RemoveRedundantTypeQualifierProcessing : J2kPostProcessing {
+        private fun check(reference: KtUserType): Boolean {
+            val qualifierClass = reference.qualifier
+                ?.referenceExpression
+                ?.resolve() as? KtClassOrObject ?: return false
+            val topLevelClass = reference.topLevelContainingClassOrObject() ?: return false
+            return topLevelClass.isAncestor(qualifierClass)
+        }
+
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtUserType) return null
+            if (!check(element)) return null
+            return {
+                if (element.isValid && check(element)) {
+                    element.deleteQualifier()
+                }
+            }
+        }
+
+        override val writeActionNeeded: Boolean = true
     }
 
 }

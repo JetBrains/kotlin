@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 
 fun KtExpression.asProperty(): KtProperty? =
@@ -33,3 +35,13 @@ fun KtExpression.unpackedReferenceToProperty(): KtProperty? =
 
 fun KtDeclaration.type() =
     (resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType
+
+fun KtElement.topLevelContainingClassOrObject(): KtClassOrObject? =
+    generateSequence(getStrictParentOfType<KtClassOrObject>()) {
+        it.getStrictParentOfType()
+    }.lastOrNull()
+
+fun KtReferenceExpression.resolve() =
+    references
+        .firstOrNull { it is KtSimpleNameReference }
+        ?.resolve()
