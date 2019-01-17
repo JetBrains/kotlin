@@ -102,8 +102,7 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
         return false;
     }
 
-    //@Override since 181
-    //add `@Override` when BUNCH: 173 is dropped
+    @Override
     public UserDataHolderEx getCustomContext() {
         return null;
     }
