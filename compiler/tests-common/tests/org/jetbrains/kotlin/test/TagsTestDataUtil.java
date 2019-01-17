@@ -68,11 +68,12 @@ public class TagsTestDataUtil {
             String tagText;
             if (point.isStart) {
                 String attributesString = point.getAttributesString();
+                String closeSuffix = point.isClosed ? "/" : "";
                 if (attributesString.isEmpty()) {
-                    tagText = String.format("<%s>", point.getName());
+                    tagText = String.format("<%s%s>", point.getName(), closeSuffix);
                 }
                 else {
-                    tagText = String.format("<%s %s>", point.getName(), attributesString);
+                    tagText = String.format("<%s %s%s>", point.getName(), attributesString, closeSuffix);
                 }
             }
             else {
@@ -88,11 +89,23 @@ public class TagsTestDataUtil {
     public static class TagInfo<Data> implements Comparable<TagInfo<?>> {
         protected final int offset;
         protected final boolean isStart;
+        protected final boolean isClosed;
+        protected final boolean isFixed;
         protected final Data data;
 
         public TagInfo(int offset, boolean start, Data data) {
+            this(offset, start, false, false, data);
+        }
+
+        public TagInfo(int offset, boolean isStart, boolean isClosed, boolean isFixed, Data data) {
+            if (isClosed && !isStart) {
+                throw new IllegalArgumentException("isClosed should be true only for start tags");
+            }
+
             this.offset = offset;
-            isStart = start;
+            this.isStart = isStart;
+            this.isClosed = isClosed;
+            this.isFixed = isFixed;
             this.data = data;
         }
 
@@ -105,6 +118,10 @@ public class TagsTestDataUtil {
             if (isStart != other.isStart) {
                 // All "starts" should go after "ends" for same offset
                 return isStart ? -1 : 1;
+            }
+
+            if (isFixed || other.isFixed) {
+                return 0;
             }
 
             String thisTag = this.getName();
