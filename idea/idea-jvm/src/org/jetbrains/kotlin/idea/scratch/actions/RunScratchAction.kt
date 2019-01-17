@@ -25,6 +25,7 @@ import com.intellij.task.ProjectTaskManager
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
+import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 import org.jetbrains.kotlin.idea.scratch.LOG as log
 
 class RunScratchAction : ScratchAction(
@@ -42,70 +43,77 @@ class RunScratchAction : ScratchAction(
         val project = e.project ?: return
         val scratchPanel = getScratchPanelFromSelectedEditor(project) ?: return
 
-        val scratchFile = scratchPanel.scratchFile
-        val psiFile = scratchFile.getPsiFile() ?: return
+        doAction(scratchPanel, false)
+    }
+
+    companion object {
+        fun doAction(scratchPanel: ScratchTopPanel, isAutoRun: Boolean) {
+            val scratchFile = scratchPanel.scratchFile
+            val psiFile = scratchFile.getPsiFile() ?: return
 
             val isMakeBeforeRun = scratchFile.options.isMakeBeforeRun
             val isRepl = scratchFile.options.isRepl
 
-        val provider = ScratchFileLanguageProvider.get(psiFile.language) ?: return
+            val provider = ScratchFileLanguageProvider.get(psiFile.language) ?: return
 
-        log.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
+            log.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
 
-        val defaultOutputHandler = provider.getOutputHandler()
+            val defaultOutputHandler = provider.getOutputHandler()
 
-        val module = scratchPanel.getModule()
+            val module = scratchPanel.getModule()
 
-        @Suppress("FoldInitializerAndIfToElvis")
-        if (module == null) {
-            return defaultOutputHandler.error(scratchFile, "Module should be selected")
-        }
-
-        val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
-
-        @Suppress("FoldInitializerAndIfToElvis")
-        if (executor == null) {
-            return defaultOutputHandler.error(scratchFile, "Couldn't run ${psiFile.name}")
-        }
-
-        executor.addOutputHandler(defaultOutputHandler)
-
-        executor.addOutputHandler(object : ScratchOutputHandlerAdapter() {
-            override fun onStart(file: ScratchFile) {
-                ScratchCompilationSupport.start(file, executor)
-                scratchPanel.updateToolbar()
+            @Suppress("FoldInitializerAndIfToElvis")
+            if (module == null) {
+                return defaultOutputHandler.error(scratchFile, "Module should be selected")
             }
 
-            override fun onFinish(file: ScratchFile) {
-                ScratchCompilationSupport.stop()
-                scratchPanel.updateToolbar()
-            }
-        })
+            val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
 
-        fun executeScratch() {
-            try {
-                executor.execute()
-            } catch (ex: Throwable) {
-                executor.errorOccurs("Exception occurs during Run Scratch Action", ex, true)
+            @Suppress("FoldInitializerAndIfToElvis")
+            if (executor == null) {
+                return defaultOutputHandler.error(scratchFile, "Couldn't run ${psiFile.name}")
             }
-        }
 
-        if (isMakeBeforeRun) {
-            ProjectTaskManager.getInstance(project).build(arrayOf(module)) { result ->
-                if (result.isAborted || result.errors > 0) {
-                    executor.errorOccurs("There were compilation errors in module ${module.name}")
+            executor.addOutputHandler(defaultOutputHandler)
+
+            executor.addOutputHandler(object : ScratchOutputHandlerAdapter() {
+                override fun onStart(file: ScratchFile) {
+                    ScratchCompilationSupport.start(file, executor)
+                    scratchPanel.updateToolbar()
                 }
 
-                if (DumbService.isDumb(project)) {
-                    DumbService.getInstance(project).smartInvokeLater {
+                override fun onFinish(file: ScratchFile) {
+                    ScratchCompilationSupport.stop()
+                    scratchPanel.updateToolbar()
+                }
+            })
+
+            fun executeScratch() {
+                try {
+                    executor.execute()
+                } catch (ex: Throwable) {
+                    executor.errorOccurs("Exception occurs during Run Scratch Action", ex, true)
+                }
+            }
+
+            if (!isAutoRun && isMakeBeforeRun) {
+                val project = scratchPanel.scratchFile.project
+                ProjectTaskManager.getInstance(project).build(arrayOf(module)) { result ->
+                    if (result.isAborted || result.errors > 0) {
+                        executor.errorOccurs("There were compilation errors in module ${module.name}")
+                    }
+
+                    if (DumbService.isDumb(project)) {
+                        DumbService.getInstance(project).smartInvokeLater {
+                            executeScratch()
+                        }
+                    } else {
                         executeScratch()
                     }
-                } else {
-                    executeScratch()
                 }
+            } else {
+                executeScratch()
             }
-        } else {
-            executeScratch()
         }
     }
 

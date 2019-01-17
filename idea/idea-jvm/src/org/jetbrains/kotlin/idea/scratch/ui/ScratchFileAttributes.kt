@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.idea.core.util.cachedFileAttribute
 import org.jetbrains.kotlin.idea.scratch.ScratchFileOptions
 
 var VirtualFile.scratchFileOptions: ScratchFileOptions? by cachedFileAttribute(
-    name = "kotlin-scratch-panel-config",
+    name = "kotlin-scratch-file-options",
     version = 1,
-    read = { ScratchFileOptions(readBoolean(), readBoolean()) },
+    read = { ScratchFileOptions(readBoolean(), readBoolean(), readBoolean()) },
     write = {
         writeBoolean(it.isRepl)
         writeBoolean(it.isMakeBeforeRun)
+        writeBoolean(it.isInteractiveMode)
     }
 )

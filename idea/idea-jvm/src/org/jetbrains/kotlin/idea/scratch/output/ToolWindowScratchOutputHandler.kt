@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.idea.scratch.output
 
 import com.intellij.execution.filters.OpenFileHyperlinkInfo
 import com.intellij.execution.impl.ConsoleViewImpl
+import com.intellij.execution.runners.ExecutionUtil
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.ide.scratch.ScratchFileType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ex.EditorEx
@@ -47,7 +49,7 @@ fun getToolwindowHandler(): ScratchOutputHandler {
 private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        printToConsole(file.project) {
+        printToConsole(file) {
             val psiFile = file.getPsiFile()
             if (psiFile != null) {
                 printHyperlink(
@@ -65,14 +67,17 @@ private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
     }
 
     override fun error(file: ScratchFile, message: String) {
-        printToConsole(file.project) {
+        printToConsole(file) {
             print(message, ConsoleViewContentType.ERROR_OUTPUT)
         }
     }
 
-    private fun printToConsole(project: Project, print: ConsoleViewImpl.() -> Unit) {
+    private fun printToConsole(file: ScratchFile, print: ConsoleViewImpl.() -> Unit) {
         ApplicationManager.getApplication().invokeLater {
-            val toolWindow = getToolWindow(project) ?: createToolWindow(project)
+            val project = file.project.takeIf { !it.isDisposed } ?: return@invokeLater
+
+            val toolWindow = getToolWindow(project) ?: createToolWindow(file)
+
             val contents = toolWindow.contentManager.contents
             for (content in contents) {
                 val component = content.component
@@ -81,8 +86,14 @@ private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
                     component.print("\n", ConsoleViewContentType.NORMAL_OUTPUT)
                 }
             }
+
             toolWindow.setAvailable(true, null)
-            toolWindow.show(null)
+
+            if (!file.options.isInteractiveMode) {
+                toolWindow.show(null)
+            }
+
+            toolWindow.icon = ExecutionUtil.getLiveIndicator(ScratchFileType.INSTANCE.icon)
         }
     }
 
@@ -96,8 +107,12 @@ private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
                     component.clear()
                 }
             }
-            toolWindow.setAvailable(false, null)
-            toolWindow.hide(null)
+
+            if (!file.options.isInteractiveMode) {
+                toolWindow.hide(null)
+            }
+
+            toolWindow.icon = ScratchFileType.INSTANCE.icon
         }
     }
 
@@ -112,11 +127,17 @@ private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
         return toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
     }
 
-    private fun createToolWindow(project: Project): ToolWindow {
+    private fun createToolWindow(file: ScratchFile): ToolWindow {
+        val project = file.project
         val toolWindowManager = ToolWindowManager.getInstance(project)
         toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, true, ToolWindowAnchor.BOTTOM)
         val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
         ScratchToolWindowFactory().createToolWindowContent(project, window)
+
+        Disposer.register(file.editor, Disposable {
+            window.setAvailable(false, null)
+        })
+
         return window
     }
 }
@@ -133,6 +154,7 @@ private class ScratchToolWindowFactory : ToolWindowFactory {
         val consoleView = ConsoleViewImpl(project, true)
         toolWindow.isToHideOnEmptyContent = true
         toolWindow.icon = ScratchFileType.INSTANCE.icon
+        toolWindow.hide(null)
 
         val contentManager = toolWindow.contentManager
         val content = contentManager.factory.createContent(consoleView.component, null, false)
