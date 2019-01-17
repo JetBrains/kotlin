@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.logging.*
-import org.jetbrains.kotlin.gradle.tasks.clearLocalStateDirectories
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
@@ -49,7 +48,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment?,
     val incrementalModuleInfo: IncrementalModuleInfo?,
     val buildFile: File?,
-    val localStateDirectories: List<File>,
+    val outputFiles: List<File>,
     val taskPath: String
 ) : Serializable {
     companion object {
@@ -77,7 +76,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val incrementalCompilationEnvironment = config.incrementalCompilationEnvironment
     private val incrementalModuleInfo = config.incrementalModuleInfo
     private val buildFile = config.buildFile
-    private val localStateDirectories = config.localStateDirectories
+    private val outputFiles = config.outputFiles
     private val taskPath = config.taskPath
 
     private val log: KotlinLogger =
@@ -232,7 +231,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             compilerMode = CompilerMode.INCREMENTAL_COMPILER,
             targetPlatform = targetPlatform,
             usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
-            localStateDirs = localStateDirectories,
+            outputFiles = outputFiles,
             multiModuleICSettings = icEnv.multiModuleICSettings,
             modulesInfo = incrementalModuleInfo!!
         )

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
@@ -14,7 +15,7 @@ internal class GradleCompilerEnvironment(
     val compilerClasspath: List<File>,
     messageCollector: GradlePrintingMessageCollector,
     outputItemsCollector: OutputItemsCollector,
-    val localStateDirectories: List<File>,
+    val outputFiles: FileCollection,
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment? = null
 ) : CompilerEnvironment(Services.EMPTY, messageCollector, outputItemsCollector) {
     val toolsJar: File? by lazy { findToolsJar() }

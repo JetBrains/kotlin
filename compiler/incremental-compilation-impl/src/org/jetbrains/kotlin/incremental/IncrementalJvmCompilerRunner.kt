@@ -65,15 +65,15 @@ fun makeIncrementally(
 
     withIC {
         val compiler = IncrementalJvmCompilerRunner(
-                cachesDir,
-                sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
-                reporter,
-                // Use precise setting in case of non-Gradle build
-                usePreciseJavaTracking = true,
-                localStateDirs = emptyList(),
-                buildHistoryFile = buildHistoryFile,
-                modulesApiHistory = EmptyModulesApiHistory,
-                kotlinSourceFilesExtensions = kotlinExtensions
+            cachesDir,
+            sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
+            reporter,
+            // Use precise setting in case of non-Gradle build
+            usePreciseJavaTracking = true,
+            outputFiles = emptyList(),
+            buildHistoryFile = buildHistoryFile,
+            modulesApiHistory = EmptyModulesApiHistory,
+            kotlinSourceFilesExtensions = kotlinExtensions
         )
         compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
@@ -102,15 +102,15 @@ class IncrementalJvmCompilerRunner(
     reporter: ICReporter,
     private val usePreciseJavaTracking: Boolean,
     buildHistoryFile: File,
-    localStateDirs: Collection<File>,
+    outputFiles: Collection<File>,
     private val modulesApiHistory: ModulesApiHistory,
     override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
     reporter,
-    localStateDirs = localStateDirs,
-        buildHistoryFile = buildHistoryFile
+    outputFiles = outputFiles,
+    buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
             IncrementalCompilation.isEnabledForJvm()

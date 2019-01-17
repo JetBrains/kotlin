@@ -5,6 +5,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.cacheOnlyIfEnabledForKotlin
 import org.jetbrains.kotlin.gradle.tasks.isBuildCacheSupported
@@ -13,7 +14,7 @@ import java.io.File
 import java.util.jar.JarFile
 
 @CacheableTask
-abstract class KaptTask : ConventionTask() {
+abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     init {
         cacheOnlyIfEnabledForKotlin()
 
@@ -23,6 +24,8 @@ abstract class KaptTask : ConventionTask() {
             outputs.cacheIf(reason) { useBuildCache }
         }
     }
+
+    override fun localStateDirectories(): FileCollection = project.files()
 
     @get:Internal
     internal lateinit var kotlinCompileTask: KotlinCompile

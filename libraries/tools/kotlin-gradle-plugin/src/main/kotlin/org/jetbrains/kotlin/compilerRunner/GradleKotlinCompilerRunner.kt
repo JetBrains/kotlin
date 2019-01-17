@@ -140,7 +140,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             incrementalCompilationEnvironment = incrementalCompilationEnvironment,
             incrementalModuleInfo = modulesInfo,
             buildFile = buildFile,
-            localStateDirectories = environment.localStateDirectories,
+            outputFiles = environment.outputFiles.toList(),
             taskPath = task.path
         )
         TaskLoggers.put(task.path, task.logger)

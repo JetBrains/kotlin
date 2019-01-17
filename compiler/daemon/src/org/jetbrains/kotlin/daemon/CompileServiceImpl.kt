@@ -582,7 +582,7 @@ class CompileServiceImpl(
             javaSourceRoots,
             reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
-            localStateDirs = incrementalCompilationOptions.localStateDirs,
+            outputFiles = incrementalCompilationOptions.outputFiles,
             usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
             kotlinSourceFilesExtensions = allKotlinExtensions

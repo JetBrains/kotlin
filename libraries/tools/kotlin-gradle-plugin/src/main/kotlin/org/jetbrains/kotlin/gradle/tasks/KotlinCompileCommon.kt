@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
+import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
@@ -70,7 +71,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         val compilerRunner = compilerRunner()
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
-            localStateDirectories = localStateDirectories()
+            outputFiles = allOutputFiles()
         )
         compilerRunner.runMetadataCompilerAsync(sourceRoots.kotlinSourceFiles, args, environment)
     }
