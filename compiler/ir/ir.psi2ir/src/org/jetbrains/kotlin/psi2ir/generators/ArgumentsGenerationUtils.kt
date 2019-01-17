@@ -134,14 +134,10 @@ private fun StatementGenerator.shouldGenerateReceiverAsSingletonReference(receiv
 }
 
 private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor: ClassDescriptor): IrExpression {
-    val expressionReceiver =
-        receiver as? ExpressionReceiver ?: throw AssertionError("'this' or 'super' receiver should be an expression receiver")
+    val expressionReceiver = receiver as? ExpressionReceiver
+        ?: throw AssertionError("'this' or 'super' receiver should be an expression receiver")
     val ktReceiver = expressionReceiver.expression
-    return IrGetValueImpl(
-        ktReceiver.startOffsetSkippingComments, ktReceiver.endOffset,
-        expressionReceiver.type.toIrType(),
-        context.symbolTable.referenceValueParameter(classDescriptor.thisAsReceiverParameter)
-    )
+    return generateThisReceiver(ktReceiver.startOffsetSkippingComments, ktReceiver.endOffset, expressionReceiver.type, classDescriptor)
 }
 
 fun StatementGenerator.generateBackingFieldReceiver(

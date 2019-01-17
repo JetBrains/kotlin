@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR, JS_IR
-
 fun WithCompanion.test(): String {
     object : WithCompanion(this) {}
     return "OK"
