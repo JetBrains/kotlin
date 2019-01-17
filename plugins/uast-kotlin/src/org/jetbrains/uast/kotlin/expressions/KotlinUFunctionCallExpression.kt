@@ -204,13 +204,16 @@ class KotlinUFunctionCallExpression(
     }
 
     private fun isAnnotationArgumentArrayInitializer(): Boolean {
-        val resolvedCall = resolvedCall ?: return false
         // KtAnnotationEntry (or KtCallExpression when annotation is nested) -> KtValueArgumentList -> KtValueArgument -> arrayOf call
-        return when (val elementAt2 = psi.parents.elementAtOrNull(2)) {
+        val isAnnotationArgument = when (val elementAt2 = psi.parents.elementAtOrNull(2)) {
             is KtAnnotationEntry -> true
             is KtCallExpression -> elementAt2.getParentOfType<KtAnnotationEntry>(true, KtDeclaration::class.java) != null
             else -> false
-        } && CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)
+        }
+        if (!isAnnotationArgument) return false
+
+        val resolvedCall = resolvedCall ?: return false
+        return CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)
     }
 
     override fun convertParent(): UElement? = super.convertParent().let { result ->
