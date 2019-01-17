@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import com.intellij.psi.JavaTokenType
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
@@ -14,26 +15,46 @@ import org.jetbrains.kotlin.lexer.KtTokens
 class OperatorExpressionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKOperatorExpression) return recurse(element)
-        val operatorToken =
-            (element.operator as? JKJavaOperatorImpl)?.token?.toKtToken() ?: return recurse(element)
+        val operator = element.operator as? JKJavaOperatorImpl ?: return recurse(element)
 
         return when (element) {
             is JKBinaryExpression -> {
+                val operatorToken = operator.token.toKtToken()
                 val left = applyToElement(element::left.detached()) as JKExpression
                 val right = applyToElement(element::right.detached()) as JKExpression
                 recurse(convertBinaryExpression(left, right, operatorToken))
             }
             is JKPrefixExpression -> {
                 val operand = applyToElement(element::expression.detached()) as JKExpression
-                recurse(kotlinPrefixExpression(operand, operatorToken, context.symbolProvider))
+                recurse(convertPrefixExpression(operand, operator))
             }
             is JKPostfixExpression -> {
+                val operatorToken = operator.token.toKtToken()
                 val operand = applyToElement(element::expression.detached()) as JKExpression
                 recurse(kotlinPostfixExpression(operand, operatorToken, context.symbolProvider))
             }
             else -> TODO(element.javaClass.toString())
         } ?: recurse(element)
     }
+
+
+    private fun convertPrefixExpression(operand: JKExpression, javaOperator: JKJavaOperatorImpl) =
+        convertTildeExpression(operand, javaOperator)
+            ?: kotlinPrefixExpression(operand, javaOperator.token.toKtToken(), context.symbolProvider)
+
+    private fun convertTildeExpression(operand: JKExpression, javaOperator: JKJavaOperatorImpl): JKExpression? =
+        if (javaOperator.token.psiToken == JavaTokenType.TILDE) {
+            val invCall =
+                JKKtCallExpressionImpl(
+                    context.symbolProvider.provideByFqName("kotlin.Int.inv"),//TODO check if Long
+                    JKExpressionListImpl()
+                )
+            JKQualifiedExpressionImpl(
+                JKParenthesizedExpressionImpl(operand),
+                JKKtQualifierImpl.DOT,
+                invCall
+            )
+        } else null
 
     private fun convertBinaryExpression(left: JKExpression, right: JKExpression, token: JKKtOperatorToken): JKBinaryExpression =
         convertStringImplicitConcatenation(left, right, token)

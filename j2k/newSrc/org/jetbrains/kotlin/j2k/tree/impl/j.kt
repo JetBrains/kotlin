@@ -118,6 +118,7 @@ class JKJavaOperatorToken(val psiToken: IElementType) : JKOperatorToken {
             JavaTokenType.GTGTGTEQ -> "ushr"
             JavaTokenType.PLUSPLUS -> "++"
             JavaTokenType.MINUSMINUS -> "--"
+            JavaTokenType.TILDE -> "~"
             else -> TODO(psiToken.toString())
         }
 }
