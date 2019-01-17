@@ -64,7 +64,12 @@ class KotlinGradleIT : BaseGradleIT() {
         val wd2 = createTempDir("testRunningInDifferentDir")
         wd1.copyRecursively(wd2)
         wd1.deleteRecursively()
-        assert(!wd1.exists())
+        if (wd1.exists()) {
+            val files = buildString {
+                wd1.walk().forEach { appendln("  " + it.relativeTo(wd1).path) }
+            }
+            error("Some files in $wd1 were not removed:\n$files")
+        }
         wd0.setWritable(false)
         workingDir = wd2
 
