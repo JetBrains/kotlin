@@ -1388,6 +1388,8 @@ public actual fun CharArray.sort(): Unit {
 
 /**
  * Sorts the array in-place according to the natural order of its elements.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
     if (size > 1) kotlin.util.sortArrayComparable(this)
@@ -1395,6 +1397,8 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
     if (size > 1) kotlin.util.sortArrayWith(this, 0, size, comparator)
