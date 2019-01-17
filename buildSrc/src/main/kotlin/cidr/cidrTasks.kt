@@ -55,18 +55,27 @@ fun Copy.applyCidrVersionRestrictions(
     pluginVersion: String
 ) {
     val dotsCount = productVersion.count { it == '.' }
-    check(dotsCount >= 1 && dotsCount <= 2) {
+    check(dotsCount in 1..2) {
         "Wrong CIDR product version format: $productVersion"
     }
 
-    val sinceBuild = if (dotsCount == 1)
+    // private product versions don't have two dots
+    val privateProductVersion = dotsCount == 1
+
+    val applyStrictProductVersionLimitation = if (privateProductVersion && strictProductVersionLimitation) {
+        // it does not make sense for private versions to apply strict version limitation
+        logger.warn("Non-public CIDR product version [$productVersion] has been specified. The corresponding `versions.<product>.strict` property will be ignored.")
+        false
+    } else strictProductVersionLimitation
+
+    val sinceBuild = if (privateProductVersion)
         productVersion
     else
         productVersion.substringBeforeLast('.')
 
-    val untilBuild = if (strictProductVersionLimitation)
-        // if strict then restrict plugin to the same single version of CLion or AppCode
-        sinceBuild + ".*"
+    val untilBuild = if (applyStrictProductVersionLimitation)
+        // if `strict` then restrict plugin to the same single version of CLion or AppCode
+        "$sinceBuild.*"
     else
         productVersion.substringBefore('.') + ".*"
 
