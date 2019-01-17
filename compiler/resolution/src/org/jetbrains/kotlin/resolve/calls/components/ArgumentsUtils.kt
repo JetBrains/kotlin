@@ -45,7 +45,7 @@ internal val ReceiverValueWithSmartCastInfo.unstableType: UnwrappedType?
     }
 
 // with all smart casts if stable
-internal val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
+val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
     get() {
         if (!isStable || possibleTypes.isEmpty()) return receiverValue.type.unwrap()
         return intersectWrappedTypes(possibleTypes + receiverValue.type)
