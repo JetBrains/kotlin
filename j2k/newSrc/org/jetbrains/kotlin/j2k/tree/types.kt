@@ -316,3 +316,18 @@ fun JKClassSymbol.isInterface(): Boolean {
 
 fun JKType.isInterface(): Boolean =
     (this as? JKClassType)?.classReference?.isInterface() ?: false
+
+fun JKMethod.nullabilityBySuperMethod(symbolProvider: JKSymbolProvider): Nullability {
+    if (modality != Modality.OVERRIDE) return Nullability.Default
+    val superMethodSymbol = findSuperMethodSymbol(symbolProvider) ?: return Nullability.Default
+    return superMethodSymbol.returnType?.nullability ?: return Nullability.Default
+}
+
+
+private fun JKMethod.findSuperMethodSymbol(symbolProvider: JKSymbolProvider): JKMethodSymbol? =
+    psi<PsiMethod>()
+        ?.findSuperMethods()
+        ?.firstOrNull()
+        ?.let {
+            symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol
+        }

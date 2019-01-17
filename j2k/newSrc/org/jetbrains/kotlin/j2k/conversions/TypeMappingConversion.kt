@@ -116,6 +116,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
         }
 
     private fun JKClassSymbol.mapClassSymbol(typeElement: JKTypeElement?): JKClassSymbol {
+        if (this is JKUniverseClassSymbol) return this
         val newFqName = typeElement?.let { kotlinCollectionClassName(it) }
             ?: kotlinStandardType()
             ?: fqName
@@ -131,7 +132,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
         )
 
 
-    private fun JKClassSymbol.kotlinCollectionClassName(typeElement: JKTypeElement): String? {
+    private fun JKClassSymbol.kotlinCollectionClassName(typeElement: JKTypeElement?): String? {
         val isStructureMutable = calculateStructureMutability(typeElement)
         return if (isStructureMutable) toKotlinMutableTypesMap[fqName]
         else toKotlinTypesMap[fqName]
@@ -152,14 +153,26 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
 
     private fun calculateNullability(typeElement: JKTypeElement?): Nullability {
         val parent = typeElement?.parent ?: return Nullability.Default
-        val psi = parent.psi ?: return Nullability.Default
+        val psi = parent.psi
         return when (parent) {
-            is JKJavaMethod -> typeFlavorCalculator.methodNullability(psi as PsiMethod)
-            is JKJavaField -> typeFlavorCalculator.variableNullability(psi as PsiVariable)
-            is JKVariable -> typeFlavorCalculator.variableNullability(psi as PsiVariable)
+            is JKMethod ->
+                parent.nullabilityBySuperMethod(context.symbolProvider).defaultToNull()
+                    ?: psi?.let { typeFlavorCalculator.methodNullability(it as PsiMethod) }
+                        .nullToDefault()
+
+            is JKVariable -> psi?.let {
+                typeFlavorCalculator.variableNullability(psi as PsiVariable)
+            }.nullToDefault()
+
             else -> Nullability.Default
         }
     }
+
+    private fun Nullability.defaultToNull() =
+        if (this == Nullability.Default) null else this
+
+    private fun Nullability?.nullToDefault() =
+        this ?: Nullability.Default
 
     private fun calculateStructureMutability(typeElement: JKTypeElement?): Boolean {
         val parent = typeElement?.parent ?: return false
