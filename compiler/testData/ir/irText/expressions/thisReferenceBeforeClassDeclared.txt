@@ -1,0 +1,95 @@
+FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
+  FUN name:test visibility:public modality:FINAL <> ($receiver:WithCompanion) returnType:kotlin.Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:WithCompanion flags:
+    BLOCK_BODY
+      VAR name:test1 type:test.<no name provided> flags:val
+        BLOCK type=test.<no name provided> origin=OBJECT_LITERAL
+          CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags: superTypes:[WithCompanion]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.<no name provided> flags:
+            CONSTRUCTOR visibility:public <> () returnType:test.<no name provided> flags:primary
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'constructor WithCompanion(WithCompanion.Companion)'
+                  a: GET_OBJECT 'companion object of WithCompanion' type=WithCompanion.Companion
+                INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+            FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+              overridden:
+                FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+              $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+              VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+              overridden:
+                FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+              $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+              overridden:
+                FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+              $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+          CALL 'constructor <no name provided>()' type=test.<no name provided> origin=OBJECT_LITERAL
+      VAR name:test2 type:test.<no name provided> flags:val
+        BLOCK type=test.<no name provided> origin=OBJECT_LITERAL
+          CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags: superTypes:[WithCompanion]
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.<no name provided> flags:
+            CONSTRUCTOR visibility:public <> () returnType:test.<no name provided> flags:primary
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'constructor WithCompanion(WithCompanion.Companion)'
+                  a: CALL 'foo(): WithCompanion.Companion' type=WithCompanion.Companion origin=null
+                    $this: GET_OBJECT 'companion object of WithCompanion' type=WithCompanion.Companion
+                INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+            FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+              overridden:
+                FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+              $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+              VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+              overridden:
+                FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+              $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+              overridden:
+                FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+              $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+          CALL 'constructor <no name provided>()' type=test.<no name provided> origin=OBJECT_LITERAL
+  CLASS CLASS name:WithCompanion modality:OPEN visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:WithCompanion flags:
+    CONSTRUCTOR visibility:public <> (a:WithCompanion.Companion) returnType:WithCompanion flags:primary
+      VALUE_PARAMETER name:a index:0 type:WithCompanion.Companion flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='WithCompanion'
+    CLASS OBJECT name:Companion modality:FINAL visibility:public flags:companion superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:WithCompanion.Companion flags:
+      CONSTRUCTOR visibility:private <> () returnType:WithCompanion.Companion flags:primary
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='companion object of WithCompanion'
+      FUN name:foo visibility:public modality:FINAL <> ($this:WithCompanion.Companion) returnType:WithCompanion.Companion flags:
+        $this: VALUE_PARAMETER name:<this> type:WithCompanion.Companion flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='foo(): WithCompanion.Companion'
+            GET_VAR 'this@Companion: Companion' type=WithCompanion.Companion origin=null
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
