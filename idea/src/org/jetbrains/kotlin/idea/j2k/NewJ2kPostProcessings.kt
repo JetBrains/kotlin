@@ -179,6 +179,14 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
                 fix.invoke()
             },
 
+            registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.VIRTUAL_MEMBER_HIDDEN) { element, diagnostic ->
+                val action = AddModifierFix
+                    .createFactory(KtTokens.OVERRIDE_KEYWORD)
+                    .createActions(diagnostic)
+                    .singleOrNull() ?: return@registerDiagnosticBasedProcessing
+                action.invoke(element.project, null, element.containingKtFile)
+            },
+
             registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS) { _, diagnostic ->
                 val fix =
                     RemoveModifierFix
