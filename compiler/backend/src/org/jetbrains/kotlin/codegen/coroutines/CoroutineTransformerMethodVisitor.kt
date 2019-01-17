@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -952,7 +952,13 @@ private fun allSuspensionPointsAreTailCalls(
         }
         if (insideTryBlock) return@all false
 
-        safelyReachableReturns[endIndex + 1] != null
+        safelyReachableReturns[endIndex + 1]?.all { returnIndex ->
+            sourceFrames[returnIndex].top().sure {
+                "There must be some value on stack to return"
+            }.insns.all { sourceInsn ->
+                sourceInsn?.let(instructions::indexOf) in beginIndex..endIndex
+            }
+        } ?: false
     }
 }
 
