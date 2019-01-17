@@ -30,13 +30,9 @@ fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
     when (this) {
         is JKLiteralExpression -> type.toJkType(symbolProvider)
         is JKOperatorExpression -> {
-            if (operator !is JKKtOperatorImpl) {
-                error("Cannot get type of ${operator::class}, it should be first converted to KtOperator")
-            }
-            val operatorSymbol = (operator as JKKtOperatorImpl).methodSymbol
-            if (operatorSymbol.name == "compareTo") {
-                kotlinTypeByName("kotlin.Boolean", symbolProvider)
-            } else operatorSymbol.returnType
+            (operator as? JKKtOperatorImpl)?.returnType
+                ?: error("Cannot get type of ${operator::class}, it should be first converted to KtOperator")
+
         }
         is JKMethodCallExpression -> identifier.returnType
         is JKFieldAccessExpressionImpl -> identifier.fieldType
@@ -117,6 +113,9 @@ fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nu
         else -> throw Exception("Invalid PSI ${this::class.java}")
     }
 }
+
+fun JKClassSymbol.asType(nullability: Nullability = Nullability.Default): JKClassType =
+    JKClassTypeImpl(this, emptyList(), nullability)
 
 fun JKType.isSubtypeOf(other: JKType, symbolProvider: JKSymbolProvider): Boolean =
     other.toKtType(symbolProvider)

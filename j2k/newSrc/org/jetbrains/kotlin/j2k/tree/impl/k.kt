@@ -104,10 +104,10 @@ class JKKtWordOperatorToken(override val text: String) : JKKtOperatorToken {
     override val operatorName: String = text
 }
 
-class JKKtOperatorImpl(override val token: JKKtOperatorToken, val methodSymbol: JKMethodSymbol) : JKOperator, JKElementBase() {
-    constructor(singleValueToken: KtSingleValueToken, methodSymbol: JKMethodSymbol) : this(
+class JKKtOperatorImpl(override val token: JKKtOperatorToken, val returnType: JKType) : JKOperator, JKElementBase() {
+    constructor(singleValueToken: KtSingleValueToken, returnType: JKType) : this(
         JKKtSingleValueOperatorToken(singleValueToken),
-        methodSymbol
+        returnType
     )
 
     override val precedence: Int

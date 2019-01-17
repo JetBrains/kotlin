@@ -145,6 +145,9 @@ fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
         JavaTokenType.MINUSMINUS -> JKKtSingleValueOperatorToken(KtTokens.MINUSMINUS)
         JavaTokenType.EXCL -> JKKtSingleValueOperatorToken(KtTokens.EXCL)
 
+        KtTokens.EQEQEQ -> JKKtSingleValueOperatorToken(KtTokens.EQEQEQ)
+        KtTokens.EXCLEQEQEQ -> JKKtSingleValueOperatorToken(KtTokens.EXCLEQEQEQ)
+
         JavaTokenType.AND -> JKKtWordOperatorToken("and")
         JavaTokenType.OR -> JKKtWordOperatorToken("or")
         JavaTokenType.XOR -> JKKtWordOperatorToken("xor")
@@ -180,9 +183,11 @@ class JKJavaOperatorImpl private constructor(psiToken: IElementType) : JKOperato
         }
 
     companion object {
-        val tokenToOperator = OPERATION_BIT_SET.types.associate {
-            it to JKJavaOperatorImpl(it)
-        }
+        val tokenToOperator =
+            (OPERATION_BIT_SET.types + arrayOf(KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ))
+                .associate {
+                    it to JKJavaOperatorImpl(it)
+                }
     }
 }
 

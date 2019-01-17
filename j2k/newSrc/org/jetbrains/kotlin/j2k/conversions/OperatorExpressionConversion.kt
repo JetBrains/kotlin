@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.ConversionContext
-import org.jetbrains.kotlin.j2k.kotlinBinaryExpression
-import org.jetbrains.kotlin.j2k.kotlinPostfixExpression
-import org.jetbrains.kotlin.j2k.kotlinPrefixExpression
+import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaOperatorImpl
-import org.jetbrains.kotlin.j2k.tree.impl.toKtToken
+import org.jetbrains.kotlin.j2k.tree.impl.*
+import org.jetbrains.kotlin.lexer.KtTokens
 
 
 class OperatorExpressionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -24,17 +21,37 @@ class OperatorExpressionConversion(private val context: ConversionContext) : Rec
             is JKBinaryExpression -> {
                 val left = applyToElement(element::left.detached()) as JKExpression
                 val right = applyToElement(element::right.detached()) as JKExpression
-                kotlinBinaryExpression(left, right, operatorToken, context.symbolProvider)?.let { recurse(it) }
+                recurse(convertBinaryExpression(left, right, operatorToken))
             }
             is JKPrefixExpression -> {
                 val operand = applyToElement(element::expression.detached()) as JKExpression
-                kotlinPrefixExpression(operand, operatorToken, context.symbolProvider)?.let { recurse(it) }
+                recurse(kotlinPrefixExpression(operand, operatorToken, context.symbolProvider))
             }
             is JKPostfixExpression -> {
                 val operand = applyToElement(element::expression.detached()) as JKExpression
-                kotlinPostfixExpression(operand, operatorToken, context.symbolProvider)?.let { recurse(it) }
+                recurse(kotlinPostfixExpression(operand, operatorToken, context.symbolProvider))
             }
             else -> TODO(element.javaClass.toString())
         } ?: recurse(element)
     }
+
+    private fun convertBinaryExpression(left: JKExpression, right: JKExpression, token: JKKtOperatorToken): JKBinaryExpression =
+        convertStringImplicitConcatenation(left, right, token)
+            ?: kotlinBinaryExpression(left, right, token, context.symbolProvider)
+
+
+    private fun convertStringImplicitConcatenation(left: JKExpression, right: JKExpression, token: JKKtOperatorToken): JKBinaryExpression? =
+        if (token is JKKtSingleValueOperatorToken
+            && token.psiToken == KtTokens.PLUS
+            && right.type(context.symbolProvider)?.isStringType() == true
+            && left.type(context.symbolProvider)?.isStringType() == false
+        ) {
+            val toStringCall =
+                JKKtCallExpressionImpl(
+                    context.symbolProvider.provideByFqName("kotlin.Any.toString"),
+                    JKExpressionListImpl()
+                )
+            val qualifiedCall = JKQualifiedExpressionImpl(left, JKKtQualifierImpl.DOT, toStringCall)
+            kotlinBinaryExpression(qualifiedCall, right, KtTokens.PLUS, context.symbolProvider)
+        } else null
 }

@@ -221,6 +221,7 @@ interface JKOperatorExpression : JKExpression {
     var operator: JKOperator
 }
 
+//TODO make left & right to be immutable
 interface JKBinaryExpression : JKOperatorExpression {
     var left: JKExpression
     var right: JKExpression

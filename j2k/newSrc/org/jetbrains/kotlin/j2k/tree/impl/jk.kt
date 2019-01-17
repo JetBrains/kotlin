@@ -102,13 +102,11 @@ class JKBlockImpl(statements: List<JKStatement> = emptyList()) : JKBlock, JKBran
     override var statements by children(statements)
 }
 
-//todo split to java and kt sbinary expression
 class JKBinaryExpressionImpl(
     left: JKExpression,
     right: JKExpression,
     override var operator: JKOperator
-) : JKBinaryExpression,
-    JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+) : JKBinaryExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBinaryExpression(this, data)
     override var right by child(right)
     override var left by child(left)

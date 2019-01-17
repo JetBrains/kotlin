@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.conversions.RecursiveApplicableConversionBase
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.j2k.conversions.multiResolveFqName
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -42,12 +44,12 @@ private fun JKType.classSymbol(symbolProvider: JKSymbolProvider) =
         else -> null
     }
 
-private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
+private fun JKKtOperatorToken.arithmeticMethodType(
     leftType: JKType,
     rightType: JKType,
     symbolProvider: JKSymbolProvider
-): JKMethodSymbol {
-    fun PsiClass.methodSymbol() =
+): JKType? {
+    fun PsiClass.methodReturnType() =
         allMethods
             .filter { it.name == operatorName }
             .firstOrNull {
@@ -56,28 +58,13 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
                     if (type !is JKTypeParameterType) rightType.isSubtypeOf(type, symbolProvider)
                     else true//TODO check for type bounds
                 } != null
-            }?.let { symbolProvider.provideDirectSymbol(it) as JKMethodSymbol }
+            }?.let { it.returnType?.toJK(symbolProvider) }
 
 
     val classSymbol =
         if (leftType.isStringType()) symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.string.toSafe())
         else leftType.classSymbol(symbolProvider)
 
-    val defaultClassSymbol by lazy {
-        when (text) {
-            "<", ">", "<=", ">=", "==", "!=", "&&", "||" ->
-                JKUnresolvedMethod(
-                    text,
-                    kotlinTypeByName(
-                        KotlinBuiltIns.FQ_NAMES._boolean.toSafe().asString(),
-                        symbolProvider,
-                        Nullability.NotNull
-                    )
-                )
-            "+", "-", "*", "/" -> JKUnresolvedMethod(text, leftType)//TODO fix that
-            else -> TODO()
-        }
-    }
     return when (classSymbol) {
         is JKMultiverseKtClassSymbol ->
             classSymbol.target.declarations
@@ -86,53 +73,112 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
                 .filter { it.name == operatorName }
                 .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
                 .firstOrNull { it.parameterTypes?.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }
-                ?: defaultClassSymbol
-        is JKUniverseClassSymbol -> classSymbol.target.psi<PsiClass>()?.methodSymbol() ?: defaultClassSymbol
-        is JKMultiverseClassSymbol -> classSymbol.target.methodSymbol() ?: defaultClassSymbol
-        else -> defaultClassSymbol
+                ?.returnType
+        is JKUniverseClassSymbol -> classSymbol.target.psi<PsiClass>()?.methodReturnType()
+        is JKMultiverseClassSymbol -> classSymbol.target.methodReturnType()
+        else -> null
     }
 }
 
-private fun JKKtOperatorToken.unaryExpressionMethodSymbol(
-    operandType: JKType,
+private fun JKKtOperatorToken.unaryExpressionMethodType(
+    operandType: JKType?,
     symbolProvider: JKSymbolProvider
-): JKMethodSymbol {
-    if (this == KtTokens.EXCLEQ) {
-        return JKExclExclMethod(operandType)
+): JKType {
+    if (operandType is JKNoType) {
+        return operandType
     }
-    val classSymbol = operandType.classSymbol(symbolProvider)
+    if (this == KtTokens.EXCLEXCL) {
+        return operandType!!
+    }
+    if (this == KtTokens.EXCL) {
+        return symbolProvider.provideByFqName<JKClassSymbol>(KotlinBuiltIns.FQ_NAMES._boolean).asType()
+    }
+    if (this == KtTokens.MINUS || this == KtTokens.PLUS) {
+        return operandType!!
+    }
+    val classSymbol = operandType!!.classSymbol(symbolProvider)
     return when (classSymbol) {
         is JKMultiverseKtClassSymbol ->// todo look for extensions
             classSymbol.target.declarations.asSequence()
                 .filterIsInstance<KtNamedFunction>()
                 .filter { it.name == operatorName }
-                .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
-                .firstOrNull()!!
+                .mapNotNull { it.typeReference?.typeElement?.toJK(symbolProvider) }
+                .firstOrNull() ?: TODO(classSymbol::class.toString() + this.operatorName)
         null -> TODO(" No class symbol")
         else -> TODO(classSymbol::class.toString())
     }
 }
 
+private val booleanOperators = TokenSet.create(
+    KtTokens.LT,
+    KtTokens.GT,
+    KtTokens.LTEQ,
+    KtTokens.GTEQ,
+    KtTokens.EQEQEQ,
+    KtTokens.EXCLEQEQEQ,
+    KtTokens.EQEQ,
+    KtTokens.EXCLEQ,
+    KtTokens.ANDAND,
+    KtTokens.OROR
+)
+
+private val arithmeticOperators = TokenSet.create(
+    KtTokens.MUL,
+    KtTokens.PLUS,
+    KtTokens.MINUS,
+    KtTokens.DIV,
+    KtTokens.PERC
+)
+
+private fun JKKtOperatorToken.defaultReturnType(leftType: JKType?, rightType: JKType?, symbolProvider: JKSymbolProvider): JKType? {
+    if (this is JKKtSingleValueOperatorToken && psiToken in arithmeticOperators) return leftType
+    return null
+}
 
 fun kotlinBinaryExpression(
     left: JKExpression,
     right: JKExpression,
     token: JKKtOperatorToken,
     symbolProvider: JKSymbolProvider
-): JKBinaryExpression? {
-    val leftType = left.type(symbolProvider) ?: return null
-    val rightType = right.type(symbolProvider) ?: return null
-    val methodSymbol = token.binaryExpressionMethodSymbol(leftType, rightType, symbolProvider)
-    return JKBinaryExpressionImpl(left, right, JKKtOperatorImpl(token, methodSymbol))
+): JKBinaryExpression {
+    val returnType =
+        when {
+            token is JKKtSingleValueOperatorToken && token.psiToken in booleanOperators ->
+                JKClassTypeImpl(symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES._boolean))
+            else -> {
+                val leftType = left.type(symbolProvider)
+                val rightType = right.type(symbolProvider)
+                leftType?.let { l ->
+                    rightType?.let { r ->
+                        token.arithmeticMethodType(l, r, symbolProvider)
+                    }
+                } ?: token.defaultReturnType(leftType, rightType, symbolProvider)
+                ?: symbolProvider.provideByFqName<JKClassSymbol>(KotlinBuiltIns.FQ_NAMES.nothing).asType()
+            }
+        }
+    return JKBinaryExpressionImpl(left, right, JKKtOperatorImpl(token, returnType))
 }
+
+fun kotlinBinaryExpression(
+    left: JKExpression,
+    right: JKExpression,
+    token: KtSingleValueToken,
+    symbolProvider: JKSymbolProvider
+): JKBinaryExpression =
+    kotlinBinaryExpression(
+        left,
+        right,
+        JKKtSingleValueOperatorToken(token),
+        symbolProvider
+    )
 
 fun kotlinPrefixExpression(
     operand: JKExpression,
     token: JKKtOperatorToken,
     symbolProvider: JKSymbolProvider
-): JKPrefixExpression? {
-    val operandType = operand.type(symbolProvider) ?: return null
-    val methodSymbol = token.unaryExpressionMethodSymbol(operandType, symbolProvider)
+): JKPrefixExpression {
+    val operandType = operand.type(symbolProvider)
+    val methodSymbol = token.unaryExpressionMethodType(operandType, symbolProvider)
     return JKPrefixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
 }
 
@@ -140,9 +186,9 @@ fun kotlinPostfixExpression(
     operand: JKExpression,
     token: JKKtOperatorToken,
     symbolProvider: JKSymbolProvider
-): JKPostfixExpression? {
-    val operandType = operand.type(symbolProvider) ?: return null
-    val methodSymbol = token.unaryExpressionMethodSymbol(operandType, symbolProvider)
+): JKPostfixExpression {
+    val operandType = operand.type(symbolProvider)
+    val methodSymbol = token.unaryExpressionMethodType(operandType, symbolProvider)
     return JKPostfixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
 }
 
@@ -181,10 +227,10 @@ fun rangeExpression(
     conversionContext: ConversionContext,
     psiContext: PsiElement
 ): JKExpression {
-    val symbol = conversionContext.symbolProvider.provideDirectSymbol(
+    val returnType = (conversionContext.symbolProvider.provideDirectSymbol(
         multiResolveFqName(ClassId.fromString("kotlin/ranges/$operatorName"), psiContext).first()
-    ) as JKMethodSymbol
-    return JKBinaryExpressionImpl(from, to, JKKtOperatorImpl(JKKtWordOperatorToken(operatorName), symbol))
+    ) as JKMethodSymbol).returnType
+    return JKBinaryExpressionImpl(from, to, JKKtOperatorImpl(JKKtWordOperatorToken(operatorName), returnType!!))
 }
 
 fun blockStatement(vararg statements: JKStatement) =
@@ -291,7 +337,7 @@ fun JKFieldAccessExpression.isInDecrementOrIncrement(): Boolean =
 fun JKExpression.bangedBangedExpr(symbolProvider: JKSymbolProvider): JKExpression =
     JKPostfixExpressionImpl(
         this,
-        JKKtOperatorImpl(KtTokens.EXCLEXCL, JKExclExclMethod(type(symbolProvider)!!))
+        JKKtOperatorImpl(KtTokens.EXCLEXCL, type(symbolProvider)!!)
     )
 
 fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: ConversionContext): Boolean =
