@@ -21,7 +21,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.j2k.tree.JKElement
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.prettyDebugPrintTree
 
@@ -45,7 +44,7 @@ class NewJavaToKotlinConverter(
         val treeBuilder = JavaToJKTreeBuilder(symbolProvider, converterServices)
         val fileTrees = files.mapNotNull(treeBuilder::buildTree)
 
-        println(fileTrees.prettyPrintTrees())
+//        println(fileTrees.prettyPrintTrees())
 
         val context = ConversionContext(
             symbolProvider,
@@ -55,9 +54,8 @@ class NewJavaToKotlinConverter(
 
         ConversionsRunner.doApply(fileTrees, context)
 
-        val resultTree = fileTrees.prettyPrintTrees()
-
-        println(resultTree)
+//        val resultTree = fileTrees.prettyPrintTrees()
+//        println(resultTree)
 
         return fileTrees.map { NewCodeBuilder().run { printCodeOut(it) } }
     }
