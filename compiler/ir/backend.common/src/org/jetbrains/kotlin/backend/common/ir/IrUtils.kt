@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
@@ -41,10 +43,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
@@ -354,7 +353,7 @@ fun Scope.createTemporaryVariableWithWrappedDescriptor(
     nameHint: String? = null,
     isMutable: Boolean = false,
     origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE): IrVariable {
-    
+
     val descriptor = WrappedVariableDescriptor()
     return createTemporaryVariableWithGivenDescriptor(
         irExpression, nameHint, isMutable, origin, descriptor
@@ -362,3 +361,24 @@ fun Scope.createTemporaryVariableWithWrappedDescriptor(
 }
 
 val IrFunction.isOverridable: Boolean get() = this is IrSimpleFunction && this.isOverridable
+
+fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
+    val thisReceiverDescriptor = WrappedReceiverParameterDescriptor()
+    thisReceiver = IrValueParameterImpl(
+        startOffset, endOffset,
+        IrDeclarationOrigin.INSTANCE_RECEIVER,
+        IrValueParameterSymbolImpl(thisReceiverDescriptor),
+        Name.identifier("<this>"),
+        index = -1,
+        type = this.symbol.typeWith(this.typeParameters.map { it.defaultType }),
+        varargElementType = null,
+        isCrossinline = false,
+        isNoinline = false
+    ).also { valueParameter ->
+        thisReceiverDescriptor.bind(valueParameter)
+        valueParameter.parent = this
+    }
+
+    assert(typeParameters.isEmpty())
+    assert(descriptor.declaredTypeParameters.isEmpty())
+}

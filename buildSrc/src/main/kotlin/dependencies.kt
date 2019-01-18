@@ -64,14 +64,13 @@ fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = proje
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
 fun DependencyHandler.projectClasses(name: String): ProjectDependency = project(name, configuration = "classes-dirs")
 
-val protobufLiteProject = ":custom-dependencies:protobuf-lite"
-val protobufRelocatedProject = ":custom-dependencies:protobuf-relocated"
-fun DependencyHandler.protobufLite(): ProjectDependency =
-        project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
-val protobufLiteTask = "$protobufLiteProject:prepare"
+val Project.protobufVersion: String get() = findProperty("versions.protobuf") as String
 
-fun DependencyHandler.protobufFull(): ProjectDependency =
-        project(protobufRelocatedProject, configuration = "default").apply { isTransitive = false }
+val Project.protobufRepo: String get() =
+    "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_Protobuf),status:SUCCESS,pinned:true,tag:$protobufVersion/artifacts/content/internal/repo/"
+
+fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufVersion"
+fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufVersion"
 
 fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 

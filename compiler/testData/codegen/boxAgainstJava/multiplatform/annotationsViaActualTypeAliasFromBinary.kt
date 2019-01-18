@@ -1,6 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
 // WITH_REFLECT
-// IGNORE_BACKEND: JVM_IR
 // FILE: main.kt
 
 // See compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationsViaActualTypeAlias2.kt

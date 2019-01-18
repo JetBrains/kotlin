@@ -31,17 +31,13 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NameUtils
 import java.util.*
 
 interface LocalNameProvider {
-    fun localName(descriptor: DeclarationDescriptor): String =
-        descriptor.name.asString()
+    fun localName(declaration: IrDeclarationWithName): String =
+        declaration.name.asString()
 
     companion object {
         val DEFAULT = object : LocalNameProvider {}
@@ -465,13 +461,13 @@ class LocalDeclarationsLowering(
             }
         }
 
-        private fun suggestLocalName(declaration: IrDeclaration): String {
+        private fun suggestLocalName(declaration: IrDeclarationWithName): String {
             localFunctions[declaration]?.let {
                 if (it.index >= 0)
                     return "lambda-${it.index}"
             }
 
-            return localNameProvider.localName(declaration.descriptor)
+            return localNameProvider.localName(declaration)
         }
 
         private fun generateNameForLiftedDeclaration(
@@ -481,7 +477,7 @@ class LocalDeclarationsLowering(
             Name.identifier(
                 declaration.parentsWithSelf
                     .takeWhile { it != newOwner }
-                    .toList().reversed().joinToString(separator = "$") { suggestLocalName(it as IrDeclaration) }
+                    .toList().reversed().joinToString(separator = "$") { suggestLocalName(it as IrDeclarationWithName) }
             )
 
         private fun createLiftedDeclaration(localFunctionContext: LocalFunctionContext) {
@@ -768,6 +764,11 @@ class LocalDeclarationsLowering(
 
                     val localClassContext = LocalClassContext(declaration)
                     localClasses[declaration] = localClassContext
+                }
+
+                override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
+                    // Getter and setter of local delegated properties are special generated functions and don't have closure.
+                    declaration.delegate.initializer?.acceptVoid(this)
                 }
             })
         }

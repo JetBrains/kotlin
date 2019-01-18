@@ -49,7 +49,8 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlinp/src",
                 "compiler/testData/psi/kdoc",
                 "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
-                "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java"
+                "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
+                "custom-dependencies/protobuf/protobuf-relocated/build"
         ).map(::File)
 
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
@@ -57,6 +58,7 @@ class CodeConformanceTest : TestCase() {
             "out",
             "dist",
             "custom-dependencies/android-sdk/build",
+            "custom-dependencies/protobuf/protobuf-relocated/build",
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
             "js/js.tests/.gradle",

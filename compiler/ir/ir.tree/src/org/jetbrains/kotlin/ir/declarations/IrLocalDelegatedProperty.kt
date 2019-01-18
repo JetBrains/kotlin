@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.name.Name
 
-interface IrLocalDelegatedProperty : IrDeclaration {
+interface IrLocalDelegatedProperty : IrDeclarationWithName {
     override val descriptor: VariableDescriptorWithAccessors
 
-    val name: Name
     val type: IrType
     val isVar: Boolean
 

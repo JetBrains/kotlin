@@ -93,6 +93,8 @@ public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { 
 
 /**
  * Sorts elements in the list in-place according to their natural sort order.
+ *
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
     collectionsSort(this, naturalOrder())
@@ -100,6 +102,8 @@ public actual fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
 
 /**
  * Sorts elements in the list in-place according to the order specified with [comparator].
+ *
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
     collectionsSort(this, comparator)
@@ -109,8 +113,7 @@ private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in 
     if (list.size <= 1) return
 
     val array = copyToArray(list)
-
-    array.asDynamic().sort(comparator.asDynamic().compare.bind(comparator))
+    sortArrayWith(array, comparator)
 
     for (i in 0 until array.size) {
         list[i] = array[i]

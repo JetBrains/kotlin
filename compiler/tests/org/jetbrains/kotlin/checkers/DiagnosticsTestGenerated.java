@@ -9071,6 +9071,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/imports/TopLevelClassVsPackage.kt");
             }
 
+            @TestMetadata("twoImportLists.kt")
+            public void testTwoImportLists() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/twoImportLists.kt");
+            }
+
             @TestMetadata("WrongImport.kt")
             public void testWrongImport() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/WrongImport.kt");

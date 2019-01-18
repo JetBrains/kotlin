@@ -36,6 +36,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.IdeaTestUtil
+import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
@@ -52,6 +53,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.GroovyFileType
 import org.junit.Assume.assumeThat
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
@@ -61,6 +63,8 @@ import java.io.IOException
 import java.io.StringWriter
 import java.net.URISyntaxException
 import java.util.*
+import com.intellij.openapi.diagnostic.Logger
+import org.junit.AfterClass
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 @RunWith(value = Parameterized::class)
@@ -71,6 +75,10 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     @JvmField
     @Rule
     var name = TestName()
+
+    @JvmField
+    @Rule
+    var testWatcher = ImportingTestWatcher()
 
     @JvmField
     @Rule
@@ -275,6 +283,23 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
         fun wrapperJar(): File {
             return File(PathUtil.getJarPathForClass(GradleWrapperMain::class.java))
+        }
+
+        private var persistedLoggerFactory : Logger.Factory? = null
+
+        @JvmStatic
+        @BeforeClass
+        fun setLoggerFactory() {
+            persistedLoggerFactory = Logger.getFactory()
+            Logger.setFactory(TestLoggerFactory::class.java)
+        }
+
+        @JvmStatic
+        @AfterClass
+        fun restoreLoggerFactory() {
+            if (persistedLoggerFactory != null) {
+                Logger.setFactory(persistedLoggerFactory)
+            }
         }
     }
 }

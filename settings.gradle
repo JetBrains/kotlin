@@ -73,8 +73,6 @@ include ":kotlin-build-common",
         ":core:metadata.jvm",
         ":core:builtins",
         ":core:util.runtime",
-        ":custom-dependencies:protobuf-relocated",
-        ":custom-dependencies:protobuf-lite",
         ":custom-dependencies:android-sdk",
         ":idea:fir-view",
         ":idea:idea-jvm",
@@ -349,3 +347,6 @@ project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
 project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
+
+// Uncomment to use locally built protobuf-relocated
+// includeBuild("custom-dependencies/protobuf")

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
-val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflection"))
+val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
 val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier("coroutines"))
 
 

@@ -6,21 +6,23 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.zip.ZipOutputStream
 
+plugins {
+    base
+    `maven-publish`
+}
+
 val relocatedProtobuf by configurations.creating
 val relocatedProtobufSources by configurations.creating
 
-val resultsCfg = configurations.create("default")
-
-val protobufVersion = rootProject.extra["versions.protobuf-java"]
+val protobufVersion: String by rootProject.extra
 val protobufJarPrefix = "protobuf-$protobufVersion"
 val outputJarPath = "$buildDir/libs/$protobufJarPrefix-lite.jar"
 
 dependencies {
-    relocatedProtobuf(project(":custom-dependencies:protobuf-relocated", configuration = "default"))
-    relocatedProtobufSources(project(":custom-dependencies:protobuf-relocated", configuration = "sources"))
+    relocatedProtobuf(project(":protobuf-relocated"))
 }
 
-task("prepare") {
+val prepare by tasks.creating {
     inputs.files(relocatedProtobuf) // this also adds a dependency
     outputs.file(outputJarPath)
     doFirst {
@@ -41,7 +43,11 @@ task("prepare") {
             return result
         }
 
-        val allFiles = loadAllFromJar(relocatedProtobuf.singleFile)
+        val mainJar = relocatedProtobuf.resolvedConfiguration.resolvedArtifacts.single {
+            it.name == "protobuf-relocated" && it.classifier == null
+        }.file
+
+        val allFiles = loadAllFromJar(mainJar)
 
         val keepClasses = arrayListOf<String>()
 
@@ -80,18 +86,38 @@ task("prepare") {
             }
         }
     }
-    addArtifact("archives", this, outputs.files.singleFile) {
-        classifier = ""
-    }
-    addArtifact(resultsCfg, this, outputs.files.singleFile) {
-        classifier = ""
-    }
 }
 
-val clean by task<Delete> {
-    delete(buildDir)
+val mainArtifact = artifacts.add(
+    "default",
+    provider {
+        prepare.outputs.files.singleFile
+    }
+) {
+    builtBy(prepare)
+    classifier = ""
 }
 
-artifacts.add("archives", relocatedProtobufSources.files.single()) {
+val sourcesArtifact = artifacts.add(
+    "default",
+    provider {
+        relocatedProtobuf.resolvedConfiguration.resolvedArtifacts.single { it.name == "protobuf-relocated" && it.classifier == "sources" }.file
+    }
+) {
     classifier = "sources"
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifact(mainArtifact)
+            artifact(sourcesArtifact)
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri("${rootProject.buildDir}/internal/repo")
+        }
+    }
 }
