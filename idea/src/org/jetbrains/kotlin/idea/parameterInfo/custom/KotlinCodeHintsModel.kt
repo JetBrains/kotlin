@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo.custom
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -66,8 +67,11 @@ class KotlinCodeHintsModel(val project: Project) : EditorFactoryListenerWrapper 
         }
 
         fun dispose() {
-            for (marker in lineEndMarkers.keys()) {
-                marker.dispose()
+            val keys = lineEndMarkers.keys()
+            ApplicationManager.getApplication().invokeLater {
+                for (marker in keys) {
+                    marker.dispose()
+                }
             }
         }
     }
