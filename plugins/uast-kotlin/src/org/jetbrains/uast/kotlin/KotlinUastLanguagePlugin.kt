@@ -219,7 +219,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                         KotlinConverter.convertPsiElement(element, givenParent, requiredType)
                     }
                     else {
-                        convertNonLocalProperty(original, givenParent, requiredType)
+                        convertNonLocalProperty(original, givenParent, requiredType).firstOrNull()
                     }
 
                 is KtParameter -> el<UParameter> {
@@ -280,7 +280,9 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return convertElement(element, null, requiredTypes)
     }
 
-    override fun <T : UElement> convertToAlternatives(element: PsiElement, requiredTypes: Array<out Class<out T>>) = when (element) {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : UElement> convertToAlternatives(element: PsiElement, requiredTypes: Array<out Class<out T>>): Sequence<T> = when {
+        (element is KtProperty && !element.isLocal) -> convertNonLocalProperty(element, null, requiredTypes) as Sequence<T>
         else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
     }
 }
@@ -299,18 +301,24 @@ internal inline fun <reified ActualT : UElement> Array<out Class<out UElement>>.
 
 internal fun Array<out Class<out UElement>>.isAssignableFrom(cls: Class<*>) = any { it.isAssignableFrom(cls) }
 
-private fun convertNonLocalProperty(property: KtProperty,
-                                    givenParent: UElement?,
-                                    requiredType: Array<out Class<out UElement>>
-): UElement? {
+private fun convertNonLocalProperty(
+    property: KtProperty,
+    givenParent: UElement?,
+    requiredType: Array<out Class<out UElement>>
+): Sequence<UElement> {
     val methods = LightClassUtil.getLightClassPropertyMethods(property)
-    return methods.backingField?.let { backingField ->
-        with(requiredType) {
-            el<UField> { KotlinUField(backingField, (backingField as? KtLightElement<*,*>)?.kotlinOrigin,  givenParent) }
+    return requiredType.accommodate(
+        alternative {
+            methods.backingField?.let { KotlinUField(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, givenParent) }
+        },
+        alternative {
+            // TODO: make it possible to use `convertDeclaration` without `KotlinUastLanguagePlugin` creation
+            methods.getter?.let { KotlinUastLanguagePlugin().convertDeclaration(it, givenParent, arrayOf(UMethod::class.java)) as? UMethod }
+        },
+        alternative {
+            methods.setter?.let { KotlinUastLanguagePlugin().convertDeclaration(it, givenParent, arrayOf(UMethod::class.java)) as? UMethod }
         }
-    } ?: methods.getter?.let { getter ->
-        KotlinUastLanguagePlugin().convertDeclaration(getter, givenParent, requiredType)
-    }
+    )
 }
 
 internal object KotlinConverter {
@@ -349,11 +357,7 @@ internal object KotlinConverter {
             is KtCatchClause -> el<UCatchClause>(build(::KotlinUCatchClause))
             is KtVariableDeclaration ->
                 if (element is KtProperty && !element.isLocal) {
-                    el<UField> {
-                        LightClassUtil.getLightClassBackingField(element)?.let {
-                            KotlinUField(it, element, givenParent)
-                        }
-                    }
+                    convertNonLocalProperty(element, givenParent, this).firstOrNull()
                 }
                 else {
                     el<UVariable> {
@@ -609,3 +613,15 @@ private fun elementTypes(requiredType: Class<out UElement>?) = requiredType?.let
 
 private fun <T : UElement> Array<out Class<out T>>.nonEmptyOr(default: Array<out Class<out UElement>>) = takeIf { it.isNotEmpty() }
     ?: default
+
+private fun <U : UElement> Array<out Class<out UElement>>.accommodate(vararg makers: UElementAlternative<out U>): Sequence<UElement> {
+    val makersSeq = makers.asSequence()
+    return this.asSequence()
+        .flatMap { requiredType -> makersSeq.filter { requiredType.isAssignableFrom(it.uType) } }
+        .distinct()
+        .mapNotNull { it.make.invoke() }
+}
+
+private inline fun <reified U : UElement> alternative(noinline make: () -> U?) = UElementAlternative(U::class.java, make)
+
+private class UElementAlternative<U : UElement>(val uType: Class<U>, val make: () -> U?)
