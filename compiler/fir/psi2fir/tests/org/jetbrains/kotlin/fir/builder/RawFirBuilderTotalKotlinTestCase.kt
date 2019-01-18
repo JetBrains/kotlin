@@ -141,7 +141,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         testTotalKotlinWithGivenMode(stubMode = true)
     }
 
-    fun testVisitConsistency() {
+    private fun testConsistency(checkConsistency: FirFile.() -> Unit) {
         val root = File(testDataPath)
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
@@ -150,7 +150,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile = ktFile.toFirFile(stubMode = false)
             try {
-                firFile.checkChildren()
+                firFile.checkConsistency()
             } catch (e: Throwable) {
                 println("EXCEPTION in: " + file.toRelativeString(root))
                 throw e
@@ -158,20 +158,11 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         }
     }
 
+    fun testVisitConsistency() {
+        testConsistency { checkChildren() }
+    }
+
     fun testTransformConsistency() {
-        val root = File(testDataPath)
-        for (file in root.walkTopDown()) {
-            if (file.isDirectory) continue
-            if (file.path.contains("testData") || file.path.contains("resources")) continue
-            if (file.extension != "kt") continue
-            val ktFile = createKtFile(file.toRelativeString(root))
-            val firFile = ktFile.toFirFile(stubMode = false)
-            try {
-                firFile.checkTransformedChildren()
-            } catch (e: Throwable) {
-                println("EXCEPTION in: " + file.toRelativeString(root))
-                throw e
-            }
-        }
+        testConsistency { checkTransformedChildren() }
     }
 }

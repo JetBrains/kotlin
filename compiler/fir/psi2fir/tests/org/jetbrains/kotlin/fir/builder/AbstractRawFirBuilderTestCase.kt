@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
 import java.io.File
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
 abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     "",
@@ -78,9 +80,15 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         if (!result.add(this)) {
             return result
         }
-        for (property in this::class.memberProperties) {
-            val childElement = property.getter.call(this) as? FirElement ?: continue
-            childElement.traverseChildren(result)
+        propertyLoop@ for (property in this::class.memberProperties) {
+            val childElement = property.getter.apply { isAccessible = true }.call(this)
+
+            when (childElement) {
+                is FirElement -> childElement.traverseChildren(result)
+                is List<*> -> childElement.filterIsInstance<FirElement>().forEach { it.traverseChildren(result) }
+                else -> continue@propertyLoop
+            }
+
         }
         return result
     }
@@ -93,7 +101,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
     private fun FirFile.transformChildren(): Set<FirElement> =
         ConsistencyTransformer().let {
-            this@transformChildren.accept(it, Unit)
+            this@transformChildren.transform<FirFile, Unit>(it, Unit)
             it.result
         }
 
@@ -103,7 +111,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         children.removeAll(visitedChildren)
         if (children.isNotEmpty()) {
             val element = children.first()
-            val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
+            val elementDump = element.render()
             throw AssertionError("FirElement ${element.javaClass} is not visited: $elementDump")
         }
     }
@@ -114,7 +122,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         children.removeAll(transformedChildren)
         if (children.isNotEmpty()) {
             val element = children.first()
-            val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
+            val elementDump = element.render()
             throw AssertionError("FirElement ${element.javaClass} is not transformed: $elementDump")
         }
     }
@@ -145,7 +153,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
                     throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
                 }
             } else {
-                element.acceptChildren(this, Unit)
+                element.transformChildren(this, Unit)
             }
             return CompositeTransformResult(element)
         }
