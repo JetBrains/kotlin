@@ -115,6 +115,7 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention()),
             registerGeneralInspectionBasedProcessing(RedundantSemicolonInspection()),
             registerIntentionBasedProcessing(RemoveEmptyClassBodyIntention()),
+            registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention()),
 
             registerIntentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() },
             registerIntentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) {
