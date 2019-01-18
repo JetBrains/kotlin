@@ -85,8 +85,8 @@ val Annotations.serialNameValue: String?
         return value
     }
 
-val Annotations.serialOptional: Boolean
-    get() = hasAnnotation(SerializationAnnotations.serialOptionalFqName)
+val Annotations.serialRequired: Boolean
+    get() = hasAnnotation(SerializationAnnotations.requiredAnnotationFqName)
 
 val Annotations.serialTransient: Boolean
     get() = hasAnnotation(SerializationAnnotations.serialTransientFqName)
