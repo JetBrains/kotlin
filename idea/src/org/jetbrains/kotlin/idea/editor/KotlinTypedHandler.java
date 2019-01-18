@@ -33,6 +33,7 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.formatter.FormatterUtil;
@@ -62,6 +63,9 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
     );
 
     private boolean kotlinLTTyped;
+
+    private boolean isGlobalPreviousDollarInString; // Global flag for all editors
+    private static final Key<Integer> PREVIOUS_IN_STRING_DOLLAR_TYPED_OFFSET_KEY = Key.create("PREVIOUS_IN_STRING_DOLLAR_TYPED_OFFSET_KEY");
 
     @Override
     public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
@@ -238,22 +242,35 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             return Result.CONTINUE;
         }
 
+        Integer previousDollarInStringOffset = null;
+        if (isGlobalPreviousDollarInString) {
+            isGlobalPreviousDollarInString = false;
+            previousDollarInStringOffset = editor.getUserData(PREVIOUS_IN_STRING_DOLLAR_TYPED_OFFSET_KEY);
+        }
+        editor.putUserData(PREVIOUS_IN_STRING_DOLLAR_TYPED_OFFSET_KEY, null);
+
         if (kotlinLTTyped) {
             kotlinLTTyped = false;
             LtGtTypingUtils.handleKotlinAutoCloseLT(editor);
             return Result.STOP;
         }
         else if (c == '{' && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
-            PsiDocumentManager.getInstance(project).commitAllDocuments();
+            PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
 
             int offset = editor.getCaretModel().getOffset();
             PsiElement previousElement = file.findElementAt(offset - 1);
             if (previousElement instanceof LeafPsiElement
-                && ((LeafPsiElement) previousElement).getElementType() == KtTokens.LONG_TEMPLATE_ENTRY_START) {
-                PsiElement currentElement = file.findElementAt(offset);
+                && ((LeafPsiElement) previousElement).getElementType() == KtTokens.LONG_TEMPLATE_ENTRY_START
+            ) {
+                if (previousDollarInStringOffset != null && previousDollarInStringOffset.intValue() == offset - 1) {
+                    editor.getDocument().insertString(offset, "}");
+                    return Result.STOP;
+                }
 
-                if (currentElement instanceof LeafPsiElement
-                    && ((LeafPsiElement) currentElement).getElementType() != KtTokens.IDENTIFIER) {
+                PsiElement currentElement = file.findElementAt(offset);
+                boolean isNextTokenIsIdentifier = currentElement instanceof LeafPsiElement &&
+                                                  ((LeafPsiElement) currentElement).getElementType() != KtTokens.IDENTIFIER;
+                if (isNextTokenIsIdentifier) {
                     editor.getDocument().insertString(offset, "}");
                     return Result.STOP;
                 }
@@ -278,6 +295,14 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
         else if (c == '&') {
             if (autoIndentCase(editor, project, file, KtOperationReferenceExpression.class)) {
                 return Result.STOP;
+            }
+        }
+        else if (c == '$') {
+            int offset = editor.getCaretModel().getOffset();
+            PsiElement element = file.findElementAt(offset);
+            if (element instanceof LeafPsiElement && ((LeafPsiElement) element).getElementType() == KtTokens.REGULAR_STRING_PART) {
+                editor.putUserData(PREVIOUS_IN_STRING_DOLLAR_TYPED_OFFSET_KEY, offset);
+                isGlobalPreviousDollarInString = true;
             }
         }
 
