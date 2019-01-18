@@ -898,12 +898,15 @@ fun runTest() {
 
         if (excludeList.contains(fileName)) return false
 
+        if (findLinesWithPrefixesRemoved(text, "// WITH_REFLECT").size() != 0) return false
+
         def languageSettings = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
         if (!languageSettings.empty) {
             def settings = languageSettings.first()
             if (settings.contains('-ProperIeee754Comparisons') ||  // K/N supports only proper IEEE754 comparisons
                     settings.contains('+NewInference') ||          // New inference is not implemented
-                    settings.contains('-ReleaseCoroutines')) {     // only release coroutines
+                    settings.contains('-ReleaseCoroutines') ||     // only release coroutines
+                    settings.contains('-DataClassInheritance')) {  // old behavior is not supported
                 return false
             }
         }
@@ -932,6 +935,7 @@ fun runTest() {
             if (!findLinesWithPrefixesRemoved(text, "// JVM_TARGET:").isEmpty()) { return false }
             return true
         }
+
     }
 
     @Override
