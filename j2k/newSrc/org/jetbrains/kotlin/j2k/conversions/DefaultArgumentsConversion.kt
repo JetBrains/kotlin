@@ -82,18 +82,22 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
 
                 parameter.initializer = remapParameterSymbol(defaultValue) as JKExpression
             }
-            if (calledMethod.visibility == Visibility.PUBLIC &&
-                !calledMethod.annotationList.annotations.any { it.classSymbol.fqName == "kotlin.annotation.AnnotationTarget.JvmOverloads" }
-            ) {
-                calledMethod.annotationList.annotations += jvmAnnotation("JvmOverloads", context.symbolProvider)
-            }
             element.classBody.declarations -= method
+        }
+
+        for (method in element.declarationList) {
+            if (method !is JKMethod) continue
+            if (method.hasParametersWithDefaultValues() && (method.visibility == Visibility.PUBLIC || method.visibility == Visibility.INTERNAL)) {
+                method.annotationList.annotations += jvmAnnotation("JvmOverloads", context.symbolProvider)
+            }
         }
 
         return recurse(element)
 
     }
 
+    private fun JKMethod.hasParametersWithDefaultValues() =
+        parameters.any { it.initializer !is JKStubExpression }
 
     private fun lookupCall(statement: JKStatement): JKMethodCallExpression? {
         val expression = when (statement) {
