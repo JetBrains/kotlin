@@ -9962,9 +9962,29 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/complexDependancyOnVariableWithTrivialConstraint.kt");
                 }
 
+                @TestMetadata("generateConstraintWithInnerNothingType.kt")
+                public void testGenerateConstraintWithInnerNothingType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/generateConstraintWithInnerNothingType.kt");
+                }
+
+                @TestMetadata("implicitNothingConstraintFromReturn.kt")
+                public void testImplicitNothingConstraintFromReturn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/implicitNothingConstraintFromReturn.kt");
+                }
+
+                @TestMetadata("kt24490.kt")
+                public void testKt24490() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt24490.kt");
+                }
+
                 @TestMetadata("lambdaNothingAndExpectedType.kt")
                 public void testLambdaNothingAndExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/lambdaNothingAndExpectedType.kt");
+                }
+
+                @TestMetadata("nestedLambdaInferenceWithIncorporationOfVariables.kt")
+                public void testNestedLambdaInferenceWithIncorporationOfVariables() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/nestedLambdaInferenceWithIncorporationOfVariables.kt");
                 }
 
                 @TestMetadata("nothingWithCallableReference.kt")

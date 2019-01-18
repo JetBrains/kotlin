@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
@@ -164,4 +165,9 @@ class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromC
     companion object {
         val Empty = FreshVariableNewTypeSubstitutor(emptyList())
     }
+}
+
+fun UnwrappedType.substituteTypeVariable(typeVariable: NewTypeVariable, value: UnwrappedType): UnwrappedType {
+    val substitutor = NewTypeSubstitutorByConstructorMap(mapOf(typeVariable.freshTypeConstructor to value))
+    return substitutor.safeSubstitute(this)
 }
