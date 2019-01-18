@@ -27,37 +27,35 @@ abstract class AbstractIsResultInspection(
     private val simplify: (KtExpression) -> Unit = {}
 ) : AbstractKotlinInspection() {
 
-    protected fun analyzeFunction(function: KtFunction, toReport: PsiElement, holder: ProblemsHolder) {
+    protected fun analyzeFunction(function: KtNamedFunction, toReport: PsiElement, holder: ProblemsHolder) {
         if (function is KtConstructor<*>) return
         val returnTypeText = function.getReturnTypeReference()?.text
         if (returnTypeText != null && typeShortName !in returnTypeText) return
-        val name = (function as? KtNamedFunction)?.nameAsName?.asString()
-        if (name in allowedNames) return
-        if (function is KtNamedFunction) {
-            val receiverTypeReference = function.receiverTypeReference
-            // Filter given type extensions
-            if (receiverTypeReference != null && typeShortName in receiverTypeReference.text) return
-        }
-        if (function is KtFunctionLiteral || returnTypeText == null) {
+        val name = function.nameAsName?.asString()
+        if (name == null || name in allowedNames) return
+        val receiverTypeReference = function.receiverTypeReference
+        // Filter given type extensions
+        if (receiverTypeReference != null && typeShortName in receiverTypeReference.text) return
+        if (returnTypeText == null) {
             // Heuristics to save performance: check if something creates given type in function text
             val text = function.bodyExpression?.text
             if (text != null && allowedNames.none { it in text } && typeShortName !in text && allowedSuffix !in text) return
         }
 
-        val descriptor = function.resolveToDescriptorIfAny() as? FunctionDescriptor ?: return
+        val descriptor = function.resolveToDescriptorIfAny() ?: return
         val returnType = descriptor.returnType ?: return
         val returnTypeClass = returnType.constructor.declarationDescriptor as? ClassDescriptor ?: return
         if (returnTypeClass.fqNameSafe.asString() != typeFullName) return
 
-        if (name != null && name.endsWith(allowedSuffix)) {
+        if (name.endsWith(allowedSuffix)) {
             analyzeFunctionWithAllowedSuffix(name, descriptor, toReport, holder)
         } else {
             holder.registerProblem(
                 toReport,
                 "Function returning $typeShortName with a name that does not end with $allowedSuffix",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                *listOfNotNull(
-                    name?.let { RenameToFix("$it$allowedSuffix") },
+                *listOf(
+                    RenameToFix("$name$allowedSuffix"),
                     AddCallOrUnwrapTypeFix(
                         withBody = function.hasBody(),
                         functionName = suggestedFunctionNameToCall,
@@ -74,10 +72,6 @@ abstract class AbstractIsResultInspection(
         return object : KtVisitorVoid() {
             override fun visitNamedFunction(function: KtNamedFunction) {
                 analyzeFunction(function, function.nameIdentifier ?: function.funKeyword ?: function, holder)
-            }
-
-            override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
-                analyzeFunction(lambdaExpression.functionLiteral, lambdaExpression.functionLiteral.lBrace, holder)
             }
         }
     }
