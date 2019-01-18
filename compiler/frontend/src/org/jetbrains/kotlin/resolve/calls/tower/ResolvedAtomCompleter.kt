@@ -99,6 +99,7 @@ class ResolvedAtomCompleter(
 
         kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
+        kotlinToResolvedCallTransformer.runAdditionalReceiversCheckers(resolvedCall, topLevelCallContext)
 
         return resolvedCall
     }
