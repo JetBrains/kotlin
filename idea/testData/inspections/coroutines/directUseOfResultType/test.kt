@@ -34,9 +34,9 @@ class Container {
 fun test() {
     // YES
     fun localGetSuccess() = Result("123")
-    // YES
+    // NO (no name)
     val anonymous = fun() = Result(45)
-    // YES
+    // NO (no name)
     val lambda = { Result(true) }
     // NO yet (we do not report local *catching functions)
     fun localCatching() = Result(2.72)
