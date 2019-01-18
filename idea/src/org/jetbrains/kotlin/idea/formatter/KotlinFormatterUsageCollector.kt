@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.internal.statistic.AbstractProjectsUsagesCollector
-import com.intellij.internal.statistic.beans.GroupDescriptor
 import com.intellij.internal.statistic.beans.UsageDescriptor
 import com.intellij.internal.statistic.utils.getEnumUsage
 import com.intellij.openapi.project.Project
@@ -15,10 +13,9 @@ import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector.KotlinFormatterKind.*
 import org.jetbrains.kotlin.idea.util.isDefaultOfficialCodeStyle
 
-class KotlinFormatterUsageCollector : AbstractProjectsUsagesCollector() {
-    override fun getGroupId(): GroupDescriptor = GroupDescriptor.create(GROUP_ID)
-
-    override fun getProjectUsages(project: Project): Set<UsageDescriptor> {
+//todo: convert to FUS?
+class KotlinFormatterUsageCollector {
+    fun getProjectUsages(project: Project): Set<UsageDescriptor> {
         val usedFormatter = getKotlinFormatterKind(project)
 
         val settings = CodeStyleSettingsManager.getSettings(project)
