@@ -115,7 +115,7 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
             }
             append(getInlayHintsTypeRenderer(element.analyze(), element).renderType(type))
         }
-        listOf(InlayInfo(declString, offset))
+        listOf(InlayInfo(declString, offset, false, true, true))
     } else {
         emptyList()
     }
