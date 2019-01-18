@@ -262,7 +262,7 @@ object ExpectedActualResolver {
         if (!equalsBy(aTypeParams, bTypeParams, TypeParameterDescriptor::getName)) return Incompatible.TypeParameterNames
 
         if (!areCompatibleModalities(a.modality, b.modality)) return Incompatible.Modality
-        if (a.visibility != b.visibility) return Incompatible.Visibility
+        if (!areDeclarationsWithCompatibleVisibilities(a, b)) return Incompatible.Visibility
 
         areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
 
@@ -425,6 +425,20 @@ object ExpectedActualResolver {
     private fun areCompatibleModalities(a: Modality, b: Modality): Boolean {
         return a == Modality.FINAL && b == Modality.OPEN ||
                 a == b
+    }
+
+    private fun areDeclarationsWithCompatibleVisibilities(
+        a: CallableMemberDescriptor,
+        b: CallableMemberDescriptor
+    ): Boolean {
+        val compare = Visibilities.compare(a.visibility, b.visibility)
+        return if (a.isOverridable) {
+            // For overridable declarations visibility should match precisely, see KT-19664
+            compare == 0
+        } else {
+            // For non-overridable declarations actuals are allowed to have more permissive visibility
+            compare != null && compare <= 0
+        }
     }
 
 
