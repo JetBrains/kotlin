@@ -50,7 +50,8 @@ enum class Ide(val platform: Platform) : CompatibilityPredicate {
     AS31(Platform.P173),
     AS32(Platform.P181),
     AS33(Platform.P182),
-    AS34(Platform.P183);
+    AS34(Platform.P183),
+    AS35(Platform.P183);
 
     val kind = Kind.values().first { it.shortName == name.take(2) }
     val version = name.dropWhile { !it.isDigit() }.toInt()
