@@ -223,10 +223,14 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                     }
 
                 is KtParameter -> el<UParameter> {
-                    val ownerFunction = original.ownerFunction as? KtFunction ?: return null
-                    val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return null
-                    val lightParameter = lightMethod.parameterList.parameters.find { it.name == original.name } ?: return null
+                    val ownerFunction = original.ownerFunction as? KtFunction ?: return@el null
+                    val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return@el null
+                    val lightParameter = lightMethod.parameterList.parameters.find { it.name == original.name } ?: return@el null
                     KotlinUParameter(lightParameter, original, givenParent)
+                } ?: el<UField> {
+                    if (!original.hasValOrVar()) return@el null
+                    val lightField = LightClassUtil.getLightClassBackingField(original) ?: return@el null
+                    KotlinUField(lightField, original, givenParent)
                 }
 
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
