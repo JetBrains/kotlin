@@ -890,7 +890,8 @@ fun runTest() {
     static def excludeList = [
             "build/external/compiler/codegen/box/functions/functionExpression/functionExpressionWithThisReference.kt", // KT-26973
             "build/external/compiler/codegen/box/inlineClasses/kt27096_innerClass.kt", // KT-27665
-            "build/external/compiler/codegen/boxInline/anonymousObject/kt8133.kt"
+            "build/external/compiler/codegen/boxInline/anonymousObject/kt8133.kt",
+            "build/external/compiler/codegen/box/localClasses/anonymousObjectInExtension.kt" // KT-29282
     ]
 
     boolean isEnabledForNativeBackend(String fileName) {
