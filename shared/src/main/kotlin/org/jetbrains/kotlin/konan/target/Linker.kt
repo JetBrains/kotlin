@@ -158,8 +158,18 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
             if (compilerRtLibrary != null) +compilerRtLibrary!!
             +libraries
             +linkerArgs
+            +rpath(dynamic)
         }) + if (debug) listOf(dsymUtilCommand(executable, outputDsymBundle)) else emptyList()
     }
+
+    private fun rpath(dynamic: Boolean): List<String> = listOfNotNull(
+            when (target.family) {
+                Family.OSX -> "@executable_path/../Frameworks"
+                Family.IOS -> "@executable_path/Frameworks"
+                else -> error(target)
+            },
+            "@loader_path/Frameworks".takeIf { dynamic }
+    ).flatMap { listOf("-rpath", it) }
 
     fun dsymUtilCommand(executable: ExecutableFile, outputDsymBundle: String) =
             object : Command(dsymutilCommand(executable, outputDsymBundle)) {
