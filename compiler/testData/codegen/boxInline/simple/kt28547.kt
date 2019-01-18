@@ -1,18 +1,18 @@
 // FILE: 1.kt
 package test
 
-class C {
+class C<T>(val value: T) {
     var inserting: Boolean = false
     fun nextSlot(): Any? = null
     fun startNode(key: Any?) {}
     fun endNode() {}
     fun emitNode(node: Any?) {}
-    fun useNode(): Any? = null
+    fun useNode(): T = value
     fun skipValue() {}
     fun updateValue(value: Any?) {}
 }
 
-class B<T>(val composer: C, val node: T) {
+class B<T>(val composer: C<T>, val node: T) {
     inline fun <V> bar(value: V, block: T.(V) -> Unit) = with(composer) {
         if (inserting || nextSlot() != value) {
             updateValue(value)
@@ -21,13 +21,13 @@ class B<T>(val composer: C, val node: T) {
     }
 }
 
-class A(val composer: C) {
-    inline fun <T> foo(key: Any, ctor: () -> T, update: B<T>.() -> Unit) = with(composer) {
+class A<T>(val composer: C<T>) {
+    inline fun foo(key: Any, ctor: () -> T, update: B<T>.() -> Unit) = with(composer) {
         startNode(key)
         val node = if (inserting)
             ctor().also { emitNode(it) }
         else useNode() as T
-        B<T>(this, node).update()
+        B(this, node).update()
         endNode()
     }
 }
@@ -36,10 +36,10 @@ class A(val composer: C) {
 import test.*
 
 fun box(): String {
-    val a = A(C())
+    val a = A(C("foo"))
     val str = "OK"
     var result = "fail"
-    a.foo<String>(
+    a.foo(
         123,
         { "abc" },
         {
