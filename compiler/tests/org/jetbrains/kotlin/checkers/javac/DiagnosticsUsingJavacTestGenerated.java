@@ -13419,6 +13419,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/modalityCheckForExplicitAndImplicitOverride.kt");
                 }
 
+                @TestMetadata("morePermissiveVisibilityOnActual.kt")
+                public void testMorePermissiveVisibilityOnActual() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/morePermissiveVisibilityOnActual.kt");
+                }
+
+                @TestMetadata("morePermissiveVisibilityOnActualViaTypeAlias.kt")
+                public void testMorePermissiveVisibilityOnActualViaTypeAlias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/morePermissiveVisibilityOnActualViaTypeAlias.kt");
+                }
+
                 @TestMetadata("nestedClasses.kt")
                 public void testNestedClasses() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/nestedClasses.kt");
