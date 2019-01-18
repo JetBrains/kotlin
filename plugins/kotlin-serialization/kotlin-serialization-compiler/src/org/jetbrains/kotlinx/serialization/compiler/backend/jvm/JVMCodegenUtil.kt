@@ -120,9 +120,17 @@ fun InstructionAdapter.genKOutputMethodCall(
     )
 }
 
-internal fun InstructionAdapter.buildInternalConstructorDesc(propsStartVar: Int, bitMaskBase: Int, codegen: ClassBodyCodegen, args: List<SerializableProperty>): String {
-    val constructorDesc = StringBuilder("(I")
-    load(bitMaskBase, OPT_MASK_TYPE)
+internal fun InstructionAdapter.buildInternalConstructorDesc(
+    propsStartVar: Int,
+    bitMaskBase: Int,
+    codegen: ClassBodyCodegen,
+    args: List<SerializableProperty>
+): String {
+    val constructorDesc = StringBuilder("(")
+    repeat(args.bitMaskSlotCount()) {
+        constructorDesc.append("I")
+        load(bitMaskBase + it, Type.INT_TYPE)
+    }
     var propVar = propsStartVar
     for (property in args) {
         val propertyType = codegen.typeMapper.mapType(property.type)
@@ -135,8 +143,10 @@ internal fun InstructionAdapter.buildInternalConstructorDesc(propsStartVar: Int,
     return constructorDesc.toString()
 }
 
-internal fun ImplementationBodyCodegen.generateMethod(function: FunctionDescriptor,
-                                                      block: InstructionAdapter.(JvmMethodSignature, ExpressionCodegen) -> Unit) {
+internal fun ImplementationBodyCodegen.generateMethod(
+    function: FunctionDescriptor,
+    block: InstructionAdapter.(JvmMethodSignature, ExpressionCodegen) -> Unit
+) {
     this.functionCodegen.generateMethod(OtherOrigin(this.myClass.psiOrParent, function), function,
                                         object : FunctionGenerationStrategy.CodegenBased(this.state) {
                                             override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {

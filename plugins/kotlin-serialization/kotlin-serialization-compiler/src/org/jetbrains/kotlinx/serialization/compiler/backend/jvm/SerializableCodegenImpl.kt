@@ -178,13 +178,15 @@ class SerializableCodegenImpl(
 
     private fun InstructionAdapter.doGenerateConstructorImpl(exprCodegen: ExpressionCodegen) {
         val seenMask = 1
-        var (propIndex, propOffset) = generateSuperSerializableCall(2)
+        val bitMaskOff = fun(it: Int): Int { return seenMask + bitMaskSlotAt(it) }
+        val bitMaskEnd = seenMask + properties.serializableProperties.bitMaskSlotCount()
+        var (propIndex, propOffset) = generateSuperSerializableCall(bitMaskEnd)
         for (i in propIndex until properties.serializableProperties.size) {
             val prop = properties[i]
             val propType = prop.asmType
             if (!prop.optional) {
                 // primary were validated before constructor call
-                genValidateProperty(i) { seenMask }
+                genValidateProperty(i, bitMaskOff)
                 val nonThrowLabel = Label()
                 ificmpne(nonThrowLabel)
                 genExceptionThrow(serializationExceptionMissingFieldName, prop.name)
@@ -194,12 +196,11 @@ class SerializableCodegenImpl(
                 load(propOffset, propType)
                 putfield(thisAsmType.internalName, prop.descriptor.name.asString(), propType.descriptor)
             } else {
-                genValidateProperty(i) { seenMask }
+                genValidateProperty(i, bitMaskOff)
                 val setLbl = Label()
                 val nextLabel = Label()
                 ificmpeq(setLbl)
                 // setting field
-                // todo: validate nullability
                 load(0, thisAsmType)
                 load(propOffset, propType)
                 putfield(thisAsmType.internalName, prop.descriptor.name.asString(), propType.descriptor)
@@ -228,7 +229,7 @@ class SerializableCodegenImpl(
             .forEach { (t, u) -> exprCodegen.genInitParam(t, u) }
 
         // init blocks
-        // todo: proper order with other initializers
+        // todo: proper order with other initializers?
         classCodegen.myClass.anonymousInitializers()
             .forEach { exprCodegen.gen(it, Type.VOID_TYPE) }
         areturn(Type.VOID_TYPE)

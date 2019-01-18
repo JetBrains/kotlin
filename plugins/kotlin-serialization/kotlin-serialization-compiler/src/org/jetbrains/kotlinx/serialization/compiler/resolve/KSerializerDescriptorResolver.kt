@@ -280,15 +280,19 @@ object KSerializerDescriptorResolver {
         val markerDesc = classDescriptor.getKSerializerConstructorMarker()
         val markerType = markerDesc.toSimpleType()
 
-        val parameterDescsAsProps = SerializableProperties(classDescriptor, bindingContext).serializableProperties.map { it.descriptor }
+        val serializableProperties = SerializableProperties(classDescriptor, bindingContext).serializableProperties
+        val parameterDescsAsProps = serializableProperties.map { it.descriptor }
+        val bitMaskSlotsCount = serializableProperties.bitMaskSlotCount()
         var i = 0
         val consParams = mutableListOf<ValueParameterDescriptor>()
-        consParams.add(
-            ValueParameterDescriptorImpl(
-                functionDescriptor, null, i++, Annotations.EMPTY, Name.identifier("seen"), functionDescriptor.builtIns.intType, false,
-                false, false, null, functionDescriptor.source
+        repeat(bitMaskSlotsCount) {
+            consParams.add(
+                ValueParameterDescriptorImpl(
+                    functionDescriptor, null, i++, Annotations.EMPTY, Name.identifier("seen$i"), functionDescriptor.builtIns.intType, false,
+                    false, false, null, functionDescriptor.source
+                )
             )
-        )
+        }
         for (prop in parameterDescsAsProps) {
             consParams.add(
                 ValueParameterDescriptorImpl(

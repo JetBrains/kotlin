@@ -19,11 +19,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
-import org.jetbrains.kotlinx.serialization.compiler.resolve.hasCompanionObjectAsSerializer
-import org.jetbrains.kotlinx.serialization.compiler.resolve.hasSerializableAnnotationWithoutArgs
-import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 
 class SerializableIrGenerator(
     val irClass: IrClass,
@@ -51,10 +48,11 @@ class SerializableIrGenerator(
                 generateAnySuperConstructorCall(toBuilder = this@contributeConstructor)
             else
                 TODO("Serializable classes with inheritance")
-            val seenVar = ctor.valueParameters[0]
+            val seenVarsOffset = properties.serializableProperties.bitMaskSlotCount()
+            val seenVars = (0 until seenVarsOffset).map { ctor.valueParameters[it] }
 
             for ((index, prop) in properties.serializableProperties.withIndex()) {
-                val paramRef = ctor.valueParameters[index + 1]
+                val paramRef = ctor.valueParameters[index + seenVarsOffset]
                 // assign this.a = a in else branch
                 val assignParamExpr = irSetField(irGet(thiz), prop.irField, irGet(paramRef))
 
@@ -69,7 +67,11 @@ class SerializableIrGenerator(
                 val propNotSeenTest =
                     irEquals(
                         irInt(0),
-                        irBinOp(OperatorNameConventions.AND, irGet(seenVar), irInt(1 shl (index % 32)))
+                        irBinOp(
+                            OperatorNameConventions.AND,
+                            irGet(seenVars[bitMaskSlotAt(index)]),
+                            irInt(1 shl (index % 32))
+                        )
                     )
 
                 +irIfThenElse(compilerContext.irBuiltIns.unitType, propNotSeenTest, ifNotSeenExpr, assignParamExpr)

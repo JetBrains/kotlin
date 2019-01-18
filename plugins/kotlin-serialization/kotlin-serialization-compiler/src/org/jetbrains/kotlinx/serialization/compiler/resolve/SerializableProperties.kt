@@ -74,3 +74,6 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
     val primaryConstructorWithDefaults = serializableClass.unsubstitutedPrimaryConstructor
         ?.original?.valueParameters?.any { it.declaresDefaultValue() } ?: false
 }
+
+internal fun List<SerializableProperty>.bitMaskSlotCount() = size / 32 + 1
+internal fun bitMaskSlotAt(propertyIndex: Int) = propertyIndex / 32

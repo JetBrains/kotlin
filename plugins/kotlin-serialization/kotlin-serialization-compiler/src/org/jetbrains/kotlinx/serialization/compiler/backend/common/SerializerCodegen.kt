@@ -33,7 +33,7 @@ abstract class SerializerCodegen(
     val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorBySerializer(serializerDescriptor)!!
     protected val serialName: String = serializableDescriptor.annotations.serialNameValue ?: serializableDescriptor.fqNameUnsafe.asString()
     protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
-    protected val orderedProperties = properties.serializableProperties
+    protected val serializableProperties = properties.serializableProperties
 
     private fun checkSerializability() {
         check(properties.isExternallySerializable) {

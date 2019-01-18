@@ -32,16 +32,12 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
-import org.jetbrains.kotlinx.serialization.compiler.resolve.hasCompanionObjectAsSerializer
-import org.jetbrains.kotlinx.serialization.compiler.resolve.hasSerializableAnnotationWithoutArgs
-import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 
 class SerializableJsTranslator(
     val declaration: KtPureClassOrObject,
     val descriptor: ClassDescriptor,
-    val translator: DeclarationBodyVisitor,
     val context: TranslationContext
 ) : SerializableCodegen(descriptor, context.bindingContext()) {
 
@@ -63,9 +59,10 @@ class SerializableJsTranslator(
                     Namer.createObjectWithPrototypeFrom(context.getInnerNameForDescriptor(serializableDescriptor).makeRef())
                 )
             )
-            val seenVar = jsFun.parameters[0].name.makeRef()
+            val seenVarsOffset = properties.serializableProperties.bitMaskSlotCount()
+            val seenVars = (0 until seenVarsOffset).map { jsFun.parameters[it].name.makeRef() }
             for ((index, prop) in properties.serializableProperties.withIndex()) {
-                val paramRef = jsFun.parameters[index + 1].name.makeRef()
+                val paramRef = jsFun.parameters[index + seenVarsOffset].name.makeRef()
                 // assign this.a = a in else branch
                 val assignParamStmt = TranslationUtils.assignmentToBackingField(context, prop.descriptor, paramRef).makeStmt()
 
@@ -77,7 +74,7 @@ class SerializableJsTranslator(
                     JsThrow(JsNew(missingExceptionClassRef, listOf(JsStringLiteral(prop.name))))
                 }
                 // (seen & 1 << i == 0) -- not seen
-                val notSeenTest = propNotSeenTest(seenVar, index)
+                val notSeenTest = propNotSeenTest(seenVars[bitMaskSlotAt(index)], index)
                 +JsIf(notSeenTest, ifNotSeenStmt, assignParamStmt)
             }
 
@@ -111,7 +108,7 @@ class SerializableJsTranslator(
             context: TranslationContext
         ) {
             if (serializableClass.isInternalSerializable)
-                SerializableJsTranslator(declaration, serializableClass, translator, context).generate()
+                SerializableJsTranslator(declaration, serializableClass, context).generate()
             else if (serializableClass.hasSerializableAnnotationWithoutArgs && !serializableClass.hasCompanionObjectAsSerializer) {
                 throw CompilationException(
                     "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
