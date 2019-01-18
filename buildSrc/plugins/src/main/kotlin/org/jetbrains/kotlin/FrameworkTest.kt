@@ -31,19 +31,17 @@ open class FrameworkTest : DefaultTask() {
     @Input
     var fullBitcode: Boolean = false
 
-    private val testOutput: String by lazy {
-        project.file(project.property("testOutputFramework")!!).absolutePath
-    }
+    private val testOutput: String = project.testOutputFramework
 
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
-        val target = project.testTarget().name
+        val target = project.testTarget.name
 
         // set crossdist build dependency if custom konan.home wasn't set
         if (!(project.property("useCustomDist") as Boolean)) {
             setRootDependency("${target}CrossDist", "${target}CrossDistRuntime", "commonDistRuntime", "distCompiler")
         }
-        check(::frameworkName.isInitialized, { "Framework name should be set" })
+        check(::frameworkName.isInitialized) { "Framework name should be set" }
         dependsOn(project.tasks.getByName("compileKonan$frameworkName"))
         return this
     }
@@ -52,7 +50,7 @@ open class FrameworkTest : DefaultTask() {
 
     @TaskAction
     fun run() {
-        val frameworkParentDirPath = "$testOutput/$frameworkName/${project.testTarget().name}"
+        val frameworkParentDirPath = "$testOutput/$frameworkName/${project.testTarget.name}"
         val frameworkPath = "$frameworkParentDirPath/$frameworkName.framework"
         val frameworkBinaryPath = "$frameworkPath/$frameworkName"
         validateBitcodeEmbedding(frameworkBinaryPath)
@@ -78,14 +76,14 @@ open class FrameworkTest : DefaultTask() {
                 listOf(provider.toString(), swiftMain)
         val options = listOf("-g", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
         val testExecutable = Paths.get(testOutput, frameworkName, "swiftTestExecutable")
-        compileSwift(project, project.testTarget(), sources, options, testExecutable, fullBitcode)
+        compileSwift(project, project.testTarget, sources, options, testExecutable, fullBitcode)
 
         runTest(testExecutable)
     }
 
     private fun runTest(testExecutable: Path) {
-        val target = project.testTarget()
-        val platform = project.platformManager().platform(target)
+        val target = project.testTarget
+        val platform = project.platformManager.platform(target)
         val configs = platform.configurables as AppleConfigurables
         val swiftPlatform = when (target) {
             KonanTarget.IOS_X64 -> "iphonesimulator"
@@ -114,7 +112,7 @@ open class FrameworkTest : DefaultTask() {
             |stdout: $stdOut
             |stderr: $stdErr
             """.trimMargin())
-        check(exitCode == 0, { "Execution failed with exit code: $exitCode "})
+        check(exitCode == 0) { "Execution failed with exit code: $exitCode "}
     }
 
     private fun validateBitcodeEmbedding(frameworkBinary: String) {
@@ -122,8 +120,8 @@ open class FrameworkTest : DefaultTask() {
         if (!fullBitcode) {
             return
         }
-        val testTarget = project.testTarget()
-        val configurables = project.platformManager().platform(testTarget).configurables as AppleConfigurables
+        val testTarget = project.testTarget
+        val configurables = project.platformManager.platform(testTarget).configurables as AppleConfigurables
 
         val bitcodeBuildTool = "${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool"
         val ldPath = "${configurables.absoluteTargetToolchain}/usr/bin/ld"

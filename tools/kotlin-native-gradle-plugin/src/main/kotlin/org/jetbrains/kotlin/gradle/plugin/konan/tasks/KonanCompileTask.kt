@@ -270,7 +270,7 @@ open class KonanCompileProgramTask: KonanCompileTask() {
     // Create tasks to run supported executables.
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
-        if (!isCrossCompile) {
+        if (!isCrossCompile && !project.hasProperty("konanNoRun")) {
             runTask = project.tasks.create("run${artifactName.capitalize()}", Exec::class.java).apply {
                 group = "run"
                 dependsOn(this@KonanCompileProgramTask)
