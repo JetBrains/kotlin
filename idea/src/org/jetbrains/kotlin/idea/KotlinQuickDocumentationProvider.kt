@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
@@ -325,6 +326,17 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             insert(buildKotlin(context, declarationDescriptor, quickNavigation, ktElement)) {}
         }
 
+        private fun StringBuilder.insertKDoc(docTag: KDocTag) {
+            insert(DescriptionBodyTemplate.Kotlin()) {
+                content {
+                    appendKDocContent(docTag)
+                }
+                sections {
+                    if (docTag is KDocSection) appendKDocSection(docTag)
+                }
+            }
+        }
+
         private fun buildKotlin(
             context: BindingContext,
             declarationDescriptor: DeclarationDescriptor,
@@ -350,21 +362,29 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 insertDeprecationInfo(declarationDescriptor, deprecationProvider)
 
                 if (!quickNavigation) {
-                    description {
+                    description desc@{
                         val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
                         if (comment != null) {
-                            insert(DescriptionBodyTemplate.Kotlin()) {
-                                content {
-                                    appendKDocContent(comment)
-                                }
-                                sections {
-                                    if (comment is KDocSection) appendKDocSection(comment)
-                                }
+                            insertKDoc(comment)
+                            return@desc
+                        }
+                        if (declarationDescriptor is ClassConstructorDescriptor && !declarationDescriptor.isPrimary) {
+                            val classComment = declarationDescriptor.constructedClass.findKDoc {
+                                DescriptorToSourceUtilsIde.getAnyDeclaration(
+                                    ktElement.project,
+                                    it
+                                )
                             }
-                        } else if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
+                            if (classComment != null) {
+                                insertKDoc(classComment)
+                                return@desc
+                            }
+                        }
+                        if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
                             insert(DescriptionBodyTemplate.FromJava()) {
                                 body = extractJavaDescription(declarationDescriptor)
                             }
+                            return@desc
                         }
                     }
                 }
