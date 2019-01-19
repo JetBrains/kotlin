@@ -135,7 +135,7 @@ public inline fun <T> T.takeUnless(predicate: (T) -> Boolean): T? {
 public inline fun repeat(times: Int, action: (Int) -> Unit) {
     contract { callsInPlace(action) }
 
-    for (index in 0 until times) {
+    for (index in 0 .. (times - 1)) {
         action(index)
     }
 }

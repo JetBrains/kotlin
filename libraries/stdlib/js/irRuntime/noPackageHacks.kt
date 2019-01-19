@@ -9,7 +9,7 @@
 internal fun <T> arrayConcat(vararg args: T): T {
     val len = args.size
     val typed = js("Array(len)").unsafeCast<Array<T>>()
-    for (i in 0 until len) {
+    for (i in 0 .. (len - 1)) {
         val arr = args[i]
         if (arr !is Array<*>) {
             typed[i] = js("[]").slice.call(arr)
@@ -25,7 +25,7 @@ internal fun <T> arrayConcat(vararg args: T): T {
 @PublishedApi
 internal fun <T> primitiveArrayConcat(vararg args: T): T {
     var size = 0
-    for (i in 0 until args.size) {
+    for (i in 0 .. (args.size - 1)) {
         size += args[i].unsafeCast<Array<Any?>>().size
     }
     val a = args[0]
@@ -35,9 +35,9 @@ internal fun <T> primitiveArrayConcat(vararg args: T): T {
     }
 
     size = 0
-    for (i in 0 until args.size) {
+    for (i in 0 .. (args.size - 1)) {
         val arr = args[i].unsafeCast<Array<Any?>>()
-        for (j in 0 until arr.size) {
+        for (j in 0 .. (arr.size - 1)) {
             result[size++] = arr[j]
         }
     }
