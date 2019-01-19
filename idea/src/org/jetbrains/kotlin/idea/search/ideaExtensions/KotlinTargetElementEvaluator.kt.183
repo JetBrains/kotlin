@@ -100,7 +100,7 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
         val calleeExpression = refExpression?.getParentOfTypeAndBranch<KtCallElement> { calleeExpression }
         if (calleeExpression != null) {
             (ref.resolve() as? KtConstructor<*>)?.let {
-                return if (flags and JavaTargetElementEvaluator().additionalReferenceSearchFlags != 0) it else it.containingClassOrObject
+                return if (flags and JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR != 0) it else it.containingClassOrObject
             }
         }
 

@@ -456,22 +456,6 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         }
     }
 
-    @Test
-    fun testMethodReturnTypeReference() {
-        doTest("Elvis") { _, file ->
-            assertEquals(
-                "UTypeReferenceExpression (name = java.lang.String)",
-                file.findElementByTextFromPsi<UMethod>("fun foo(bar: String): String? = null").returnTypeReference?.asLogString()
-            )
-            assertEquals(
-                null,
-                file.findElementByTextFromPsi<UMethod>("fun bar() = 42").returnTypeReference?.asLogString()
-            )
-
-        }
-    }
-
-
 }
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T =

@@ -75,9 +75,9 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
         return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
     }
 
-    override fun getExpressionAtCaret(atCaret: PsiElement, dataFlowToThis: Boolean): KtExpression? {
+    override fun getExpressionAtCaret(atCaret: PsiElement?, dataFlowToThis: Boolean): KtExpression? {
         val element =
-                atCaret.parentsWithSelf
+                atCaret?.parentsWithSelf
                         ?.firstOrNull {
                             it is KtProperty ||
                             it is KtParameter ||
