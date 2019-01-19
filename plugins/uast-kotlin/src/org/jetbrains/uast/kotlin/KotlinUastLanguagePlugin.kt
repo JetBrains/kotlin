@@ -222,16 +222,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                         convertNonLocalProperty(original, givenParent, requiredType).firstOrNull()
                     }
 
-                is KtParameter -> el<UParameter> {
-                    val ownerFunction = original.ownerFunction as? KtFunction ?: return@el null
-                    val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return@el null
-                    val lightParameter = lightMethod.parameterList.parameters.find { it.name == original.name } ?: return@el null
-                    KotlinUParameter(lightParameter, original, givenParent)
-                } ?: el<UField> {
-                    if (!original.hasValOrVar()) return@el null
-                    val lightField = LightClassUtil.getLightClassBackingField(original) ?: return@el null
-                    KotlinUField(lightField, original, givenParent)
-                }
+                is KtParameter -> convertParameter(original, givenParent, this).firstOrNull()
 
                 is KtFile -> el<UFile> { KotlinUFile(original, this@KotlinUastLanguagePlugin) }
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement, this@KotlinUastLanguagePlugin) }
@@ -245,6 +236,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
             }
         }
     }
+
 
     private fun convertEnumEntry(original: KtEnumEntry, givenParent: UElement?): UElement? {
         return LightClassUtil.getLightClassBackingField(original)?.let { psiField ->
@@ -283,6 +275,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     @Suppress("UNCHECKED_CAST")
     override fun <T : UElement> convertToAlternatives(element: PsiElement, requiredTypes: Array<out Class<out T>>): Sequence<T> = when {
         (element is KtProperty && !element.isLocal) -> convertNonLocalProperty(element, null, requiredTypes) as Sequence<T>
+        element is KtParameter -> convertParameter(element, null, requiredTypes) as Sequence<T>
         else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
     }
 }
@@ -301,25 +294,44 @@ internal inline fun <reified ActualT : UElement> Array<out Class<out UElement>>.
 
 internal fun Array<out Class<out UElement>>.isAssignableFrom(cls: Class<*>) = any { it.isAssignableFrom(cls) }
 
+
+private fun convertToPropertyAlternatives(
+    methods: LightClassUtil.PropertyAccessorsPsiMethods?,
+    givenParent: UElement?
+): Array<UElementAlternative<*>> = if (methods != null) arrayOf(
+    alternative {
+        methods.backingField?.let { KotlinUField(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, givenParent) }
+    },
+    alternative {
+        // TODO: make it possible to use `convertDeclaration` without `KotlinUastLanguagePlugin` creation
+        methods.getter?.let { KotlinUastLanguagePlugin().convertDeclaration(it, givenParent, arrayOf(UMethod::class.java)) as? UMethod }
+    },
+    alternative {
+        methods.setter?.let { KotlinUastLanguagePlugin().convertDeclaration(it, givenParent, arrayOf(UMethod::class.java)) as? UMethod }
+    }
+) else emptyArray()
+
 private fun convertNonLocalProperty(
     property: KtProperty,
     givenParent: UElement?,
     requiredType: Array<out Class<out UElement>>
-): Sequence<UElement> {
-    val methods = LightClassUtil.getLightClassPropertyMethods(property)
-    return requiredType.accommodate(
-        alternative {
-            methods.backingField?.let { KotlinUField(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, givenParent) }
-        },
-        alternative {
-            // TODO: make it possible to use `convertDeclaration` without `KotlinUastLanguagePlugin` creation
-            methods.getter?.let { KotlinUastLanguagePlugin().convertDeclaration(it, givenParent, arrayOf(UMethod::class.java)) as? UMethod }
-        },
-        alternative {
-            methods.setter?.let { KotlinUastLanguagePlugin().convertDeclaration(it, givenParent, arrayOf(UMethod::class.java)) as? UMethod }
-        }
-    )
-}
+): Sequence<UElement> =
+    requiredType.accommodate(*convertToPropertyAlternatives(LightClassUtil.getLightClassPropertyMethods(property), givenParent))
+
+
+private fun convertParameter(
+    element: KtParameter,
+    givenParent: UElement?,
+    requiredTypes: Array<out Class<out UElement>>
+): Sequence<UElement> = requiredTypes.accommodate(
+    alternative uParam@{
+        val ownerFunction = element.ownerFunction as? KtFunction ?: return@uParam null
+        val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return@uParam null
+        val lightParameter = lightMethod.parameterList.parameters.find { it.name == element.name } ?: return@uParam null
+        KotlinUParameter(lightParameter, element, givenParent)
+    },
+    *convertToPropertyAlternatives(LightClassUtil.getLightClassPropertyMethods(element), givenParent)
+)
 
 internal object KotlinConverter {
     internal tailrec fun unwrapElements(element: PsiElement?): PsiElement? = when (element) {
