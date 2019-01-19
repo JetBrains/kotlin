@@ -6,6 +6,7 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertInstanceOf
@@ -119,6 +120,36 @@ class KotlinUastAlternativesTest : AbstractKotlinUastTest() {
                 assertEquals(
                     "@org.jetbrains.annotations.NotNull var justParam: int",
                     it.joinToString(transform = UElement::asRenderString)
+                )
+            }
+
+        }
+    }
+
+    @Test
+    fun testPrimaryConstructorAlternatives() {
+        doTest("ManyAlternatives") { name, file ->
+            val index = file.psi.text.indexOf("ClassA")
+            val ktProperty = PsiTreeUtil.getParentOfType(file.psi.findElementAt(index), KtClass::class.java)!!
+            val plugin = UastLanguagePlugin.byLanguage(ktProperty.language)!!
+
+            plugin.convertToAlternatives<UElement>(ktProperty, arrayOf(UClass::class.java)).let {
+                assertEquals("public final class ClassA {", it.joinToString { it.asRenderString().lineSequence().first() })
+            }
+
+            plugin.convertToAlternatives<UElement>(ktProperty, arrayOf(UClass::class.java, UMethod::class.java)).let {
+                assertEquals(
+                    "public final class ClassA {, " +
+                            "public fun ClassA(@org.jetbrains.annotations.NotNull justParam: int, @org.jetbrains.annotations.NotNull paramAndProp: java.lang.String) = UastEmptyExpression",
+                    it.joinToString { it.asRenderString().lineSequence().first() }
+                )
+            }
+
+            plugin.convertToAlternatives<UElement>(ktProperty, arrayOf(UElement::class.java)).let {
+                assertEquals(
+                    "public final class ClassA {, " +
+                            "public fun ClassA(@org.jetbrains.annotations.NotNull justParam: int, @org.jetbrains.annotations.NotNull paramAndProp: java.lang.String) = UastEmptyExpression",
+                    it.joinToString { it.asRenderString().lineSequence().first() }
                 )
             }
 

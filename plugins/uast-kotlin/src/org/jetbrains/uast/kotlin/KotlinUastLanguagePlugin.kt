@@ -181,11 +181,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
                 is KtEnumEntry -> el<UEnumConstant> {
                     convertEnumEntry(original, givenParent)
                 }
-                is KtClassOrObject -> el<UClass> {
-                    original.toLightClass()?.let { lightClass ->
-                        KotlinUClass.create(lightClass, givenParent)
-                    }
-                }
+                is KtClassOrObject -> convertClassOrObject(original, givenParent, this).firstOrNull()
                 is KtFunction ->
                     if (original.isLocal) {
                         el<ULambdaExpression> {
@@ -276,6 +272,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     override fun <T : UElement> convertToAlternatives(element: PsiElement, requiredTypes: Array<out Class<out T>>): Sequence<T> = when {
         (element is KtProperty && !element.isLocal) -> convertNonLocalProperty(element, null, requiredTypes) as Sequence<T>
         element is KtParameter -> convertParameter(element, null, requiredTypes) as Sequence<T>
+        element is KtClassOrObject -> convertClassOrObject(element, null, requiredTypes) as Sequence<T>
         else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
     }
 }
@@ -332,6 +329,25 @@ private fun convertParameter(
     },
     *convertToPropertyAlternatives(LightClassUtil.getLightClassPropertyMethods(element), givenParent)
 )
+
+private fun convertClassOrObject(
+    element: KtClassOrObject,
+    givenParent: UElement?,
+    requiredTypes: Array<out Class<out UElement>>
+): Sequence<UElement> {
+    val ktLightClass = element.toLightClass() ?: return emptySequence()
+    val uClass = KotlinUClass.create(ktLightClass, givenParent)
+    return requiredTypes.accommodate(
+        alternative { uClass },
+        alternative primaryConstructor@{
+            val primaryConstructor = element.primaryConstructor ?: return@primaryConstructor null
+            uClass.methods.asSequence()
+                .filter { it.sourcePsi == primaryConstructor }
+                .firstOrNull()
+        }
+    )
+}
+
 
 internal object KotlinConverter {
     internal tailrec fun unwrapElements(element: PsiElement?): PsiElement? = when (element) {
