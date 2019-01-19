@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JVM_IR
 

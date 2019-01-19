@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 public inline fun Int.times(body : () -> Unit) {
     var count = this;
     while (count > 0) {

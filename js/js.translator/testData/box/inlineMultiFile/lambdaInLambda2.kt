@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 // EXPECTED_REACHABLE_NODES: 1286
 /*
  * Copy of JVM-backend test

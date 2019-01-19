@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 fun foo() : Int =
     try {
         2

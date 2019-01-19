@@ -1,6 +1,7 @@
 // FILE: 1.kt
 // IGNORE_BACKEND: JS
 // WITH_RUNTIME
+// KJS_WITH_FULL_RUNTIME
 package test
 
 public inline fun <T> T.myalso(block: (T) -> Unit): T {
