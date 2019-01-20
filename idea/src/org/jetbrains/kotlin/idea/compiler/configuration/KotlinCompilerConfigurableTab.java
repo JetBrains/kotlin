@@ -61,6 +61,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     static {
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_AMD, "AMD");
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_CLOSURE, "Closure");
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, "CommonJS");
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, "UMD (detect AMD or CommonJS if available, fallback to plain)");
 

@@ -5270,6 +5270,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/jsModule/externalFunction.kt");
         }
 
+        @TestMetadata("externalFunctionClosure.kt")
+        public void testExternalFunctionClosure() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/externalFunctionClosure.kt");
+        }
+
         @TestMetadata("externalFunctionPlain.kt")
         public void testExternalFunctionPlain() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/externalFunctionPlain.kt");

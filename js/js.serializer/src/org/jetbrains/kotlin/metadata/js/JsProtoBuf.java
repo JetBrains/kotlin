@@ -2989,6 +2989,10 @@ public final class JsProtoBuf {
        * <code>UMD = 4;</code>
        */
       UMD(3, 4),
+      /**
+       * <code>CLOSURE = 5;</code>
+       */
+      CLOSURE(4, 5),
       ;
 
       /**
@@ -3007,6 +3011,10 @@ public final class JsProtoBuf {
        * <code>UMD = 4;</code>
        */
       public static final int UMD_VALUE = 4;
+      /**
+       * <code>CLOSURE = 5;</code>
+       */
+      public static final int CLOSURE_VALUE = 5;
 
 
       public final int getNumber() { return value; }
@@ -3017,6 +3025,7 @@ public final class JsProtoBuf {
           case 2: return AMD;
           case 3: return COMMON_JS;
           case 4: return UMD;
+          case 5: return CLOSURE;
           default: return null;
         }
       }

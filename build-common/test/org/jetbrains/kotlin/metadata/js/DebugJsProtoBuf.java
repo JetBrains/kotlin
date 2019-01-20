@@ -3818,6 +3818,10 @@ public final class DebugJsProtoBuf {
        * <code>UMD = 4;</code>
        */
       UMD(3, 4),
+      /**
+       * <code>CLOSURE = 5;</code>
+       */
+      CLOSURE(4, 5),
       ;
 
       /**
@@ -3836,6 +3840,10 @@ public final class DebugJsProtoBuf {
        * <code>UMD = 4;</code>
        */
       public static final int UMD_VALUE = 4;
+      /**
+       * <code>CLOSURE = 5;</code>
+       */
+      public static final int CLOSURE_VALUE = 5;
 
 
       public final int getNumber() { return value; }
@@ -3846,6 +3854,7 @@ public final class DebugJsProtoBuf {
           case 2: return AMD;
           case 3: return COMMON_JS;
           case 4: return UMD;
+          case 5: return CLOSURE;
           default: return null;
         }
       }
@@ -4901,56 +4910,56 @@ public final class DebugJsProtoBuf {
       "org.jetbrains.kotlin.metadata.Annotation" +
       "\"=\n\005Files\0224\n\004file\030\001 \003(\0132&.org.jetbrains." +
       "kotlin.metadata.js.File\"!\n\007Classes\022\026\n\ncl" +
-      "ass_name\030\001 \003(\005B\002\020\001\"\345\001\n\007Library\022C\n\004kind\030\001" +
+      "ass_name\030\001 \003(\005B\002\020\001\"\362\001\n\007Library\022C\n\004kind\030\001" +
       " \001(\0162..org.jetbrains.kotlin.metadata.js." +
       "Library.Kind:\005PLAIN\022H\n\020package_fragment\030" +
       "\002 \003(\0132..org.jetbrains.kotlin.metadata.Pa" +
-      "ckageFragment\022\027\n\017imported_module\030\003 \003(\t\"2" +
+      "ckageFragment\022\027\n\017imported_module\030\003 \003(\t\"?" +
       "\n\004Kind\022\t\n\005PLAIN\020\001\022\007\n\003AMD\020\002\022\r\n\tCOMMON_JS\020",
-      "\003\022\007\n\003UMD\020\004:@\n\017package_fq_name\022&.org.jetb" +
-      "rains.kotlin.metadata.Package\030\203\001 \001(\005:j\n\020" +
-      "class_annotation\022$.org.jetbrains.kotlin." +
-      "metadata.Class\030\202\001 \003(\0132).org.jetbrains.ko" +
-      "tlin.metadata.Annotation:G\n\030class_contai" +
-      "ning_file_id\022$.org.jetbrains.kotlin.meta" +
-      "data.Class\030\207\001 \001(\005:v\n\026constructor_annotat" +
-      "ion\022*.org.jetbrains.kotlin.metadata.Cons" +
-      "tructor\030\202\001 \003(\0132).org.jetbrains.kotlin.me" +
-      "tadata.Annotation:p\n\023function_annotation",
-      "\022\'.org.jetbrains.kotlin.metadata.Functio" +
-      "n\030\202\001 \003(\0132).org.jetbrains.kotlin.metadata" +
-      ".Annotation:M\n\033function_containing_file_" +
-      "id\022\'.org.jetbrains.kotlin.metadata.Funct" +
-      "ion\030\207\001 \001(\005:p\n\023property_annotation\022\'.org." +
-      "jetbrains.kotlin.metadata.Property\030\202\001 \003(" +
-      "\0132).org.jetbrains.kotlin.metadata.Annota" +
-      "tion:w\n\032property_getter_annotation\022\'.org" +
-      ".jetbrains.kotlin.metadata.Property\030\204\001 \003" +
-      "(\0132).org.jetbrains.kotlin.metadata.Annot",
-      "ation:w\n\032property_setter_annotation\022\'.or" +
-      "g.jetbrains.kotlin.metadata.Property\030\205\001 " +
-      "\003(\0132).org.jetbrains.kotlin.metadata.Anno" +
-      "tation:~\n\022compile_time_value\022\'.org.jetbr" +
-      "ains.kotlin.metadata.Property\030\203\001 \001(\01328.o" +
-      "rg.jetbrains.kotlin.metadata.Annotation." +
-      "Argument.Value:M\n\033property_containing_fi" +
-      "le_id\022\'.org.jetbrains.kotlin.metadata.Pr" +
-      "operty\030\207\001 \001(\005:s\n\025enum_entry_annotation\022(" +
-      ".org.jetbrains.kotlin.metadata.EnumEntry",
+      "\003\022\007\n\003UMD\020\004\022\013\n\007CLOSURE\020\005:@\n\017package_fq_na" +
+      "me\022&.org.jetbrains.kotlin.metadata.Packa" +
+      "ge\030\203\001 \001(\005:j\n\020class_annotation\022$.org.jetb" +
+      "rains.kotlin.metadata.Class\030\202\001 \003(\0132).org" +
+      ".jetbrains.kotlin.metadata.Annotation:G\n" +
+      "\030class_containing_file_id\022$.org.jetbrain" +
+      "s.kotlin.metadata.Class\030\207\001 \001(\005:v\n\026constr" +
+      "uctor_annotation\022*.org.jetbrains.kotlin." +
+      "metadata.Constructor\030\202\001 \003(\0132).org.jetbra" +
+      "ins.kotlin.metadata.Annotation:p\n\023functi",
+      "on_annotation\022\'.org.jetbrains.kotlin.met" +
+      "adata.Function\030\202\001 \003(\0132).org.jetbrains.ko" +
+      "tlin.metadata.Annotation:M\n\033function_con" +
+      "taining_file_id\022\'.org.jetbrains.kotlin.m" +
+      "etadata.Function\030\207\001 \001(\005:p\n\023property_anno" +
+      "tation\022\'.org.jetbrains.kotlin.metadata.P" +
+      "roperty\030\202\001 \003(\0132).org.jetbrains.kotlin.me" +
+      "tadata.Annotation:w\n\032property_getter_ann" +
+      "otation\022\'.org.jetbrains.kotlin.metadata." +
+      "Property\030\204\001 \003(\0132).org.jetbrains.kotlin.m",
+      "etadata.Annotation:w\n\032property_setter_an" +
+      "notation\022\'.org.jetbrains.kotlin.metadata" +
+      ".Property\030\205\001 \003(\0132).org.jetbrains.kotlin." +
+      "metadata.Annotation:~\n\022compile_time_valu" +
+      "e\022\'.org.jetbrains.kotlin.metadata.Proper" +
+      "ty\030\203\001 \001(\01328.org.jetbrains.kotlin.metadat" +
+      "a.Annotation.Argument.Value:M\n\033property_" +
+      "containing_file_id\022\'.org.jetbrains.kotli" +
+      "n.metadata.Property\030\207\001 \001(\005:s\n\025enum_entry" +
+      "_annotation\022(.org.jetbrains.kotlin.metad",
+      "ata.EnumEntry\030\202\001 \003(\0132).org.jetbrains.kot" +
+      "lin.metadata.Annotation:w\n\024parameter_ann" +
+      "otation\022-.org.jetbrains.kotlin.metadata." +
+      "ValueParameter\030\202\001 \003(\0132).org.jetbrains.ko" +
+      "tlin.metadata.Annotation:h\n\017type_annotat" +
+      "ion\022#.org.jetbrains.kotlin.metadata.Type" +
       "\030\202\001 \003(\0132).org.jetbrains.kotlin.metadata." +
-      "Annotation:w\n\024parameter_annotation\022-.org" +
-      ".jetbrains.kotlin.metadata.ValueParamete" +
-      "r\030\202\001 \003(\0132).org.jetbrains.kotlin.metadata" +
-      ".Annotation:h\n\017type_annotation\022#.org.jet" +
-      "brains.kotlin.metadata.Type\030\202\001 \003(\0132).org" +
-      ".jetbrains.kotlin.metadata.Annotation:{\n" +
-      "\031type_parameter_annotation\022,.org.jetbrai" +
-      "ns.kotlin.metadata.TypeParameter\030\202\001 \003(\0132" +
-      ").org.jetbrains.kotlin.metadata.Annotati",
-      "on:x\n\026package_fragment_files\022..org.jetbr" +
-      "ains.kotlin.metadata.PackageFragment\030\202\001 " +
-      "\001(\0132\'.org.jetbrains.kotlin.metadata.js.F" +
-      "ilesB\021B\017DebugJsProtoBuf"
+      "Annotation:{\n\031type_parameter_annotation\022" +
+      ",.org.jetbrains.kotlin.metadata.TypePara" +
+      "meter\030\202\001 \003(\0132).org.jetbrains.kotlin.meta",
+      "data.Annotation:x\n\026package_fragment_file" +
+      "s\022..org.jetbrains.kotlin.metadata.Packag" +
+      "eFragment\030\202\001 \001(\0132\'.org.jetbrains.kotlin." +
+      "metadata.js.FilesB\021B\017DebugJsProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

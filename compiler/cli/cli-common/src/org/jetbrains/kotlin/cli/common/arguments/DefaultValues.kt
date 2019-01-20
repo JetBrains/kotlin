@@ -47,7 +47,7 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
 
     object JsModuleKinds : DefaultValues(
             "\"plain\"",
-            listOf("\"plain\"", "\"amd\"", "\"commonjs\"", "\"umd\"")
+            listOf("\"plain\"", "\"amd\"", "\"closure\"", "\"commonjs\"", "\"umd\"")
     )
 
     object JsSourceMapContentModes : DefaultValues(

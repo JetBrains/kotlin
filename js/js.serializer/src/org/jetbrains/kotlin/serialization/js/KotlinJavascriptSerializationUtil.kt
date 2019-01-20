@@ -143,6 +143,7 @@ object KotlinJavascriptSerializationUtil {
             val moduleProtoKind = when (moduleKind) {
                 ModuleKind.PLAIN -> JsProtoBuf.Library.Kind.PLAIN
                 ModuleKind.AMD -> JsProtoBuf.Library.Kind.AMD
+                ModuleKind.CLOSURE -> JsProtoBuf.Library.Kind.CLOSURE
                 ModuleKind.COMMON_JS -> JsProtoBuf.Library.Kind.COMMON_JS
                 ModuleKind.UMD -> JsProtoBuf.Library.Kind.UMD
             }
@@ -305,6 +306,7 @@ object KotlinJavascriptSerializationUtil {
         val moduleKind = when (content.kind) {
             null, JsProtoBuf.Library.Kind.PLAIN -> ModuleKind.PLAIN
             JsProtoBuf.Library.Kind.AMD -> ModuleKind.AMD
+            JsProtoBuf.Library.Kind.CLOSURE -> ModuleKind.CLOSURE
             JsProtoBuf.Library.Kind.COMMON_JS -> ModuleKind.COMMON_JS
             JsProtoBuf.Library.Kind.UMD -> ModuleKind.UMD
         }

@@ -28,10 +28,35 @@ object ModuleWrapperTranslation {
     ): List<JsStatement> {
         return when (kind) {
             ModuleKind.AMD -> wrapAmd(function, importedModules, program)
+            ModuleKind.CLOSURE -> wrapClosure(moduleId, function, importedModules, program)
             ModuleKind.COMMON_JS -> wrapCommonJs(function, importedModules, program)
             ModuleKind.UMD -> wrapUmd(moduleId, function, importedModules, program)
             ModuleKind.PLAIN -> wrapPlain(moduleId, function, importedModules, program)
         }
+    }
+
+    private fun wrapClosure(
+            moduleId: String, function: JsExpression,
+            importedModules: List<JsImportedModule>, program: JsProgram
+    ): List<JsStatement> {
+        val scope = program.scope
+        val exportsName = scope.declareName("exports")
+        val googRequireName = JsNameRef("require", "goog")
+        val googModuleName = JsNameRef("module", "goog")
+
+        val statements = mutableListOf<JsStatement>()
+        statements += JsInvocation(googModuleName, JsStringLiteral(moduleId)).makeStmt()
+
+        statements += importedModules.map {
+            JsAstUtils.newVar(
+                it.internalName,
+                JsInvocation(googRequireName, JsStringLiteral(it.externalName)))
+        }
+
+        val invocationArgs = listOf(exportsName.makeRef()) + importedModules.map { it.internalName.makeRef() }
+        statements += JsInvocation(function, invocationArgs).makeStmt()
+
+        return statements
     }
 
     private fun wrapUmd(

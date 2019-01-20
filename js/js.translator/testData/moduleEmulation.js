@@ -3,7 +3,6 @@ var emulatedModules = { kotlin: kotlin };
 var module = { exports: {} };
 var currentModuleId;
 
-
 // TODO don't expose by default when run test with AMD module kind
 function require(moduleId) {
     return emulatedModules[moduleId];
@@ -17,10 +16,21 @@ var $kotlin_test_internal$ = {
     endModule : function(moduleId) {
         emulatedModules[moduleId] = module.exports;
     },
+    endGoogModule: function() {
+      emulatedModules[currentModuleId] = exports;
+    },
     setModuleId: function(moduleId) {
         currentModuleId = moduleId;
     }
 };
+
+var goog = {
+  require: require,
+  module: function (moduleId) {
+    currentModuleId = moduleId;
+    exports = {};
+  }
+}
 
 // TODO expose only when run test with AMD or UMD module kind
 function define(moduleId, dependencies, body) {

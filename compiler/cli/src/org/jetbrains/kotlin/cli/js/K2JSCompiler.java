@@ -86,6 +86,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     static {
         moduleKindMap.put(K2JsArgumentConstants.MODULE_PLAIN, ModuleKind.PLAIN);
+        moduleKindMap.put(K2JsArgumentConstants.MODULE_CLOSURE, ModuleKind.CLOSURE);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_COMMONJS, ModuleKind.COMMON_JS);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_AMD, ModuleKind.AMD);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_UMD, ModuleKind.UMD);
@@ -410,7 +411,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;
         if (moduleKind == null) {
             messageCollector.report(
-                    ERROR, "Unknown module kind: " + moduleKindName + ". Valid values are: plain, amd, commonjs, umd", null
+                    ERROR, "Unknown module kind: " + moduleKindName + ". Valid values are: plain, amd, closure, commonjs, umd", null
             );
             moduleKind = ModuleKind.PLAIN;
         }

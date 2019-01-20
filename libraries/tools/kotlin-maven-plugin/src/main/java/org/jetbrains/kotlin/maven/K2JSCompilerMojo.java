@@ -84,6 +84,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
      * <ul>
      *     <li><b>amd</b> &mdash;
      *       <a href="https://github.com/amdjs/amdjs-api/wiki/AMD"></a>Asynchronous Module System</a>;</li>
+     *     <li><b>closure</b> &mdash; Closure conventions based on <code>goog.module</code>;</li>
      *     <li><b>commonjs</b> &mdash; npm/CommonJS conventions based on synchronous <code>require</code>
      *       function;</li>
      *     <li><b>plain</b> (default) &mdash; no module system, keep all modules in global scope;</li>

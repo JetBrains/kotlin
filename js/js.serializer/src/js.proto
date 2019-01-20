@@ -108,6 +108,7 @@ message Library {
     AMD = 2;
     COMMON_JS = 3;
     UMD = 4;
+    CLOSURE = 5;
   }
 
   optional Kind kind = 1 [default = PLAIN];

@@ -504,7 +504,8 @@ abstract class BasicBoxTest(
         val escapedModuleId = StringUtil.escapeStringCharacters(moduleId)
 
         return when (moduleKind) {
-
+            ModuleKind.CLOSURE -> "$content\n" +
+                    "$KOTLIN_TEST_INTERNAL.endGoogModule();"
             ModuleKind.COMMON_JS -> "$KOTLIN_TEST_INTERNAL.beginModule();\n" +
                     "$content\n" +
                     "$KOTLIN_TEST_INTERNAL.endModule(\"$escapedModuleId\");"

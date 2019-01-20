@@ -22,6 +22,7 @@ public interface K2JsArgumentConstants {
 
     String MODULE_PLAIN = "plain";
     String MODULE_AMD = "amd";
+    String MODULE_CLOSURE = "closure";
     String MODULE_COMMONJS = "commonjs";
     String MODULE_UMD = "umd";
 
