@@ -364,7 +364,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
         if (arguments.getTarget() != null) {
-            assert arguments.getTarget() == "v5" : "Unsupported ECMA version: " + arguments.getTarget();
+            assert "v5".equals(arguments.getTarget()) : "Unsupported ECMA version: " + arguments.getTarget();
         }
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.defaultVersion());
 
