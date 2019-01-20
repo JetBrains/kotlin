@@ -134,6 +134,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     private fun compileWithDaemon(messageCollector: MessageCollector): ExitCode? {
         val isDebugEnabled = log.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBoolean() ?: false
+        val enableAssertions = System.getProperty("kotlin.daemon.ea")?.toBoolean() ?: false
         val daemonMessageCollector =
             if (isDebugEnabled) messageCollector else MessageCollector.NONE
 
@@ -144,7 +145,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                     sessionFlagFile,
                     compilerFullClasspath,
                     daemonMessageCollector,
-                    isDebugEnabled
+                    isDebugEnabled = isDebugEnabled,
+                    enableAssertions = enableAssertions
                 )
             } catch (e: Throwable) {
                 log.error("Caught an exception trying to connect to Kotlin Daemon:")
