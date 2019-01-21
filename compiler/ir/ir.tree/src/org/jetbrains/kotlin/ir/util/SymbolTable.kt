@@ -232,7 +232,8 @@ open class SymbolTable : ReferenceSymbolTable {
 
     fun declareClass(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-        classFactory: (IrClassSymbol) -> IrClass = { IrClassImpl(startOffset, endOffset, origin, it) }
+        modality: Modality = descriptor.modality,
+        classFactory: (IrClassSymbol) -> IrClass = { IrClassImpl(startOffset, endOffset, origin, it, modality) }
     ): IrClass {
         return classSymbolTable.declare(
             descriptor,

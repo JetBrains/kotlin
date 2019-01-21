@@ -92,6 +92,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             mapClassDeclaration(declaration.descriptor),
+            declaration.modality,
             declaration.declarations.map { it.transform() }
         ).apply {
             transformAnnotations(declaration)

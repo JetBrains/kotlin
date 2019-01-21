@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/enumEntry.kt
-  CLASS ENUM_CLASS name:Z modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<Z>]
+  CLASS ENUM_CLASS name:Z modality:OPEN visibility:public flags: superTypes:[kotlin.Enum<Z>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z flags:
     CONSTRUCTOR visibility:private <> () returnType:Z flags:primary
       BLOCK_BODY

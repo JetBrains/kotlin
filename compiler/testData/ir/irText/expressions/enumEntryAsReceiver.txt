@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
-  CLASS ENUM_CLASS name:X modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<X>]
+  CLASS ENUM_CLASS name:X modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Enum<X>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X flags:
     CONSTRUCTOR visibility:private <> () returnType:X flags:primary
       BLOCK_BODY

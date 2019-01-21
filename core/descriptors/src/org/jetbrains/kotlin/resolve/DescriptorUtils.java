@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -30,6 +32,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
+import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class DescriptorUtils {
@@ -329,6 +332,16 @@ public class DescriptorUtils {
 
     private static boolean isKindOf(@Nullable DeclarationDescriptor descriptor, @NotNull ClassKind classKind) {
         return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == classKind;
+    }
+
+    public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
+        for (DeclarationDescriptor member : getAllDescriptors(classDescriptor.getDefaultType().getMemberScope())) {
+            if (member instanceof CallableMemberDescriptor &&
+                ((CallableMemberDescriptor) member).getModality() == ABSTRACT) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull

@@ -291,7 +291,7 @@ private fun MemberDescriptor.calcModalityFlag(): Int {
 private val MemberDescriptor.effectiveModality: Modality
     get() {
         if (this is ClassDescriptor && kind == ClassKind.ENUM_CLASS) {
-            if (JvmCodegenUtil.hasAbstractMembers(this)) {
+            if (DescriptorUtils.hasAbstractMembers(this)) {
                 return Modality.ABSTRACT
             }
         }
