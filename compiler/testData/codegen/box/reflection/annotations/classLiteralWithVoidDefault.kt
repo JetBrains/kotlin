@@ -12,7 +12,7 @@ public @interface Anno {
 
 // FILE: test.kt
 
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class C {
     @Anno
@@ -23,7 +23,7 @@ class C {
 }
 
 fun box(): String {
-    assertEquals("[@Anno(value=void)]", C::f1.annotations.toString())
-    assertEquals("[@Anno(value=class java.lang.Void)]", C::f2.annotations.toString())
+    assertTrue("\\[@Anno\\(value=void(\\.class)?\\)\\]".toRegex().matches(C::f1.annotations.toString()))
+    assertTrue("\\[@Anno\\(value=(class )?java.lang.Void(\\.class)?\\)\\]".toRegex().matches(C::f2.annotations.toString()))
     return "OK"
 }
