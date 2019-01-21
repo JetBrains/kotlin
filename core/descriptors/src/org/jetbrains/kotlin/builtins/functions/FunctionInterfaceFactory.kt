@@ -63,8 +63,8 @@ class FunctionInterfacePackageFragmentImpl(
     name: FqName
 ) : FunctionInterfacePackageFragment,
     PackageFragmentDescriptorImpl(module, name) {
-    private val memberScopeObj = FunctionInterfaceMemberScope(classDescriptorFactory, fqName)
-    override fun getMemberScope() = memberScopeObj
+    private val memberScope = FunctionInterfaceMemberScope(classDescriptorFactory, fqName)
+    override fun getMemberScope() = memberScope
 }
 
 fun functionInterfacePackageFragmentProvider(

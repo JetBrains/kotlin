@@ -104,15 +104,13 @@ class FunctionClassDescriptor(
     override fun getDeclaredTypeParameters() = parameters
 
     private inner class FunctionTypeConstructor : AbstractClassTypeConstructor(storageManager) {
-        val functionClassId = ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("Function"))
-        val kFunctionClassId = ClassId(KOTLIN_REFLECT_FQ_NAME, Name.identifier("KFunction"))
 
         override fun computeSupertypes(): Collection<KotlinType> {
             val result = ArrayList<KotlinType>(2)
 
             fun add(id: ClassId) {
                 val moduleDescriptor = containingDeclaration.containingDeclaration
-                val descriptor = moduleDescriptor.findClassAcrossModuleDependencies(id) ?: error("TODO")
+                val descriptor = moduleDescriptor.findClassAcrossModuleDependencies(id) ?: error("Built-in class $id not found")
 
                 val typeConstructor = descriptor.typeConstructor
 
@@ -141,6 +139,8 @@ class FunctionClassDescriptor(
                     add(ClassId(BUILT_INS_PACKAGE_FQ_NAME, Kind.Function.numberedClassName(arity)))
                 Kind.KSuspendFunction ->
                     add(ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, Kind.SuspendFunction.numberedClassName(arity)))
+                else -> {
+                }
             }
 
             return result.toList()
@@ -158,4 +158,9 @@ class FunctionClassDescriptor(
     }
 
     override fun toString() = name.asString()
+
+    companion object {
+        val functionClassId = ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("Function"))
+        val kFunctionClassId = ClassId(KOTLIN_REFLECT_FQ_NAME, Name.identifier("KFunction"))
+    }
 }

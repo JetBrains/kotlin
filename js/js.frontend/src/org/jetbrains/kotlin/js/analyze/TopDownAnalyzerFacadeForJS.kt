@@ -81,12 +81,8 @@ object TopDownAnalyzerFacadeForJS {
             additionalPackages += functionInterfacePackageFragmentProvider(context.storageManager, context.module)
         }
 
-        context.module.setDependencies(
-            listOf(context.module) +
-                    moduleDescriptors +
-                    listOf(builtIns.builtInsModule),
-            friendModuleDescriptors.toSet()
-        )
+        val dependencies = mutableSetOf(context.module) + moduleDescriptors + builtIns.builtInsModule
+        context.module.setDependencies(dependencies.toList(), friendModuleDescriptors.toSet())
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
