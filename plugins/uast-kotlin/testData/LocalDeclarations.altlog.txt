@@ -1,4 +1,4 @@
-[1]:[UFile (package = )]
+[2]:[UFile (package = ), UClass (name = LocalDeclarationsKt)]
     [1]:[UAnnotationMethod (name = foo)]
         [1]:[UIdentifier (Identifier (foo))]
         [1]:[UDeclarationsExpression]
