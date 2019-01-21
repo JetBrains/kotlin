@@ -11,7 +11,7 @@ repositories {
     maven("https://jetbrains.bintray.com/markdown")
 }
 
-// Do not rename, used in JPS importer
+// Do not rename, used in pill importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":compiler:backend",
@@ -69,7 +69,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:util",
         ":core:util.runtime"))
 
-// Do not rename, used in JPS importer
+// Do not rename, used in pill importer
 val packedJars by configurations.creating
 
 val sideJars by configurations.creating

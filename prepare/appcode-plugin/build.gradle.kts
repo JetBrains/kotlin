@@ -39,7 +39,7 @@ val pluginXmlPath = "META-INF/plugin.xml"
 val platformDepsJarName = "kotlinNative-platformDeps.jar"
 val pluginXmlLocation = File(buildDir, "pluginXml")
 
-// Do not rename, used in JPS importer
+// Do not rename, used in pill importer
 val projectsToShadow by extra(listOf(
     ":kotlin-ultimate:cidr-native",
     ":kotlin-ultimate:appcode-native"))
