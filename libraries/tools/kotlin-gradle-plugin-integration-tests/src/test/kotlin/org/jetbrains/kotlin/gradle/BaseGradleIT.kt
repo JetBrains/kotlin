@@ -45,7 +45,13 @@ abstract class BaseGradleIT {
         val sdkLicense = File(sdkLicenses, "android-sdk-license")
         if (!sdkLicense.exists()) {
             sdkLicense.createNewFile()
-            sdkLicense.writeText("d56f5187479451eabf01fb78af6dfcb131a6481e")
+            sdkLicense.writeText(
+                """
+                8933bad161af4178b1185d1a37fbf41ea5269c55
+                d56f5187479451eabf01fb78af6dfcb131a6481e
+                24333f8a63b6825ea9c5514f83c2829b004d1fee
+                """.trimIndent()
+            )
         }
 
         val sdkPreviewLicense = File(sdkLicenses, "android-sdk-preview-license")
@@ -545,13 +551,13 @@ abstract class BaseGradleIT {
         params.toMutableList().apply {
             add("--stacktrace")
             when (minLogLevel) {
-            // Do not allow to configure Gradle project with `ERROR` log level (error logs visible on all log levels)
+                // Do not allow to configure Gradle project with `ERROR` log level (error logs visible on all log levels)
                 LogLevel.ERROR -> error("Log level ERROR is not supported by Gradle command-line")
-            // Omit log level argument for default `LIFECYCLE` log level,
-            // because there is no such command-line option `--lifecycle`
-            // see https://docs.gradle.org/current/userguide/logging.html#sec:choosing_a_log_level
+                // Omit log level argument for default `LIFECYCLE` log level,
+                // because there is no such command-line option `--lifecycle`
+                // see https://docs.gradle.org/current/userguide/logging.html#sec:choosing_a_log_level
                 LogLevel.LIFECYCLE -> Unit
-            //Command line option for other log levels
+                //Command line option for other log levels
                 else -> add("--${minLogLevel.name.toLowerCase()}")
             }
             if (options.daemonOptionSupported) {
