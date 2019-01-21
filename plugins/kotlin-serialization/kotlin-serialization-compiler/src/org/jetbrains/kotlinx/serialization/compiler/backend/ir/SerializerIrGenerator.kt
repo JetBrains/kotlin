@@ -396,10 +396,8 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         // todo: set properties in external deserialization
         var args: List<IrExpression> = localProps.map { it.get() }
         val ctor: IrConstructorSymbol = if (serializableDescriptor.isInternalSerializable) {
-            val ctorDesc = serializableIrClass
-                .constructors.single { it.origin == SERIALIZABLE_PLUGIN_ORIGIN }
             args = bitMasks.map { irGet(it) } + args + irNull()
-            ctorDesc.symbol
+            serializableIrClass.serializableSyntheticConstructor()
         } else {
             compilerContext.externalSymbols.referenceConstructor(serializableDescriptor.unsubstitutedPrimaryConstructor!!)
         }

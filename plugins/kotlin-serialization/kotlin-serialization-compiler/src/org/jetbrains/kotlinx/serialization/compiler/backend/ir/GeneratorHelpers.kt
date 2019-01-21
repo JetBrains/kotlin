@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -489,4 +486,7 @@ interface IrBuilderExtension {
             )
         }
     }
+
+    fun IrClass.serializableSyntheticConstructor(): IrConstructorSymbol =
+        this.constructors.single { it.origin == SERIALIZABLE_PLUGIN_ORIGIN }.symbol
 }
