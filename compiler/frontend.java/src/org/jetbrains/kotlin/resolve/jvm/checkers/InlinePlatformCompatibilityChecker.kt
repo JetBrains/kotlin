@@ -42,16 +42,15 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget) : CallChecker
         val resultingDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
         if (!InlineUtil.isInline(resultingDescriptor)) {
             if (resultingDescriptor is PropertyDescriptor && InlineUtil.isInline(resultingDescriptor.getter)) {
-            //TODO: we should distinguish setter usage from getter one, now we could report wrong diagnostic on non-inline setter
-            //var prop: Int
-            // inline get
-            // set
-            //
-            // prop  - resolved call with property descriptor and we should report error
-            // prop = 1 - resolved call with setter for whole expression and property descriptor for left part,
-            //              so we couldn't distinguish is this expression for setter or for getter and will report wrong diagnostic
-            }
-            else {
+                //TODO: we should distinguish setter usage from getter one, now we could report wrong diagnostic on non-inline setter
+                //var prop: Int
+                // inline get
+                // set
+                //
+                // prop  - resolved call with property descriptor and we should report error
+                // prop = 1 - resolved call with setter for whole expression and property descriptor for left part,
+                //              so we couldn't distinguish is this expression for setter or for getter and will report wrong diagnostic
+            } else {
                 return
             }
         }
@@ -61,11 +60,13 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget) : CallChecker
 
         val compilingBytecodeVersion = jvmTarget.bytecodeVersion
         if (compilingBytecodeVersion < inliningBytecodeVersion) {
-            context.trace.report(ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM.on(
+            context.trace.report(
+                ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM.on(
                     reportOn,
                     JvmTarget.getDescription(inliningBytecodeVersion),
                     JvmTarget.getDescription(compilingBytecodeVersion)
-            ))
+                )
+            )
         }
     }
 
@@ -79,11 +80,11 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget) : CallChecker
 
             val source = containingDeclaration.source
             val binaryClass =
-                    when (source) {
-                        is KotlinJvmBinarySourceElement -> source.binaryClass
-                        is KotlinJvmBinaryPackageSourceElement -> source.getContainingBinaryClass(funOrProperty)
-                        else -> null
-                    } as? FileBasedKotlinClass ?: return null
+                when (source) {
+                    is KotlinJvmBinarySourceElement -> source.binaryClass
+                    is KotlinJvmBinaryPackageSourceElement -> source.getContainingBinaryClass(funOrProperty)
+                    else -> null
+                } as? FileBasedKotlinClass ?: return null
 
             return binaryClass.classVersion
         }
