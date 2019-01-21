@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -145,7 +146,7 @@ class NewCapturedType(
             NewCapturedType(captureStatus, constructor, lowerType, annotations, newNullability)
 }
 
-class NewCapturedTypeConstructor(val projection: TypeProjection, private var supertypes: List<UnwrappedType>? = null) : TypeConstructor {
+class NewCapturedTypeConstructor(override val projection: TypeProjection, private var supertypes: List<UnwrappedType>? = null) : CapturedTypeConstructor {
     fun initializeSupertypes(supertypes: List<UnwrappedType>) {
         assert(this.supertypes == null) {
             "Already initialized! oldValue = ${this.supertypes}, newValue = $supertypes"
