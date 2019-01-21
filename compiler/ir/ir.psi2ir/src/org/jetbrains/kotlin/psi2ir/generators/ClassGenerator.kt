@@ -58,7 +58,8 @@ class ClassGenerator(
         val endOffset = ktClassOrObject.pureEndOffset
 
         return context.symbolTable.declareClass(
-            startOffset, endOffset, IrDeclarationOrigin.DEFINED, classDescriptor
+            startOffset, endOffset, IrDeclarationOrigin.DEFINED, classDescriptor,
+            getEffectiveModality(ktClassOrObject, classDescriptor)
         ).buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
 
@@ -98,6 +99,25 @@ class ClassGenerator(
             }
         }
     }
+
+    private fun getEffectiveModality(ktClassOrObject: KtPureClassOrObject, classDescriptor: ClassDescriptor): Modality =
+        when {
+            !DescriptorUtils.isEnumClass(classDescriptor) ->
+                classDescriptor.modality
+            DescriptorUtils.hasAbstractMembers(classDescriptor) ->
+                Modality.ABSTRACT
+            ktClassOrObject.hasEnumEntriesWithClassMembers() ->
+                Modality.OPEN
+            else ->
+                Modality.FINAL
+        }
+
+    private fun KtPureClassOrObject.hasEnumEntriesWithClassMembers(): Boolean {
+        val body = this.body ?: return false
+        return body.enumEntries.any { it.hasMemberDeclarations() }
+    }
+
+    private fun KtEnumEntry.hasMemberDeclarations() = declarations.isNotEmpty()
 
     private fun generateFakeOverrideMemberDeclarations(irClass: IrClass, ktClassOrObject: KtPureClassOrObject) {
         irClass.descriptor.unsubstitutedMemberScope.getContributedDescriptors()
@@ -252,20 +272,20 @@ class ClassGenerator(
         val dispatchReceiverParameter = irDelegatedFunction.dispatchReceiverParameter!!
         val dispatchReceiverType = dispatchReceiverParameter.type
         irCall.dispatchReceiver =
-                IrGetFieldImpl(
+            IrGetFieldImpl(
+                startOffset, endOffset,
+                irDelegate.symbol,
+                irDelegate.type,
+                IrGetValueImpl(
                     startOffset, endOffset,
-                    irDelegate.symbol,
-                    irDelegate.type,
-                    IrGetValueImpl(
-                        startOffset, endOffset,
-                        dispatchReceiverType,
-                        dispatchReceiverParameter.symbol
-                    )
+                    dispatchReceiverType,
+                    dispatchReceiverParameter.symbol
                 )
+            )
         irCall.extensionReceiver =
-                irDelegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
-                    IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol)
-                }
+            irDelegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
+                IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol)
+            }
         irCall.mapValueParameters { overriddenValueParameter ->
             val delegatedValueParameter = delegated.valueParameters[overriddenValueParameter.index]
             val irDelegatedValueParameter = irDelegatedFunction.getIrValueParameter(delegatedValueParameter)
@@ -400,11 +420,11 @@ class ClassGenerator(
 
             if (!enumEntryDescriptor.isExpect) {
                 irEnumEntry.initializerExpression =
-                        createBodyGenerator(irEnumEntry.symbol)
-                            .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
+                    createBodyGenerator(irEnumEntry.symbol)
+                        .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
             }
 
-            if (ktEnumEntry.declarations.isNotEmpty()) {
+            if (ktEnumEntry.hasMemberDeclarations()) {
                 irEnumEntry.correspondingClass = generateClass(ktEnumEntry)
             }
         }

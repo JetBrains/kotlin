@@ -51,7 +51,6 @@ import java.io.File;
 import static org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt.SUSPEND_FUNCTION_CREATE_METHOD_NAME;
 import static org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS;
 import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
-import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
@@ -145,14 +144,6 @@ public class JvmCodegenUtil {
         else {
             return DescriptorUtils.areInSameModule(directMember, contextDescriptor);
         }
-    }
-
-    public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
-        return CollectionsKt.any(
-                DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope()),
-                descriptor -> descriptor instanceof CallableMemberDescriptor &&
-                              ((CallableMemberDescriptor) descriptor).getModality() == ABSTRACT
-        );
     }
 
     public static boolean isConstOrHasJvmFieldAnnotation(@NotNull PropertyDescriptor propertyDescriptor) {

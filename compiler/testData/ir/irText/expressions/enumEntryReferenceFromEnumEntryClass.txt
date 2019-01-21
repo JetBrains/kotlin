@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
-  CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<MyEnum>]
+  CLASS ENUM_CLASS name:MyEnum modality:OPEN visibility:public flags: superTypes:[kotlin.Enum<MyEnum>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:MyEnum flags:
     CONSTRUCTOR visibility:private <> () returnType:MyEnum flags:primary
       BLOCK_BODY
