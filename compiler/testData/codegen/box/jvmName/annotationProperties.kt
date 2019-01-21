@@ -2,6 +2,7 @@
 // WITH_REFLECT
 
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 annotation class Anno(@get:JvmName("uglyJvmName") val value: String)
 
@@ -17,11 +18,11 @@ fun bar() {}
 
 fun box(): String {
     val f = Foo::class.annotations.single()
-    assertEquals("@Anno(uglyJvmName=OK)", f.toString())
+    assertTrue("@Anno\\(uglyJvmName=\"?OK\"?\\)".toRegex().matches(f.toString()))
     assertEquals("OK", (f as Anno).value)
 
     val b = ::bar.annotations.single()
-    assertEquals("@Meta(anno=@Anno(uglyJvmName=OK))", b.toString())
+    assertEquals("@Meta(anno=$f)", b.toString())
     assertEquals("OK", (b as Meta).anno.value)
 
     return "OK"
