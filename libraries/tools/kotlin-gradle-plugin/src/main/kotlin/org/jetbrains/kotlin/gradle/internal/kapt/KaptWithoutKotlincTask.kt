@@ -95,8 +95,6 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             }
             logger.info("Kapt worker classpath: ${config.classpath}")
         }
-
-        workerExecutor.await()
     }
 }
 
