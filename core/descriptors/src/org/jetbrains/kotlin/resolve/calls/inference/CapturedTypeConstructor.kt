@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class CapturedTypeConstructor(
-        val typeProjection: TypeProjection
-): TypeConstructor {
+    val typeProjection: TypeProjection
+) : TypeConstructor {
     var newTypeConstructor: NewCapturedTypeConstructor? = null
 
     init {
@@ -60,17 +60,18 @@ class CapturedTypeConstructor(
 }
 
 class CapturedType(
-        val typeProjection: TypeProjection,
-        override val constructor: CapturedTypeConstructor = CapturedTypeConstructor(typeProjection),
-        override val isMarkedNullable: Boolean = false,
-        override val annotations: Annotations = Annotations.EMPTY
-): SimpleType(), SubtypingRepresentatives {
+    val typeProjection: TypeProjection,
+    override val constructor: CapturedTypeConstructor = CapturedTypeConstructor(typeProjection),
+    override val isMarkedNullable: Boolean = false,
+    override val annotations: Annotations = Annotations.EMPTY
+) : SimpleType(), SubtypingRepresentatives {
     override val arguments: List<TypeProjection>
         get() = listOf()
 
     override val memberScope: MemberScope
         get() = ErrorUtils.createErrorScope(
-                "No member resolution should be done on captured type, it used only during constraint system resolution", true)
+            "No member resolution should be done on captured type, it used only during constraint system resolution", true
+        )
 
     override val subTypeRepresentative: KotlinType
         get() = representative(OUT_VARIANCE, builtIns.nullableAnyType)
@@ -90,26 +91,28 @@ class CapturedType(
         return CapturedType(typeProjection, constructor, newNullability, annotations)
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations): CapturedType = CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations)
+    override fun replaceAnnotations(newAnnotations: Annotations): CapturedType =
+        CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations)
 }
 
-fun createCapturedType(typeProjection: TypeProjection): KotlinType
-        = CapturedType(typeProjection)
+fun createCapturedType(typeProjection: TypeProjection): KotlinType = CapturedType(typeProjection)
 
 fun KotlinType.isCaptured(): Boolean = constructor is CapturedTypeConstructor
 
 fun TypeSubstitution.wrapWithCapturingSubstitution(needApproximation: Boolean = true): TypeSubstitution =
     if (this is IndexedParametersSubstitution)
         IndexedParametersSubstitution(
-                this.parameters,
-                this.arguments.zip(this.parameters).map {
-                    it.first.createCapturedIfNeeded(it.second)
-                }.toTypedArray(),
-                approximateCapturedTypes = needApproximation)
+            this.parameters,
+            this.arguments.zip(this.parameters).map {
+                it.first.createCapturedIfNeeded(it.second)
+            }.toTypedArray(),
+            approximateCapturedTypes = needApproximation
+        )
     else
         object : DelegatedTypeSubstitution(this@wrapWithCapturingSubstitution) {
             override fun approximateContravariantCapturedTypes() = needApproximation
-            override fun get(key: KotlinType) = super.get(key)?.createCapturedIfNeeded(key.constructor.declarationDescriptor as? TypeParameterDescriptor)
+            override fun get(key: KotlinType) =
+                super.get(key)?.createCapturedIfNeeded(key.constructor.declarationDescriptor as? TypeParameterDescriptor)
         }
 
 private fun TypeProjection.createCapturedIfNeeded(typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection {
