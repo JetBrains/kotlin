@@ -795,16 +795,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 !properVisibilityForCompanionObjectInstanceField &&
                 (hasPrivateOrProtectedProperVisibility || hasPackagePrivateProperVisibility ||
                  isNonIntrinsicPrivateCompanionObjectInInterface(companionObjectDescriptor));
-        boolean doNotGeneratePublic =
-                properVisibilityForCompanionObjectInstanceField && hasPrivateOrProtectedProperVisibility;
-        int fieldAccessFlags;
-        if (doNotGeneratePublic) {
-            fieldAccessFlags = ACC_STATIC | ACC_FINAL;
+        boolean fieldIsForcedToBePublic =
+                JvmCodegenUtil.isJvmInterface(descriptor) ||
+                !properVisibilityForCompanionObjectInstanceField;
+        int fieldAccessFlags = ACC_STATIC | ACC_FINAL;
+        if (fieldIsForcedToBePublic) {
+            fieldAccessFlags |= ACC_PUBLIC;
         }
         else {
-            fieldAccessFlags = ACC_PUBLIC | ACC_STATIC | ACC_FINAL;
-        }
-        if (properVisibilityForCompanionObjectInstanceField) {
             fieldAccessFlags |= properFieldVisibilityFlag;
         }
         if (fieldShouldBeDeprecated) {
