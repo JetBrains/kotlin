@@ -99,6 +99,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM_WARNING = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory1<PsiElement, String> JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE = DiagnosticFactory0.create(ERROR);
