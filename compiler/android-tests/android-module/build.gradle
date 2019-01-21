@@ -83,5 +83,5 @@ dependencies {
     androidTestImplementation 'junit:junit:4.12'
     implementation 'com.android.support:multidex:1.0.3'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestCompile fileTree(dir: 'libs/test', include: ['*.jar'])
+    androidTestImplementation fileTree(dir: 'libs/test', include: ['*.jar'])
 }

@@ -6,7 +6,7 @@
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
 
-package some.long.name
+package some.llong.name
 
 import helpers.*
 import kotlin.coroutines.*
