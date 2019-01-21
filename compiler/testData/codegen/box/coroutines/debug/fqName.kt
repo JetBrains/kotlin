@@ -31,7 +31,7 @@ fun builder(c: suspend () -> Unit) {
 fun box(): String {
     var res = "OK"
     builder {
-        if (Test().getStackTraceElement().className != "some.long.name.Test") {
+        if (Test().getStackTraceElement().className != "some.llong.name.Test") {
             res = Test().getStackTraceElement().className
         }
     }
