@@ -489,7 +489,7 @@ object Renderers {
         val typeParameter = typeVariableWithCapturedConstraint.originalTypeParameter
         val upperBound = TypeIntersector.getUpperBoundsAsType(typeParameter)
 
-        assert(!KotlinBuiltIns.isNullableAny(upperBound) && capturedTypeConstructor.typeProjection.projectionKind == Variance.IN_VARIANCE) {
+        assert(!KotlinBuiltIns.isNullableAny(upperBound) && capturedTypeConstructor.projection.projectionKind == Variance.IN_VARIANCE) {
             "There is the only reason to report TYPE_INFERENCE_CANNOT_CAPTURE_TYPES"
         }
 
@@ -504,7 +504,7 @@ object Renderers {
             newText().normal(
                 typeParameter.name.wrapIntoQuotes() +
                         " cannot capture " +
-                        "${capturedTypeConstructor.typeProjection.toString().wrapIntoQuotes()}. " +
+                        "${capturedTypeConstructor.projection.toString().wrapIntoQuotes()}. " +
                         explanation
             )
         )

@@ -98,10 +98,10 @@ private fun substituteCapturedTypesWithProjections(typeProjection: TypeProjectio
     val typeSubstitutor = TypeSubstitutor.create(object : TypeConstructorSubstitution() {
         override fun get(key: TypeConstructor): TypeProjection? {
             val capturedTypeConstructor = key as? CapturedTypeConstructor ?: return null
-            if (capturedTypeConstructor.typeProjection.isStarProjection) {
-                return TypeProjectionImpl(Variance.OUT_VARIANCE, capturedTypeConstructor.typeProjection.type)
+            if (capturedTypeConstructor.projection.isStarProjection) {
+                return TypeProjectionImpl(Variance.OUT_VARIANCE, capturedTypeConstructor.projection.type)
             }
-            return capturedTypeConstructor.typeProjection
+            return capturedTypeConstructor.projection
         }
     })
     return typeSubstitutor.substituteWithoutApproximation(typeProjection)
@@ -127,7 +127,7 @@ fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> 
 
     val typeConstructor = type.constructor
     if (type.isCaptured()) {
-        val typeProjection = (typeConstructor as CapturedTypeConstructor).typeProjection
+        val typeProjection = (typeConstructor as CapturedTypeConstructor).projection
         fun KotlinType.makeNullableIfNeeded() = TypeUtils.makeNullableIfNeeded(this, type.isMarkedNullable)
         val bound = typeProjection.type.makeNullableIfNeeded()
 
