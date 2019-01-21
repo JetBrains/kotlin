@@ -1459,6 +1459,24 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/exclExcl")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ExclExcl extends AbstractIrBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInExclExcl() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/exclExcl"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("primitive.kt")
+        public void testPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/exclExcl/primitive.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
