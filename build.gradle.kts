@@ -80,6 +80,8 @@ val appcodeKotlinPlugin by configurations.creating
 val clionKotlinPlugin by configurations.creating
 
 val includeCidr by extra(project.getBooleanProperty("cidrPluginsEnabled") ?: false)
+val isJpsBuildEnabled = findProperty("jpsBuild")?.toString() == "true"
+val jpsBootstrap by configurations.creating
 
 dependencies {
     if (includeCidr) {
@@ -836,7 +838,6 @@ fun org.jetbrains.gradle.ext.JUnit.configureForKotlin() {
     workingDirectory = rootDir.toString()
 }
 
-val isJpsBuildEnabled = findProperty("jpsBuild")?.toString() == "true"
 if (isJpsBuildEnabled && System.getProperty("idea.active") != null) {
     allprojects {
         apply(mapOf("plugin" to "idea"))

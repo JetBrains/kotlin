@@ -221,6 +221,9 @@ def isJpsBuild = hasProperty("jpsBuild") && jpsBuild == 'true'
 def includeStdlib = !hasProperty("useBootstrapStdlib") || useBootstrapStdlib == 'false'
 if (isJpsBuild) {
     includeStdlib = false
+
+    include ":kotlin-stdlib:jps-build"
+    project(":kotlin-stdlib:jps-build").projectDir = "$rootDir/libraries/stdlib/jps-build" as File
 } else {
     // modules that we are currently cannot compile with jps
     include ":kotlin-idl2k"
