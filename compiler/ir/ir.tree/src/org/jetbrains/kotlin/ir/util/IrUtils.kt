@@ -144,6 +144,9 @@ fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDescriptor, I
 
 fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
 
+fun IrExpression.isTrueConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == true
+
+fun IrExpression.isFalseConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == false
 
 fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType, irBuiltIns: IrBuiltIns): IrExpression {
     return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, irBuiltIns.unitType.toKotlinType()))

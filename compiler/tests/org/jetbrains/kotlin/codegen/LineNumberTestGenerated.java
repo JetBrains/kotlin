@@ -201,6 +201,11 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             runTest("compiler/testData/lineNumber/custom/noParametersArgumentCallInExpression.kt");
         }
 
+        @TestMetadata("primitiveNullChecks.kt")
+        public void testPrimitiveNullChecks() throws Exception {
+            runTest("compiler/testData/lineNumber/custom/primitiveNullChecks.kt");
+        }
+
         @TestMetadata("smapInlineAsArgument.kt")
         public void testSmapInlineAsArgument() throws Exception {
             runTest("compiler/testData/lineNumber/custom/smapInlineAsArgument.kt");

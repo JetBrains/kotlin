@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun shouldReturnFalse() : Boolean {
     try {
         return true
