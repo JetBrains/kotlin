@@ -14,6 +14,7 @@ enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = tru
     Sets(packageName = "kotlin.collections"),
     Maps(packageName = "kotlin.collections"),
     Sequences(packageName = "kotlin.sequences"),
+    USequences(packageName = "kotlin.sequences"),
     Ranges(packageName = "kotlin.ranges"),
     URanges(packageName = "kotlin.ranges"),
     Comparisons(packageName = "kotlin.comparisons"),

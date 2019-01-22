@@ -67,3 +67,59 @@ public fun Collection<UShort>.toUShortArray(): UShortArray {
     return result
 }
 
+/**
+ * Returns the sum of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("sumOfUInt")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun Iterable<UInt>.sum(): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("sumOfULong")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun Iterable<ULong>.sum(): ULong {
+    var sum: ULong = 0uL
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("sumOfUByte")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun Iterable<UByte>.sum(): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("sumOfUShort")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun Iterable<UShort>.sum(): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+

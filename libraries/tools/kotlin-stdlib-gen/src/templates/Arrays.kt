@@ -968,7 +968,7 @@ object ArrayOps : TemplateGroupBase() {
                     PrimitiveType.Char ->
                         body { "return withType(\"CharArray\", fillFrom(this, ${primitive}Array(newSize)))" }
                     PrimitiveType.Long ->
-                        body { "return withType(\"LongArray\", arrayCopyResize(this, newSize, ZERO))" }
+                        body { "return withType(\"LongArray\", arrayCopyResize(this, newSize, ${primitive!!.zero()}))" }
                     else ->
                         body { "return fillFrom(this, ${primitive}Array(newSize))" }
                 }

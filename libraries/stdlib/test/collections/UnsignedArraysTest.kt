@@ -568,4 +568,20 @@ class UnsignedArraysTest {
         val a = ubyteArrayOf(3, 2, 1)
         a.forEachIndexed { index, e -> assertEquals(e, a[index]) }
     }
+
+    @Test
+    fun sum() {
+        expect(14u) { arrayOf(2u, 3u, 9u).asSequence().sum() }
+        expect(400u) { arrayOf<UByte>(200u, 200u).asList().sum() }
+        expect(50000u) { arrayOf<UShort>(20000u, 30000u).asIterable().sum() }
+        expect(12_000_000_000_000_000_000uL) { arrayOf(10_000_000_000_000_000_000uL, 2_000_000_000_000_000_000uL).sum() }
+    }
+
+    @Test
+    fun sumInUnsignedArrays() {
+        expect(14u) { uintArrayOf(2u, 3u, 9u).sum() }
+        expect(400u) { ubyteArrayOf(200u, 200u).sum() }
+        expect(50000u) { ushortArrayOf(20000u, 30000u).sum() }
+        expect(12_000_000_000_000_000_000uL) { ulongArrayOf(10_000_000_000_000_000_000uL, 2_000_000_000_000_000_000uL).sum() }
+    }
 }

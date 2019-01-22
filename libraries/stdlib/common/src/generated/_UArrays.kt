@@ -3735,3 +3735,99 @@ public inline fun UShortArray.sumByDouble(selector: (UShort) -> Double): Double 
     return sum
 }
 
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfUInt")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun Array<out UInt>.sum(): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfULong")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun Array<out ULong>.sum(): ULong {
+    var sum: ULong = 0uL
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfUByte")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun Array<out UByte>.sum(): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfUShort")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun Array<out UShort>.sum(): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.sum(): UInt {
+    return storage.sum().toUInt()
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.sum(): ULong {
+    return storage.sum().toULong()
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.sum(): UInt {
+    return sumBy { it.toUInt() }
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.sum(): UInt {
+    return sumBy { it.toUInt() }
+}
+
