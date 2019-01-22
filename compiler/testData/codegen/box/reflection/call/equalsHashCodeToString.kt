@@ -5,6 +5,8 @@
 
 // WITH_REFLECT
 
+package test
+
 class A
 
 data class D(val s: String)
@@ -14,7 +16,7 @@ fun box(): String {
     assert(A::equals.call(a, a))
     assert(!A::equals.call(a, 0))
     assert(A::hashCode.call(a) == A::hashCode.call(a))
-    assert(A::toString.call(a).startsWith("A@"))
+    assert(A::toString.call(a).startsWith("test.A@"))
 
     assert(D::equals.call(D("foo"), D("foo")))
     assert(!D::equals.call(D("foo"), D("bar")))

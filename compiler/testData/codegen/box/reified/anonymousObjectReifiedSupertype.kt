@@ -3,6 +3,8 @@
 
 // WITH_RUNTIME
 
+package test
+
 import kotlin.test.assertEquals
 
 abstract class A<R> {
@@ -20,6 +22,6 @@ inline fun<reified T> foo(): A<T> {
 fun box(): String {
     val y = foo<String>();
     assertEquals("OK", y.f())
-    assertEquals("A<java.lang.String>", y.javaClass.getGenericSuperclass()?.toString())
+    assertEquals("test.A<java.lang.String>", y.javaClass.getGenericSuperclass()?.toString())
     return "OK"
 }

@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+package test
 
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -15,14 +16,13 @@ annotation class Meta(val anno: Anno)
 @Meta(Anno(value = "OK"))
 fun bar() {}
 
-
 fun box(): String {
     val f = Foo::class.annotations.single()
-    assertTrue("@Anno\\(uglyJvmName=\"?OK\"?\\)".toRegex().matches(f.toString()))
+    assertTrue("@test.Anno\\(uglyJvmName=\"?OK\"?\\)".toRegex().matches(f.toString()))
     assertEquals("OK", (f as Anno).value)
 
     val b = ::bar.annotations.single()
-    assertEquals("@Meta(anno=$f)", b.toString())
+    assertEquals("@test.Meta(anno=$f)", b.toString())
     assertEquals("OK", (b as Meta).anno.value)
 
     return "OK"
