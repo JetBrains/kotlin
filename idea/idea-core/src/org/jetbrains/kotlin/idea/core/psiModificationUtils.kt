@@ -230,6 +230,10 @@ fun KtClass.getOrCreateCompanionObject(): KtObjectDeclaration {
 }
 
 fun KtDeclaration.toDescriptor(): DeclarationDescriptor? {
+    if (this is KtScriptInitializer) {
+        return null
+    }
+
     val bindingContext = analyze()
     // TODO: temporary code
     if (this is KtPrimaryConstructor) {
