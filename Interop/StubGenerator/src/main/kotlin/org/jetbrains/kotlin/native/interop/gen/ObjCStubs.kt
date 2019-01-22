@@ -499,7 +499,7 @@ abstract class ObjCContainerStub(stubGenerator: StubGenerator,
 
     private val methodStubs get() = methodToStub.values
 
-    val propertyStubs = properties.map {
+    val propertyStubs = properties.mapNotNull {
         createObjCPropertyStub(stubGenerator, it, container, this.methodToStub)
     }
 
@@ -615,19 +615,34 @@ class ObjCClassStub(private val stubGenerator: StubGenerator, private val clazz:
     }
 }
 
+class GeneratedObjCCategoriesMembers {
+    private val propertyNames = mutableSetOf<String>()
+    private val instanceMethodSelectors = mutableSetOf<String>()
+    private val classMethodSelectors = mutableSetOf<String>()
+
+    fun register(method: ObjCMethod): Boolean =
+            (if (method.isClass) classMethodSelectors else instanceMethodSelectors).add(method.selector)
+
+    fun register(property: ObjCProperty): Boolean = propertyNames.add(property.name)
+
+}
+
 class ObjCCategoryStub(
         private val stubGenerator: StubGenerator, private val category: ObjCCategory
 ) : KotlinStub {
 
+    private val generatedMembers = stubGenerator.generatedObjCCategoriesMembers
+            .getOrPut(category.clazz, { GeneratedObjCCategoriesMembers() })
+
     // TODO: consider removing members that are also present in the class or its supertypes.
 
-    private val methodToStub = category.methods.map {
+    private val methodToStub = category.methods.filter { generatedMembers.register(it) }.map {
         it to ObjCMethodStub(stubGenerator, it, category, isDesignatedInitializer = false)
     }.toMap()
 
     private val methodStubs get() = methodToStub.values
 
-    private val propertyStubs = category.properties.map {
+    private val propertyStubs = category.properties.filter { generatedMembers.register(it) }.mapNotNull {
         createObjCPropertyStub(stubGenerator, it, category, methodToStub)
     }
 
@@ -645,11 +660,11 @@ private fun createObjCPropertyStub(
         property: ObjCProperty,
         container: ObjCContainer,
         methodToStub: Map<ObjCMethod, ObjCMethodStub>
-): ObjCPropertyStub {
+): ObjCPropertyStub? {
     // Note: the code below assumes that if the property is generated,
     // then its accessors are also generated as explicit methods.
-    val getterStub = methodToStub[property.getter]!!
-    val setterStub = property.setter?.let { methodToStub[it]!! }
+    val getterStub = methodToStub[property.getter] ?: return null
+    val setterStub = property.setter?.let { methodToStub[it] ?: return null }
     return ObjCPropertyStub(stubGenerator, property, container, getterStub, setterStub)
 }
 

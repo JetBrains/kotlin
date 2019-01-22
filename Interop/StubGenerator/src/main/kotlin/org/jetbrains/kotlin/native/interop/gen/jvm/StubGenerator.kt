@@ -54,6 +54,8 @@ class StubGenerator(
         pkgName.substringAfterLast('.')
     }
 
+    val generatedObjCCategoriesMembers = mutableMapOf<ObjCClass, GeneratedObjCCategoriesMembers>()
+
     val excludedFunctions: Set<String>
         get() = configuration.excludedFunctions
 
