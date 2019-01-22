@@ -339,8 +339,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     fun printDescriptors() {
-        // A workaround to check if the lateinit field is assigned, see KT-9327
-        try { moduleDescriptor } catch (e: UninitializedPropertyAccessException) { return }
+        if (!::moduleDescriptor.isInitialized)
+            return
 
         separator("Descriptors after: ${phase?.description}")
         moduleDescriptor.deepPrint()

@@ -50,8 +50,8 @@ fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
-fun ThrowUninitializedPropertyAccessException(): Nothing {
-    throw UninitializedPropertyAccessException()
+fun ThrowUninitializedPropertyAccessException(propertyName: String): Nothing {
+    throw UninitializedPropertyAccessException("lateinit property $propertyName has not been initialized")
 }
 
 @ExportForCppRuntime

@@ -52,7 +52,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
         val callSite = super.visitCall(expression) as IrCall
         if (!callSite.descriptor.needsInlining)
             return callSite
-        if (callSite.symbol == context.ir.symbols.isInitializedGetter)
+        if (callSite.symbol == context.ir.symbols.lateinitIsInitializedPropertyGetter)
             return callSite
 
         val callee = getFunctionDeclaration(callSite.symbol)
