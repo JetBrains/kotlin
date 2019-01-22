@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckerContext
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
@@ -302,7 +302,7 @@ object ExpectedActualResolver {
         if (b == null) return false
 
         with(NewKotlinTypeChecker) {
-            val context = object : TypeCheckerContext(false) {
+            val context = object : ClassicTypeCheckerContext(false) {
                 override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
                     return isExpectedClassAndActualTypeAlias(a, b, platformModule) ||
                             isExpectedClassAndActualTypeAlias(b, a, platformModule) ||

@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.Variance;
-import org.jetbrains.kotlin.types.model.TypeParameterIM;
+import org.jetbrains.kotlin.types.model.TypeParameterMarker;
 
 import java.util.List;
 
-public interface TypeParameterDescriptor extends ClassifierDescriptor, TypeParameterIM {
+public interface TypeParameterDescriptor extends ClassifierDescriptor, TypeParameterMarker {
     boolean isReified();
 
     @NotNull

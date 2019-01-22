@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.CaptureStatus
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
+import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull

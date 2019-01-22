@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
-import org.jetbrains.kotlin.types.model.DynamicTypeIM
+import org.jetbrains.kotlin.types.model.DynamicTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 open class DynamicTypesSettings {
@@ -40,7 +40,7 @@ fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicType(builtIns, Annotati
 class DynamicType(
     builtIns: KotlinBuiltIns,
     override val annotations: Annotations
-) : FlexibleType(builtIns.nothingType, builtIns.nullableAnyType), DynamicTypeIM {
+) : FlexibleType(builtIns.nothingType, builtIns.nullableAnyType), DynamicTypeMarker {
     override val delegate: SimpleType get() = upperBound
 
     // Nullability has no effect on dynamics

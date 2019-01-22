@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinTypeFactory.flexibleType
 import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.model.CapturedTypeMarker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
 
-abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorTypeEqualsToAnything = true, allowedTypeVariable = false) {
+abstract class TypeCheckerContextForConstraintSystem : ClassicTypeCheckerContext(errorTypeEqualsToAnything = true, allowedTypeVariable = false) {
 
     abstract fun isMyTypeVariable(type: SimpleType): Boolean
 
@@ -23,7 +26,13 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
 
     abstract fun addLowerConstraint(typeVariable: TypeConstructor, subType: UnwrappedType)
 
-    override fun getLowerCapturedTypePolicy(subType: SimpleType, superType: NewCapturedType) = when {
+    override fun getLowerCapturedTypePolicy(subType: SimpleTypeMarker, superType: CapturedTypeMarker): LowerCapturedTypePolicy {
+        require(subType is SimpleType)
+        require(superType is NewCapturedType)
+        return getLowerCapturedTypePolicy(subType, superType)
+    }
+
+    private fun getLowerCapturedTypePolicy(subType: SimpleType, superType: NewCapturedType) = when {
         isMyTypeVariable(subType) -> LowerCapturedTypePolicy.SKIP_LOWER
         subType.contains { it.anyBound(this::isMyTypeVariable) } -> LowerCapturedTypePolicy.CHECK_ONLY_LOWER
         else -> LowerCapturedTypePolicy.CHECK_SUBTYPE_AND_LOWER
@@ -35,7 +44,9 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
      * then we can get wrong result.
      * override val sameConstructorPolicy get() = SeveralSupertypesWithSameConstructorPolicy.TAKE_FIRST_FOR_SUBTYPING
      */
-    override final fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? {
+    final override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
+        require(subType is UnwrappedType)
+        require(superType is UnwrappedType)
         val hasNoInfer = subType.isTypeVariableWithNoInfer() || superType.isTypeVariableWithNoInfer()
         if (hasNoInfer) return true
 
@@ -199,7 +210,7 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
         val notTypeVariables = subIntersectionTypes.filterNot(this::isMyTypeVariable)
 
         // todo: may be we can do better then that.
-        if (notTypeVariables.isNotEmpty() && NewKotlinTypeChecker.isSubtypeOf(intersectTypes(notTypeVariables), superType)) {
+        if (notTypeVariables.isNotEmpty() && NewKotlinTypeChecker.isSubtypeOf(intersectTypes(notTypeVariables) as KotlinType, superType)) {
             return true
         }
 

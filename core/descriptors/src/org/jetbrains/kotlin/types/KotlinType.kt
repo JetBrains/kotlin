@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
-import org.jetbrains.kotlin.types.model.FlexibleTypeIM
-import org.jetbrains.kotlin.types.model.KotlinTypeIM
-import org.jetbrains.kotlin.types.model.SimpleTypeIM
+import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
 
 /**
  * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].
@@ -43,7 +44,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeIM
  *
  * For type creation see [KotlinTypeFactory].
  */
-sealed class KotlinType : Annotated, KotlinTypeIM {
+sealed class KotlinType : Annotated, KotlinTypeMarker {
 
     abstract val constructor: TypeConstructor
     abstract val arguments: List<TypeProjection>
@@ -122,7 +123,7 @@ sealed class UnwrappedType: KotlinType() {
  * then all your types are simple.
  * Or more precisely, all instances are subclasses of [SimpleType] or [WrappedType] (which contains [SimpleType] inside).
  */
-abstract class SimpleType : UnwrappedType(), SimpleTypeIM {
+abstract class SimpleType : UnwrappedType(), SimpleTypeMarker, TypeArgumentListMarker {
     abstract override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
     abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
 
@@ -141,7 +142,7 @@ abstract class SimpleType : UnwrappedType(), SimpleTypeIM {
 
 // lowerBound is a subtype of upperBound
 abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleType) :
-        UnwrappedType(), SubtypingRepresentatives, FlexibleTypeIM {
+        UnwrappedType(), SubtypingRepresentatives, FlexibleTypeMarker {
 
     abstract val delegate: SimpleType
 

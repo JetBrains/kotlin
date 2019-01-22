@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntersectionStrategy.*
 import org.jetbrains.kotlin.types.checker.*
-import org.jetbrains.kotlin.types.checker.CaptureStatus.*
+import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.types.model.CaptureStatus.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isNothing
