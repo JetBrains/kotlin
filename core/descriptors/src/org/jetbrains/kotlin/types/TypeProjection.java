@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.types.model.TypeArgumentIM;
 
-public interface TypeProjection {
+public interface TypeProjection extends TypeArgumentIM {
     @NotNull
     Variance getProjectionKind();
 

@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
+import org.jetbrains.kotlin.types.model.FlexibleTypeIM
+import org.jetbrains.kotlin.types.model.KotlinTypeIM
+import org.jetbrains.kotlin.types.model.SimpleTypeIM
 
 /**
  * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].
@@ -40,7 +43,7 @@ import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
  *
  * For type creation see [KotlinTypeFactory].
  */
-sealed class KotlinType : Annotated {
+sealed class KotlinType : Annotated, KotlinTypeIM {
 
     abstract val constructor: TypeConstructor
     abstract val arguments: List<TypeProjection>
@@ -119,7 +122,7 @@ sealed class UnwrappedType: KotlinType() {
  * then all your types are simple.
  * Or more precisely, all instances are subclasses of [SimpleType] or [WrappedType] (which contains [SimpleType] inside).
  */
-abstract class SimpleType : UnwrappedType() {
+abstract class SimpleType : UnwrappedType(), SimpleTypeIM {
     abstract override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
     abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
 
@@ -138,7 +141,7 @@ abstract class SimpleType : UnwrappedType() {
 
 // lowerBound is a subtype of upperBound
 abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleType) :
-        UnwrappedType(), SubtypingRepresentatives {
+        UnwrappedType(), SubtypingRepresentatives, FlexibleTypeIM {
 
     abstract val delegate: SimpleType
 

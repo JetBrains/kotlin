@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.model.CapturedTypeIM
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.DO_NOTHING_2
@@ -129,7 +130,7 @@ class NewCapturedType(
     val lowerType: UnwrappedType?, // todo check lower type for nullable captured types
     override val annotations: Annotations = Annotations.EMPTY,
     override val isMarkedNullable: Boolean = false
-) : SimpleType() {
+) : SimpleType(), CapturedTypeIM {
     internal constructor(captureStatus: CaptureStatus, lowerType: UnwrappedType?, projection: TypeProjection) :
             this(captureStatus, NewCapturedTypeConstructor(projection), lowerType)
 
