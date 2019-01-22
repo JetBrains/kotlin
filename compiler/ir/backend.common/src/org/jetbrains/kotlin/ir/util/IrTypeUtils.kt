@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -75,13 +76,18 @@ fun IrType.isNullable(): Boolean = DFS.ifAny(listOf(this), { it.typeParameterSup
 })
 
 
-fun IrType.isThrowable(): Boolean {
+fun IrType.isThrowable(): Boolean = isTypeFromKotlinPackage { name -> name.asString() == "Throwable" }
+
+fun IrType.isThrowableTypeOrSubtype() = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isThrowable)
+
+fun IrType.isUnsigned(): Boolean = isTypeFromKotlinPackage { name -> UnsignedTypes.isShortNameOfUnsignedType(name) }
+
+private inline fun IrType.isTypeFromKotlinPackage(namePredicate: (Name) -> Boolean): Boolean {
     if (this is IrSimpleType) {
         val classClassifier = classifier as? IrClassSymbol ?: return false
-        if (classClassifier.owner.name.asString() != "Throwable") return false
+        if (!namePredicate(classClassifier.owner.name)) return false
         val parent = classClassifier.owner.parent as? IrPackageFragment ?: return false
         return parent.fqName == kotlinPackageFqn
     } else return false
 }
 
-fun IrType.isThrowableTypeOrSubtype() = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isThrowable)

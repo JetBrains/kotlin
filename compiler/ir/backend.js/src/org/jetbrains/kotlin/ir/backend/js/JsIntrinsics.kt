@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
@@ -181,10 +180,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val charClassSymbol = getInternalClassWithoutPackage("kotlin.Char")
     val charConstructor = charClassSymbol.constructors.single().owner
 
-    val uByteClassSymbol = getInternalClassWithoutPackage("kotlin.UByte")
-    val uShortClassSymbol = getInternalClassWithoutPackage("kotlin.UShort")
-    val uIntClassSymbol = getInternalClassWithoutPackage("kotlin.UInt")
-    val uLongClassSymbol = getInternalClassWithoutPackage("kotlin.ULong")
+    val uByteClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UByte") }
+    val uShortClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UShort") }
+    val uIntClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UInt") }
+    val uLongClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.ULong") }
 
     val unreachable = defineUnreachableIntrinsic()
 
