@@ -2384,6 +2384,10 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun sliceArray-ojwP5H8 ([SLjava/util/Collection;)[S
 	public static final fun sliceArray-tAntMlw ([ILkotlin/ranges/IntRange;)[I
 	public static final fun sliceArray-xo_DsdI ([BLjava/util/Collection;)[B
+	public static final fun sumOfUByte ([Lkotlin/UByte;)I
+	public static final fun sumOfUInt ([Lkotlin/UInt;)I
+	public static final fun sumOfULong ([Lkotlin/ULong;)J
+	public static final fun sumOfUShort ([Lkotlin/UShort;)I
 	public static final fun toTypedArray--ajY-9A ([I)[Lkotlin/UInt;
 	public static final fun toTypedArray-GBYM_sE ([B)[Lkotlin/UByte;
 	public static final fun toTypedArray-QwZRm1k ([J)[Lkotlin/ULong;
@@ -2403,6 +2407,10 @@ public abstract class kotlin/collections/UByteIterator : java/util/Iterator, kot
 }
 
 public final class kotlin/collections/UCollectionsKt {
+	public static final fun sumOfUByte (Ljava/lang/Iterable;)I
+	public static final fun sumOfUInt (Ljava/lang/Iterable;)I
+	public static final fun sumOfULong (Ljava/lang/Iterable;)J
+	public static final fun sumOfUShort (Ljava/lang/Iterable;)I
 	public static final fun toUByteArray (Ljava/util/Collection;)[B
 	public static final fun toUIntArray (Ljava/util/Collection;)[I
 	public static final fun toULongArray (Ljava/util/Collection;)[J
@@ -4541,6 +4549,13 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun zip (Lkotlin/sequences/Sequence;Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun zipWithNext (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun zipWithNext (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+}
+
+public final class kotlin/sequences/USequencesKt {
+	public static final fun sumOfUByte (Lkotlin/sequences/Sequence;)I
+	public static final fun sumOfUInt (Lkotlin/sequences/Sequence;)I
+	public static final fun sumOfULong (Lkotlin/sequences/Sequence;)J
+	public static final fun sumOfUShort (Lkotlin/sequences/Sequence;)I
 }
 
 public final class kotlin/system/TimingKt {

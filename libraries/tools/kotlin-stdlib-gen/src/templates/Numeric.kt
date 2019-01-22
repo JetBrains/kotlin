@@ -5,31 +5,65 @@
 
 package templates
 
+import templates.Family.*
+
 object Numeric : TemplateGroupBase() {
 
     init {
         defaultBuilder {
             sequenceClassification(SequenceClass.terminal)
+            specialFor(ArraysOfUnsigned) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+            }
         }
     }
 
     private val numericPrimitivesDefaultOrder = PrimitiveType.defaultPrimitives intersect PrimitiveType.numericPrimitives
+    private val summablePrimitives = numericPrimitivesDefaultOrder + PrimitiveType.unsignedPrimitives
 
     val f_sum = fn("sum()") {
-        Family.defaultFamilies.forEach { family -> include(family, numericPrimitivesDefaultOrder) }
+        listOf(Iterables, Sequences, ArraysOfObjects).forEach { include(it, summablePrimitives) }
+        include(ArraysOfPrimitives, numericPrimitivesDefaultOrder)
+        include(ArraysOfUnsigned)
     } builder {
+        val p = primitive!!
 
         doc { "Returns the sum of all elements in the ${f.collection}." }
-        returns("SUM")
-        platformName("sumOf<T>")
-        body {
-            """
-            var sum: SUM = ZERO
-            for (element in this) {
-                sum += element
+        returns(p.sumType().name)
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+
+            body {
+                if (p == p.sumType())
+                    "return storage.sum().to${p.sumType().name}()"
+                else
+                    "return sumBy { it.to${p.sumType().name}() }"
             }
-            return sum
-            """
+        }
+        specialFor(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives) {
+            platformName("sumOf<T>")
+
+            if (p.isUnsigned()) {
+                require(f != ArraysOfPrimitives) { "Arrays of unsigneds are separate from arrays of primitives." }
+                specialFor(Iterables) { sourceFile(SourceFile.UCollections) }
+                specialFor(Sequences) { sourceFile(SourceFile.USequences) }
+                specialFor(ArraysOfObjects) { sourceFile(SourceFile.UArrays) }
+
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+            }
+
+            body {
+                """
+                var sum: ${p.sumType().name} = ${p.sumType().zero()}
+                for (element in this) {
+                    sum += element
+                }
+                return sum
+                """
+            }
         }
     }
 
