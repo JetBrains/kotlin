@@ -48,8 +48,6 @@ class KotlinConsoleKeeper(val project: Project) {
 
         val consoleRunner = KotlinConsoleRunner(module, cmdLine, previousCompilationFailed, project, REPL_TITLE, path)
         consoleRunner.initAndRun()
-        consoleRunner.setupGutters()
-
         return consoleRunner
     }
 

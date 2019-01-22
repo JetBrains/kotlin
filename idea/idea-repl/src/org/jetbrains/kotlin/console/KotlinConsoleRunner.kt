@@ -168,6 +168,8 @@ class KotlinConsoleRunner(
 
         enableCompletion(consoleView)
 
+        setupGutters(consoleView)
+
         return consoleView
     }
 
@@ -228,7 +230,7 @@ class KotlinConsoleRunner(
         editor.setPlaceholderAttributes(placeholderAttrs)
     }
 
-    fun setupGutters() {
+    fun setupGutters(consoleView: LanguageConsoleView) {
         fun configureEditorGutter(editor: EditorEx, color: Color, iconWithTooltip: IconWithTooltip): RangeHighlighter {
             editor.settings.isLineMarkerAreaShown = true // hack to show gutter
             editor.settings.isFoldingOutlineShown = true
