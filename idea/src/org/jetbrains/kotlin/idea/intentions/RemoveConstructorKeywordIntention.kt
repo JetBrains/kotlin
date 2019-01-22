@@ -9,19 +9,18 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 
-class OmitConstructorKeywordIntention : SelfTargetingIntention<KtPrimaryConstructor>(
+class RemoveConstructorKeywordIntention : SelfTargetingIntention<KtPrimaryConstructor>(
     KtPrimaryConstructor::class.java,
-    "Omit constructor keyword"
+    "Remove constructor keyword"
 ) {
     override fun applyTo(element: KtPrimaryConstructor, editor: Editor?) {
-        element.getConstructorKeyword()?.delete()
+        element.removeRedundantConstructorKeywordAndSpace()
     }
 
     override fun isApplicableTo(element: KtPrimaryConstructor, caretOffset: Int): Boolean {
         if (element.containingClassOrObject !is KtClass) return false
         if (element.getConstructorKeyword() == null) return false
-        return element.annotationEntries.isEmpty() && element.visibilityModifier() == null
+        return element.modifierList == null
     }
 }

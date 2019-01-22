@@ -4,8 +4,7 @@
 class WithComments
 /**
  * Some nasty constructor
- */
-(
+ */(
     /* First parameter */
     val first: Int,
     /* Second Parameter */
