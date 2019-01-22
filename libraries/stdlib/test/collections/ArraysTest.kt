@@ -99,7 +99,7 @@ class ArraysTest {
         assertEquals(0.toShort(), arr[0])
         assertEquals(1.toShort(), arr[1])
     }
-    
+
     @Test fun intArray() {
         val arr = IntArray(2)
 
@@ -107,7 +107,7 @@ class ArraysTest {
         assertEquals(0, arr[0])
         assertEquals(0, arr[1])
     }
-    
+
     @Test fun intArrayInit() {
         val arr = IntArray(2) { it.toInt() }
 
@@ -115,7 +115,7 @@ class ArraysTest {
         assertEquals(0.toInt(), arr[0])
         assertEquals(1.toInt(), arr[1])
     }
-    
+
     @Test fun longArray() {
         val arr = LongArray(2)
 
@@ -141,7 +141,7 @@ class ArraysTest {
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
-    
+
     @Test fun floatArrayInit() {
         val arr = FloatArray(2) { it.toFloat() }
 
@@ -916,7 +916,7 @@ class ArraysTest {
             byteArrayOf(1, 2, 3), byteArrayOf(4, 5, 6),
             byteArrayOf(5, 6, 3), byteArrayOf(6, 3, 3), byteArrayOf(6, 6, 3)
         )
-        
+
         doTest(
             CharArray::copyInto, ::assertArrayNotSameButEquals, CharArray::contentToString,
             charArrayOf('a', 'b', 'c'), charArrayOf('e', 'f', 'g'),
