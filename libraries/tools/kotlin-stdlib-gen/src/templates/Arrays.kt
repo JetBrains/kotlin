@@ -454,171 +454,204 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_plus = fn("plus(element: T)") {
-        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builderWith { primitive ->
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
         operator()
         returns("SELF")
 
-        on(Platform.JVM) {
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            val signedPrimitiveName = primitive!!.name.drop(1)
             body {
                 """
-                val index = size
-                val result = java.util.Arrays.copyOf(this, index + 1)
-                result[index] = element
-                return result
+                return SELF(storage + element.to$signedPrimitiveName())
                 """
             }
         }
 
-        on(Platform.JS) {
-            inline(suppressWarning = true)
-            specialFor(InvariantArraysOfObjects) {
-                family = ArraysOfObjects
-                suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
-                returns("Array<T>")
+        specialFor(InvariantArraysOfObjects, ArraysOfPrimitives) {
+            on(Platform.JVM) {
+                body {
+                    """
+                    val index = size
+                    val result = java.util.Arrays.copyOf(this, index + 1)
+                    result[index] = element
+                    return result
+                    """
+                }
             }
 
-            body {
-                if (primitive == null)
-                    "return this.asDynamic().concat(arrayOf(element))"
-                else
-                    "return plus(${primitive.name.toLowerCase()}ArrayOf(element))"
+            on(Platform.JS) {
+                inline(suppressWarning = true)
+                specialFor(InvariantArraysOfObjects) {
+                    family = ArraysOfObjects
+                    suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
+                    returns("Array<T>")
+                }
+
+                body {
+                    if (primitive == null)
+                        "return this.asDynamic().concat(arrayOf(element))"
+                    else
+                        "return plus(${primitive.name.toLowerCase()}ArrayOf(element))"
+                }
             }
-        }
-        on(Platform.Native) {
-            body {
-                """
-                val index = size
-                val result = copyOfUninitializedElements(index + 1)
-                result[index] = element
-                return result
-                """
+            on(Platform.Native) {
+                body {
+                    """
+                    val index = size
+                    val result = copyOfUninitializedElements(index + 1)
+                    result[index] = element
+                    return result
+                    """
+                }
             }
-        }
-        on(Platform.Common) {
-            specialFor(InvariantArraysOfObjects) {
-                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
+            on(Platform.Common) {
+                specialFor(InvariantArraysOfObjects) {
+                    suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
+                }
             }
         }
     }
 
 
     val f_plus_collection = fn("plus(elements: Collection<T>)") {
-        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         operator()
         returns("SELF")
         doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
-        on(Platform.JVM) {
+
+        specialFor(ArraysOfUnsigned) {
+            val signedPrimitiveName = primitive!!.name.drop(1)
             body {
                 """
                 var index = size
-                val result = java.util.Arrays.copyOf(this, index + elements.size)
-                for (element in elements) result[index++] = element
-                return result
+                val result = storage.copyOf(size + elements.size)
+                for (element in elements) result[index++] = element.to$signedPrimitiveName()
+                return SELF(result)
                 """
             }
         }
-        on(Platform.JS) {
-            // TODO: inline arrayPlusCollection when @PublishedAPI is available
-//                    inline(Platform.JS, Inline.Yes)
-//                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
-            specialFor(InvariantArraysOfObjects) {
-                family = ArraysOfObjects
-                suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
-                returns("Array<T>")
+        specialFor(InvariantArraysOfObjects, ArraysOfPrimitives) {
+            on(Platform.JVM) {
+                body {
+                    """
+                    var index = size
+                    val result = java.util.Arrays.copyOf(this, index + elements.size)
+                    for (element in elements) result[index++] = element
+                    return result
+                    """
+                }
             }
-            when (primitive) {
-                null, PrimitiveType.Boolean, PrimitiveType.Long ->
-                    body { "return arrayPlusCollection(this, elements)" }
-                else -> {
-                    on(Backend.Legacy) {
-                        body {
-                            "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)"
+            on(Platform.JS) {
+                // TODO: inline arrayPlusCollection when @PublishedAPI is available
+//                        inline(Platform.JS, Inline.Yes)
+//                        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+                specialFor(InvariantArraysOfObjects) {
+                    family = ArraysOfObjects
+                    suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
+                    returns("Array<T>")
+                }
+                when (primitive) {
+                    null, PrimitiveType.Boolean, PrimitiveType.Long ->
+                        body { "return arrayPlusCollection(this, elements)" }
+                    else -> {
+                        on(Backend.Legacy) {
+                            body {
+                                "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)"
+                            }
                         }
-                    }
-                    on(Backend.IR) {
-                        // Don't use fillFromCollection because it treats arrays
-                        // as `dynamic` but we need to concrete types to perform
-                        // unboxing of collections elements
-                        body {
-                            """
-                            var index = size
-                            val result = this.copyOf(size + elements.size)
-                            for (element in elements) result[index++] = element
-                            return result
-                            """
+                        on(Backend.IR) {
+                            // Don't use fillFromCollection because it treats arrays
+                            // as `dynamic` but we need to concrete types to perform
+                            // unboxing of collections elements
+                            body {
+                                """
+                                var index = size
+                                val result = this.copyOf(size + elements.size)
+                                for (element in elements) result[index++] = element
+                                return result
+                                """
+                            }
                         }
                     }
                 }
             }
-        }
-        on(Platform.Native) {
-            body {
-                """
-                var index = size
-                val result = copyOfUninitializedElements(index + elements.size)
-                for (element in elements) result[index++] = element
-                return result
-                """
+            on(Platform.Native) {
+                body {
+                    """
+                    var index = size
+                    val result = copyOfUninitializedElements(index + elements.size)
+                    for (element in elements) result[index++] = element
+                    return result
+                    """
+                }
             }
-        }
-        on(Platform.Common) {
-            specialFor(InvariantArraysOfObjects) {
-                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
+            on(Platform.Common) {
+                specialFor(InvariantArraysOfObjects) {
+                    suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
+                }
             }
         }
     }
 
     val f_plus_array = fn("plus(elements: SELF)") {
-        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         operator(true)
         doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] array." }
         returns("SELF")
-        specialFor(InvariantArraysOfObjects) {
-            signature("plus(elements: Array<out T>)", notForSorting = true)
-        }
 
-        on(Platform.JVM) {
-            body {
-                """
-                val thisSize = size
-                val arraySize = elements.size
-                val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-                System.arraycopy(elements, 0, result, thisSize, arraySize)
-                return result
-                """
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "return SELF(storage + elements.storage)" }
+        }
+        specialFor(InvariantArraysOfObjects, ArraysOfPrimitives) {
+            specialFor(InvariantArraysOfObjects) {
+                signature("plus(elements: Array<out T>)", notForSorting = true)
             }
 
-        }
-        on(Platform.JS) {
-            inline(suppressWarning = true)
-            specialFor(InvariantArraysOfObjects) {
-                family = ArraysOfObjects
-                suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
-                returns("Array<T>")
-                body { """return this.asDynamic().concat(elements)""" }
+            on(Platform.JVM) {
+                body {
+                    """
+                    val thisSize = size
+                    val arraySize = elements.size
+                    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+                    System.arraycopy(elements, 0, result, thisSize, arraySize)
+                    return result
+                    """
+                }
+
             }
-            specialFor(ArraysOfPrimitives) {
-                body { """return primitiveArrayConcat(this, elements)""" }
+            on(Platform.JS) {
+                inline(suppressWarning = true)
+                specialFor(InvariantArraysOfObjects) {
+                    family = ArraysOfObjects
+                    suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
+                    returns("Array<T>")
+                    body { """return this.asDynamic().concat(elements)""" }
+                }
+                specialFor(ArraysOfPrimitives) {
+                    body { """return primitiveArrayConcat(this, elements)""" }
+                }
             }
-        }
-        on(Platform.Native) {
-            body {
-                """
-                val thisSize = size
-                val arraySize = elements.size
-                val result = copyOfUninitializedElements(thisSize + arraySize)
-                elements.copyRangeTo(result, 0, arraySize, thisSize)
-                return result
-                """
+            on(Platform.Native) {
+                body {
+                    """
+                    val thisSize = size
+                    val arraySize = elements.size
+                    val result = copyOfUninitializedElements(thisSize + arraySize)
+                    elements.copyRangeTo(result, 0, arraySize, thisSize)
+                    return result
+                    """
+                }
             }
-        }
-        on(Platform.Common) {
-            specialFor(InvariantArraysOfObjects) {
-                suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
+            on(Platform.Common) {
+                specialFor(InvariantArraysOfObjects) {
+                    suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
+                }
             }
         }
     }

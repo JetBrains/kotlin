@@ -8,6 +8,9 @@ package test.collections
 
 import kotlin.test.*
 
+fun assertArrayContentEquals(expected: UIntArray, actual: UIntArray, message: String = "") { assertTrue(expected contentEquals actual, message) }
+
+
 class UnsignedArraysTest {
 
     @Test
@@ -217,6 +220,13 @@ class UnsignedArraysTest {
             assertFailsWith(exClass, bounds) { uintArrayOf(1).copyOfRange(start, end) }
             assertFailsWith(exClass, bounds) { ulongArrayOf(1uL).copyOfRange(start, end) }
         }
+    }
+
+    @Test
+    fun plus() {
+        assertArrayContentEquals(uintArrayOf(1u, 2u, 3u), uintArrayOf(1u, 2u) + 3u)
+        assertArrayContentEquals(uintArrayOf(1u, 2u, 3u, 4u), uintArrayOf(1u, 2u) + listOf(3u, 4u))
+        assertArrayContentEquals(uintArrayOf(1u, 2u, 3u, 4u), uintArrayOf(1u, 2u) + uintArrayOf(3u, 4u))
     }
 
 }
