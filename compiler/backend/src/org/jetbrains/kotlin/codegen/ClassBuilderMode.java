@@ -79,11 +79,15 @@ public class ClassBuilderMode {
             /* generateMultiFileFacadePartClasses = */ true,
             /* mightBeIncorrectCode = */ true);
 
-    @TestOnly
-    public final static ClassBuilderMode LIGHT_ANALYSIS_FOR_TESTS = new ClassBuilderMode(
+    private final static ClassBuilderMode LIGHT_ANALYSIS_FOR_TESTS = new ClassBuilderMode(
             /* bodies = */ false,
             /* metadata = */ true,
             /* sourceRetention = */ false,
             /* generateMultiFileFacadePartClasses = */ true,
             /* mightBeIncorrectCode = */ true);
+
+    @TestOnly
+    public static ClassBuilderMode getLightAnalysisForTests() {
+        return LIGHT_ANALYSIS_FOR_TESTS;
+    }
 }

@@ -22,7 +22,7 @@ import java.io.File
 abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
     private companion object {
         var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory() {
-            override fun getClassBuilderMode() = ClassBuilderMode.LIGHT_ANALYSIS_FOR_TESTS
+            override fun getClassBuilderMode() = ClassBuilderMode.getLightAnalysisForTests()
         }
     }
 
