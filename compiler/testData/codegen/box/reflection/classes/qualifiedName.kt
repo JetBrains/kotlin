@@ -3,6 +3,8 @@
 
 // WITH_REFLECT
 
+package test
+
 import kotlin.test.assertEquals
 
 class Klass {
@@ -11,9 +13,9 @@ class Klass {
 }
 
 fun box(): String {
-    assertEquals("Klass", Klass::class.qualifiedName)
-    assertEquals("Klass.Nested", Klass.Nested::class.qualifiedName)
-    assertEquals("Klass.Companion", Klass.Companion::class.qualifiedName)
+    assertEquals("test.Klass", Klass::class.qualifiedName)
+    assertEquals("test.Klass.Nested", Klass.Nested::class.qualifiedName)
+    assertEquals("test.Klass.Companion", Klass.Companion::class.qualifiedName)
 
     class Local
     assertEquals(null, Local::class.qualifiedName)

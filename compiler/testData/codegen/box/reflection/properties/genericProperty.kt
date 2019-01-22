@@ -4,6 +4,7 @@
 // IGNORE_BACKEND: JS, NATIVE
 
 // WITH_REFLECT
+package test
 
 import kotlin.test.assertEquals
 
@@ -11,6 +12,6 @@ data class Box<T>(val element: T)
 
 fun box(): String {
     val p = Box<String>::element
-    assertEquals("val Box<T>.element: T", p.toString())
+    assertEquals("val test.Box<T>.element: T", p.toString())
     return p.call(Box("OK"))
 }

@@ -6,6 +6,8 @@
 // WITH_REFLECT
 // KT-13700 Exception obtaining descriptor for property reference
 
+package test
+
 import kotlin.test.assertEquals
 
 interface H<T> {
@@ -15,7 +17,7 @@ interface H<T> {
 interface A : H<A>
 
 fun box(): String {
-    assertEquals("A?", A::parent.returnType.toString())
+    assertEquals("test.A?", A::parent.returnType.toString())
     assertEquals("T?", H<A>::parent.returnType.toString())
 
     return "OK"

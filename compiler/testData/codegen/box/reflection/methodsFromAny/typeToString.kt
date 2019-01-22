@@ -5,6 +5,8 @@
 
 // WITH_REFLECT
 
+package test
+
 import kotlin.test.assertEquals
 
 fun String?.foo(x: Int, y: Array<Int>, z: IntArray, w: List<Map<Any, A<*>>>) {}
@@ -22,7 +24,7 @@ fun box(): String {
                     "kotlin.Int",
                     "kotlin.Array<kotlin.Int>",
                     "kotlin.IntArray",
-                    "kotlin.collections.List<kotlin.collections.Map<kotlin.Any, A<*>>>"
+                    "kotlin.collections.List<kotlin.collections.Map<kotlin.Any, test.A<*>>>"
             ),
             String?::foo.parameters.map { it.type.toString() }
     )
@@ -30,11 +32,11 @@ fun box(): String {
     assertEquals("kotlin.Unit", String?::foo.returnType.toString())
 
     val bar = A::class.members.single { it.name == "bar" }
-    assertEquals(listOf("A<T>", "T", "U"), bar.parameters.map { it.type.toString() })
+    assertEquals(listOf("test.A<T>", "T", "U"), bar.parameters.map { it.type.toString() })
     assertEquals("T?", bar.returnType.toString())
 
     assertEquals(
-            listOf("A<in kotlin.Number>", "A<out kotlin.Number>"),
+            listOf("test.A<in kotlin.Number>", "test.A<out kotlin.Number>"),
             ::baz.parameters.map { it.type.toString() }
     )
 
