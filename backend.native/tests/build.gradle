@@ -65,6 +65,8 @@ externalStdlibTestsDir.mkdirs()
 ext.platformManager = project.rootProject.platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
 
+ext.testLibraryDir = "${project.property("konan.home")}/klib/platform/${project.target.name}"
+
 // Add executor to run tests depending on a target
 project.convention.plugins.executor = ExecutorServiceKt.create(project)
 
@@ -102,7 +104,7 @@ konanArtifacts {
 task installTestLibrary(type: KlibInstall) {
     dependsOn compileKonanTestLibraryHost
     klib = konanArtifacts.testLibrary.getArtifactByTarget('host')
-    repo = rootProject.file("${project.property("konan.home")}/klib/common")
+    repo = rootProject.file(testLibraryDir)
 }
 
 // Gets tests from the same Kotlin compiler build
@@ -1756,7 +1758,10 @@ task link_testLib_explicitly(type: RunStandaloneKonanTest) {
     source = "link/omit/hello.kt"
     // We force library inclusion, so need to see the warning banner.
     flags = ['-l', 'testLibrary'] 
-
+    doLast {
+        def file = new File("$testLibraryDir/testLibrary")
+        file.deleteDir()
+    }
 }
 
 task no_purge_for_dependencies(type: LinkKonanTest) {
