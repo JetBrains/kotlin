@@ -25,7 +25,15 @@ enum class TypeVariance {
     INV
 }
 
-interface TypeSystemContext {
+
+interface TypeSystemOptimizationContext {
+    /**
+     *  @return true is a.arguments == b.arguments, or false if not supported
+     */
+    fun identicalArguments(a: SimpleTypeIM, b: SimpleTypeIM) = false
+}
+
+interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeIM.asSimpleType(): SimpleTypeIM?
     fun KotlinTypeIM.asFlexibleType(): FlexibleTypeIM?
 

@@ -46,7 +46,7 @@ object AbstractStrictEqualityTypeChecker {
             return false
         }
 
-//        if (a.arguments === b.arguments) return true
+        if (identicalArguments(a, b)) return true
 
         for (i in 0 until a.argumentsCount()) {
             val aArg = a.getArgument(i)
