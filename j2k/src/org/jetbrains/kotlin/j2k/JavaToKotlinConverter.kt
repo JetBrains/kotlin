@@ -349,7 +349,7 @@ class JavaToKotlinConverter(
         override fun isModal() = delegate.isModal
         override fun getModalityState() = delegate.modalityState
 
-        override fun setModalityProgress(modalityProgress: ProgressIndicator) {
+        override fun setModalityProgress(modalityProgress: ProgressIndicator?) {
             delegate.setModalityProgress(modalityProgress)
         }
 
