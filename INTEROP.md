@@ -560,10 +560,6 @@ To convert a Kotlin function to a pointer to a C function,
 the lambda instead of a function reference. The function or lambda must not
 capture any values.
 
-Note that some function types are not supported currently. For example,
-it is not possible to get a pointer to a function that receives or returns structs
-by value.
-
 If the callback doesn't run in the main thread, it is mandatory to init the _Kotlin/Native_
 runtime by calling `kotlin.native.initRuntimeIfNeeded()`.
 
