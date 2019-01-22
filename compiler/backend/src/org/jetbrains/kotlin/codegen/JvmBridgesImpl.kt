@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.backend.common.bridges.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
@@ -31,12 +32,27 @@ class DescriptorBasedFunctionHandleForJvm(
     override val mayBeUsedAsSuperImplementation: Boolean =
         super.mayBeUsedAsSuperImplementation || descriptor.isJvmDefaultOrPlatformDependent()
 
+    private val asmMethod by lazy(LazyThreadSafetyMode.NONE) {
+        state.typeMapper.mapAsmMethod(descriptor)
+    }
+
     override val isDeclaration: Boolean =
         descriptor.kind.isReal || needToGenerateDelegationToDefaultImpls(descriptor)
 
     override val mightBeIncorrectCode: Boolean
         get() = state.classBuilderMode.mightBeIncorrectCode
+
+    override fun hashCode(): Int = descriptor.containerEntityForEqualityAndHashCode().hashCode() + 31 * asmMethod.hashCode()
+    override fun equals(other: Any?): Boolean {
+        if (other !is DescriptorBasedFunctionHandleForJvm) return false
+
+        return asmMethod == other.asmMethod &&
+                descriptor.containerEntityForEqualityAndHashCode() == other.descriptor.containerEntityForEqualityAndHashCode()
+    }
 }
+
+private fun FunctionDescriptor.containerEntityForEqualityAndHashCode(): Any =
+    (containingDeclaration as? ClassDescriptor)?.typeConstructor ?: containingDeclaration
 
 private fun CallableMemberDescriptor.isJvmDefaultOrPlatformDependent() =
     hasJvmDefaultAnnotation() || hasPlatformDependentAnnotation()
