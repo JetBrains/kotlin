@@ -109,6 +109,11 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             runTest("idea/testData/folding/checkCollapse/customRegionsNotFullBlock.kt");
         }
 
+        @TestMetadata("doubleImportListsError.kt")
+        public void testDoubleImportListsError() throws Exception {
+            runTest("idea/testData/folding/checkCollapse/doubleImportListsError.kt");
+        }
+
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
             runTest("idea/testData/folding/checkCollapse/functionLiteral.kt");
