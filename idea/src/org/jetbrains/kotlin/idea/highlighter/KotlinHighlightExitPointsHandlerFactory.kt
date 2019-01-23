@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBase() {
     companion object {
@@ -111,7 +112,7 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
                         return false
                     }
 
-                    val bindingContext = expression.analyze()
+                    val bindingContext = expression.analyze(BodyResolveMode.FULL)
                     if (!expression.isUsedAsResultOfLambda(bindingContext)) {
                         return false
                     }
@@ -157,7 +158,7 @@ private fun KtExpression.getRelevantDeclaration(): KtDeclarationWithBody? {
                 }
 
                 if (InlineUtil.canBeInlineArgument(parent) &&
-                    !InlineUtil.isInlinedArgument(parent as KtFunction, parent.analyze(), false)
+                    !InlineUtil.isInlinedArgument(parent as KtFunction, parent.analyze(BodyResolveMode.FULL), false)
                 ) {
                     return parent
                 }
