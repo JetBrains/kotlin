@@ -287,7 +287,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         sourceCompiler.generateAndInsertFinallyBlocks(
             adapter, infos, (remapper.remap(parameters.argsSizeOnStack + 1).value as StackValue.Local).index
         )
-        removeStaticInitializationTrigger(adapter)
         if (!sourceCompiler.isFinallyMarkerRequired()) {
             removeFinallyMarkers(adapter)
         }
@@ -587,21 +586,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             val name = callableDescriptor.name.asString()
             return (name == "arrayOf" || name == "emptyArray") && callableDescriptor.containingDeclaration is BuiltInsPackageFragment
         }
-
-        private fun removeStaticInitializationTrigger(methodNode: MethodNode) {
-            val insnList = methodNode.instructions
-            var insn: AbstractInsnNode? = insnList.first
-            while (insn != null) {
-                if (MultifileClassPartCodegen.isStaticInitTrigger(insn)) {
-                    val clinitTriggerCall = insn
-                    insn = insn.next
-                    insnList.remove(clinitTriggerCall)
-                } else {
-                    insn = insn.next
-                }
-            }
-        }
-
 
         /*descriptor is null for captured vars*/
         private fun shouldPutGeneralValue(type: Type, kotlinType: KotlinType?, stackValue: StackValue): Boolean {

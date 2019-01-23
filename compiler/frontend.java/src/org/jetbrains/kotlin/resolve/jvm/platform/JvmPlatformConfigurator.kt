@@ -37,7 +37,8 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         StrictfpApplicabilityChecker(),
         ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor())),
         JvmAnnotationsTargetNonExistentAccessorChecker(),
-        BadInheritedJavaSignaturesChecker
+        BadInheritedJavaSignaturesChecker,
+        JvmMultifileClassStateChecker
     ),
 
     additionalCallCheckers = listOf(

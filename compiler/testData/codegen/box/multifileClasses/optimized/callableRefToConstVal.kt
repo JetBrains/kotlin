@@ -7,14 +7,10 @@
 
 import a.*
 
-fun box(): String = OK.okRef.get()
+fun box(): String = ::OK.get()
 
 // FILE: part1.kt
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package a
 
-private val ok = run { "OK" }
-
-object OK {
-    val okRef = ::ok
-}
+const val OK = "OK"

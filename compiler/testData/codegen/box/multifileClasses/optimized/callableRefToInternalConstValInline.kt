@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
 // WITH_RUNTIME
@@ -6,14 +7,13 @@
 
 import a.*
 
-fun box(): String = OK().ok
+fun box(): String = okInline()
 
 // FILE: part1.kt
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package a
 
-private val reallyOk = run { "OK" }
+internal const val ok = "OK"
 
-class OK() {
-    val ok = reallyOk
-}
+internal inline fun okInline() =
+        ::ok.get()
