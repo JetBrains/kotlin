@@ -104,6 +104,12 @@ abstract class BasicBoxTest(
             fileContent = fileContent.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
 
+        val runtimeType =
+            if (KJS_WITH_FULL_RUNTIME.matcher(fileContent).find())
+                JsIrTestRuntime.FULL
+            else
+                JsIrTestRuntime.DEFAULT
+
         val actualMainCallParameters = if (CALL_MAIN_PATTERN.matcher(fileContent).find()) MainCallParameters.mainWithArguments(listOf("testArg")) else mainCallParameters
 
         val outputPrefixFile = getOutputPrefixFile(filePath)
@@ -128,7 +134,8 @@ abstract class BasicBoxTest(
                 generateJavaScriptFile(
                     file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
-                    outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction
+                    outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction,
+                    runtimeType
                 )
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) Pair(outputFileName, module) else null
@@ -182,7 +189,7 @@ abstract class BasicBoxTest(
             }
 
             if (!dontRunGeneratedCode) {
-                runGeneratedCode(allJsFiles, mainModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+                runGeneratedCode(allJsFiles, mainModuleName, testPackage, testFunction, expectedResult, withModuleSystem, runtimeType)
             }
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
@@ -235,12 +242,13 @@ abstract class BasicBoxTest(
     }
 
     protected open fun runGeneratedCode(
-            jsFiles: List<String>,
-            testModuleName: String?,
-            testPackage: String?,
-            testFunction: String,
-            expectedResult: String,
-            withModuleSystem: Boolean
+        jsFiles: List<String>,
+        testModuleName: String?,
+        testPackage: String?,
+        testFunction: String,
+        expectedResult: String,
+        withModuleSystem: Boolean,
+        runtime: JsIrTestRuntime
     ) {
         NashornJsTestChecker.check(jsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
     }
@@ -306,7 +314,8 @@ abstract class BasicBoxTest(
         outputPostfixFile: File?,
         mainCallParameters: MainCallParameters,
         testPackage: String?,
-        testFunction: String
+        testFunction: String,
+        runtime: JsIrTestRuntime
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -328,32 +337,33 @@ abstract class BasicBoxTest(
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
                 sourceDirs, module, kotlinFiles, dependencies, friends, multiModule, remap,
-                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction
+                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, runtime
             )
         }
     }
 
     private fun checkIncrementalCompilation(
-            sourceDirs: List<String>,
-            module: TestModule,
-            kotlinFiles: List<TestFile>,
-            dependencies: List<String>,
-            friends: List<String>,
-            multiModule: Boolean,
-            remap: Boolean,
-            outputFile: File,
-            outputPrefixFile: File?,
-            outputPostfixFile: File?,
-            mainCallParameters: MainCallParameters,
-            incrementalData: IncrementalData,
-            testPackage: String?,
-            testFunction: String
+        sourceDirs: List<String>,
+        module: TestModule,
+        kotlinFiles: List<TestFile>,
+        dependencies: List<String>,
+        friends: List<String>,
+        multiModule: Boolean,
+        remap: Boolean,
+        outputFile: File,
+        outputPrefixFile: File?,
+        outputPostfixFile: File?,
+        mainCallParameters: MainCallParameters,
+        incrementalData: IncrementalData,
+        testPackage: String?,
+        testFunction: String,
+        runtime: JsIrTestRuntime
     ) {
         val sourceToTranslationUnit = hashMapOf<File, TranslationUnit>()
         for (testFile in kotlinFiles) {
@@ -375,7 +385,7 @@ abstract class BasicBoxTest(
 
         translateFiles(
             translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -439,7 +449,8 @@ abstract class BasicBoxTest(
         incrementalData: IncrementalData,
         remap: Boolean,
         testPackage: String?,
-        testFunction: String
+        testFunction: String,
+        runtime: JsIrTestRuntime
     ) {
         val translator = K2JSTranslator(config)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -776,6 +787,7 @@ abstract class BasicBoxTest(
         private val RECOMPILE_PATTERN = Pattern.compile("^// *RECOMPILE *$", Pattern.MULTILINE)
         private val SOURCE_MAP_SOURCE_EMBEDDING = Regex("^// *SOURCE_MAP_EMBED_SOURCES: ([A-Z]+)*\$", RegexOption.MULTILINE)
         private val CALL_MAIN_PATTERN = Pattern.compile("^// *CALL_MAIN *$", Pattern.MULTILINE)
+        private val KJS_WITH_FULL_RUNTIME = Pattern.compile("^// *KJS_WITH_FULL_RUNTIME *\$", Pattern.MULTILINE)
 
         val TEST_MODULE = "JS_TESTS"
         private val DEFAULT_MODULE = "main"
