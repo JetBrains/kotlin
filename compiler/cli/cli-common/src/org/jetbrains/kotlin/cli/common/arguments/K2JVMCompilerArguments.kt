@@ -268,11 +268,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         )
         result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
         JvmDefaultMode.fromStringOrNull(jvmDefault)?.let { result[JvmAnalysisFlags.jvmDefaultMode] = it }
-                ?: collector.report(
-                    CompilerMessageSeverity.ERROR,
-                    "Unknown @JvmDefault mode: $jvmDefault, " +
-                            "supported modes: ${JvmDefaultMode.values().map { it.description }}"
-                )
+            ?: collector.report(
+                CompilerMessageSeverity.ERROR,
+                "Unknown @JvmDefault mode: $jvmDefault, " +
+                        "supported modes: ${JvmDefaultMode.values().map { it.description }}"
+            )
+        result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         return result
     }
 

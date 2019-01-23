@@ -207,17 +207,17 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             }
         }
 
-        if (explicitLanguageVersionSettings != null) {
-            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, explicitLanguageVersionSettings);
-        }
-        else if (disableReleaseCoroutines) {
-            CompilerTestLanguageVersionSettings compilerLanguageVersionSettings = new CompilerTestLanguageVersionSettings(
+        if (disableReleaseCoroutines) {
+            explicitLanguageVersionSettings = new CompilerTestLanguageVersionSettings(
                     Collections.singletonMap(LanguageFeature.ReleaseCoroutines, LanguageFeature.State.DISABLED),
                     ApiVersion.LATEST_STABLE,
                     LanguageVersion.LATEST_STABLE,
                     Collections.emptyMap()
             );
-            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, compilerLanguageVersionSettings);
+        }
+
+        if (explicitLanguageVersionSettings != null) {
+            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, explicitLanguageVersionSettings);
         }
 
         updateConfigurationWithFlags(configuration, kotlinConfigurationFlags);

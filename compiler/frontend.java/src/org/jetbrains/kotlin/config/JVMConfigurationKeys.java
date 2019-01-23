@@ -69,8 +69,6 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
             CompilerConfigurationKey.create("disable optimization");
-    public static final CompilerConfigurationKey<Boolean> INHERIT_MULTIFILE_PARTS =
-            CompilerConfigurationKey.create("compile multifile classes to a hierarchy of parts and facade");
     public static final CompilerConfigurationKey<Boolean> USE_TYPE_TABLE =
             CompilerConfigurationKey.create("use type table in serializer");
 
