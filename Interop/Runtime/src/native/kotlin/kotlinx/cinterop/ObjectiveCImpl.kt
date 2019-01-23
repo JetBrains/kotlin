@@ -120,9 +120,10 @@ annotation class ObjCFactory(val bridge: String)
 @Retention(AnnotationRetention.BINARY)
 annotation class InteropStubs()
 
+@PublishedApi
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
-private annotation class ObjCMethodImp(val selector: String, val encoding: String)
+internal annotation class ObjCMethodImp(val selector: String, val encoding: String)
 
 @kotlin.native.internal.ExportForCppRuntime("Kotlin_Interop_getObjCClass")
 private fun getObjCClassByName(name: NativePtr): NativePtr {
