@@ -1153,7 +1153,7 @@ object ArrayOps : TemplateGroupBase() {
 
     val f_fill = fn("fill(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
         platforms(Platform.JVM)
-        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Fills original array with the provided value." }
         returns("Unit")
@@ -1161,6 +1161,13 @@ object ArrayOps : TemplateGroupBase() {
             """
             java.util.Arrays.fill(this, fromIndex, toIndex, element)
             """
+        }
+
+        specialFor(ArraysOfUnsigned) {
+            val signedPrimitiveName = primitive!!.name.drop(1)
+            body {
+                "storage.fill(element.to$signedPrimitiveName(), fromIndex, toIndex)"
+            }
         }
     }
 
