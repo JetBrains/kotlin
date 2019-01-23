@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -80,7 +81,7 @@ class MultifileClassCodegenImpl(
                     .filterIsInstance<DeserializedCallableMemberDescriptor>()
 
     private val shouldGeneratePartHierarchy =
-            state.inheritMultifileParts
+        state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)
 
     private val partInternalNamesSorted = run {
         val partInternalNamesSet = hashSetOf<String>()
