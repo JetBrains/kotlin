@@ -36,7 +36,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.IdeaTestUtil
-import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
@@ -63,7 +62,6 @@ import java.io.IOException
 import java.io.StringWriter
 import java.net.URISyntaxException
 import java.util.*
-import com.intellij.openapi.diagnostic.Logger
 import org.junit.AfterClass
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
@@ -285,21 +283,18 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             return File(PathUtil.getJarPathForClass(GradleWrapperMain::class.java))
         }
 
-        private var persistedLoggerFactory : Logger.Factory? = null
+        private var logSaver: GradleImportingTestLogSaver? = null
 
         @JvmStatic
         @BeforeClass
         fun setLoggerFactory() {
-            persistedLoggerFactory = Logger.getFactory()
-            Logger.setFactory(TestLoggerFactory::class.java)
+            logSaver = GradleImportingTestLogSaver()
         }
 
         @JvmStatic
         @AfterClass
         fun restoreLoggerFactory() {
-            if (persistedLoggerFactory != null) {
-                Logger.setFactory(persistedLoggerFactory)
-            }
+            logSaver?.restore()
         }
     }
 }
