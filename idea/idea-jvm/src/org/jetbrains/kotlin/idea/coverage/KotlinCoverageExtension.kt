@@ -162,7 +162,7 @@ class KotlinCoverageExtension : JavaCoverageEngineExtension() {
         }
 
         private fun collectClassFilePrefixes(file: KtFile): Collection<String> {
-            val result = file.children.filter { it is KtClassOrObject }.map { (it as KtClassOrObject).name!! }
+            val result = file.children.filter { it is KtClassOrObject }.mapNotNull { (it as KtClassOrObject).name }
             val packagePartFqName = JvmFileClassUtil.getFileClassInfoNoResolve(file).fileClassFqName
             return result.union(arrayListOf(packagePartFqName.shortName().asString()))
         }
