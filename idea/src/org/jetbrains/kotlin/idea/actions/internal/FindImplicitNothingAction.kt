@@ -135,14 +135,8 @@ class FindImplicitNothingAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        if (!ApplicationManager.getApplication().isInternal) {
-            e.presentation.isVisible = false
-            e.presentation.isEnabled = false
-        }
-        else {
-            e.presentation.isVisible = true
-            e.presentation.isEnabled = selectedKotlinFiles(e).any()
-        }
+        e.presentation.isVisible = ApplicationManager.getApplication().isInternal
+        e.presentation.isEnabled = ApplicationManager.getApplication().isInternal
     }
 
     private fun selectedKotlinFiles(e: AnActionEvent): Sequence<KtFile> {
