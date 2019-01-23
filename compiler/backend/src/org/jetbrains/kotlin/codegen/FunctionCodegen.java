@@ -659,8 +659,6 @@ public class FunctionCodegen {
                 genNotNullAssertionsForParameters(new InstructionAdapter(mv), parentCodegen.state, functionDescriptor, frameMap);
             }
 
-            parentCodegen.beforeMethodBody(mv);
-
             methodEnd = new Label();
             context.setMethodEndLabel(methodEnd);
             strategy.generateBody(mv, frameMap, signature, context, parentCodegen);

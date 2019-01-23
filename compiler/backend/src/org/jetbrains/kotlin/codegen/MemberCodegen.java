@@ -455,15 +455,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         if (clInit == null) {
             DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
             SimpleFunctionDescriptorImpl clInitDescriptor = createClInitFunctionDescriptor(contextDescriptor);
-            MethodVisitor mv = createClInitMethodVisitor(contextDescriptor);
+            MethodVisitor mv =
+                    v.newMethod(JvmDeclarationOriginKt.OtherOrigin(contextDescriptor), ACC_STATIC, "<clinit>", "()V", null, null);
             clInit = new ExpressionCodegen(mv, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInitDescriptor), state, this);
         }
         return clInit;
-    }
-
-    @NotNull
-    public MethodVisitor createClInitMethodVisitor(@NotNull DeclarationDescriptor contextDescriptor) {
-        return v.newMethod(JvmDeclarationOriginKt.OtherOrigin(contextDescriptor), ACC_STATIC, "<clinit>", "()V", null, null);
     }
 
     @NotNull
@@ -494,9 +490,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 }
             }
         }
-    }
-
-    public void beforeMethodBody(@NotNull MethodVisitor mv) {
     }
 
     // Requires public access, because it is used by serialization plugin to generate initializer in synthetic constructor
