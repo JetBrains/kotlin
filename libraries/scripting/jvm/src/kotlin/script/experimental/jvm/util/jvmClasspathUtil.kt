@@ -187,14 +187,16 @@ object KotlinJars {
     }
 
     fun getLib(propertyName: String, jarName: String, markerClass: KClass<*>): File? =
-            System.getProperty(propertyName)?.let(::File)?.takeIf(File::exists)
-            ?: explicitCompilerClasspath?.firstOrNull { it.matchMaybeVersionedFile(jarName) }?.takeIf(File::exists)
+        getExplicitLib(propertyName, jarName)
             ?: getResourcePathForClass(markerClass.java).takeIf(File::exists)
 
     fun getLib(propertyName: String, jarName: String, markerClassName: String): File? =
+        getExplicitLib(propertyName, jarName)
+            ?: tryGetResourcePathForClassByName(markerClassName, Thread.currentThread().contextClassLoader)?.takeIf(File::exists)
+
+    private fun getExplicitLib(propertyName: String, jarName: String) =
         System.getProperty(propertyName)?.let(::File)?.takeIf(File::exists)
             ?: explicitCompilerClasspath?.firstOrNull { it.matchMaybeVersionedFile(jarName) }?.takeIf(File::exists)
-            ?: tryGetResourcePathForClassByName(markerClassName, Thread.currentThread().contextClassLoader)?.takeIf(File::exists)
 
     val stdlibOrNull: File? by lazy {
         System.getProperty(KOTLIN_STDLIB_JAR_PROPERTY)?.let(::File)?.takeIf(File::exists)
@@ -214,7 +216,7 @@ object KotlinJars {
         getLib(
             KOTLIN_REFLECT_JAR_PROPERTY,
             KOTLIN_JAVA_REFLECT_JAR,
-            "kotlin.reflect.full.IllegalCallableAccessException"
+            "kotlin.reflect.full.KClasses" // using a class that is a part of the kotlin-reflect.jar
         )
     }
 

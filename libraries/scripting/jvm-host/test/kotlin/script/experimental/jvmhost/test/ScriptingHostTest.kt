@@ -174,6 +174,26 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
+    fun testIgnoredOptionsWarning() {
+        val script = "println(\"Hi\")"
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            compilerOptions("-version", "-d", "destDir", "-Xreport-perf", "-no-reflect")
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                        compilerOptions.append("-no-jdk", "-version", "-no-stdlib", "-Xdump-perf", "-no-inline")
+                    }.asSuccess()
+                }
+            }
+        }
+        val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
+        assertTrue(res is ResultWithDiagnostics.Success)
+        assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: -version, -d, -Xreport-perf" })
+        assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: -Xdump-perf" })
+        assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored when configured from refinement callbacks: -no-jdk, -no-stdlib" })
+    }
+
+    @Test
     fun testMemoryCache() {
         val script = "val x = 1\nprintln(\"x = \$x\")"
         val cache = SimpleMemoryScriptsCache()
