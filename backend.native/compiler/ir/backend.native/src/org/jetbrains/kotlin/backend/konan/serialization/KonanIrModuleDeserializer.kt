@@ -212,7 +212,6 @@ class KonanIrModuleDeserializer(
 
         reachableTopLevels.add(topLevelKey)
 
-        // TODO: This is a mess. Cleanup!
         do {
             val key = reachableTopLevels.first()
 
@@ -221,21 +220,15 @@ class KonanIrModuleDeserializer(
                 continue
             }
 
-            val previousModuleDescriptor = deserializedModuleDescriptor
-            deserializedModuleDescriptor = key.moduleOfOrigin
-
-            if (deserializedModuleDescriptor == null) {
-                deserializedModuleDescriptor = previousModuleDescriptor
-                reachableTopLevels.remove(key)
-                deserializedTopLevels.add(key)
-                continue
+            if (key.moduleOfOrigin != null) {
+                deserializedModuleDescriptor = key.moduleOfOrigin
+                val reachable = deserializeTopLevelDeclaration(key)
+                reversedFileIndex[key]!!.declarations.add(reachable)
+            } else {
+                // The key.moduleOrigin is null for uniqIds that we haven't seen in any of the library headers.
+                // Just skip it for now and handle it elsewhere.
             }
 
-            val reachable = deserializeTopLevelDeclaration(key)
-
-            deserializedModuleDescriptor = previousModuleDescriptor
-
-            reversedFileIndex[key]!!.declarations.add(reachable)
             reachableTopLevels.remove(key)
             deserializedTopLevels.add(key)
         } while (reachableTopLevels.isNotEmpty())
