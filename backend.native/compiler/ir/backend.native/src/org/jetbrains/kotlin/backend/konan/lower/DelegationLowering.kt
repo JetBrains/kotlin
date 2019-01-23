@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
@@ -116,20 +114,6 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
         }
 
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
-
-            override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
-                declaration.transformChildrenVoid(this)
-
-                val initializer = declaration.delegate.initializer!!
-                declaration.delegate.initializer = IrBlockImpl(initializer.startOffset, initializer.endOffset, initializer.type, null,
-                        listOf(
-                                declaration.getter,
-                                declaration.setter,
-                                initializer
-                        ).filterNotNull())
-
-                return declaration.delegate
-            }
 
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
                 expression.transformChildrenVoid(this)

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -42,6 +41,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
     override fun lower(irFile: IrFile) {
+        var generatedClasses = mutableListOf<IrClass>()
         irFile.transform(object: IrElementTransformerVoidWithContext() {
 
             private val stack = mutableListOf<IrElement>()
@@ -61,9 +61,18 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
             }
 
             override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+                lateinit var tempGeneratedClasses: MutableList<IrClass>
+                if (declaration is IrClass) {
+                    tempGeneratedClasses = generatedClasses
+                    generatedClasses = mutableListOf()
+                }
                 stack.push(declaration)
                 val result = super.visitDeclaration(declaration)
                 stack.pop()
+                if (declaration is IrClass) {
+                    declaration.declarations += generatedClasses
+                    generatedClasses = tempGeneratedClasses
+                }
                 return result
             }
 
@@ -99,20 +108,19 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     return expression
                 }
 
-                val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().last()
+                val parent: IrDeclarationContainer = (currentClass?.irElement as? IrClass) ?: irFile
                 val loweredFunctionReference = FunctionReferenceBuilder(parent, expression).build()
+                generatedClasses.add(loweredFunctionReference.functionReferenceClass)
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
                         expression.startOffset, expression.endOffset)
-                return irBuilder.irBlock(expression) {
-                    +loweredFunctionReference.functionReferenceClass
-                    +irCall(loweredFunctionReference.functionReferenceConstructor.symbol).apply {
-                        expression.getArguments().forEachIndexed { index, argument ->
-                            putValueArgument(index, argument.second)
-                        }
+                return irBuilder.irCall(loweredFunctionReference.functionReferenceConstructor.symbol).apply {
+                    expression.getArguments().forEachIndexed { index, argument ->
+                        putValueArgument(index, argument.second)
                     }
                 }
             }
         }, null)
+        irFile.declarations += generatedClasses
     }
 
     private class BuiltFunctionReference(val functionReferenceClass: IrClass,
@@ -249,16 +257,12 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     if (!isKFunction)
                         +irDelegatingConstructorCall(irBuiltIns.anyClass.owner.constructors.single())
                     else +irDelegatingConstructorCall(kFunctionImplConstructorSymbol.owner).apply {
-                        val stringType = irBuiltIns.stringType
-                        val name = IrConstImpl(startOffset, endOffset, stringType,
-                                IrConstKind.String, referencedFunction.name.asString())
-                        putValueArgument(0, name)
-                        val fqName = IrConstImpl(startOffset, endOffset, stringType, IrConstKind.String,
-                                (functionReference.symbol.owner).fullName)
-                        putValueArgument(1, fqName)
-                        val bound = IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType,
-                                boundFunctionParameters.isNotEmpty())
-                        putValueArgument(2, bound)
+                        // TODO: Remove as soon as IR declarations have their originalDescriptor.
+                        val name = (referencedFunction.descriptor as? WrappedSimpleFunctionDescriptor)?.originalDescriptor?.name
+                                ?: referencedFunction.name
+                        putValueArgument(0, irString(name.asString()))
+                        putValueArgument(1, irString((functionReference.symbol.owner).fullName))
+                        putValueArgument(2, irBoolean(boundFunctionParameters.isNotEmpty()))
                         val needReceiver = boundFunctionParameters.singleOrNull()?.descriptor is ReceiverParameterDescriptor
                         val receiver = if (needReceiver) irGet(valueParameters.single()) else irNull()
                         putValueArgument(3, receiver)

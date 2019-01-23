@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.LocalDelegatedPropertiesLowering
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectDeclarationsRemoving
 import org.jetbrains.kotlin.backend.konan.lower.FinallyBlocksLowering
@@ -88,13 +89,8 @@ internal class KonanLower(val context: Context, val parentPhaser: PhaseManager) 
         phaser.phase(KonanPhase.LOWER_SHARED_VARIABLES) {
             SharedVariablesLowering(context).runOnFilePostfix(irFile)
         }
-        phaser.phase(KonanPhase.LOWER_DELEGATION) {
-            PropertyDelegationLowering(context).lower(irFile)
-        }
-        phaser.phase(KonanPhase.LOWER_CALLABLES) {
-            CallableReferenceLowering(context).lower(irFile)
-        }
         phaser.phase(KonanPhase.LOWER_LOCAL_FUNCTIONS) {
+            LocalDelegatedPropertiesLowering().lower(irFile)
             LocalDeclarationsLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_TAILREC) {
@@ -118,6 +114,12 @@ internal class KonanLower(val context: Context, val parentPhaser: PhaseManager) 
         }
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
+        }
+        phaser.phase(KonanPhase.LOWER_DELEGATION) {
+            PropertyDelegationLowering(context).lower(irFile)
+        }
+        phaser.phase(KonanPhase.LOWER_CALLABLES) {
+            CallableReferenceLowering(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_INTEROP_PART2) {
             InteropLoweringPart2(context).lower(irFile)
