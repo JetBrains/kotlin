@@ -2278,6 +2278,14 @@ public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kot
 }
 
 public final class kotlin/collections/UArraysKt {
+	public static final fun binarySearch-2fe2U9s ([IIII)I
+	public static synthetic fun binarySearch-2fe2U9s$default ([IIIIILjava/lang/Object;)I
+	public static final fun binarySearch-EtDCXyQ ([SSII)I
+	public static synthetic fun binarySearch-EtDCXyQ$default ([SSIIILjava/lang/Object;)I
+	public static final fun binarySearch-K6DWlUc ([JJII)I
+	public static synthetic fun binarySearch-K6DWlUc$default ([JJIIILjava/lang/Object;)I
+	public static final fun binarySearch-WpHrYlw ([BBII)I
+	public static synthetic fun binarySearch-WpHrYlw$default ([BBIIILjava/lang/Object;)I
 	public static final fun contentEquals-ctEhBpI ([I[I)Z
 	public static final fun contentEquals-kdPth3s ([B[B)Z
 	public static final fun contentEquals-mazbYpA ([S[S)Z
