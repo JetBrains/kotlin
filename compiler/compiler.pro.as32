@@ -52,6 +52,10 @@ messages/**)
 -dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
 
+# Annotations from intellijCore/annotations.jar that not presented in org.jetbrains.annotations
+-dontwarn org.jetbrains.annotations.Async*
+-dontwarn org.jetbrains.annotations.Nls$Capitalization
+
 # Depends on apache batick which has lots of dependencies
 -dontwarn com.intellij.util.SVGLoader*
 

@@ -20,8 +20,8 @@ dependencies {
 
     compile(project(":idea:idea-core"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "annotations") }
-    compileOnly(intellijDep()) { includeJars("util", "openapi", "idea", "asm-all", "jdom", "annotations", "trove4j", "guava", rootProject = rootProject) }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("util", "openapi", "idea", "asm-all", "jdom", "trove4j", "guava", rootProject = rootProject) }
     compileOnly(intellijPluginDep("gradle")) //{ includeJars("gradle-tooling-api", "gradle", rootProject = rootProject) }
 }
 

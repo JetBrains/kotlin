@@ -186,8 +186,7 @@ extra["intellijUltimateEnabled"] = intellijUltimateEnabled
 extra["intellijSeparateSdks"] = intellijSeparateSdks
 
 extra["IntellijCoreDependencies"] =
-        listOf("annotations",
-               if (Platform[191].orHigher()) "asm-all-7.0" else "asm-all",
+        listOf(if (Platform[191].orHigher()) "asm-all-7.0" else "asm-all",
                "guava",
                "jdom",
                "jna",
