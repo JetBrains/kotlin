@@ -218,19 +218,14 @@ if (isTeamcityBuild || includeUltimate) {
 }
 
 def isJpsBuild = hasProperty("jpsBuild") && jpsBuild == 'true'
-def includeStdlib = !hasProperty("useBootstrapStdlib") || useBootstrapStdlib == 'false'
 if (isJpsBuild) {
-    includeStdlib = false
-
     include ":kotlin-stdlib:jps-build"
     project(":kotlin-stdlib:jps-build").projectDir = "$rootDir/libraries/stdlib/jps-build" as File
 } else {
     // modules that we are currently cannot compile with jps
     include ":kotlin-idl2k"
     project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
-}
-
-if (includeStdlib) {
+    
     include ":kotlin-stdlib-common",
             ":kotlin-stdlib",
             ":kotlin-stdlib-js",
@@ -246,11 +241,7 @@ if (includeStdlib) {
             ":kotlin-runtime",
 
             ":include:kotlin-stdlib-common-sources"
-}
 
-rootProject.name = "kotlin"
-
-if (includeStdlib) {
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
     project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js" as File
@@ -267,6 +258,8 @@ if (includeStdlib) {
 
     project(':kotlin-runtime').projectDir = "$rootDir/libraries/stdlib/runtime" as File
 }
+
+rootProject.name = "kotlin"
 
 project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-runtime" as File
 project(':kotlin-test').projectDir = "$rootDir/libraries/kotlin.test" as File

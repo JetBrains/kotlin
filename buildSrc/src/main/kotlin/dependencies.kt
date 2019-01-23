@@ -58,9 +58,7 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
 fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
 
 val Project.useBootstrapStdlib: Boolean get() =
-    findProperty("useBootstrapStdlib")?.let { it.toString() != "false" }
-        ?: findProperty("jpsBuild")?.let { it.toString() == "true" }
-        ?: false
+    findProperty("jpsBuild")?.toString() == "true"
 
 fun Project.kotlinStdlib(suffix: String? = null): Any {
     return if (useBootstrapStdlib)
