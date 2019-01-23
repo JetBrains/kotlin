@@ -6,6 +6,7 @@
 package test.collections
 
 import kotlin.test.Test
+import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -65,6 +66,55 @@ class UArrayJVMTest {
         test(array.toUShortArray(), UShortArray::binarySearch, operations, UInt::toUShort)
         test(array, UIntArray::binarySearch, operations, UInt::toUInt)
         test(array.toULongArray(), ULongArray::binarySearch, operations, UInt::toULong)
+    }
+
+    @Test
+    fun fill() {
+        fun <A, E> testFailures(array: A, fill: A.(E, Int, Int) -> Unit, element: E, arraySize: Int) {
+            assertFailsWith<ArrayIndexOutOfBoundsException> {
+                array.fill(element, -1, arraySize)
+            }
+            assertFailsWith<ArrayIndexOutOfBoundsException> {
+                array.fill(element, 0, arraySize + 1)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                array.fill(element, 1, 0)
+            }
+        }
+
+        testFailures(UByteArray(5) { it.toUByte() }, UByteArray::fill, 0u, 5)
+        testFailures(UShortArray(5) { it.toUShort() }, UShortArray::fill, 0u, 5)
+        testFailures(UIntArray(5) { it.toUInt() }, UIntArray::fill, 0u, 5)
+        testFailures(ULongArray(5) { it.toULong() }, ULongArray::fill, 0u, 5)
+
+        fun <A, E> test(
+            array: UIntArray,
+            fill: A.(E, Int, Int) -> Unit,
+            operations: List<OperationOnRange<UInt, UIntArray>>,
+            arrayTransform: UIntArray.() -> A,
+            elementTransform: UInt.() -> E,
+            contentEquals: A.(A) -> Boolean
+        ) {
+            for (o in operations) {
+                val result = array.arrayTransform()
+                result.fill(o.element.elementTransform(), o.fromIndex, o.toIndex)
+                assertTrue(o.expectedResult.arrayTransform().contentEquals(result))
+            }
+        }
+
+        val array = UIntArray(5) { it.toUInt() }
+
+        val operations = listOf(
+            OperationOnRange(5u, 1, 4, uintArrayOf(0u, 5u, 5u, 5u, 4u)),
+            OperationOnRange(1u, 0, 5, uintArrayOf(1u, 1u, 1u, 1u, 1u)),
+            OperationOnRange(2u, 0, 3, uintArrayOf(2u, 2u, 2u, 3u, 4u)),
+            OperationOnRange(3u, 2, 5, uintArrayOf(0u, 1u, 3u, 3u, 3u))
+        )
+
+        test(array, UByteArray::fill, operations, UIntArray::toUByteArray, UInt::toUByte, UByteArray::contentEquals)
+        test(array, UShortArray::fill, operations, UIntArray::toUShortArray, UInt::toUShort, UShortArray::contentEquals)
+        test(array, UIntArray::fill, operations, UIntArray::copyOf, UInt::toUInt, UIntArray::contentEquals)
+        test(array, ULongArray::fill, operations, UIntArray::toULongArray, UInt::toULong, ULongArray::contentEquals)
     }
 }
 
