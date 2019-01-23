@@ -2,6 +2,7 @@
 // IGNORE_BACKEND: JVM_IR
 
 // FULL_JDK
+// JVM_TARGET: 1.8
 
 import java.util.*
 
