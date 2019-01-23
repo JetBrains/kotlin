@@ -210,24 +210,27 @@ class KonanIrModuleDeserializer(
         val uniqId = UniqId(descriptorUniqId.index, isLocal = false)
         val topLevelKey = UniqIdKey(topLevelDescriptor.module, uniqId)
 
+        // This top level descriptor doesn't have a serialized IR declaration.
+        if (topLevelKey.moduleOfOrigin == null) return null
+
         reachableTopLevels.add(topLevelKey)
 
         do {
             val key = reachableTopLevels.first()
 
-            if (deserializedSymbols[key]?.isBound == true) {
+            if (deserializedSymbols[key]?.isBound == true ||
+                // The key.moduleOrigin is null for uniqIds that we haven't seen in any of the library headers.
+                // Just skip it for now and handle it elsewhere.
+                key.moduleOfOrigin == null) {
+
                 reachableTopLevels.remove(key)
+                deserializedTopLevels.add(key)
                 continue
             }
 
-            if (key.moduleOfOrigin != null) {
-                deserializedModuleDescriptor = key.moduleOfOrigin
-                val reachable = deserializeTopLevelDeclaration(key)
-                reversedFileIndex[key]!!.declarations.add(reachable)
-            } else {
-                // The key.moduleOrigin is null for uniqIds that we haven't seen in any of the library headers.
-                // Just skip it for now and handle it elsewhere.
-            }
+            deserializedModuleDescriptor = key.moduleOfOrigin
+            val reachable = deserializeTopLevelDeclaration(key)
+            reversedFileIndex[key]!!.declarations.add(reachable)
 
             reachableTopLevels.remove(key)
             deserializedTopLevels.add(key)

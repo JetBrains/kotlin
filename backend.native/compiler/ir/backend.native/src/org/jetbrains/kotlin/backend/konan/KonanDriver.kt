@@ -81,7 +81,7 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
             if (library == null) {
                 return@map null
             }
-            deserializer.deserializeIrModule(it, library.irHeader)
+            library.irHeader?.let { header -> deserializer.deserializeIrModule(it, header) }
         }.filterNotNull()
 
         val symbols = KonanSymbols(context, generatorContext.symbolTable, generatorContext.symbolTable.lazyWrapper)
@@ -117,11 +117,11 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
 
     phaser.phase(KonanPhase.SERIALIZER) {
         val declarationTable = DeclarationTable(context.irModule!!.irBuiltins, DescriptorTable())
-        val serializedIr = IrModuleSerializer(context, declarationTable/*, onlyForInlines = false*/).serializedIrModule(context.irModule!!)
+        val serializedIr = IrModuleSerializer(context, declarationTable).serializedIrModule(context.irModule!!)
 
         val serializer = KonanSerializationUtil(context, context.config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, declarationTable)
         context.serializedLinkData =
-            serializer.serializeModule(context.moduleDescriptor, serializedIr)
+            serializer.serializeModule(context.moduleDescriptor, if (!context.config.isInteropStubs) serializedIr else null)
     }
     phaser.phase(KonanPhase.BACKEND) {
         phaser.phase(KonanPhase.LOWER) {

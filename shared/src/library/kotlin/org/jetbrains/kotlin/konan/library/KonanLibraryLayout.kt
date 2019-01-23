@@ -50,7 +50,7 @@ interface KonanLibraryLayout {
         = File(irDir, "hidden_$declarationId.knd")
     fun visibleDeclarationFile(declarationId: String)
         = File(irDir, "visible_$declarationId.knd")
-    val wholeIrFile
+    val irHeader
         get() = File(irDir, "irHeaders.kni")
     val irIndex: File
         get() = File(irDir, "uniqIdTableDump.txt")

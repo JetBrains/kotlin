@@ -209,7 +209,7 @@ internal class KonanSerializationUtil(val context: Context, val metadataVersion:
                 .build()
     }
 
-    internal fun serializeModule(moduleDescriptor: ModuleDescriptor, serializedIr: SerializedIr): LinkData {
+    internal fun serializeModule(moduleDescriptor: ModuleDescriptor, serializedIr: SerializedIr?): LinkData {
         val libraryProto = KonanProtoBuf.LinkDataLibrary.newBuilder()
         libraryProto.moduleName = moduleDescriptor.name.asString()
         val fragments = mutableListOf<List<ByteArray>>()

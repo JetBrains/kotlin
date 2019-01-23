@@ -84,7 +84,7 @@ class KonanLibraryImpl(
                 }
             }
 
-    override val irHeader: ByteArray by lazy { layout.inPlace {  metadataReader.loadWholeIr(it) }}
+    override val irHeader: ByteArray? by lazy { layout.inPlace { library -> library.irHeader.let { if (it.exists) metadataReader.loadIrHeader(library) else null }}}
 
     override fun irDeclaration(index: Long, isLocal: Boolean) = layout.inPlace { metadataReader.loadIrDeclaraton(it, index, isLocal) }
 

@@ -43,7 +43,7 @@ interface KonanLibrary {
     fun packageMetadataParts(fqName: String): Set<String>
     fun packageMetadata(fqName: String, partName: String): ByteArray
 
-    val irHeader: ByteArray
+    val irHeader: ByteArray?
     fun irDeclaration(index: Long, isLocal: Boolean): ByteArray
 }
 

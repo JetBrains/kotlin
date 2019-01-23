@@ -675,7 +675,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
                     val companionObject = classDescriptor.companionObjectDescriptor ?:
                             error("native variable class $classDescriptor must have the companion object")
 
-                    builder.at(expression).irGetObject(symbolTable.referenceClass(companionObject))
+                    builder.at(expression).irGetObject(symbolTable.lazyWrapper.referenceClass(companionObject))
                 }
             }
             else -> expression
