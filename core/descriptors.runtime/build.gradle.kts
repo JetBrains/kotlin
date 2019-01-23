@@ -8,7 +8,6 @@ dependencies {
     compileOnly(project(":core:util.runtime"))
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":core:descriptors.jvm"))
-    compileOnly("org.jetbrains:annotations:13.0")
 
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":generators:test-generator"))

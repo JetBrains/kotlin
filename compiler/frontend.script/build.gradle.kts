@@ -10,7 +10,6 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(kotlinStdlib())
-    compileOnly("org.jetbrains:annotations:13.0")
     compileOnly(project(":kotlin-reflect-api"))
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }

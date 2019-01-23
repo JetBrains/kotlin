@@ -9,7 +9,6 @@ dependencies {
     compile(project(":core:util.runtime"))
     compile(commonDep("javax.inject"))
     compileOnly(kotlinStdlib())
-    compileOnly("org.jetbrains:annotations:13.0")
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(kotlinStdlib())
     testCompileOnly("org.jetbrains:annotations:13.0")

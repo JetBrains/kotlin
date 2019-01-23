@@ -63,7 +63,7 @@ dependencies {
     shadows(project(":core:util.runtime"))
     shadows("javax.inject:javax.inject:1")
     shadows(protobufLite())
-
+    
     compileOnly("org.jetbrains:annotations:13.0")
 }
 

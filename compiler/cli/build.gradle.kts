@@ -25,7 +25,6 @@ dependencies {
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    compileOnly("org.jetbrains:annotations:13.0")
 
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))

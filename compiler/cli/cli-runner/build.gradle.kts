@@ -10,7 +10,6 @@ jvmTarget = "1.6"
 
 dependencies {
     compile(kotlinStdlib())
-    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 sourceSets {

@@ -16,7 +16,6 @@ dependencies {
     compile(project(":js:js.frontend"))
     compile(projectRuntimeJar(":kotlin-preloader"))
     compile(project(":idea:idea-jps-common"))
-    compileOnly(group = "org.jetbrains", name = "annotations", version = "13.0")
     compileOnly(intellijDep()) {
         if (Platform[181].orHigher()) {
             includeJars("jdom", "trove4j", "jps-model", "openapi", "platform-api", "util", "asm-all", rootProject = rootProject)
