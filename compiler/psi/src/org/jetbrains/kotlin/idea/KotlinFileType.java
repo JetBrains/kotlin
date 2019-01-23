@@ -31,7 +31,7 @@ public class KotlinFileType extends LanguageFileType {
         @NotNull
         @Override
         protected Icon compute() {
-            return IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png");
+            return KotlinFileIcon.KOTLIN_FILE;
         }
     };
 

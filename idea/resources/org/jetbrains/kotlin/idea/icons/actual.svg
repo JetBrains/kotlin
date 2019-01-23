@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g fill="none" fill-rule="evenodd">
+    <rect width="10.4" height="10.4" x="2.8" y="2.8" fill="#F4AF3D" fill-opacity=".6" rx="1" transform="rotate(45 8 8)"/>
+    <path fill="#231F20" fill-opacity=".7" d="M2.9834,1.2 L4.1,4 L1.8964,4 L2.9834,1.2 Z M4.8154,5.9999 L6.0004,5.9999 L3.4464,-0.0001 L2.5534,-0.0001 L0.0004,5.9999 L1.1514,5.9999 L1.5654,4.9999 L4.4064,4.9999 L4.8154,5.9999 Z" transform="translate(5 5)"/>
+  </g>
+</svg>
