@@ -14,29 +14,45 @@ if (cwd.endsWith(testDataPathFromRoot)) {
     process.chdir(cwd.substr(0, cwd.length - testDataPathFromRoot.length));
 }
 
-var runtimeFiles = ["js/js.translator/testData/out/irBox/testRuntime.js"];
 var filesFromArgs = process.argv.slice(2);
+
+function toAbsolutePath(path) {
+    if (fs.existsSync(path) && fs.statSync(path).isFile()) {
+        return fs.realpathSync(path)
+    }
+
+    return "";
+}
 
 // TODO autodetect common js files and other js files
 // Filter out all except existing js files and transform all paths to absolute
-var files = [].concat(runtimeFiles, filesFromArgs, anotherFiles)
-    .map(function(path) {
-        if (fs.existsSync(path) && fs.statSync(path).isFile()) {
-            return fs.realpathSync(path)
-        }
-
-        return "";
-    })
+var files = [].concat(filesFromArgs, anotherFiles)
+    .map(toAbsolutePath)
     .filter(function(path) {
         return path.endsWith(".js")
     });
+
+// Find runtime path
+
+var runtimeHeader = "// RUNTIME: ";
+var runtimeFiles = [];
+files.forEach(function (path) {
+    var code = fs.readFileSync(path, 'utf8');
+    var firstLine = code.substr(0, code.indexOf("\n"));
+    if (firstLine.startsWith(runtimeHeader)) {
+        runtimeFiles = JSON.parse(firstLine.slice(runtimeHeader.length))
+            .map(toAbsolutePath);
+    }
+});
+
+var allFiles = [].concat(files, runtimeFiles);
 
 // Evaluate files and run box function
 
 var sandbox = {};
 vm.createContext(sandbox);
 
-files.forEach(function(path) {
+allFiles.forEach(function(path) {
     var code = fs.readFileSync(path, 'utf8');
     vm.runInContext(code, sandbox, {
         filename: path
