@@ -16,6 +16,206 @@ package kotlin.collections
 import kotlin.random.*
 
 /**
+ * Returns 1st *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UIntArray.component1(): UInt {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun ULongArray.component1(): ULong {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UByteArray.component1(): UByte {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UShortArray.component1(): UShort {
+    return get(0)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UIntArray.component2(): UInt {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun ULongArray.component2(): ULong {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UByteArray.component2(): UByte {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UShortArray.component2(): UShort {
+    return get(1)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UIntArray.component3(): UInt {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun ULongArray.component3(): ULong {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UByteArray.component3(): UByte {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UShortArray.component3(): UShort {
+    return get(2)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UIntArray.component4(): UInt {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun ULongArray.component4(): ULong {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UByteArray.component4(): UByte {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UShortArray.component4(): UShort {
+    return get(3)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UIntArray.component5(): UInt {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun ULongArray.component5(): ULong {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UByteArray.component5(): UByte {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UShortArray.component5(): UShort {
+    return get(4)
+}
+
+/**
  * Returns a random element from this array.
  * 
  * @throws NoSuchElementException if this array is empty.
