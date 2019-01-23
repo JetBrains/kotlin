@@ -888,7 +888,7 @@ object Elements : TemplateGroupBase() {
 
     val f_components = (1..5).map { n ->
         fn("component$n()") {
-            include(Lists, ArraysOfObjects, ArraysOfPrimitives)
+            include(Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
         } builder {
             operator(true)
             inlineOnly()
