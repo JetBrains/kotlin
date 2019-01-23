@@ -22,6 +22,7 @@ dependencies {
     compile(project(":compiler:frontend.common"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:frontend.script"))
+    compile(project(":compiler:ir.backend.common")) // TODO: fix import (workaround for jps build)
     compile(project(":js:js.frontend"))
     compile(project(":js:js.serializer"))
     compile(project(":compiler:light-classes"))
