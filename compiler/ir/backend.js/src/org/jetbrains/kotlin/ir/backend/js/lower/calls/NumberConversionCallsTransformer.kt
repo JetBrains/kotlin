@@ -66,14 +66,12 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
         }
 
         for (type in arrayOf(irBuiltIns.byteType, irBuiltIns.shortType, irBuiltIns.intType)) {
-            add(type, ConversionNames.TO_CHAR, intrinsics.charConstructor)
+            add(type, ConversionNames.TO_CHAR, intrinsics.jsNumberToChar)
         }
 
         for (type in arrayOf(irBuiltIns.floatType, irBuiltIns.doubleType, irBuiltIns.numberType)) {
             add(type, ConversionNames.TO_CHAR, intrinsics.jsNumberToChar)
         }
-
-        add(irBuiltIns.charType, ConversionNames.TO_CHAR, ::useDispatchReceiver)
     }
 
     override fun transformCall(call: IrCall): IrExpression {
