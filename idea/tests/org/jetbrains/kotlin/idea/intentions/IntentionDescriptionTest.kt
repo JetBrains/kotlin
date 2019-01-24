@@ -38,7 +38,9 @@ class IntentionDescriptionTest : LightPlatformTestCase() {
             val shortName = className.substringAfterLast(".").replace("$", "")
             val directory = File("idea/resources/intentionDescriptions/$shortName")
             if (!directory.exists() || !directory.isDirectory) {
-                errors.append("No description directory for intention '").append(className).append("'\n")
+                if (tool.categories != null) {
+                    errors.append("No description directory for intention '").append(className).append("'\n")
+                }
             } else {
                 val necessaryNames = when {
                     shortName.isMavenIntentionName() -> necessaryMavenNames
@@ -53,6 +55,7 @@ class IntentionDescriptionTest : LightPlatformTestCase() {
                 }
             }
         }
+
         UsefulTestCase.assertEmpty(errors.toString())
     }
 
