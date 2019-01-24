@@ -532,8 +532,26 @@ object ArrayOps : TemplateGroupBase() {
             when (primitive) {
                 null, PrimitiveType.Boolean, PrimitiveType.Long ->
                     body { "return arrayPlusCollection(this, elements)" }
-                else ->
-                    body { "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)" }
+                else -> {
+                    on(Backend.Legacy) {
+                        body {
+                            "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)"
+                        }
+                    }
+                    on(Backend.IR) {
+                        // Don't use fillFromCollection because it treats arrays
+                        // as `dynamic` but we need to concrete types to perform
+                        // unboxing of collections elements
+                        body {
+                            """
+                            var index = size
+                            val result = this.copyOf(size + elements.size)
+                            for (element in elements) result[index++] = element
+                            return result
+                            """
+                        }
+                    }
+                }
             }
         }
         on(Platform.Native) {

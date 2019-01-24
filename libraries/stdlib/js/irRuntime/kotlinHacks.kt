@@ -66,13 +66,6 @@ internal fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>):
     return result
 }
 
-internal fun <T> fillFromCollection(dst: dynamic, startIndex: Int, collection: Collection<T>): dynamic {
-    var index = startIndex
-    val arr = dst.unsafeCast<Array<T>>()
-    for (element in collection) arr[index++] = element
-    return dst
-}
-
 internal inline fun copyArrayType(from: dynamic, to: dynamic) {
     if (from.`$type$` !== undefined) {
         to.`$type$` = from.`$type$`
