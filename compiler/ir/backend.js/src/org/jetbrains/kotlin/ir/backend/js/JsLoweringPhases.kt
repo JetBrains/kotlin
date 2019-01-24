@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 private fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { lower(it) }
 
@@ -371,10 +370,10 @@ val jsPhases = listOf(
     TypeOperatorLoweringPhase,
     SecondaryConstructorLoweringPhase,
     SecondaryFactoryInjectorLoweringPhase,
+    ClassReferenceLoweringPhase,
     InlineClassLoweringPhase,
     AutoboxingTransformerPhase,
     BlockDecomposerLoweringPhase,
-    ClassReferenceLoweringPhase,
     PrimitiveCompanionLoweringPhase,
     ConstLoweringPhase,
     CallsLoweringPhase,

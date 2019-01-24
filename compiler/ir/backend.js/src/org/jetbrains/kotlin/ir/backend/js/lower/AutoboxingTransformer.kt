@@ -151,7 +151,8 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
     override fun IrExpression.useAsVarargElement(expression: IrVararg): IrExpression {
         return this.useAs(
-            if (this.type.isInlined())
+            // Do not box primitive inline classes
+            if (this.type.isInlined() && !expression.type.isInlined() && !expression.type.isPrimitiveArray())
                 irBuiltIns.anyNType
             else
                 expression.varargElementType
