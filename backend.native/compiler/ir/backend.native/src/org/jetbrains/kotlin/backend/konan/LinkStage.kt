@@ -193,7 +193,6 @@ internal class LinkStage(val context: Context, val phaser: PhaseManager) {
             }
         } catch (e: KonanExternalToolFailure) {
             context.reportCompilationError("${e.toolName} invocation reported errors")
-            return null
         }
         return executable
     }

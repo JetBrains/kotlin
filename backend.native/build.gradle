@@ -222,7 +222,7 @@ targetList.each { target ->
         args = [*konanArgs,
                 '-output', project(':runtime').file("build/${target}Stdlib"),
                 '-produce', 'library', '-module-name', 'stdlib', '-XXLanguage:+AllowContractsForCustomFunctions',
-                '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental',
+                '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental', '-XXLanguage:+InlineClasses',
                 '-Xuse-experimental=kotlin.contracts.ExperimentalContracts',
                 '-Xuse-experimental=kotlin.ExperimentalMultiplatform',
                 '-Xallow-result-return-type',

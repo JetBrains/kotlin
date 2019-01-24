@@ -398,6 +398,7 @@ private val ObjCClassOrProtocol.superTypes: Sequence<ObjCClassOrProtocol>
 private fun ObjCClassOrProtocol.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.methods.asSequence().filter { it.isClass == isClass }
 
+@Suppress("UNUSED_PARAMETER")
 private fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> =
         this // TODO: exclude methods that are marked as unavailable in [container].
 

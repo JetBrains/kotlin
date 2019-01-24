@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.serialization.konan.KonanMetadataVersion
 
 private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
-    override fun createMetadataVersion(p0: IntArray): BinaryVersion = KonanMetadataVersion(*p0)
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KonanMetadataVersion(*versionArray)
 
     override val performanceManager:CommonCompilerPerformanceManager by lazy {
         K2NativeCompilerPerformanceManager()

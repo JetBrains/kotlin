@@ -7,19 +7,15 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.alwaysTrue
 
 internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
 
@@ -43,14 +39,10 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
     val main =
         candidates.singleOrNull { it.hasSingleArrayOfStringParameter } ?:
         candidates.singleOrNull { it.hasNoParameters } ?:
-        run {
-            context.reportCompilationError("Could not find '$entryName' in '$packageName' package.")
-            null
-        }
-
-    if (main != null && main.isSuspend) {
+        context.reportCompilationError("Could not find '$entryName' in '$packageName' package.")
+    
+    if (main.isSuspend) {
         context.reportCompilationError("Entry point can not be a suspend function.")
-        return null
     }
 
     return main

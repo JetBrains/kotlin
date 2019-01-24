@@ -1016,7 +1016,7 @@ internal object Devirtualization {
                         .asSequence()
                         .filter { it.key.irCallSite != null }
                         .associate { it.key.irCallSite!! to it.value }
-        devirtualize(irModule, context, moduleDFG, externalModulesDFG, devirtualizedCallSites)
+        devirtualize(irModule, context, externalModulesDFG, devirtualizedCallSites)
         removeRedundantCoercions(irModule, context, moduleDFG, externalModulesDFG)
         return AnalysisResult(devirtualizationAnalysisResult)
     }
@@ -1040,7 +1040,7 @@ internal object Devirtualization {
                     || (this is IrPrivateFunctionCall && specialNames.any { dfgSymbol.name?.contains(it) == true })
 
     private fun devirtualize(irModule: IrModuleFragment, context: Context,
-                             moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG,
+                             externalModulesDFG: ExternalModulesDFG,
                              devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
         val symbols = context.ir.symbols
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!

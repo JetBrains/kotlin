@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object InteropFqNames {
 
@@ -27,7 +26,7 @@ object InteropFqNames {
     val nativePointed = packageName.child(Name.identifier(nativePointedName)).toUnsafe()
 }
 
-internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: ClassDescriptor) {
+internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val packageScope = builtIns.builtInsModule.getPackage(InteropFqNames.packageName).memberScope
 
