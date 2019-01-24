@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.irasdescriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.konan.descriptors.getArgumentValueOrNull
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.konanBackingField
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
@@ -167,19 +168,19 @@ fun List<IrCall>.findAnnotation(fqName: FqName): IrCall? = this.firstOrNull {
     it.annotationClass.fqNameSafe == fqName
 }
 
-fun IrDeclaration.getAnnotationArgumentStringValue(fqName: FqName, argumentName: String): String? {
+fun <T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
     val annotation = this.annotations.findAnnotation(fqName)
     if (annotation == null) {
         // As a last resort try searching the descriptor.
         // This is needed for a period while we don't have IR for platform libraries.
         return this.descriptor.annotations
             .findAnnotation(fqName)
-            ?.getStringValue(argumentName)
+            ?.getArgumentValueOrNull<T>(argumentName)
     }
     for (index in 0 until annotation.valueArgumentsCount) {
         val parameter = annotation.symbol.owner.valueParameters[index]
         if (parameter.name == Name.identifier(argumentName)) {
-            val actual = annotation.getValueArgument(index) as? IrConst<String>
+            val actual = annotation.getValueArgument(index) as? IrConst<T>
             return actual?.value
         }
     }

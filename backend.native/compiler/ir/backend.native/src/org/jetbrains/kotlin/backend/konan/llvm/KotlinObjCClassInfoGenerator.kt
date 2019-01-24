@@ -90,16 +90,15 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
     }
 
     private fun selectClassName(irClass: IrClass): String? {
-        val exportObjCClassAnnotation =
-                irClass.descriptor.annotations.findAnnotation(context.interopBuiltIns.exportObjCClass.fqNameSafe)
-
-        return if (exportObjCClassAnnotation != null) {
-            exportObjCClassAnnotation.getStringValueOrNull("name") ?: irClass.name.asString()
-        } else if (irClass.isExported()) {
-            irClass.fqNameSafe.asString()
-        } else {
-            null // Generate as anonymous.
-        }
+        val exportObjCClassAnnotation = context.interopBuiltIns.exportObjCClass.fqNameSafe
+        return irClass.getAnnotationArgumentValue(exportObjCClassAnnotation, "name")
+            ?: if (irClass.annotations.hasAnnotation(exportObjCClassAnnotation))
+                irClass.name.asString()
+            else if (irClass.isExported()) {
+                irClass.fqNameSafe.asString()
+            } else {
+                null // Generate as anonymous.
+            }
     }
 
     private val impType = pointerType(functionType(int8TypePtr, true, int8TypePtr, int8TypePtr))

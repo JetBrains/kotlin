@@ -60,7 +60,8 @@ fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         }
 fun IrClass.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         (this as IrDeclaration).parentDeclarationsWithSelf.filterIsInstance<IrClass>().any {
-            it.annotations.findAnnotation(externalObjCClassFqName) != null
+            it.annotations.hasAnnotation(externalObjCClassFqName) ||
+            it.descriptor.annotations.hasAnnotation(externalObjCClassFqName)
         }
 
 fun ClassDescriptor.isObjCMetaClass(): Boolean = this.getAllSuperClassifiers().any {
@@ -224,17 +225,9 @@ class ObjCOverridabilityCondition : ExternalOverridabilityCondition {
 
 }
 
-fun IrConstructor.objCConstructorIsDesignated(): Boolean {
-    val annotation = this.annotations.findAnnotation(objCConstructorFqName)!!
-    for (index in 0 until annotation.valueArgumentsCount) {
-        val parameter = annotation.symbol.owner.valueParameters[index]
-        if (parameter.name == Name.identifier("designated")) {
-            val actual = annotation.getValueArgument(index) as IrConst<kotlin.Boolean>
-            return actual.value
-        }
-    }
-    error("Could not find 'designated' argument")
-}
+fun IrConstructor.objCConstructorIsDesignated(): Boolean =
+    this.getAnnotationArgumentValue<Boolean>(objCConstructorFqName, "designated")
+        ?: error("Could not find 'designated' argument")
 
 @Deprecated("Use IR version rather than descriptor version")
 fun ConstructorDescriptor.objCConstructorIsDesignated(): Boolean {

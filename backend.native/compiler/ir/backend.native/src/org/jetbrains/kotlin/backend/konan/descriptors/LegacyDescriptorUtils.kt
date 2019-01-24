@@ -180,6 +180,14 @@ fun AnnotationDescriptor.getStringValueOrNull(name: String): String? {
     return constantValue?.value as String?
 }
 
+fun <T> AnnotationDescriptor.getArgumentValueOrNull(name: String): T? {
+    val constantValue = this.allValueArguments.entries.atMostOne {
+        it.key.asString() == name
+    }?.value
+    return constantValue?.value as T?
+}
+
+
 fun AnnotationDescriptor.getStringValue(name: String): String = this.getStringValueOrNull(name)!!
 
 private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {

@@ -161,7 +161,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
     if (isInvoke) {
         callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = ${targetPtrParameter!!};")
     } else {
-        val cCallSymbolName = callee.getAnnotationArgumentStringValue(cCall, "id")!!
+        val cCallSymbolName = callee.getAnnotationArgumentValue<String>(cCall, "id")!!
         cLines += "extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");" // Exported from cinterop stubs.
     }
 
@@ -354,7 +354,7 @@ private fun IrValueParameter.isCStringParameter() =
         this.descriptor.annotations.hasAnnotation(cCall.child(Name.identifier("CString")))
 
 private fun getStructSpelling(kotlinClass: IrClass): String? =
-        kotlinClass.getAnnotationArgumentStringValue(FqName("kotlinx.cinterop.internal.CStruct"), "spelling")
+        kotlinClass.getAnnotationArgumentValue(FqName("kotlinx.cinterop.internal.CStruct"), "spelling")
 
 private fun getCStructType(kotlinClass: IrClass): CType? =
         getStructSpelling(kotlinClass)?.let { CTypes.simple(it) }
