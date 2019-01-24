@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 private const val runtimeDir = "js/js.translator/testData/out/irBox"
@@ -26,6 +27,29 @@ enum class JsIrTestRuntime(
     )
 }
 
+// Required to compile native builtins with the rest of runtime
+private const val builtInsHeader = """@file:Suppress(
+    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
+    "MUST_BE_INITIALIZED_OR_BE_ABSTRACT",
+    "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE",
+    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
+    "WRONG_MODIFIER_TARGET"
+)
+"""
+
+// Native builtins that were not implemented in JS IR runtime
+private val unimplementedNativeBuiltInsDir = KotlinTestUtils.tmpDir("unimplementedBuiltins").also { tmpDir ->
+    val allBuiltins = listOfKtFilesFrom("core/builtins/native/kotlin").map { File(it).name }
+    val implementedBuiltIns = listOfKtFilesFrom("libraries/stdlib/js/irRuntime/builtins/").map { File(it).name }
+    val unimplementedBuiltIns = allBuiltins - implementedBuiltIns
+    for (filename in unimplementedBuiltIns) {
+        val originalFile = File("core/builtins/native/kotlin", filename)
+        val newFile = File(tmpDir, filename)
+        val sourceCode = builtInsHeader + originalFile.readText()
+        newFile.writeText(sourceCode)
+    }
+}
+
 private val fullRuntimeSources = listOfKtFilesFrom(
     "core/builtins/src/kotlin",
     "libraries/stdlib/common/src",
@@ -36,15 +60,8 @@ private val fullRuntimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/runtime",
     "libraries/stdlib/unsigned",
 
-    "core/builtins/native/kotlin/Annotation.kt",
-    "core/builtins/native/kotlin/Number.kt",
-    "core/builtins/native/kotlin/Comparable.kt",
-    "core/builtins/native/kotlin/Collections.kt",
-    "core/builtins/native/kotlin/Iterator.kt",
-    "core/builtins/native/kotlin/CharSequence.kt",
-
     "core/builtins/src/kotlin/Unit.kt",
-
+    unimplementedNativeBuiltInsDir.path,
     BasicBoxTest.COMMON_FILES_DIR_PATH
 ) - listOfKtFilesFrom(
     "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
@@ -102,10 +119,6 @@ private val fullRuntimeSources = listOfKtFilesFrom(
 
 val reducedRuntimeSources = fullRuntimeSources - listOfKtFilesFrom(
     "libraries/stdlib/unsigned",
-    "core/builtins/src/kotlin/reflect/KParameter.kt",
-    "core/builtins/src/kotlin/reflect/KType.kt",
-    "core/builtins/src/kotlin/reflect/KTypeParameter.kt",
-    "core/builtins/src/kotlin/reflect/KVisibility.kt",
     "libraries/stdlib/common/src/generated/_Arrays.kt",
     "libraries/stdlib/common/src/generated/_Collections.kt",
     "libraries/stdlib/common/src/generated/_Maps.kt",

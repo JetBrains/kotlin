@@ -27,7 +27,8 @@ fun compile(
     configuration: CompilerConfiguration,
     export: FqName? = null,
     dependencies: List<ModuleDescriptor> = listOf(),
-    irDependencyModules: List<IrModuleFragment> = listOf()
+    irDependencyModules: List<IrModuleFragment> = listOf(),
+    builtInsModule: ModuleDescriptorImpl? = null
 ): Result {
     val analysisResult =
         TopDownAnalyzerFacadeForJS.analyzeFiles(
@@ -35,7 +36,9 @@ fun compile(
             project,
             configuration,
             dependencies.mapNotNull { it as? ModuleDescriptorImpl },
-            emptyList()
+            emptyList(),
+            thisIsBuiltInsModule = builtInsModule == null,
+            customBuiltInsModule = builtInsModule
         )
 
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
