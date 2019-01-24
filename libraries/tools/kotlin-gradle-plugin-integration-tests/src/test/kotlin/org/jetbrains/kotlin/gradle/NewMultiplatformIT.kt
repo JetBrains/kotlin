@@ -1201,7 +1201,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 )
             }
 
-            gradleBuildScript().appendText("\n" + """
+            gradleBuildScript().appendText(
+                "\n" + """
                 publishing {
                     publications {
                         jvm6 {
@@ -1211,7 +1212,23 @@ class NewMultiplatformIT : BaseGradleIT() {
                         }
                     }
                 }
-            """.trimIndent())
+                """.trimIndent()
+            )
+
+            if (withMetadata) {
+                gradleBuildScript().appendText(
+                    "\n" + """
+                    publishing {
+                        publications {
+                            kotlinMultiplatform {
+                                // KT-29485
+                                artifactId = 'sample-lib-multiplatform'
+                            }
+                        }
+                    }
+                    """.trimIndent()
+                )
+            }
 
             build("clean", "publish") {
                 assertSuccessful()
@@ -1240,7 +1257,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     // Check that, despite the rewritten POM, the module metadata contains the original dependency:
                     val moduleMetadata = projectDir.resolve("repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.module").readText()
                         .replace("\\s+".toRegex(), "").replace("\n", "")
-                    assertTrue { "\"group\":\"com.example\",\"module\":\"sample-lib\"" in moduleMetadata }
+                    assertTrue { "\"group\":\"com.example\",\"module\":\"sample-lib-multiplatform\"" in moduleMetadata }
                     assertTrue { "\"group\":\"com.external.dependency\",\"module\":\"external\"" in moduleMetadata }
                 }
                 assertFileExists("repo/foo/bar/42/bar-42.jar")
