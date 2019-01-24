@@ -1,4 +1,4 @@
-import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.ideaExt.*
 import org.jetbrains.gradle.ext.TopLevelArtifact
 import java.util.regex.Pattern
 

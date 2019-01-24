@@ -1,3 +1,6 @@
+@file:Suppress("PackageDirectoryMismatch")
+package org.jetbrains.kotlin.ideaExt
+
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.configure
@@ -8,6 +11,9 @@ import org.jetbrains.gradle.ext.*
  * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
+
+fun org.gradle.api.Project.idea(configure: org.gradle.plugins.ide.idea.model.IdeaModel.() -> Unit): Unit =
+    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("idea", configure)
 
 fun IdeaProject.settings(block: ProjectSettings.() -> Unit) =
     (this@settings as ExtensionAware).extensions.configure(block)
