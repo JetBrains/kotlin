@@ -63,6 +63,7 @@ import java.io.StringWriter
 import java.net.URISyntaxException
 import java.util.*
 import org.junit.AfterClass
+import org.junit.Assume.assumeTrue
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 @RunWith(value = Parameterized::class)
@@ -89,9 +90,12 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     private lateinit var myProjectSettings: GradleProjectSettings
     private lateinit var myJdkHome: String
 
+    open fun isApplicableTest(): Boolean = true
+
     override fun setUp() {
         myJdkHome = IdeaTestUtil.requireRealJdkHome()
         super.setUp()
+        assumeTrue(isApplicableTest())
         assumeThat(gradleVersion, versionMatcherRule.matcher)
         runWrite {
             ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME)?.let {
@@ -216,7 +220,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         return File(baseDir, getTestName(true).substringBefore("_"))
     }
 
-    protected fun configureByFiles(): List<VirtualFile> {
+    protected open fun configureByFiles(): List<VirtualFile> {
         val rootDir = testDataDirectory()
         assert(rootDir.exists()) { "Directory ${rootDir.path} doesn't exist" }
 

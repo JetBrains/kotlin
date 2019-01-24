@@ -150,7 +150,8 @@ class ModuleInfo(
     fun moduleDependency(moduleName: String, scope: DependencyScope) {
         val moduleEntry = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().singleOrNull { it.moduleName == moduleName }
         if (moduleEntry == null) {
-            projectInfo.messageCollector.report("Module '${module.name}': No module dependency found: '$moduleName'")
+            val allModules = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().map { it.moduleName }.joinToString(", ")
+            projectInfo.messageCollector.report("Module '${module.name}': No module dependency found: '$moduleName'. All module names: $allModules")
             return
         }
         checkDependencyScope(moduleEntry, scope)

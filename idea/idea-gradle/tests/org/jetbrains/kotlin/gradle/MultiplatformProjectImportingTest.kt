@@ -23,15 +23,14 @@ import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.facetSettings
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 
-class MultiplatformProjectImportingTest : GradleImportingTestCase() {
+class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
 
     private fun legacyMode() = gradleVersion.split(".")[0].toInt() < 4
     private fun getDependencyLibraryUrls(moduleName: String) =
@@ -51,6 +50,10 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
 
     private fun assertFileInModuleScope(file: VirtualFile, moduleName: String) {
         assert(getModule(moduleName).getModuleWithDependenciesAndLibrariesScope(true).contains(file))
+    }
+
+    override fun isApplicableTest(): Boolean {
+        return shouldRunTest(gradleKotlinPluginVersion, gradleVersion)
     }
 
     @Test
@@ -88,7 +91,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
     }
 
     @Test
-    fun testPlatformToCommonExpectedByDependencyInComposite() {
+    fun testPlatformToCommonExpByInComposite() { // renamed from testPlatformToCommonExpectedByDependencyInComposite due to lack support of long names under Windows
         configureByFiles()
         importProject()
 
@@ -293,10 +296,8 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         }
     }
 
-    //@TargetVersions("3.5")
     @Test
     fun testJsTestOutputFile() {
-        // TODO fix for 4.9
         configureByFiles()
 
         importProject()
