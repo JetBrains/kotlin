@@ -329,35 +329,6 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testParallelTasks() {
-        parallelTasksImpl(isParallel = true)
-    }
-
-    @Test
-    fun testNoParallelTasks() {
-        parallelTasksImpl(isParallel = false)
-    }
-
-    private fun parallelTasksImpl(isParallel: Boolean) = with(Project("new-mpp-parallel", gradleVersion)) {
-        val options = defaultBuildOptions().copy(parallelTasksInProject = isParallel)
-        build("assemble", options = options) {
-            assertSuccessful()
-            val tasks = arrayOf(":compileKotlinMetadata", ":compileKotlinJvm", ":compileKotlinJs")
-            if (isParallel) {
-                assertTasksSubmittedWork(*tasks)
-            } else {
-                assertTasksDidNotSubmitWork(*tasks)
-            }
-            val expectedKotlinOutputFiles = listOf(
-                kotlinClassesDir(sourceSet = "metadata/main") + "common/A.kotlin_metadata",
-                kotlinClassesDir(sourceSet = "jvm/main") + "common/A.class",
-                kotlinClassesDir(sourceSet = "js/main") + "new-mpp-parallel.js"
-            )
-            expectedKotlinOutputFiles.forEach { assertFileExists(it) }
-        }
-    }
-
-    @Test
     fun testLibWithTests() = doTestLibWithTests(Project("new-mpp-lib-with-tests", gradleVersion))
 
     @Test
