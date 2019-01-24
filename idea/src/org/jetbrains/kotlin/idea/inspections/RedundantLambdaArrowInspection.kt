@@ -15,12 +15,15 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
 class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -47,6 +50,13 @@ class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
             if (parameters.isNotEmpty()) {
                 val context = lambdaExpression.analyze()
                 if (context[BindingContext.EXPECTED_EXPRESSION_TYPE, lambdaExpression] == null) return
+            }
+
+            val valueArgument = lambdaExpression.parent as? KtValueArgument
+            val valueArgumentCall = valueArgument?.getStrictParentOfType<KtCallExpression>()
+            if (valueArgumentCall != null) {
+                val argumentMatch = valueArgumentCall.resolveToCall()?.getArgumentMapping(valueArgument) as? ArgumentMatch
+                if (argumentMatch?.valueParameter?.original?.type?.isTypeParameter() == true) return
             }
 
             val startOffset = functionLiteral.startOffset
