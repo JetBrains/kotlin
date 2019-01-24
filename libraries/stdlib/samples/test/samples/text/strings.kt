@@ -193,10 +193,7 @@ class Strings {
 
     @Sample
     fun isNotBlank() {
-        val notBlank = "isNotBlank"
-        assertPrints(notBlank.isNotBlank(), "true")
-
-        val blank = " "
-        assertPrints(blank.isNotBlank(), "false")
+        val notBlankString = "This is not a blank string"
+        assertPrints(notBlankString.isNotBlank(), "true")
     }
 }
