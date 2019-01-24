@@ -207,11 +207,11 @@ task teamcityPublishStdLibSources {
 
 // These files are built before the 'dist' is complete,
 // so we provide custom values for
-// konan.home, --runtime, -Djava.library.path etc
+// org.jetbrains.kotlin.native.home, --runtime, -Djava.library.path etc
 
 targetList.each { target ->
     def konanJvmArgs =  [*HostManager.regularJvmArgs,
-            "-Dkonan.home=${rootProject.projectDir}",
+            "-Dorg.jetbrains.kotlin.native.home=${rootProject.projectDir}",
             "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
     ]
 
@@ -322,7 +322,7 @@ task debugCompiler(type: JavaExec) {
     classpath = project.fileTree("${distDir.canonicalPath}/konan/lib/") {
         include '*.jar'
     }
-    jvmArgs "-Dkonan.home=${distDir.canonicalPath}",
+    jvmArgs "-Dorg.jetbrains.kotlin.native.home=${distDir.canonicalPath}",
             "-Djava.library.path=${distDir.canonicalPath}/konan/nativelib"
     enableAssertions = true
     args = findProperty("konan.debug.args").toString().tokenize() ?: []

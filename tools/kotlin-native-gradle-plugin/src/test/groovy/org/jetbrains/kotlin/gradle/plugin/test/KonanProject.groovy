@@ -85,7 +85,7 @@ class KonanProject {
         this.targets = targets
         projectPath = projectDir.toPath()
         konanBuildDir = projectPath.resolve('build/konan').toFile()
-        def konanHome = System.getProperty("konan.home")
+        def konanHome = System.getProperty("konan.home") ?: System.getProperty("org.jetbrains.kotlin.native.home")
         if (konanHome == null) {
             throw new IllegalStateException("konan.home isn't specified")
         }

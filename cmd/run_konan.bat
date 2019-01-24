@@ -75,7 +75,7 @@ set JAVA_OPTS=-ea ^
     -Xmx3G ^
     -XX:TieredStopAtLevel=1 ^
     "-Djava.library.path=%NATIVE_LIB%" ^
-    "-Dkonan.home=%_KONAN_HOME%" ^
+    "-Dorg.jetbrains.kotlin.native.home=%_KONAN_HOME%" ^
     -Dfile.encoding=UTF-8 ^
     %JAVA_OPTS%
 

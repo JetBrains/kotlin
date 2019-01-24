@@ -68,7 +68,7 @@ internal abstract class KonanCliRunner(
     }
 
     override val additionalSystemProperties = mutableMapOf(
-            "konan.home" to project.konanHome,
+            "org.jetbrains.kotlin.native.home" to project.konanHome,
             "java.library.path" to "${project.konanHome}/konan/nativelib"
     )
 

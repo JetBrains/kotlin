@@ -23,7 +23,7 @@ buildscript {
     ext.konanHome = distDir.absolutePath
     def jvmArguments = [project.findProperty("platformLibsJvmArgs") ?: "-Xmx6G", *HostManager.defaultJvmArgs]
     ext.jvmArgs = jvmArguments.join(" ")
-    ext.setProperty("konan.home", konanHome)
+    ext.setProperty("org.jetbrains.kotlin.native.home", konanHome)
     ext.setProperty("konan.jvmArgs", jvmArgs)
 }
 

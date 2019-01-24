@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 
 class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform) {
 
-    private val konanHome = System.getProperty("konan.home")
+    private val konanHome = System.getProperty("org.jetbrains.kotlin.native.home")
     private val distribution = customerDistribution(konanHome)
     private val platformManager = PlatformManager(distribution)
     private val targetManager = platformManager.targetManager(userProvidedTargetName)

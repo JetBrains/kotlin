@@ -142,8 +142,8 @@ export KONAN_REPO=$PWD/../kotlin-native
 # Run this once since it is costly, you can remove the `clean` task if not big changes were made from the last time you did this
 pushd $KONAN_REPO && git pull && ./gradlew clean dependencies:update dist distPlatformLibs && popd
 
-# In your project, you set have to the konan.home property, and include as composite the shared and gradle-plugin builds
-./gradlew check -Pkonan.home=$KONAN_REPO/dist --include-build $KONAN_REPO/shared --include-build $KONAN_REPO/tools/kotlin-native-gradle-plugin
+# In your project, you set have to the org.jetbrains.kotlin.native.home property, and include as composite the shared and gradle-plugin builds
+./gradlew check -Porg.jetbrains.kotlin.native.home=$KONAN_REPO/dist --include-build $KONAN_REPO/shared --include-build $KONAN_REPO/tools/kotlin-native-gradle-plugin
 ```
 
 </div>

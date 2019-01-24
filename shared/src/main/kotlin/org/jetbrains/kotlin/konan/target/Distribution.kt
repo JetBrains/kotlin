@@ -31,7 +31,7 @@ class Distribution(
     private fun findKonanHome(): String {
         if (konanHomeOverride != null) return konanHomeOverride
 
-        val value = System.getProperty("konan.home", "dist")
+        val value = System.getProperty("org.jetbrains.kotlin.native.home", "dist")
         val path = File(value).absolutePath
         return path
     }

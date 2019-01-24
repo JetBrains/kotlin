@@ -8,9 +8,9 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
     }
 
-    ext.useCustomDist = project.hasProperty("konan.home")
+    ext.useCustomDist = project.hasProperty("org.jetbrains.kotlin.native.home")
     if (!useCustomDist) {
-        ext.setProperty("konan.home", distDir.absolutePath)
+        ext.setProperty("org.jetbrains.kotlin.native.home", distDir.absolutePath)
     }
 }
 
@@ -50,11 +50,11 @@ dependencies {
 
 test {
     dependsOn 'cleanTest'
-    systemProperty('konan.home', getProperty("konan.home"))
+    systemProperty('org.jetbrains.kotlin.native.home', getProperty("org.jetbrains.kotlin.native.home"))
     dependsOn konanArtifacts.collect { it.getByTarget('host') }
     if (useCustomDist) {
         // Use the klib utility from the distribution
-        def distClasspath = fileTree("${project.getProperty("konan.home")}/konan/lib") {
+        def distClasspath = fileTree("${project.getProperty("org.jetbrains.kotlin.native.home")}/konan/lib") {
             include "**/*.jar"
         }
         classpath = distClasspath + sourceSets.test.runtimeClasspath - sourceSets.main.runtimeClasspath

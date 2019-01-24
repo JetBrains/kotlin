@@ -12,7 +12,7 @@ import java.nio.file.Paths
 
 
 object DistProperties {
-    private val dist: Path = Paths.get(requireProp("konan.home"))
+    private val dist: Path = Paths.get(requireProp("org.jetbrains.kotlin.native.home"))
     private val konancDriver = if (HostManager.host.family == Family.MINGW) "konanc.bat" else "konanc"
     val konanc: Path = dist.resolve("bin/$konancDriver")
     val lldb: Path = Paths.get("lldb")

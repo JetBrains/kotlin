@@ -48,12 +48,12 @@ apply plugin: 'org.jetbrains.kotlin.platform.native'
 </div>
 
 By default the plugin downloads the Kotlin/Native compiler during the first run. If you have already downloaded the compiler
-manually you can specify the path to its root directory using `konan.home` project property (e.g. in `gradle.properties`).
+manually you can specify the path to its root directory using `org.jetbrains.kotlin.native.home` project property (e.g. in `gradle.properties`).
 
 <div class="sample" markdown="1" theme="idea" mode="groovy">
 
 ```groovy
-konan.home=/home/user/kotlin-native-0.8
+org.jetbrains.kotlin.native.home=/home/user/kotlin-native-0.8
 ```
 
 </div>
