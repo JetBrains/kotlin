@@ -113,6 +113,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testJavaMethod() throws Exception {
             runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/javaMethod.kt");
         }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/vararg.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/branched")
