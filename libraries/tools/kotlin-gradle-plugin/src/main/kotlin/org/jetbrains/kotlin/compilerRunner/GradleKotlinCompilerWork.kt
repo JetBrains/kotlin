@@ -66,6 +66,15 @@ internal class GradleKotlinCompilerWork @Inject constructor(
      */
     config: GradleKotlinCompilerWorkArguments
 ) : Runnable {
+
+    companion object {
+        init {
+            if (System.getProperty("org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.trace.loading") == "true") {
+                System.out.println("Loaded GradleKotlinCompilerWork")
+            }
+        }
+    }
+
     private val projectRootFile = config.projectFiles.projectRootFile
     private val clientIsAliveFlagFile = config.projectFiles.clientIsAliveFlagFile
     private val sessionFlagFile = config.projectFiles.sessionFlagFile
@@ -80,10 +89,16 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val taskPath = config.taskPath
 
     private val log: KotlinLogger =
-        TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it) }
+        TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
             ?: run {
-                System.err.println("Could not get logger for '$taskPath'. Falling back to sl4j logger")
-                SL4JKotlinLogger(LoggerFactory.getLogger("GradleKotlinCompilerWork"))
+                val logger = LoggerFactory.getLogger("GradleKotlinCompilerWork")
+                val kotlinLogger = if (logger is org.gradle.api.logging.Logger) {
+                    GradleKotlinLogger(logger)
+                } else SL4JKotlinLogger(logger)
+
+                kotlinLogger.apply {
+                    debug("Could not get logger for '$taskPath'. Falling back to sl4j logger")
+                }
             }
 
     private val isIncremental: Boolean
