@@ -68,7 +68,7 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
             return true
         }
 
-        private fun detectNameToAdd(argument: KtValueArgument): Name? {
+        fun detectNameToAdd(argument: KtValueArgument): Name? {
             if (argument.isNamed()) return null
             if (argument is KtLambdaArgument) return null
 
