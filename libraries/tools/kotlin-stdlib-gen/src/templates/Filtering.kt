@@ -17,6 +17,11 @@ object Filtering : TemplateGroupBase() {
                 sequenceClassification(terminal)
             else
                 sequenceClassification(intermediate, stateless)
+
+            specialFor(ArraysOfUnsigned) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+            }
         }
     }
 
@@ -832,7 +837,7 @@ object Filtering : TemplateGroupBase() {
 
 
     val f_slice = fn("slice(indices: Iterable<Int>)") {
-        include(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        include(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns a list containing elements at specified [indices]." }
         returns("List<T>")
@@ -870,7 +875,7 @@ object Filtering : TemplateGroupBase() {
     }
 
     val f_slice_range = fn("slice(indices: IntRange)") {
-        include(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        include(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns a list containing elements at indices in the specified [indices] range." }
         returns("List<T>")
@@ -880,7 +885,7 @@ object Filtering : TemplateGroupBase() {
             return this.subList(indices.start, indices.endInclusive + 1).toList()
             """
         }
-        body(ArraysOfPrimitives, ArraysOfObjects) {
+        body(ArraysOfPrimitives, ArraysOfObjects, ArraysOfUnsigned) {
             """
             if (indices.isEmpty()) return listOf()
             return copyOfRange(indices.start, indices.endInclusive + 1).asList()
@@ -900,7 +905,7 @@ object Filtering : TemplateGroupBase() {
     }
 
     val f_sliceArray = fn("sliceArray(indices: Collection<Int>)") {
-        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns an array containing elements of this array at specified [indices]." }
         returns("SELF")
@@ -924,12 +929,17 @@ object Filtering : TemplateGroupBase() {
             return result
             """
         }
+        body(ArraysOfUnsigned) {
+            """
+            return SELF(storage.sliceArray(indices))
+            """
+        }
     }
 
     val f_sliceArrayRange = fn("sliceArray(indices: IntRange)") {
-        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
-        doc { "Returns a list containing elements at indices in the specified [indices] range." }
+        doc { "Returns an array containing elements at indices in the specified [indices] range." }
         returns("SELF")
         body(InvariantArraysOfObjects) {
             """
@@ -941,6 +951,11 @@ object Filtering : TemplateGroupBase() {
             """
             if (indices.isEmpty()) return SELF(0)
             return copyOfRange(indices.start, indices.endInclusive + 1)
+            """
+        }
+        body(ArraysOfUnsigned) {
+            """
+            return SELF(storage.sliceArray(indices))
             """
         }
     }

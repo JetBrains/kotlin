@@ -46,8 +46,7 @@ internal constructor(@PublishedApi internal val storage: ShortArray) : Collectio
     }
 
     override fun containsAll(elements: Collection<UShort>): Boolean {
-        if ((elements as Collection<Any?>).any { it as? UShort == null }) return false
-        return elements.all { storage.contains(it.toShort()) }
+        return (elements as Collection<*>).all { it is UShort && storage.contains(it.toShort()) }
     }
 
     override fun isEmpty(): Boolean = this.storage.size == 0

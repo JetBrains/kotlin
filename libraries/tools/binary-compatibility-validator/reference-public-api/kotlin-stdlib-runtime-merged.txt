@@ -2284,6 +2284,10 @@ public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kot
 }
 
 public final class kotlin/collections/UArraysKt {
+	public static final fun asList--ajY-9A ([I)Ljava/util/List;
+	public static final fun asList-GBYM_sE ([B)Ljava/util/List;
+	public static final fun asList-QwZRm1k ([J)Ljava/util/List;
+	public static final fun asList-rL5Bavg ([S)Ljava/util/List;
 	public static final fun binarySearch-2fe2U9s ([IIII)I
 	public static synthetic fun binarySearch-2fe2U9s$default ([IIIIILjava/lang/Object;)I
 	public static final fun binarySearch-EtDCXyQ ([SSII)I
@@ -2340,6 +2344,22 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun singleOrNull-GBYM_sE ([B)Lkotlin/UByte;
 	public static final fun singleOrNull-QwZRm1k ([J)Lkotlin/ULong;
 	public static final fun singleOrNull-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun slice-F7u83W8 ([JLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun slice-HwE9HBo ([ILjava/lang/Iterable;)Ljava/util/List;
+	public static final fun slice-JGPC0-M ([SLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun slice-JQknh5Q ([BLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun slice-Q6IL4kU ([SLkotlin/ranges/IntRange;)Ljava/util/List;
+	public static final fun slice-ZRhS8yI ([JLkotlin/ranges/IntRange;)Ljava/util/List;
+	public static final fun slice-c0bezYM ([BLkotlin/ranges/IntRange;)Ljava/util/List;
+	public static final fun slice-tAntMlw ([ILkotlin/ranges/IntRange;)Ljava/util/List;
+	public static final fun sliceArray-CFIt9YE ([ILjava/util/Collection;)[I
+	public static final fun sliceArray-Q6IL4kU ([SLkotlin/ranges/IntRange;)[S
+	public static final fun sliceArray-ZRhS8yI ([JLkotlin/ranges/IntRange;)[J
+	public static final fun sliceArray-c0bezYM ([BLkotlin/ranges/IntRange;)[B
+	public static final fun sliceArray-kzHmqpY ([JLjava/util/Collection;)[J
+	public static final fun sliceArray-ojwP5H8 ([SLjava/util/Collection;)[S
+	public static final fun sliceArray-tAntMlw ([ILkotlin/ranges/IntRange;)[I
+	public static final fun sliceArray-xo_DsdI ([BLjava/util/Collection;)[B
 	public static final fun toTypedArray--ajY-9A ([I)[Lkotlin/UInt;
 	public static final fun toTypedArray-GBYM_sE ([B)[Lkotlin/UByte;
 	public static final fun toTypedArray-QwZRm1k ([J)[Lkotlin/ULong;

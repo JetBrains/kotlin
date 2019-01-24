@@ -7,6 +7,7 @@
 package test.collections
 
 import test.collections.behaviors.collectionBehavior
+import test.collections.behaviors.listBehavior
 import kotlin.test.*
 
 fun assertArrayContentEquals(expected: UIntArray, actual: UIntArray, message: String = "")      { assertTrue(expected contentEquals actual, message) }
@@ -19,10 +20,10 @@ class UnsignedArraysTest {
 
     @Test
     fun collectionBehavior() {
-        compare(listOf<UByte>(), ubyteArrayOf()) { this.collectionBehavior() }
-        compare(listOf<UShort>(1), ushortArrayOf(1)) { this.collectionBehavior() }
-        compare(listOf<UInt>(1, 2), uintArrayOf(1u, 2u)) { this.collectionBehavior() }
-        compare(listOf<ULong>(1, 2, 3), ulongArrayOf(1u, 2u, 3u)) { this.collectionBehavior() }
+        compare(listOf<UByte>(), ubyteArrayOf()) { collectionBehavior() }
+        compare(listOf<UShort>(1), ushortArrayOf(1)) { collectionBehavior() }
+        compare(listOf<UInt>(1, 2), uintArrayOf(1u, 2u)) { collectionBehavior() }
+        compare(listOf<ULong>(1, 2, 3), ulongArrayOf(1u, 2u, 3u)) { collectionBehavior() }
     }
 
     @Test
@@ -363,5 +364,51 @@ class UnsignedArraysTest {
         assertArrayContentEquals(ubyteArrayOf(3u, 2u, 1u), ubyteArrayOf(1u, 2u, 3u).reversedArray())
         assertArrayContentEquals(ushortArrayOf(3u, 2u, 1u), ushortArrayOf(1u, 2u, 3u).reversedArray())
         assertArrayContentEquals(ulongArrayOf(3u, 2u, 1u), ulongArrayOf(1u, 2u, 3u).reversedArray())
+    }
+
+    @Test
+    fun asList() {
+        compare(listOf<UByte>(), ubyteArrayOf().asList()) { listBehavior() }
+        compare(listOf<UShort>(1), ushortArrayOf(1.toUShort()).asList()) { listBehavior() }
+        compare(listOf<UInt>(1, 2), uintArrayOf(1u, 2u).asList()) { listBehavior() }
+        compare(listOf<UInt>(1, 2, 3), uintArrayOf(1u, 2u, 3u).asList()) { listBehavior() }
+
+        val ulongs = ulongArrayOf(1uL, 5uL, 7uL)
+        val ulongsAsList = ulongs.asList()
+        assertEquals(5uL, ulongsAsList[1])
+        ulongs[1] = 10
+        assertEquals(10uL, ulongsAsList[1], "Should reflect changes in original array")
+    }
+
+    @Test
+    fun slice() {
+        assertEquals(listOf<UInt>(), uintArrayOf(1, 2, 3).slice(5..1))
+        assertEquals(listOf<UInt>(2, 3, 9), uintArrayOf(2, 3, 9, 2, 3, 9).slice(listOf(3, 1, 2)))
+        assertEquals(listOf<UByte>(127, 100), ubyteArrayOf(50, 100, 127).slice(2 downTo 1))
+        assertEquals(listOf<UShort>(200, 100), ushortArrayOf(50, 100, 200).slice(2 downTo 1))
+        assertEquals(listOf<ULong>(100, 200, 30), ulongArrayOf(50, 100, 200, 30).slice(1..3))
+
+        for (range in listOf(-1 until 0, 0 until 2, 2..2)) {
+            val bounds = "range: $range"
+            val exClass = IndexOutOfBoundsException::class
+            assertFailsWith(exClass, bounds) { uintArrayOf(1).slice(range) }
+            assertFailsWith(exClass, bounds) { ulongArrayOf(1).slice(range) }
+        }
+    }
+
+    @Test
+    fun sliceArray() {
+        assertArrayContentEquals(uintArrayOf(), uintArrayOf(1, 2, 3).sliceArray(5..1))
+        assertArrayContentEquals(uintArrayOf(2, 3, 9), uintArrayOf(2, 3, 9, 2, 3, 9).sliceArray(listOf(3, 1, 2)))
+        assertArrayContentEquals(ubyteArrayOf(127, 100), ubyteArrayOf(50, 100, 127).sliceArray(listOf(2, 1)))
+        assertArrayContentEquals(ushortArrayOf(200, 100), ushortArrayOf(50, 100, 200).sliceArray(listOf(2, 1)))
+        assertArrayContentEquals(ulongArrayOf(100, 200, 30), ulongArrayOf(50, 100, 200, 30).sliceArray(1..3))
+
+        for (range in listOf(-1 until 0, 0 until 2, 2..2)) {
+            val bounds = "range: $range"
+            val exClass = IndexOutOfBoundsException::class
+            assertFailsWith(exClass, bounds) { ubyteArrayOf(1).sliceArray(range) }
+            assertFailsWith(exClass, bounds) { ushortArrayOf(1).sliceArray(range) }
+        }
     }
 }

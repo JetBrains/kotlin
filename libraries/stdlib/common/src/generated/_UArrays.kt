@@ -1384,6 +1384,178 @@ public inline fun UShortArray.singleOrNull(predicate: (UShort) -> Boolean): USho
 }
 
 /**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.slice(indices: IntRange): List<UInt> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.slice(indices: IntRange): List<ULong> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.slice(indices: IntRange): List<UByte> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at indices in the specified [indices] range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.slice(indices: IntRange): List<UShort> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
+
+/**
+ * Returns a list containing elements at specified [indices].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.slice(indices: Iterable<Int>): List<UInt> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<UInt>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
+
+/**
+ * Returns a list containing elements at specified [indices].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.slice(indices: Iterable<Int>): List<ULong> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<ULong>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
+
+/**
+ * Returns a list containing elements at specified [indices].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.slice(indices: Iterable<Int>): List<UByte> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<UByte>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
+
+/**
+ * Returns a list containing elements at specified [indices].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.slice(indices: Iterable<Int>): List<UShort> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<UShort>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.sliceArray(indices: Collection<Int>): UIntArray {
+    return UIntArray(storage.sliceArray(indices))
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.sliceArray(indices: Collection<Int>): ULongArray {
+    return ULongArray(storage.sliceArray(indices))
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.sliceArray(indices: Collection<Int>): UByteArray {
+    return UByteArray(storage.sliceArray(indices))
+}
+
+/**
+ * Returns an array containing elements of this array at specified [indices].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.sliceArray(indices: Collection<Int>): UShortArray {
+    return UShortArray(storage.sliceArray(indices))
+}
+
+/**
+ * Returns an array containing elements at indices in the specified [indices] range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.sliceArray(indices: IntRange): UIntArray {
+    return UIntArray(storage.sliceArray(indices))
+}
+
+/**
+ * Returns an array containing elements at indices in the specified [indices] range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.sliceArray(indices: IntRange): ULongArray {
+    return ULongArray(storage.sliceArray(indices))
+}
+
+/**
+ * Returns an array containing elements at indices in the specified [indices] range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.sliceArray(indices: IntRange): UByteArray {
+    return UByteArray(storage.sliceArray(indices))
+}
+
+/**
+ * Returns an array containing elements at indices in the specified [indices] range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.sliceArray(indices: IntRange): UShortArray {
+    return UShortArray(storage.sliceArray(indices))
+}
+
+/**
  * Reverses elements in the array in-place.
  */
 @SinceKotlin("1.3")
@@ -1532,6 +1704,34 @@ public inline fun UByteArray.asByteArray(): ByteArray {
 public inline fun UIntArray.asIntArray(): IntArray {
     return storage
 }
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public expect fun UIntArray.asList(): List<UInt>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public expect fun ULongArray.asList(): List<ULong>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public expect fun UByteArray.asList(): List<UByte>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public expect fun UShortArray.asList(): List<UShort>
 
 /**
  * Returns an array of type [LongArray], which is a view of this array where each element is a signed reinterpretation
