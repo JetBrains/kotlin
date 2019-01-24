@@ -46,8 +46,7 @@ internal constructor(@PublishedApi internal val storage: LongArray) : Collection
     }
 
     override fun containsAll(elements: Collection<ULong>): Boolean {
-        if ((elements as Collection<Any?>).any { it as? ULong == null }) return false
-        return elements.all { storage.contains(it.toLong()) }
+        return (elements as Collection<*>).all { it is ULong && storage.contains(it.toLong()) }
     }
 
     override fun isEmpty(): Boolean = this.storage.size == 0

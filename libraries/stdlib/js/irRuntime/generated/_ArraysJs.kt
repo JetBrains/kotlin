@@ -85,9 +85,18 @@ public actual fun CharArray.asList(): List<Char> {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(element: Char): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Char = this@asList[index]
-        override fun indexOf(element: Char): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Char): Int = this@asList.lastIndexOf(element)
+        override fun get(index: Int): Char {
+            AbstractList.checkElementIndex(index, size)
+            return this@asList[index]
+        }
+        override fun indexOf(element: Char): Int {
+            if ((element as Any?) !is Char) return -1
+            return this@asList.indexOf(element)
+        }
+        override fun lastIndexOf(element: Char): Int {
+            if ((element as Any?) !is Char) return -1
+            return this@asList.lastIndexOf(element)
+        }
     }
 }
 

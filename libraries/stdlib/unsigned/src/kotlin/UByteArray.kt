@@ -46,8 +46,7 @@ internal constructor(@PublishedApi internal val storage: ByteArray) : Collection
     }
 
     override fun containsAll(elements: Collection<UByte>): Boolean {
-        if ((elements as Collection<Any?>).any { it as? UByte == null }) return false
-        return elements.all { storage.contains(it.toByte()) }
+        return (elements as Collection<*>).all { it is UByte && storage.contains(it.toByte()) }
     }
 
     override fun isEmpty(): Boolean = this.storage.size == 0

@@ -1147,7 +1147,7 @@ object ArrayOps : TemplateGroupBase() {
 
 
     val f_asList = fn("asList()") {
-        include(ArraysOfObjects, ArraysOfPrimitives)
+        include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns a [List] that wraps the original array." }
         returns("List<T>")
@@ -1168,13 +1168,33 @@ object ArrayOps : TemplateGroupBase() {
                             override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
                         }
                         """
-        specialFor(ArraysOfPrimitives) {
+        specialFor(ArraysOfPrimitives, ArraysOfUnsigned) {
             on(Platform.JVM) {
                 body { objectLiteralImpl }
             }
             on(Platform.JS) {
-                if (primitive == PrimitiveType.Char) {
-                    body { objectLiteralImpl }
+                if (primitive == PrimitiveType.Char || primitive in PrimitiveType.unsignedPrimitives) {
+                    body {
+                        """
+                        return object : AbstractList<T>(), RandomAccess {
+                            override val size: Int get() = this@asList.size
+                            override fun isEmpty(): Boolean = this@asList.isEmpty()
+                            override fun contains(element: T): Boolean = this@asList.contains(element)
+                            override fun get(index: Int): T {
+                                AbstractList.checkElementIndex(index, size)
+                                return this@asList[index]
+                            }
+                            override fun indexOf(element: T): Int {
+                                if ((element as Any?) !is T) return -1
+                                return this@asList.indexOf(element)
+                            }
+                            override fun lastIndexOf(element: T): Int {
+                                if ((element as Any?) !is T) return -1
+                                return this@asList.lastIndexOf(element)
+                            }
+                        }
+                        """
+                    }
                 }
                 else {
                     inlineOnly()

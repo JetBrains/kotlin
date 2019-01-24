@@ -4040,7 +4040,7 @@ public fun CharArray.sliceArray(indices: Collection<Int>): CharArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
     if (indices.isEmpty()) return copyOfRange(0, 0)
@@ -4048,7 +4048,7 @@ public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
     if (indices.isEmpty()) return ByteArray(0)
@@ -4056,7 +4056,7 @@ public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
     if (indices.isEmpty()) return ShortArray(0)
@@ -4064,7 +4064,7 @@ public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun IntArray.sliceArray(indices: IntRange): IntArray {
     if (indices.isEmpty()) return IntArray(0)
@@ -4072,7 +4072,7 @@ public fun IntArray.sliceArray(indices: IntRange): IntArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun LongArray.sliceArray(indices: IntRange): LongArray {
     if (indices.isEmpty()) return LongArray(0)
@@ -4080,7 +4080,7 @@ public fun LongArray.sliceArray(indices: IntRange): LongArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
     if (indices.isEmpty()) return FloatArray(0)
@@ -4088,7 +4088,7 @@ public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
     if (indices.isEmpty()) return DoubleArray(0)
@@ -4096,7 +4096,7 @@ public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
     if (indices.isEmpty()) return BooleanArray(0)
@@ -4104,7 +4104,7 @@ public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun CharArray.sliceArray(indices: IntRange): CharArray {
     if (indices.isEmpty()) return CharArray(0)
