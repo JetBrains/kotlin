@@ -1384,6 +1384,134 @@ public inline fun UShortArray.singleOrNull(predicate: (UShort) -> Boolean): USho
 }
 
 /**
+ * Reverses elements in the array in-place.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.reverse(): Unit {
+    storage.reverse()
+}
+
+/**
+ * Reverses elements in the array in-place.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.reverse(): Unit {
+    storage.reverse()
+}
+
+/**
+ * Reverses elements in the array in-place.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.reverse(): Unit {
+    storage.reverse()
+}
+
+/**
+ * Reverses elements in the array in-place.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.reverse(): Unit {
+    storage.reverse()
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.reversed(): List<UInt> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.reversed(): List<ULong> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.reversed(): List<UByte> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.reversed(): List<UShort> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.reversedArray(): UIntArray {
+    return UIntArray(storage.reversedArray())
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.reversedArray(): ULongArray {
+    return ULongArray(storage.reversedArray())
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.reversedArray(): UByteArray {
+    return UByteArray(storage.reversedArray())
+}
+
+/**
+ * Returns an array with elements of this array in reversed order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.reversedArray(): UShortArray {
+    return UShortArray(storage.reversedArray())
+}
+
+/**
  * Returns an array of type [ByteArray], which is a view of this array where each element is a signed reinterpretation
  * of the corresponding element of this array.
  */

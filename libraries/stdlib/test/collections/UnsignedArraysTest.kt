@@ -9,7 +9,10 @@ package test.collections
 import test.collections.behaviors.collectionBehavior
 import kotlin.test.*
 
-fun assertArrayContentEquals(expected: UIntArray, actual: UIntArray, message: String = "") { assertTrue(expected contentEquals actual, message) }
+fun assertArrayContentEquals(expected: UIntArray, actual: UIntArray, message: String = "")      { assertTrue(expected contentEquals actual, message) }
+fun assertArrayContentEquals(expected: ULongArray, actual: ULongArray, message: String = "")    { assertTrue(expected contentEquals actual, message) }
+fun assertArrayContentEquals(expected: UShortArray, actual: UShortArray, message: String = "")  { assertTrue(expected contentEquals actual, message) }
+fun assertArrayContentEquals(expected: UByteArray, actual: UByteArray, message: String = "")    { assertTrue(expected contentEquals actual, message) }
 
 
 class UnsignedArraysTest {
@@ -348,4 +351,17 @@ class UnsignedArraysTest {
         assertEquals(genericArray.toList(), ulongArray.toList())
     }
 
+    @Test fun reversed() {
+        expect(listOf(3u, 2u, 1u)) { uintArrayOf(1u, 2u, 3u).reversed() }
+        expect(listOf<UByte>(3u, 2u, 1u)) { ubyteArrayOf(1u, 2u, 3u).reversed() }
+        expect(listOf<UShort>(3u, 2u, 1u)) { ushortArrayOf(1u, 2u, 3u).reversed() }
+        expect(listOf<ULong>(3u, 2u, 1u)) { ulongArrayOf(1u, 2u, 3u).reversed() }
+    }
+
+    @Test fun reversedArray() {
+        assertArrayContentEquals(uintArrayOf(3u, 2u, 1u), uintArrayOf(1u, 2u, 3u).reversedArray())
+        assertArrayContentEquals(ubyteArrayOf(3u, 2u, 1u), ubyteArrayOf(1u, 2u, 3u).reversedArray())
+        assertArrayContentEquals(ushortArrayOf(3u, 2u, 1u), ushortArrayOf(1u, 2u, 3u).reversedArray())
+        assertArrayContentEquals(ulongArrayOf(3u, 2u, 1u), ulongArrayOf(1u, 2u, 3u).reversedArray())
+    }
 }

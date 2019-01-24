@@ -2332,6 +2332,10 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun random-JzugnMA ([JLkotlin/random/Random;)J
 	public static final fun random-oSF2wD8 ([BLkotlin/random/Random;)B
 	public static final fun random-s5X_as8 ([SLkotlin/random/Random;)S
+	public static final fun reversed--ajY-9A ([I)Ljava/util/List;
+	public static final fun reversed-GBYM_sE ([B)Ljava/util/List;
+	public static final fun reversed-QwZRm1k ([J)Ljava/util/List;
+	public static final fun reversed-rL5Bavg ([S)Ljava/util/List;
 	public static final fun singleOrNull--ajY-9A ([I)Lkotlin/UInt;
 	public static final fun singleOrNull-GBYM_sE ([B)Lkotlin/UByte;
 	public static final fun singleOrNull-QwZRm1k ([J)Lkotlin/ULong;
