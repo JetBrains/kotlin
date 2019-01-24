@@ -343,11 +343,15 @@ private fun IrType.isCEnumType(): Boolean {
             .any { (it.classifierOrNull?.owner as? IrClass)?.fqNameSafe == FqName("kotlinx.cinterop.CEnum") }
 }
 
+// TODO: get rid of consulting descriptors for annotations.
+// Make sure external stubs always get proper annotaions.
 private fun IrValueParameter.isWCStringParameter() =
-        this.annotations.hasAnnotation(cCall.child(Name.identifier("WCString")))
+        this.annotations.hasAnnotation(cCall.child(Name.identifier("WCString"))) ||
+        this.descriptor.annotations.hasAnnotation(cCall.child(Name.identifier("WCString")))
 
 private fun IrValueParameter.isCStringParameter() =
-        this.annotations.hasAnnotation(cCall.child(Name.identifier("CString")))
+        this.annotations.hasAnnotation(cCall.child(Name.identifier("CString"))) ||
+        this.descriptor.annotations.hasAnnotation(cCall.child(Name.identifier("CString")))
 
 private fun getStructSpelling(kotlinClass: IrClass): String? =
         kotlinClass.getAnnotationArgumentStringValue(FqName("kotlinx.cinterop.internal.CStruct"), "spelling")
