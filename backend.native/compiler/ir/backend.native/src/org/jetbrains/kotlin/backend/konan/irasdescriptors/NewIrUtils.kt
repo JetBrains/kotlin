@@ -166,6 +166,18 @@ fun List<IrCall>.findAnnotation(fqName: FqName): IrCall? = this.firstOrNull {
     it.annotationClass.fqNameSafe == fqName
 }
 
+fun <T> List<IrCall>.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
+    val annotation = this.findAnnotation(fqName) ?: return null
+    for (index in 0 until annotation.valueArgumentsCount) {
+        val parameter = annotation.symbol.owner.valueParameters[index]
+        if (parameter.name == Name.identifier(argumentName)) {
+            val actual = annotation.getValueArgument(index) as? IrConst<T>
+            return actual?.value
+        }
+    }
+    return null
+}
+
 fun IrValueParameter.isInlineParameter(): Boolean =
     !this.isNoinline && (this.type.isFunction() || this.type.isSuspendFunction()) && !this.type.isMarkedNullable()
 
