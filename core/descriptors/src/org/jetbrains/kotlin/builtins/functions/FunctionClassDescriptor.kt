@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
-import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE
@@ -108,9 +107,9 @@ class FunctionClassDescriptor(
         override fun computeSupertypes(): Collection<KotlinType> {
             val result = ArrayList<KotlinType>(2)
 
-            fun add(packageFragment: PackageFragmentDescriptor, name: Name) {
-                val descriptor = packageFragment.getMemberScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
-                    ?: error("Class $name not found in $packageFragment")
+            fun add(id: ClassId) {
+                val moduleDescriptor = containingDeclaration.containingDeclaration
+                val descriptor = moduleDescriptor.findClassAcrossModuleDependencies(id) ?: error("Built-in class $id not found")
 
                 val typeConstructor = descriptor.typeConstructor
 
@@ -124,30 +123,26 @@ class FunctionClassDescriptor(
 
             when (functionKind) {
                 Kind.SuspendFunction -> // SuspendFunction$N<...> <: Function
-                    add(getBuiltInPackage(BUILT_INS_PACKAGE_FQ_NAME), Name.identifier("Function"))
+                    add(functionClassId)
                 Kind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
-                    add(containingDeclaration, Name.identifier("KFunction"))
-                else -> // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
-                    add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
+                    add(kFunctionClassId)
+                Kind.Function -> // Function$N <: Function
+                    add(functionClassId)
+                Kind.KFunction -> // KFunction$N <: KFunction
+                    add(kFunctionClassId)
             }
 
             // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for K{Suspend}Function2
             when (functionKind) {
-                Kind.KFunction -> add(getBuiltInPackage(BUILT_INS_PACKAGE_FQ_NAME), Kind.Function.numberedClassName(arity))
-                Kind.KSuspendFunction -> add(
-                    getBuiltInPackage(COROUTINES_PACKAGE_FQ_NAME_RELEASE),
-                    Kind.SuspendFunction.numberedClassName(arity)
-                )
+                Kind.KFunction ->
+                    add(ClassId(BUILT_INS_PACKAGE_FQ_NAME, Kind.Function.numberedClassName(arity)))
+                Kind.KSuspendFunction ->
+                    add(ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, Kind.SuspendFunction.numberedClassName(arity)))
                 else -> {
                 }
             }
 
             return result.toList()
-        }
-
-        private fun getBuiltInPackage(fqName: FqName): BuiltInsPackageFragment {
-            val packageView = containingDeclaration.containingDeclaration.getPackage(fqName)
-            return packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()
         }
 
         override fun getParameters() = this@FunctionClassDescriptor.parameters
@@ -162,4 +157,9 @@ class FunctionClassDescriptor(
     }
 
     override fun toString() = name.asString()
+
+    companion object {
+        val functionClassId = ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("Function"))
+        val kFunctionClassId = ClassId(KOTLIN_REFLECT_FQ_NAME, Name.identifier("KFunction"))
+    }
 }

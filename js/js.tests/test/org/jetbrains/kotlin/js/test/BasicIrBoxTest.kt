@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test
 
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.Result
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
@@ -112,7 +114,8 @@ abstract class BasicIrBoxTest(
             config.configuration,
             FqName((testPackage?.let { "$it." } ?: "") + testFunction),
             dependencies,
-            irDependencies
+            irDependencies,
+            runtimeResult.moduleDescriptor as ModuleDescriptorImpl
         )
 
         compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
