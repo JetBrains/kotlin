@@ -61,7 +61,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     override fun removeModifier(modifier: KtModifierKeywordToken) {
         super.removeModifier(modifier)
         if (modifierList == null) {
-            getConstructorKeyword()?.delete()
+            removeRedundantConstructorKeywordAndSpace()
         }
     }
 
