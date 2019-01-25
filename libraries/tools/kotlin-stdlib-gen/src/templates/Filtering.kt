@@ -128,12 +128,14 @@ object Filtering : TemplateGroupBase() {
         include(CharSequences, Strings, ArraysOfUnsigned)
     } builder {
         val n = "\$n"
-        doc { 
+        doc {
             """
             Returns a list containing first [n] elements.
             """
         }
-        sample("samples.collections.Collections.Transformations.take")
+        specialFor(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives) {
+            sample("samples.collections.Collections.Transformations.take")
+        }
         returns("List<T>")
         body {
             """
@@ -155,12 +157,13 @@ object Filtering : TemplateGroupBase() {
         }
 
         specialFor(Strings, CharSequences) {
+            sample("samples.text.Strings.take")
             returns("SELF")
             specialFor(Strings) {
-                doc { "Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter."}
+                doc { "Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter." }
             }
             specialFor(CharSequences) {
-                doc { "Returns a subsequence of this char sequence containing the first [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter."}
+                doc { "Returns a subsequence of this char sequence containing the first [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter." }
             }
         }
         body(Strings, CharSequences) {

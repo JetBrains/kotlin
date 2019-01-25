@@ -191,4 +191,10 @@ class Strings {
         assertPrints("Hot_Tea".commonSuffixWith("Hot_Coffee"), "")
     }
 
+    @Sample
+    fun take() {
+        val string = "Lorem Ipsum"
+        assertPrints(string.take(5), "Lorem")
+    }
+
 }
