@@ -117,6 +117,7 @@
           <Problem reference="com.intellij.openapi.extensions.ExtensionPointName#findExtensionOrFail" reason="Absent in 182." />
           <Problem reference="com.intellij.openapi.ui.popup.PopupChooserBuilder#PopupChooserBuilder(javax.swing.JList)" reason="Generified in 182. Use PopupChooserBuilderWrapper instead." />
           <Problem reference="com.intellij.openapi.editor.event.EditorFactoryListener" reason="Default implementations were added in 183. Use EditorFactoryListenerWrapper for inheritance instead." />
+          <Problem reference="com.intellij.codeInspection.reference.RefFile#getPsiElement" reason="Absent in 182. Use psiFile extension instead." />
         </list>
       </option>
     </inspection_tool>

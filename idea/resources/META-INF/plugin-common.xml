@@ -2650,7 +2650,7 @@
                      displayName="Local variable naming convention"
                      level="WEAK WARNING"/>
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PackageNameInspection"
+    <globalInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PackageNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
