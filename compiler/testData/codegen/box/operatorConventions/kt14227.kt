@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
+// KJS_WITH_FULL_RUNTIME
 import kotlin.test.*
 
 fun box(): String {

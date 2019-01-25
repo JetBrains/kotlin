@@ -143,6 +143,8 @@ public class GenerateRangesCodegenTestData {
             throw new AssertionError(e);
         }
 
+        out.println("// KJS_WITH_FULL_RUNTIME");
+
         // Ranges are not supported in JVM_IR yet
         if (!WHITELISTED_FOR_JVM_IR_BACKEND.contains(file.getName())) {
             writeIgnoreBackendDirective(out, "JVM_IR");
