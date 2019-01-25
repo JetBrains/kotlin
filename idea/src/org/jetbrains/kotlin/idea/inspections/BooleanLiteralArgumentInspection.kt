@@ -48,9 +48,10 @@ class BooleanLiteralArgumentInspection(
                 fixes += AddNamesToLastBooleanArgumentsFix()
             }
             fixes += IntentionWrapper(AddNameToArgumentIntention(), argument.containingKtFile)
-            holder.registerProblem(
+            holder.registerProblemWithoutOfflineInformation(
                 argument,
                 "Boolean literal argument without parameter name",
+                isOnTheFly,
                 if (reportSingle || hasPreviousUnnamedBoolean) GENERIC_ERROR_OR_WARNING else INFORMATION,
                 *fixes.toTypedArray()
             )
