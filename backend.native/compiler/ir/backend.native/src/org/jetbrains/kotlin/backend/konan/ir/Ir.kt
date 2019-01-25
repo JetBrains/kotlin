@@ -509,11 +509,6 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
                     Name.identifier(className), NoLookupLocation.FROM_BACKEND
             ) as ClassDescriptor)
 
-    private fun getFunction(name: Name, receiverType: KotlinType, predicate: (FunctionDescriptor) -> Boolean) =
-            symbolTable.referenceFunction(receiverType.memberScope
-                    .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single(predicate)
-            )
-
     val functions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
             .map { symbolTable.referenceClass(builtIns.getFunction(it)) }
 
@@ -532,12 +527,17 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val topLevelSuite    = getKonanTestClass("TopLevelSuite")
     val testFunctionKind = getKonanTestClass("TestFunctionKind")
 
-    private val testFunctionKindCache = mutableMapOf<TestProcessor.FunctionKind, IrEnumEntrySymbol>()
-    fun getTestFunctionKind(kind: TestProcessor.FunctionKind): IrEnumEntrySymbol = testFunctionKindCache.getOrPut(kind) {
-        symbolTable.referenceEnumEntry(testFunctionKind.descriptor.unsubstitutedMemberScope.getContributedClassifier(
-                kind.runtimeKindName, NoLookupLocation.FROM_BACKEND
-        ) as ClassDescriptor)
+    private val testFunctionKindCache = TestProcessor.FunctionKind.values().associate {
+        val symbol = if (it.runtimeKindString.isEmpty())
+            null
+        else
+            symbolTable.referenceEnumEntry(testFunctionKind.descriptor.unsubstitutedMemberScope.getContributedClassifier(
+                    Name.identifier(it.runtimeKindString), NoLookupLocation.FROM_BACKEND
+            ) as ClassDescriptor)
+        it to symbol
     }
+
+    fun getTestFunctionKind(kind: TestProcessor.FunctionKind) = testFunctionKindCache[kind]!!
 }
 
 private fun getArrayListClassDescriptor(context: Context): ClassDescriptor {

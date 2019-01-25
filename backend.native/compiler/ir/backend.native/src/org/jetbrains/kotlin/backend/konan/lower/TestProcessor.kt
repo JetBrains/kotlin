@@ -136,18 +136,14 @@ internal class TestProcessor (val context: KonanBackendContext) {
     // endregion
 
     // region Classes for annotation collection.
-    internal enum class FunctionKind(annotationNameString: String, runtimeKindString: String) {
-        TEST("kotlin.test.Test", "") {
-            override val runtimeKindName: Name get() = throw NotImplementedError()
-        },
-
+    internal enum class FunctionKind(annotationNameString: String, val runtimeKindString: String) {
+        TEST("kotlin.test.Test", ""),
         BEFORE_TEST("kotlin.test.BeforeTest", "BEFORE_TEST"),
         AFTER_TEST("kotlin.test.AfterTest", "AFTER_TEST"),
         BEFORE_CLASS("kotlin.test.BeforeClass", "BEFORE_CLASS"),
         AFTER_CLASS("kotlin.test.AfterClass", "AFTER_CLASS");
 
         val annotationFqName = FqName(annotationNameString)
-        open val runtimeKindName = Name.identifier(runtimeKindString)
 
         companion object {
             val INSTANCE_KINDS = listOf(TEST, BEFORE_TEST, AFTER_TEST)
@@ -604,11 +600,9 @@ internal class TestProcessor (val context: KonanBackendContext) {
     }
     // endregion
 
-    fun process(irModuleFragment: IrModuleFragment) {
-        irModuleFragment.files.forEach {
-            val annotationCollector = AnnotationCollector(it)
-            it.acceptChildrenVoid(annotationCollector)
-            createTestSuites(it, annotationCollector)
-        }
+    fun process(irFile: IrFile) {
+        val annotationCollector = AnnotationCollector(irFile)
+        irFile.acceptChildrenVoid(annotationCollector)
+        createTestSuites(irFile, annotationCollector)
     }
 }

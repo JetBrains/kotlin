@@ -42,10 +42,6 @@ internal class KonanLower(val context: Context, val parentPhaser: PhaseManager) 
             irModule.files.forEach(ExpectDeclarationsRemoving(context)::lower)
         }
 
-        phaser.phase(KonanPhase.TEST_PROCESSOR) {
-            TestProcessor(context).process(irModule)
-        }
-
         phaser.phase(KonanPhase.LOWER_BEFORE_INLINE) {
             irModule.files.forEach(PreInlineLowering(context)::lower)
         }
@@ -116,6 +112,9 @@ internal class KonanLower(val context: Context, val parentPhaser: PhaseManager) 
         }
         phaser.phase(KonanPhase.LOWER_INNER_CLASSES) {
             InnerClassLowering(context).runOnFilePostfix(irFile)
+        }
+        phaser.phase(KonanPhase.TEST_PROCESSOR) {
+            TestProcessor(context).process(irFile)
         }
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
