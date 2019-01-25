@@ -2,7 +2,7 @@
 // FILE:a.kt
 package a
 
-<!OI;SYNTAX!><<!><!OI;SYNTAX!><<!><!OI;SYNTAX!><<!> <!OI;SYNTAX!>FOOO<!><!OI;SYNTAX!><!>
+<!SYNTAX!><<!><!SYNTAX!><<!><!SYNTAX!><<!> <!SYNTAX!>FOOO<!><!SYNTAX!><!>
 import b.B        //class
 import b.foo      //function
 import b.ext      //extension function
@@ -14,7 +14,7 @@ import b.<!UNRESOLVED_REFERENCE!>constant<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>dV
 import <!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
 import b.C.<!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
 
-<!OI;SYNTAX!><<!><!OI;SYNTAX!><<!><!OI;SYNTAX!><<!><!OI;SYNTAX!>HEAD<!><!OI;SYNTAX!><!>
+<!SYNTAX!><<!><!SYNTAX!><<!><!SYNTAX!><<!><!SYNTAX!>HEAD<!><!SYNTAX!><!>
 import b.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>smth<!>
 import b.<!UNRESOLVED_REFERENCE!>bar<!>.*
 import b.<!UNRESOLVED_REFERENCE!>unr<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>unr<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>unr<!>
