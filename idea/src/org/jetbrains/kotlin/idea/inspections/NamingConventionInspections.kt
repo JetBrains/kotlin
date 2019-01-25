@@ -29,6 +29,16 @@ import javax.swing.JPanel
 
 data class NamingRule(val message: String, val matcher: (String) -> Boolean)
 
+private fun findRuleMessage(checkString: String, rules: Array<out NamingRule>): String? {
+    for (rule in rules) {
+        if (rule.matcher(checkString)) {
+            return rule.message
+        }
+    }
+
+    return null
+}
+
 private val START_UPPER = NamingRule("should start with an uppercase letter") {
     it.getOrNull(0)?.isUpperCase() == false
 }
@@ -39,6 +49,10 @@ private val START_LOWER = NamingRule("should start with a lowercase letter") {
 
 private val NO_UNDERSCORES = NamingRule("should not contain underscores") {
     '_' in it
+}
+
+private val NO_START_UPPER = NamingRule("should not start with an uppercase letter") {
+    it.getOrNull(0)?.isUpperCase() == true
 }
 
 private val NO_START_UNDERSCORE = NamingRule("should not start with an underscore") {
@@ -57,13 +71,9 @@ private val NO_BAD_CHARACTERS_OR_UNDERSCORE = NamingRule("may contain only lette
     it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' && c != '_' }
 }
 
-private val ONLY_LOWER_DIGITS_OR_UNDERSCORE = NamingRule("may contain only lowercase letters, digits or underscores") {
-    it.any { c -> c !in 'a'..'z' && c !in '0'..'9' && c != '_' }
-}
-
 abstract class NamingConventionInspection(
     private val entityName: String,
-    @Language("RegExp") private val defaultNamePattern: String,
+    @Language("RegExp") protected val defaultNamePattern: String,
     private vararg val rules: NamingRule
 ) : AbstractKotlinInspection() {
     protected var nameRegex: Regex? = defaultNamePattern.toRegex()
@@ -91,15 +101,14 @@ abstract class NamingConventionInspection(
     }
 
     protected fun getNameMismatchMessage(name: String): String {
-        if (namePattern == defaultNamePattern) {
-            for (rule in rules) {
-                if (rule.matcher(name)) {
-                    return rule.message
-                }
-            }
+        if (namePattern != defaultNamePattern) {
+            return getDefaultErrorMessage()
         }
-        return "doesn't match regex '$namePattern'"
+
+        return findRuleMessage(name, rules) ?: getDefaultErrorMessage()
     }
+
+    protected fun getDefaultErrorMessage() = "doesn't match regex '$namePattern'"
 
     override fun createOptionsPanel() = NamingConventionOptionsPanel(this)
 }
@@ -233,18 +242,42 @@ class LocalVariableNameInspection :
     )
 
 class PackageNameInspection :
-    NamingConventionInspection("Package", "[a-z_][a-z\\d_]*(\\.[a-z_][a-z\\d_]*)*", ONLY_LOWER_DIGITS_OR_UNDERSCORE) {
+    NamingConventionInspection("Package", "[a-z_][a-zA-Z\\d_]*(\\.[a-z_][a-zA-Z\\d_]*)*") {
+
+    companion object {
+        val PART_RULES = arrayOf(NO_BAD_CHARACTERS_OR_UNDERSCORE, NO_START_UPPER)
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return packageDirectiveVisitor { directive ->
+            val packageNameExpression = directive.packageNameExpression ?: return@packageDirectiveVisitor
             val qualifiedName = directive.qualifiedName
-            if (qualifiedName.isNotEmpty() && nameRegex?.matches(qualifiedName) == false) {
-                val message = getNameMismatchMessage(qualifiedName)
-                holder.registerProblem(
-                    directive.packageNameExpression!!,
-                    "Package name <code>#ref</code> $message #loc",
-                    RenamePackageFix()
-                )
+            if (qualifiedName.isEmpty() || nameRegex?.matches(qualifiedName) != false) {
+                return@packageDirectiveVisitor
             }
+
+            val partErrorMessage = if (namePattern == defaultNamePattern) {
+                directive.packageNames.asSequence()
+                    .mapNotNull { simpleName ->
+                        val referencedName = simpleName.getReferencedName()
+                        findRuleMessage(referencedName, PackageNameInspection.PART_RULES)
+                    }
+                    .firstOrNull()
+            } else {
+                null
+            }
+
+            val descriptionTemplate = if (partErrorMessage != null) {
+                "Package name <code>#ref</code> part $partErrorMessage #loc"
+            } else {
+                "Package name <code>#ref</code> ${getDefaultErrorMessage()} #loc"
+            }
+
+            holder.registerProblem(
+                packageNameExpression,
+                descriptionTemplate,
+                RenamePackageFix()
+            )
         }
     }
 
