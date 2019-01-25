@@ -20,12 +20,46 @@ package org.jetbrains.kotlin.util.capitalizeDecapitalize
  * "FooBar" -> "fooBar"
  * "FOOBar" -> "fooBar"
  * "FOO" -> "foo"
+ * "FOO_BAR" -> "fooBar"
+ * "__F_BAR" -> "fBar"
  */
 fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
     fun isUpperCaseCharAt(index: Int): Boolean {
         val c = this[index]
         return if (asciiOnly) c in 'A'..'Z' else c.isUpperCase()
     }
+
+    /**
+     * FOOBAR -> null
+     * FOO_BAR -> "fooBar"
+     * FOO_BAR_BAZ -> "fooBarBaz"
+     * "__F_BAR" -> "fBar"
+     * "F_BAR" -> "fBar"
+     */
+    fun decapitalizeConstant(): String? {
+        val builder = StringBuilder()
+
+        val words = split("_")
+        var validWords = 0
+
+        for (word in words) {
+            if (word.isEmpty()) continue
+
+            when {
+                validWords == 0 -> builder.append(word.toLowerCase())
+                word.length == 1 -> builder.append(Character.toUpperCase(word[0]))
+                else -> builder.append(Character.toUpperCase(word[0]) + word.substring(1).toLowerCase())
+            }
+
+            validWords++
+        }
+
+        return if(validWords > 1) builder.toString() else null
+    }
+
+    val constant = decapitalizeConstant()
+
+    if (constant != null) return constant
 
     if (isEmpty() || !isUpperCaseCharAt(0)) return this
 
