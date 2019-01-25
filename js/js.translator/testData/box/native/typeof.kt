@@ -4,7 +4,7 @@ package foo
 class A
 
 fun box(): String {
-    assertEquals("number", jsTypeOf(1))
+    assertEquals("object", jsTypeOf(1))
     assertEquals("number", jsTypeOf(1.2))
     assertEquals("boolean", jsTypeOf(true))
     assertEquals("string", jsTypeOf("sss"))

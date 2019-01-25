@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1291
+// IGNORE_BACKEND: JS_IR
 package foo
 
 val NUMBER = 1
