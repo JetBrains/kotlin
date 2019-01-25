@@ -127,6 +127,7 @@ val reducedRuntimeSources = fullRuntimeSources - listOfKtFilesFrom(
     "libraries/stdlib/common/src/generated/_Strings.kt",
     "libraries/stdlib/common/src/generated/_UArrays.kt",
     "libraries/stdlib/common/src/generated/_URanges.kt",
+    "libraries/stdlib/common/src/generated/_UCollections.kt",
     "libraries/stdlib/common/src/kotlin/SequencesH.kt",
     "libraries/stdlib/common/src/kotlin/TextH.kt",
     "libraries/stdlib/common/src/kotlin/collections/",

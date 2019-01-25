@@ -325,4 +325,18 @@ class UnsignedArraysTest {
         assertEquals(0.0, uintArrayOf(0, 2, 4).sumByDouble { (it % 2u).toInt().toDouble() })
         assertEquals(6.0, ulongArrayOf(2, 3, 4).sumByDouble { (it - 1u).toInt().toDouble() })
     }
+
+    @Test
+    fun toUnsignedArray() {
+        val uintList = listOf(1u, 2u, 3u)
+        val uintArray: UIntArray = uintList.toUIntArray()
+        expect(3) { uintArray.size }
+        assertEquals(uintList, uintArray.toList())
+
+        val genericArray: Array<ULong> = arrayOf<ULong>(1, 2, 3)
+        val ulongArray: ULongArray = genericArray.toULongArray()
+        expect(3) { ulongArray.size }
+        assertEquals(genericArray.toList(), ulongArray.toList())
+    }
+
 }

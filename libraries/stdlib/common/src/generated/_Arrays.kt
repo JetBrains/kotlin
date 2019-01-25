@@ -6740,80 +6740,56 @@ public expect fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit
  * Returns an array of Boolean containing all of the elements of this generic array.
  */
 public fun Array<out Boolean>.toBooleanArray(): BooleanArray {
-    val result = BooleanArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return BooleanArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Byte containing all of the elements of this generic array.
  */
 public fun Array<out Byte>.toByteArray(): ByteArray {
-    val result = ByteArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return ByteArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Char containing all of the elements of this generic array.
  */
 public fun Array<out Char>.toCharArray(): CharArray {
-    val result = CharArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return CharArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Double containing all of the elements of this generic array.
  */
 public fun Array<out Double>.toDoubleArray(): DoubleArray {
-    val result = DoubleArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return DoubleArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Float containing all of the elements of this generic array.
  */
 public fun Array<out Float>.toFloatArray(): FloatArray {
-    val result = FloatArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return FloatArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Int containing all of the elements of this generic array.
  */
 public fun Array<out Int>.toIntArray(): IntArray {
-    val result = IntArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return IntArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Long containing all of the elements of this generic array.
  */
 public fun Array<out Long>.toLongArray(): LongArray {
-    val result = LongArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return LongArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Short containing all of the elements of this generic array.
  */
 public fun Array<out Short>.toShortArray(): ShortArray {
-    val result = ShortArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return ShortArray(size) { index -> this[index] }
 }
 
 /**
