@@ -126,7 +126,7 @@ class JavaToKotlinAction : AnAction() {
 
             if (enableExternalCodeProcessing && converterResult!!.externalCodeProcessing != null) {
                 val question = "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?"
-                if (!askExternalCodeProcessing || (Messages.showOkCancelDialog(project, question, title, Messages.getQuestionIcon()) == Messages.OK)) {
+                if (!askExternalCodeProcessing || (Messages.showYesNoDialog(project, question, title, Messages.getQuestionIcon()) == Messages.YES)) {
                     ProgressManager.getInstance().runProcessWithProgressSynchronously(
                             {
                                 runReadAction {
