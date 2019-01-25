@@ -36,28 +36,26 @@ fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
      * "__F_BAR" -> "fBar"
      * "F_BAR" -> "fBar"
      */
-    fun decapitalizeConstant(): String? {
+    fun decapitalizeConst(str: String): String? {
+        val words = str.split("_").filter { it.isNotEmpty() }
+
+        if (words.size <= 1) return null
+
         val builder = StringBuilder()
 
-        val words = split("_")
-        var validWords = 0
-
-        for (word in words) {
-            if (word.isEmpty()) continue
-
-            when {
-                validWords == 0 -> builder.append(word.toLowerCase())
-                word.length == 1 -> builder.append(Character.toUpperCase(word[0]))
-                else -> builder.append(Character.toUpperCase(word[0]) + word.substring(1).toLowerCase())
+        words.forEachIndexed { index, word ->
+            if (index == 0) {
+                builder.append(word.toLowerCase())
+            } else {
+                builder.append(word.first().toUpperCase())
+                builder.append(word.drop(1).toLowerCase())
             }
-
-            validWords++
         }
 
-        return if (validWords > 1) builder.toString() else null
+        return builder.toString()
     }
 
-    val constant = decapitalizeConstant()
+    val constant = decapitalizeConst(this)
 
     if (constant != null) return constant
 
