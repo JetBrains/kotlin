@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.backend.konan.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
@@ -200,7 +200,7 @@ private fun debugInfoBaseType(context:Context, targetData:LLVMTargetDataRef, typ
         LLVMSizeOfTypeInBits(targetData, type),
         LLVMPreferredAlignmentOfType(targetData, type).toLong(), encoding) as DITypeOpaqueRef
 
-internal val FunctionDescriptor.types:List<KotlinType>
+internal val IrFunction.types:List<KotlinType>
     get() {
         val parameters = descriptor.valueParameters.map{it.type}
         return listOf(descriptor.returnType!!, *parameters.toTypedArray())
@@ -223,7 +223,7 @@ internal fun KotlinType.encoding(context: Context): DwarfTypeKind = when {
 
 internal fun alignTo(value:Long, align:Long):Long = (value + align - 1) / align * align
 
-internal fun  FunctionDescriptor.subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef): DISubroutineTypeRef {
+internal fun IrFunction.subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef): DISubroutineTypeRef {
     val types = this@subroutineType.types
     return subroutineType(context, llvmTargetData, types)
 }

@@ -441,9 +441,9 @@ internal object DataFlowIR {
 
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-        val classMap = mutableMapOf<ClassDescriptor, Type>()
+        val classMap = mutableMapOf<IrClass, Type>()
         val primitiveMap = mutableMapOf<PrimitiveBinaryType, Type>()
-        val functionMap = mutableMapOf<DeclarationDescriptor, FunctionSymbol>()
+        val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
 
         private val NAME_ESCAPES = Name.identifier("Escapes")
         private val NAME_POINTS_TO = Name.identifier("PointsTo")
@@ -488,9 +488,9 @@ internal object DataFlowIR {
             }, data = null)
         }
 
-        private fun ClassDescriptor.isFinal() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
+        private fun IrClass.isFinal() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
 
-        fun mapClassReferenceType(descriptor: ClassDescriptor, eraseLocalObjects: Boolean = true): Type {
+        fun mapClassReferenceType(descriptor: IrClass, eraseLocalObjects: Boolean = true): Type {
             // Do not try to devirtualize ObjC classes.
             if (descriptor.module.name == Name.special("<forward declarations>") || descriptor.isObjCClass())
                 return Type.Virtual
@@ -530,7 +530,7 @@ internal object DataFlowIR {
             return type
         }
 
-        private fun choosePrimary(erasure: List<ClassDescriptor>): ClassDescriptor {
+        private fun choosePrimary(erasure: List<IrClass>): IrClass {
             if (erasure.size == 1) return erasure[0]
             // A parameter with constraints - choose class if exists.
             return erasure.singleOrNull { !it.isInterface } ?: context.ir.symbols.any.owner
@@ -564,22 +564,22 @@ internal object DataFlowIR {
                 }
 
         // TODO: use from LlvmDeclarations.
-        private fun getFqName(descriptor: DeclarationDescriptor): FqName =
+        private fun getFqName(descriptor: IrDeclaration): FqName =
                 descriptor.parent.fqNameSafe.child(descriptor.name)
 
-        private val FunctionDescriptor.internalName get() = getFqName(this).asString() + "#internal"
+        private val IrFunction.internalName get() = getFqName(this).asString() + "#internal"
 
-        fun mapFunction(descriptor: DeclarationDescriptor): FunctionSymbol = when (descriptor) {
-            is FunctionDescriptor -> mapFunction(descriptor)
+        fun mapFunction(descriptor: IrDeclaration): FunctionSymbol = when (descriptor) {
+            is IrFunction -> mapFunction(descriptor)
             is IrField -> mapPropertyInitializer(descriptor)
             else -> error("Unknown descriptor: $descriptor")
         }
 
-        private fun mapFunction(descriptor: FunctionDescriptor): FunctionSymbol = descriptor.target.let {
+        private fun mapFunction(descriptor: IrFunction): FunctionSymbol = descriptor.target.let {
             functionMap[it]?.let { return it }
 
             val name = if (it.isExported()) it.symbolName else it.internalName
-            val returnsUnit = it is ConstructorDescriptor || (!it.isSuspend && it.returnType.isUnit())
+            val returnsUnit = it is IrConstructor || (!it.isSuspend && it.returnType.isUnit())
             val returnsNothing = !it.isSuspend && it.returnType.isNothing()
             var attributes = 0
             if (returnsUnit)
@@ -602,13 +602,13 @@ internal object DataFlowIR {
 
                 else -> {
                     val isAbstract = it is IrSimpleFunction && it.modality == Modality.ABSTRACT
-                    val classDescriptor = it.containingDeclaration as? ClassDescriptor
+                    val classDescriptor = it.containingDeclaration as? IrClass
                     val bridgeTarget = it.bridgeTarget
                     val isSpecialBridge = bridgeTarget.let {
                         it != null && BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(it.descriptor) != null
                     }
                     val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
-                    val placeToFunctionsTable = !isAbstract && it !is ConstructorDescriptor && classDescriptor != null
+                    val placeToFunctionsTable = !isAbstract && it !is IrConstructor && classDescriptor != null
                             && !classDescriptor.isNonGeneratedAnnotation()
                             && (it.isOverridableOrOverrides || bridgeTarget != null || descriptor.isSpecial || !classDescriptor.isFinal())
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
@@ -632,7 +632,7 @@ internal object DataFlowIR {
             return symbol
         }
 
-        private val FunctionDescriptor.isSpecial get() =
+        private val IrFunction.isSpecial get() =
             name.asString().let { it.startsWith("<bridge-") || it == "<box>" || it == "<unbox>" }
 
         private fun mapPropertyInitializer(descriptor: IrField): FunctionSymbol = descriptor.original.let {
@@ -652,7 +652,7 @@ internal object DataFlowIR {
         fun getPrivateFunctionsTableForExport() =
                 functionMap
                         .asSequence()
-                        .filter { it.key is FunctionDescriptor }
+                        .filter { it.key is IrFunction }
                         .filter { it.value.let { it is DataFlowIR.FunctionSymbol.Declared && it.symbolTableIndex >= 0 } }
                         .sortedBy { (it.value as DataFlowIR.FunctionSymbol.Declared).symbolTableIndex }
                         .apply {
@@ -660,7 +660,7 @@ internal object DataFlowIR {
                                 assert((entry.value  as DataFlowIR.FunctionSymbol.Declared).symbolTableIndex == index) { "Inconsistent function table" }
                             }
                         }
-                        .map { (it.key as FunctionDescriptor) to (it.value as DataFlowIR.FunctionSymbol.Declared) }
+                        .map { (it.key as IrFunction) to (it.value as DataFlowIR.FunctionSymbol.Declared) }
                         .toList()
 
         fun getPrivateClassesTableForExport() =

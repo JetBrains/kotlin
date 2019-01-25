@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassDescriptor
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
 import org.jetbrains.kotlin.backend.konan.llvm.objc.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,7 +21,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
-    fun llvmFunction(function: FunctionDescriptor): LLVMValueRef = function.llvmFunction
+    fun llvmFunction(function: IrFunction): LLVMValueRef = function.llvmFunction
     val intPtrType = LLVMIntPtrType(llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
     // Keep in sync with OBJECT_TAG_MASK in C++.
@@ -33,19 +30,19 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     //-------------------------------------------------------------------------//
 
     /* to class descriptor */
-    fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef = descriptor.llvmTypeInfoPtr
+    fun typeInfoValue(descriptor: IrClass): LLVMValueRef = descriptor.llvmTypeInfoPtr
 
-    fun param(fn: FunctionDescriptor, i: Int): LLVMValueRef {
+    fun param(fn: IrFunction, i: Int): LLVMValueRef {
         assert(i >= 0 && i < countParams(fn))
         return LLVMGetParam(fn.llvmFunction, i)!!
     }
 
-    private fun countParams(fn: FunctionDescriptor) = LLVMCountParams(fn.llvmFunction)
+    private fun countParams(fn: IrFunction) = LLVMCountParams(fn.llvmFunction)
 
-    fun functionEntryPointAddress(descriptor: FunctionDescriptor) = descriptor.entryPointAddress.llvm
-    fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef = descriptor.functionName.localHash.llvm
+    fun functionEntryPointAddress(descriptor: IrFunction) = descriptor.entryPointAddress.llvm
+    fun functionHash(descriptor: IrFunction): LLVMValueRef = descriptor.functionName.localHash.llvm
 
-    fun getObjectInstanceStorage(descriptor: ClassDescriptor, shared: Boolean): LLVMValueRef {
+    fun getObjectInstanceStorage(descriptor: IrClass, shared: Boolean): LLVMValueRef {
         assert (!descriptor.isUnit())
         val llvmGlobal = if (!isExternal(descriptor)) {
             context.llvmDeclarations.forSingleton(descriptor).instanceFieldRef
@@ -65,7 +62,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         return llvmGlobal
     }
 
-    fun getObjectInstanceShadowStorage(descriptor: ClassDescriptor): LLVMValueRef {
+    fun getObjectInstanceShadowStorage(descriptor: IrClass): LLVMValueRef {
         assert (!descriptor.isUnit())
         assert (descriptor.objectIsShared)
         val llvmGlobal = if (!isExternal(descriptor)) {
@@ -83,7 +80,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         return llvmGlobal
     }
 
-    fun typeInfoForAllocation(constructedClass: ClassDescriptor): LLVMValueRef {
+    fun typeInfoForAllocation(constructedClass: IrClass): LLVMValueRef {
         assert(!constructedClass.isObjCClass())
         return typeInfoValue(constructedClass)
     }
@@ -115,7 +112,7 @@ val LLVMValueRef.isConst:Boolean
 
 
 internal inline fun<R> generateFunction(codegen: CodeGenerator,
-                                        descriptor: FunctionDescriptor,
+                                        descriptor: IrFunction,
                                         startLocation: LocationInfo? = null,
                                         endLocation: LocationInfo? = null,
                                         code:FunctionGenerationContext.(FunctionGenerationContext) -> R) {
@@ -161,7 +158,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                                          val codegen: CodeGenerator,
                                          startLocation: LocationInfo?,
                                          endLocation: LocationInfo?,
-                                         internal val functionDescriptor: FunctionDescriptor? = null): ContextUtils {
+                                         internal val functionDescriptor: IrFunction? = null): ContextUtils {
 
     override val context = codegen.context
     val vars = VariableManager(this)
@@ -175,8 +172,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     var returnType: LLVMTypeRef? = LLVMGetReturnType(getFunctionType(function))
     private val returns: MutableMap<LLVMBasicBlockRef, LLVMValueRef> = mutableMapOf()
     // TODO: remove, to make CodeGenerator descriptor-agnostic.
-    val constructedClass: ClassDescriptor?
-        get() = (functionDescriptor as? ClassConstructorDescriptor)?.constructedClass
+    val constructedClass: IrClass?
+        get() = (functionDescriptor as? IrConstructor)?.constructedClass
     private var returnSlot: LLVMValueRef? = null
     private var slotsPhi: LLVMValueRef? = null
     private val frameOverlaySlotCount =
@@ -412,7 +409,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return call(context.llvm.allocInstanceFunction, listOf(typeInfo), lifetime)
     }
 
-    fun allocInstance(descriptor: ClassDescriptor, lifetime: Lifetime): LLVMValueRef =
+    fun allocInstance(descriptor: IrClass, lifetime: Lifetime): LLVMValueRef =
             allocInstance(codegen.typeInfoForAllocation(descriptor), lifetime)
 
     fun allocArray(
@@ -631,7 +628,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return switch
     }
 
-    fun lookupVirtualImpl(receiver: LLVMValueRef, descriptor: FunctionDescriptor): LLVMValueRef {
+    fun lookupVirtualImpl(receiver: LLVMValueRef, descriptor: IrFunction): LLVMValueRef {
         assert(LLVMTypeOf(receiver) == codegen.kObjHeaderPtr)
 
         val typeInfoPtr: LLVMValueRef = if (descriptor.getObjCMethodInfo() != null) {
@@ -655,7 +652,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
          * owner as Any and dispatch it via vtable.
          */
         val anyMethod = (descriptor as IrSimpleFunction).findOverriddenMethodOfAny()
-        val owner = (anyMethod ?: descriptor).containingDeclaration as ClassDescriptor
+        val owner = (anyMethod ?: descriptor).containingDeclaration as IrClass
 
         val llvmMethod = if (!owner.isInterface) {
             // If this is a virtual method of the class - we can call via vtable.
@@ -680,7 +677,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private fun IrSimpleFunction.findOverriddenMethodOfAny(): IrSimpleFunction? {
         if (modality == Modality.ABSTRACT) return null
         val resolved = resolveFakeOverride()
-        if ((resolved.parent as ClassDescriptor).isAny()) {
+        if ((resolved.parent as IrClass).isAny()) {
             return resolved
         }
 
@@ -688,9 +685,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     fun getObjectValue(
-            descriptor: ClassDescriptor,
-            exceptionHandler: ExceptionHandler,
-            locationInfo: LocationInfo?
+        descriptor: IrClass,
+        exceptionHandler: ExceptionHandler,
+        locationInfo: LocationInfo?
     ): LLVMValueRef {
         if (descriptor.isUnit()) {
             return codegen.theUnitInstanceRef.llvm
@@ -745,7 +742,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
      * Note: the same code is generated as IR in [org.jetbrains.kotlin.backend.konan.lower.EnumUsageLowering].
      */
     fun getEnumEntry(descriptor: IrEnumEntry, exceptionHandler: ExceptionHandler): LLVMValueRef {
-        val enumClassDescriptor = descriptor.containingDeclaration as ClassDescriptor
+        val enumClassDescriptor = descriptor.containingDeclaration as IrClass
         val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClassDescriptor)
 
         val ordinal = loweredEnum.entriesMap[descriptor.name]!!

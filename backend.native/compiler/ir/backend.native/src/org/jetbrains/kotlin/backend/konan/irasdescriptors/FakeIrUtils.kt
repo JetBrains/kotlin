@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module

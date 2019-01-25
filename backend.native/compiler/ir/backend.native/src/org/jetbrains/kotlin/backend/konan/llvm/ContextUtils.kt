@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -143,7 +141,7 @@ internal interface ContextUtils : RuntimeAware {
     val staticData: StaticData
         get() = context.llvm.staticData
 
-    fun isExternal(descriptor: DeclarationDescriptor): Boolean {
+    fun isExternal(descriptor: IrDeclaration): Boolean {
         val pkg = descriptor.findPackage()
         return when (pkg) {
             is IrFile -> pkg.packageFragmentDescriptor.containingDeclaration != context.moduleDescriptor
@@ -156,7 +154,7 @@ internal interface ContextUtils : RuntimeAware {
      * LLVM function generated from the Kotlin function.
      * It may be declared as external function prototype.
      */
-    val FunctionDescriptor.llvmFunction: LLVMValueRef
+    val IrFunction.llvmFunction: LLVMValueRef
         get() {
             assert(this.isReal)
 
@@ -171,13 +169,13 @@ internal interface ContextUtils : RuntimeAware {
     /**
      * Address of entry point of [llvmFunction].
      */
-    val FunctionDescriptor.entryPointAddress: ConstPointer
+    val IrFunction.entryPointAddress: ConstPointer
         get() {
             val result = LLVMConstBitCast(this.llvmFunction, int8TypePtr)!!
             return constPointer(result)
         }
 
-    val ClassDescriptor.typeInfoPtr: ConstPointer
+    val IrClass.typeInfoPtr: ConstPointer
         get() {
             return if (isExternal(this)) {
                 constPointer(importGlobal(this.typeInfoSymbolName, runtime.typeInfoType,
@@ -191,7 +189,7 @@ internal interface ContextUtils : RuntimeAware {
      * Pointer to type info for given class.
      * It may be declared as pointer to external variable.
      */
-    val ClassDescriptor.llvmTypeInfoPtr: LLVMValueRef
+    val IrClass.llvmTypeInfoPtr: LLVMValueRef
         get() = typeInfoPtr.llvm
 
     /**

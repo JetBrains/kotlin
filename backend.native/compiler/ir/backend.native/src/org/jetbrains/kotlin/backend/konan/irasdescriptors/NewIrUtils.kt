@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.backend.konan.irasdescriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.descriptors.getArgumentValueOrNull
-import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.konanBackingField
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl

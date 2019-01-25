@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -48,7 +45,7 @@ internal abstract class AbstractValueUsageTransformer(
 
     protected open fun IrExpression.useAsValue(value: IrValueDeclaration): IrExpression = this.useAs(value.type)
 
-    protected open fun IrExpression.useAsArgument(parameter: ParameterDescriptor): IrExpression =
+    protected open fun IrExpression.useAsArgument(parameter: IrValueParameter): IrExpression =
             this.useAsValue(parameter)
 
     protected open fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression =
@@ -58,10 +55,11 @@ internal abstract class AbstractValueUsageTransformer(
             this.useAsArgument(expression.symbol.owner.extensionReceiverParameter!!)
 
     protected open fun IrExpression.useAsValueArgument(expression: IrFunctionAccessExpression,
-                                                       parameter: ValueParameterDescriptor): IrExpression =
+                                                       parameter: IrValueParameter
+    ): IrExpression =
             this.useAsArgument(parameter)
 
-    private fun IrExpression.useForVariable(variable: VariableDescriptor): IrExpression =
+    private fun IrExpression.useForVariable(variable: IrVariable): IrExpression =
             this.useAsValue(variable)
 
     private fun IrExpression.useForField(field: IrField): IrExpression =

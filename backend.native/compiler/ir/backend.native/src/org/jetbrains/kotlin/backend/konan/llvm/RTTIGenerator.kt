@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
@@ -44,14 +46,14 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         }
     }
 
-    private fun checkAcyclicClass(classDescriptor: ClassDescriptor): Boolean = when {
+    private fun checkAcyclicClass(classDescriptor: IrClass): Boolean = when {
         classDescriptor.symbol == context.ir.symbols.array -> false
         classDescriptor.isArray -> true
         context.llvmDeclarations.forClass(classDescriptor).fields.all { checkAcyclicFieldType(it.type) } -> true
         else -> false
     }
 
-    private fun flagsFromClass(classDescriptor: ClassDescriptor): Int {
+    private fun flagsFromClass(classDescriptor: IrClass): Int {
         var result = 0
         if (classDescriptor.isFrozen)
            result = result or TF_IMMUTABLE
@@ -123,7 +125,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     private val EXPORT_TYPE_INFO_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "ExportTypeInfo"))
 
-    private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMValueRef?) {
+    private fun exportTypeInfoIfRequired(classDesc: IrClass, typeInfoGlobal: LLVMValueRef?) {
         val annot = classDesc.descriptor.annotations.findAnnotation(EXPORT_TYPE_INFO_FQ_NAME)
         if (annot != null) {
             val name = getAnnotationValue(annot)!!
@@ -168,7 +170,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         return LLVMStoreSizeOfType(llvmTargetData, classType).toInt()
     }
 
-    fun generate(classDesc: ClassDescriptor) {
+    fun generate(classDesc: IrClass) {
 
         val className = classDesc.fqNameSafe
 
@@ -241,7 +243,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         exportTypeInfoIfRequired(classDesc, classDesc.llvmTypeInfoPtr)
     }
 
-    fun vtable(classDesc: ClassDescriptor): ConstArray {
+    fun vtable(classDesc: IrClass): ConstArray {
         // TODO: compile-time resolution limits binary compatibility
         val vtableEntries = context.getVtableBuilder(classDesc).vtableEntries.map {
             val implementation = it.implementation
@@ -254,7 +256,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         return ConstArray(int8TypePtr, vtableEntries)
     }
 
-    fun methodTableRecords(classDesc: ClassDescriptor): List<MethodTableRecord> {
+    fun methodTableRecords(classDesc: IrClass): List<MethodTableRecord> {
         val functionNames = mutableMapOf<Long, OverriddenFunctionDescriptor>()
         return context.getVtableBuilder(classDesc).methodTableEntries.map {
             val functionName = it.overriddenDescriptor.functionName
@@ -273,7 +275,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private fun mapRuntimeType(type: LLVMTypeRef): Int =
             runtimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
 
-    private fun makeExtendedInfo(descriptor: ClassDescriptor): ConstPointer {
+    private fun makeExtendedInfo(descriptor: IrClass): ConstPointer {
         // TODO: shall we actually do that?
         if (context.shouldOptimize())
             return NullPointer(runtime.extendedTypeInfoType)
@@ -311,9 +313,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
-            descriptor: ClassDescriptor,
-            methodImpls: Map<FunctionDescriptor, ConstPointer>,
-            immutable: Boolean = false
+        descriptor: IrClass,
+        methodImpls: Map<IrFunction, ConstPointer>,
+        immutable: Boolean = false
     ): ConstPointer {
         assert(descriptor.isInterface)
 
@@ -377,7 +379,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     data class ReflectionInfo(val packageName: String?, val relativeName: String?)
 
-    private fun getReflectionInfo(descriptor: ClassDescriptor): ReflectionInfo {
+    private fun getReflectionInfo(descriptor: IrClass): ReflectionInfo {
         return if (descriptor.isAnonymousObject) {
             ReflectionInfo(packageName = null, relativeName = null)
         } else if (descriptor.isLocal) {
@@ -385,7 +387,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         } else {
             ReflectionInfo(
                     packageName = descriptor.findPackage().fqName.asString(),
-                    relativeName = generateSequence(descriptor, { it.parent as? ClassDescriptor })
+                    relativeName = generateSequence(descriptor, { it.parent as? IrClass })
                             .toList().reversed()
                             .joinToString(".") { it.name.asString() }
             )

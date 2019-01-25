@@ -7,24 +7,16 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassDescriptor
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.types.SimpleType
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
  */
-internal val ClassDescriptor.implementedInterfaces: List<ClassDescriptor>
+internal val IrClass.implementedInterfaces: List<IrClass>
     get() {
         val superClassImplementedInterfaces = this.getSuperClassNotAny()?.implementedInterfaces ?: emptyList()
         val superInterfaces = this.getSuperInterfaces()
@@ -79,10 +71,10 @@ internal fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false
 }
 
 // TODO: don't forget to remove descriptor access here.
-internal val FunctionDescriptor.isTypedIntrinsic: Boolean
+internal val IrFunction.isTypedIntrinsic: Boolean
     get() = this.descriptor.isTypedIntrinsic
 
-internal val DeclarationDescriptor.isFrozen: Boolean
+internal val IrDeclaration.isFrozen: Boolean
     get() = this.descriptor.isFrozen
 
 internal val arrayTypes = setOf(
@@ -100,17 +92,17 @@ internal val arrayTypes = setOf(
 )
 
 
-internal val ClassDescriptor.isArray: Boolean
+internal val IrClass.isArray: Boolean
     get() = this.fqNameSafe.asString() in arrayTypes
 
 
-internal val ClassDescriptor.isInterface: Boolean
+internal val IrClass.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
-fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
+fun IrClass.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
         || this.kind == ClassKind.ENUM_CLASS
 
-internal fun FunctionDescriptor.hasValueTypeAt(index: Int): Boolean {
+internal fun IrFunction.hasValueTypeAt(index: Int): Boolean {
     when (index) {
         0 -> return !isSuspend && returnType.let { (it.isInlined() || it.isUnit()) }
         1 -> return dispatchReceiverParameter.let { it != null && it.type.isInlined() }
@@ -119,7 +111,7 @@ internal fun FunctionDescriptor.hasValueTypeAt(index: Int): Boolean {
     }
 }
 
-internal fun FunctionDescriptor.hasReferenceAt(index: Int): Boolean {
+internal fun IrFunction.hasReferenceAt(index: Int): Boolean {
     when (index) {
         0 -> return isSuspend || returnType.let { !it.isInlined() && !it.isUnit() }
         1 -> return dispatchReceiverParameter.let { it != null && !it.type.isInlined() }
@@ -128,18 +120,19 @@ internal fun FunctionDescriptor.hasReferenceAt(index: Int): Boolean {
     }
 }
 
-private fun FunctionDescriptor.needBridgeToAt(target: FunctionDescriptor, index: Int)
+private fun IrFunction.needBridgeToAt(target: IrFunction, index: Int)
         = hasValueTypeAt(index) xor target.hasValueTypeAt(index)
 
-internal fun FunctionDescriptor.needBridgeTo(target: FunctionDescriptor)
+internal fun IrFunction.needBridgeTo(target: IrFunction)
         = (0..this.valueParameters.size + 2).any { needBridgeToAt(target, it) }
 
 internal val IrSimpleFunction.target: IrSimpleFunction
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
 
-internal val FunctionDescriptor.target: FunctionDescriptor get() = when (this) {
+internal val IrFunction.target: IrFunction
+    get() = when (this) {
     is IrSimpleFunction -> this.target
-    is ConstructorDescriptor -> this
+    is IrConstructor -> this
     else -> error(this)
 }
 
@@ -149,7 +142,7 @@ internal enum class BridgeDirection {
     TO_VALUE_TYPE
 }
 
-private fun FunctionDescriptor.bridgeDirectionToAt(target: FunctionDescriptor, index: Int)
+private fun IrFunction.bridgeDirectionToAt(target: IrFunction, index: Int)
        = when {
             hasValueTypeAt(index) && target.hasReferenceAt(index) -> BridgeDirection.FROM_VALUE_TYPE
             hasReferenceAt(index) && target.hasValueTypeAt(index) -> BridgeDirection.TO_VALUE_TYPE
@@ -221,13 +214,13 @@ internal fun IrSimpleFunction.bridgeDirectionsTo(
     return ourDirections
 }
 
-tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
+tailrec internal fun IrDeclaration.findPackage(): IrPackageFragment {
     val parent = this.parent
-    return parent as? PackageFragmentDescriptor
-            ?: (parent as DeclarationDescriptor).findPackage()
+    return parent as? IrPackageFragment
+            ?: (parent as IrDeclaration).findPackage()
 }
 
-fun FunctionDescriptor.isComparisonDescriptor(map: Map<SimpleType, IrSimpleFunction>): Boolean =
+fun IrFunction.isComparisonDescriptor(map: Map<SimpleType, IrSimpleFunction>): Boolean =
         this in map.values
 
 val IrDeclaration.isPropertyAccessor get() =

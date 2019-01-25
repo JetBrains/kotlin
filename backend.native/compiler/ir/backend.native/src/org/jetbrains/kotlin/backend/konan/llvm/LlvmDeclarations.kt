@@ -36,15 +36,15 @@ enum class UniqueKind(val llvmName: String) {
 }
 
 internal class LlvmDeclarations(
-        private val functions: Map<FunctionDescriptor, FunctionLlvmDeclarations>,
-        private val classes: Map<ClassDescriptor, ClassLlvmDeclarations>,
-        private val fields: Map<IrField, FieldLlvmDeclarations>,
-        private val staticFields: Map<IrField, StaticFieldLlvmDeclarations>,
-        private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
-    fun forFunction(descriptor: FunctionDescriptor) = functions[descriptor] ?:
+    private val functions: Map<IrFunction, FunctionLlvmDeclarations>,
+    private val classes: Map<IrClass, ClassLlvmDeclarations>,
+    private val fields: Map<IrField, FieldLlvmDeclarations>,
+    private val staticFields: Map<IrField, StaticFieldLlvmDeclarations>,
+    private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
+    fun forFunction(descriptor: IrFunction) = functions[descriptor] ?:
             error("${descriptor.toString()} ${descriptor.name} in ${(descriptor.parent as IrDeclaration).name}")
 
-    fun forClass(descriptor: ClassDescriptor) = classes[descriptor] ?:
+    fun forClass(descriptor: IrClass) = classes[descriptor] ?:
             error("$descriptor ${descriptor.name}")
 
     fun forField(descriptor: IrField) = fields[descriptor] ?:
@@ -53,7 +53,7 @@ internal class LlvmDeclarations(
     fun forStaticField(descriptor: IrField) = staticFields[descriptor] ?:
             error(descriptor.toString())
 
-    fun forSingleton(descriptor: ClassDescriptor) = forClass(descriptor).singletonDeclarations ?:
+    fun forSingleton(descriptor: IrClass) = forClass(descriptor).singletonDeclarations ?:
             error(descriptor.toString())
 
     fun forUnique(kind: UniqueKind) = unique[kind] ?: error("No unique $kind")
@@ -91,9 +91,9 @@ internal class UniqueLlvmDeclarations(val pointer: ConstPointer)
  * All fields of the class instance.
  * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
  */
-internal fun ContextUtils.getFields(classDescriptor: ClassDescriptor) = context.getFields(classDescriptor)
+internal fun ContextUtils.getFields(classDescriptor: IrClass) = context.getFields(classDescriptor)
 
-internal fun Context.getFields(classDescriptor: ClassDescriptor): List<IrField> {
+internal fun Context.getFields(classDescriptor: IrClass): List<IrField> {
     val superClass = classDescriptor.getSuperClassNotAny() // TODO: what if Any has fields?
     val superFields = if (superClass != null) getFields(superClass) else emptyList()
 
@@ -103,7 +103,7 @@ internal fun Context.getFields(classDescriptor: ClassDescriptor): List<IrField> 
 /**
  * Fields declared in the class.
  */
-private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<IrField> {
+private fun Context.getDeclaredFields(classDescriptor: IrClass): List<IrField> {
     // TODO: Here's what is going on here:
     // The existence of a backing field for a property is only described in the IR,
     // but not in the PropertyDescriptor.
@@ -147,17 +147,17 @@ private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>
 private class DeclarationsGeneratorVisitor(override val context: Context) :
         IrElementVisitorVoid, ContextUtils {
 
-    val functions = mutableMapOf<FunctionDescriptor, FunctionLlvmDeclarations>()
-    val classes = mutableMapOf<ClassDescriptor, ClassLlvmDeclarations>()
+    val functions = mutableMapOf<IrFunction, FunctionLlvmDeclarations>()
+    val classes = mutableMapOf<IrClass, ClassLlvmDeclarations>()
     val fields = mutableMapOf<IrField, FieldLlvmDeclarations>()
     val staticFields = mutableMapOf<IrField, StaticFieldLlvmDeclarations>()
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 
     private class Namer(val prefix: String) {
-        private val names = mutableMapOf<DeclarationDescriptor, Name>()
+        private val names = mutableMapOf<IrDeclaration, Name>()
         private val counts = mutableMapOf<FqName, Int>()
 
-        fun getName(parent: FqName, descriptor: DeclarationDescriptor): Name {
+        fun getName(parent: FqName, descriptor: IrDeclaration): Name {
             return names.getOrPut(descriptor) {
                 val count = counts.getOrDefault(parent, 0) + 1
                 counts[parent] = count
@@ -168,7 +168,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
     val objectNamer = Namer("object-")
 
-    private fun getLocalName(parent: FqName, descriptor: DeclarationDescriptor): Name {
+    private fun getLocalName(parent: FqName, descriptor: IrDeclaration): Name {
         if (descriptor.isAnonymousObject) {
             return objectNamer.getName(parent, descriptor)
         }
@@ -176,7 +176,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         return descriptor.name
     }
 
-    private fun getFqName(descriptor: DeclarationDescriptor): FqName {
+    private fun getFqName(descriptor: IrDeclaration): FqName {
         val parent = descriptor.parent
         val parentFqName = when (parent) {
             is IrPackageFragment -> parent.fqName
@@ -194,7 +194,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
      * Note: since these declarations are going to be private, the name is only required not to clash with any
      * exported declarations.
      */
-    private fun qualifyInternalName(descriptor: DeclarationDescriptor): String {
+    private fun qualifyInternalName(descriptor: IrDeclaration): String {
         return getFqName(descriptor).asString() + "#internal"
     }
 
@@ -295,7 +295,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     }
 
     private fun createUniqueDeclarations(
-            descriptor: ClassDescriptor, typeInfoPtr: ConstPointer, bodyType: LLVMTypeRef) {
+        descriptor: IrClass, typeInfoPtr: ConstPointer, bodyType: LLVMTypeRef) {
         when {
                 descriptor.isUnit() -> {
                     uniques[UniqueKind.UNIT] =
@@ -309,7 +309,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         }
     }
 
-    private fun createSingletonDeclarations(descriptor: ClassDescriptor): SingletonLlvmDeclarations? {
+    private fun createSingletonDeclarations(descriptor: IrClass): SingletonLlvmDeclarations? {
 
         if (descriptor.isUnit()) {
             return null
@@ -343,7 +343,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         return SingletonLlvmDeclarations(instanceFieldRef, instanceShadowFieldRef)
     }
 
-    private fun createKotlinObjCClassDeclarations(descriptor: ClassDescriptor): KotlinObjCClassLlvmDeclarations {
+    private fun createKotlinObjCClassDeclarations(descriptor: IrClass): KotlinObjCClassLlvmDeclarations {
         val internalName = qualifyInternalName(descriptor)
 
         val classPointerGlobal = staticData.createGlobal(int8TypePtr, "kobjcclassptr:$internalName")
@@ -393,7 +393,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         val descriptor = declaration
         val llvmFunctionType = getLlvmFunctionType(descriptor)
 
-        if ((descriptor is ConstructorDescriptor && descriptor.isObjCConstructor)) {
+        if ((descriptor is IrConstructor && descriptor.isObjCConstructor)) {
             return
         }
 

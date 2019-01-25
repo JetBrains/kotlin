@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 
@@ -77,7 +78,7 @@ internal class OverriddenFunctionDescriptor(
     }
 }
 
-internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val context: Context) {
+internal class ClassVtablesBuilder(val classDescriptor: IrClass, val context: Context) {
     private val DEBUG = 0
 
     private inline fun DEBUG_OUTPUT(severity: Int, block: () -> Unit) {
@@ -178,7 +179,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
                                && it.bridgeTarget == null }
                     .sortedBy { it.uniqueId }
 
-    private val functionIds = mutableMapOf<FunctionDescriptor, Long>()
+    private val functionIds = mutableMapOf<IrFunction, Long>()
 
-    private val FunctionDescriptor.uniqueId get() = functionIds.getOrPut(this) { functionName.localHash.value }
+    private val IrFunction.uniqueId get() = functionIds.getOrPut(this) { functionName.localHash.value }
 }

@@ -232,19 +232,19 @@ internal interface CodeContext {
      * Declares the variable.
      * @return index of declared variable.
      */
-    fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?, variableLocation: VariableDebugLocation?): Int
+    fun genDeclareVariable(descriptor: IrVariable, value: LLVMValueRef?, variableLocation: VariableDebugLocation?): Int
 
     /**
      * @return index of variable declared before, or -1 if no such variable has been declared yet.
      */
-    fun getDeclaredVariable(descriptor: VariableDescriptor): Int
+    fun getDeclaredVariable(descriptor: IrVariable): Int
 
     /**
      * Generates the code to obtain a value available in this context.
      *
      * @return the requested value
      */
-    fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef
+    fun genGetValue(descriptor: IrValueDeclaration): LLVMValueRef
 
     /**
      * Returns owning function scope.
@@ -342,11 +342,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         override fun genThrow(exception: LLVMValueRef) = unsupported()
 
-        override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?, variableLocation: VariableDebugLocation?) = unsupported(descriptor)
+        override fun genDeclareVariable(descriptor: IrVariable, value: LLVMValueRef?, variableLocation: VariableDebugLocation?) = unsupported(descriptor)
 
-        override fun getDeclaredVariable(descriptor: VariableDescriptor) = -1
+        override fun getDeclaredVariable(descriptor: IrVariable) = -1
 
-        override fun genGetValue(descriptor: ValueDescriptor) = unsupported(descriptor)
+        override fun genGetValue(descriptor: IrValueDeclaration) = unsupported(descriptor)
 
         override fun functionScope(): CodeContext? = null
 
@@ -622,16 +622,16 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      */
     private inner class VariableScope : InnerScopeImpl() {
 
-        override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?, variableLocation: VariableDebugLocation?): Int {
+        override fun genDeclareVariable(descriptor: IrVariable, value: LLVMValueRef?, variableLocation: VariableDebugLocation?): Int {
             return functionGenerationContext.vars.createVariable(descriptor, value, variableLocation)
         }
 
-        override fun getDeclaredVariable(descriptor: VariableDescriptor): Int {
+        override fun getDeclaredVariable(descriptor: IrVariable): Int {
             val index = functionGenerationContext.vars.indexOf(descriptor)
             return if (index < 0) super.getDeclaredVariable(descriptor) else return index
         }
 
-        override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
+        override fun genGetValue(descriptor: IrValueDeclaration): LLVMValueRef {
             val index = functionGenerationContext.vars.indexOf(descriptor)
             if (index < 0) {
                 return super.genGetValue(descriptor)
@@ -664,7 +664,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
 
-        override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
+        override fun genGetValue(descriptor: IrValueDeclaration): LLVMValueRef {
             val index = functionGenerationContext.vars.indexOf(descriptor)
             if (index < 0) {
                 return super.genGetValue(descriptor)
@@ -735,7 +735,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     /**
      * Binds LLVM function parameters to IR parameter descriptors.
      */
-    private fun bindParameters(descriptor: FunctionDescriptor?): Map<ParameterDescriptor, LLVMValueRef> {
+    private fun bindParameters(descriptor: IrFunction?): Map<IrValueParameter, LLVMValueRef> {
         if (descriptor == null) return emptyMap()
         val parameterDescriptors = descriptor.allParameters
         return parameterDescriptors.mapIndexed { i, parameterDescriptor ->
@@ -1600,7 +1600,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: IrField): LLVMValueRef {
         val fieldInfo = context.llvmDeclarations.forField(value)
 
-        val classDescriptor = value.containingDeclaration as ClassDescriptor
+        val classDescriptor = value.containingDeclaration as IrClass
         val typePtr = pointerType(fieldInfo.classBodyType)
 
         val bodyPtr = getObjectBodyPtr(classDescriptor, thisPtr)
@@ -1610,7 +1610,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return fieldPtr!!
     }
 
-    private fun getObjectBodyPtr(classDescriptor: ClassDescriptor, objectPtr: LLVMValueRef): LLVMValueRef {
+    private fun getObjectBodyPtr(classDescriptor: IrClass, objectPtr: LLVMValueRef): LLVMValueRef {
         return if (classDescriptor.isObjCClass()) {
             assert(classDescriptor.isKotlinObjCClass())
 
@@ -1920,7 +1920,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         this.scope(startLine()) else null
 
     @Suppress("UNCHECKED_CAST")
-    private fun FunctionDescriptor.scope(startLine:Int): DIScopeOpaqueRef? {
+    private fun IrFunction.scope(startLine:Int): DIScopeOpaqueRef? {
         if (codegen.isExternal(this) || !context.shouldContainDebugInfo())
             return null
         return context.debugInfo.subprograms.getOrPut(codegen.llvmFunction(this)) {
@@ -1973,7 +1973,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
     }
 
-    private fun FunctionDescriptor.returnsUnit() = returnType.isUnit() && !isSuspend
+    private fun IrFunction.returnsUnit() = returnType.isUnit() && !isSuspend
 
     /**
      * Evaluates all arguments of [expression] that are explicitly represented in the IR.
@@ -2047,10 +2047,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
     }
 
-    private inner class SuspensionPointScope(val suspensionPointId: VariableDescriptor,
+    private inner class SuspensionPointScope(val suspensionPointId: IrVariable,
                                              val bbResume: LLVMBasicBlockRef,
                                              val bbResumeId: Int): InnerScopeImpl() {
-        override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
+        override fun genGetValue(descriptor: IrValueDeclaration): LLVMValueRef {
             if (descriptor == suspensionPointId) {
                 return if (context.config.indirectBranchesAreAllowed)
                            functionGenerationContext.blockAddress(bbResume)
@@ -2092,7 +2092,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return when {
             function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args)
             function.origin == IrDeclarationOrigin.IR_BUILTINS_STUB -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
-            function is ConstructorDescriptor -> evaluateConstructorCall(callee, argsWithContinuationIfNeeded)
+            function is IrConstructor -> evaluateConstructorCall(callee, argsWithContinuationIfNeeded)
             else -> evaluateSimpleFunctionCall(function, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifierSymbol?.owner)
         }
     }
@@ -2141,8 +2141,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun evaluateSimpleFunctionCall(
-            descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
-            resultLifetime: Lifetime, superClass: ClassDescriptor? = null): LLVMValueRef {
+        descriptor: IrFunction, args: List<LLVMValueRef>,
+        resultLifetime: Lifetime, superClass: IrClass? = null): LLVMValueRef {
         //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
         if (superClass == null && descriptor is IrSimpleFunction && descriptor.isOverridable)
             return callVirtual(descriptor, args, resultLifetime)
@@ -2190,7 +2190,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
     }
 
-    private fun genGetObjCClass(classDescriptor: ClassDescriptor): LLVMValueRef {
+    private fun genGetObjCClass(classDescriptor: IrClass): LLVMValueRef {
         return functionGenerationContext.getObjCClass(classDescriptor, currentCodeContext.exceptionHandler)
     }
 
@@ -2251,7 +2251,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    fun callDirect(descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
+    fun callDirect(descriptor: IrFunction, args: List<LLVMValueRef>,
                    resultLifetime: Lifetime): LLVMValueRef {
         val realDescriptor = descriptor.target
         val llvmFunction = codegen.llvmFunction(realDescriptor)
@@ -2260,7 +2260,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    fun callVirtual(descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
+    fun callVirtual(descriptor: IrFunction, args: List<LLVMValueRef>,
                     resultLifetime: Lifetime): LLVMValueRef {
 
         val function = functionGenerationContext.lookupVirtualImpl(args.first(), descriptor)
@@ -2274,7 +2274,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     // instead of a plain list.
     // In such case it would be possible to check that all args are available and in the correct order.
     // However, it currently requires some refactoring to be performed.
-    private fun call(descriptor: FunctionDescriptor, function: LLVMValueRef, args: List<LLVMValueRef>,
+    private fun call(descriptor: IrFunction, function: LLVMValueRef, args: List<LLVMValueRef>,
                      resultLifetime: Lifetime): LLVMValueRef {
         val result = call(function, args, resultLifetime)
         if (descriptor.returnType.isNothing()) {
@@ -2315,7 +2315,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun delegatingConstructorCall(
-            descriptor: ClassConstructorDescriptor, args: List<LLVMValueRef>): LLVMValueRef {
+        descriptor: IrConstructor, args: List<LLVMValueRef>): LLVMValueRef {
 
         val constructedClass = functionGenerationContext.constructedClass!!
         val thisPtr = currentCodeContext.genGetValue(constructedClass.thisReceiver!!)
@@ -2385,7 +2385,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun appendEntryPointSelector(descriptor: FunctionDescriptor?) {
+    private fun appendEntryPointSelector(descriptor: IrFunction?) {
         if (descriptor == null) return
 
         val entryPoint = codegen.llvmFunction(descriptor)

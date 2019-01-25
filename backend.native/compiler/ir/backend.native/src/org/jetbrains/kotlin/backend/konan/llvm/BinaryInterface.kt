@@ -112,7 +112,7 @@ private val exportForCompilerAnnotation = FqName("kotlin.native.internal.ExportF
 
 private val publishedApiAnnotation = FqName("kotlin.PublishedApi")
 
-private fun acyclicTypeMangler(visited: MutableSet<TypeParameterDescriptor>, type: IrType): String {
+private fun acyclicTypeMangler(visited: MutableSet<IrTypeParameter>, type: IrType): String {
     val descriptor = (type.classifierOrNull as? IrTypeParameterSymbol)?.owner
     if (descriptor != null) {
         val upperBounds = if (visited.contains(descriptor)) "" else {
@@ -148,7 +148,7 @@ private fun acyclicTypeMangler(visited: MutableSet<TypeParameterDescriptor>, typ
 }
 
 private fun typeToHashString(type: IrType)
-    = acyclicTypeMangler(mutableSetOf<TypeParameterDescriptor>(), type)
+    = acyclicTypeMangler(mutableSetOf<IrTypeParameter>(), type)
 
 internal val IrValueParameter.extensionReceiverNamePart: String
     get() = "@${typeToHashString(this.type)}."

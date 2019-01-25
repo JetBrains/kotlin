@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.name.Name
@@ -45,7 +46,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     }
 
     val variables: ArrayList<Record> = arrayListOf()
-    val contextVariablesToIndex: HashMap<ValueDescriptor, Int> = hashMapOf()
+    val contextVariablesToIndex: HashMap<IrValueDeclaration, Int> = hashMapOf()
 
     // Clears inner state of variable manager.
     fun clear() {
@@ -53,8 +54,8 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         contextVariablesToIndex.clear()
     }
 
-    fun createVariable(descriptor: ValueDescriptor, value: LLVMValueRef? = null, variableLocation: VariableDebugLocation?) : Int {
-        val isVar = descriptor is VariableDescriptor && descriptor.isVar
+    fun createVariable(descriptor: IrValueDeclaration, value: LLVMValueRef? = null, variableLocation: VariableDebugLocation?) : Int {
+        val isVar = descriptor is IrVariable && descriptor.isVar
         // Note that we always create slot for object references for memory management.
         if (!functionGenerationContext.context.shouldContainDebugInfo() && !isVar && value != null)
             return createImmutable(descriptor, value)
@@ -66,8 +67,8 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
             return createMutable(descriptor, isVar, value, variableLocation)
     }
 
-    internal fun createMutable(descriptor: ValueDescriptor,
-                      isVar: Boolean, value: LLVMValueRef? = null, variableLocation: VariableDebugLocation?) : Int {
+    internal fun createMutable(descriptor: IrValueDeclaration,
+                               isVar: Boolean, value: LLVMValueRef? = null, variableLocation: VariableDebugLocation?) : Int {
         assert(!contextVariablesToIndex.contains(descriptor))
         val index = variables.size
         val type = functionGenerationContext.getLLVMType(descriptor.type)
@@ -80,7 +81,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     }
 
     internal var skip = 0
-    internal fun createParameter(descriptor: ValueDescriptor, variableLocation: VariableDebugLocation?) : Int {
+    internal fun createParameter(descriptor: IrValueDeclaration, variableLocation: VariableDebugLocation?) : Int {
         assert(!contextVariablesToIndex.contains(descriptor))
         val index = variables.size
         val type = functionGenerationContext.getLLVMType(descriptor.type)
@@ -109,7 +110,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         return index
     }
 
-    internal fun createImmutable(descriptor: ValueDescriptor, value: LLVMValueRef) : Int {
+    internal fun createImmutable(descriptor: IrValueDeclaration, value: LLVMValueRef) : Int {
         if (contextVariablesToIndex.containsKey(descriptor))
             throw Error("${ir2string(descriptor)} is already defined")
         val index = variables.size
@@ -118,7 +119,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         return index
     }
 
-    fun indexOf(descriptor: ValueDescriptor) : Int {
+    fun indexOf(descriptor: IrValueDeclaration) : Int {
         return contextVariablesToIndex.getOrElse(descriptor) { -1 }
     }
 

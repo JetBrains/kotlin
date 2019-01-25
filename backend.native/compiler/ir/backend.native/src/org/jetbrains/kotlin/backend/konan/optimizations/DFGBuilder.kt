@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-private fun IrClass.getOverridingOf(function: FunctionDescriptor) = (function as? IrSimpleFunction)?.let {
+private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimpleFunction)?.let {
     it.allOverriddenDescriptors.atMostOne { it.parent == this }
 }
 
@@ -42,18 +42,18 @@ private fun IrTypeOperator.isCast() =
 
 
 private class VariableValues {
-    val elementData = HashMap<VariableDescriptor, MutableSet<IrExpression>>()
+    val elementData = HashMap<IrVariable, MutableSet<IrExpression>>()
 
-    fun addEmpty(variable: VariableDescriptor) =
+    fun addEmpty(variable: IrVariable) =
             elementData.getOrPut(variable, { mutableSetOf() })
 
-    fun add(variable: VariableDescriptor, element: IrExpression) =
+    fun add(variable: IrVariable, element: IrExpression) =
             elementData[variable]?.add(element)
 
-    fun add(variable: VariableDescriptor, elements: Set<IrExpression>) =
+    fun add(variable: IrVariable, elements: Set<IrExpression>) =
             elementData[variable]?.addAll(elements)
 
-    fun get(variable: VariableDescriptor): Set<IrExpression>? =
+    fun get(variable: IrVariable): Set<IrExpression>? =
             elementData[variable]
 
     fun computeClosure() {
@@ -63,14 +63,14 @@ private class VariableValues {
     }
 
     // Computes closure of all possible values for given variable.
-    private fun computeValueClosure(value: VariableDescriptor): Set<IrExpression> {
+    private fun computeValueClosure(value: IrVariable): Set<IrExpression> {
         val result = mutableSetOf<IrExpression>()
-        val seen = mutableSetOf<VariableDescriptor>()
+        val seen = mutableSetOf<IrVariable>()
         dfs(value, seen, result)
         return result
     }
 
-    private fun dfs(value: VariableDescriptor, seen: MutableSet<VariableDescriptor>, result: MutableSet<IrExpression>) {
+    private fun dfs(value: IrVariable, seen: MutableSet<IrVariable>, result: MutableSet<IrExpression>) {
         seen += value
         val elements = elementData[value]
                 ?: return
@@ -79,7 +79,7 @@ private class VariableValues {
                 result += element
             else {
                 val descriptor = element.symbol.owner
-                if (descriptor is VariableDescriptor && !seen.contains(descriptor))
+                if (descriptor is IrVariable && !seen.contains(descriptor))
                     dfs(descriptor, seen, result)
             }
         }
@@ -230,7 +230,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 }
             }
 
-            private fun analyze(descriptor: DeclarationDescriptor, body: IrElement?) {
+            private fun analyze(descriptor: IrDeclaration, body: IrElement?) {
                 // Find all interesting expressions, variables and functions.
                 val visitor = ElementFinderVisitor()
                 body?.acceptVoid(visitor)
@@ -297,7 +297,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         val variableValues = VariableValues()
         val returnValues = mutableListOf<IrExpression>()
         val thrownValues = mutableListOf<IrExpression>()
-        val catchParameters = mutableSetOf<VariableDescriptor>()
+        val catchParameters = mutableSetOf<IrVariable>()
 
         private val suspendableExpressionStack = mutableListOf<IrSuspendableExpression>()
 
@@ -305,7 +305,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             element.acceptChildrenVoid(this)
         }
 
-        private fun assignVariable(variable: VariableDescriptor, value: IrExpression) {
+        private fun assignVariable(variable: IrVariable, value: IrExpression) {
             expressionValuesExtractor.forEachValue(value) {
                 variableValues.add(variable, it)
             }
@@ -410,13 +410,13 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
     private inner class FunctionDFGBuilder(val expressionValuesExtractor: ExpressionValuesExtractor,
                                            val variableValues: VariableValues,
-                                           val descriptor: DeclarationDescriptor,
+                                           val descriptor: IrDeclaration,
                                            val expressions: List<IrExpression>,
                                            val returnValues: List<IrExpression>,
                                            val thrownValues: List<IrExpression>,
-                                           val catchParameters: Set<VariableDescriptor>) {
+                                           val catchParameters: Set<IrVariable>) {
 
-        private val allParameters = (descriptor as? FunctionDescriptor)?.allParameters ?: emptyList()
+        private val allParameters = (descriptor as? IrFunction)?.allParameters ?: emptyList()
         private val templateParameters = allParameters.withIndex().associateBy({ it.value }, { DataFlowIR.Node.Parameter(it.index) })
 
         private val continuationParameter = when {
@@ -570,7 +570,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                 else
                                                     it
                                             }
-                                    if (callee is ConstructorDescriptor) {
+                                    if (callee is IrConstructor) {
                                         DataFlowIR.Node.NewObject(
                                                 symbolTable.mapFunction(callee),
                                                 arguments,
@@ -580,7 +580,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                     } else {
                                         callee as IrSimpleFunction
                                         if (callee.isOverridable && value.superQualifier == null) {
-                                            val owner = callee.containingDeclaration as ClassDescriptor
+                                            val owner = callee.containingDeclaration as IrClass
                                             val actualReceiverType = value.dispatchReceiver!!.type
                                             val actualReceiverClassifier = actualReceiverType.classifierOrFail
 
@@ -634,7 +634,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                             }
 
                             is IrDelegatingConstructorCall -> {
-                                val thisReceiver = (descriptor as ConstructorDescriptor).constructedClass.thisReceiver!!
+                                val thisReceiver = (descriptor as IrConstructor).constructedClass.thisReceiver!!
                                 val thiz = IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, thisReceiver.type,
                                         thisReceiver.symbol)
                                 val arguments = listOf(thiz) + value.getArguments().map { it.second }
