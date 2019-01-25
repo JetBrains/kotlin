@@ -193,13 +193,11 @@ function invokeModule(inst, args) {
     return exit_status;
 }
 
-// Instantiate module in Browser in a sequence of promises.
+// Instantiate module in Browser.
 function instantiateAndRun(arraybuffer, args) {
-    WebAssembly.compile(arraybuffer)
-        .then(module => {
-            linkJavaScriptLibraries();
-            return WebAssembly.instantiate(module, konan_dependencies);
-        }).then(instance => invokeModule(instance, args));
+    linkJavaScriptLibraries();
+    WebAssembly.instantiate(arraybuffer, konan_dependencies)
+        .then(resultObject => invokeModule(resultObject.instance, args));
 }
 
 // Instantiate module in d8 synchronously.
@@ -211,11 +209,11 @@ function instantiateAndRunSync(arraybuffer, args) {
 }
 
 
-// Instantiate module in Browser as a promise of streaming instantiation.
+// Instantiate module in Browser using streaming instantiation.
 function instantiateAndRunStreaming(filename) {
     linkJavaScriptLibraries();
     WebAssembly.instantiateStreaming(fetch(filename), konan_dependencies)
-      .then(resultObject => invokeModule(resultObject.instance, [filename]));
+        .then(resultObject => invokeModule(resultObject.instance, [filename]));
 }
 
 konan.moduleEntry = function (args) {
