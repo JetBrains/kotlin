@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
@@ -143,6 +144,13 @@ class NewCapturedType(
 
     override fun makeNullableAsSpecified(newNullability: Boolean) =
         NewCapturedType(captureStatus, constructor, lowerType, annotations, newNullability)
+
+    override fun refine(moduleDescriptor: ModuleDescriptor) =
+        NewCapturedType(
+            captureStatus,
+            constructor.refine(moduleDescriptor),
+            lowerType?.refine(moduleDescriptor), annotations, isMarkedNullable
+        )
 }
 
 class NewCapturedTypeConstructor(override val projection: TypeProjection, private var supertypes: List<UnwrappedType>? = null) :
@@ -161,6 +169,9 @@ class NewCapturedTypeConstructor(override val projection: TypeProjection, privat
     override fun isDenotable() = false
     override fun getDeclarationDescriptor(): ClassifierDescriptor? = null
     override fun getBuiltIns(): KotlinBuiltIns = projection.type.builtIns
+
+    internal fun refine(moduleDescriptor: ModuleDescriptor) =
+        NewCapturedTypeConstructor(projection.refine(moduleDescriptor), supertypes?.map { it.refine(moduleDescriptor) })
 
     override fun toString() = "CapturedType($projection)"
 }

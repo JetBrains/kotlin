@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 
 public class TypeProjectionImpl extends TypeProjectionBase {
     private final Variance projection;
@@ -46,5 +47,11 @@ public class TypeProjectionImpl extends TypeProjectionBase {
     @Override
     public boolean isStarProjection() {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public TypeProjection refine(ModuleDescriptor moduleDescriptor) {
+        return new TypeProjectionImpl(projection, type.refine(moduleDescriptor));
     }
 }

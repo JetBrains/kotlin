@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
@@ -38,4 +39,6 @@ class StubType(
     override fun toString(): String {
         return "NonFixed: $originalTypeVariable"
     }
+
+    override fun refine(moduleDescriptor: ModuleDescriptor) = this
 }

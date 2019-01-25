@@ -10,10 +10,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -58,6 +55,12 @@ public class TypeUtils {
         @Override
         public String toString() {
             return name;
+        }
+
+        @NotNull
+        @Override
+        public DelegatingSimpleType replaceDelegate(@NotNull SimpleType delegate) {
+            throw new IllegalStateException(name);
         }
     }
 
@@ -184,7 +187,10 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static SimpleType makeUnsubstitutedType(ClassifierDescriptor classifierDescriptor, MemberScope unsubstitutedMemberScope) {
+    public static SimpleType makeUnsubstitutedType(
+            ClassifierDescriptor classifierDescriptor, MemberScope unsubstitutedMemberScope,
+            Function1<ModuleDescriptor, MemberScope> scopeFactory
+    ) {
         if (ErrorUtils.isError(classifierDescriptor)) {
             return ErrorUtils.createErrorType("Unsubstituted type for " + classifierDescriptor);
         }
@@ -195,7 +201,7 @@ public class TypeUtils {
                 typeConstructor,
                 arguments,
                 false,
-                unsubstitutedMemberScope
+                unsubstitutedMemberScope, scopeFactory
         );
     }
 

@@ -46,7 +46,7 @@ open class KnownClassDescriptor(
         this.declaredTypeParameters = declaredTypeParameters
         this.supertypes = supertypes
         this.typeConstructor = ClassTypeConstructorImpl(this, declaredTypeParameters, supertypes, LockBasedStorageManager.NO_LOCKS)
-        this.defaultType = TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
+        this.defaultType = TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope, { unsubstitutedMemberScope })
     }
 
     companion object {

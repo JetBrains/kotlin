@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -134,4 +135,7 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
 
     override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
             = KotlinTypeFactory.flexibleType(lowerBound.makeNullableAsSpecified(newNullability), upperBound.makeNullableAsSpecified(newNullability))
+
+    override fun refine(moduleDescriptor: ModuleDescriptor) =
+        KotlinTypeFactory.flexibleType(lowerBound.refine(moduleDescriptor), upperBound.refine(moduleDescriptor)) as FlexibleType
 }

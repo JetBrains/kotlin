@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 
 public interface TypeProjection {
     @NotNull
@@ -26,4 +27,7 @@ public interface TypeProjection {
     KotlinType getType();
 
     boolean isStarProjection();
+
+    @NotNull
+    TypeProjection refine(@NotNull ModuleDescriptor moduleDescriptor);
 }

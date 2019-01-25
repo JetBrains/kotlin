@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.descriptors.impl;
 
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper;
@@ -42,7 +44,17 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         this.defaultType = storageManager.createLazyValue(new Function0<SimpleType>() {
             @Override
             public SimpleType invoke() {
-                return TypeUtils.makeUnsubstitutedType(AbstractClassDescriptor.this, getUnsubstitutedMemberScope());
+                return TypeUtils.makeUnsubstitutedType(
+                        AbstractClassDescriptor.this, getUnsubstitutedMemberScope(),
+                        new Function1<ModuleDescriptor, MemberScope>() {
+                            @Override
+                            public MemberScope invoke(ModuleDescriptor moduleDescriptor) {
+                                ClassDescriptor descriptor = KotlinTypeKt.refineDescriptor(AbstractClassDescriptor.this, moduleDescriptor);
+                                if (descriptor == null) return getUnsubstitutedMemberScope();
+                                return descriptor.getUnsubstitutedMemberScope();
+                            }
+                        }
+                );
             }
         });
         this.unsubstitutedInnerClassesScope = storageManager.createLazyValue(new Function0<MemberScope>() {

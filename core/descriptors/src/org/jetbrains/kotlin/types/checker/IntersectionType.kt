@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
 import java.util.*
 import kotlin.collections.LinkedHashSet
@@ -123,8 +122,7 @@ object TypeIntersector {
 
         if (filteredSuperAndEqualTypes.size < 2) return filteredSuperAndEqualTypes.single()
 
-        val constructor = IntersectionTypeConstructor(inputTypes)
-        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.EMPTY, constructor, listOf(), false, constructor.createScopeForKotlinType())
+        return IntersectionTypeConstructor(inputTypes).createType()
     }
 
     private fun isStrictSupertype(subtype: KotlinType, supertype: KotlinType): Boolean {

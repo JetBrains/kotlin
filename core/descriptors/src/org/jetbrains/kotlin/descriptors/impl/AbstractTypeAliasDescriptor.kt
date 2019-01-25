@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class AbstractTypeAliasDescriptor(
     containingDeclaration: DeclarationDescriptor,
@@ -90,7 +91,13 @@ abstract class AbstractTypeAliasDescriptor(
     protected abstract fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor>
 
     protected fun computeDefaultType(): SimpleType =
-        TypeUtils.makeUnsubstitutedType(this, classDescriptor?.unsubstitutedMemberScope ?: MemberScope.Empty)
+        TypeUtils.makeUnsubstitutedType(this, classDescriptor?.unsubstitutedMemberScope ?: MemberScope.Empty) { moduleDescriptor ->
+            classDescriptor
+                ?.refineDescriptor(moduleDescriptor)
+                ?.safeAs<ClassDescriptor>()
+                ?.unsubstitutedMemberScope
+                ?: MemberScope.Empty
+        }
 
     private val typeConstructor = object : TypeConstructor {
         override fun getDeclarationDescriptor(): TypeAliasDescriptor =

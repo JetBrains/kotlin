@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
+@file:Suppress("Reformat")
+
 package org.jetbrains.kotlin.load.java.lazy.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.resolveClassByFqName
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -80,6 +86,11 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
         if (newLower == newUpper) return newLower
         return renderer.renderFlexibleType(newLower, newUpper, builtIns)
     }
+
+    override fun refine(moduleDescriptor: ModuleDescriptor): FlexibleType {
+        if (moduleDescriptor.builtIns === lowerBound.builtIns) return this
+        return RawTypeImpl(lowerBound.refine(moduleDescriptor), upperBound.refine(moduleDescriptor))
+    }
 }
 
 internal object RawSubstitution : TypeSubstitution() {
@@ -125,14 +136,21 @@ internal object RawSubstitution : TypeSubstitution() {
 
         if (type.isError) return ErrorUtils.createErrorType("Raw error type: ${type.constructor}") to false
 
+        val memberScope = declaration.getMemberScope(RawSubstitution)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                type.annotations, type.constructor,
-                type.constructor.parameters.map {
+            type.annotations, type.constructor,
+            type.constructor.parameters.map {
                     parameter ->
                     computeProjection(parameter, attr)
                 },
-                type.isMarkedNullable, declaration.getMemberScope(RawSubstitution)
-        ) to true
+            type.isMarkedNullable, memberScope
+        ) factory@ { moduleDescriptor ->
+            val fqName = declaration.fqNameOrNull() ?: return@factory memberScope
+
+            moduleDescriptor
+                .resolveClassByFqName(fqName, NoLookupLocation.FOR_ALREADY_TRACKED)
+                ?.getMemberScope(RawSubstitution) ?: memberScope
+        } to true
     }
 
     fun computeProjection(

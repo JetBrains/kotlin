@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.coroutines.hasFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtExpression
@@ -63,6 +64,8 @@ class TypeTemplate(
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions) =
         "~${renderer.renderType(typeVariable.type)}"
+
+    override fun refine(moduleDescriptor: ModuleDescriptor) = this
 }
 
 class CoroutineInferenceData {

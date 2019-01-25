@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
 
@@ -477,7 +476,7 @@ open class WrappedClassDescriptor(
 
 
     private val _defaultType: SimpleType by lazy {
-        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
+        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope) { unsubstitutedMemberScope }
     }
 
     override fun getDefaultType(): SimpleType = _defaultType
@@ -562,7 +561,7 @@ open class WrappedEnumEntryDescriptor(
 
 
     private val _defaultType: SimpleType by lazy {
-        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
+        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope) { unsubstitutedMemberScope }
     }
 
     override fun getDefaultType(): SimpleType = _defaultType

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
@@ -38,6 +39,8 @@ class SimpleTypeWithEnhancement(
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
             = origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability)) as SimpleType
+
+    override fun replaceDelegate(delegate: SimpleType) = SimpleTypeWithEnhancement(delegate, enhancement)
 }
 
 class FlexibleTypeWithEnhancement(
@@ -60,6 +63,9 @@ class FlexibleTypeWithEnhancement(
     }
 
     override val delegate: SimpleType get() = origin.delegate
+
+    override fun refine(moduleDescriptor: ModuleDescriptor) =
+        FlexibleTypeWithEnhancement(origin.refine(moduleDescriptor), enhancement.refine(moduleDescriptor))
 }
 
 fun KotlinType.getEnhancement(): KotlinType? = when (this) {

@@ -242,4 +242,6 @@ internal class NotNullTypeParameter(override val delegate: SimpleType) : CustomT
     override fun replaceAnnotations(newAnnotations: Annotations) = NotNullTypeParameter(delegate.replaceAnnotations(newAnnotations))
     override fun makeNullableAsSpecified(newNullability: Boolean) =
         if (newNullability) delegate.makeNullableAsSpecified(true) else this
+
+    override fun replaceDelegate(delegate: SimpleType) = NotNullTypeParameter(delegate)
 }

@@ -154,7 +154,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
 
             is IntersectionTypeConstructor -> if (type.isMarkedNullable) {
                 val newConstructor = constructor.transformComponents(transform = { it.makeNullable() }) ?: constructor
-                return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(type.annotations, newConstructor, listOf(), false, newConstructor.createScopeForKotlinType())
+                return newConstructor.createType()
             }
         }
 
