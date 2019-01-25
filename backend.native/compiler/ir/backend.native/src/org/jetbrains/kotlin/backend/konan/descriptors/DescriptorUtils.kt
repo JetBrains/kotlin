@@ -100,7 +100,6 @@ internal val IrClass.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
 fun IrClass.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
-        || this.kind == ClassKind.ENUM_CLASS
 
 internal fun IrFunction.hasValueTypeAt(index: Int): Boolean {
     when (index) {

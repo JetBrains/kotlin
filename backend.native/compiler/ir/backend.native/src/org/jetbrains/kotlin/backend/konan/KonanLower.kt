@@ -83,8 +83,8 @@ internal class KonanLower(val context: Context, val parentPhaser: PhaseManager) 
         phaser.phase(KonanPhase.LOWER_FOR_LOOPS) {
             ForLoopsLowering(context).lower(irFile)
         }
-        phaser.phase(KonanPhase.LOWER_ENUMS) {
-            EnumClassLowering(context).run(irFile)
+        phaser.phase(KonanPhase.LOWER_ENUM_CONSTRUCTORS) {
+            EnumConstructorsLowering(context).run(irFile)
         }
         phaser.phase(KonanPhase.LOWER_INITIALIZERS) {
             InitializersLowering(context).runOnFilePostfix(irFile)
@@ -116,6 +116,9 @@ internal class KonanLower(val context: Context, val parentPhaser: PhaseManager) 
         }
         phaser.phase(KonanPhase.LOWER_INNER_CLASSES) {
             InnerClassLowering(context).runOnFilePostfix(irFile)
+        }
+        phaser.phase(KonanPhase.LOWER_ENUMS) {
+            EnumClassLowering(context).run(irFile)
         }
         phaser.phase(KonanPhase.LOWER_INTEROP_PART2) {
             InteropLoweringPart2(context).lower(irFile)

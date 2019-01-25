@@ -134,7 +134,6 @@ internal val MemberScope.contributedMethods: List<FunctionDescriptor>
     }
 
 fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
-        || this.kind == ClassKind.ENUM_CLASS
 
 internal val FunctionDescriptor.target: FunctionDescriptor
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
