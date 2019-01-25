@@ -50,10 +50,10 @@ internal fun patchFiles(
     val resultFiles = testFiles.map {
         val fileName = if (isSingle) it.name else testFile.name.substringBeforeLast(".kt") + "/" + it.name
         TestClassInfo(
-                fileName,
-                changePackage(newPackagePrefix, it.content, oldPackage),
-                oldPackage.get(),
-                getGeneratedClassName(File(fileName), it.content, newPackagePrefix, oldPackage.get())
+            fileName,
+            changePackage(newPackagePrefix, it.content, oldPackage),
+            oldPackage.get(),
+            getGeneratedClassName(File(fileName), it.content, newPackagePrefix, oldPackage.get())
         )
     }
     val packages =
@@ -131,16 +131,14 @@ private fun changePackage(newPackagePrefix: String, text: String, oldPackage: Re
         val oldPackageName = matcher.toMatchResult().group(1)
         oldPackage.set(FqName(oldPackageName))
         return matcher.replaceAll("package $newPackagePrefix.$oldPackageName")
-    }
-    else {
+    } else {
         oldPackage.set(FqName.ROOT)
         val packageDirective = "package $newPackagePrefix;\n"
         if (text.contains("@file:")) {
             val index = text.lastIndexOf("@file:")
             val packageDirectiveIndex = text.indexOf("\n", index)
             return text.substring(0, packageDirectiveIndex + 1) + packageDirective + text.substring(packageDirectiveIndex + 1)
-        }
-        else {
+        } else {
             return packageDirective + text
         }
     }
@@ -194,7 +192,10 @@ private fun String.patchSelfImports(newPackage: FqName): String {
         val possibleSelfImport = matcher.toMatchResult().group(1)
         val classOrObjectPattern = Pattern.compile("[\\s|^](class|object)\\s$possibleSelfImport[\\s|\\(|{|;|:]")
         if (classOrObjectPattern.matcher(newText).find()) {
-            newText = newText.replace("import " + possibleSelfImport, "import " + newPackage.child(Name.identifier(possibleSelfImport)).asString())
+            newText = newText.replace(
+                "import $possibleSelfImport",
+                "import " + newPackage.child(Name.identifier(possibleSelfImport)).asString()
+            )
         }
     }
     return newText
