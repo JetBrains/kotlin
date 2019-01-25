@@ -45,7 +45,8 @@ import org.jetbrains.kotlin.types.Variance
 
 internal class IrModuleSerializer(
     val logger: LoggingContext,
-    val declarationTable: DeclarationTable
+    val declarationTable: DeclarationTable,
+    val bodiesOnlyForInlines: Boolean = false
 ) {
 
     private val loopIndex = mutableMapOf<IrLoop, Int>()
@@ -805,7 +806,9 @@ internal class IrModuleSerializer(
             //proto.addValueParameter(serializeIrValueParameter(it))
             proto.addValueParameter(serializeDeclaration(it))
         }
-        function.body?.let { proto.body = serializeStatement(it) }
+        if (!bodiesOnlyForInlines || function.isInline) {
+            function.body?.let { proto.body = serializeStatement(it) }
+        }
         return proto.build()
     }
 

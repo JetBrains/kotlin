@@ -117,11 +117,11 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
 
     phaser.phase(KonanPhase.SERIALIZER) {
         val declarationTable = DeclarationTable(context.irModule!!.irBuiltins, DescriptorTable())
-        val serializedIr = IrModuleSerializer(context, declarationTable).serializedIrModule(context.irModule!!)
+        val serializedIr = IrModuleSerializer(context, declarationTable, bodiesOnlyForInlines = context.config.isInteropStubs).serializedIrModule(context.irModule!!)
 
         val serializer = KonanSerializationUtil(context, context.config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, declarationTable)
         context.serializedLinkData =
-            serializer.serializeModule(context.moduleDescriptor, if (!context.config.isInteropStubs) serializedIr else null)
+            serializer.serializeModule(context.moduleDescriptor, /*if (!context.config.isInteropStubs) serializedIr else null*/ serializedIr)
     }
     phaser.phase(KonanPhase.BACKEND) {
         phaser.phase(KonanPhase.LOWER) {
