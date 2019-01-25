@@ -25,7 +25,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
     }
-    ext.useCustomDist = project.hasProperty("org.jetbrains.kotlin.native.home")
+    ext.useCustomDist = project.hasProperty("org.jetbrains.kotlin.native.home") || project.hasProperty("konan.home")
     if (!useCustomDist) {
         ext.setProperty("org.jetbrains.kotlin.native.home", distDir.absolutePath)
     }
@@ -54,6 +54,10 @@ dependencies {
             type = 'zip'
         }
     }
+}
+
+if (project.hasProperty("konan.home")) {
+    ext.setProperty("org.jetbrains.kotlin.native.home", project.property("konan.home"))
 }
 
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
