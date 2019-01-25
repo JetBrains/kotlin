@@ -44,7 +44,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
     init {
         val connection = project.messageBus.connect()
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
-            KotlinMigrationProjectComponent.getInstance(project).onImportFinished()
+            KotlinMigrationProjectComponent.getInstanceIfNotDisposed(project)?.onImportFinished()
         })
     }
 
@@ -116,8 +116,16 @@ class KotlinMigrationProjectComponent(val project: Project) {
     }
 
     companion object {
-        fun getInstance(project: Project): KotlinMigrationProjectComponent =
-            project.getComponent(KotlinMigrationProjectComponent::class.java)!!
+        fun getInstanceIfNotDisposed(project: Project): KotlinMigrationProjectComponent? {
+            return runReadAction {
+                if (!project.isDisposed) {
+                    project.getComponent(KotlinMigrationProjectComponent::class.java)
+                        ?: error("Can't find ${KotlinMigrationProjectComponent::class.qualifiedName} component")
+                } else {
+                    null
+                }
+            }
+        }
 
         private fun prepareMigrationInfo(old: MigrationState?, new: MigrationState?): MigrationInfo? {
             if (old == null || new == null) {

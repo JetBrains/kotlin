@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test
-import java.lang.IllegalStateException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -99,7 +98,8 @@ class GradleMigrateTest : GradleImportingTestCase() {
         }
 
         val importResult = FutureResult<MigrationTestState?>()
-        val migrationProjectComponent = KotlinMigrationProjectComponent.getInstance(myProject)
+        val migrationProjectComponent = KotlinMigrationProjectComponent.getInstanceIfNotDisposed(myProject)
+            ?: error("Disposed project")
 
         migrationProjectComponent.setImportFinishListener { migrationState ->
             importResult.set(migrationState)

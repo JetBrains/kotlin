@@ -104,7 +104,8 @@ class MavenMigrateTest : MavenImportingTestCase() {
         }
 
         val importResult = FutureResult<KotlinMigrationProjectComponent.MigrationTestState?>()
-        val migrationProjectComponent = KotlinMigrationProjectComponent.getInstance(myProject)
+        val migrationProjectComponent = KotlinMigrationProjectComponent.getInstanceIfNotDisposed(myProject)
+            ?: error("Disposed project")
 
         migrationProjectComponent.setImportFinishListener { migrationState ->
             importResult.set(migrationState)
