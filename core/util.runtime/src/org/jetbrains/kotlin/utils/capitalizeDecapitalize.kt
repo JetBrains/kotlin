@@ -54,7 +54,7 @@ fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
             validWords++
         }
 
-        return if(validWords > 1) builder.toString() else null
+        return if (validWords > 1) builder.toString() else null
     }
 
     val constant = decapitalizeConstant()
