@@ -38,5 +38,10 @@ projectTest {
     doFirst {
         environment("kotlin.tests.android.timeout", "45")
     }
+
+    if (project.hasProperty("teamcity") || project.hasProperty("kotlin.test.android.teamcity")) {
+        systemProperty("kotlin.test.android.teamcity", true)
+    }
+
     workingDir = rootDir
 }
