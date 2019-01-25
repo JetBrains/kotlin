@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.compile
-import org.jetbrains.kotlin.js.test.runtimeSources
+import org.jetbrains.kotlin.js.test.JsIrTestRuntime
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
@@ -53,7 +53,7 @@ fun main() {
 
     val result = compile(
         environment.project,
-        runtimeSources.map(::createPsiFile),
+        JsIrTestRuntime.FULL.sources.map(::createPsiFile),
         buildConfiguration(environment),
         null,
         true,
