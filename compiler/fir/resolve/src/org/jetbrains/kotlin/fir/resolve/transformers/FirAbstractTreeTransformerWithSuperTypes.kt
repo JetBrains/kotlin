@@ -16,16 +16,16 @@ import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 
 abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: Boolean) : FirAbstractTreeTransformer() {
-    protected var towerScope = FirCompositeScope(mutableListOf(), reversedPriority = reversedScopePriority)
+    protected val towerScope = FirCompositeScope(mutableListOf(), reversedPriority = reversedScopePriority)
 
     protected inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
-        val scopeBefore = towerScope
-        val scopes = towerScope.scopes
-        val sizeBefore = scopes.size
+        val sizeBefore = towerScope.scopes.size
         val result = l()
-        towerScope = scopeBefore
-        assert(scopes.size >= sizeBefore)
-        scopes.subList(sizeBefore + 1, scopes.size).clear()
+        val size = towerScope.scopes.size
+        assert(size >= sizeBefore)
+        repeat(size - sizeBefore) {
+            towerScope.scopes.let { it.removeAt(it.size - 1) }
+        }
         return result
     }
 

@@ -6,12 +6,20 @@
 package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSymbolProvider {
+    override fun getCallableSymbols(callableId: CallableId): List<ConeSymbol> {
+        for (provider in providers) {
+            val symbols = provider.getCallableSymbols(callableId)
+            if (symbols.isNotEmpty()) return symbols
+        }
+        return emptyList()
+    }
 
     override fun getPackage(fqName: FqName): FqName? {
         return providers.firstNotNullResult { it.getPackage(fqName) }

@@ -2,7 +2,7 @@ FILE: genericFunctions.kt
     public abstract interface Any {
     }
     <reified T : R|Any|> public final inline function safeAs R|Any|.(): R|T| {
-        return@@@safeAs STUB
+        return@@@safeAs as?/R|T|(this#)
     }
     public abstract class Summator {
         public constructor(): super<R|Any|>()

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 class FirMemberPropertyImpl(
     session: FirSession,
     psi: PsiElement?,
+    symbol: FirPropertySymbol,
     name: Name,
     visibility: Visibility,
     modality: Modality?,
@@ -37,7 +39,7 @@ class FirMemberPropertyImpl(
     override var setter: FirPropertyAccessor,
     override var delegate: FirExpression?
 ) : FirAbstractCallableMember(
-    session, psi, name, visibility, modality, isExpect, isActual, isOverride, receiverType, returnType
+    session, psi, symbol, name, visibility, modality, isExpect, isActual, isOverride, receiverType, returnType
 ), FirProperty {
     init {
         status.isConst = isConst

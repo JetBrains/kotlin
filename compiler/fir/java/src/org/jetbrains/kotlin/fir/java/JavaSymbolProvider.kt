@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.java.symbols.JavaClassSymbol
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -19,6 +20,10 @@ class JavaSymbolProvider(
     val project: Project,
     private val searchScope: GlobalSearchScope
 ) : AbstractFirSymbolProvider() {
+    override fun getCallableSymbols(callableId: CallableId): List<ConeSymbol> {
+        // TODO
+        return emptyList()
+    }
 
     override fun getSymbolByFqName(classId: ClassId): ConeSymbol? {
         return classCache.lookupCacheOrCalculate(classId) {

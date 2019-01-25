@@ -1,0 +1,16 @@
+FILE: superMember.kt
+    public open class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public open function foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): super<R|A|>()
+
+        public final function bar(): R|kotlin/Unit| {
+            R|/A.foo|()
+        }
+
+    }

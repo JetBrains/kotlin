@@ -8,8 +8,8 @@ FILE: lists.kt
 
     }
     public final function convert R|kotlin/collections/List<kotlin/String>|.(): R|MyStringList| {
-        return@@@convert STUB
+        return@@@convert as/R|MyStringList|(this#)
     }
     public final function ret(l: R|kotlin/collections/MutableList<kotlin/String>|): R|MyMutableStringList| {
-        return@@@ret STUB
+        return@@@ret as/R|MyMutableStringList|(this#)
     }

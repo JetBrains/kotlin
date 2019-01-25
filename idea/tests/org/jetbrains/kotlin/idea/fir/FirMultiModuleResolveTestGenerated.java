@@ -33,4 +33,9 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
     public void testBasic() throws Exception {
         runTest("idea/testData/fir/multiModule/basic/");
     }
+
+    @TestMetadata("mppMembers")
+    public void testMppMembers() throws Exception {
+        runTest("idea/testData/fir/multiModule/mppMembers/");
+    }
 }

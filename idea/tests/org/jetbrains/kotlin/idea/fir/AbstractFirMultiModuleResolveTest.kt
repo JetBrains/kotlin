@@ -68,7 +68,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
         for (module in project.allModules().drop(1)) {
             val session = createSession(module, provider)
 
-            val builder = RawFirBuilder(session, stubMode = true)
+            val builder = RawFirBuilder(session, stubMode = false)
             val psiManager = PsiManager.getInstance(project)
 
             val ideaModuleInfo = session.moduleInfo.cast<IdeaModuleInfo>()

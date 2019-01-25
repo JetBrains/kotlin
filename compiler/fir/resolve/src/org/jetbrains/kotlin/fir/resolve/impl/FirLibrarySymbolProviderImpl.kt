@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.LibraryClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FictitiousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -27,6 +27,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
 class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider {
+    override fun getCallableSymbols(callableId: CallableId): List<ConeSymbol> {
+        // TODO
+        return emptyList()
+    }
 
     private class BuiltInsPackageFragment(stream: InputStream, val fqName: FqName) {
         lateinit var version: BuiltInsBinaryVersion

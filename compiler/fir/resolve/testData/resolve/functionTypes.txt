@@ -1,12 +1,11 @@
 FILE: functionTypes.kt
     <T> public final function simpleRun(f: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
-        return@@@simpleRun STUB
+        return@@@simpleRun <Unresolved name: f>#()
     }
     <T, R> public final function simpleMap R|kotlin/collections/List<T>|.(f: R|(T) -> R|): R|R| {
-        return@@@simpleMap STUB
     }
     <T> public final function simpleWith(t: R|T|, f: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
-        return@@@simpleWith STUB
+        return@@@simpleWith <Unresolved name: t>#.<Unresolved name: f>#()
     }
     <T, R> public abstract interface KMutableProperty1 : R|KProperty1<T, R>|, R|KMutableProperty<R>| {
     }

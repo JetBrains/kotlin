@@ -140,6 +140,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitReference(namedReference, null)
     }
 
+    open fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
+        visitNamedReference(resolvedCallableReference, null)
+    }
+
     open fun visitSuperReference(superReference: FirSuperReference) {
         visitReference(superReference, null)
     }
@@ -578,6 +582,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
         visitRegularClass(regularClass)
+    }
+
+    final override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: Nothing?) {
+        visitResolvedCallableReference(resolvedCallableReference)
     }
 
     final override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: Nothing?) {

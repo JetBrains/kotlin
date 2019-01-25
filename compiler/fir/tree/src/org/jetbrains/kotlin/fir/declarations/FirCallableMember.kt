@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.VisitedSupertype
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // Good name needed (something with receiver, type parameters, return type, and name)
-interface FirCallableMember : @VisitedSupertype FirDeclaration, FirMemberDeclaration, FirTypedDeclaration {
+interface FirCallableMember :
+    @VisitedSupertype FirDeclaration, FirMemberDeclaration,
+    FirTypedDeclaration, FirSymbolOwner<FirCallableMember> {
     val isOverride: Boolean get() = status.isOverride
 
     val receiverType: FirType?

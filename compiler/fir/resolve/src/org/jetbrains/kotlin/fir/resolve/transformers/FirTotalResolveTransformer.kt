@@ -13,7 +13,8 @@ class FirTotalResolveTransformer {
     val transformers: List<FirTransformer<Nothing?>> = listOf(
         FirImportResolveTransformer(),
         FirTypeResolveTransformer(),
-        FirStatusResolveTransformer()
+        FirStatusResolveTransformer(),
+        FirAccessResolveTransformer()
     )
 
     fun processFile(firFile: FirFile) {

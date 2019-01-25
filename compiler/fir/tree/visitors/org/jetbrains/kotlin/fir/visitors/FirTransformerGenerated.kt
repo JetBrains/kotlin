@@ -136,8 +136,12 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(reference, data)
     }
 
-    open fun <E : FirReference> transformNamedReference(namedReference: E, data: D): CompositeTransformResult<E> {
+    open fun transformNamedReference(namedReference: FirNamedReference, data: D): CompositeTransformResult<FirNamedReference> {
         return transformReference(namedReference, data)
+    }
+
+    open fun transformResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): CompositeTransformResult<FirNamedReference> {
+        return transformNamedReference(resolvedCallableReference, data)
     }
 
     open fun <E : FirReference> transformSuperReference(superReference: E, data: D): CompositeTransformResult<E> {
@@ -578,6 +582,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitRegularClass(regularClass: FirRegularClass, data: D): CompositeTransformResult<FirElement> {
         return transformRegularClass(regularClass, data)
+    }
+
+    final override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): CompositeTransformResult<FirElement> {
+        return transformResolvedCallableReference(resolvedCallableReference, data)
     }
 
     final override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): CompositeTransformResult<FirElement> {

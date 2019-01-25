@@ -1,0 +1,7 @@
+FILE: simple.kt
+    public final function foo(): R|error: Not supported: FirImplicitTypeImpl| {
+        return@@@foo Int(1)
+    }
+    public final function bar(): R|error: Not supported: FirImplicitTypeImpl| {
+        return@@@bar R|/foo|()
+    }

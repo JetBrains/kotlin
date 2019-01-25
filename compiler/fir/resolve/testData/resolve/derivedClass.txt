@@ -7,9 +7,9 @@ FILE: derivedClass.kt
 
     }
     <T : R|kotlin/Any|> public final class Derived : R|Base<T>| {
-        public constructor(x: R|T|): super<R|Base<T>|>()
+        public constructor(x: R|T|): super<R|Base<T>|>(R|/Base.x|)
 
     }
     <T : R|kotlin/Any|> public final function create(x: R|T|): R|Derived<T>| {
-        return@@@create STUB
+        return@@@create <Unresolved name: Derived>#(<Unresolved name: x>#)
     }

@@ -242,4 +242,27 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/multifile/TypeAliasExpansion.kt");
         }
     }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/references")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class References extends AbstractFirResolveTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReferences() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/references/simple.kt");
+        }
+
+        @TestMetadata("superMember.kt")
+        public void testSuperMember() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/references/superMember.kt");
+        }
+    }
 }

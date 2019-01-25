@@ -4,9 +4,9 @@ FILE: noPrimaryConstructor.kt
             public get(): R|kotlin/String|
 
         public constructor(x: R|kotlin/String|): super<R|kotlin/Any|>() {
-            return STUB
+            this#.R|/NoPrimary.x| = R|/NoPrimary.x|
         }
 
-        public constructor(): this<R|NoPrimary|>()
+        public constructor(): this<R|NoPrimary|>(String())
 
     }

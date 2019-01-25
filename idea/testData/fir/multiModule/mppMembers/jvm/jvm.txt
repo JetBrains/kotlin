@@ -1,0 +1,29 @@
+FILE: jvm.kt
+    public open actual class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final actual function foo(): R|kotlin/Unit| {
+        }
+
+        public final function bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class C : R|B| {
+        public constructor(): super<R|B|>()
+
+        public final function test(): R|kotlin/Unit| {
+            R|/A.foo|()
+            <Unresolved name: bar>#()
+        }
+
+    }
+    public final class D : R|A| {
+        public constructor(): super<R|A|>()
+
+        public final function test(): R|kotlin/Unit| {
+            R|/A.foo|()
+            <Unresolved name: bar>#()
+        }
+
+    }

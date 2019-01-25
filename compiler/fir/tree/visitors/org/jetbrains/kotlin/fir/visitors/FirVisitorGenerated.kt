@@ -140,6 +140,10 @@ abstract class FirVisitor<out R, in D> {
         return visitReference(namedReference, data)
     }
 
+    open fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): R {
+        return visitNamedReference(resolvedCallableReference, data)
+    }
+
     open fun visitSuperReference(superReference: FirSuperReference, data: D): R {
         return visitReference(superReference, data)
     }

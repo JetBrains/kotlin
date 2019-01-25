@@ -695,6 +695,12 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print("${namedReference.name}#")
     }
 
+    override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
+        print("R|")
+        print(resolvedCallableReference.callableSymbol.callableId)
+        print("|")
+    }
+
     override fun visitThisReference(thisReference: FirThisReference) {
         print("this")
         val labelName = thisReference.labelName

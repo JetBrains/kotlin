@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMember
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirAbstractCallableMember(
     session: FirSession,
     psi: PsiElement?,
+    final override val symbol: FirBasedSymbol<FirCallableMember>,
     name: Name,
     visibility: Visibility,
     modality: Modality?,
@@ -30,6 +32,7 @@ abstract class FirAbstractCallableMember(
 ) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, isExpect, isActual), FirCallableMember {
 
     init {
+        symbol.bind(this)
         status.isOverride = isOverride
     }
 
