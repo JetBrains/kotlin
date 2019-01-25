@@ -10,6 +10,7 @@ enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = tru
     Arrays(packageName = "kotlin.collections"),
     UArrays(packageName = "kotlin.collections"),
     Collections(packageName = "kotlin.collections"),
+    UCollections(packageName = "kotlin.collections"),
     Sets(packageName = "kotlin.collections"),
     Maps(packageName = "kotlin.collections"),
     Sequences(packageName = "kotlin.sequences"),
