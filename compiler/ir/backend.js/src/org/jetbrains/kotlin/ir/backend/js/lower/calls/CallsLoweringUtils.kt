@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
 
@@ -80,7 +80,7 @@ internal class SimpleMemberKey(val klass: IrType, val name: Name) {
     }
 }
 
-enum class PrimitiveType {
+internal enum class PrimitiveTypeType {
     FLOATING_POINT_NUMBER,
     INTEGER_NUMBER,
     STRING,
@@ -88,12 +88,12 @@ enum class PrimitiveType {
     OTHER
 }
 
-fun IrType.getPrimitiveType() = makeNotNull().run {
+internal fun IrType.getPrimitiveType() = makeNotNull().run {
     when {
-        isBoolean() -> PrimitiveType.BOOLEAN
-        isByte() || isShort() || isInt() -> PrimitiveType.INTEGER_NUMBER
-        isFloat() || isDouble() -> PrimitiveType.FLOATING_POINT_NUMBER
-        isString() -> PrimitiveType.STRING
-        else -> PrimitiveType.OTHER
+        isBoolean() -> PrimitiveTypeType.BOOLEAN
+        isByte() || isShort() || isInt() -> PrimitiveTypeType.INTEGER_NUMBER
+        isFloat() || isDouble() -> PrimitiveTypeType.FLOATING_POINT_NUMBER
+        isString() -> PrimitiveTypeType.STRING
+        else -> PrimitiveTypeType.OTHER
     }
 }

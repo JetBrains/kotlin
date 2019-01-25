@@ -36,7 +36,7 @@ class MoveBodilessDeclarationsToSeparatePlace : FileLoweringPass {
         "Boolean",
         "Byte",
         "Short",
-        "Int",
+        //"Int",
         "Float",
         "Double"
     ).map { Name.identifier(it) }.toSet()

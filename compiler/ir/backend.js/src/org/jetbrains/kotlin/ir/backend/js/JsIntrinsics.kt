@@ -177,6 +177,18 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         )
     )
 
+    val intTo = listOf(
+        PrimitiveType.BYTE,
+        PrimitiveType.SHORT,
+        PrimitiveType.LONG
+    ).associateWith {
+        context.symbolTable.referenceSimpleFunction(
+            context.getClass(FqName("kotlin.Int")).unsubstitutedMemberScope.findSingleFunction(
+                Name.identifier("to${it.typeName}")
+            )
+        )
+    }
+
     val charClassSymbol = getInternalClassWithoutPackage("kotlin.Char")
     val charConstructor = charClassSymbol.constructors.single().owner
 

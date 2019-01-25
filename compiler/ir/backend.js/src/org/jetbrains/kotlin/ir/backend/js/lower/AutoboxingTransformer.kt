@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import com.intellij.lang.jvm.actions.expectedTypes
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.utils.isPrimitiveArray
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.makeNotNull
@@ -78,6 +80,16 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             actualInlinedClass != null && expectedInlinedClass == null -> context.intrinsics.jsBoxIntrinsic
             actualInlinedClass == null && expectedInlinedClass != null -> context.intrinsics.jsUnboxIntrinsic
             else -> return this
+        }
+
+        if (actualType is IrDynamicType || expectedType is IrDynamicType) {
+            if (this is IrGetValue && this.symbol.owner.name.asString().contains("_unsafeCast_")) {
+                return this
+            } else if (this is IrConst<*>) {
+                return this
+            } else {
+            //    TODO("Fix dynamic boxing/unboxing")
+            }
         }
 
         return buildSafeCall(this, actualType, expectedType) { arg ->

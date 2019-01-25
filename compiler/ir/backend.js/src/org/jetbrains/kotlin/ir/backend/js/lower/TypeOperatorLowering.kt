@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.utils.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.backend.common.utils.isPrimitiveArray
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -27,12 +30,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val unit = context.irBuiltIns.unitType
     private val unitValue get() = JsIrBuilder.buildGetObjectValue(unit, unit.classifierOrFail as IrClassSymbol)
-
-    private val lit24 get() = JsIrBuilder.buildInt(context.irBuiltIns.intType, 24)
-    private val lit16 get() = JsIrBuilder.buildInt(context.irBuiltIns.intType, 16)
-
-    private val byteMask get() = JsIrBuilder.buildInt(context.irBuiltIns.intType, 0xFF)
-    private val shortMask get() = JsIrBuilder.buildInt(context.irBuiltIns.intType, 0xFFFF)
 
     private val calculator = JsIrArithBuilder(context)
 
@@ -132,7 +129,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
             private fun isTypeOfCheckingType(type: IrType) =
                 type.isByte() ||
                         type.isShort() ||
-                        type.isInt() ||
+                        //type.isInt() ||
                         type.isFloat() ||
                         type.isDouble() ||
                         type.isBoolean() ||
@@ -308,20 +305,17 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 val isNullable = expression.argument.type.isNullable()
                 val toType = expression.typeOperand
 
-                fun maskOp(arg: IrExpression, mask: IrExpression, shift: IrExpressionWithCopy) = calculator.run {
-                    shr(shl(and(arg, mask), shift), shift.copy())
-                }
-
                 val newStatements = mutableListOf<IrStatement>()
                 val argument = cacheValue(expression.argument, newStatements, declaration)
 
-                val casted = when {
-                    toType.isByte() -> maskOp(argument(), byteMask, lit24)
-                    toType.isShort() -> maskOp(argument(), shortMask, lit16)
-                    toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.jsToLong).apply {
-                        putValueArgument(0, argument())
-                    }
+                val toPrimitiveType = when {
+                    toType.isByte() -> PrimitiveType.BYTE
+                    toType.isShort() -> PrimitiveType.SHORT
+                    toType.isLong() -> PrimitiveType.LONG
                     else -> error("Unreachable execution (coercion to non-Integer type")
+                }
+                val casted = JsIrBuilder.buildCall(context.intrinsics.intTo[toPrimitiveType]!!).apply {
+                    dispatchReceiver = argument()
                 }
 
                 newStatements += if (isNullable) JsIrBuilder.buildIfElse(toType, nullCheck(argument()), litNull, casted) else casted

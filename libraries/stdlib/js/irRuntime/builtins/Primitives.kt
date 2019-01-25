@@ -4,7 +4,7 @@
  */
 
 // Auto-generated file. DO NOT EDIT!
-@file:Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+@file:Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "RESERVED_MEMBER_INSIDE_INLINE_CLASS")
 
 package kotlin
 
@@ -388,7 +388,8 @@ public class Short private constructor() : Number(), Comparable<Short> {
  * Represents a 32-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
-public class Int private constructor() : Number(), Comparable<Int> {
+@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+public inline class Int internal constructor(val value: Double) : Number(), Comparable<Int> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Int can have.
@@ -418,174 +419,188 @@ public class Int private constructor() : Number(), Comparable<Int> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Byte): Int
+    public operator fun compareTo(other: Byte): Int = value.compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Short): Int
+    public operator fun compareTo(other: Short): Int = value.compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: Int): Int
+    public override operator fun compareTo(other: Int): Int = value.compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Long): Int
+    public operator fun compareTo(other: Long): Int = value.compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Float): Int
+    public operator fun compareTo(other: Float): Int = value.compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Double): Int
+    public operator fun compareTo(other: Double): Int = value.compareTo(other)
 
     /** Adds the other value to this value. */
-    public operator fun plus(other: Byte): Int
+    public operator fun plus(other: Byte): Int = trunkateToInt(value + other.toInt().value)
     /** Adds the other value to this value. */
-    public operator fun plus(other: Short): Int
+    public operator fun plus(other: Short): Int = trunkateToInt(value + other.toInt().value)
     /** Adds the other value to this value. */
-    public operator fun plus(other: Int): Int
+    public operator fun plus(other: Int): Int = trunkateToInt(value + other.value)
     /** Adds the other value to this value. */
-    public operator fun plus(other: Long): Long
+    public operator fun plus(other: Long): Long = value.toLong() + other
     /** Adds the other value to this value. */
-    public operator fun plus(other: Float): Float
+    public operator fun plus(other: Float): Float = value.toFloat() + other
     /** Adds the other value to this value. */
-    public operator fun plus(other: Double): Double
+    public operator fun plus(other: Double): Double = value + other
 
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: Byte): Int
+    public operator fun minus(other: Byte): Int = trunkateToInt(value - other.toInt().value)
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: Short): Int
+    public operator fun minus(other: Short): Int = trunkateToInt(value - other.toInt().value)
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: Int): Int
+    public operator fun minus(other: Int): Int = trunkateToInt(value - other.toInt().value)
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: Long): Long
+    public operator fun minus(other: Long): Long = value.toLong() - other
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: Float): Float
+    public operator fun minus(other: Float): Float = value.toFloat() - other
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: Double): Double
+    public operator fun minus(other: Double): Double = value - other
 
     /** Multiplies this value by the other value. */
-    public operator fun times(other: Byte): Int
+    public operator fun times(other: Byte): Int = imul(this, other.toInt())
     /** Multiplies this value by the other value. */
-    public operator fun times(other: Short): Int
+    public operator fun times(other: Short): Int = imul(this, other.toInt())
     /** Multiplies this value by the other value. */
-    public operator fun times(other: Int): Int
+    public operator fun times(other: Int): Int = imul(this, other)
     /** Multiplies this value by the other value. */
-    public operator fun times(other: Long): Long
+    public operator fun times(other: Long): Long = value.toLong() * other
     /** Multiplies this value by the other value. */
-    public operator fun times(other: Float): Float
+    public operator fun times(other: Float): Float = value.toFloat() * other
     /** Multiplies this value by the other value. */
-    public operator fun times(other: Double): Double
+    public operator fun times(other: Double): Double = value.toDouble() * other
 
     /** Divides this value by the other value. */
-    public operator fun div(other: Byte): Int
+    public operator fun div(other: Byte): Int = trunkateToInt(value / other.toInt().value)
     /** Divides this value by the other value. */
-    public operator fun div(other: Short): Int
+    public operator fun div(other: Short): Int = trunkateToInt(value / other.toInt().value)
     /** Divides this value by the other value. */
-    public operator fun div(other: Int): Int
+    public operator fun div(other: Int): Int = trunkateToInt(value / other.toInt().value).toInt()
     /** Divides this value by the other value. */
-    public operator fun div(other: Long): Long
+    public operator fun div(other: Long): Long = value.toLong() / other
     /** Divides this value by the other value. */
-    public operator fun div(other: Float): Float
+    public operator fun div(other: Float): Float = value.toFloat() / other
     /** Divides this value by the other value. */
-    public operator fun div(other: Double): Double
+    public operator fun div(other: Double): Double = value / other
 
     /** Calculates the remainder of dividing this value by the other value. */
     @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Byte): Int
+    public operator fun mod(other: Byte): Int = trunkateToInt(value % other.toInt().value)
     /** Calculates the remainder of dividing this value by the other value. */
     @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Short): Int
+    public operator fun mod(other: Short): Int = trunkateToInt(value % other.toInt().value)
     /** Calculates the remainder of dividing this value by the other value. */
     @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Int): Int
+    public operator fun mod(other: Int): Int = trunkateToInt(value % other.toInt().value)
     /** Calculates the remainder of dividing this value by the other value. */
     @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Long): Long
+    public operator fun mod(other: Long): Long = value.toLong() % other
     /** Calculates the remainder of dividing this value by the other value. */
     @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Float): Float
+    public operator fun mod(other: Float): Float = value.toFloat() % other
     /** Calculates the remainder of dividing this value by the other value. */
     @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
-    public operator fun mod(other: Double): Double
+    public operator fun mod(other: Double): Double = value % other
 
     /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
-    public operator fun rem(other: Byte): Int
+    public operator fun rem(other: Byte): Int = trunkateToInt(value % other.toInt().value)
     /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
-    public operator fun rem(other: Short): Int
+    public operator fun rem(other: Short): Int = trunkateToInt(value % other.toInt().value)
     /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
-    public operator fun rem(other: Int): Int
+    public operator fun rem(other: Int): Int = trunkateToInt(value % other.toInt().value)
     /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
-    public operator fun rem(other: Long): Long
+    public operator fun rem(other: Long): Long = value.toLong() % other
     /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
-    public operator fun rem(other: Float): Float
+    public operator fun rem(other: Float): Float = value.toFloat() % other
     /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
-    public operator fun rem(other: Double): Double
+    public operator fun rem(other: Double): Double = value % other
 
     /** Increments this value. */
-    public operator fun inc(): Int
+    public operator fun inc(): Int = this + 1
     /** Decrements this value. */
-    public operator fun dec(): Int
+    public operator fun dec(): Int = this - 1
     /** Returns this value. */
-    public operator fun unaryPlus(): Int
+    public operator fun unaryPlus(): Int = this
     /** Returns the negative of this value. */
-    public operator fun unaryMinus(): Int
+    public operator fun unaryMinus(): Int = trunkateToInt(-value)
 
      /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): IntRange
+    public operator fun rangeTo(other: Byte): IntRange = IntRange(this, other.toInt())
      /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): IntRange
+    public operator fun rangeTo(other: Short): IntRange = IntRange(this, other.toInt())
      /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Int): IntRange
+    public operator fun rangeTo(other: Int): IntRange = IntRange(this, other.toInt())
      /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Long): LongRange
+    public operator fun rangeTo(other: Long): LongRange = LongRange(this.toLong(), other)
 
     /** Shifts this value left by the [bitCount] number of bits. */
-    public infix fun shl(bitCount: Int): Int
+    public infix fun shl(bitCount: Int): Int = jsShl(value, bitCount.value)
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
-    public infix fun shr(bitCount: Int): Int
+    public infix fun shr(bitCount: Int): Int = jsShr(value, bitCount.value)
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
-    public infix fun ushr(bitCount: Int): Int
+    public infix fun ushr(bitCount: Int): Int = jsShru(value, bitCount.value)
     /** Performs a bitwise AND operation between the two values. */
-    public infix fun and(other: Int): Int
+    public infix fun and(other: Int): Int = jsAnd(value, other.value)
     /** Performs a bitwise OR operation between the two values. */
-    public infix fun or(other: Int): Int
+    public infix fun or(other: Int): Int = jsOr(value, other.value)
     /** Performs a bitwise XOR operation between the two values. */
-    public infix fun xor(other: Int): Int
+    public infix fun xor(other: Int): Int = jsXor(value, other.value)
     /** Inverts the bits in this value. */
-    public fun inv(): Int
+    public fun inv(): Int = jsInv(value)
 
-    public override fun toByte(): Byte
-    public override fun toChar(): Char
-    public override fun toShort(): Short
-    public override fun toInt(): Int
-    public override fun toLong(): Long
-    public override fun toFloat(): Float
-    public override fun toDouble(): Double
+    public override fun toByte(): Byte = value.toByte()
+    public override fun toChar(): Char = value.toChar()
+    public override fun toShort(): Short = value.toShort()
+    public override fun toInt(): Int = this
+    public override fun toLong(): Long = value.toLong()
+    public override fun toFloat(): Float = value.toFloat()
+    public override fun toDouble(): Double = value
+
+    override fun toString() = value.toString()
+
+    override fun hashCode(): Int = this
 }
+
+fun d2i(x: dynamic): Int = Int(x.unsafeCast<Double>())
+fun trunkateToInt(x: Double): Int = Int(js("x | 0").unsafeCast<Double>())
+fun jsShl(a: Double, b: Double): Int = d2i(js("a << b"))
+fun jsShr(a: Double, b: Double): Int = d2i(js("a >> b"))
+fun jsShru(a: Double, b: Double): Int = d2i(js("a >>> b"))
+fun jsAnd(a: Double, b: Double): Int = d2i(js("a & b"))
+fun jsOr(a: Double, b: Double): Int = d2i(js("a | b"))
+fun jsXor(a: Double, b: Double): Int = d2i(js("a ^ b"))
+fun jsInv(a: Double): Int = d2i(js("~a"))
 
 /**
  * Represents a single-precision 32-bit IEEE 754 floating point number.

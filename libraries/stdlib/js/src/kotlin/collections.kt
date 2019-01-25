@@ -133,8 +133,8 @@ internal fun <T> arrayCopy(source: Array<out T>, destination: Array<in T>, desti
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
 
     if (js("ArrayBuffer").isView(destination) && js("ArrayBuffer").isView(source)) {
-        val subrange = source.asDynamic().subarray(startIndex, endIndex)
-        destination.asDynamic().set(subrange, destinationOffset)
+        val subrange = source.asDynamic().subarray(startIndex.toDouble(), endIndex.toDouble())
+        destination.asDynamic().set(subrange, destinationOffset.toDouble())
     } else {
         if (source !== destination || destinationOffset <= startIndex) {
             for (index in 0 until rangeSize) {

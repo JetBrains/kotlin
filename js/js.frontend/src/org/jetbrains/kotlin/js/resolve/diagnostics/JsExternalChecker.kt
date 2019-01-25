@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
 
 object JsExternalChecker : DeclarationChecker {
     val DEFINED_EXTERNALLY_PROPERTY_NAMES = setOf(FqNameUnsafe("kotlin.js.noImpl"), FqNameUnsafe("kotlin.js.definedExternally"))
@@ -116,7 +117,9 @@ object JsExternalChecker : DeclarationChecker {
             }
         }
 
-        reportOnParametersAndReturnTypesIf(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION, KotlinType::isInlineClassType)
+        reportOnParametersAndReturnTypesIf(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION) {
+            it.isInlineClassType() && !it.isPrimitiveNumberOrNullableType()
+        }
         reportOnParametersAndReturnTypesIf(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION, KotlinType::isExtensionFunctionType)
 
         if (descriptor is CallableMemberDescriptor && descriptor.isNonAbstractMemberOfInterface() &&

@@ -12,9 +12,19 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isChar
+import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+
+fun IrType.isPrimitiveNativelyImplemented(): Boolean = when {
+    isInt() -> true
+    isChar() -> true
+    else -> false
+}
 
 class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val transformers = listOf(
@@ -29,6 +39,14 @@ class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
         ExceptionHelperCallsTransformer(context)
     )
 
+    fun shouldSkipCall(call: IrCall): Boolean {
+        val function = call.symbol.owner
+        val dispathReceiver = function.dispatchReceiverParameter ?: return false
+        if (dispathReceiver.type.isPrimitiveNativelyImplemented())
+            return true
+        return false
+    }
+
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitFunction(declaration: IrFunction): IrStatement {
@@ -39,7 +57,7 @@ class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
             override fun visitCall(expression: IrCall): IrExpression {
                 val call = super.visitCall(expression)
-                if (call is IrCall) {
+                if (call is IrCall && !shouldSkipCall(call)) {
                     for (transformer in transformers) {
                         val newCall = transformer.transformCall(call)
                         if (newCall !== call) {

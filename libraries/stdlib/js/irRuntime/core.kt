@@ -42,12 +42,16 @@ fun hashCode(obj: dynamic): Int {
         return 0
 
     return when (typeOf(obj)) {
-        "object" ->  if ("function" === js("typeof obj.hashCode")) js("obj.hashCode()") else getObjectHashCode(obj)
+        "object" ->  when {
+            "function" === js("typeof obj.hashCode") -> js("obj.hashCode()")
+            "function" === js("typeof obj.hashCode_ret\$kotlin_Int") -> js("obj.hashCode_ret\$kotlin_Int()")
+            else -> getObjectHashCode(obj)
+        }
         "function" -> getObjectHashCode(obj)
         "number" -> getNumberHashCode(obj)
         "boolean" -> if(obj.unsafeCast<Boolean>()) 1 else 0
         else -> getStringHashCode(js("String(obj)"))
-    }
+    }.unsafeCast<Int>()
 }
 
 fun getObjectHashCode(obj: dynamic) = js("""

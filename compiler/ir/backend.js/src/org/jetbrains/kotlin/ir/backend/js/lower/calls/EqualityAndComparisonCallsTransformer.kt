@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -56,12 +55,11 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         val lhs = call.getValueArgument(0)!!
         val rhs = call.getValueArgument(1)!!
 
-
         val lhsJsType = lhs.type.getPrimitiveType()
         val rhsJsType = rhs.type.getPrimitiveType()
 
         val equalsMethod = lhs.type.findEqualsMethod()
-        val isLhsPrimitive = lhsJsType != PrimitiveType.OTHER
+        val isLhsPrimitive = lhsJsType != PrimitiveTypeType.OTHER && !lhs.type.isPrimitiveNativelyImplemented()
 
         return when {
             lhs.type is IrDynamicType ->
@@ -72,7 +70,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
                 irCall(call, intrinsics.jsEqeq.symbol)
 
             // For non-float primitives of the same type use JS `==`
-            isLhsPrimitive && lhsJsType == rhsJsType && lhsJsType != PrimitiveType.FLOATING_POINT_NUMBER ->
+            isLhsPrimitive && lhsJsType == rhsJsType && lhsJsType != PrimitiveTypeType.FLOATING_POINT_NUMBER ->
                 chooseEqualityOperatorForPrimitiveTypes(call)
 
             !isLhsPrimitive && !lhs.type.toKotlinType().isNullable() && equalsMethod != null ->
@@ -149,7 +147,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
     private fun IrFunction.isMethodOfPrimitiveJSType() =
         dispatchReceiverParameter?.let {
-            it.type.getPrimitiveType() != PrimitiveType.OTHER
+            it.type.getPrimitiveType() != PrimitiveTypeType.OTHER
         } ?: false
 
     private fun IrFunction.isMethodOfPotentiallyPrimitiveJSType() =

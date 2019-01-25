@@ -35,6 +35,6 @@ fun testSingle(a: Int, b: Int): String? {
 
 fun box(): String {
     val error = test(generateSeries(listOf(3, 0x1234, 0xFFFF, 0xABCD, 0xABCDEF, 0x43211234, 0x7FFFFFFC, 0x7FFFFFFF)))
-    if (error != null) return "fail: error"
+    if (error != null) return "fail: $error"
     return "OK"
 }
