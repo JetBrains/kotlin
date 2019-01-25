@@ -41,6 +41,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
     private val generatedTestNames = Lists.newArrayList<String>()
 
+    private val pathFilter: String? = System.getProperties().getProperty("kotlin.test.android.path.filter")
+
     private fun generateOutputFiles() {
         prepareAndroidModule()
         generateAndSave()
@@ -194,6 +196,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             } else if (FileUtilRt.getExtension(file.name) != KotlinFileType.EXTENSION) {
                 // skip non kotlin files
             } else {
+                if (pathFilter != null && !file.path.contains(pathFilter)) {
+                    continue
+                }
+
                 if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM, file)) {
                     continue
                 }

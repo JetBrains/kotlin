@@ -43,5 +43,9 @@ projectTest {
         systemProperty("kotlin.test.android.teamcity", true)
     }
 
+    project.findProperty("kotlin.test.android.path.filter")?.let {
+        systemProperty("kotlin.test.android.path.filter", it.toString())
+    }
+
     workingDir = rootDir
 }
