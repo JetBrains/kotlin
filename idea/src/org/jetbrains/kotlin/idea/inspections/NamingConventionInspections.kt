@@ -18,6 +18,7 @@ import com.intellij.ui.EditorTextField
 import com.siyeh.ig.psiutils.TestUtils
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpFileType
+import org.jdom.Element
 import org.jetbrains.kotlin.idea.quickfix.RenameIdentifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -71,15 +72,18 @@ private val NO_BAD_CHARACTERS_OR_UNDERSCORE = NamingRule("may contain only lette
     it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' && c != '_' }
 }
 
-abstract class NamingConventionInspection(
+class NamingConventionInspectionSettings(
     private val entityName: String,
-    @Language("RegExp") protected val defaultNamePattern: String,
+    @Language("RegExp") val defaultNamePattern: String,
+    private val setNamePatternCallback: ((value: String) -> Unit),
     private vararg val rules: NamingRule
-) : AbstractKotlinInspection() {
-    protected var nameRegex: Regex? = defaultNamePattern.toRegex()
+) {
+    var nameRegex: Regex? = defaultNamePattern.toRegex()
+
     var namePattern: String = defaultNamePattern
         set(value) {
             field = value
+            setNamePatternCallback.invoke(value)
             nameRegex = try {
                 value.toRegex()
             } catch (e: PatternSyntaxException) {
@@ -87,7 +91,7 @@ abstract class NamingConventionInspection(
             }
         }
 
-    protected fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
+    fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
         val name = element.name
         val nameIdentifier = element.nameIdentifier
         if (name != null && nameIdentifier != null && nameRegex?.matches(name) == false) {
@@ -108,9 +112,61 @@ abstract class NamingConventionInspection(
         return findRuleMessage(name, rules) ?: getDefaultErrorMessage()
     }
 
-    protected fun getDefaultErrorMessage() = "doesn't match regex '$namePattern'"
+    fun getDefaultErrorMessage() = "doesn't match regex '$namePattern'"
 
-    override fun createOptionsPanel() = NamingConventionOptionsPanel(this)
+    fun createOptionsPanel(): JPanel = NamingConventionOptionsPanel(this)
+
+    private class NamingConventionOptionsPanel(settings: NamingConventionInspectionSettings) : JPanel() {
+        init {
+            layout = BorderLayout()
+
+            val regexField = EditorTextField(settings.namePattern, null, RegExpFileType.INSTANCE).apply {
+                setOneLineMode(true)
+            }
+            regexField.document.addDocumentListener(object : DocumentAdapter() {
+                override fun documentChanged(e: DocumentEvent) {
+                    settings.namePattern = regexField.text
+                }
+            })
+            val labeledComponent = LabeledComponent.create(regexField, "Pattern:", BorderLayout.WEST)
+            add(labeledComponent, BorderLayout.NORTH)
+        }
+    }
+}
+
+
+sealed class NamingConventionInspection(
+    entityName: String,
+    @Language("RegExp") defaultNamePattern: String,
+    vararg rules: NamingRule
+) : AbstractKotlinInspection() {
+
+    // Serialized inspection state
+    @Suppress("MemberVisibilityCanBePrivate")
+    var namePattern: String = defaultNamePattern
+
+    protected val namingSettings = NamingConventionInspectionSettings(
+        entityName, defaultNamePattern,
+        setNamePatternCallback = { value ->
+            namePattern = value
+        },
+        rules = *rules
+    )
+
+    protected fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
+        namingSettings.verifyName(element, holder)
+    }
+
+    protected fun getNameMismatchMessage(name: String): String {
+        return namingSettings.getNameMismatchMessage(name)
+    }
+
+    override fun createOptionsPanel(): JPanel = namingSettings.createOptionsPanel()
+
+    override fun readSettings(node: Element) {
+        super.readSettings(node)
+        namingSettings.namePattern = namePattern
+    }
 }
 
 class ClassNameInspection : NamingConventionInspection(
@@ -252,11 +308,11 @@ class PackageNameInspection :
         return packageDirectiveVisitor { directive ->
             val packageNameExpression = directive.packageNameExpression ?: return@packageDirectiveVisitor
             val qualifiedName = directive.qualifiedName
-            if (qualifiedName.isEmpty() || nameRegex?.matches(qualifiedName) != false) {
+            if (qualifiedName.isEmpty() || namingSettings.nameRegex?.matches(qualifiedName) != false) {
                 return@packageDirectiveVisitor
             }
 
-            val partErrorMessage = if (namePattern == defaultNamePattern) {
+            val partErrorMessage = if (namePattern == namingSettings.defaultNamePattern) {
                 directive.packageNames.asSequence()
                     .mapNotNull { simpleName ->
                         val referencedName = simpleName.getReferencedName()
@@ -270,7 +326,7 @@ class PackageNameInspection :
             val descriptionTemplate = if (partErrorMessage != null) {
                 "Package name <code>#ref</code> part $partErrorMessage #loc"
             } else {
-                "Package name <code>#ref</code> ${getDefaultErrorMessage()} #loc"
+                "Package name <code>#ref</code> ${namingSettings.getDefaultErrorMessage()} #loc"
             }
 
             holder.registerProblem(
@@ -286,22 +342,5 @@ class PackageNameInspection :
             val packageDirective = element as? KtPackageDirective ?: return null
             return JavaPsiFacade.getInstance(element.project).findPackage(packageDirective.qualifiedName)
         }
-    }
-}
-
-class NamingConventionOptionsPanel(owner: NamingConventionInspection) : JPanel() {
-    init {
-        layout = BorderLayout()
-
-        val regexField = EditorTextField(owner.namePattern, null, RegExpFileType.INSTANCE).apply {
-            setOneLineMode(true)
-        }
-        regexField.document.addDocumentListener(object : DocumentAdapter() {
-            override fun documentChanged(e: DocumentEvent) {
-                owner.namePattern = regexField.text
-            }
-        })
-        val labeledComponent = LabeledComponent.create(regexField, "Pattern:", BorderLayout.WEST)
-        add(labeledComponent, BorderLayout.NORTH)
     }
 }
