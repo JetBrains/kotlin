@@ -28,7 +28,9 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         get() {
             val result = when (target) {
                 KonanTarget.LINUX_X64 ->
-                    listOf("--sysroot=$absoluteTargetSysRoot")
+                    listOf("--sysroot=$absoluteTargetSysRoot") +
+                    if (target != host) listOf("-target", targetArg!!) else emptyList()
+
                 KonanTarget.LINUX_ARM32_HFP ->
                     listOf("-target", targetArg!!,
                             "-mfpu=vfp", "-mfloat-abi=hard",

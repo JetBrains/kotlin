@@ -182,6 +182,8 @@ open class HostManager(protected val distribution: Distribution = Distribution()
                 ) + zephyrSubtargets
                 KonanTarget.MINGW_X64 -> listOf(
                     KonanTarget.MINGW_X64,
+                    KonanTarget.LINUX_X64,
+                    KonanTarget.LINUX_ARM32_HFP,
                     KonanTarget.WASM32
                 ) + zephyrSubtargets
                 KonanTarget.MACOS_X64 -> listOf(
@@ -189,6 +191,8 @@ open class HostManager(protected val distribution: Distribution = Distribution()
                     KonanTarget.IOS_ARM32,
                     KonanTarget.IOS_ARM64,
                     KonanTarget.IOS_X64,
+                    KonanTarget.LINUX_X64,
+                    KonanTarget.LINUX_ARM32_HFP,
                     KonanTarget.ANDROID_ARM32,
                     KonanTarget.ANDROID_ARM64,
                     KonanTarget.WASM32
@@ -242,9 +246,9 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             else -> throw TargetSupportException("Unknown host target: ${host_os()} ${host_arch()}")
         }
 
-        val hostIsMac   = (host == KonanTarget.MACOS_X64)
-        val hostIsLinux = (host == KonanTarget.LINUX_X64)
-        val hostIsMingw = (host == KonanTarget.MINGW_X64)
+        val hostIsMac   = (host.family == Family.OSX)
+        val hostIsLinux = (host.family == Family.LINUX)
+        val hostIsMingw = (host.family == Family.MINGW)
 
         val hostSuffix get() = host.name
         @JvmStatic
