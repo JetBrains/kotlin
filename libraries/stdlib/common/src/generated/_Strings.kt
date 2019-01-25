@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -455,7 +455,7 @@ public inline fun String.slice(indices: Iterable<Int>): String {
 /**
  * Returns a subsequence of this char sequence containing the first [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter.
  * 
- * @sample samples.collections.Collections.Transformations.take
+ * @sample samples.text.Strings.take
  */
 public fun CharSequence.take(n: Int): CharSequence {
     require(n >= 0) { "Requested character count $n is less than zero." }
@@ -465,7 +465,7 @@ public fun CharSequence.take(n: Int): CharSequence {
 /**
  * Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter.
  * 
- * @sample samples.collections.Collections.Transformations.take
+ * @sample samples.text.Strings.take
  */
 public fun String.take(n: Int): String {
     require(n >= 0) { "Requested character count $n is less than zero." }
