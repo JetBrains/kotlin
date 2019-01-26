@@ -10,7 +10,9 @@ import com.intellij.psi.controlFlow.ControlFlowFactory
 import com.intellij.psi.controlFlow.ControlFlowUtil
 import com.intellij.psi.controlFlow.LocalsOrMyInstanceFieldsControlFlowPolicy
 import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.blockStatement
 import org.jetbrains.kotlin.j2k.copyTreeAndDetach
+import org.jetbrains.kotlin.j2k.runExpression
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
@@ -39,14 +41,20 @@ class SwitchStatementConversion(private val context: ConversionContext) : Recurs
             val statements = cases
                 .takeWhileInclusive { it.statements.fallsThrough() }
                 .flatMap { it.statements }
-                .flatMap { it.singleListOrBlockStatements() }
-                .takeWhile { !isSwitchBreak(it) }
-                .map { it.copyTreeAndDetach() }
-                .let {
-                    if (it.size == 1 && cases.first().statements.singleOrNull() is JKBlockStatement)
-                        listOf(JKBlockStatementImpl(JKBlockImpl(it)))
-                    else it
+                .takeWhileInclusive { it.singleListOrBlockStatements().none { isSwitchBreak(it) } }
+                .mapNotNull { statement ->
+                    when {
+                        statement is JKBlockStatement ->
+                            blockStatement(
+                                statement.block.statements
+                                    .takeWhile { !isSwitchBreak(it) }
+                                    .map { it.copyTreeAndDetach() }
+                            )
+                        isSwitchBreak(statement) -> null
+                        else -> statement.copyTreeAndDetach()
+                    }
                 }
+
             val javaLabels = cases
                 .takeWhileInclusive { it.statements.isEmpty() }
 
@@ -56,12 +64,12 @@ class SwitchStatementConversion(private val context: ConversionContext) : Recurs
             val elseLabel = javaLabels
                 .find { it is JKJavaDefaultSwitchCaseImpl }
                 ?.let { JKKtElseWhenLabelImpl() }
-            val elseWhenCase = elseLabel?.let {
-                JKKtWhenCaseImpl(listOf(it), statements.map { it.copyTreeAndDetach() }.blockOrSingle())
+            val elseWhenCase = elseLabel?.let { label ->
+                JKKtWhenCaseImpl(listOf(label), statements.map { it.copyTreeAndDetach() }.singleBlockOrWrapToRun())
             }
             val mainWhenCase =
                 if (statementLabels.isNotEmpty()) {
-                    JKKtWhenCaseImpl(statementLabels, statements.blockOrSingle())
+                    JKKtWhenCaseImpl(statementLabels, statements.singleBlockOrWrapToRun())
                 } else null
             listOfNotNull(mainWhenCase) +
                     listOfNotNull(elseWhenCase) +
@@ -71,9 +79,19 @@ class SwitchStatementConversion(private val context: ConversionContext) : Recurs
     private fun <T> List<T>.takeWhileInclusive(predicate: (T) -> Boolean): List<T> =
         takeWhile(predicate) + listOfNotNull(find { !predicate(it) })
 
-    private fun List<JKStatement>.blockOrSingle(): JKStatement =
+    private fun List<JKStatement>.singleBlockOrWrapToRun(): JKStatement =
         singleOrNull()
-            ?: JKBlockStatementImpl(JKBlockImpl(this))
+            ?: JKBlockStatementImpl(
+                JKBlockImpl(map { statement ->
+                    when (statement) {
+                        is JKBlockStatement ->
+                            JKExpressionStatementImpl(
+                                runExpression(statement, context.symbolProvider)
+                            )
+                        else -> statement
+                    }
+                })
+            )
 
 
     private fun JKStatement.singleListOrBlockStatements(): List<JKStatement> =
