@@ -5,7 +5,23 @@
 
 package kotlin.test
 
+// This file plugs some declaration from "kotlin.test" library used in tests.
+
 fun <T> assertEquals(a: T, b: T) {
     if (a != b) throw Exception("")
 }
+
+fun assertTrue(x: Boolean) {
+    if (!x) throw Exception("")
+}
+
+fun assertFalse(x: Boolean) {
+    if (x) throw Exception("")
+}
+
+fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
+    if (actual == null) throw Exception("")
+    return actual
+}
+
 
