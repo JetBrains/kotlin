@@ -913,7 +913,6 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): NativeIndex {
     val result = NativeIndexImpl(library, verbose)
     indexDeclarations(result)
-    findMacros(result)
     return result
 }
 
@@ -955,6 +954,8 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl) {
                 }
                 CXChildVisitResult.CXChildVisit_Continue
             }
+
+            findMacros(nativeIndex, translationUnit, headers)
         } finally {
             clang_disposeTranslationUnit(translationUnit)
         }
