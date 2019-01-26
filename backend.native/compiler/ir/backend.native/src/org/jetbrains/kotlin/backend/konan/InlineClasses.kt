@@ -202,7 +202,10 @@ private val implicitInlineClasses =
                 KonanFqNames.nativePtr +
                 InteropFqNames.cPointer).toSet()
 
-private fun IrClass.getAllSuperClassifiers(): List<IrClass> = listOf(this) + this.superTypes.flatMap { (it.classifierOrFail.owner as IrClass).getAllSuperClassifiers() }
+private val superQualifierTable = mutableMapOf<IrClass, List<IrClass>>()
+private fun IrClass.getAllSuperClassifiers(): List<IrClass> = superQualifierTable.getOrPut(this) {
+    listOf(this) + this.superTypes.flatMap { (it.classifierOrFail.owner as IrClass).getAllSuperClassifiers() }
+}
 
 internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, KotlinType>() {
 
