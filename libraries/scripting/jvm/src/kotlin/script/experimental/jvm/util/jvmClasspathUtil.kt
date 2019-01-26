@@ -10,8 +10,8 @@ import java.io.FileNotFoundException
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
-import kotlin.script.experimental.jvm.impl.getResourcePathForClass
 import kotlin.script.experimental.jvm.impl.toFile
+import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClass
 import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClassByName
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
@@ -186,13 +186,21 @@ object KotlinJars {
         classpath!!
     }
 
-    fun getLib(propertyName: String, jarName: String, markerClass: KClass<*>): File? =
+    fun getLib(propertyName: String, jarName: String, markerClass: KClass<*>, classLoader: ClassLoader? = null): File? =
         getExplicitLib(propertyName, jarName)
-            ?: getResourcePathForClass(markerClass.java).takeIf(File::exists)
+            ?: run {
+                val requestedClassloader = classLoader ?: Thread.currentThread().contextClassLoader
+                val byName =
+                    if (requestedClassloader == markerClass.java.classLoader) null
+                    else tryGetResourcePathForClassByName(markerClass.java.name, requestedClassloader)
+                byName ?: tryGetResourcePathForClass(markerClass.java)
+            }?.takeIf(File::exists)
 
-    fun getLib(propertyName: String, jarName: String, markerClassName: String): File? =
+    fun getLib(propertyName: String, jarName: String, markerClassName: String, classLoader: ClassLoader? = null): File? =
         getExplicitLib(propertyName, jarName)
-            ?: tryGetResourcePathForClassByName(markerClassName, Thread.currentThread().contextClassLoader)?.takeIf(File::exists)
+            ?: tryGetResourcePathForClassByName(
+                markerClassName, classLoader ?: Thread.currentThread().contextClassLoader
+            )?.takeIf(File::exists)
 
     private fun getExplicitLib(propertyName: String, jarName: String) =
         System.getProperty(propertyName)?.let(::File)?.takeIf(File::exists)
