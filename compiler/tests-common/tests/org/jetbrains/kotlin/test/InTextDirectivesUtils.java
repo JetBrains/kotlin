@@ -221,6 +221,10 @@ public final class InTextDirectivesUtils {
     public static boolean isCompatibleTarget(TargetBackend targetBackend, File file) {
         if (targetBackend == TargetBackend.ANY) return true;
 
+        List<String> doNotTarget = findLinesWithPrefixesRemoved(textWithDirectives(file), "// DONT_TARGET_EXACT_BACKEND: ");
+        if (doNotTarget.contains(targetBackend.name()))
+            return false;
+
         List<String> backends = findLinesWithPrefixesRemoved(textWithDirectives(file), "// TARGET_BACKEND: ");
         return backends.isEmpty() || backends.contains(targetBackend.name()) || backends.contains(targetBackend.getCompatibleWith().name());
     }
