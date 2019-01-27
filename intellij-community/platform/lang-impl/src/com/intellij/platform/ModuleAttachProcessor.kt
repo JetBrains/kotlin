@@ -169,7 +169,7 @@ private fun updateVcsMapping(primaryModule: Module, addedModuleContentRoot: Virt
     if (contentRoots.size == 1 && FileUtil.filesEqual(File(contentRoots[0].path), File(mappings[0].directory))) {
       val vcs = vcsManager.findVersioningVcs(addedModuleContentRoot)
       if (vcs != null && vcs.name == mappings[0].vcs) {
-        vcsManager.directoryMappings = listOf(VcsDirectoryMapping("", vcs.name))
+        vcsManager.directoryMappings = listOf(VcsDirectoryMapping.createDefault(vcs.name))
         return
       }
     }
