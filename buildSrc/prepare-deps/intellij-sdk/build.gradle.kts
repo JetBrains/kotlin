@@ -160,16 +160,13 @@ val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(
 
 val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
-val copySources by tasks.creating(Copy::class.java) {
-    from(sources)
-    into(File(repoDir, sources.name))
-    rename {
-        // All sources jars must contain module version before classifier to be correctly imported by IDEA
-        if (it.contains(intellijVersion))
-            it
-        else
-            it.replace("-sources", "-$intellijVersion-sources")
-    }
+val mergeSources by tasks.creating(Jar::class.java) {
+    dependsOn(sources)
+    from(provider { sources.map(::zipTree) })
+    destinationDir = File(repoDir, sources.name)
+    baseName = "intellij"
+    classifier = "sources"
+    version = intellijVersion
 }
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }
@@ -204,7 +201,7 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
 }
 
 val prepareIvyXmls by tasks.creating {
-    dependsOn(unzipIntellijCore, unzipJpsStandalone, copySources, copyJpsBuildTest)
+    dependsOn(unzipIntellijCore, unzipJpsStandalone, mergeSources, copyJpsBuildTest)
 
     val intellijSdkDir = File(repoDir, intellij.name)
     val intellijUltimateSdkDir = File(repoDir, intellijUltimate.name)
