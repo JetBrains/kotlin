@@ -2275,6 +2275,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConvertResourceToUseCallInspection"
+                     displayName="Convert resource to use() call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertTryFinallyToUseCallInspection"
                      displayName="Convert try / finally to use() call"
                      groupPath="Kotlin"
