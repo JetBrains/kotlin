@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.util.irCall
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -31,13 +32,29 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
             add(irBuiltIns.booleanNotSymbol, intrinsics.jsNot)
 
-            add(irBuiltIns.lessFunByOperandType, intrinsics.jsLt)
-            add(irBuiltIns.lessOrEqualFunByOperandType, intrinsics.jsLtEq)
-            add(irBuiltIns.greaterFunByOperandType, intrinsics.jsGt)
-            add(irBuiltIns.greaterOrEqualFunByOperandType, intrinsics.jsGtEq)
+            add(irBuiltIns.lessFunByOperandType.filterKeys { it != irBuiltIns.long }, intrinsics.jsLt)
+            add(irBuiltIns.lessOrEqualFunByOperandType.filterKeys { it != irBuiltIns.long }, intrinsics.jsLtEq)
+            add(irBuiltIns.greaterFunByOperandType.filterKeys { it != irBuiltIns.long }, intrinsics.jsGt)
+            add(irBuiltIns.greaterOrEqualFunByOperandType.filterKeys { it != irBuiltIns.long }, intrinsics.jsGtEq)
+
+            add(irBuiltIns.lessFunByOperandType[irBuiltIns.long]!!.symbol, transformLongComparison(intrinsics.jsLt))
+            add(irBuiltIns.lessOrEqualFunByOperandType[irBuiltIns.long]!!.symbol, transformLongComparison(intrinsics.jsLtEq))
+            add(irBuiltIns.greaterFunByOperandType[irBuiltIns.long]!!.symbol, transformLongComparison(intrinsics.jsGt))
+            add(irBuiltIns.greaterOrEqualFunByOperandType[irBuiltIns.long]!!.symbol, transformLongComparison(intrinsics.jsGtEq))
         }
     }
 
+    private fun transformLongComparison(comparator: IrSimpleFunction): (IrCall) -> IrExpression = { call ->
+        IrCallImpl(
+            call.startOffset,
+            call.endOffset,
+            comparator.returnType,
+            comparator.symbol
+        ).apply {
+            putValueArgument(0, irCall(call, intrinsics.longCompareToLong, firstArgumentAsDispatchReceiver = true))
+            putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, 0))
+        }
+    }
 
     override fun transformCall(call: IrCall): IrExpression {
         val symbol = call.symbol
