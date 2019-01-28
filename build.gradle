@@ -406,6 +406,27 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     }
 }
 
+task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
+    dependsOn('distPlatformLibs')
+    dependsOn('dist')
+    def simpleOsName = HostManager.simpleOsName()
+    baseName = "kotlin-native-dist-$simpleOsName-$konanVersionFull"
+    from("$project.rootDir/dist") {
+        include '**'
+        exclude 'dependencies'
+        into baseName
+    }
+
+    destinationDir = file('.')
+
+    if (isWindows()) {
+        zip64 true
+    } else {
+        extension = 'tar.gz'
+        compression = Compression.GZIP
+    }
+}
+
 task samples {
     dependsOn 'samplesZip', 'samplesTar'
 }
