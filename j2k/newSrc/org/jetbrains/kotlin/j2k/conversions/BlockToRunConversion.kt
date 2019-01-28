@@ -37,7 +37,7 @@ class BlockToRunConversion(private val context: ConversionContext) : RecursiveAp
             emptyList()
         )
         val call = JKKtCallExpressionImpl(runSymbol as JKMethodSymbol, JKExpressionListImpl(listOf(lambda)))
-        return recurse(call)
+        return recurse(JKExpressionStatementImpl(call))
     }
 
 }
