@@ -76,7 +76,7 @@ dependencies {
 }
 
 sourceSets {
-    if (Ide.AS33.orHigher()) {
+    if (Ide.AS33.orHigher() || Ide.IJ191.orHigher()) {
         "main" { }
         "test" { }
     } else {
