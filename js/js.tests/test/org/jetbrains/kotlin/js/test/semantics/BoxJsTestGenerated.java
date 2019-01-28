@@ -3533,6 +3533,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/incremental/inlineModuleVariable.kt");
         }
 
+        @TestMetadata("inlineSuspendFun.kt")
+        public void testInlineSuspendFun() throws Exception {
+            runTest("js/js.translator/testData/box/incremental/inlineSuspendFun.kt");
+        }
+
         @TestMetadata("jsModule.kt")
         public void testJsModule() throws Exception {
             runTest("js/js.translator/testData/box/incremental/jsModule.kt");
