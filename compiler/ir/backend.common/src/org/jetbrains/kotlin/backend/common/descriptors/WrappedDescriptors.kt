@@ -272,6 +272,14 @@ open class WrappedSimpleFunctionDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
 ) : SimpleFunctionDescriptor, WrappedCallableDescriptor<IrSimpleFunction>(annotations, sourceElement) {
+
+    // TODO: Remove as soon as all IR declarations have their originalDescriptor.
+    constructor(originalDescriptor: FunctionDescriptor) : this(originalDescriptor.annotations, originalDescriptor.source) {
+        this.originalDescriptor = originalDescriptor
+    }
+
+    var originalDescriptor: FunctionDescriptor? = null
+
     override fun getOverriddenDescriptors() = owner.overriddenSymbols.map { it.descriptor }
     override fun getContainingDeclaration() = (owner.parent as IrSymbolOwner).symbol.descriptor
     override fun getModality() = owner.modality
@@ -810,7 +818,8 @@ open class WrappedFieldDescriptor(
 
     override fun isLateInit() = owner.correspondingProperty?.isLateinit ?: false
 
-    override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = owner.correspondingProperty?.descriptor?.extensionReceiverParameter
+    override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? =
+        owner.correspondingProperty?.descriptor?.extensionReceiverParameter
 
     override fun isExternal() = owner.isExternal
 

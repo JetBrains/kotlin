@@ -493,7 +493,7 @@ class LocalDeclarationsLowering(
             val oldDeclaration = localFunctionContext.declaration as IrSimpleFunction
 
             val memberOwner = memberDeclaration.parent
-            val newDescriptor = WrappedSimpleFunctionDescriptor(oldDeclaration.descriptor.annotations, oldDeclaration.descriptor.source)
+            val newDescriptor = WrappedSimpleFunctionDescriptor(oldDeclaration.descriptor)
             val newSymbol = IrSimpleFunctionSymbolImpl(newDescriptor)
             val newName = generateNameForLiftedDeclaration(oldDeclaration, memberOwner)
 
