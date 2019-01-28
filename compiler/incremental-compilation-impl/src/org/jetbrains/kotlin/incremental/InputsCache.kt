@@ -39,7 +39,7 @@ class InputsCache(
     fun removeOutputForSourceFiles(sources: Iterable<File>) {
         for (sourceFile in sources) {
             sourceToOutputMap.remove(sourceFile).forEach { it ->
-                reporter.report { "Deleting $it on clearing cache for $sourceFile" }
+                reporter.reportVerbose { "Deleting $it on clearing cache for $sourceFile" }
                 it.delete()
             }
         }

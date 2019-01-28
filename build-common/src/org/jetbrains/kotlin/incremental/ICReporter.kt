@@ -21,14 +21,13 @@ import java.io.File
 
 interface ICReporter {
     fun report(message: () -> String)
+    fun reportVerbose(message: () -> String)
 
-    // used in Gradle plugin
-    @Suppress("unused")
-    fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {}
+    fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
 
     fun pathsAsString(files: Iterable<File>): String =
-            files.joinToString { it.canonicalPath }
+        files.joinToString { it.canonicalPath }
 
     fun pathsAsString(vararg files: File): String =
-            pathsAsString(files.toList())
+        pathsAsString(files.toList())
 }

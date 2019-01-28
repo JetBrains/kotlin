@@ -36,24 +36,34 @@ internal class RemoteICReporter(
     private val icLogLines = arrayListOf<String>()
 
     override fun report(message: () -> String) {
+        reportImpl(isMessageVerbose = false, message = message)
+    }
+
+    override fun reportVerbose(message: () -> String) {
+        reportImpl(isMessageVerbose = true, message = message)
+    }
+
+    private fun reportImpl(isMessageVerbose: Boolean, message: () -> String) {
         val lazyMessage = lazy { message() }
-        if (shouldReportMessages && isVerbose) {
+
+        val shouldReportVerbose = isVerbose || !isMessageVerbose
+        if (shouldReportMessages && shouldReportVerbose) {
             servicesFacade.report(ReportCategory.IC_MESSAGE, ReportSeverity.DEBUG, lazyMessage.value)
         }
-        if (shouldReportICLog) {
+        if (shouldReportICLog && shouldReportVerbose) {
             icLogLines.add(lazyMessage.value)
         }
     }
 
-    override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
+    override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
         if (shouldReportCompileIteration) {
             compilationResults.add(
                 CompilationResultCategory.IC_COMPILE_ITERATION.code,
                 CompileIterationResult(sourceFiles, exitCode.toString())
             )
         }
-        if (shouldReportICLog) {
-            icLogLines.add("compile iteration:")
+        if (shouldReportICLog && incremental) {
+            icLogLines.add("Compile iteration:")
             sourceFiles.relativePaths(rootDir).forEach {
                 icLogLines.add("  $it")
             }

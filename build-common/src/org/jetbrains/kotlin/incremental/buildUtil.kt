@@ -130,7 +130,7 @@ fun ChangesCollector.getDirtyData(
     val dirtyClassesFqNames = HashSet<FqName>()
 
     for (change in changes()) {
-        reporter.report { "Process $change" }
+        reporter.reportVerbose { "Process $change" }
 
         if (change is ChangeInfo.SignatureChanged) {
             val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
@@ -190,7 +190,7 @@ fun mapClassesFqNamesToFiles(
             val srcFile = cache.getSourceFileIfClass(dirtyClassFqName)
             if (srcFile == null || srcFile in excludes || srcFile.isJavaFile()) continue
 
-            reporter.report { ("Class $dirtyClassFqName caused recompilation of: ${reporter.pathsAsString(srcFile)}") }
+            reporter.report { "Class $dirtyClassFqName caused recompilation of: ${reporter.pathsAsString(srcFile)}" }
             dirtyFiles.add(srcFile)
         }
     }

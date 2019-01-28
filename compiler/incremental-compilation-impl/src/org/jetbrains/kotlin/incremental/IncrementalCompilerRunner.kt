@@ -105,22 +105,22 @@ abstract class IncrementalCompilerRunner<
     private fun clearLocalStateOnRebuild(args: Args) {
         val destinationDir = destinationDir(args)
 
-        reporter.report { "Clearing output on rebuild" }
+        reporter.reportVerbose { "Clearing output on rebuild" }
         for (file in sequenceOf(destinationDir, workingDir) + outputFiles.asSequence()) {
             val deleted: Boolean? = when {
                 file.isDirectory -> {
-                    reporter.report { "Deleting directory $file" }
+                    reporter.reportVerbose { "  Deleting directory $file" }
                     file.deleteRecursively()
                 }
                 file.isFile -> {
-                    reporter.report { "Deleting $file" }
+                    reporter.reportVerbose { "  Deleting $file" }
                     file.delete()
                 }
                 else -> null
             }
 
             if (deleted == false) {
-                reporter.report { "Could not delete $file" }
+                reporter.reportVerbose { "  Could not delete $file" }
             }
         }
 
@@ -241,6 +241,7 @@ abstract class IncrementalCompilerRunner<
             exitCode = runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
             postCompilationHook(exitCode)
 
+            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
             if (exitCode != ExitCode.OK) break
 
             dirtySourcesSinceLastTimeFile.delete()

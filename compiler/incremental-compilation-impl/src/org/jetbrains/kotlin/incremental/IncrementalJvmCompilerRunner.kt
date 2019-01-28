@@ -82,6 +82,9 @@ fun makeIncrementally(
 object EmptyICReporter : ICReporter {
     override fun report(message: () -> String) {
     }
+
+    override fun reportVerbose(message: () -> String) {
+    }
 }
 
 inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
@@ -146,7 +149,7 @@ class IncrementalJvmCompilerRunner(
         initDirtyFiles(dirtyFiles, changedFiles)
 
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild { "No information on previous build" }
-        reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
+        reporter.reportVerbose { "Last Kotlin Build info -- $lastBuildInfo" }
 
         val classpathChanges = getClasspathChanges(args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
 
@@ -351,14 +354,9 @@ class IncrementalJvmCompilerRunner(
         args.destination = null
         args.buildFile = moduleFile.absolutePath
 
-        try {
-            reporter.report { "compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}" }
-            reporter.report { "compiling with classpath: ${classpath.toList().sorted().joinToString()}" }
-            val exitCode = compiler.exec(messageCollector, services, args)
-            reporter.reportCompileIteration(sourcesToCompile, exitCode)
-            return exitCode
-        }
-        finally {
+        return try {
+            compiler.exec(messageCollector, services, args)
+        } finally {
             args.destination = destination
             moduleFile.delete()
         }

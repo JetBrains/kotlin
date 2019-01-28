@@ -32,7 +32,10 @@ class TestICReporter : ICReporter {
     override fun report(message: () -> String) {
     }
 
-    override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
+    override fun reportVerbose(message: () -> String) {
+    }
+
+    override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
         compiledSourcesMutable.addAll(sourceFiles)
         this.exitCode = exitCode
     }
