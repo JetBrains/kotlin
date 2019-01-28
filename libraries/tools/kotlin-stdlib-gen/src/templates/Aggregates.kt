@@ -276,6 +276,7 @@ object Aggregates : TemplateGroupBase() {
                 include(Sequences, genericSpecializations)
                 include(ArraysOfObjects, genericSpecializations)
                 include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives - PrimitiveType.Boolean)
+                include(ArraysOfUnsigned)
                 include(CharSequences)
             } builder {
                 val isFloat = primitive?.isFloatingPoint() == true
@@ -307,7 +308,7 @@ object Aggregates : TemplateGroupBase() {
                     return $op
                     """
                 }
-                body(ArraysOfObjects, ArraysOfPrimitives, CharSequences) {
+                body(ArraysOfObjects, ArraysOfPrimitives, CharSequences, ArraysOfUnsigned) {
                     """
                     if (isEmpty()) return null
                     var $op = this[0]
@@ -330,9 +331,11 @@ object Aggregates : TemplateGroupBase() {
 
     val f_minBy = fn("minBy(selector: (T) -> R)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc { "Returns the first ${f.element} yielding the smallest value of the given function or `null` if there are no ${f.element.pluralize()}." }
         sample("samples.collections.Collections.Aggregates.minBy")
         typeParam("R : Comparable<R>")
@@ -355,7 +358,7 @@ object Aggregates : TemplateGroupBase() {
             return minElem
             """
         }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (isEmpty()) return null
 
@@ -379,7 +382,7 @@ object Aggregates : TemplateGroupBase() {
 
     val f_minWith = fn("minWith(comparator: Comparator<in T>)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         doc { "Returns the first ${f.element} having the smallest value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
         returns("T?")
@@ -396,7 +399,7 @@ object Aggregates : TemplateGroupBase() {
             return min
             """
         }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (isEmpty()) return null
             var min = this[0]
@@ -412,9 +415,10 @@ object Aggregates : TemplateGroupBase() {
 
     val f_maxBy = fn("maxBy(selector: (T) -> R)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns the first ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element.pluralize()}." }
         sample("samples.collections.Collections.Aggregates.maxBy")
@@ -438,7 +442,7 @@ object Aggregates : TemplateGroupBase() {
             return maxElem
             """
         }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (isEmpty()) return null
 
@@ -463,7 +467,7 @@ object Aggregates : TemplateGroupBase() {
 
     val f_maxWith = fn("maxWith(comparator: Comparator<in T>)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         doc { "Returns the first ${f.element} having the largest value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
         returns("T?")
@@ -480,7 +484,7 @@ object Aggregates : TemplateGroupBase() {
         return max
         """
         }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (isEmpty()) return null
 
@@ -614,9 +618,10 @@ object Aggregates : TemplateGroupBase() {
     }
 
     val f_reduceIndexed = fn("reduceIndexed(operation: (index: Int, acc: T, T) -> T)") {
-        include(ArraysOfPrimitives, CharSequences)
+        include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc {
             """
@@ -686,9 +691,10 @@ object Aggregates : TemplateGroupBase() {
     }
 
     val f_reduceRightIndexed = fn("reduceRightIndexed(operation: (index: Int, T, acc: T) -> T)") {
-        include(CharSequences, ArraysOfPrimitives)
+        include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc {
             """
@@ -763,9 +769,10 @@ object Aggregates : TemplateGroupBase() {
     }
 
     val f_reduce = fn("reduce(operation: (acc: T, T) -> T)") {
-        include(ArraysOfPrimitives, CharSequences)
+        include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
         returns("T")
@@ -819,9 +826,10 @@ object Aggregates : TemplateGroupBase() {
     }
 
     val f_reduceRight = fn("reduceRight(operation: (T, acc: T) -> T)") {
-        include(CharSequences, ArraysOfPrimitives)
+        include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
         returns("T")
@@ -885,7 +893,7 @@ object Aggregates : TemplateGroupBase() {
         specialFor(Iterables, Maps, CharSequences) {
             inline()
             doc { "Performs the given [action] on each ${f.element} and returns the ${f.collection} itself afterwards." }
-            val collectionType = when(f) {
+            val collectionType = when (f) {
                 Maps -> "M"
                 CharSequences -> "S"
                 else -> "C"
@@ -914,9 +922,10 @@ object Aggregates : TemplateGroupBase() {
 
     val f_forEach = fn("forEach(action: (T) -> Unit)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Performs the given [action] on each ${f.element}." }
         specialFor(Iterables, Maps) { annotation("@kotlin.internal.HidesMembers") }
@@ -930,9 +939,11 @@ object Aggregates : TemplateGroupBase() {
 
     val f_forEachIndexed = fn("forEachIndexed(action: (index: Int, T) -> Unit)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc {
             """
             Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}.

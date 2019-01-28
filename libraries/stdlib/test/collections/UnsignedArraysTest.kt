@@ -411,4 +411,161 @@ class UnsignedArraysTest {
             assertFailsWith(exClass, bounds) { ushortArrayOf(1).sliceArray(range) }
         }
     }
+
+    @Test
+    fun min() {
+        expect(null) { arrayOf<UByte>().min() }
+        expect(1u) { arrayOf<UShort>(1).min() }
+        expect(2u) { arrayOf<UInt>(2, 3).min() }
+        expect(2uL) { arrayOf<ULong>(3, 2).min() }
+    }
+
+    @Test
+    fun minInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().min() }
+        expect(1u) { ushortArrayOf(1).min() }
+        expect(2u) { uintArrayOf(2, 3).min() }
+        expect(2uL) { ulongArrayOf(3, 2).min() }
+    }
+
+    @Test
+    fun max() {
+        expect(null) { arrayOf<UByte>().max() }
+        expect(1u) { arrayOf<UShort>(1).max() }
+        expect(3u) { arrayOf<UInt>(2, 3).max() }
+        expect(3uL) { arrayOf<ULong>(3, 2).max() }
+    }
+
+    @Test
+    fun maxInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().max() }
+        expect(1u) { ushortArrayOf(1).max() }
+        expect(3u) { uintArrayOf(2, 3).max() }
+        expect(3uL) { ulongArrayOf(3, 2).max() }
+    }
+
+    @Test
+    fun minWith() {
+        expect(null) { arrayOf<UByte>().minWith(naturalOrder()) }
+        expect(1u) { arrayOf<UShort>(1).minWith(naturalOrder()) }
+        expect(2u) { arrayOf<UInt>(2, 3).minWith(naturalOrder()) }
+        expect(2uL) { arrayOf<ULong>(3, 2).minWith(naturalOrder()) }
+    }
+
+    @Test
+    fun minWithInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().minWith(reverseOrder()) }
+        expect(1u) { ushortArrayOf(1).minWith(reverseOrder()) }
+        expect(3u) { uintArrayOf(2, 3).minWith(reverseOrder()) }
+        expect(3uL) { ulongArrayOf(3, 2).minWith(reverseOrder()) }
+    }
+
+    @Test
+    fun maxWith() {
+        expect(null) { arrayOf<UByte>().maxWith(naturalOrder()) }
+        expect(1u) { arrayOf<UShort>(1).maxWith(naturalOrder()) }
+        expect(3u) { arrayOf<UInt>(2, 3).maxWith(naturalOrder()) }
+        expect(3uL) { arrayOf<ULong>(3, 2).maxWith(naturalOrder()) }
+    }
+
+    @Test
+    fun maxWithInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().maxWith(reverseOrder()) }
+        expect(1u) { ushortArrayOf(1).maxWith(reverseOrder()) }
+        expect(2u) { uintArrayOf(2, 3).maxWith(reverseOrder()) }
+        expect(2uL) { ulongArrayOf(3, 2).maxWith(reverseOrder()) }
+    }
+
+    @Test
+    fun minBy() {
+        expect(null) { arrayOf<UByte>().minBy { it * it } }
+        expect(1u) { arrayOf<UShort>(1).minBy { it * it } }
+        expect(2u) { arrayOf<UInt>(2, 3).minBy { it * it } }
+        expect(3uL) { arrayOf<ULong>(3, 2).minBy { it - 3 } }
+    }
+
+    @Test
+    fun minByInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().minBy { it * it } }
+        expect(1u) { ushortArrayOf(1).minBy { it * it } }
+        expect(2u) { uintArrayOf(2, 3).minBy { it * it } }
+        expect(3uL) { ulongArrayOf(3, 2).minBy { it - 3 } }
+    }
+
+    @Test
+    fun maxBy() {
+        expect(null) { arrayOf<UByte>().maxBy { it + 1 } }
+        expect(1u) { arrayOf<UShort>(1).maxBy { it + 1 } }
+        expect(2u) { arrayOf<UInt>(2, 3).maxBy { it - 3 } }
+        expect(3uL) { arrayOf<ULong>(3, 2).maxBy { it + 1 } }
+    }
+
+    @Test
+    fun maxByInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().maxBy { it + 1 } }
+        expect(1u) { ushortArrayOf(1).maxBy { it + 1 } }
+        expect(2u) { uintArrayOf(2, 3).maxBy { it - 3 } }
+        expect(3uL) { ulongArrayOf(3, 2).maxBy { it + 1 } }
+    }
+
+    @Test
+    fun reduce() {
+        expect(0u) { ubyteArrayOf(3, 2, 1).reduce { acc, e -> (acc - e).toUByte() } }
+        expect(0u) { ushortArrayOf(3, 2, 1).reduce { acc, e -> (acc - e).toUShort() } }
+        expect((-4).toUInt()) { uintArrayOf(1, 2, 3).reduce { acc, e -> acc - e } }
+        expect((-4).toULong()) { ulongArrayOf(1, 2, 3).reduce { acc, e -> acc - e } }
+
+        assertFailsWith<UnsupportedOperationException> {
+            uintArrayOf().reduce { acc, e -> acc + e }
+        }
+    }
+
+    @Test
+    fun reduceIndexed() {
+        expect(1u) { ubyteArrayOf(3, 2, 1).reduceIndexed { index, acc, e -> if (index != 2) (e - acc).toUByte() else e } }
+        expect(1u) { ushortArrayOf(3, 2, 1).reduceIndexed { index, acc, e -> if (index != 2) (e - acc).toUShort() else e } }
+        expect(UInt.MAX_VALUE) { uintArrayOf(1, 2, 3).reduceIndexed { index, acc, e -> index.toUInt() + acc - e } }
+        expect(ULong.MAX_VALUE) { ulongArrayOf(1, 2, 3).reduceIndexed { index, acc, e -> index.toULong() + acc - e } }
+
+        assertFailsWith<UnsupportedOperationException> {
+            uintArrayOf().reduceIndexed { index, acc, e -> index.toUInt() + e + acc }
+        }
+    }
+
+    @Test
+    fun reduceRight() {
+        expect(2u) { ubyteArrayOf(1, 2, 3).reduceRight { e, acc -> (e - acc).toUByte() } }
+        expect(2u) { ushortArrayOf(1, 2, 3).reduceRight { e, acc -> (e - acc).toUShort() } }
+        expect(2u) { uintArrayOf(1, 2, 3).reduceRight { e, acc -> e - acc } }
+        expect(2uL) { ulongArrayOf(1, 2, 3).reduceRight { e, acc -> e - acc } }
+
+        assertFailsWith<UnsupportedOperationException> {
+            uintArrayOf().reduceRight { e, acc -> e + acc }
+        }
+    }
+
+    @Test
+    fun reduceRightIndexed() {
+        expect(1u) { ubyteArrayOf(3, 2, 1).reduceRightIndexed { index, e, acc -> if (index != 1) (e - acc).toUByte() else e } }
+        expect(1u) { ushortArrayOf(3, 2, 1).reduceRightIndexed { index, e, acc -> if (index != 1) (e - acc).toUShort() else e } }
+        expect(1u) { uintArrayOf(1, 2, 3).reduceRightIndexed { index, e, acc -> index.toUInt() + e - acc } }
+        expect(1uL) { ulongArrayOf(1, 2, 3).reduceRightIndexed { index, e, acc -> index.toULong() + e - acc } }
+
+        assertFailsWith<UnsupportedOperationException> {
+            uintArrayOf().reduceRightIndexed { index, e, acc -> index.toUInt() + e + acc }
+        }
+    }
+
+    @Test
+    fun forEach() {
+        var i = 0
+        val a = ubyteArrayOf(3, 2, 1)
+        a.forEach { e -> assertEquals(e, a[i++]) }
+    }
+
+    @Test
+    fun forEachIndexed() {
+        val a = ubyteArrayOf(3, 2, 1)
+        a.forEachIndexed { index, e -> assertEquals(e, a[index]) }
+    }
 }
