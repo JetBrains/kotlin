@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
@@ -49,8 +46,13 @@ open class SerialTypeInfo(
     val unit: Boolean = false
 )
 
-fun AbstractSerialGenerator.findAddOnSerializer(propertyType: KotlinType): ClassDescriptor? =
-    additionalSerializersInScopeOfCurrentFile[propertyType]
+fun AbstractSerialGenerator.findAddOnSerializer(propertyType: KotlinType, module: ModuleDescriptor): ClassDescriptor? {
+    additionalSerializersInScopeOfCurrentFile[propertyType]?.let { return it }
+    if (propertyType in contextualKClassListInCurrentFile)
+        return module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
+    if (propertyType.isMarkedNullable) return findAddOnSerializer(propertyType.makeNotNullable(), module)
+    return null
+}
 
 @Suppress("FunctionName", "LocalVariableName")
 fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
@@ -59,8 +61,8 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
 
     val T = property.type
     property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
+    findAddOnSerializer(T, property.module)?.let { return SerializableInfo(it) }
     T.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
-    findAddOnSerializer(T)?.let { return SerializableInfo(it) }
     return when {
         T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
         T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(
@@ -95,8 +97,9 @@ fun AbstractSerialGenerator.findTypeSerializerOrContext(
     annotations: Annotations = kType.annotations,
     sourceElement: PsiElement? = null
 ): ClassDescriptor? {
-    additionalSerializersInScopeOfCurrentFile[kType]?.let { return it }
     if (kType.isTypeParameter()) return null
+    if (kType.isMarkedNullable) return findTypeSerializerOrContext(module, kType.makeNotNullable(), annotations, sourceElement)
+    additionalSerializersInScopeOfCurrentFile[kType]?.let { return it }
     fun getContextualSerializer() =
         if (annotations.hasAnnotation(SerializationAnnotations.contextualFqName) || kType in contextualKClassListInCurrentFile)
             module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
@@ -104,7 +107,7 @@ fun AbstractSerialGenerator.findTypeSerializerOrContext(
             null
     return getContextualSerializer() ?: findTypeSerializer(module, kType) ?: throw CompilationException(
         "Serializer for element of type $kType has not been found.\n" +
-                "To use context serializer as fallback, explicitly annotate element with @ContextualSerializer",
+                "To use context serializer as fallback, explicitly annotate element with @ContextualSerialization",
         null,
         sourceElement
     )
@@ -142,6 +145,21 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "kotlin.collections.Map", "kotlin.collections.LinkedHashMap", "kotlin.collections.MutableMap" -> "LinkedHashMapSerializer"
         "kotlin.collections.HashMap" -> "HashMapSerializer"
         "kotlin.collections.Map.Entry" -> "MapEntrySerializer"
+        "java.lang.Boolean" -> "BooleanSerializer"
+        "java.lang.Byte" -> "ByteSerializer"
+        "java.lang.Short" -> "ShortSerializer"
+        "java.lang.Integer" -> "IntSerializer"
+        "java.lang.Long" -> "LongSerializer"
+        "java.lang.Float" -> "FloatSerializer"
+        "java.lang.Double" -> "DoubleSerializer"
+        "java.lang.Character" -> "CharSerializer"
+        "java.lang.String" -> "StringSerializer"
+        "java.util.Collection", "java.util.List", "java.util.ArrayList" -> "ArrayListSerializer"
+        "java.util.Set", "java.util.LinkedHashSet" -> "LinkedHashSetSerializer"
+        "java.util.HashSet" -> "HashSetSerializer"
+        "java.util.Map", "java.util.LinkedHashMap" -> "LinkedHashMapSerializer"
+        "java.util.HashMap" -> "HashMapSerializer"
+        "java.util.Map.Entry" -> "MapEntrySerializer"
         else -> return null
     }
     return module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, Name.identifier(name)))
