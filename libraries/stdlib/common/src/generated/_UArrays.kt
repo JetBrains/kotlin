@@ -2176,7 +2176,6 @@ public inline fun UShortArray.copyOfRange(fromIndex: Int, toIndex: Int): UShortA
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UIntArray.indices: IntRange
     get() = storage.indices
 
@@ -2185,7 +2184,6 @@ public inline val UIntArray.indices: IntRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val ULongArray.indices: IntRange
     get() = storage.indices
 
@@ -2194,7 +2192,6 @@ public inline val ULongArray.indices: IntRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UByteArray.indices: IntRange
     get() = storage.indices
 
@@ -2203,7 +2200,6 @@ public inline val UByteArray.indices: IntRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UShortArray.indices: IntRange
     get() = storage.indices
 
@@ -2212,7 +2208,6 @@ public inline val UShortArray.indices: IntRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UIntArray.lastIndex: Int
     get() = storage.lastIndex
 
@@ -2221,7 +2216,6 @@ public inline val UIntArray.lastIndex: Int
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val ULongArray.lastIndex: Int
     get() = storage.lastIndex
 
@@ -2230,7 +2224,6 @@ public inline val ULongArray.lastIndex: Int
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UByteArray.lastIndex: Int
     get() = storage.lastIndex
 
@@ -2239,7 +2232,6 @@ public inline val UByteArray.lastIndex: Int
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UShortArray.lastIndex: Int
     get() = storage.lastIndex
 
@@ -2732,6 +2724,522 @@ public inline fun UShortArray.count(predicate: (UShort) -> Boolean): Int {
 }
 
 /**
+ * Performs the given [action] on each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.forEach(action: (UInt) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.forEach(action: (ULong) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.forEach(action: (UByte) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.forEach(action: (UShort) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.forEachIndexed(action: (index: Int, UInt) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.forEachIndexed(action: (index: Int, ULong) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.forEachIndexed(action: (index: Int, UByte) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.forEachIndexed(action: (index: Int, UShort) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.max(): UInt? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.max(): ULong? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.max(): UByte? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.max(): UShort? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UInt? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): ULong? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): UByte? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R): UShort? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.maxWith(comparator: Comparator<in UShort>): UShort? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.min(): UInt? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.min(): ULong? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.min(): UByte? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.min(): UShort? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UInt? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): ULong? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): UByte? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R): UShort? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.minWith(comparator: Comparator<in UShort>): UShort? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
@@ -2829,6 +3337,290 @@ public inline fun UByteArray.none(predicate: (UByte) -> Boolean): Boolean {
 public inline fun UShortArray.none(predicate: (UShort) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.reduce(operation: (acc: UInt, UInt) -> UInt): UInt {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.reduce(operation: (acc: ULong, ULong) -> ULong): ULong {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.reduce(operation: (acc: UByte, UByte) -> UByte): UByte {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.reduce(operation: (acc: UShort, UShort) -> UShort): UShort {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.reduceIndexed(operation: (index: Int, acc: UInt, UInt) -> UInt): UInt {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.reduceIndexed(operation: (index: Int, acc: ULong, ULong) -> ULong): ULong {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.reduceIndexed(operation: (index: Int, acc: UByte, UByte) -> UByte): UByte {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.reduceIndexed(operation: (index: Int, acc: UShort, UShort) -> UShort): UShort {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.reduceRight(operation: (UInt, acc: UInt) -> UInt): UInt {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.reduceRight(operation: (ULong, acc: ULong) -> ULong): ULong {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.reduceRight(operation: (UByte, acc: UByte) -> UByte): UByte {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.reduceRight(operation: (UShort, acc: UShort) -> UShort): UShort {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.reduceRightIndexed(operation: (index: Int, UInt, acc: UInt) -> UInt): UInt {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.reduceRightIndexed(operation: (index: Int, ULong, acc: ULong) -> ULong): ULong {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.reduceRightIndexed(operation: (index: Int, UByte, acc: UByte) -> UByte): UByte {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.reduceRightIndexed(operation: (index: Int, UShort, acc: UShort) -> UShort): UShort {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
 }
 
 /**

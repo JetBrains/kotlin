@@ -2320,6 +2320,14 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun firstOrNull-GBYM_sE ([B)Lkotlin/UByte;
 	public static final fun firstOrNull-QwZRm1k ([J)Lkotlin/ULong;
 	public static final fun firstOrNull-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun getIndices--ajY-9A ([I)Lkotlin/ranges/IntRange;
+	public static final fun getIndices-GBYM_sE ([B)Lkotlin/ranges/IntRange;
+	public static final fun getIndices-QwZRm1k ([J)Lkotlin/ranges/IntRange;
+	public static final fun getIndices-rL5Bavg ([S)Lkotlin/ranges/IntRange;
+	public static final fun getLastIndex--ajY-9A ([I)I
+	public static final fun getLastIndex-GBYM_sE ([B)I
+	public static final fun getLastIndex-QwZRm1k ([J)I
+	public static final fun getLastIndex-rL5Bavg ([S)I
 	public static final fun getOrNull-PpDY95g ([BI)Lkotlin/UByte;
 	public static final fun getOrNull-nggk6HY ([SI)Lkotlin/UShort;
 	public static final fun getOrNull-qFRl0hI ([II)Lkotlin/UInt;
@@ -2328,6 +2336,22 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun lastOrNull-GBYM_sE ([B)Lkotlin/UByte;
 	public static final fun lastOrNull-QwZRm1k ([J)Lkotlin/ULong;
 	public static final fun lastOrNull-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun max--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun max-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun max-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun max-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun maxWith-XMRcp5o ([BLjava/util/Comparator;)Lkotlin/UByte;
+	public static final fun maxWith-YmdZ_VM ([ILjava/util/Comparator;)Lkotlin/UInt;
+	public static final fun maxWith-eOHTfZs ([SLjava/util/Comparator;)Lkotlin/UShort;
+	public static final fun maxWith-zrEWJaI ([JLjava/util/Comparator;)Lkotlin/ULong;
+	public static final fun min--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun min-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun min-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun min-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun minWith-XMRcp5o ([BLjava/util/Comparator;)Lkotlin/UByte;
+	public static final fun minWith-YmdZ_VM ([ILjava/util/Comparator;)Lkotlin/UInt;
+	public static final fun minWith-eOHTfZs ([SLjava/util/Comparator;)Lkotlin/UShort;
+	public static final fun minWith-zrEWJaI ([JLjava/util/Comparator;)Lkotlin/ULong;
 	public static final fun plus-CFIt9YE ([ILjava/util/Collection;)[I
 	public static final fun plus-kzHmqpY ([JLjava/util/Collection;)[J
 	public static final fun plus-ojwP5H8 ([SLjava/util/Collection;)[S
