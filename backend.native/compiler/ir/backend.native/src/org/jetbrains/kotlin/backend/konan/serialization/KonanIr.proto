@@ -5,9 +5,9 @@ option java_outer_classname = "KonanIr";
 option optimize_for = LITE_RUNTIME;
 
 message DescriptorReference {
-    required string package_fq_name = 1;
-    required string class_fq_name = 2;
-    required string name = 3;
+    required String package_fq_name = 1;
+    required String class_fq_name = 2;
+    required String name = 3;
     optional UniqId uniq_id = 4;
     optional bool is_getter = 5 [default = false];
     optional bool is_setter = 6 [default = false];
@@ -28,7 +28,7 @@ message Coordinates {
     required int32 end_offset = 2;
 }
 
-/* ------ Top Level---------------------------------------------- */
+/* ------ Top Level---------------------------------------KonanIrModuleDeserializer.kt------- */
 
 message IrDeclarationContainer {
     repeated IrDeclaration declaration = 1;
@@ -50,6 +50,16 @@ message IrModule {
     repeated IrFile file = 2;
     required IrSymbolTable symbol_table = 3;
     required IrTypeTable type_table = 4;
+}
+
+/* ------ String Table ------------------------------------------ */
+
+message String {
+    required int32 index = 1;
+}
+
+message StringTable {
+    repeated string value = 1;
 }
 
 /* ------ IrSymbols --------------------------------------------- */
@@ -74,7 +84,7 @@ message IrSymbolData {
     required IrSymbolKind kind = 1;
     required UniqId uniq_id = 2;
     required UniqId top_level_uniq_id = 3;
-    optional string fqname = 4;
+    optional String fqname = 4;
     optional DescriptorReference descriptor_reference = 5;
 }
 
@@ -153,7 +163,7 @@ message IrTypeIndex {
 
 message IrBreak {
     required int32 loop_id = 1;
-    optional string label = 2;
+    optional String label = 2;
 }
 
 message IrBlock {
@@ -183,7 +193,7 @@ message IrCall {
 
 message IrFunctionReference {
     required IrSymbol symbol = 1;
-    optional string origin = 2;
+    optional Origin origin = 2;
     required MemberAccessCommon member_access = 3;
 }
 
@@ -192,7 +202,7 @@ message IrPropertyReference {
     optional IrSymbol field = 1;
     optional IrSymbol getter = 2;
     optional IrSymbol setter = 3;
-    optional string origin = 4;
+    optional Origin origin = 4;
     required MemberAccessCommon member_access = 5;
 }
 
@@ -216,13 +226,13 @@ message IrConst {
         int64 long = 7;
         float float = 8;
         double double = 9;
-        string string = 10;
+        String string = 10;
     }
 }
 
 message IrContinue {
     required int32 loop_id = 1;
-    optional string label = 2;
+    optional String label = 2;
 }
 
 message IrDelegatingConstructorCall {
@@ -272,7 +282,7 @@ message IrInstanceInitializerCall {
 message Loop {
     required int32 loop_id = 1;
     required IrExpression condition = 2;
-    optional string label = 3;
+    optional String label = 3;
     optional IrExpression body = 4;
 }
 
