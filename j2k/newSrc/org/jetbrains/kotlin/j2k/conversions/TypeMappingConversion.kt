@@ -56,7 +56,13 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
     }
 
     private fun JKTypeArgumentList.fixTypeArguments(classSymbol: JKClassSymbol): JKTypeArgumentList {
-        if (typeArguments.isNotEmpty()) return this
+        if (typeArguments.isNotEmpty()) {
+            return JKTypeArgumentListImpl(
+                typeArguments.map { typeArgument ->
+                    JKTypeElementImpl(typeArgument.type.mapType(null))
+                }
+            )
+        }
         val typeParametersCount = classSymbol.expectedTypeParametersCount()
         return when (typeParametersCount) {
             0 -> this
