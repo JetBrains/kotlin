@@ -7,8 +7,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 val nativePlatformVariants = listOf(
     "windows-amd64",
     "windows-i386",

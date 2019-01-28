@@ -6,8 +6,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(kotlinStdlib())
     compile(project(":compiler:cli-common"))

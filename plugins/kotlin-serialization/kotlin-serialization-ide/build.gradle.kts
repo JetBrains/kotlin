@@ -6,8 +6,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(project(":kotlinx-serialization-compiler-plugin"))
     compile(project(":idea"))

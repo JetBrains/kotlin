@@ -4,8 +4,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(intellijDep()) {
         includeJars("platform-api", "platform-impl", "extensions", rootProject = rootProject)
