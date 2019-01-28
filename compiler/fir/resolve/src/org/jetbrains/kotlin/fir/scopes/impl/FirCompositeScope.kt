@@ -11,12 +11,16 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirCompositeScope(val scopes: MutableList<FirScope>) : FirScope {
+class FirCompositeScope(
+    val scopes: MutableList<FirScope>,
+    private val reversedPriority: Boolean = false
+) : FirScope {
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
         processor: (ConeSymbol) -> Boolean
     ): Boolean {
+        val scopes = if (reversedPriority) scopes.asReversed() else scopes
         for (scope in scopes) {
             if (!position.allowTypeParameters && scope is FirTypeParameterScope) continue
             if (!scope.processClassifiersByName(name, position, processor)) {

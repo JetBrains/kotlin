@@ -9,19 +9,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
-class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        @Suppress("UNCHECKED_CAST")
-        return (element.transformChildren(this, data) as E).compose()
-    }
-
+class FirStatusResolveTransformer : FirAbstractTreeTransformer() {
     private val declarationsWithStatuses = mutableListOf<FirDeclaration>()
 
     private val classes = mutableListOf<FirRegularClass>()

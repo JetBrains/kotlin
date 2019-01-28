@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -27,31 +26,18 @@ import org.jetbrains.kotlin.fir.visitors.compose
 
 open class FirTypeResolveTransformer(
     private val traversedClassifiers: Set<FirMemberDeclaration> = setOf()
-) : FirTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        @Suppress("UNCHECKED_CAST")
-        return (element.transformChildren(this, data) as E).compose()
-    }
-
-    lateinit var scope: FirCompositeScope
-
+) : FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority = false) {
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         val session = file.session
-        scope = FirCompositeScope(
-            mutableListOf(
-                // from high priority to low priority
-                FirExplicitSimpleImportingScope(file.imports, session),
-                FirSelfImportingScope(file.packageFqName, session),
-                FirDefaultSimpleImportingScope(session),
-                FirExplicitStarImportingScope(file.imports, session),
-                FirDefaultStarImportingScope(session)
-            )
+        towerScope.scopes += listOf(
+            // from high priority to low priority
+            FirExplicitSimpleImportingScope(file.imports, session),
+            FirSelfImportingScope(file.packageFqName, session),
+            FirDefaultSimpleImportingScope(session),
+            FirExplicitStarImportingScope(file.imports, session),
+            FirDefaultStarImportingScope(session)
         )
         return super.transformFile(file, data)
-    }
-
-    private fun lookupSuperTypes(klass: FirRegularClass): List<ConeClassLikeType> {
-        return mutableListOf<ConeClassLikeType>().also { klass.symbol.collectSuperTypes(it) }
     }
 
     private fun resolveSuperTypesAndExpansions(element: FirMemberDeclaration) {
@@ -70,13 +56,13 @@ open class FirTypeResolveTransformer(
 
                 val firProvider = FirProvider.getInstance(regularClass.session)
                 val classId = regularClass.symbol.classId
-                scope.scopes += FirNestedClassifierScope(classId, firProvider)
+                towerScope.scopes += FirNestedClassifierScope(classId, firProvider)
                 val companionObjects = regularClass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
                 for (companionObject in companionObjects) {
-                    scope.scopes += FirNestedClassifierScope(companionObject.symbol.classId, firProvider)
+                    towerScope.scopes += FirNestedClassifierScope(companionObject.symbol.classId, firProvider)
                 }
 
-                lookupSuperTypes(regularClass).mapTo(scope.scopes) {
+                lookupSuperTypes(regularClass).mapTo(towerScope.scopes) {
                     val symbol = it.symbol
                     if (symbol is FirBasedSymbol<*>) {
                         FirNestedClassifierScope(symbol.classId, FirProvider.getInstance(symbol.fir.session))
@@ -100,7 +86,7 @@ open class FirTypeResolveTransformer(
 
 
     private inline fun <T> FirMemberDeclaration.withTypeParametersScope(crossinline l: () -> T): T {
-        val scopes = scope.scopes
+        val scopes = towerScope.scopes
         if (typeParameters.isNotEmpty()) {
             scopes += FirMemberTypeParameterScope(this)
         }
@@ -108,17 +94,6 @@ open class FirTypeResolveTransformer(
         if (typeParameters.isNotEmpty()) {
             scopes.removeAt(scopes.lastIndex)
         }
-        return result
-    }
-
-    private inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
-        val scopeBefore = scope
-        val scopes = scope.scopes
-        val sizeBefore = scopes.size
-        val result = l()
-        scope = scopeBefore
-        assert(scopes.size >= sizeBefore)
-        scopes.subList(sizeBefore + 1, scopes.size).clear()
         return result
     }
 
@@ -137,7 +112,7 @@ open class FirTypeResolveTransformer(
     override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
         val typeResolver = FirTypeResolver.getInstance(type.session)
         type.transformChildren(this, null)
-        return transformType(type, typeResolver.resolveType(type, scope, position = FirPosition.OTHER))
+        return transformType(type, typeResolver.resolveType(type, towerScope, position = FirPosition.OTHER))
     }
 
     override fun transformFunctionType(functionType: FirFunctionType, data: Nothing?): CompositeTransformResult<FirType> {
@@ -151,7 +126,7 @@ open class FirTypeResolveTransformer(
             functionType.receiverType,
             functionType.valueParameters as MutableList<FirValueParameter>,
             functionType.returnType,
-            typeResolver.resolveType(functionType, scope, FirPosition.OTHER)
+            typeResolver.resolveType(functionType, towerScope, FirPosition.OTHER)
         ).compose()
     }
 
@@ -230,7 +205,7 @@ open class FirTypeResolveTransformer(
 
         override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
             val typeResolver = FirTypeResolver.getInstance(type.session)
-            val symbol = typeResolver.resolveToSymbol(type, scope, position = FirPosition.SUPER_TYPE_OR_EXPANSION)
+            val symbol = typeResolver.resolveToSymbol(type, towerScope, position = FirPosition.SUPER_TYPE_OR_EXPANSION)
             val myTransformer = this@FirTypeResolveTransformer
 
             if (symbol != null) {
@@ -245,35 +220,7 @@ open class FirTypeResolveTransformer(
 
 
             type.transformChildren(myTransformer, null)
-            return myTransformer.transformType(type, typeResolver.resolveUserType(type, symbol, scope))
+            return myTransformer.transformType(type, typeResolver.resolveUserType(type, symbol, towerScope))
         }
     }
-
-    private tailrec fun ConeClassLikeType.computePartialExpansion(): ConeClassLikeType? {
-        return when (this) {
-            is ConeAbbreviatedType -> directExpansion.takeIf { it !is ConeClassErrorType }?.computePartialExpansion()
-            else -> return this
-        }
-    }
-
-    private tailrec fun ConeClassLikeSymbol.collectSuperTypes(list: MutableList<ConeClassLikeType>) {
-        when (this) {
-            is ConeClassSymbol -> {
-                val superClassType =
-                    this.superTypes
-                        .map { it.computePartialExpansion() }
-                        .firstOrNull {
-                            it !is ConeClassErrorType && (it?.symbol as? ConeClassSymbol)?.kind == ClassKind.CLASS
-                        } ?: return
-                list += superClassType
-                superClassType.symbol.collectSuperTypes(list)
-            }
-            is ConeTypeAliasSymbol -> {
-                val expansion = expansionType?.computePartialExpansion() ?: return
-                expansion.symbol.collectSuperTypes(list)
-            }
-            else -> error("?!id:1")
-        }
-    }
-
 }
