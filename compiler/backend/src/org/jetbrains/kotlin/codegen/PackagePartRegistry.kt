@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.FqName
 
-internal class PackagePartRegistry {
+class PackagePartRegistry {
     val parts = mutableMapOf<FqName, PackageParts>()
 
     fun addPart(packageFqName: FqName, partInternalName: String, facadeInternalName: String?) {

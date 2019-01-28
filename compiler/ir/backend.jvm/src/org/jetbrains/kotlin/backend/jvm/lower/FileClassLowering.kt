@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -62,7 +63,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
         irFile.declarations.addAll(classes)
     }
 
-    fun createFileClass(irFile: IrFile, fileClassMembers: List<IrDeclaration>): IrClass {
+    private fun createFileClass(irFile: IrFile, fileClassMembers: List<IrDeclaration>): IrClass {
         val fileEntry = irFile.fileEntry
         val ktFile = context.psiSourceManager.getKtFile(fileEntry as PsiSourceManager.PsiFileEntry)
             ?: throw AssertionError("Unexpected file entry: $fileEntry")
@@ -89,8 +90,13 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             createImplicitParameterDeclarationWithWrappedDescriptor()
             // TODO: figure out why reparenting leads to failing tests.
             // fileClassMembers.forEach { it.parent = this }
+
+            val partClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
+            val facadeClassType =
+                if (fileClassInfo.withJvmMultifileClass) AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName)
+                else null
+            context.state.factory.packagePartRegistry.addPart(irFile.fqName, partClassType.internalName, facadeClassType?.internalName)
         }
         // TODO file annotations
     }
 }
-
