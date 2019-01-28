@@ -10,8 +10,8 @@ import com.intellij.codeInspection.*
 import com.intellij.codeInspection.reference.RefEntity
 import com.intellij.codeInspection.reference.RefFile
 import com.intellij.codeInspection.reference.RefPackage
-import com.intellij.openapi.editor.event.DocumentAdapter
 import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.JavaPsiFacade
@@ -132,7 +132,7 @@ class NamingConventionInspectionSettings(
             val regexField = EditorTextField(settings.namePattern, null, RegExpFileType.INSTANCE).apply {
                 setOneLineMode(true)
             }
-            regexField.document.addDocumentListener(object : DocumentAdapter() {
+            regexField.document.addDocumentListener(object : DocumentListener {
                 override fun documentChanged(e: DocumentEvent) {
                     settings.namePattern = regexField.text
                 }
@@ -387,6 +387,8 @@ class PackageNameInspection : BaseGlobalInspection() {
         }
     }
 
+    // Serialized setting
+    @Suppress("MemberVisibilityCanBePrivate")
     var namePattern: String = DEFAULT_PACKAGE_NAME_PATTERN
 
     private val namingSettings = NamingConventionInspectionSettings(
