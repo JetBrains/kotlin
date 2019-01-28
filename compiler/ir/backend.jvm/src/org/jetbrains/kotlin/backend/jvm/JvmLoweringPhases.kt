@@ -49,7 +49,7 @@ private val KCallableNamePropertyPhase = makeJvmPhase(
 )
 
 private val LateinitPhase = makeJvmPhase(
-    { context, file -> LateinitLowering(context, true).lower(file) },
+    { context, file -> LateinitLowering(context).lower(file) },
     name = "Lateinit",
     description = "Insert checks for lateinit field references"
 )

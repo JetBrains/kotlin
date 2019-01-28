@@ -67,7 +67,7 @@ private val ArrayInlineConstructorLoweringPhase = makeJsPhase(
 )
 
 private val LateinitLoweringPhase = makeJsPhase(
-    { context, module -> LateinitLowering(context, true).lower(module) },
+    { context, module -> LateinitLowering(context).lower(module) },
     name = "LateinitLowering",
     description = "Insert checks for lateinit field references"
 )

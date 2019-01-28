@@ -34,20 +34,17 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-fun makeLateinitPhase(generateParameterNameInAssertion: Boolean) = object : CompilerPhase<CommonBackendContext, IrFile> {
+fun makeLateinitPhase() = object : CompilerPhase<CommonBackendContext, IrFile> {
     override val name = "Lateinit"
     override val description = "Insert checks for lateinit field references"
 
     override fun invoke(context: CommonBackendContext, input: IrFile): IrFile {
-        LateinitLowering(context, generateParameterNameInAssertion).lower(input)
+        LateinitLowering(context).lower(input)
         return input
     }
 }
 
-class LateinitLowering(
-    val context: CommonBackendContext,
-    private val generateParameterNameInAssertion: Boolean = false
-) : FileLoweringPass {
+class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitProperty(declaration: IrProperty): IrStatement {
@@ -128,17 +125,15 @@ class LateinitLowering(
 
     private fun IrBuilderWithScope.throwUninitializedPropertyAccessException(name: String) =
         irCall(throwErrorFunction).apply {
-            if (generateParameterNameInAssertion) {
-                putValueArgument(
-                    0,
-                    IrConstImpl.string(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        context.irBuiltIns.stringType,
-                        name
-                    )
+            putValueArgument(
+                0,
+                IrConstImpl.string(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    context.irBuiltIns.stringType,
+                    name
                 )
-            }
+            )
         }
 
     private val throwErrorFunction = context.ir.symbols.ThrowUninitializedPropertyAccessException.owner
