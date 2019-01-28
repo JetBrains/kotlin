@@ -29,6 +29,7 @@ object ConversionsRunner {
             +AnnotationClassConversion(context)
             +AnnotationConversion(context)
             +ModalityConversion(context)
+            +BoxedTypeOperationsConversion(context)
             +AssignmentAsExpressionToAlsoConversion(context)
             +AssignmentStatementValCreationConversion(context)
             +AssignmentStatementOperatorConversion()

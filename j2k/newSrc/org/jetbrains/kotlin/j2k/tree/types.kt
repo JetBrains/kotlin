@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
@@ -59,7 +61,7 @@ fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
             JKClassTypeImpl(symbol, listOf(classType.type), Nullability.NotNull)
         }
         is JKKtAnnotationArrayInitializerExpression -> JKNoTypeImpl //TODO
-
+        is JKLambdaExpression -> returnType.type
         else -> TODO(this::class.java.toString())
     }
 
@@ -290,6 +292,18 @@ fun JKClassSymbol.expectedTypeParametersCount(): Int {
         else -> 0
     }
 }
+
+val primitiveTypes =
+    listOf(
+        JvmPrimitiveType.BOOLEAN,
+        JvmPrimitiveType.CHAR,
+        JvmPrimitiveType.BYTE,
+        JvmPrimitiveType.SHORT,
+        JvmPrimitiveType.INT,
+        JvmPrimitiveType.FLOAT,
+        JvmPrimitiveType.LONG,
+        JvmPrimitiveType.DOUBLE
+    )
 
 fun JKClassSymbol.isArrayType(): Boolean =
     fqName in
