@@ -347,7 +347,7 @@ class JavaToJKTreeBuilder(
                     val classSymbol =
                         classOrAnonymousClassReference?.resolve()?.let {
                             symbolProvider.provideDirectSymbol(it) as JKClassSymbol
-                        } ?: JKUnresolvedClassSymbol(classOrAnonymousClassReference!!.text)
+                        } ?: JKUnresolvedClassSymbol(classOrAnonymousClassReference?.referenceName!!)
                     val typeArgumentList =
                         this.typeArgumentList.toJK()
                             .takeIf { it.typeArguments.isNotEmpty() }
