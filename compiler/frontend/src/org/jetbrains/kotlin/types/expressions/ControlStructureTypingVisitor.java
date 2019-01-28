@@ -80,14 +80,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
 
     @Override
-    public KotlinTypeInfo visitIfExpression(@NotNull KtIfExpression expression, ExpressionTypingContext context) {
-        return visitIfExpression(expression, context, false);
-    }
-
-    public KotlinTypeInfo visitIfExpression(KtIfExpression ifExpression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
-        components.dataFlowAnalyzer.recordExpectedType(contextWithExpectedType.trace, ifExpression, contextWithExpectedType.expectedType);
-
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
+    public KotlinTypeInfo visitIfExpression(@NotNull KtIfExpression ifExpression, ExpressionTypingContext context) {
         KtExpression condition = ifExpression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(condition, context);
         boolean loopBreakContinuePossibleInCondition = condition != null && containsJumpOutOfLoop(condition, context);
@@ -103,7 +96,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (elseBranch == null) {
             if (thenBranch != null) {
                 KotlinTypeInfo result = getTypeInfoWhenOnlyOneBranchIsPresent(
-                        thenBranch, thenScope, thenInfo, elseInfo, contextWithExpectedType, ifExpression);
+                        thenBranch, thenScope, thenInfo, elseInfo, context, ifExpression);
                 // If jump was possible, take condition check info as the jump info
                 return result.getJumpOutPossible()
                        ? result.replaceJumpOutPossible(true).replaceJumpFlowInfo(conditionDataFlowInfo)
@@ -113,7 +106,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
         if (thenBranch == null) {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
-                    elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression);
+                    elseBranch, elseScope, elseInfo, thenInfo, context, ifExpression);
         }
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(ifExpression, false);
         KtBlockExpression thenBlock = psiFactory.wrapInABlockWrapper(thenBranch);
@@ -124,17 +117,16 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 callForIf, ResolveConstruct.IF, Lists.newArrayList("thenBranch", "elseBranch"),
                 Lists.newArrayList(false, false),
-                contextWithExpectedType, dataFlowInfoForArguments);
+                context, dataFlowInfoForArguments);
 
-        return processBranches(
-                ifExpression, contextWithExpectedType, context, conditionDataFlowInfo,
+        return processIfBranches(
+                ifExpression, context, conditionDataFlowInfo,
                 loopBreakContinuePossibleInCondition, elseBranch, thenBranch, resolvedCall);
     }
 
     @NotNull
-    private KotlinTypeInfo processBranches(
+    private KotlinTypeInfo processIfBranches(
             KtIfExpression ifExpression,
-            ExpressionTypingContext contextWithExpectedType,
             ExpressionTypingContext context,
             DataFlowInfo conditionDataFlowInfo,
             boolean loopBreakContinuePossibleInCondition,
@@ -206,7 +198,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         // If break or continue was possible, take condition check info as the jump info
         return TypeInfoFactoryKt.createTypeInfo(
-                components.dataFlowAnalyzer.checkType(resultType, ifExpression, contextWithExpectedType),
+                components.dataFlowAnalyzer.checkType(resultType, ifExpression, context),
                 resultDataFlowInfo, loopBreakContinuePossible,
                 loopBreakContinuePossibleInCondition ? context.dataFlowInfo : conditionDataFlowInfo);
     }
