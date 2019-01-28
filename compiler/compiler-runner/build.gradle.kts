@@ -19,7 +19,6 @@ dependencies {
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compileOnly(project(":compiler:util"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly("org.jetbrains:annotations:13.0")
     runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
 }
 

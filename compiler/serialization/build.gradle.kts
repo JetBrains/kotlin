@@ -11,7 +11,6 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":core:descriptors"))
     compile(project(":core:deserialization"))
-    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 sourceSets {

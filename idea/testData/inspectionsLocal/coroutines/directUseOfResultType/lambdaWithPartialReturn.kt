@@ -1,3 +1,4 @@
+// PROBLEM: none
 package kotlin
 
 fun test(arg: Boolean) {

@@ -5,6 +5,7 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
+import org.gradle.kotlin.dsl.*
 
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
@@ -35,6 +36,7 @@ plugins {
     `build-scan` version "1.15"
     idea
     id("jps-compatible")
+    id("org.jetbrains.gradle.plugin.idea-ext")
 }
 
 pill {
@@ -76,6 +78,7 @@ val appcodeKotlinPlugin by configurations.creating
 val clionKotlinPlugin by configurations.creating
 
 val includeCidr by extra(project.getBooleanProperty("cidrPluginsEnabled") ?: false)
+val jpsBootstrap by configurations.creating
 
 dependencies {
     if (includeCidr) {
@@ -145,6 +148,7 @@ rootProject.apply {
     from(rootProject.file("gradle/versions.gradle.kts"))
     from(rootProject.file("gradle/report.gradle.kts"))
     from(rootProject.file("gradle/javaInstrumentation.gradle.kts"))
+    from(rootProject.file("gradle/jps.gradle.kts"))
 }
 
 IdeVersionConfigurator.setCurrentIde(this)
@@ -180,8 +184,7 @@ extra["intellijUltimateEnabled"] = intellijUltimateEnabled
 extra["intellijSeparateSdks"] = intellijSeparateSdks
 
 extra["IntellijCoreDependencies"] =
-        listOf("annotations",
-               if (Platform[191].orHigher()) "asm-all-7.0" else "asm-all",
+        listOf(if (Platform[191].orHigher()) "asm-all-7.0" else "asm-all",
                "guava",
                "jdom",
                "jna",

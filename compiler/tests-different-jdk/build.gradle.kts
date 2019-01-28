@@ -15,7 +15,6 @@ dependencies {
     testRuntime(intellijDep())
     testRuntime(intellijDep())
     testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))
-    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 sourceSets {

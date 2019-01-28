@@ -14,7 +14,6 @@ dependencies {
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly("org.jetbrains:annotations:13.0")
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 }
 

@@ -14,7 +14,7 @@ dependencies {
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("annotations", "asm-all", "trove4j", "util", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "util", rootProject = rootProject) }
     compileOnly(project(":kotlin-reflect-api"))
 
     testCompileOnly(project(":compiler:cli-common"))

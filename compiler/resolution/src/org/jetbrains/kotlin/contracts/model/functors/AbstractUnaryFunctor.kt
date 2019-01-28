@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.contracts.model.structure.ESReturns
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
+import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.Computation
-
+import org.jetbrains.kotlin.contracts.model.structure.ESConstants
+import org.jetbrains.kotlin.contracts.model.structure.isReturns
+import org.jetbrains.kotlin.contracts.model.structure.isWildcard
 
 /**
  * Unary functor that has sequential semantics, i.e. it won't apply to
@@ -30,17 +30,16 @@ import org.jetbrains.kotlin.contracts.model.Computation
  * It provides [applyToFinishingClauses] method for successors, which is guaranteed to
  * be called only on clauses that haven't failed before reaching functor transformation.
  */
-abstract class AbstractUnaryFunctor : AbstractReducingFunctor() {
+abstract class AbstractUnaryFunctor(constants: ESConstants) : AbstractReducingFunctor(constants) {
     override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
-        assert(arguments.size == 1, { "Wrong size of arguments list for Unary operator: expected 1, got ${arguments.size}" })
+        assert(arguments.size == 1) { "Wrong size of arguments list for Unary operator: expected 1, got ${arguments.size}" }
         return invokeWithArguments(arguments[0])
     }
 
     fun invokeWithArguments(arg: Computation): List<ESEffect> {
-        val returning = mutableListOf<ConditionalEffect>()
-        val rest = mutableListOf<ESEffect>()
-
-        arg.effects.forEach { if (it !is ConditionalEffect || it.simpleEffect !is ESReturns || it.simpleEffect.value == ESConstant.WILDCARD) rest += it else returning += it }
+        val returning =
+            arg.effects.filterIsInstance<ConditionalEffect>().filter { it.simpleEffect.isReturns { !value.isWildcard } }
+        val rest = arg.effects - returning
 
         val evaluatedByFunctor = invokeWithReturningEffects(returning)
 
@@ -49,5 +48,3 @@ abstract class AbstractUnaryFunctor : AbstractReducingFunctor() {
 
     protected abstract fun invokeWithReturningEffects(list: List<ConditionalEffect>): List<ConditionalEffect>
 }
-
-

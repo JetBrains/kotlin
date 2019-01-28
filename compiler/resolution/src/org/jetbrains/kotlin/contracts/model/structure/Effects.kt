@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.contracts.model.structure
 
-import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.ESValue
@@ -40,8 +39,11 @@ data class ESReturns(val value: ESValue) : SimpleEffect() {
         if (this.value !is ESConstant || other.value !is ESConstant) return this.value == other.value
 
         // ESReturns(x) implies ESReturns(?) for any 'x'
-        if (other.value.constantReference == ConstantReference.WILDCARD) return true
+        if (other.value.isWildcard) return true
 
         return value == other.value
     }
 }
+
+inline fun ESEffect.isReturns(block: ESReturns.() -> Boolean): Boolean =
+    this is ESReturns && block()

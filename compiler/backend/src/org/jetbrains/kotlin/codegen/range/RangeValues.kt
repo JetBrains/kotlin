@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -89,7 +88,7 @@ private fun isSubtypeOfString(type: KotlinType, builtIns: KotlinBuiltIns) =
     KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.stringType)
 
 private fun isSubtypeOfCharSequence(type: KotlinType, builtIns: KotlinBuiltIns) =
-    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
+    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.charSequence.defaultType)
 
 private fun getResolvedCallForRangeExpression(
     bindingContext: BindingContext,

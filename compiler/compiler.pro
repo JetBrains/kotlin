@@ -52,6 +52,10 @@ messages/**)
 -dontwarn com.intellij.util.io.TarUtil
 -dontwarn com.intellij.util.io.Compressor$Tar
 
+# Annotations from intellijCore/annotations.jar that not presented in org.jetbrains.annotations
+-dontwarn org.jetbrains.annotations.Async*
+-dontwarn org.jetbrains.annotations.Nls$Capitalization
+
 # Nullability annotations used in Guava
 -dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
 -dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl

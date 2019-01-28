@@ -57,7 +57,8 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
 
 fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
 
-val Project.useBootstrapStdlib: Boolean get() = findProperty("useBootstrapStdlib")?.let { it.toString() != "false" } ?: false
+val Project.useBootstrapStdlib: Boolean get() =
+    findProperty("jpsBuild")?.toString() == "true"
 
 fun Project.kotlinStdlib(suffix: String? = null): Any {
     return if (useBootstrapStdlib)
@@ -113,7 +114,7 @@ fun Project.toolsJar(jdkHome: File = File(this.property("JDK_18") as String)): F
     firstFromJavaHomeThatExists("lib/tools.jar", jdkHome = jdkHome)
 
 val compilerManifestClassPath
-    get() = "kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar trove4j.jar"
+    get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar trove4j.jar"
 
 object EmbeddedComponents {
     val CONFIGURATION_NAME = "embeddedComponents"

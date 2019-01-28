@@ -11,7 +11,6 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
     testRuntime(project(":kotlin-reflect"))
     testRuntime(intellijDep())
-    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 sourceSets {

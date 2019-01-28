@@ -11,5 +11,3 @@ kotlin.compiler.newInferenceEnabled=true
 
 intellijUltimateEnabled=false
 intellijEnforceCommunitySdk=true
-
-#useBootstrapStdlib=true

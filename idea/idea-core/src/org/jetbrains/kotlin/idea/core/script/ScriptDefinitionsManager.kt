@@ -58,7 +58,7 @@ import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStlib
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
@@ -304,7 +304,7 @@ class BundledKotlinScriptDependenciesResolver(private val project: Project) : De
             listOf(reflectPath, stdlibPath, scriptRuntimePath)
         }
         if (ScratchFileService.getInstance().getRootType(virtualFile) is IdeConsoleRootType) {
-            classpath = scriptCompilationClasspathFromContextOrStlib(wholeClasspath = true) + classpath
+            classpath = scriptCompilationClasspathFromContextOrStdlib(wholeClasspath = true) + classpath
         }
 
         return ScriptDependencies(javaHome = javaHome?.let(::File), classpath = classpath).asSuccess()

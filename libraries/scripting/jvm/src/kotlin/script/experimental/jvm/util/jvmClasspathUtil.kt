@@ -10,8 +10,9 @@ import java.io.FileNotFoundException
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
-import kotlin.script.experimental.jvm.impl.getResourcePathForClass
 import kotlin.script.experimental.jvm.impl.toFile
+import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClass
+import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClassByName
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 // TODO: consider moving all these utilites to the build-common or some other shared compiler API module
@@ -29,6 +30,7 @@ internal const val KOTLIN_SCRIPT_CLASSPATH_PROPERTY = "kotlin.script.classpath"
 internal const val KOTLIN_COMPILER_CLASSPATH_PROPERTY = "kotlin.compiler.classpath"
 internal const val KOTLIN_COMPILER_JAR_PROPERTY = "kotlin.compiler.jar"
 internal const val KOTLIN_STDLIB_JAR_PROPERTY = "kotlin.java.stdlib.jar"
+internal const val KOTLIN_REFLECT_JAR_PROPERTY = "kotlin.java.reflect.jar"
 // obsolete name, but maybe still used in the wild
 // TODO: consider removing
 internal const val KOTLIN_RUNTIME_JAR_PROPERTY = "kotlin.java.runtime.jar"
@@ -124,7 +126,7 @@ fun scriptCompilationClasspathFromContextOrNull(
         ?: classpathFromClasspathProperty()?.takeAndFilter()
 }
 
-fun scriptCompilationClasspathFromContextOrStlib(
+fun scriptCompilationClasspathFromContextOrStdlib(
     vararg keyNames: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false
@@ -184,10 +186,25 @@ object KotlinJars {
         classpath!!
     }
 
-    fun getLib(propertyName: String, jarName: String, markerClass: KClass<*>): File? =
-            System.getProperty(propertyName)?.let(::File)?.takeIf(File::exists)
+    fun getLib(propertyName: String, jarName: String, markerClass: KClass<*>, classLoader: ClassLoader? = null): File? =
+        getExplicitLib(propertyName, jarName)
+            ?: run {
+                val requestedClassloader = classLoader ?: Thread.currentThread().contextClassLoader
+                val byName =
+                    if (requestedClassloader == markerClass.java.classLoader) null
+                    else tryGetResourcePathForClassByName(markerClass.java.name, requestedClassloader)
+                byName ?: tryGetResourcePathForClass(markerClass.java)
+            }?.takeIf(File::exists)
+
+    fun getLib(propertyName: String, jarName: String, markerClassName: String, classLoader: ClassLoader? = null): File? =
+        getExplicitLib(propertyName, jarName)
+            ?: tryGetResourcePathForClassByName(
+                markerClassName, classLoader ?: Thread.currentThread().contextClassLoader
+            )?.takeIf(File::exists)
+
+    private fun getExplicitLib(propertyName: String, jarName: String) =
+        System.getProperty(propertyName)?.let(::File)?.takeIf(File::exists)
             ?: explicitCompilerClasspath?.firstOrNull { it.matchMaybeVersionedFile(jarName) }?.takeIf(File::exists)
-            ?: getResourcePathForClass(markerClass.java).takeIf(File::exists)
 
     val stdlibOrNull: File? by lazy {
         System.getProperty(KOTLIN_STDLIB_JAR_PROPERTY)?.let(::File)?.takeIf(File::exists)
@@ -201,6 +218,14 @@ object KotlinJars {
     val stdlib: File by lazy {
         stdlibOrNull
                 ?: throw Exception("Unable to find kotlin stdlib, please specify it explicitly via \"$KOTLIN_STDLIB_JAR_PROPERTY\" property")
+    }
+
+    val reflectOrNull: File? by lazy {
+        getLib(
+            KOTLIN_REFLECT_JAR_PROPERTY,
+            KOTLIN_JAVA_REFLECT_JAR,
+            "kotlin.reflect.full.KClasses" // using a class that is a part of the kotlin-reflect.jar
+        )
     }
 
     val scriptRuntimeOrNull: File? by lazy {

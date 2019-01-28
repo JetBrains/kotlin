@@ -89,7 +89,7 @@ abstract class CLITool<A : CommonToolArguments> {
             messageCollector
         }
 
-        reportArgumentParseProblems(fixedMessageCollector, arguments)
+        fixedMessageCollector.reportArgumentParseProblems(arguments)
         return execImpl(fixedMessageCollector, services, arguments)
     }
 

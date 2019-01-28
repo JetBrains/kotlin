@@ -11,7 +11,6 @@ dependencies {
     compile(project(":core:util.runtime"))
     compile(project(":core:descriptors"))
     compile(commonDep("javax.inject"))
-    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 sourceSets {

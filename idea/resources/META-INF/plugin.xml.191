@@ -69,6 +69,6 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij.codeInsight">
-      <nonBlockingContextChecker implementation="org.jetbrains.kotlin.idea.inspections.blockingCallsDetection.CoroutineNonBlockingContextChecker"/>
-    </extensions>
+     <nonBlockingContextChecker implementation="org.jetbrains.kotlin.idea.inspections.blockingCallsDetection.CoroutineNonBlockingContextChecker"/>
+  </extensions>
 </idea-plugin>

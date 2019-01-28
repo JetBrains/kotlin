@@ -20,7 +20,6 @@ internal class GradleCompilerRunnerWithWorkers(
         // todo: write tests with Workers enabled;
         workersExecutor.submit(GradleKotlinCompilerWork::class.java) { config ->
             config.isolationMode = IsolationMode.NONE
-            config.forkMode = ForkMode.NEVER
             config.params(workArgs)
         }
     }

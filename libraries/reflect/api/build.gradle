@@ -4,13 +4,18 @@ apply plugin: 'kotlin'
 
 configureJvm6Project(project)
 
+def jpsBuild = findProperty("jpsBuild")?.toString() == "true"
+
 sourceSets {
     main {
         java {
             srcDir "${rootDir}/core/reflection.jvm/src"
         }
     }
-    java9
+
+    if (!jpsBuild) {
+        java9
+    }
 }
 
 dependencies {
@@ -23,12 +28,14 @@ dependencies {
     compileOnly "org.jetbrains:annotations:13.0"
 }
 
-compileJava9Sources(
-        project, 'kotlin.reflect',
-        [sourceSets.main.output, configurations.compileOnly.filter {
-            !it.name.contains("kotlin-stdlib")
-        }]
-)
+if (!jpsBuild) {
+    compileJava9Sources(
+            project, 'kotlin.reflect',
+            [sourceSets.main.output, configurations.compileOnly.filter {
+                !it.name.contains("kotlin-stdlib")
+            }]
+    )
+}
 
 compileKotlin {
     kotlinOptions {
@@ -45,7 +52,9 @@ jar {
 
 task java9Jar(type: Jar) {
     classifier = "java9"
-    from sourceSets.java9.output
+    if (!jpsBuild) {
+        from sourceSets.java9.output
+    }
 }
 
 artifacts {
