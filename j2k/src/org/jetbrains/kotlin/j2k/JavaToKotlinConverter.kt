@@ -39,7 +39,7 @@ import java.util.*
 interface PostProcessor {
     fun insertImport(file: KtFile, fqName: FqName)
 
-    fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?)
+    fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?, settings: ConverterSettings?)
 }
 
 enum class ParseContext {

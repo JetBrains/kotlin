@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -63,7 +65,11 @@ import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
 
 interface J2kPostProcessing {
-    fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)?
+    fun createAction(element: KtElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? =
+        createAction(element, diagnostics)
+
+    fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? =
+        createAction(element, diagnostics, null)
 
     val writeActionNeeded: Boolean
 }

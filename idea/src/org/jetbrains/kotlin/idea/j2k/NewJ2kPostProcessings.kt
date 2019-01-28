@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -105,7 +106,18 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             registerInspectionBasedProcessing(ReplacePutWithAssignmentInspection()),
             SingleProcessing(UseExpressionBodyProcessing()),
             registerInspectionBasedProcessing(UnnecessaryVariableInspection()),
-            registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection()),
+            SingleProcessing(
+                object : J2kPostProcessing {
+                    override val writeActionNeeded: Boolean = true
+                    private val processing = registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection())
+
+                    override fun createAction(element: KtElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+                        if (settings?.specifyLocalVariableTypeByDefault == true) return null
+
+                        return processing.processing.createAction(element, diagnostics)
+                    }
+                }
+            ),
             registerGeneralInspectionBasedProcessing(RedundantUnitReturnTypeInspection()),
 
             SingleProcessing(RemoveExplicitPropertyType()),
@@ -392,10 +404,14 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
     private class RemoveExplicitPropertyType : J2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: KtElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
             if (element !is KtProperty) return null
+            val needFieldTypes = settings?.specifyFieldTypeByDefault == true
+            val needLocalVariablesTypes = settings?.specifyLocalVariableTypeByDefault == true
 
             fun check(element: KtProperty): Boolean {
+                if (needLocalVariablesTypes && element.isLocal) return false
+                if (needFieldTypes && element.isMember) return false
                 val initializer = element.initializer ?: return false
                 val withoutExpectedType = initializer.analyzeInContext(initializer.getResolutionScope())
                 val descriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return false

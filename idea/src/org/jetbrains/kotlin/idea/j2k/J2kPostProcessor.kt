@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
@@ -60,7 +62,7 @@ class J2kPostProcessor(
     }
 
 
-    override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) {
+    override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?,settings: ConverterSettings??) {
         fun Processing.flattenToGroups(): List<List<J2kPostProcessing>> =
             when (this) {
                 is SingleProcessing -> listOf(listOf(this.processing))
@@ -80,7 +82,7 @@ class J2kPostProcessor(
                 do {
                     var modificationStamp: Long? = file.modificationStamp
                     val elementToActions = runReadAction {
-                        collectAvailableActions(processings, file, rangeMarker)
+                        collectAvailableActions(processings, file, rangeMarker, settings)
                     }
 
                     withContext(EDT) {
@@ -127,7 +129,8 @@ class J2kPostProcessor(
     private fun collectAvailableActions(
         processings: Collection<J2kPostProcessing>,
         file: KtFile,
-        rangeMarker: RangeMarker?
+        rangeMarker: RangeMarker?,
+        settings: ConverterSettings??
     ): List<ActionData> {
         val diagnostics = analyzeFileRange(file, rangeMarker)
 
@@ -143,7 +146,7 @@ class J2kPostProcessor(
 
                     if (rangeResult == RangeFilterResult.PROCESS) {
                         processings.forEach { processing ->
-                            val action = processing.createAction(element, diagnostics)
+                            val action = processing.createAction(element, diagnostics, settings)
                             if (action != null) {
                                 availableActions.add(
                                     ActionData(

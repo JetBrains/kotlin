@@ -36,7 +36,7 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
             factory.createFileWithLightClassSupport("Dummy.kt", it, file)
         }.map {
             CommandProcessor.getInstance().runUndoTransparentAction {
-                postProcessor.doAdditionalProcessing(it, null)
+                postProcessor.doAdditionalProcessing(it, null, settings)
             }
             it.text
         }.single()

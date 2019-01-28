@@ -33,6 +33,6 @@ class AfterConversionPass(val project: Project, val postProcessor: PostProcessor
             null
         }
 
-        postProcessor.doAdditionalProcessing(kotlinFile, rangeMarker)
+        postProcessor.doAdditionalProcessing(kotlinFile, rangeMarker, null)
     }
 }
