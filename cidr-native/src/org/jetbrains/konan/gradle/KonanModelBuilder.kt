@@ -29,20 +29,7 @@ class KonanModelBuilder : ModelBuilderService {
     override fun buildAll(modelName: String, project: Project): Any? {
         val targets = project.getTargets() ?: return null
 
-        val artifacts = targets
-            .flatMap { it["getCompilations"] as NamedDomainObjectContainer<*> }
-            .flatMap { compilation ->
-                val outputKinds = compilation["getOutputKinds"] as? List<*>
-                val buildTypes = compilation["getBuildTypes"] as? List<*>
-                outputKinds.orEmpty().flatMap { outputKind ->
-                    buildTypes.orEmpty().mapNotNull { buildType ->
-                        outputKind ?: return@mapNotNull null
-                        buildType ?: return@mapNotNull null
-                        compilation["getLinkTask", outputKind, buildType] as? Task
-                    }
-                }
-            }
-            .mapNotNull { buildArtifact(it) }
+        val artifacts = collectArtifacts1320(targets).takeIf { it.isNotEmpty() } ?: collectArtifactsLegacy(targets)
 
         val buildModuleTaskName = project.tasks.findByName("assemble")?.path
         val cleanModuleTaskName = project.tasks.findByName("clean")?.path
@@ -50,6 +37,28 @@ class KonanModelBuilder : ModelBuilderService {
 
         return KonanModelImpl(artifacts, buildModuleTaskName, cleanModuleTaskName, kotlinNativeHome)
     }
+
+    // This is for Kotlin 1.3.20+:
+    private fun collectArtifacts1320(targets: Collection<*>) = targets
+        .flatMap { target -> target["getBinaries"] as? Collection<*> ?: emptyList<Any>() }
+        .mapNotNull { binary -> binary["getLinkTask"] as? Task }
+        .mapNotNull { task -> buildArtifact(task) }
+
+    // Legacy way (< 1.3.20):
+    private fun collectArtifactsLegacy(targets: Collection<*>) = targets
+        .flatMap { target -> target["getCompilations"] as NamedDomainObjectContainer<*> }
+        .flatMap { compilation ->
+            val outputKinds = compilation["getOutputKinds"] as? List<*>
+            val buildTypes = compilation["getBuildTypes"] as? List<*>
+            outputKinds.orEmpty().flatMap { outputKind ->
+                buildTypes.orEmpty().mapNotNull { buildType ->
+                    outputKind ?: return@mapNotNull null
+                    buildType ?: return@mapNotNull null
+                    compilation["getLinkTask", outputKind, buildType] as? Task
+                }
+            }
+        }
+        .mapNotNull { buildArtifact(it) }
 
     private fun buildArtifact(buildArtifactTask: Task): KonanModelArtifact? {
         val outputKind = buildArtifactTask["getOutputKind"]["name"] as? String ?: return null
