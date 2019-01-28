@@ -279,10 +279,11 @@ class KonanIrModuleDeserializer(
                 .filter { it.descriptor.findPackage() == packageFragment }
             val declarations = symbols.map {
 
+                val classDescriptor = it.descriptor as ClassDescriptor
                 val declaration = symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-                    it.descriptor as ClassDescriptor,
-                    { symbol: IrClassSymbol -> IrClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, symbol) }
-                )
+                        classDescriptor,
+                        classDescriptor.modality
+                ) { symbol: IrClassSymbol -> IrClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, symbol) }
                 declaration
 
             }

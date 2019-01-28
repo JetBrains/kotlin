@@ -761,22 +761,23 @@ abstract class IrModuleDeserializer(
 
         val symbol = deserializeIrSymbol(proto.symbol) as IrClassSymbol
 
+        val modality = deserializeModality(proto.modality)
         val clazz = symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-            symbol.descriptor, { symbol ->
-                IrClassImpl(
-                    start, end, origin,
-                    symbol,
-                    Name.identifier(proto.name),
-                    deserializeClassKind(proto.kind),
-                    deserializeVisibility(proto.visibility),
-                    deserializeModality(proto.modality),
-                    proto.isCompanion,
-                    proto.isInner,
-                    proto.isData,
-                    proto.isExternal,
-                    proto.isInline
-                )
-            })
+            symbol.descriptor, modality) { symbol ->
+            IrClassImpl(
+                        start, end, origin,
+                        symbol,
+                        Name.identifier(proto.name),
+                        deserializeClassKind(proto.kind),
+                        deserializeVisibility(proto.visibility),
+                        modality,
+                        proto.isCompanion,
+                        proto.isInner,
+                        proto.isData,
+                        proto.isExternal,
+                        proto.isInline
+            )
+        }
 
         proto.declarationContainer.declarationList.forEach {
             val member = deserializeDeclaration(it, clazz)
