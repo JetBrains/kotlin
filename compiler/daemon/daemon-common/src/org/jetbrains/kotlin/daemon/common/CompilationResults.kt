@@ -26,5 +26,6 @@ interface CompilationResults : Remote {
 }
 
 enum class CompilationResultCategory(val code: Int) {
-    IC_COMPILE_ITERATION(0)
+    IC_COMPILE_ITERATION(0),
+    IC_LOG(1)
 }

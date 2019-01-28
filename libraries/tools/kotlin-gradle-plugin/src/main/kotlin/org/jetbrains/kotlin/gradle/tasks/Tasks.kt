@@ -133,6 +133,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         }
 
     @get:Internal
+    var reportExecutionResult: Boolean = false
+
+    @get:Internal
     internal val buildHistoryFile: File
         get() = File(taskBuildDirectory, "build-history.bin")
 
@@ -436,6 +439,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
+            reportExecutionResult = reportExecutionResult,
             incrementalCompilationEnvironment = icEnv
         )
         compilerRunner.runJvmCompilerAsync(
@@ -593,6 +597,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
+            reportExecutionResult = reportExecutionResult,
             incrementalCompilationEnvironment = icEnv
         )
         compilerRunner.runJsCompilerAsync(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)

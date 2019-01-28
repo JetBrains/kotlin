@@ -511,13 +511,18 @@ class CompileServiceImpl(
 
         val workingDir = incrementalCompilationOptions.workingDir
         val modulesApiHistory = ModulesApiHistoryJs(incrementalCompilationOptions.modulesInfo)
+
         val compiler = IncrementalJsCompilerRunner(
             workingDir = workingDir,
             reporter = reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
             modulesApiHistory = modulesApiHistory
         )
-        return compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
+        return try {
+            compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
+        } finally {
+            reporter.flush()
+        }
     }
 
     private fun execIncrementalCompiler(
@@ -570,6 +575,8 @@ class CompileServiceImpl(
         val workingDir = incrementalCompilationOptions.workingDir
 
         val modulesApiHistory = incrementalCompilationOptions.run {
+            reporter.report { "Use module detection: ${multiModuleICSettings.useModuleDetection}" }
+
             if (!multiModuleICSettings.useModuleDetection) {
                 ModulesApiHistoryJvm(modulesInfo)
             } else {
@@ -587,7 +594,11 @@ class CompileServiceImpl(
             modulesApiHistory = modulesApiHistory,
             kotlinSourceFilesExtensions = allKotlinExtensions
         )
-        return compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)
+        return try {
+            compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)
+        } finally {
+            reporter.flush()
+        }
     }
 
     override fun leaseReplSession(

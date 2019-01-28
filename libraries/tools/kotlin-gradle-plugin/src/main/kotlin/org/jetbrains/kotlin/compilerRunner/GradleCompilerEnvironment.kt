@@ -16,6 +16,7 @@ internal class GradleCompilerEnvironment(
     messageCollector: GradlePrintingMessageCollector,
     outputItemsCollector: OutputItemsCollector,
     val outputFiles: FileCollection,
+    val reportExecutionResult: Boolean,
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment? = null
 ) : CompilerEnvironment(Services.EMPTY, messageCollector, outputItemsCollector) {
     val toolsJar: File? by lazy { findToolsJar() }

@@ -22,26 +22,54 @@ import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
 
 internal class RemoteICReporter(
-        private val servicesFacade: CompilerServicesFacadeBase,
-        private val compilationResults: CompilationResults,
-        compilationOptions: CompilationOptions
+    private val servicesFacade: CompilerServicesFacadeBase,
+    private val compilationResults: CompilationResults,
+    compilationOptions: IncrementalCompilationOptions
 ) : ICReporter {
+
+    private val rootDir = compilationOptions.modulesInfo.projectRoot
     private val shouldReportMessages = ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories
     private val isVerbose = compilationOptions.reportSeverity == ReportSeverity.DEBUG.code
-    private val shouldReportCompileIteration = CompilationResultCategory.IC_COMPILE_ITERATION.code in compilationOptions.requestedCompilationResults
+    private val shouldReportCompileIteration =
+        CompilationResultCategory.IC_COMPILE_ITERATION.code in compilationOptions.requestedCompilationResults
+    private val shouldReportICLog = CompilationResultCategory.IC_LOG.code in compilationOptions.requestedCompilationResults
+    private val icLogLines = arrayListOf<String>()
 
     override fun report(message: () -> String) {
+        val lazyMessage = lazy { message() }
         if (shouldReportMessages && isVerbose) {
-            servicesFacade.report(ReportCategory.IC_MESSAGE, ReportSeverity.DEBUG, message())
+            servicesFacade.report(ReportCategory.IC_MESSAGE, ReportSeverity.DEBUG, lazyMessage.value)
+        }
+        if (shouldReportICLog) {
+            icLogLines.add(lazyMessage.value)
         }
     }
 
     override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
         if (shouldReportCompileIteration) {
-            compilationResults.add(CompilationResultCategory.IC_COMPILE_ITERATION.code,
-                                   CompileIterationResult(sourceFiles, exitCode.toString())
+            compilationResults.add(
+                CompilationResultCategory.IC_COMPILE_ITERATION.code,
+                CompileIterationResult(sourceFiles, exitCode.toString())
             )
         }
+        if (shouldReportICLog) {
+            icLogLines.add("compile iteration:")
+            sourceFiles.relativePaths(rootDir).forEach {
+                icLogLines.add("  $it")
+            }
+        }
     }
+
+    fun flush() {
+        if (shouldReportICLog) {
+            compilationResults.add(CompilationResultCategory.IC_LOG.code, icLogLines)
+        }
+    }
+
+    private fun File.relativeOrCanonical(base: File): String =
+        relativeToOrNull(base)?.path ?: canonicalPath
+
+    private fun Iterable<File>.relativePaths(base: File): List<String> =
+        map { it.relativeOrCanonical(base) }.sorted()
 }
 
