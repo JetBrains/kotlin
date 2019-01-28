@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.builtins.unsigned
 
 
+import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.UnsignedType
 import org.jetbrains.kotlin.generators.builtins.convert
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
@@ -81,6 +82,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         generateBitwiseOperators()
 
         generateMemberConversions()
+        generateFloatingConversions()
 
         generateToStringHashCode()
 
@@ -223,6 +225,21 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println()
     }
 
+    private fun generateFloatingConversions() {
+        for (otherType in PrimitiveType.floatingPoint) {
+            val otherName = otherType.capitalized
+            out.println("    @kotlin.internal.InlineOnly")
+            out.print("    public inline fun to$otherName(): $otherName = ")
+            when (type) {
+                UnsignedType.UINT, UnsignedType.ULONG ->
+                    out.println(if (otherType == PrimitiveType.FLOAT) "this.toDouble().toFloat()" else className.toLowerCase() + "ToDouble(data)")
+                else ->
+                    out.println("this.toInt().to$otherName()")
+            }
+        }
+        out.println()
+    }
+
     private fun generateExtensionConversions() {
         for (otherType in UnsignedType.values()) {
             val otherSigned = otherType.asSigned.capitalized
@@ -235,6 +252,17 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 otherType == type -> "$className(this)"
                 else -> "$className(this.to$thisSigned())"
             })
+        }
+        out.println()
+
+        for (otherType in PrimitiveType.floatingPoint) {
+            val otherName = otherType.capitalized
+            out.println("@SinceKotlin(\"1.3\")")
+            out.println("@ExperimentalUnsignedTypes")
+            out.println("@kotlin.internal.InlineOnly")
+            out.print("public inline fun $otherName.to$className(): $className = ")
+            val conversion = if (otherType == PrimitiveType.DOUBLE) "" else ".toDouble()"
+            out.println("doubleTo$className(this$conversion)")
         }
     }
 

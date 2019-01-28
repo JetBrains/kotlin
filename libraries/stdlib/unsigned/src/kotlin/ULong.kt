@@ -182,6 +182,11 @@ public inline class ULong @PublishedApi internal constructor(@PublishedApi inter
     @kotlin.internal.InlineOnly
     public inline fun toULong(): ULong = this
 
+    @kotlin.internal.InlineOnly
+    public inline fun toFloat(): Float = this.toDouble().toFloat()
+    @kotlin.internal.InlineOnly
+    public inline fun toDouble(): Double = ulongToDouble(data)
+
     public override fun toString(): String = ulongToString(data)
 
 }
@@ -202,3 +207,12 @@ public inline fun Int.toULong(): ULong = ULong(this.toLong())
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun Long.toULong(): ULong = ULong(this)
+
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun Float.toULong(): ULong = doubleToULong(this.toDouble())
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun Double.toULong(): ULong = doubleToULong(this)

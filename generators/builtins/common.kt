@@ -34,6 +34,7 @@ enum class PrimitiveType(val byteSize: Int?) {
     companion object {
         val exceptBoolean = PrimitiveType.values().filterNot { it == BOOLEAN }
         val onlyNumeric = PrimitiveType.values().filterNot { it == BOOLEAN || it == CHAR }
+        val floatingPoint = listOf(FLOAT, DOUBLE)
     }
 }
 

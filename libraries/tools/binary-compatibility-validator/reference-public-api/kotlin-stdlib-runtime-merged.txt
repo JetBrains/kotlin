@@ -459,12 +459,18 @@ public abstract interface annotation class kotlin/UnsafeVariance : java/lang/ann
 }
 
 public final class kotlin/UnsignedKt {
+	public static final fun doubleToUByte (D)B
+	public static final fun doubleToUInt (D)I
+	public static final fun doubleToULong (D)J
+	public static final fun doubleToUShort (D)S
 	public static final fun uintCompare (II)I
 	public static final fun uintDivide-J1ME1BU (II)I
 	public static final fun uintRemainder-J1ME1BU (II)I
+	public static final fun uintToDouble (I)D
 	public static final fun ulongCompare (JJ)I
 	public static final fun ulongDivide-eb3DHEI (JJ)J
 	public static final fun ulongRemainder-eb3DHEI (JJ)J
+	public static final fun ulongToDouble (J)D
 }
 
 public abstract interface annotation class kotlin/UseExperimental : java/lang/annotation/Annotation {
