@@ -2724,6 +2724,254 @@ public inline fun UShortArray.count(predicate: (UShort) -> Boolean): Int {
 }
 
 /**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UIntArray.fold(initial: R, operation: (acc: R, UInt) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> ULongArray.fold(initial: R, operation: (acc: R, ULong) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UByteArray.fold(initial: R, operation: (acc: R, UByte) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UShortArray.fold(initial: R, operation: (acc: R, UShort) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UIntArray.foldIndexed(initial: R, operation: (index: Int, acc: R, UInt) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> ULongArray.foldIndexed(initial: R, operation: (index: Int, acc: R, ULong) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UByteArray.foldIndexed(initial: R, operation: (index: Int, acc: R, UByte) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UShortArray.foldIndexed(initial: R, operation: (index: Int, acc: R, UShort) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UIntArray.foldRight(initial: R, operation: (UInt, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> ULongArray.foldRight(initial: R, operation: (ULong, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UByteArray.foldRight(initial: R, operation: (UByte, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UShortArray.foldRight(initial: R, operation: (UShort, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UIntArray.foldRightIndexed(initial: R, operation: (index: Int, UInt, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> ULongArray.foldRightIndexed(initial: R, operation: (index: Int, ULong, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UByteArray.foldRightIndexed(initial: R, operation: (index: Int, UByte, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UShortArray.foldRightIndexed(initial: R, operation: (index: Int, UShort, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
  * Performs the given [action] on each element.
  */
 @SinceKotlin("1.3")

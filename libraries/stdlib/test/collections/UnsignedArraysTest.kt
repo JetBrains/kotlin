@@ -584,4 +584,151 @@ class UnsignedArraysTest {
         expect(50000u) { ushortArrayOf(20000u, 30000u).sum() }
         expect(12_000_000_000_000_000_000uL) { ulongArrayOf(10_000_000_000_000_000_000uL, 2_000_000_000_000_000_000uL).sum() }
     }
+
+    @Test
+    fun fold() {
+        expect(6u) { ubyteArrayOf(1, 2, 3).fold(0u) { acc, e -> acc + e } }
+        expect(13u) { ushortArrayOf(1, 2, 3).fold(1u) { acc, e -> acc + 2u * e } }
+        expect(6u) { uintArrayOf(1, 2, 3).fold(1u) { acc, e -> acc * e } }
+        expect("0123") { ulongArrayOf(1, 2, 3).fold("0") { acc, e -> "$acc$e" } }
+    }
+
+    @Test
+    fun foldIndexed() {
+        expect(8u) { ubyteArrayOf(1, 2, 3).foldIndexed(0u) { i, acc, e -> acc + i.toUByte() * e } }
+        expect(10) { ushortArrayOf(1, 2, 3).foldIndexed(1) { i, acc, e -> acc + i + e.toInt() } }
+        expect(15u) { uintArrayOf(1, 2, 3).foldIndexed(1u) { i, acc, e -> acc * (i.toUInt() + e) } }
+        expect(" 0-1 1-2 2-3") { ulongArrayOf(1, 2, 3).foldIndexed("") { i, acc, e -> "$acc $i-$e" } }
+    }
+
+    @Test
+    fun foldRight() {
+        expect(6u) { ubyteArrayOf(1, 2, 3).foldRight(0u) { e, acc -> acc + e } }
+        expect(13u) { ushortArrayOf(1, 2, 3).foldRight(1u) { e, acc -> acc + 2u * e } }
+        expect(6u) { uintArrayOf(1, 2, 3).foldRight(1u) { e, acc -> acc * e } }
+        expect("0321") { ulongArrayOf(1, 2, 3).foldRight("0") { e, acc -> "$acc$e" } }
+    }
+
+    @Test
+    fun foldRightIndexed() {
+        expect(8u) { ubyteArrayOf(1, 2, 3).foldRightIndexed(0u) { i, e, acc -> acc + i.toUByte() * e } }
+        expect(10) { ushortArrayOf(1, 2, 3).foldRightIndexed(1) { i, e, acc -> acc + i + e.toInt() } }
+        expect(15u) { uintArrayOf(1, 2, 3).foldRightIndexed(1u) { i, e, acc -> acc * (i.toUInt() + e) } }
+        expect(" 2-3 1-2 0-1") { ulongArrayOf(1, 2, 3).foldRightIndexed("") { i, e, acc -> "$acc $i-$e" } }
+    }
+
+    @Test
+    fun elementAt() {
+        expect(0u) { ubyteArrayOf(0, 1, 2).elementAt(0) }
+        expect(1u) { ushortArrayOf(0, 1, 2).elementAt(1) }
+        expect(2u) { uintArrayOf(0, 1, 2).elementAt(2) }
+
+        // TODO: Uncomment these tests after KT-30051 gets fixed.
+        // Currently JS does not throw exception on incorrect index.
+//        assertFailsWith<IndexOutOfBoundsException> { uintArrayOf().elementAt(0) }
+//        assertFailsWith<IndexOutOfBoundsException> { ulongArrayOf(0, 1, 2).elementAt(-1) }
+    }
+
+    @Test
+    fun elementAtOrElse() {
+        expect(0u) { ubyteArrayOf(0, 1, 2).elementAtOrElse(0) { UByte.MAX_VALUE } }
+        expect(UShort.MAX_VALUE) { ushortArrayOf(0, 1, 2).elementAtOrElse(-1) { UShort.MAX_VALUE } }
+        expect(UInt.MAX_VALUE) { uintArrayOf(0, 1, 2).elementAtOrElse(3) { UInt.MAX_VALUE } }
+        expect(ULong.MAX_VALUE) { ulongArrayOf(0, 1, 2).elementAtOrElse(100) { ULong.MAX_VALUE } }
+    }
+
+    @Test
+    fun elementAtOrNull() {
+        expect(0u) { ubyteArrayOf(0, 1, 2).elementAtOrNull(0) }
+        expect(null) { ushortArrayOf(0, 1, 2).elementAtOrNull(-1) }
+        expect(null) { uintArrayOf(0, 1, 2).elementAtOrNull(3) }
+        expect(null) { ulongArrayOf(0, 1, 2).elementAtOrNull(100) }
+    }
+
+    @Test
+    fun find() {
+        expect(0u) { ubyteArrayOf(0, 1, 2).find { it == 0.toUByte() } }
+        expect(0u) { ushortArrayOf(0, 1, 2).find { it % 2u == 0u } }
+        expect(1u) { uintArrayOf(0, 1, 2).find { it % 2u == 1u } }
+        expect(null) { ulongArrayOf(0, 1, 2).find { it == 3uL } }
+    }
+
+    @Test
+    fun findLast() {
+        expect(0u) { ubyteArrayOf(0, 1, 2).findLast { it == 0.toUByte() } }
+        expect(2u) { ushortArrayOf(0, 1, 2).findLast { it % 2u == 0u } }
+        expect(1u) { uintArrayOf(0, 1, 2).findLast { it % 2u == 1u } }
+        expect(null) { ulongArrayOf(0, 1, 2).findLast { it == 3uL } }
+    }
+
+    @Test
+    fun first() {
+        expect(0u) { ubyteArrayOf(0, 1, 2).first() }
+        expect(0u) { ushortArrayOf(0, 1, 2).first { it % 2u == 0u } }
+        expect(1u) { uintArrayOf(0, 1, 2).first { it % 2u == 1u } }
+        assertFailsWith<NoSuchElementException> { uintArrayOf().first() }
+        assertFailsWith<NoSuchElementException> { ulongArrayOf(0, 1, 2).first { it == 3uL } }
+    }
+
+    @Test
+    fun firstOrNull() {
+        expect(0u) { ubyteArrayOf(0, 1, 2).firstOrNull() }
+        expect(0u) { ushortArrayOf(0, 1, 2).firstOrNull { it % 2u == 0u } }
+        expect(1u) { uintArrayOf(0, 1, 2).firstOrNull { it % 2u == 1u } }
+        expect(null) { uintArrayOf().firstOrNull() }
+        expect(null) { ulongArrayOf(0, 1, 2).firstOrNull { it == 3uL } }
+    }
+
+    @Test
+    fun getOrElse() {
+        expect(0u) { ubyteArrayOf(0, 1, 2).getOrElse(0) { UByte.MAX_VALUE } }
+        expect(UShort.MAX_VALUE) { ushortArrayOf(0, 1, 2).getOrElse(-1) { UShort.MAX_VALUE } }
+        expect(UInt.MAX_VALUE) { uintArrayOf(0, 1, 2).getOrElse(3) { UInt.MAX_VALUE } }
+        expect(ULong.MAX_VALUE) { ulongArrayOf(0, 1, 2).getOrElse(100) { ULong.MAX_VALUE } }
+    }
+
+    @Test
+    fun getOrNull() {
+        expect(0u) { ubyteArrayOf(0, 1, 2).getOrNull(0) }
+        expect(null) { ushortArrayOf(0, 1, 2).getOrNull(-1) }
+        expect(null) { uintArrayOf(0, 1, 2).getOrNull(3) }
+        expect(null) { ulongArrayOf(0, 1, 2).getOrNull(100) }
+    }
+
+    @Test
+    fun last() {
+        expect(2u) { ubyteArrayOf(0, 1, 2).last() }
+        expect(2u) { ushortArrayOf(0, 1, 2).last { it % 2u == 0u } }
+        expect(1u) { uintArrayOf(0, 1, 2).last { it % 2u == 1u } }
+        assertFailsWith<NoSuchElementException> { uintArrayOf().last() }
+        assertFailsWith<NoSuchElementException> { ulongArrayOf(0, 1, 2).last { it == 3uL } }
+    }
+
+    @Test
+    fun lastOrNull() {
+        expect(2u) { ubyteArrayOf(0, 1, 2).lastOrNull() }
+        expect(2u) { ushortArrayOf(0, 1, 2).lastOrNull { it % 2u == 0u } }
+        expect(1u) { uintArrayOf(0, 1, 2).lastOrNull { it % 2u == 1u } }
+        expect(null) { uintArrayOf().lastOrNull() }
+        expect(null) { ulongArrayOf(0, 1, 2).lastOrNull { it == 3uL } }
+    }
+
+    @Test
+    fun single() {
+        expect(0u) { ubyteArrayOf(0).single() }
+        expect(2u) { ushortArrayOf(0, 1, 2).single { it == 2.toUShort() } }
+        expect(1u) { uintArrayOf(0, 1, 2).single { it % 2u == 1u } }
+        assertFailsWith<NoSuchElementException> { uintArrayOf().single() }
+        assertFailsWith<NoSuchElementException> { ulongArrayOf(0, 1, 2).single { it == 3uL } }
+        assertFailsWith<IllegalArgumentException> { ulongArrayOf(0, 1, 2).single { it % 2uL == 0uL } }
+    }
+
+    @Test
+    fun singleOrNull() {
+        expect(0u) { ubyteArrayOf(0).singleOrNull() }
+        expect(2u) { ushortArrayOf(0, 1, 2).singleOrNull { it == 2.toUShort() } }
+        expect(1u) { uintArrayOf(0, 1, 2).singleOrNull { it % 2u == 1u } }
+        expect(null) { uintArrayOf().singleOrNull() }
+        expect(null) { ulongArrayOf(0, 1, 2).singleOrNull() { it % 2uL == 0uL } }
+    }
 }
