@@ -116,6 +116,10 @@ fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nu
     }
 }
 
+
+fun JKType.asTypeElement() =
+    JKTypeElementImpl(this)
+
 fun JKClassSymbol.asType(nullability: Nullability = Nullability.Default): JKClassType =
     JKClassTypeImpl(this, emptyList(), nullability)
 
