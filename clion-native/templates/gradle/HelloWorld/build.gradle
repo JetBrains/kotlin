@@ -1,5 +1,5 @@
 plugins {
-    id 'kotlin-multiplatform' version '1.3.11'
+    id 'org.jetbrains.kotlin.multiplatform' version '1.3.20'
 }
 
 repositories {
@@ -7,34 +7,20 @@ repositories {
 }
 
 kotlin {
-    targets {
-        // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
-        // For Linux, preset should be changed to e.g. presets.linuxX64
-        // For MacOS, preset should be changed to e.g. presets.macosX64
-        fromPreset(presets.{% platform %}, 'HelloWorld')
-
-        configure([HelloWorld]) {
-            // Comment to generate Kotlin/Native library (KLIB) instead of executable file:
-            compilations.main.outputKinds 'EXECUTABLE'
-            // Change to specify fully qualified name of your application's entry point:
-            compilations.main.entryPoint 'sample.helloworld.main'
-        }
-    }
-
-    sourceSets {
-        HelloWorldMain {
-        }
-        HelloWorldTest {
+    // For ARM, preset function should be changed to iosArm32() or iosArm64()
+    // For Linux, preset function should be changed to e.g. linuxX64()
+    // For MacOS, preset function should be changed to e.g. macosX64()
+    {% platform %}('HelloWorld') {
+        binaries {
+            // Comment the next section to generate Kotlin/Native library (KLIB) instead of executable file:
+            executable('HelloWorldApp') {
+                // Change to specify fully qualified name of your application's entry point:
+                entryPoint = 'sample.helloworld.main'
+            }
         }
     }
 }
 
-task runProgram {
-    def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
-    dependsOn kotlin.targets.HelloWorld.compilations.main.linkTaskName('EXECUTABLE', buildType)
-    doLast {
-        exec {
-            executable kotlin.targets.HelloWorld.compilations.main.getBinary('EXECUTABLE', buildType)
-        }
-    }
-}
+// Use the following Gradle tasks to run your application:
+// :runHelloWorldAppReleaseExecutableHelloWorld - without debug symbols
+// :runHelloWorldAppDebugExecutableHelloWorld - with debug symbols

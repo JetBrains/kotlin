@@ -4,11 +4,11 @@ This example shows how one could implement simple comma separated values reader 
 A sample data [European Mammals Red List for 2009](https://data.europa.eu/euodp/en/data/dataset?res_format=CSV)
 from EU is being used.
 
-To build use `../gradlew assemble`.
+To build use `./gradlew assemble`.
 
-To run use `../gradlew runProgram` or execute the program directly:
+To run use `./gradlew runCSVParserAppReleaseExecutableCSVParser` or execute the program directly:
 
-    ./build/bin/csvParser/main/release/executable/csvparser.kexe \
+    ./build/bin/CSVParser/CSVParserAppReleaseExecutable/CSVParserApp.kexe \
         ./European_Mammals_Red_List_Nov_2009.csv 4 100
 
 It will print number of all unique entries in fifth column
