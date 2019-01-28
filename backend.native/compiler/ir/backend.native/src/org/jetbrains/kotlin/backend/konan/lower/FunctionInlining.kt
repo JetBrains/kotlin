@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -278,7 +277,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
 
             val isImmutableVariableLoad: Boolean
                 get() = argumentExpression.let {
-                    it is IrGetValue && !it.descriptor.let { it is VariableDescriptor && it.isVar }
+                    it is IrGetValue && !it.symbol.owner.let { it is IrVariable && it.isVar }
                 }
         }
 
