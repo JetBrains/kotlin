@@ -283,7 +283,7 @@ internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
 }
 
 internal fun KtElement.analyze(): BindingContext {
-    if (containingFile !is KtFile) return BindingContext.EMPTY // EA-114080, EA-113475
+    if (!isValid || containingFile !is KtFile) return BindingContext.EMPTY // EA-114080, EA-113475, EA-134193
     return ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
         ?.getBindingContext(this) ?: BindingContext.EMPTY
 }
