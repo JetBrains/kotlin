@@ -447,7 +447,7 @@ class PSICallResolver(
         private fun createReceiverValueWithSmartCastInfo(variable: KotlinResolutionCandidate): ReceiverValueWithSmartCastInfo {
             val callForVariable = variable.resolvedCall.atom as PSIKotlinCallForVariable
             val calleeExpression = callForVariable.baseCall.psiCall.calleeExpression as? KtReferenceExpression
-                    ?: error("Unexpected call : ${callForVariable.baseCall.psiCall}")
+                ?: error("Unexpected call : ${callForVariable.baseCall.psiCall}")
 
             val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Context for resolve candidate")
 
@@ -562,7 +562,7 @@ class PSICallResolver(
 
                     val bindingContext = context.trace.bindingContext
                     val call = bindingContext[BindingContext.DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL, ktExpression]
-                            ?: ktExpression?.getCall(bindingContext)
+                        ?: ktExpression?.getCall(bindingContext)
 
                     val onlyResolvedCall = call?.let {
                         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
@@ -589,7 +589,7 @@ class PSICallResolver(
             ModifierCheckerCore.check(projection, context.trace, null, languageVersionSettings)
 
             resolveType(context, projection.typeReference, typeResolver)?.let { SimpleTypeArgumentImpl(projection.typeReference!!, it) }
-                    ?: TypeArgumentPlaceholder
+                ?: TypeArgumentPlaceholder
         }
 
     private fun resolveArgumentsInParenthesis(
