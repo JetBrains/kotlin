@@ -6,5 +6,3 @@ fun foo() {
     }
 }
 // 1 LINENUMBER 3
-// Adding ignore flags below the test since the test relies on line numbers.
-// IGNORE_BACKEND: JVM_IR
