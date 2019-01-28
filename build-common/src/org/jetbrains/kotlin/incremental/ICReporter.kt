@@ -25,6 +25,20 @@ interface ICReporter {
 
     fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
 
+    fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {
+        reportMarkDirty(affectedFiles, "dirty class $classFqName")
+    }
+
+    fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {
+        reportMarkDirty(affectedFiles, "dirty member $scope#$name")
+    }
+
+    fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {
+        affectedFiles.forEach { file ->
+            reportVerbose { "${pathsAsString(file)} is marked dirty: $reason" }
+        }
+    }
+
     fun pathsAsString(files: Iterable<File>): String =
         files.joinToString { it.canonicalPath }
 

@@ -139,16 +139,16 @@ abstract class IncrementalCompilerRunner<
     protected abstract fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode
 
     protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: ChangedFiles.Known) {
-        dirtyFiles.add(changedFiles.modified)
-        dirtyFiles.add(changedFiles.removed)
+        dirtyFiles.add(changedFiles.modified, "was modified since last time")
+        dirtyFiles.add(changedFiles.removed, "was removed since last time")
 
         if (dirtySourcesSinceLastTimeFile.exists()) {
             val files = dirtySourcesSinceLastTimeFile.readLines().map(::File)
             if (files.isNotEmpty()) {
-                reporter.report { "Source files added since last compilation: ${reporter.pathsAsString(files)}" }
+                reporter.reportVerbose { "Source files added since last compilation: ${reporter.pathsAsString(files)}" }
             }
 
-            dirtyFiles.add(files)
+            dirtyFiles.add(files, "was not compiled last time")
         }
     }
 

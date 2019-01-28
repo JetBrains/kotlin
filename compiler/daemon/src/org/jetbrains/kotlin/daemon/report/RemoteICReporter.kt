@@ -34,6 +34,7 @@ internal class RemoteICReporter(
         CompilationResultCategory.IC_COMPILE_ITERATION.code in compilationOptions.requestedCompilationResults
     private val shouldReportICLog = CompilationResultCategory.IC_LOG.code in compilationOptions.requestedCompilationResults
     private val icLogLines = arrayListOf<String>()
+    private val recompilationReason = HashMap<File, String>()
 
     override fun report(message: () -> String) {
         reportImpl(isMessageVerbose = false, message = message)
@@ -64,9 +65,18 @@ internal class RemoteICReporter(
         }
         if (shouldReportICLog && incremental) {
             icLogLines.add("Compile iteration:")
-            sourceFiles.relativePaths(rootDir).forEach {
-                icLogLines.add("  $it")
+            sourceFiles.relativePaths(rootDir).forEach { file ->
+                val reason = recompilationReason[file]?.let { " <- $it" } ?: ""
+                icLogLines.add("  $file$reason")
             }
+            recompilationReason.clear()
+        }
+    }
+
+    override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {
+        super.reportMarkDirty(affectedFiles, reason)
+        if (shouldReportICLog) {
+            affectedFiles.forEach { recompilationReason[it] = reason }
         }
     }
 
