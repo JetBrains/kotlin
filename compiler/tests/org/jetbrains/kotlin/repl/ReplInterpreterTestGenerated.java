@@ -84,6 +84,11 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         runTest("compiler/testData/repl/functionReferencesPrev.repl");
     }
 
+    @TestMetadata("functionResult.repl")
+    public void testFunctionResult() throws Exception {
+        runTest("compiler/testData/repl/functionResult.repl");
+    }
+
     @TestMetadata("imports.repl")
     public void testImports() throws Exception {
         runTest("compiler/testData/repl/imports.repl");
