@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: list.kt
 
 val intList = listOf(1, 2, 3)
