@@ -45,13 +45,17 @@ git remote add upstream https://github.com/JetBrains/kotlin.git
 
 ## Updating the mirror with the latest version from upstream
 
-Updating the mirror typically involves a lot of commits and therefore
-it is easiest to do by bypassing gerrit entirely.
-
 ```
 git fetch upstream
 git checkout master
 git pull upstream master
+git push origin master
+```
+
+Updating the mirror sometimes contain a lot of files. If gerrit rejects
+the push just push directly.
+
+```
 git push sso://kotlin-internal.googlesource.com/_direct/kotlin master
 ```
 
