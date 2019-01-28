@@ -162,6 +162,8 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
             Method("java.util.Map.size") convertTo Field("kotlin.collections.Map.size"),
             Method("java.util.Map.values") convertTo Field("kotlin.collections.Map.values"),
             Method("java.util.Collection.size") convertTo Field("kotlin.collections.Collection.size"),
+            Method("java.util.Collection.remove") convertTo Method("kotlin.collections.MutableCollection.remove"),
+            Method("java.util.List.remove") convertTo Method("kotlin.collections.MutableCollection.removeAt"),
             Method("java.util.Map.Entry.getKey") convertTo Field("kotlin.collections.Map.Entry.key"),
             Method("java.util.Map.Entry.getValue") convertTo Field("kotlin.collections.Map.Entry.value"),
 
@@ -176,7 +178,7 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
             Method("java.lang.String.valueOf")
                     convertTo ExtensionMethod("kotlin.Any.toString")
                     withReplaceType ReplaceType.FULL_REPLACE
-                    withByArgumentsFilter { it -> it.isNotEmpty() && it.first().type(context.symbolProvider)?.isArrayType() == false },
+                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(context.symbolProvider)?.isArrayType() == false },
 
 
             Method("java.util.Collections.singletonList") convertTo Method("kotlin.collections.listOf")
