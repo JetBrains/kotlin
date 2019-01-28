@@ -256,7 +256,8 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
         when (serializer.classId) {
             enumSerializerId, contextSerializerId -> {
                 // a special way to instantiate enum -- need a enum KClass reference
-                aconst(codegen.typeMapper.mapType(kType))
+                // GENERIC_ARGUMENT forces boxing in order to obtain KClass
+                aconst(codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
                 AsmUtil.wrapJavaClassIntoKClass(this)
                 signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
             }
@@ -320,8 +321,8 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
         )
 
     property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
+    findAddOnSerializer(property.type, property.module)?.let { return SerializableInfo(it) }
     property.type.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
-    findAddOnSerializer(property.type)?.let { return SerializableInfo(it) }
 
     if (property.type.isTypeParameter()) return JVMSerialTypeInfo(
         property,
