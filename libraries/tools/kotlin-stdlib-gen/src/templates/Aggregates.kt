@@ -505,8 +505,11 @@ object Aggregates : TemplateGroupBase() {
     val f_foldIndexed = fn("foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R)") {
         includeDefault()
         include(CharSequences)
+        include(ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc {
             """
             Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -529,9 +532,11 @@ object Aggregates : TemplateGroupBase() {
     }
 
     val f_foldRightIndexed = fn("foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R)") {
-        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc {
             """
             Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -571,8 +576,11 @@ object Aggregates : TemplateGroupBase() {
     val f_fold = fn("fold(initial: R, operation: (acc: R, T) -> R)") {
         includeDefault()
         include(CharSequences)
+        include(ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc { "Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each ${f.element}." }
         typeParam("R")
         returns("R")
@@ -586,9 +594,10 @@ object Aggregates : TemplateGroupBase() {
     }
 
     val f_foldRight = fn("foldRight(initial: R, operation: (T, acc: R) -> R)") {
-        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Accumulates value starting with [initial] value and applying [operation] from right to left to each ${f.element} and current accumulator value." }
         typeParam("R")
