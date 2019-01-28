@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.junit.runner.RunWith
 import java.io.File
@@ -191,5 +193,87 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
     fun testTransformConsistency() {
         testConsistency { checkTransformedChildren() }
+    }
+
+    fun testPsiConsistency() {
+        val root = File(testDataPath)
+        var counter = 0
+        for (file in root.walkTopDown()) {
+            if (file.isDirectory) continue
+            if (file.path.contains("testData") || file.path.contains("resources")) continue
+            if (file.extension != "kt") continue
+            val ktFile = createKtFile(file.toRelativeString(root))
+            val firFile: FirFile = ktFile.toFirFile(stubMode = false)
+            val psiSetViaFir = mutableSetOf<KtElement>()
+            val psiSetDirect = mutableSetOf<KtElement>()
+            firFile.accept(object : FirVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    val psi = element.psi as? KtElement
+                    if (psi != null) {
+                        psiSetViaFir += psi
+                    }
+                    element.acceptChildren(this)
+                }
+            })
+            ktFile.accept(object : KtTreeVisitor<Nothing?>() {
+                override fun visitKtElement(element: KtElement, data: Nothing?): Void? {
+                    psiSetDirect += element
+                    return super.visitKtElement(element, data)
+                }
+            })
+            psiSetDirect -= psiSetViaFir
+            psiSetDirect.removeIf {
+                it is KtPackageDirective || it is KtImportList || it is KtClassBody ||
+                        it is KtModifierList ||
+                        it is KtUserType || it is KtNullableType || it is KtFunctionType || it is KtFunctionTypeReceiver ||
+                        it is KtQualifiedExpression ||
+                        it is KtPropertyDelegate ||
+                        it is KtConstructorCalleeExpression && it.parent is KtAnnotationEntry ||
+                        it is KtValueArgumentList || it is KtParameterList || it is KtTypeParameterList || it is KtTypeArgumentList ||
+                        it is KtTypeReference && it.parent.parent.parent is KtCallExpression ||
+                        it is KtSuperTypeList || it is KtSuperTypeListEntry ||
+                        // TODO: may be we should look at argument after KT-24081
+                        it is KtValueArgument || it is KtLambdaArgument || it is KtValueArgumentName ||
+                        it is KtContainerNodeForControlStructureBody || it is KtContainerNode ||
+                        it is KtStringTemplateEntry ||
+                        it is KtOperationReferenceExpression ||
+                        it is KtLabelReferenceExpression ||
+                        it is KtConstructorDelegationReferenceExpression ||
+                        it is KtParenthesizedExpression ||
+                        it is KtLabeledExpression ||
+                        it is KtAnnotatedExpression ||
+                        it is KtWhenConditionWithExpression ||
+                        it is KtFinallySection ||
+                        // TODO: KT-24089 (support of dynamic)
+                        it is KtDynamicType ||
+                        // NB: KtAnnotation is processed via its KtAnnotationEntries
+                        it is KtFileAnnotationList || it is KtAnnotationUseSiteTarget || it is KtAnnotation ||
+                        it is KtInitializerList || it is KtEnumEntrySuperclassReferenceExpression ||
+                        it is KtLambdaExpression ||
+                        it is KtTypeConstraintList ||
+                        it is KtTypeConstraint ||
+                        it is KtDestructuringDeclaration && it.parent is KtParameter ||
+                        it is KtArrayAccessExpression && it.parent is KtBinaryExpression ||
+                        it is KtNameReferenceExpression &&
+                        (it.parent is KtUserType || it.parent is KtInstanceExpressionWithLabel ||
+                                it.parent is KtValueArgumentName || it.parent is KtTypeConstraint) ||
+                        it.getStrictParentOfType<KtPackageDirective>() != null ||
+                        it.getStrictParentOfType<KtImportDirective>() != null
+            }
+            if (psiSetDirect.isNotEmpty()) {
+                println("Total of $counter files processed successfully")
+                println("FILE ${file.toRelativeString(root)} has not traversed PSI elements (total of ${psiSetDirect.size})!")
+                for (element in psiSetDirect) {
+                    println("Not traversed ${element.javaClass}: ${element.text}")
+                    val traversedParent = element.parents.firstOrNull { it in psiSetViaFir }
+                    if (traversedParent != null) {
+                        println("(traversed parent: ${traversedParent.javaClass})")
+                    }
+                }
+                println(firFile.render())
+                throw AssertionError()
+            }
+            counter++
+        }
     }
 }
