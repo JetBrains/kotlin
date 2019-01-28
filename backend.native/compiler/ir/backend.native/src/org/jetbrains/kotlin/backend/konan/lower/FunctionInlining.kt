@@ -262,8 +262,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             val isInlinableLambdaArgument: Boolean
                 get() {
                     if (!parameter.isInlineParameter()) return false
-                    if (argumentExpression is IrFunctionReference
-                            && !argumentExpression.descriptor.isSuspend) return true // Skip suspend functions for now since it's not supported by FE anyway.
+                    if (argumentExpression is IrFunctionReference) return true
 
                     // Do pattern-matching on IR.
                     if (argumentExpression !is IrBlock) return false
