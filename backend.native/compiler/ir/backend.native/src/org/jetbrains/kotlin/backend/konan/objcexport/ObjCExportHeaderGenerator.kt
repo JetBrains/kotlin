@@ -435,7 +435,8 @@ abstract class ObjCExportHeaderGenerator(
 
                     descriptor.enumEntries.forEach {
                         val entryName = namer.getEnumEntrySelector(it)
-                        +ObjCProperty(entryName, null, type, listOf("class", "readonly"))
+                        +ObjCProperty(entryName, null, type, listOf("class", "readonly"),
+                                declarationAttributes = listOf(swiftNameAttribute(entryName)))
                     }
                 }
                 else -> {
@@ -657,7 +658,7 @@ abstract class ObjCExportHeaderGenerator(
         val getterSelector = getSelector(baseProperty.getter!!)
         val getterName: String? = if (getterSelector != name) getterSelector else null
 
-        return ObjCProperty(name, property, type, attributes, setterName, getterName)
+        return ObjCProperty(name, property, type, attributes, setterName, getterName, listOf(swiftNameAttribute(name)))
     }
 
     private fun buildMethod(method: FunctionDescriptor, baseMethod: FunctionDescriptor): ObjCMethod {

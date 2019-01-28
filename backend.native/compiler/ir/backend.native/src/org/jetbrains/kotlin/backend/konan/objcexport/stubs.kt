@@ -47,9 +47,14 @@ class ObjCParameter(name: String,
 class ObjCProperty(name: String,
                    descriptor: PropertyDescriptor?,
                    val type: ObjCType,
-                   val attributes: List<String>,
+                   val propertyAttributes: List<String>,
                    val setterName: String? = null,
-                   val getterName: String? = null) : Stub<PropertyDescriptor>(name, descriptor)
+                   val getterName: String? = null,
+                   val declarationAttributes: List<String> = emptyList()) : Stub<PropertyDescriptor>(name, descriptor) {
+
+    @Deprecated("", ReplaceWith("this.propertyAttributes"), DeprecationLevel.WARNING)
+    val attributes: List<String> get() = propertyAttributes
+}
 
 private fun buildMethodName(selectors: List<String>, parameters: List<ObjCParameter>): String =
         if (selectors.size == 1 && parameters.size == 0) {

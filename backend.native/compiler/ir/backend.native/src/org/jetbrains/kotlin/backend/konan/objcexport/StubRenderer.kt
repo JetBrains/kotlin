@@ -46,9 +46,9 @@ object StubRenderer {
         }
 
         fun ObjCProperty.getAllAttributes(): List<String> {
-            if (getterName == null && setterName == null) return attributes
+            if (getterName == null && setterName == null) return propertyAttributes
 
-            val allAttributes = attributes.toMutableList()
+            val allAttributes = propertyAttributes.toMutableList()
             getterName?.let { allAttributes += "getter=$it" }
             setterName?.let { allAttributes += "setter=$it" }
             return allAttributes
@@ -65,6 +65,7 @@ object StubRenderer {
         append("@property")
         appendAttributes()
         appendTypeAndName()
+        appendPostfixDeclarationAttributes(property.declarationAttributes)
         append(';')
     }
 
@@ -105,8 +106,7 @@ object StubRenderer {
         }
 
         fun appendAttributes() {
-            if (method.attributes.isNotEmpty()) append(' ')
-            method.attributes.joinTo(this, separator = " ", transform = ::renderAttribute)
+            appendPostfixDeclarationAttributes(method.attributes)
         }
 
         appendStaticness()
@@ -114,6 +114,11 @@ object StubRenderer {
         appendParameters()
         appendAttributes()
         append(';')
+    }
+
+    private fun Appendable.appendPostfixDeclarationAttributes(attributes: List<kotlin.String>) {
+        if (attributes.isNotEmpty()) this.append(' ')
+        attributes.joinTo(this, separator = " ", transform = this@StubRenderer::renderAttribute)
     }
 
     private fun ObjCProtocol.renderProtocolHeader() = buildString {

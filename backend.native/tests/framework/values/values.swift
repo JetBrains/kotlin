@@ -490,6 +490,10 @@ func testPureSwiftClasses() throws {
     try assertEquals(actual: "pure", expected: ValuesKt.iFunExt(PureSwiftKotlinInterfaceImpl()))
 }
 
+func testNames() throws {
+    try assertEquals(actual: ValuesKt.PROPERTY_NAME_MUST_NOT_BE_ALTERED_BY_SWIFT, expected: 111)
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : TestProvider {
@@ -526,6 +530,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestInlineClasses", method: withAutorelease(testInlineClasses)),
             TestCase(name: "TestShared", method: withAutorelease(testShared)),
             TestCase(name: "TestPureSwiftClasses", method: withAutorelease(testPureSwiftClasses)),
+            TestCase(name: "TestNames", method: withAutorelease(testNames)),
         ]
     }
 }
