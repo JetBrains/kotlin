@@ -10,55 +10,11 @@ import platform.AppKit.*
 import platform.Contacts.CNContactStore
 import platform.Contacts.CNEntityType
 import platform.Foundation.*
-import platform.darwin.NSObject
-import platform.darwin.dispatch_async_f
-import platform.darwin.dispatch_get_main_queue
-import platform.darwin.dispatch_sync_f
+import platform.darwin.*
+import platform.posix.QOS_CLASS_BACKGROUND
 import platform.posix.memcpy
 import kotlin.native.concurrent.*
-
-inline fun <reified T> executeAsync(queue: NSOperationQueue, crossinline producerConsumer: () -> Pair<T, (T) -> Unit>) {
-    dispatch_async_f(queue.underlyingQueue, DetachedObjectGraph {
-        producerConsumer()
-    }.asCPointer(), staticCFunction { it ->
-        val result = DetachedObjectGraph<Pair<T, (T) -> Unit>>(it).attach()
-        result.second(result.first)
-    })
-}
-
-inline fun mainContinuation(singleShot: Boolean = true, noinline block: () -> Unit) = Continuation0(
-        block, staticCFunction { invokerArg ->
-        if (NSThread.isMainThread()) {
-            invokerArg!!.callContinuation0()
-        } else {
-            dispatch_sync_f(dispatch_get_main_queue(), invokerArg, staticCFunction { args ->
-                args!!.callContinuation0()
-            })
-        }
-    }, singleShot)
-
-inline fun <T1> mainContinuation(singleShot: Boolean = true, noinline block: (T1) -> Unit) = Continuation1(
-        block, staticCFunction { invokerArg ->
-    if (NSThread.isMainThread()) {
-        invokerArg!!.callContinuation1<T1>()
-    } else {
-        dispatch_sync_f(dispatch_get_main_queue(), invokerArg, staticCFunction { args ->
-            args!!.callContinuation1<T1>()
-        })
-    }
-}, singleShot)
-
-inline fun <T1, T2> mainContinuation(singleShot: Boolean = true, noinline block: (T1, T2) -> Unit) = Continuation2(
-        block, staticCFunction { invokerArg ->
-    if (NSThread.isMainThread()) {
-        invokerArg!!.callContinuation2<T1, T2>()
-    } else {
-        dispatch_sync_f(dispatch_get_main_queue(), invokerArg, staticCFunction { args ->
-            args!!.callContinuation2<T1, T2>()
-        })
-    }
-}, singleShot)
-
+import kotlin.test.assertNotNull
 
 data class QueryResult(val json: Map<String, *>?, val error: String?)
 
@@ -89,6 +45,7 @@ private fun runApp() {
     app.run()
 }
 
+
 class Controller : NSObject() {
     private var index = 1
     private val httpDelegate = HttpDelegate()
@@ -99,6 +56,14 @@ class Controller : NSObject() {
             appDelegate.contentText.string = "Another load in progress..."
             return
         }
+
+        // Here we call continuator service to ensure we can access mutable state from continuation.
+
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND.convert(), 0),
+                Continuator.wrap({ println("In queue ${dispatch_get_current_queue()}")}.freeze()) {
+            println("After in queue ${dispatch_get_current_queue()}: $index")
+        })
+
         appDelegate.canClick = false
         // Fetch URL in the background on the button click.
         httpDelegate.fetchUrl("https://jsonplaceholder.typicode.com/todos/${index++}")
