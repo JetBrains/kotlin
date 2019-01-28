@@ -63,6 +63,50 @@ internal fun ulongRemainder(v1: ULong, v2: ULong): ULong {
 }
 
 
+@PublishedApi
+internal fun doubleToUByte(v: Double): UByte = when {
+    v.isNaN() -> 0u
+    v <= UByte.MIN_VALUE.toDouble() -> UByte.MIN_VALUE
+    v >= UByte.MAX_VALUE.toDouble() -> UByte.MAX_VALUE
+    else -> v.toInt().toUByte()
+}
+
+@PublishedApi
+internal fun doubleToUShort(v: Double): UShort = when {
+    v.isNaN() -> 0u
+    v <= UShort.MIN_VALUE.toDouble() -> UShort.MIN_VALUE
+    v >= UShort.MAX_VALUE.toDouble() -> UShort.MAX_VALUE
+    else -> v.toInt().toUShort()
+}
+
+@PublishedApi
+internal fun doubleToUInt(v: Double): UInt = when {
+    v.isNaN() -> 0u
+    v <= UInt.MIN_VALUE.toDouble() -> UInt.MIN_VALUE
+    v >= UInt.MAX_VALUE.toDouble() -> UInt.MAX_VALUE
+    v <= Int.MAX_VALUE -> v.toInt().toUInt()
+    else -> (v - Int.MAX_VALUE).toInt().toUInt() + Int.MAX_VALUE.toUInt()      // Int.MAX_VALUE < v < UInt.MAX_VALUE
+}
+
+@PublishedApi
+internal fun doubleToULong(v: Double): ULong = when {
+    v.isNaN() -> 0u
+    v <= ULong.MIN_VALUE.toDouble() -> ULong.MIN_VALUE
+    v >= ULong.MAX_VALUE.toDouble() -> ULong.MAX_VALUE
+    v < Long.MAX_VALUE -> v.toLong().toULong()
+
+    // Real values from Long.MAX_VALUE to (Long.MAX_VALUE + 1) are not representable in Double, so don't handle them.
+    else -> (v - 9223372036854775808.0).toLong().toULong() + 9223372036854775808uL      // Long.MAX_VALUE + 1 < v < ULong.MAX_VALUE
+}
+
+
+@PublishedApi
+internal fun uintToDouble(v: Int): Double = (v and Int.MAX_VALUE).toDouble() + (v ushr 31 shl 30).toDouble() * 2
+
+@PublishedApi
+internal fun ulongToDouble(v: Long): Double = (v ushr 11).toDouble() * 2048 + (v and 2047)
+
+
 internal fun ulongToString(v: Long): String = ulongToString(v, 10)
 
 internal fun ulongToString(v: Long, base: Int): String {

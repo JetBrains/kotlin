@@ -5,7 +5,7 @@
 
 package test.unsigned
 
-import kotlin.math.sign
+import kotlin.math.*
 import kotlin.random.Random
 import kotlin.test.*
 
@@ -99,6 +99,146 @@ class ULongTest {
     }
 
 
+    @Test
+    fun convertToFloat() {
+        fun testEquals(v1: Float, v2: ULong) = assertEquals(v1, v2.toFloat())
 
+        testEquals(0.0f, zero)
+        testEquals(1.0f, one)
 
+        testEquals(2.0f.pow(ULong.SIZE_BITS) - 1, max)
+        testEquals(2.0f * Long.MAX_VALUE + 1, max)
+
+        repeat(100) {
+            val long = Random.nextLong(from = 0, until = Long.MAX_VALUE)
+            testEquals(long.toFloat(), long.toULong())
+        }
+
+        repeat(100) {
+            val long = Random.nextLong(from = 0, until = Long.MAX_VALUE)
+            val float = Long.MAX_VALUE.toFloat() + long.toFloat()    // We lose accuracy here, hence `eps` is used.
+            val ulong = Long.MAX_VALUE.toULong() + long.toULong()
+
+            val eps = 1e+13
+            assertTrue(abs(float - ulong.toFloat()) < eps)
+        }
+    }
+
+    @Test
+    fun convertToDouble() {
+        fun testEquals(v1: Double, v2: ULong) = assertEquals(v1, v2.toDouble())
+
+        testEquals(0.0, zero)
+        testEquals(1.0, one)
+
+        testEquals(2.0.pow(ULong.SIZE_BITS) - 1, max)
+        testEquals(2.0 * Long.MAX_VALUE + 1, max)
+
+        repeat(100) {
+            val long = Random.nextLong(from = 0, until = Long.MAX_VALUE)
+            testEquals(long.toDouble(), long.toULong())
+        }
+
+        repeat(100) {
+            val long = Random.nextLong(from = 0, until = Long.MAX_VALUE)
+            val double = Long.MAX_VALUE.toDouble() + long.toDouble()    // We lose accuracy here, hence `eps` is used.
+            val ulong = Long.MAX_VALUE.toULong() + long.toULong()
+
+            val eps = 1e+4
+            assertTrue(abs(double - ulong.toDouble()) < eps)
+        }
+
+        fun testRounding(from: ULong, count: UInt) {
+            for (x in from..(from + count)) {
+                val double = x.toDouble()
+                val v = double.toULong()
+                val down = double.nextDown().toULong()
+                val up = double.nextUp().toULong()
+
+                assertTrue(down <= x && down <= v)
+                assertTrue(up >= x && up >= v)
+
+                if (v > x) {
+                    assertTrue(v - x <= x - down, "Expected $x being closer to $v than to $down")
+                } else {
+                    assertTrue(x - v <= up - x, "Expected $x being closer to $v than to $up")
+                }
+            }
+        }
+
+        testRounding(0u, 100u)
+        testRounding(Long.MAX_VALUE.toULong() - 520u, 100u)
+        testRounding(ULong.MAX_VALUE - 10000u, 10000u)
+    }
+
+    @Test
+    fun convertDoubleToULong() {
+        fun testEquals(v1: Double, v2: ULong) = assertEquals(v1.toULong(), v2)
+
+        testEquals(0.0, zero)
+        testEquals(-1.0, zero)
+
+        testEquals(-2_000_000_000_000.0, zero)
+        testEquals(-(2.0.pow(ULong.SIZE_BITS + 5)), zero)
+        testEquals(Double.MIN_VALUE, zero)
+        testEquals(Double.NEGATIVE_INFINITY, zero)
+        testEquals(Double.NaN, zero)
+
+        testEquals(1.0, one)
+
+        testEquals(2_000_000_000_000_000_000_000.0, max)
+        testEquals(2.0.pow(ULong.SIZE_BITS), max)
+        testEquals(2.0.pow(ULong.SIZE_BITS + 5), max)
+        testEquals(Double.MAX_VALUE, max)
+        testEquals(Double.POSITIVE_INFINITY, max)
+
+        repeat(100) {
+            val v = -Random.nextDouble(until = 2.0.pow(ULong.SIZE_BITS + 8))
+            testEquals(v, zero)
+        }
+
+        repeat(100) {
+            val v = Random.nextDouble(from = max.toDouble(), until = 2.0.pow(ULong.SIZE_BITS + 8))
+            testEquals(v, max)
+        }
+
+        repeat(100) {
+            val v = Random.nextDouble() * Long.MAX_VALUE
+            testEquals(v, v.toLong().toULong())
+        }
+
+        repeat(100) {
+            val diff = Random.nextDouble() * Long.MAX_VALUE
+            val d = Long.MAX_VALUE.toDouble() + diff
+            val ul = Long.MAX_VALUE.toULong() + diff.toLong().toULong()
+            val eps = 1e-6
+
+            assertTrue(d.toULong() / ul <= 1u)
+            assertTrue(d / ul.toDouble() < 1 + eps)
+            assertTrue(d / ul.toDouble() > 1 - eps)
+        }
+
+        fun testTrailingBits(v: Double, count: Int) {
+            val mask = (1uL shl count) - 1uL
+            assertEquals(0uL, v.toULong() and mask)
+        }
+
+        var withTrailingZeros = 2.0.pow(64)
+        repeat(10) {
+            withTrailingZeros = withTrailingZeros.nextDown()
+            testTrailingBits(withTrailingZeros, 11)
+        }
+
+        withTrailingZeros = 2.0.pow(63)
+        repeat(10) {
+            testTrailingBits(withTrailingZeros, 11)
+            withTrailingZeros = withTrailingZeros.nextUp()
+        }
+
+        repeat(100) {
+            val msb = Random.nextInt(53, 64)
+            val v = 2.0.pow(msb) * (1.0 + Random.nextDouble())
+            testTrailingBits(v, msb - 52)
+        }
+    }
 }

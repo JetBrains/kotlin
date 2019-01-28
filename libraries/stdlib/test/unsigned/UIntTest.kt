@@ -5,6 +5,9 @@
 
 package test.unsigned
 
+import kotlin.math.nextDown
+import kotlin.math.nextUp
+import kotlin.math.pow
 import kotlin.math.sign
 import kotlin.random.Random
 import kotlin.test.*
@@ -99,6 +102,91 @@ class UIntTest {
     }
 
 
+    @Test
+    fun convertToFloat() {
+        fun testEquals(v1: Float, v2: UInt) = assertEquals(v1, v2.toFloat())
 
+        testEquals(0.0f, zero)
+        testEquals(1.0f, one)
+        testEquals(0xFFFF_FFFF.toFloat(), max)
 
+        repeat(100) {
+            val long = Random.nextLong(0, 0xFFFF_FFFF)
+            testEquals(long.toFloat(), long.toUInt())
+        }
+    }
+
+    @Test
+    fun convertToDouble() {
+        fun testEquals(v1: Double, v2: UInt) = assertEquals(v1, v2.toDouble())
+
+        testEquals(0.0, zero)
+        testEquals(1.0, one)
+        testEquals(max.toLong().toDouble(), max)
+
+        repeat(100) {
+            val long = Random.nextLong(0, max.toLong())
+            testEquals(long.toDouble(), long.toUInt())
+        }
+
+        fun testRounding(from: UInt, count: UInt) {
+            for (x in from..(from + count)) {
+                val double = x.toDouble()
+                val v = double.toUInt()
+                val down = double.nextDown().toUInt()
+                val up = double.nextUp().toUInt()
+
+                assertTrue(down <= x && down <= v)
+                assertTrue(up >= x && up >= v)
+
+                if (v > x) {
+                    assertTrue(v - x <= x - down, "Expected $x being closer to $v than to $down")
+                } else {
+                    assertTrue(x - v <= up - x, "Expected $x being closer to $v than to $up")
+                }
+            }
+        }
+
+        testRounding(0u, 100u)
+        testRounding(Int.MAX_VALUE.toUInt() - 10u, 100u)
+        testRounding(UInt.MAX_VALUE - 100u, 100u)
+    }
+
+    @Test
+    fun convertDoubleToUInt() {
+        fun testEquals(v1: Double, v2: UInt) = assertEquals(v1.toUInt(), v2)
+
+        testEquals(0.0, zero)
+        testEquals(-1.0, zero)
+
+        testEquals(-2_000_000_000_000.0, zero)
+        testEquals(-(2.0.pow(UInt.SIZE_BITS + 12)), zero)
+        testEquals(Double.MIN_VALUE, zero)
+        testEquals(Double.NEGATIVE_INFINITY, zero)
+        testEquals(Double.NaN, zero)
+
+        testEquals(1.0, one)
+
+        testEquals(2_000_000_000_000.0, max)
+        testEquals(max.toDouble(), max)
+        testEquals(2.0.pow(UInt.SIZE_BITS), max)
+        testEquals(2.0.pow(UInt.SIZE_BITS + 12), max)
+        testEquals(Double.MAX_VALUE, max)
+        testEquals(Double.POSITIVE_INFINITY, max)
+
+        repeat(100) {
+            val v = -Random.nextDouble(until = 2.0.pow(UInt.SIZE_BITS + 8))
+            testEquals(v, zero)
+        }
+
+        repeat(100) {
+            val v = Random.nextDouble(from = max.toDouble(), until = 2.0.pow(UInt.SIZE_BITS + 8))
+            testEquals(v, max)
+        }
+
+        repeat(100) {
+            val v = Random.nextDouble(until = max.toDouble())
+            testEquals(v, v.toLong().toUInt())
+        }
+    }
 }
