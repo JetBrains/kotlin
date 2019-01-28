@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.j2k.conversions.multiResolveFqName
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
@@ -30,6 +32,7 @@ class JKSymbolProvider {
     fun provideDirectSymbol(psi: PsiElement): JKSymbol {
         return symbolsByPsi.getOrPut(psi) {
             when (psi) {
+                is KtLightDeclaration<*, *> -> provideDirectSymbol(psi.kotlinOrigin!!)
                 is PsiClass -> JKMultiverseClassSymbol(psi)
                 is KtClassOrObject -> JKMultiverseKtClassSymbol(psi)
                 is PsiMethod -> JKMultiverseMethodSymbol(psi, this)

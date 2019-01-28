@@ -94,6 +94,7 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             SingleProcessing(RemoveExplicitTypeArgumentsProcessing()),
             SingleProcessing(RemoveRedundantOverrideVisibilityProcessing()),
             registerInspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection()),
+            registerGeneralInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
             SingleProcessing(FixObjectStringConcatenationProcessing()),
             SingleProcessing(ConvertToStringTemplateProcessing()),
             SingleProcessing(UsePropertyAccessSyntaxProcessing()),

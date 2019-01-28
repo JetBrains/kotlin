@@ -27,6 +27,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.j2k.content
 import org.jetbrains.kotlin.j2k.ast.Nullability
@@ -202,17 +203,19 @@ class JavaToJKTreeBuilder(
         }
 
         private fun JKExpression.qualified(qualifier: JKExpression?) =
-            if (qualifier != null) {
+            if (qualifier != null && qualifier !is JKStubExpression) {
                 JKQualifiedExpressionImpl(qualifier, JKJavaQualifierImpl.DOT, this)
             } else this
 
         //TODO mostly copied from old j2k, refactor
         fun PsiMethodCallExpression.toJK(): JKExpression {
-            val arguments = argumentList.toJK()
+            val arguments = argumentList
             val typeArguments = typeArgumentList.toJK()
             val qualifier = methodExpression.qualifierExpression?.toJK()
             val target = methodExpression.resolve()
-            val symbol = symbolProvider.provideSymbol<JKMethodSymbol>(methodExpression as PsiReferenceExpressionImpl)
+            val symbol = target?.let {
+                symbolProvider.provideDirectSymbol(it)
+            } ?: JKUnresolvedMethod(methodExpression)
 
             return when {
                 methodExpression.referenceNameElement is PsiKeyword -> {
@@ -221,7 +224,7 @@ class JavaToJKTreeBuilder(
                         THIS_KEYWORD -> JKThisExpressionImpl(JKLabelEmptyImpl())
                         else -> error("Unknown keyword in callee position")
                     }
-                    JKDelegationConstructorCallImpl(symbol, callee, arguments)
+                    JKDelegationConstructorCallImpl(symbol as JKMethodSymbol, callee, arguments.toJK())
                 }
 
                 target is KtLightMethod -> {
@@ -229,16 +232,16 @@ class JavaToJKTreeBuilder(
                     when (origin) {
                         is KtNamedFunction -> {
                             if (origin.isExtensionDeclaration()) {
-                                val receiver = arguments.expressions.firstOrNull()
+                                val receiver = arguments.expressions.firstOrNull()?.toJK()?.parenthesizeIfBinaryExpression()
                                 JKJavaMethodCallExpressionImpl(
                                     symbolProvider.provideDirectSymbol(origin) as JKMethodSymbol,
-                                    arguments.also { it.expressions = it.expressions.drop(1) },
+                                    arguments.expressions.drop(1).map { it.toJK() }.toExpressionList(),
                                     typeArguments
                                 ).qualified(receiver)
                             } else {
                                 JKJavaMethodCallExpressionImpl(
                                     symbolProvider.provideDirectSymbol(origin) as JKMethodSymbol,
-                                    arguments,
+                                    arguments.expressions.map { it.toJK() }.toExpressionList(),
                                     typeArguments
                                 ).qualified(qualifier)
                             }
@@ -254,7 +257,7 @@ class JavaToJKTreeBuilder(
                             val isTopLevel = origin.getStrictParentOfType<KtClassOrObject>() == null
                             val propertyAccess = if (isTopLevel) {
                                 if (isExtension) JKQualifiedExpressionImpl(
-                                    arguments.expressions.first().detached(arguments),
+                                    arguments.expressions.first().toJK(),
                                     JKJavaQualifierImpl.DOT,
                                     propertyAccessExpression
                                 )
@@ -266,7 +269,7 @@ class JavaToJKTreeBuilder(
                                     propertyAccess
 
                                 1 /* setter */ -> {
-                                    val argument = (arguments.expressions[if (isExtension) 1 else 0]).detached(arguments)
+                                    val argument = (arguments.expressions[if (isExtension) 1 else 0]).toJK()
                                     JKJavaAssignmentExpressionImpl(
                                         propertyAccess,
                                         argument,
@@ -281,23 +284,31 @@ class JavaToJKTreeBuilder(
                     }
                 }
 
-                target is PsiMethod ->
-                    JKJavaMethodCallExpressionImpl(symbol, arguments, typeArguments)
+                symbol is JKMethodSymbol ->
+                    JKJavaMethodCallExpressionImpl(symbol, arguments.toJK(), typeArguments)
                         .qualified(qualifier)
-                else ->
-                    JKJavaMethodCallExpressionImpl(symbol, arguments, typeArguments)
-                        .qualified(qualifier)
+                symbol is JKFieldSymbol ->
+                    JKFieldAccessExpressionImpl(symbol).qualified(qualifier)
+                else -> TODO(text)
             }
         }
 
         fun PsiReferenceExpression.toJK(): JKExpression {
+            val target = resolve()
+            if (target is KtLightClassForFacade) return JKStubExpressionImpl()
+            if (target is KtLightField
+                && target.name == "INSTANCE"
+                && target.containingClass.kotlinOrigin is KtObjectDeclaration
+            ) {
+                return qualifierExpression?.toJK() ?: JKStubExpressionImpl()
+            }
+
             val symbol = symbolProvider.provideSymbol(this)
-            val access = when (symbol) {
+            return when (symbol) {
                 is JKClassSymbol -> JKClassAccessExpressionImpl(symbol)
                 is JKFieldSymbol -> JKFieldAccessExpressionImpl(symbol)
                 else -> TODO()
-            }
-            return qualifierExpression?.let { JKQualifiedExpressionImpl(it.toJK(), JKJavaQualifierImpl.DOT, access) } ?: access
+            }.qualified(qualifierExpression?.toJK())
         }
 
         fun PsiArrayInitializerExpression.toJK(): JKExpression {

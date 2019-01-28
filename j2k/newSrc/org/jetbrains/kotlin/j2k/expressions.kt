@@ -221,6 +221,15 @@ fun downToExpression(
         psiContext
     )
 
+fun List<JKExpression>.toExpressionList() =
+    JKExpressionListImpl(this)
+
+fun JKExpression.parenthesizeIfBinaryExpression() =
+    when (this) {
+        is JKBinaryExpression -> JKParenthesizedExpressionImpl(this)
+        else -> this
+    }
+
 fun rangeExpression(
     from: JKExpression,
     to: JKExpression,
@@ -236,6 +245,9 @@ fun rangeExpression(
 
 fun blockStatement(vararg statements: JKStatement) =
     JKBlockStatementImpl(JKBlockImpl(statements.toList()))
+
+fun blockStatement(statements: List<JKStatement>) =
+    JKBlockStatementImpl(JKBlockImpl(statements))
 
 fun useExpression(
     receiver: JKExpression,
