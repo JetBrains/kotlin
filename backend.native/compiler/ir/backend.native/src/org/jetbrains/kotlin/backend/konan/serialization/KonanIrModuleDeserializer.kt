@@ -284,11 +284,13 @@ class KonanIrModuleDeserializer(
                         classDescriptor,
                         classDescriptor.modality
                 ) { symbol: IrClassSymbol -> IrClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, symbol) }
+                .also {
+                    it.parent = file
+                }
                 declaration
 
             }
             file.declarations.addAll(declarations)
-            file
         }
     }
 
