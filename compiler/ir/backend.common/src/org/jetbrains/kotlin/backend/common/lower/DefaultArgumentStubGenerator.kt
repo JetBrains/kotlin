@@ -26,18 +26,18 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 // TODO: fix expect/actual default parameters
 
-open class DefaultArgumentStubGenerator constructor(open val context: CommonBackendContext, private val skipInlineMethods: Boolean = true) :
-    DeclarationContainerLoweringPass {
+open class DefaultArgumentStubGenerator(
+    open val context: CommonBackendContext,
+    private val skipInlineMethods: Boolean = true
+) : DeclarationContainerLoweringPass {
+
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.transformDeclarationsFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)
@@ -198,13 +198,13 @@ private fun markerParameterDeclaration(function: IrFunction) =
 
 val DEFAULT_DISPATCH_CALL = object : IrStatementOriginImpl("DEFAULT_DISPATCH_CALL") {}
 
-open class DefaultParameterInjector constructor(
+open class DefaultParameterInjector(
     val context: CommonBackendContext,
     private val skipInline: Boolean = true
-) : BodyLoweringPass {
-    override fun lower(irBody: IrBody) {
+) : FileLoweringPass {
 
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                 super.visitDelegatingConstructorCall(expression)
 
@@ -320,10 +320,12 @@ open class DefaultParameterInjector constructor(
                     valueParameterDeclaration to (valueArgument ?: defaultValueArgument)
                 }
 
+                val startOffset = expression.startOffset
+                val endOffset = expression.endOffset
                 maskValues.forEachIndexed { i, maskValue ->
                     params += maskParameterDeclaration(realFunction, i) to IrConstImpl.int(
-                        startOffset = irBody.startOffset,
-                        endOffset = irBody.endOffset,
+                        startOffset = startOffset,
+                        endOffset = endOffset,
                         type = context.irBuiltIns.intType,
                         value = maskValue
                     )
@@ -331,14 +333,14 @@ open class DefaultParameterInjector constructor(
                 if (expression.symbol is IrConstructorSymbol) {
                     val defaultArgumentMarker = context.ir.symbols.defaultConstructorMarker
                     params += markerParameterDeclaration(realFunction) to IrGetObjectValueImpl(
-                        startOffset = irBody.startOffset,
-                        endOffset = irBody.endOffset,
+                        startOffset = startOffset,
+                        endOffset = endOffset,
                         type = defaultArgumentMarker.owner.defaultType,
                         symbol = defaultArgumentMarker
                     )
                 } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
                     params += realFunction.valueParameters.last() to
-                            IrConstImpl.constNull(irBody.startOffset, irBody.endOffset, context.irBuiltIns.nothingNType)
+                            IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
                 }
                 params.forEach {
                     log { "descriptor::${realFunction.name.asString()}#${it.first.index}: ${it.first.name.asString()}" }
