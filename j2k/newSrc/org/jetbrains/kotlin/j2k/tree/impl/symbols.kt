@@ -150,10 +150,10 @@ class JKMultiverseMethodSymbol(override val target: PsiMethod, private val symbo
 
 class JKMultiverseFunctionSymbol(override val target: KtNamedFunction, private val symbolProvider: JKSymbolProvider) : JKMethodSymbol {
     override val receiverType: JKType?
-        get() = target.receiverTypeReference?.typeElement?.toJK(symbolProvider)
+        get() = target.receiverTypeReference?.toJK(symbolProvider)
     override val parameterTypes: List<JKType>?
         get() = target.valueParameters.map { parameter ->
-            val type = parameter.typeReference?.typeElement?.toJK(symbolProvider)
+            val type = parameter.typeReference?.toJK(symbolProvider)
             type?.let {
                 if (parameter.isVarArg) {
                     JKClassTypeImpl(
@@ -165,7 +165,7 @@ class JKMultiverseFunctionSymbol(override val target: KtNamedFunction, private v
         }.takeIf { parameters -> parameters.all { it != null } } as? List<JKType>
 
     override val returnType: JKType?
-        get() = target.typeReference?.typeElement?.toJK(symbolProvider)
+        get() = target.typeReference?.toJK(symbolProvider)
     override val name: String
         get() = target.name!!
     override val declaredIn: JKSymbol
@@ -199,7 +199,7 @@ class JKMultiverseFieldSymbol(override val target: PsiVariable, private val symb
 
 class JKMultiversePropertySymbol(override val target: KtCallableDeclaration, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
     override val fieldType: JKType?
-        get() = target.typeReference?.typeElement?.toJK(symbolProvider)
+        get() = target.typeReference?.toJK(symbolProvider)
     override val name: String
         get() = target.name!!
     override val declaredIn: JKSymbol

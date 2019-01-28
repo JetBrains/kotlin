@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.kotlinTypeByName
 import org.jetbrains.kotlin.j2k.tree.impl.*
+import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtNullableType
-import org.jetbrains.kotlin.psi.KtTypeElement
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -124,21 +122,20 @@ fun JKType.isSubtypeOf(other: JKType, symbolProvider: JKSymbolProvider): Boolean
         ?.let { otherType -> this.toKtType(symbolProvider)?.isSubtypeOf(otherType) } == true
 
 
-fun KtTypeElement.toJK(symbolProvider: JKSymbolProvider): JKType? {
-    return when (this) {
-        is KtUserType -> {
-            val qualifiedName = qualifier?.text?.let { it + "." }.orEmpty() + referencedName
-            val typeParameters = typeArguments.map { it.typeReference?.typeElement?.toJK(symbolProvider) }
-            if (typeParameters.any { it == null }) return null
-            val fqName = resolveFqName(ClassId.fromString(qualifiedName), this) ?: return null
-            val symbol = symbolProvider.provideDirectSymbol(fqName) as? JKClassSymbol ?: return null
-            JKClassTypeImpl(symbol, typeParameters as List<JKType>)
-        }
-        is KtNullableType ->
-            innerType?.toJK(symbolProvider)?.updateNullability(Nullability.Nullable)
-        else -> null
-    }
-}
+
+fun KotlinType.toJK(symbolProvider: JKSymbolProvider): JKClassTypeImpl =
+    JKClassTypeImpl(
+        symbolProvider.provideByFqName(getJetTypeFqName(false)),
+        arguments.map { it.type.toJK(symbolProvider) },
+        if (isNullable()) Nullability.Nullable else Nullability.NotNull
+    )
+
+
+fun KtTypeReference.toJK(symbolProvider: JKSymbolProvider): JKType? =
+    analyze()
+        .get(BindingContext.TYPE, this)
+        ?.toJK(symbolProvider)
+
 
 fun JKType.toKtType(symbolProvider: JKSymbolProvider): KotlinType? =
     when (this) {

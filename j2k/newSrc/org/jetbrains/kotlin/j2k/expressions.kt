@@ -103,7 +103,7 @@ private fun JKKtOperatorToken.unaryExpressionMethodType(
             classSymbol.target.declarations.asSequence()
                 .filterIsInstance<KtNamedFunction>()
                 .filter { it.name == operatorName }
-                .mapNotNull { it.typeReference?.typeElement?.toJK(symbolProvider) }
+                .mapNotNull { it.typeReference?.toJK(symbolProvider) }
                 .firstOrNull() ?: TODO(classSymbol::class.toString() + this.operatorName)
         null -> TODO(" No class symbol")
         else -> TODO(classSymbol::class.toString())
