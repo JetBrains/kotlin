@@ -61,8 +61,8 @@ task buildSamplesWithPlatformLibs() {
 }
 
 task buildAllSamples() {
-    dependsOn buildSh
     subprojects.each {
         dependsOn("${it.path}:assemble")
     }
+    finalizedBy buildSh
 }
