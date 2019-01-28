@@ -35,6 +35,7 @@ object ConversionsRunner {
             +AssignmentStatementOperatorConversion()
             +AssignmentStatementSimplifyValConversion()
             +AssignmentStatementSimplifyAlsoConversion()
+            +AssignmentStatementSplitAlsoConversion()
             +PolyadicExpressionConversion(context)
             +OperatorExpressionConversion(context)
             +ThrowStatementConversion()
