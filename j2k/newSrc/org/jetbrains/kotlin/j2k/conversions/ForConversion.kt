@@ -35,7 +35,6 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         val whileStatement = JKWhileStatementImpl(condition, whileBody)
 
         if (loopStatement.initializer is JKEmptyStatement) return whileStatement
-        //TODO check for error conflict
 
         val convertedFromForLoopSyntheticWhileStatement =
             JKKtConvertedFromForLoopSyntheticWhileStatementImpl(
@@ -131,13 +130,13 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                 else -> return null
             }
             val range = forIterationRange(start, right, reversed, inclusive, loopVarPsi)
-            //TODO for loop explicitType
-//            val explicitType = if (context.converter.settings.specifyLocalVariableTypeByDefault)
-//                JKJavaPrimitiveTypeImpl.INT
-//            else null
+            val explicitType =
+                if (context.converter.settings.specifyLocalVariableTypeByDefault)
+                    JKJavaPrimitiveTypeImpl.INT
+                else JKNoTypeImpl
             val loopVarDeclaration =
                 JKForLoopVariableImpl(
-                    JKTypeElementImpl(JKNoTypeImpl),
+                    JKTypeElementImpl(explicitType),
                     loopVar::name.detached(),
                     JKStubExpressionImpl()
                 )

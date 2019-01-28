@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 
 
-class ForInConversion : RecursiveApplicableConversionBase() {
+class ForInConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKForInStatement) return recurse(element)
 
-        val parameterDeclaration = element.declaration as? JKParameter
-        if (parameterDeclaration != null) {
+        val parameterDeclaration = element.declaration as? JKVariable
+        if (parameterDeclaration != null
+            && !context.converter.settings.specifyLocalVariableTypeByDefault
+        ) {
             parameterDeclaration.type = JKTypeElementImpl(JKNoTypeImpl)
         }
 
