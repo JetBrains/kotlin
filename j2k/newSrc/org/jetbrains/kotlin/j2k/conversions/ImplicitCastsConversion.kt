@@ -79,6 +79,12 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
     }
 
     private fun JKExpression.castToAsPrimitiveTypes(toType: JKType): JKExpression? {
+        if (this is JKPrefixExpression
+            && (operator.token.text == "+" || operator.token.text == "-")
+        ) {
+            val casted = expression.castToAsPrimitiveTypes(toType) ?: return null
+            return JKPrefixExpressionImpl(casted, operator)
+        }
         val expressionTypeAsPrimitive = type(context.symbolProvider)?.asPrimitiveType() ?: return null
         val toTypeAsPrimitive = toType.asPrimitiveType() ?: return null
         if (toTypeAsPrimitive == expressionTypeAsPrimitive) return null
