@@ -58,10 +58,9 @@ interface MultifileClassCodegen {
 }
 
 class MultifileClassCodegenImpl(
-        private val state: GenerationState,
-        private val files: Collection<KtFile>,
-        private val facadeFqName: FqName,
-        private val packagePartRegistry: PackagePartRegistry
+    private val state: GenerationState,
+    private val files: Collection<KtFile>,
+    private val facadeFqName: FqName
 ) : MultifileClassCodegen {
     private val facadeClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(facadeFqName)
 
@@ -214,7 +213,7 @@ class MultifileClassCodegenImpl(
             !file.hasDeclarationsForPartClass(state.bindingContext)
         ) return
 
-        packagePartRegistry.addPart(partType.internalName, facadeClassType.internalName)
+        state.factory.packagePartRegistry.addPart(packageFragment.fqName, partType.internalName, facadeClassType.internalName)
 
         val builder = state.factory.newVisitor(MultifileClassPart(file, packageFragment), partType, file)
 

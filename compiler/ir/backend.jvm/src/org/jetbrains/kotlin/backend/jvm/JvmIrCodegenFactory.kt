@@ -36,8 +36,8 @@ object JvmIrCodegenFactory : CodegenFactory {
         JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext)
     }
 
-    override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): PackageCodegen {
-        val impl = PackageCodegenImpl(state, files, fqName, registry)
+    override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): PackageCodegen {
+        val impl = PackageCodegenImpl(state, files, fqName)
 
         return object : PackageCodegen {
             override fun generate(errorHandler: CompilationErrorHandler) {
@@ -54,7 +54,7 @@ object JvmIrCodegenFactory : CodegenFactory {
         }
     }
 
-    override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): MultifileClassCodegen {
+    override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): MultifileClassCodegen {
         TODO()
     }
 }

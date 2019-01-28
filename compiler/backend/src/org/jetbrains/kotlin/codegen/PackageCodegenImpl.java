@@ -44,18 +44,15 @@ public class PackageCodegenImpl implements PackageCodegen {
     private final GenerationState state;
     private final Collection<KtFile> files;
     private final PackageFragmentDescriptor packageFragment;
-    private final PackagePartRegistry packagePartRegistry;
 
     public PackageCodegenImpl(
             @NotNull GenerationState state,
             @NotNull Collection<KtFile> files,
-            @NotNull FqName packageFqName,
-            @NotNull PackagePartRegistry registry
+            @NotNull FqName packageFqName
     ) {
         this.state = state;
         this.files = files;
         this.packageFragment = getOnlyPackageFragment(packageFqName);
-        packagePartRegistry = registry;
     }
 
     @Override
@@ -120,7 +117,7 @@ public class PackageCodegenImpl implements PackageCodegen {
 
         if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
 
-        packagePartRegistry.addPart(fileClassType.getInternalName(), null);
+        state.getFactory().getPackagePartRegistry().addPart(packageFragment.getFqName(), fileClassType.getInternalName(), null);
 
         ClassBuilder builder = state.getFactory().newVisitor(JvmDeclarationOriginKt.PackagePart(file, packageFragment), fileClassType, file);
 

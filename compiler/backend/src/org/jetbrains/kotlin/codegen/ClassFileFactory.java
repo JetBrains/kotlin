@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.serialization.StringTableImpl;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getMappingFileName;
@@ -62,7 +62,7 @@ public class ClassFileFactory implements OutputFileCollection {
     private boolean isDone = false;
 
     private final Set<File> sourceFiles = new HashSet<>();
-    private final Map<String, PackageParts> partsGroupedByPackage = new LinkedHashMap<>();
+    private final PackagePartRegistry packagePartRegistry = new PackagePartRegistry();
 
     public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory) {
         this.state = state;
@@ -71,6 +71,11 @@ public class ClassFileFactory implements OutputFileCollection {
 
     public GenerationState getGenerationState() {
         return state;
+    }
+
+    @NotNull
+    public PackagePartRegistry getPackagePartRegistry() {
+        return packagePartRegistry;
     }
 
     @NotNull
@@ -110,7 +115,7 @@ public class ClassFileFactory implements OutputFileCollection {
         JvmModuleProtoBuf.Module.Builder builder = JvmModuleProtoBuf.Module.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
 
-        for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(partsGroupedByPackage.values(), state)) {
+        for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(packagePartRegistry.getParts().values(), state)) {
             part.addTo(builder);
         }
 
@@ -133,12 +138,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
             @Override
             public String asText(ClassBuilderFactory factory) {
-                try {
-                    return new String(asBytes(factory), "UTF-8");
-                }
-                catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
-                }
+                return new String(asBytes(factory), StandardCharsets.UTF_8);
             }
         });
     }
@@ -239,22 +239,14 @@ public class ClassFileFactory implements OutputFileCollection {
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerSourceFiles(files);
-        return state.getCodegenFactory().createPackageCodegen(state, files, fqName, buildNewPackagePartRegistry(fqName));
+        return state.getCodegenFactory().createPackageCodegen(state, files, fqName);
     }
 
     @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerSourceFiles(files);
-        return state.getCodegenFactory().createMultifileClassCodegen(state, files, facadeFqName, buildNewPackagePartRegistry(facadeFqName.parent()));
-    }
-
-    private PackagePartRegistry buildNewPackagePartRegistry(@NotNull FqName packageFqName) {
-        String packageFqNameAsString = packageFqName.asString();
-        return (partInternalName, facadeInternalName) -> {
-            PackageParts packageParts = partsGroupedByPackage.computeIfAbsent(packageFqNameAsString, PackageParts::new);
-            packageParts.addPart(partInternalName, facadeInternalName);
-        };
+        return state.getCodegenFactory().createMultifileClassCodegen(state, files, facadeFqName);
     }
 
     private void registerSourceFiles(Collection<KtFile> files) {
