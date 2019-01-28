@@ -56,6 +56,7 @@ class KonanIrModuleDeserializer(
 
     var deserializedModuleDescriptor: ModuleDescriptor? = null
     var deserializedModuleProtoSymbolTables = mutableMapOf<ModuleDescriptor, KonanIr.IrSymbolTable>()
+    var deserializedModuleProtoStringTables = mutableMapOf<ModuleDescriptor, KonanIr.StringTable>()
     var deserializedModuleProtoTypeTables = mutableMapOf<ModuleDescriptor, KonanIr.IrTypeTable>()
 
     val resolvedForwardDeclarations = mutableMapOf<UniqIdKey, UniqIdKey>()
@@ -139,6 +140,9 @@ class KonanIrModuleDeserializer(
         return deserializeIrTypeData(typeData)
     }
 
+    override fun deserializeString(proto: KonanIr.String) =
+        deserializedModuleProtoStringTables[deserializedModuleDescriptor]!!.getStrings(proto.index)
+
     fun deserializeIrSymbolData(proto: KonanIr.IrSymbolData): IrSymbol {
         val key = proto.uniqId.uniqIdKey(deserializedModuleDescriptor!!)
         val topLevelKey = proto.topLevelUniqId.uniqIdKey(deserializedModuleDescriptor!!)
@@ -169,8 +173,19 @@ class KonanIrModuleDeserializer(
         return symbol
     }
 
-    override fun deserializeDescriptorReference(proto: KonanIr.DescriptorReference)
-        = descriptorReferenceDeserializer.deserializeDescriptorReference(proto)
+    override fun deserializeDescriptorReference(proto: KonanIr.DescriptorReference): DeclarationDescriptor =
+         descriptorReferenceDeserializer.deserializeDescriptorReference(
+            deserializeString(proto.packageFqName),
+            deserializeString(proto.classFqName),
+            deserializeString(proto.name),
+            if (proto.hasUniqId()) proto.uniqId.index else null,
+            isEnumEntry = proto.isEnumEntry,
+            isEnumSpecial = proto.isEnumSpecial,
+            isDefaultConstructor = proto.isDefaultConstructor,
+            isFakeOverride = proto.isFakeOverride,
+            isGetter = proto.isGetter,
+            isSetter = proto.isSetter
+        )
 
     private val ByteArray.codedInputStream: org.jetbrains.kotlin.protobuf.CodedInputStream
         get() {
@@ -295,7 +310,7 @@ class KonanIrModuleDeserializer(
     }
 
     fun deserializeIrFile(fileProto: KonanIr.IrFile, moduleDescriptor: ModuleDescriptor, deserializeAllDeclarations: Boolean): IrFile {
-        val fileEntry = NaiveSourceBasedFileEntryImpl(fileProto.fileEntry.name)
+        val fileEntry = NaiveSourceBasedFileEntryImpl(deserializeString(fileProto.fileEntry.name))
 
         // TODO: we need to store "" in protobuf, I suppose. Or better yet, reuse fqname storage from metadata.
         val fqName = if (fileProto.fqName == "<root>") FqName.ROOT else FqName(fileProto.fqName)
@@ -321,6 +336,7 @@ class KonanIrModuleDeserializer(
 
         deserializedModuleDescriptor = moduleDescriptor
         deserializedModuleProtoSymbolTables.put(moduleDescriptor, proto.symbolTable)
+        deserializedModuleProtoStringTables.put(moduleDescriptor, proto.stringTable)
         deserializedModuleProtoTypeTables.put(moduleDescriptor, proto.typeTable)
 
         val files = proto.fileList.map {

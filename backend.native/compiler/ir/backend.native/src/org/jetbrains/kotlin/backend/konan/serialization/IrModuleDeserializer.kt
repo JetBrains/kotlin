@@ -62,6 +62,7 @@ abstract class IrModuleDeserializer(
     abstract fun deserializeIrSymbol(proto: KonanIr.IrSymbol): IrSymbol
     abstract fun deserializeIrType(proto: KonanIr.IrTypeIndex): IrType
     abstract fun deserializeDescriptorReference(proto: KonanIr.DescriptorReference): DeclarationDescriptor
+    abstract fun deserializeString(proto: KonanIr.String): String
 
     private fun deserializeTypeArguments(proto: KonanIr.TypeArguments): List<IrType> {
         logger.log { "### deserializeTypeArguments" }
@@ -540,7 +541,7 @@ abstract class IrModuleDeserializer(
         val loopId = proto.loopId
         loopIndex.getOrPut(loopId) { loop }
 
-        val label = if (proto.hasLabel()) proto.label else null
+        val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val body = if (proto.hasBody()) deserializeExpression(proto.body) else null
         val condition = deserializeExpression(proto.condition)
 
@@ -568,7 +569,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeBreak(proto: KonanIr.IrBreak, start: Int, end: Int, type: IrType): IrBreak {
-        val label = if (proto.hasLabel()) proto.label else null
+        val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val loopId = proto.loopId
         val loop = loopIndex[loopId]!!
         val irBreak = IrBreakImpl(start, end, type, loop)
@@ -578,7 +579,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeContinue(proto: KonanIr.IrContinue, start: Int, end: Int, type: IrType): IrContinue {
-        val label = if (proto.hasLabel()) proto.label else null
+        val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val loopId = proto.loopId
         val loop = loopIndex[loopId]!!
         val irContinue = IrContinueImpl(start, end, type, loop)
@@ -604,7 +605,7 @@ abstract class IrModuleDeserializer(
             LONG
             -> IrConstImpl.long(start, end, type, proto.long)
             STRING
-            -> IrConstImpl.string(start, end, type, proto.string)
+            -> IrConstImpl.string(start, end, type, deserializeString(proto.string))
             FLOAT
             -> IrConstImpl.float(start, end, type, proto.float)
             DOUBLE
@@ -693,7 +694,7 @@ abstract class IrModuleDeserializer(
         origin: IrDeclarationOrigin
     ): IrTypeParameter {
         val symbol = deserializeIrSymbol(proto.symbol) as IrTypeParameterSymbol
-        val name = Name.identifier(proto.name)
+        val name = Name.identifier(deserializeString(proto.name))
         val variance = deserializeIrTypeVariance(proto.variance)
 
         val parameter = symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
@@ -741,7 +742,7 @@ abstract class IrModuleDeserializer(
             IrValueParameterImpl(
                 start, end, origin,
                 deserializeIrSymbol(proto.symbol) as IrValueParameterSymbol,
-                Name.identifier(proto.name),
+                Name.identifier(deserializeString(proto.name)),
                 proto.index,
                 deserializeIrType(proto.type),
                 varargElementType,
@@ -763,11 +764,11 @@ abstract class IrModuleDeserializer(
 
         val modality = deserializeModality(proto.modality)
         val clazz = symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-            symbol.descriptor, modality) { symbol ->
+            symbol.descriptor, modality) {
             IrClassImpl(
                         start, end, origin,
-                        symbol,
-                        Name.identifier(proto.name),
+                        it,
+                        Name.identifier(deserializeString(proto.name)),
                         deserializeClassKind(proto.kind),
                         deserializeVisibility(proto.visibility),
                         modality,
@@ -825,14 +826,14 @@ abstract class IrModuleDeserializer(
         start: Int, end: Int, origin: IrDeclarationOrigin, correspondingProperty: IrProperty? = null
     ): IrSimpleFunction {
 
-        logger.log { "### deserializing IrFunction ${proto.base.name}" }
+        logger.log { "### deserializing IrFunction ${deserializeString(proto.base.name)}" }
         val symbol = deserializeIrSymbol(proto.symbol) as IrSimpleFunctionSymbol
 
         val function = symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
             symbol.descriptor, {
                 IrFunctionImpl(
                     start, end, origin, it,
-                    Name.identifier(proto.base.name),
+                    Name.identifier(deserializeString(proto.base.name)),
                     deserializeVisibility(proto.base.visibility),
                     deserializeModality(proto.modality),
                     deserializeIrType(proto.base.returnType),
@@ -869,7 +870,7 @@ abstract class IrModuleDeserializer(
             end,
             origin,
             symbol,
-            Name.identifier(proto.name),
+            Name.identifier(deserializeString(proto.name)),
             type,
             proto.isVar,
             proto.isConst,
@@ -891,7 +892,7 @@ abstract class IrModuleDeserializer(
             irrelevantOrigin,
             symbol.descriptor
         ) {
-            IrEnumEntryImpl(start, end, origin, it, Name.identifier(proto.name))
+            IrEnumEntryImpl(start, end, origin, it, Name.identifier(deserializeString(proto.name)))
         }
 
         if (proto.hasCorrespondingClass()) {
@@ -916,8 +917,8 @@ abstract class IrModuleDeserializer(
         return initializer
     }
 
-    private fun deserializeVisibility(value: String): Visibility { // TODO: switch to enum
-        return when (value) {
+    private fun deserializeVisibility(value: KonanIr.Visibility): Visibility { // TODO: switch to enum
+        return  when (deserializeString(value.name)) {
             "public" -> Visibilities.PUBLIC
             "private" -> Visibilities.PRIVATE
             "private_to_this" -> Visibilities.PRIVATE_TO_THIS
@@ -942,7 +943,7 @@ abstract class IrModuleDeserializer(
                 IrConstructorImpl(
                     start, end, origin,
                     it,
-                    Name.identifier(proto.base.name),
+                    Name.identifier(deserializeString(proto.base.name)),
                     deserializeVisibility(proto.base.visibility),
                     deserializeIrType(proto.base.returnType),
                     proto.base.isInline,
@@ -968,7 +969,7 @@ abstract class IrModuleDeserializer(
             { IrFieldImpl(
                     start, end, origin,
                     it,
-                    Name.identifier(proto.name),
+                    Name.identifier(deserializeString(proto.name)),
                     type,
                     deserializeVisibility(proto.visibility),
                     proto.isFinal,
@@ -1009,7 +1010,7 @@ abstract class IrModuleDeserializer(
         val property = IrPropertyImpl(
             start, end, origin,
             descriptor,
-            Name.identifier(proto.name),
+            Name.identifier(deserializeString(proto.name)),
             deserializeVisibility(proto.visibility),
             deserializeModality(proto.modality),
             proto.isVar,
@@ -1068,12 +1069,13 @@ abstract class IrModuleDeserializer(
         IrDeclarationOrigin::class.nestedClasses.toList() + DeclarationFactory.FIELD_FOR_OUTER_THIS::class
     val originIndex = allKnownOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
     val irrelevantOrigin = object : IrDeclarationOriginImpl("irrelevant") {}
+    fun deserializeIrDeclarationOrigin(proto: KonanIr.IrDeclarationOrigin) = originIndex[deserializeString(proto.custom)]!!
 
     protected fun deserializeDeclaration(proto: KonanIr.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
 
         val start = proto.coordinates.startOffset
         val end = proto.coordinates.endOffset
-        val origin = originIndex[proto.origin.name]!!
+        val origin = deserializeIrDeclarationOrigin(proto.origin)
 
         val declarator = proto.declarator
 
