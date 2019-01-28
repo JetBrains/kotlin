@@ -21,24 +21,32 @@ class ModalityConversion(private val context: ConversionContext) : RecursiveAppl
     }
 
     private fun processClass(klass: JKClass) {
-        if (klass.classKind != JKClass.ClassKind.CLASS) return
-        if (klass.modality != Modality.OPEN) return
-        if (context.converter.settings.openByDefault) return
-        if (!context.converter.converterServices.oldServices.referenceSearcher.hasInheritors(klass.psi as PsiClass)) {
-            klass.modality = Modality.FINAL
+        klass.modality = when {
+            klass.classKind == JKClass.ClassKind.ENUM -> Modality.FINAL
+            klass.modality == Modality.OPEN
+                    && context.converter.settings.openByDefault -> Modality.OPEN
+            klass.modality == Modality.OPEN
+                    && context.converter.settings.openByDefault -> Modality.OPEN
+            klass.modality == Modality.OPEN
+                    && !context.converter.converterServices.oldServices.referenceSearcher.hasInheritors(klass.psi as PsiClass) ->
+                Modality.FINAL
+
+            else -> klass.modality
         }
     }
 
     private fun processMethod(method: JKJavaMethod) {
         val psi = method.psi<PsiMethod>()!!
-        if (method.modality == Modality.OPEN
-            && !context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi)
-        ) {
-            method.modality = Modality.FINAL
-        }
-        if ((method.psi!! as PsiMethod).findSuperMethods().isNotEmpty()) {
-            method.modality = Modality.OVERRIDE
+        method.modality = when {
+            method.modality != Modality.ABSTRACT
+                    && (method.psi!! as PsiMethod).findSuperMethods().isNotEmpty() -> Modality.OVERRIDE
+            method.modality == Modality.OPEN
+                    && context.converter.settings.openByDefault
+                    && method.visibility != Visibility.PRIVATE -> Modality.OPEN
+
+            method.modality == Modality.OPEN
+                    && !context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi) -> Modality.FINAL
+            else -> method.modality
         }
     }
-
 }
