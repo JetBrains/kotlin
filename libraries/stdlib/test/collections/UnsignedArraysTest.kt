@@ -339,4 +339,35 @@ class UnsignedArraysTest {
         assertEquals(genericArray.toList(), ulongArray.toList())
     }
 
+    @Test
+    fun fold() {
+        expect(6u) { ubyteArrayOf(1, 2, 3).fold(0u) { acc, e -> acc + e } }
+        expect(13u) { ushortArrayOf(1, 2, 3).fold(1u) { acc, e -> acc + 2u * e } }
+        expect(3u) { uintArrayOf(1, 2, 3).fold(0u) { _, e -> e } }
+        expect(0) { ulongArrayOf(1, 2, 3).fold(1) { _, _ -> 0 } }
+    }
+
+    @Test
+    fun foldIndexed() {
+        expect(8u) { ubyteArrayOf(1, 2, 3).foldIndexed(0u) { i, acc, e -> acc + i.toUByte() * e } }
+        expect(2) { ushortArrayOf(1, 2, 3).foldIndexed(1) { i, _, _ -> i } }
+        expect(3u) { uintArrayOf(1, 2, 3).foldIndexed(0u) { _, _, e -> e } }
+        expect(0) { ulongArrayOf(1, 2, 3).foldIndexed(1) { _, _, _ -> 0 } }
+    }
+
+    @Test
+    fun foldRight() {
+        expect(6u) { ubyteArrayOf(1, 2, 3).foldRight(0u) { e, acc -> acc + e } }
+        expect(13u) { ushortArrayOf(1, 2, 3).foldRight(1u) { e, acc -> acc + 2u * e } }
+        expect(1u) { uintArrayOf(1, 2, 3).foldRight(0u) { e, _ -> e } }
+        expect(0) { ulongArrayOf(1, 2, 3).foldRight(1) { _, _ -> 0 } }
+    }
+
+    @Test
+    fun foldRightIndexed() {
+        expect(8u) { ubyteArrayOf(1, 2, 3).foldRightIndexed(0u) { i, e, acc -> acc + i.toUByte() * e } }
+        expect(0) { ushortArrayOf(1, 2, 3).foldRightIndexed(1) { i, _, _ -> i } }
+        expect(1u) { uintArrayOf(1, 2, 3).foldRightIndexed(0u) { _, e, _ -> e } }
+        expect(0) { ulongArrayOf(1, 2, 3).foldRightIndexed(1) { _, _, _ -> 0 } }
+    }
 }
