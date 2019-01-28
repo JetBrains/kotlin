@@ -154,14 +154,20 @@ class JsIrBackendContext(
 
     val functions = (0..22).map { symbolTable.referenceClass(builtIns.getFunction(it)) }
 
-    val primitiveCompanionObjects = PrimitiveType.NUMBER_TYPES
-        .asSequence()
-        .filter { it.name != "LONG" && it.name != "CHAR" } // skip due to they have own explicit companions
-        .map {
-            it.typeName to symbolTable.lazyWrapper.referenceClass(
-                getClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.typeName.identifier}CompanionObject")))
+    private fun primitivesWithImplicitCompanionObject(): List<Name> {
+        val numbers = PrimitiveType.NUMBER_TYPES
+            .filter { it.name != "LONG" && it.name != "CHAR" } // skip due to they have own explicit companions
+            .map { it.typeName }
+
+        return numbers + listOf(Name.identifier("String"))
+    }
+
+    val primitiveCompanionObjects = primitivesWithImplicitCompanionObject()
+        .associate {
+            it to symbolTable.lazyWrapper.referenceClass(
+                getClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
             )
-        }.toMap()
+        }
 
     val suspendFunctions = (0..22).map { symbolTable.referenceClass(builtIns.getSuspendFunction(it)) }
 
