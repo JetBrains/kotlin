@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.junit.runner.RunWith
 import java.io.File
@@ -41,6 +42,10 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         var normalDeclarations = 0
         var errorReferences = 0
         var normalReferences = 0
+
+        var ktExpressions = 0
+        var ktDeclarations = 0
+        var ktReferences = 0
         println("BASE PATH: $testDataPath")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
@@ -105,6 +110,25 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         declaration.acceptChildren(this)
                     }
                 })
+                ktFile.accept(object : KtTreeVisitor<Nothing?>() {
+                    override fun visitReferenceExpression(expression: KtReferenceExpression, data: Nothing?): Void? {
+                        ktReferences++
+                        expression.acceptChildren(this)
+                        return null
+                    }
+
+                    override fun visitExpression(expression: KtExpression, data: Nothing?): Void? {
+                        ktExpressions++
+                        expression.acceptChildren(this)
+                        return null
+                    }
+
+                    override fun visitDeclaration(dcl: KtDeclaration, data: Nothing?): Void? {
+                        ktDeclarations++
+                        dcl.acceptChildren(this)
+                        return null
+                    }
+                })
 
             } catch (e: Exception) {
                 if (counter > 0) {
@@ -125,6 +149,9 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("NORMAL DECLARATIONS: $normalDeclarations")
         println("ERROR REFERENCES: $errorReferences")
         println("NORMAL REFERENCES: $normalReferences")
+        println("KT EXPRESSIONS: $ktExpressions")
+        println("KT DECLARATIONS: $ktDeclarations")
+        println("KT REFERENCES: $ktReferences")
         if (!stubMode) {
             assertEquals(0, expressionStubs)
         }
