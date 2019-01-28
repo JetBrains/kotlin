@@ -18,7 +18,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         var newElement = element
         if (element is JKJavaNewArray) {
-            val arrayType = element.type.type.asPrimitiveType()
+            val arrayType = element.type.type as? JKJavaPrimitiveType
             val arrayConstructorName =
                 if (arrayType != null)
                     CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY[PrimitiveType.valueOf(arrayType.jvmPrimitiveType.name)]!!.asString()
@@ -47,7 +47,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
                 )
             } else {
                 JKJavaNewExpressionImpl(
-                    context.symbolProvider.provideByFqName(arrayFqName(type).replace('/', '.')),
+                    context.symbolProvider.provideByFqName(type.arrayFqName()),
                     JKExpressionListImpl(dimensions[0]),
                     JKTypeArgumentListImpl(emptyList())
                 )
@@ -66,7 +66,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
             )
         }
         var resultType = JKClassTypeImpl(
-            context.symbolProvider.provideByFqName(arrayFqName(type)),
+            context.symbolProvider.provideByFqName(type.arrayFqName()),
             if (type is JKJavaPrimitiveType) emptyList() else listOf(type),
             Nullability.Default
         )
@@ -83,8 +83,4 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
             JKTypeArgumentListImpl(listOf(JKTypeElementImpl(resultType)))
         )
     }
-
-    private fun arrayFqName(type: JKType): String = if (type is JKJavaPrimitiveType)
-        PrimitiveType.valueOf(type.jvmPrimitiveType.name).arrayTypeFqName.asString()
-    else KotlinBuiltIns.FQ_NAMES.array.asString()
 }

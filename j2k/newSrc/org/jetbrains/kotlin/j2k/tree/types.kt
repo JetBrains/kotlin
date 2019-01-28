@@ -305,6 +305,11 @@ val primitiveTypes =
         JvmPrimitiveType.DOUBLE
     )
 
+fun JKType.arrayFqName(): String =
+    if (this is JKJavaPrimitiveType)
+        PrimitiveType.valueOf(jvmPrimitiveType.name).arrayTypeFqName.asString()
+    else KotlinBuiltIns.FQ_NAMES.array.asString()
+
 fun JKClassSymbol.isArrayType(): Boolean =
     fqName in
             JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE.values

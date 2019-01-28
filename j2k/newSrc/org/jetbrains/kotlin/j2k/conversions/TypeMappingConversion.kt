@@ -114,7 +114,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
                 )
             is JKJavaArrayType ->
                 JKClassTypeImpl(
-                    context.symbolProvider.provideByFqName(arrayFqName(type)),
+                    context.symbolProvider.provideByFqName(type.arrayFqName()),
                     if (type is JKJavaPrimitiveType) emptyList() else listOf(type.mapType(typeElement)),
                     type.nullability
                 )
@@ -189,9 +189,4 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
             else -> false
         }
     }
-
-    private fun arrayFqName(type: JKType): String =
-        if (type is JKJavaPrimitiveType)
-            PrimitiveType.valueOf(type.jvmPrimitiveType.name).arrayTypeFqName.asString()
-        else KotlinBuiltIns.FQ_NAMES.array.asString()
 }
