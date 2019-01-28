@@ -661,6 +661,10 @@ private class JpsICReporter : ICReporter {
             KotlinBuilder.LOG.debug(message())
         }
     }
+
+    override fun reportVerbose(message: () -> String) {
+        report(message)
+    }
 }
 
 private fun ChangesCollector.processChangesUsingLookups(
@@ -672,12 +676,12 @@ private fun ChangesCollector.processChangesUsingLookups(
     val allCaches = caches.flatMap { it.thisWithDependentCaches }
     val reporter = JpsICReporter()
 
-    reporter.report { "Start processing changes" }
+    reporter.reportVerbose { "Start processing changes" }
 
     val dirtyFiles = getDirtyFiles(allCaches, dataManager)
     fsOperations.markInChunkOrDependents(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
 
-    reporter.report { "End of processing changes" }
+    reporter.reportVerbose { "End of processing changes" }
 }
 
 private fun ChangesCollector.getDirtyFiles(
