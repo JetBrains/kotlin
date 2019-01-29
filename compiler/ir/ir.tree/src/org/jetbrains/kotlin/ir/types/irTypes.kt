@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.ir.types
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -68,6 +70,8 @@ fun IrType.makeNullable(addKotlinType:Boolean = true) =
     else
         this
 
+var irTypeKotlinBuiltIns: KotlinBuiltIns? = null
+
 fun IrType.toKotlinType(): KotlinType {
     originalKotlinType?.let {
         return it
@@ -75,6 +79,7 @@ fun IrType.toKotlinType(): KotlinType {
 
     return when (this) {
         is IrSimpleType -> makeKotlinType(classifier, arguments, hasQuestionMark)
+        is IrDynamicType -> createDynamicType(irTypeKotlinBuiltIns!!)
         else -> TODO(toString())
     }
 }

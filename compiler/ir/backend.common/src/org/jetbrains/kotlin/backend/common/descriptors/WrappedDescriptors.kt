@@ -583,7 +583,7 @@ open class WrappedClassDescriptor(
     private val _typeConstructor: TypeConstructor by lazy {
         LazyTypeConstructor(
             this,
-            { emptyList() },
+            { declaredTypeParameters },
             { owner.superTypes.map { it.toKotlinType() } },
             LockBasedStorageManager.NO_LOCKS
         )

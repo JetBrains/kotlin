@@ -1,0 +1,606 @@
+syntax = "proto2";
+package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir;
+
+option java_outer_classname = "IrKlibProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+message DescriptorReference {
+  required string package_fq_name = 1;
+  required string class_fq_name = 2;
+  required string name = 3;
+  optional UniqId uniq_id = 4;
+  optional bool is_getter = 5 [default = false];
+  optional bool is_setter = 6 [default = false];
+  optional bool is_backing_field = 7 [default = false];
+  optional bool is_fake_override = 8 [default = false];
+  optional bool is_default_constructor = 9 [default = false];
+  optional bool is_enum_entry = 10 [default = false];
+  optional bool is_enum_special = 11 [default = false];
+}
+
+message UniqId {
+  required uint64 index = 1;
+  required bool isLocal = 2;
+}
+
+message Coordinates {
+  required int32 start_offset = 1;
+  required int32 end_offset = 2;
+}
+
+/* ------ Top Level---------------------------------------------- */
+
+message IrDeclarationContainer {
+  repeated IrDeclaration declaration = 1;
+}
+
+message FileEntry { // TODO: extend me.
+                    required string name = 1;
+}
+
+message IrFile {
+  repeated UniqId declaration_id = 1;
+  required FileEntry file_entry = 2;
+  // TODO: we need a better string management. See metadata serialization as an example.
+  required string fq_name = 3;
+}
+
+message IrModule {
+  required string name = 1;
+  repeated IrFile file = 2;
+  required IrSymbolTable symbol_table = 3;
+  required IrTypeTable type_table = 4;
+}
+
+/* ------ IrSymbols --------------------------------------------- */
+
+enum IrSymbolKind {
+  FUNCTION_SYMBOL = 1;
+  CONSTRUCTOR_SYMBOL = 2;
+  ENUM_ENTRY_SYMBOL = 3;
+  FIELD_SYMBOL = 4;
+  VALUE_PARAMETER_SYMBOL = 5;
+  RETURNABLE_BLOCK_SYMBOL = 6;
+  CLASS_SYMBOL = 7;
+  TYPE_PARAMETER_SYMBOL = 8;
+  VARIABLE_SYMBOL = 9;
+  ANONYMOUS_INIT_SYMBOL = 10;
+
+  STANDALONE_FIELD_SYMBOL = 11; // For fields without properties. WrappedFieldDescriptor, rather than WrappedPropertyDescriptor.
+  RECEIVER_PARAMETER_SYMBOL = 12; // ReceiverParameterDescriptor rather than ValueParameterDescriptor.
+}
+
+message IrSymbolData {
+  required IrSymbolKind kind = 1;
+  required UniqId uniq_id = 2;
+  required UniqId top_level_uniq_id = 3;
+  optional string fqname = 4;
+  optional DescriptorReference descriptor_reference = 5;
+}
+
+message IrSymbol {
+  required int32 index = 1;
+}
+
+message IrSymbolTable {
+  repeated IrSymbolData symbols = 1;
+}
+
+/* ------ IrTypes --------------------------------------------- */
+
+enum IrTypeVariance { // Should we import metadata variance, or better stay separate?
+                      IN = 0;
+                      OUT = 1;
+                      INV = 2;
+}
+
+message Annotations {
+  repeated IrCall annotation = 1;
+}
+
+message TypeArguments {
+  repeated IrTypeIndex type_argument = 1;
+}
+
+message IrStarProjection {
+  optional bool void = 1;
+}
+
+message IrTypeProjection {
+  required IrTypeVariance variance = 1;
+  required IrTypeIndex type = 2;
+}
+
+message IrTypeArgument {
+  oneof kind {
+    IrStarProjection star = 1;
+    IrTypeProjection type = 2;
+  }
+}
+
+message IrSimpleType {
+  required Annotations annotations = 1;
+  required IrSymbol classifier = 2;
+  required bool has_question_mark = 3;
+  repeated IrTypeArgument argument = 4;
+}
+
+message IrDynamicType {
+  required Annotations annotations = 1;
+}
+
+message IrErrorType {
+  required Annotations annotations = 1;
+}
+
+message IrType {
+  oneof kind {
+    IrSimpleType simple = 1;
+    IrDynamicType dynamic = 2;
+    IrErrorType error = 3;
+  }
+}
+
+message IrTypeTable {
+  repeated IrType types = 1;
+}
+
+message IrTypeIndex {
+  required int32 index = 1;
+}
+
+/* ------ IrExpressions --------------------------------------------- */
+
+message IrBreak {
+  required int32 loop_id = 1;
+  optional string label = 2;
+}
+
+message IrBlock {
+  required bool is_lambda_origin = 1;
+  repeated IrStatement statement = 2;
+}
+
+message MemberAccessCommon {
+  optional IrExpression dispatch_receiver = 1;
+  optional IrExpression extension_receiver = 2;
+  repeated NullableIrExpression value_argument = 3;
+  required TypeArguments type_arguments = 4;
+}
+
+message IrCall {
+  enum Primitive {
+    NOT_PRIMITIVE = 1;
+    NULLARY = 2;
+    UNARY = 3;
+    BINARY = 4;
+  }
+  required Primitive kind = 1;
+  required IrSymbol symbol = 2;
+  required MemberAccessCommon member_access = 3;
+  optional IrSymbol super = 4;
+}
+
+message IrFunctionReference {
+  required IrSymbol symbol = 1;
+  optional string origin = 2;
+  required MemberAccessCommon member_access = 3;
+}
+
+
+message IrPropertyReference {
+  optional IrSymbol field = 1;
+  optional IrSymbol getter = 2;
+  optional IrSymbol setter = 3;
+  optional string origin = 4;
+  required MemberAccessCommon member_access = 5;
+}
+
+message IrComposite {
+  repeated IrStatement statement = 1;
+}
+
+message IrClassReference {
+  required IrSymbol class_symbol = 1;
+  required IrTypeIndex class_type = 2;
+}
+
+message IrConst {
+  oneof value {
+    bool null = 1;
+    bool boolean = 2;
+    int32 char = 3;
+    int32 byte = 4;
+    int32 short = 5;
+    int32 int = 6;
+    int64 long = 7;
+    float float = 8;
+    double double = 9;
+    string string = 10;
+  }
+}
+
+message IrContinue {
+  required int32 loop_id = 1;
+  optional string label = 2;
+}
+
+message IrDelegatingConstructorCall {
+  required IrSymbol symbol = 1;
+  required MemberAccessCommon member_access = 2;
+}
+
+message IrDoWhile {
+  required Loop loop = 1;
+}
+
+message IrEnumConstructorCall {
+  required IrSymbol symbol = 1;
+  required MemberAccessCommon member_access = 2;
+}
+
+message IrGetClass {
+  required IrExpression argument = 1;
+}
+
+message IrGetEnumValue {
+  required IrSymbol symbol = 2;
+}
+
+message FieldAccessCommon {
+  required IrSymbol symbol = 1;
+  optional IrSymbol super = 2;
+  optional IrExpression receiver = 3;
+}
+
+message IrGetField {
+  required FieldAccessCommon field_access = 1;
+}
+
+message IrGetValue {
+  required IrSymbol symbol = 1;
+}
+
+message IrGetObject {
+  required IrSymbol symbol = 1;
+}
+
+message IrInstanceInitializerCall {
+  required IrSymbol symbol = 1;
+}
+
+message Loop {
+  required int32 loop_id = 1;
+  required IrExpression condition = 2;
+  optional string label = 3;
+  optional IrExpression body = 4;
+}
+
+message IrReturn {
+  required IrSymbol return_target = 1;
+  required IrExpression value = 2;
+}
+
+message IrSetField {
+  required FieldAccessCommon field_access = 1;
+  required IrExpression value = 2;
+}
+
+message IrSetVariable {
+  required IrSymbol symbol = 1;
+  required IrExpression value = 2;
+}
+
+message IrSpreadElement {
+  required IrExpression expression = 1;
+  required Coordinates coordinates = 2;
+}
+
+message IrStringConcat {
+  repeated IrExpression argument = 1;
+}
+
+message IrThrow {
+  required IrExpression value = 1;
+}
+
+message IrTry {
+  required IrExpression result = 1;
+  repeated IrStatement catch = 2;
+  optional IrExpression finally = 3;
+}
+
+message IrTypeOp {
+  required IrTypeOperator operator = 1;
+  required IrTypeIndex operand = 2;
+  required IrExpression argument = 3;
+}
+
+message IrVararg {
+  required IrTypeIndex element_type = 1;
+  repeated IrVarargElement element = 2;
+}
+
+message IrVarargElement {
+  oneof vararg_element {
+    IrExpression expression = 1;
+    IrSpreadElement spread_element = 2;
+  }
+}
+
+message IrWhen {
+  repeated IrStatement branch = 1;
+}
+
+message IrWhile {
+  required Loop loop = 1;
+}
+
+// TODO: we need an extension mechanism to accomodate new
+// IR operators in upcoming releases.
+message IrOperation {
+  oneof operation {
+    IrBlock block = 1;
+    IrBreak break = 2;
+    IrCall call = 3;
+    IrClassReference class_reference = 4;
+    IrComposite composite = 5;
+    IrConst const = 6;
+    IrContinue continue = 7;
+    IrDelegatingConstructorCall delegating_constructor_call = 8;
+    IrDoWhile do_while = 9;
+    IrEnumConstructorCall enum_constructor_call = 10;
+    IrFunctionReference function_reference = 11;
+    IrGetClass get_class = 12;
+    IrGetEnumValue get_enum_value = 13;
+    IrGetField get_field = 14;
+    IrGetObject get_object = 15;
+    IrGetValue get_value = 16;
+    IrInstanceInitializerCall instance_initializer_call = 17;
+    IrPropertyReference property_reference = 18;
+    IrReturn return = 19;
+    IrSetField set_field = 20;
+    IrSetVariable set_variable = 21;
+    IrStringConcat string_concat = 22;
+    IrThrow throw = 23;
+    IrTry try = 24;
+    IrTypeOp type_op = 25;
+    IrVararg vararg = 26;
+    IrWhen when = 27;
+    IrWhile while = 28;
+  }
+}
+
+enum IrTypeOperator {
+  CAST = 1;
+  IMPLICIT_CAST = 2;
+  IMPLICIT_NOTNULL = 3;
+  IMPLICIT_COERCION_TO_UNIT = 4;
+  IMPLICIT_INTEGER_COERCION = 5;
+  SAFE_CAST = 6;
+  INSTANCEOF = 7;
+  NOT_INSTANCEOF = 8;
+  SAM_CONVERSION = 9;
+}
+
+
+message IrExpression {
+  required IrOperation operation = 1;
+  required IrTypeIndex type = 2;
+  required Coordinates coordinates = 3;
+}
+
+message NullableIrExpression {
+  optional IrExpression expression = 1;
+}
+
+/* ------ Declarations --------------------------------------------- */
+
+message IrTypeAlias {
+  // Nothing for now.
+}
+
+message IrFunction {
+  required IrSymbol symbol = 1;
+  required IrFunctionBase base = 2;
+  required ModalityKind modality = 3;
+  required bool is_tailrec = 4;
+  required bool is_suspend = 5;
+  repeated IrSymbol overridden = 6;
+  //optional UniqId corresponding_property = 7;
+}
+
+message IrFunctionBase {
+  required string name = 1;
+  required string visibility = 2;
+  required bool is_inline = 3;
+  required bool is_external = 4;
+  required IrTypeParameterContainer type_parameters = 5;
+  optional IrDeclaration dispatch_receiver = 6;
+  optional IrDeclaration extension_receiver = 7;
+  repeated IrDeclaration value_parameter = 8;
+  optional IrStatement body = 9;
+  required IrTypeIndex return_type = 10;
+}
+
+message IrConstructor {
+  required IrSymbol symbol = 1;
+  required IrFunctionBase base = 2;
+  required bool is_primary = 3;
+
+}
+
+message IrField {
+  required IrSymbol symbol = 1;
+  optional IrExpression initializer = 2;
+  required string name = 3;
+  required string visibility = 4;
+  required bool is_final = 5;
+  required bool is_external = 6;
+  required bool is_static = 7;
+  required IrTypeIndex type = 8;
+}
+
+message IrProperty {
+  optional DescriptorReference descriptor = 1; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+  required string name = 2;
+  required string visibility = 3;
+  required ModalityKind modality = 4;
+  required bool is_var = 5;
+  required bool is_const = 6;
+  required bool is_lateinit = 7;
+  required bool is_delegated = 8;
+  required bool is_external = 9;
+  optional IrField backing_field = 10;
+  optional IrFunction getter = 11;
+  optional IrFunction setter = 12;
+}
+
+message IrVariable {
+  required string name = 1;
+  required IrSymbol symbol = 2;
+  required IrTypeIndex type = 3;
+  required bool is_var = 4;
+  required bool is_const = 5;
+  required bool is_lateinit = 6;
+  optional IrExpression initializer = 7;
+}
+
+enum ClassKind {
+  CLASS = 1;
+  INTERFACE = 2;
+  ENUM_CLASS = 3;
+  ENUM_ENTRY = 4;
+  ANNOTATION_CLASS = 5;
+  OBJECT = 6;
+}
+
+enum ModalityKind { // It is ModalityKind to not clash with Modality in descriptor metadata.
+                    FINAL_MODALITY = 1;
+                    SEALED_MODALITY = 2;
+                    OPEN_MODALITY = 3;
+                    ABSTRACT_MODALITY = 4;
+}
+
+message IrValueParameter {
+  required IrSymbol symbol = 1;
+  required string name = 2;
+  required int32 index = 3;
+  required IrTypeIndex type = 4;
+  optional IrTypeIndex vararg_element_type = 5;
+  required bool is_crossinline = 6;
+  required bool is_noinline = 7;
+  optional IrExpression default_value = 8;
+}
+
+message IrTypeParameter {
+  required IrSymbol symbol = 1;
+  required string name = 2;
+  required int32 index = 3;
+  required IrTypeVariance variance = 4;
+  repeated IrTypeIndex super_type = 5;
+  required bool is_reified = 6;
+}
+
+message IrTypeParameterContainer {
+  repeated IrDeclaration type_parameter = 1;
+}
+
+message IrClass {
+  required IrSymbol symbol = 1;
+  required string name = 2;
+  required ClassKind kind = 3;
+  required string visibility = 4;
+  required ModalityKind modality = 5;
+  // TODO: consider using flags for the booleans.
+  required bool is_companion = 6;
+  required bool is_inner = 7;
+  required bool is_data = 8;
+  required bool is_external = 9;
+  required bool is_inline = 10;
+  optional IrDeclaration this_receiver = 11;
+  required IrTypeParameterContainer type_parameters = 12;
+  required IrDeclarationContainer declaration_container = 13;
+  repeated IrTypeIndex super_type = 14;
+}
+
+message IrEnumEntry {
+  required IrSymbol symbol = 1;
+  optional IrExpression initializer = 2;
+  optional IrDeclaration corresponding_class = 3;
+  required string name = 4;
+}
+
+message IrAnonymousInit {
+  required IrSymbol symbol = 1;
+  required IrStatement body = 2;
+}
+
+// TODO: we need an extension mechanism to accomodate new
+// IR operators in upcoming releases.
+message IrDeclarator {
+  oneof declarator {
+    IrAnonymousInit ir_anonymous_init = 1;
+    IrClass ir_class = 2;
+    IrConstructor ir_constructor = 3;
+    IrEnumEntry ir_enum_entry = 4;
+    IrField ir_field = 5;
+    IrFunction ir_function = 6;
+    IrProperty ir_property = 7;
+    IrTypeAlias ir_type_alias = 8;
+    IrTypeParameter ir_type_parameter = 9;
+    IrVariable ir_variable = 10;
+    IrValueParameter ir_value_parameter = 11;
+  }
+}
+
+message IrDeclarationOrigin {
+  required string name = 1;
+}
+
+message IrDeclaration {
+  required IrDeclarationOrigin origin = 1;
+  required Coordinates coordinates = 2;
+  required Annotations annotations = 3;
+  required IrDeclarator declarator = 4;
+  //repeated IrDeclaration nested = 5;
+  required string file_name = 5; // TODO: files should be communicated some other way, I suppose.
+}
+
+/* ------- IrStatements --------------------------------------------- */
+
+message IrBranch {
+  required IrExpression condition = 1;
+  required IrExpression result = 2;
+}
+
+message IrBlockBody {
+  repeated IrStatement statement = 1;
+}
+
+message IrCatch {
+  required IrDeclaration catch_parameter = 1;
+  required IrExpression result = 2;
+}
+
+enum IrSyntheticBodyKind {
+  ENUM_VALUES = 1;
+  ENUM_VALUEOF = 2;
+}
+
+message IrSyntheticBody {
+  required IrSyntheticBodyKind kind = 1;
+}
+
+// Let's try to map IrElement as well as IrStatement to IrStatement.
+message IrStatement {
+  required Coordinates coordinates = 1;
+  oneof statement {
+    IrDeclaration declaration = 2;
+    IrExpression expression = 3;
+    IrBlockBody block_body = 4;
+    IrBranch branch = 5;
+    IrCatch catch = 6;
+    IrSyntheticBody synthetic_body = 7;
+  }
+}

@@ -58,7 +58,8 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
         ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
         ProtoPath("build-common/src/java_descriptors.proto"),
-        ProtoPath("compiler/ir/backend.js/src/org/jetbrains/kotlin/ir/backend/js/lower/serialization/metadata/js.proto")
+//        ProtoPath("compiler/ir/backend.js/src/org/jetbrains/kotlin/ir/backend/js/lower/serialization/metadata/js.proto"),
+        ProtoPath("compiler/ir/backend.js/src/org/jetbrains/kotlin/ir/backend/js/lower/serialization/ir/ir.proto")
 )
 
 private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/metadata/src/ext_options.proto")

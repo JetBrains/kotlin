@@ -102,8 +102,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun generateThrowableProperties(): List<JsStatement> {
         val functions = irClass.declarations.filterIsInstance<IrSimpleFunction>()
 
-        val messageGetter = functions.single { it.name == Name.special("<get-message>") }
-        val causeGetter = functions.single { it.name == Name.special("<get-cause>") }
+
+        // TODO: Fix `Name.special` deserialization
+        val messageGetter = functions.single { it.name.asString() == "<get-message>" }
+        val causeGetter = functions.single { it.name.asString() == "<get-cause>" }
 
         val msgProperty = defineProperty(classPrototypeRef, "message", getter = buildGetterFunction(messageGetter))
 

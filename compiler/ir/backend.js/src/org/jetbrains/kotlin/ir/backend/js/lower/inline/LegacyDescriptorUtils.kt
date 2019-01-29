@@ -9,6 +9,10 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
+import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.types.KotlinType
@@ -45,6 +49,15 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
 
         return dispatchReceiver.type.isFunctionType &&
                 this.isOperator && this.name == OperatorNameConventions.INVOKE
+    }
+
+internal val IrFunction.isFunctionInvoke: Boolean
+    get() {
+        val dispatchReceiver = dispatchReceiverParameter ?: return false
+        assert(!dispatchReceiver.type.isFunctionTypeOrSubtype())
+
+        return dispatchReceiver.type.isFunctionTypeOrSubtype() &&
+                /*this.isOperator &&*/ this.name == OperatorNameConventions.INVOKE
     }
 
 // It is possible to declare "external inline fun",

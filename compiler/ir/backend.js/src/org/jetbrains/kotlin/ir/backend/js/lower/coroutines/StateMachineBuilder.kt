@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
+import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
@@ -351,8 +352,8 @@ class StateMachineBuilder(
                 if (it.result in suspendableNodes) {
                     suspendableNodes += wrapped
                 }
-                when (it) {
-                    is IrElseBranch -> IrElseBranchImpl(it.startOffset, it.endOffset, it.condition, wrapped)
+                when {
+                    isElseBranch(it) -> IrElseBranchImpl(it.startOffset, it.endOffset, it.condition, wrapped)
                     else /* IrBranch */ -> IrBranchImpl(it.startOffset, it.endOffset, it.condition, wrapped)
                 }
             }
@@ -365,7 +366,7 @@ class StateMachineBuilder(
         val rootBlock = currentBlock
 
         for (branch in branches) {
-            if (branch !is IrElseBranch) {
+            if (!isElseBranch(branch)) {
                 branch.condition.acceptVoid(this)
                 val branchBlock = JsIrBuilder.buildComposite(branch.result.type)
                 val elseBlock = JsIrBuilder.buildComposite(expression.type)
