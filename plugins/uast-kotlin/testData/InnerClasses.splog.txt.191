@@ -1,0 +1,7 @@
+UFile (package = )
+    UClass (name = Foo)
+        UClass (name = Bar)
+            UAnnotationMethod (name = Bar)
+            UAnnotationMethod (name = getAPlusB)
+            UClass (name = Baz)
+                UAnnotationMethod (name = doNothing)

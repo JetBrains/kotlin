@@ -18,10 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiLanguageInjectionHost
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.UPolyadicExpression
-import org.jetbrains.uast.UastBinaryOperator
+import org.jetbrains.uast.*
 import org.jetbrains.uast.expressions.UInjectionHost
 
 class KotlinStringTemplateUPolyadicExpression(
@@ -32,7 +29,15 @@ class KotlinStringTemplateUPolyadicExpression(
     KotlinUElementWithType,
     KotlinEvaluatableUElement,
     UInjectionHost {
-    override val operands: List<UExpression> by lz { psi.entries.map { KotlinConverter.convertEntry(it, this)!! } }
+    override val operands: List<UExpression> by lz {
+        psi.entries.map {
+            KotlinConverter.convertEntry(
+                it,
+                this,
+                DEFAULT_EXPRESSION_TYPES_LIST
+            )!!
+        }
+    }
     override val operator = UastBinaryOperator.PLUS
 
     override val psiLanguageInjectionHost: PsiLanguageInjectionHost get() = psi
