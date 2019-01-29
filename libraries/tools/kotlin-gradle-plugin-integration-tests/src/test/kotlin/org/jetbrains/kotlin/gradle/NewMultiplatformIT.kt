@@ -948,7 +948,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         if (HostManager.hostIsMac) {
 
             // Check dependency exporting and bitcode embedding in frameworks.
-            // For release builds
+            // For release builds.
             build("linkReleaseFrameworkIos") {
                 assertSuccessful()
                 assertFileExists("build/bin/ios/releaseFramework/native_binary.framework")
@@ -961,7 +961,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
             }
 
-            // For debug builds
+            // For debug builds.
             build("linkDebugFrameworkIos") {
                 assertSuccessful()
                 assertFileExists("build/bin/ios/debugFramework/native_binary.framework")
@@ -984,6 +984,18 @@ class NewMultiplatformIT : BaseGradleIT() {
                     assertFalse(it.contains("-Xembed-bitcode"))
                 }
             }
+
+            // Check that bitcode is disabled for iOS simulator.
+            build("linkReleaseFrameworkIosSim", "linkDebugFrameworkIosSim") {
+                assertSuccessful()
+                assertFileExists("build/bin/iosSim/releaseFramework/native-binary.framework")
+                assertFileExists("build/bin/iosSim/debugFramework/native-binary.framework")
+                checkFrameworkCompilationCommandLine {
+                    assertFalse(it.contains("-Xembed-bitcode"))
+                    assertFalse(it.contains("-Xembed-bitcode-marker"))
+                }
+            }
+
 
             // Check that plugin doesn't allow exporting dependencies not added in the API configuration.
             val buildFile = listOf("build.gradle", "build.gradle.kts").map { projectDir.resolve(it) }.single { it.exists() }
