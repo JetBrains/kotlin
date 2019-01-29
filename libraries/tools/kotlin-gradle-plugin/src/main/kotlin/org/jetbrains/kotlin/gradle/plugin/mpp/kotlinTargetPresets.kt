@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
-import org.gradle.api.artifacts.repositories.RepositoryLayout
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.reflect.Instantiator
@@ -24,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -265,37 +260,7 @@ class KotlinNativeTargetPreset(
         }
     }
 
-    private fun setupKotlinNativeVirtualRepo(): Unit = with(project) {
-
-        val repoAlreadyExists = this.repositories.asSequence()
-            .filterIsInstance<IvyArtifactRepository>()
-            .any { KOTLIN_NATIVE_FAKE_REPO_NAME == it.name }
-
-        if (repoAlreadyExists) return
-
-        this.repositories.ivy { repo ->
-            repo.name = KOTLIN_NATIVE_FAKE_REPO_NAME
-            repo.setUrl("file://$konanHome/klib")
-
-            fun IvyArtifactRepository.layoutCompatible(configureAction: (RepositoryLayout) -> Unit) =
-                if (isGradleVersionAtLeast(5, 0)) {
-                    val patternLayoutFunction = javaClass.getMethod("patternLayout", Action::class.java)
-                    patternLayoutFunction(repo, Action<RepositoryLayout> { configureAction(it) })
-                } else {
-                    layout("pattern", configureAction)
-                }
-
-            repo.layoutCompatible {
-                val layout = it as IvyPatternRepositoryLayout
-                layout.artifact("common/[artifact]")
-                layout.artifact("platform/[classifier]/[artifact]")
-            }
-            repo.metadataSources {
-                it.artifact()
-            }
-        }
-    }
-
+    // We declare default K/N dependencies as files to avoid searching them in remote repos (see KT-28128).
     private fun defaultLibs(target: KonanTarget? = null): List<Dependency> = with(project) {
 
         val relPath = if (target != null) "platform/${target.name}" else "common"
@@ -303,22 +268,11 @@ class KotlinNativeTargetPreset(
         file("$konanHome/klib/$relPath")
             .listFiles { file -> file.isDirectory }
             ?.sortedBy { dir -> dir.name.toLowerCase() }
-            ?.map { dir ->
-                dependencies.create(
-                    mutableMapOf(
-                        "group" to "Kotlin/Native",
-                        "name" to dir.name,
-                        "version" to getKotlinNativeLibraryVersion(dir)
-                    ).also { dependencyNotation ->
-                        if (target != null) dependencyNotation += "classifier" to target.name
-                    }
-                )
-            } ?: emptyList()
+            ?.map { dir -> dependencies.create(files(dir)) } ?: emptyList()
     }
 
     override fun createTarget(name: String): KotlinNativeTarget {
         setupNativeCompiler()
-        setupKotlinNativeVirtualRepo()
 
         val result = KotlinNativeTarget(project, konanTarget).apply {
             targetName = name
@@ -362,7 +316,6 @@ class KotlinNativeTargetPreset(
     }
 
     companion object {
-        private const val KOTLIN_NATIVE_FAKE_REPO_NAME = "Kotlin/Native default libraries"
         private const val KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY = "konanHome"
     }
 }
@@ -375,13 +328,3 @@ internal val KonanTarget.enabledOnCurrentHost
 
 internal val KotlinNativeCompilation.isMainCompilation: Boolean
     get() = name == KotlinCompilation.MAIN_COMPILATION_NAME
-
-private fun getKotlinNativeLibraryVersion(klibDir: File): String {
-    val manifestFile = File(klibDir, "manifest")
-    check(manifestFile.isFile) { "Manifest file not found for Kotlin/Native library: $klibDir" }
-
-    val compilerVersion = Properties().also { it.load(manifestFile.bufferedReader()) }.getProperty("compiler_version")
-    checkNotNull(compilerVersion) { "Compiler version not specified in manifest file: $manifestFile" }
-
-    return KonanVersion.fromString(compilerVersion).toString()
-}
