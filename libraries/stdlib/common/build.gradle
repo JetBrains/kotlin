@@ -103,8 +103,9 @@ configurations {
 artifacts {
     archives sourcesJar
     sources sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 // TODO: call the "dist" task instead, once we need to publish kotlin-stdlib-common.jar with the compiler distribution
 task distCommon(type: Copy) {

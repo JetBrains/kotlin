@@ -21,5 +21,6 @@ ArtifactsKt.runtimeJar(project, jar, {})
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()

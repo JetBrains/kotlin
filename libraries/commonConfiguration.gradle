@@ -213,10 +213,13 @@ ext.configurePublishing = { Project project ->
 
         task publish(dependsOn: uploadArchives)
     }
-
 }
 
 allprojects { project ->
+    project.ext.javadocJar = { lambda = {} ->
+        ArtifactsKt.javadocJar(project, lambda)
+    }
+    
     dependencies.ext.kotlinStdlib = { suffix ->
         DependenciesKt.kotlinStdlib(project, suffix)
     }

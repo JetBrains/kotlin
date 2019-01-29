@@ -44,8 +44,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 task distJs(type: Copy) {
     dependsOn(compileKotlin2Js)

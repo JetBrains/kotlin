@@ -29,8 +29,9 @@ classes.dependsOn.remove("compileJava")
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 compileKotlinCommon {
     kotlinOptions {

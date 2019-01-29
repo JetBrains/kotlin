@@ -345,8 +345,9 @@ artifacts {
     runtime mergedJar
     archives mergedJar
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 task distJs(type: Copy) {
     from(compileJs)

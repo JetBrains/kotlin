@@ -27,5 +27,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
