@@ -99,7 +99,7 @@ private val fullRuntimeSources = listOfKtFilesFrom(
 
     // Full version is defined in stdlib
     // This file is useful for smaller subset of runtime sources
-    "libraries/stdlib/js/irRuntime/rangeExtensions.kt",
+    "libraries/stdlib/js/irRuntime/smallRuntimeMissingDeclarations.kt",
 
     // Mostly array-specific stuff
     "libraries/stdlib/js/src/kotlin/builtins.kt",
@@ -158,6 +158,8 @@ val reducedRuntimeSources = fullRuntimeSources - listOfKtFilesFrom(
     "libraries/stdlib/src/kotlin/util/KotlinVersion.kt",
     "libraries/stdlib/src/kotlin/util/Tuples.kt",
     "libraries/stdlib/common/src/generated/_Comparisons.kt"
+) + listOfKtFilesFrom(
+    "libraries/stdlib/js/irRuntime/smallRuntimeMissingDeclarations.kt"
 )
 
 private fun listOfKtFilesFrom(vararg paths: String): List<String> {

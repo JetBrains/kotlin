@@ -98,7 +98,7 @@ internal class CombinedContext(
 
     override fun toString(): String =
         "[" + fold("") { acc, element ->
-            if (acc.length == 0) element.toString() else "$acc, $element"
+            if (acc.isEmpty()) element.toString() else "$acc, $element"
         } + "]"
 
     private fun writeReplace(): Any {
@@ -116,11 +116,6 @@ internal class CombinedContext(
             private const val serialVersionUID: Long = 0L
         }
 
-        private fun readResolve(): Any {
-            var result: CoroutineContext = EmptyCoroutineContext
-            for (element in elements)
-                result = result + element
-            return result
-        }
+        private fun readResolve(): Any = elements.fold(EmptyCoroutineContext, CoroutineContext::plus)
     }
 }
