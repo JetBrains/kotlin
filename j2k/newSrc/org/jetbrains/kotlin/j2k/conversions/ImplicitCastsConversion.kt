@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.j2k.bangedBangedExpr
-import org.jetbrains.kotlin.j2k.copyTreeAndDetach
-import org.jetbrains.kotlin.j2k.fixLiteral
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class ImplicitCastsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -19,9 +17,69 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
             is JKVariable -> convertVariable(element)
             is JKForInStatement -> convertForInStatement(element)
             is JKMethodCallExpression -> convertMethodCallExpression(element)
+            is JKBinaryExpression -> return recurse(convertBinaryExpression(element))
             is JKKtAssignmentStatement -> convertAssignmentStatement(element)
         }
         return recurse(element)
+    }
+
+
+    private fun convertBinaryExpression(binaryExpression: JKBinaryExpression): JKExpression {
+        fun JKBinaryExpression.addBangBang(): JKBinaryExpression {
+            fun JKType.isAcceptable() = asPrimitiveType() != null
+
+            if (operator.isEquals()) return this
+
+            val leftType = left.type(context.symbolProvider) ?: return this
+            val rightType = right.type(context.symbolProvider) ?: return this
+            return if (leftType.isAcceptable()
+                && rightType.isAcceptable()
+                && (leftType.isNullable() || rightType.isNullable())
+                && (operator.isArithmetic() || operator.isLessOrGreater())
+            ) {
+                JKBinaryExpressionImpl(
+                    ::left.detached().bangedBangedExpr(context.symbolProvider),
+                    ::right.detached().bangedBangedExpr(context.symbolProvider),
+                    operator
+                )
+            } else this
+        }
+
+        fun JKBinaryExpression.convertComparationExpression(): JKBinaryExpression {
+            if (!operator.isComparationOperator()) return this
+            val leftType = left.type(context.symbolProvider)?.asPrimitiveType() ?: return this
+            val rightType = right.type(context.symbolProvider)?.asPrimitiveType() ?: return this
+
+            val leftOperandCastedCasted by lazy {
+                JKBinaryExpressionImpl(
+                    ::left.detached().let { it.castTo(rightType, strict = true) ?: it },
+                    ::right.detached(),
+                    operator
+                )
+            }
+
+            val rightOperandCastedCasted by lazy {
+                JKBinaryExpressionImpl(
+                    ::left.detached(),
+                    ::right.detached().let { it.castTo(leftType, strict = true) ?: it },
+                    operator
+
+                )
+            }
+            println()
+
+            return when {
+                leftType.jvmPrimitiveType == rightType.jvmPrimitiveType -> this
+                leftType.jvmPrimitiveType == JvmPrimitiveType.CHAR -> leftOperandCastedCasted
+                rightType.jvmPrimitiveType == JvmPrimitiveType.CHAR -> rightOperandCastedCasted
+                operator.isEquals() ->
+                    if (rightType isStrongerThan leftType) leftOperandCastedCasted
+                    else rightOperandCastedCasted
+                else -> this
+            }
+        }
+
+        return binaryExpression.convertComparationExpression().addBangBang()
     }
 
     private fun convertVariable(variable: JKVariable) {
@@ -78,11 +136,11 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
         return null
     }
 
-    private fun JKExpression.castToAsPrimitiveTypes(toType: JKType): JKExpression? {
+    private fun JKExpression.castToAsPrimitiveTypes(toType: JKType, strict: Boolean): JKExpression? {
         if (this is JKPrefixExpression
             && (operator.token.text == "+" || operator.token.text == "-")
         ) {
-            val casted = expression.castToAsPrimitiveTypes(toType) ?: return null
+            val casted = expression.castToAsPrimitiveTypes(toType, strict) ?: return null
             return JKPrefixExpressionImpl(casted, operator)
         }
         val expressionTypeAsPrimitive = type(context.symbolProvider)?.asPrimitiveType() ?: return null
@@ -90,7 +148,8 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
         if (toTypeAsPrimitive == expressionTypeAsPrimitive) return null
 
         if (this is JKLiteralExpression) {
-            if (expressionTypeAsPrimitive == JKJavaPrimitiveTypeImpl.INT
+            if (!strict
+                && expressionTypeAsPrimitive == JKJavaPrimitiveTypeImpl.INT
                 && (toTypeAsPrimitive == JKJavaPrimitiveTypeImpl.LONG ||
                         toTypeAsPrimitive == JKJavaPrimitiveTypeImpl.SHORT ||
                         toTypeAsPrimitive == JKJavaPrimitiveTypeImpl.BYTE)
@@ -118,10 +177,10 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
     }
 
 
-    private fun JKExpression.castTo(toType: JKType): JKExpression? {
+    private fun JKExpression.castTo(toType: JKType, strict: Boolean = false): JKExpression? {
         val expressionType = type(context.symbolProvider)
         if (expressionType == toType) return null
-        castToAsPrimitiveTypes(toType)?.also { return it }
+        castToAsPrimitiveTypes(toType, strict)?.also { return it }
         return addBangBang(toType)
     }
 }

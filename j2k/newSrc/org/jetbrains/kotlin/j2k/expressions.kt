@@ -110,18 +110,48 @@ private fun JKKtOperatorToken.unaryExpressionMethodType(
     }
 }
 
-private val booleanOperators = TokenSet.create(
-    KtTokens.LT,
-    KtTokens.GT,
-    KtTokens.LTEQ,
-    KtTokens.GTEQ,
-    KtTokens.EQEQEQ,
-    KtTokens.EXCLEQEQEQ,
-    KtTokens.EQEQ,
-    KtTokens.EXCLEQ,
-    KtTokens.ANDAND,
-    KtTokens.OROR
-)
+fun JKOperator.isComparationOperator() =
+    (token as? JKKtSingleValueOperatorToken)?.psiToken in comparationOperators
+
+fun JKOperator.isEquals() =
+    (token as? JKKtSingleValueOperatorToken)?.psiToken in equalsOperators
+
+fun JKOperator.isArithmetic() =
+    (token as? JKKtSingleValueOperatorToken)?.psiToken in arithmeticOperators
+
+fun JKOperator.isLessOrGreater() =
+    (token as? JKKtSingleValueOperatorToken)?.psiToken in lessGreaterOperators
+
+private val equalsOperators =
+    TokenSet.create(
+        KtTokens.EQEQEQ,
+        KtTokens.EXCLEQEQEQ,
+        KtTokens.EQEQ,
+        KtTokens.EXCLEQ
+    )
+
+private val lessGreaterOperators =
+    TokenSet.create(
+        KtTokens.LT,
+        KtTokens.GT,
+        KtTokens.LTEQ,
+        KtTokens.GTEQ
+    )
+
+private val comparationOperators =
+    TokenSet.orSet(
+        lessGreaterOperators,
+        equalsOperators
+    )
+
+private val booleanOperators =
+    TokenSet.orSet(
+        comparationOperators,
+        TokenSet.create(
+            KtTokens.ANDAND,
+            KtTokens.OROR
+        )
+    )
 
 private val arithmeticOperators = TokenSet.create(
     KtTokens.MUL,
@@ -429,7 +459,9 @@ private fun convertCharLiteral(text: String): JKKtLiteralExpression {
 private fun convertIntegerLiteral(element: JKLiteralExpression): JKKtLiteralExpression {
     var text = element.literal
     if (element.type == JKLiteralExpression.LiteralType.LONG) {
-        text = text.replace("l", "L")
+        text = text.replace("l", "L").let {
+            if (!it.endsWith("L")) it + "L" else it
+        }
     }
 
     fun isHexLiteral(text: String) = text.startsWith("0x") || text.startsWith("0X")

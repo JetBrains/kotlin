@@ -155,6 +155,22 @@ fun JKType.toKtType(symbolProvider: JKSymbolProvider): KotlinType? =
 //        else -> TODO(this::class.java.toString())
     }
 
+infix fun JKJavaPrimitiveType.isStrongerThan(other: JKJavaPrimitiveType) =
+    jvmPrimitivePrioritypriority.getValue(this.jvmPrimitiveType.primitiveType) >
+            jvmPrimitivePrioritypriority.getValue(other.jvmPrimitiveType.primitiveType)
+
+private val jvmPrimitivePrioritypriority =
+    mapOf(
+        PrimitiveType.BOOLEAN to -1,
+        PrimitiveType.CHAR to 0,
+        PrimitiveType.BYTE to 1,
+        PrimitiveType.SHORT to 2,
+        PrimitiveType.INT to 3,
+        PrimitiveType.LONG to 4,
+        PrimitiveType.FLOAT to 5,
+        PrimitiveType.DOUBLE to 6
+    )
+
 
 fun JKClassSymbol.toKtType(): KotlinType? {
     val classDescriptor = when (this) {
