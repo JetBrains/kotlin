@@ -146,6 +146,16 @@ class Android25ProjectHandler(
         // We should request such API in the Android plugin
         val apiElementsConfigurationName = "${variant.name}ApiElements"
         val runtimeElementsConfigurationName = "${variant.name}RuntimeElements"
+
+        // KT-29476, the Android *Elements configurations need Kotlin MPP dependencies:
+        if (project.configurations.findByName(apiElementsConfigurationName) != null) {
+            project.addExtendsFromRelation(apiElementsConfigurationName, compilation.apiConfigurationName)
+        }
+        if (project.configurations.findByName(runtimeElementsConfigurationName) != null) {
+            project.addExtendsFromRelation(runtimeElementsConfigurationName, compilation.implementationConfigurationName)
+            project.addExtendsFromRelation(runtimeElementsConfigurationName, compilation.runtimeOnlyConfigurationName)
+        }
+
         listOf(apiElementsConfigurationName, runtimeElementsConfigurationName).forEach { outputConfigurationName ->
             project.configurations.findByName(outputConfigurationName)?.usesPlatformOf(compilation.target)
         }

@@ -104,35 +104,33 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override fun source(sourceSet: KotlinSourceSet) {
         if (kotlinSourceSets.add(sourceSet)) {
-            with(target.project) {
-                //TODO possibly issue with forced instantiation
-                whenEvaluated {
-                    sourceSet.getSourceSetHierarchy().forEach { sourceSet ->
-                        val isCommonSource =
-                            CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project)?.contains(sourceSet) ?: false
+            //TODO possibly issue with forced instantiation
+            target.project.whenEvaluated {
+                sourceSet.getSourceSetHierarchy().forEach { sourceSet ->
+                    val isCommonSource =
+                        CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project)?.contains(sourceSet) ?: false
 
-                        addSourcesToCompileTask(sourceSet, addAsCommonSources = isCommonSource)
+                    addSourcesToCompileTask(sourceSet, addAsCommonSources = isCommonSource)
 
-                        // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
-                        // old Java & Android projects:
-                        addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName, forced = false)
-                        addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName, forced = false)
-                        addExtendsFromRelation(compileOnlyConfigurationName, sourceSet.compileOnlyConfigurationName, forced = false)
+                    // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
+                    // old Java & Android projects:
+                    addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName, forced = false)
+                    addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName, forced = false)
+                    addExtendsFromRelation(compileOnlyConfigurationName, sourceSet.compileOnlyConfigurationName, forced = false)
 
-                        if (this is KotlinCompilationToRunnableFiles<*>) {
-                            addExtendsFromRelation(runtimeOnlyConfigurationName, sourceSet.runtimeOnlyConfigurationName, forced = false)
-                        }
+                    if (this@AbstractKotlinCompilation is KotlinCompilationToRunnableFiles<*>) {
+                        addExtendsFromRelation(runtimeOnlyConfigurationName, sourceSet.runtimeOnlyConfigurationName, forced = false)
+                    }
 
-                        if (sourceSet.name != defaultSourceSetName) {
-                            kotlinExtension.sourceSets.findByName(defaultSourceSetName)?.let { defaultSourceSet ->
-                                // Temporary solution for checking consistency across source sets participating in a compilation that may
-                                // not be interconnected with the dependsOn relation: check the settings as if the default source set of
-                                // the compilation depends on the one added to the compilation:
-                                defaultSourceSetLanguageSettingsChecker.runAllChecks(
-                                    defaultSourceSet,
-                                    sourceSet
-                                )
-                            }
+                    if (sourceSet.name != defaultSourceSetName) {
+                        kotlinExtension.sourceSets.findByName(defaultSourceSetName)?.let { defaultSourceSet ->
+                            // Temporary solution for checking consistency across source sets participating in a compilation that may
+                            // not be interconnected with the dependsOn relation: check the settings as if the default source set of
+                            // the compilation depends on the one added to the compilation:
+                            defaultSourceSetLanguageSettingsChecker.runAllChecks(
+                                defaultSourceSet,
+                                sourceSet
+                            )
                         }
                     }
                 }

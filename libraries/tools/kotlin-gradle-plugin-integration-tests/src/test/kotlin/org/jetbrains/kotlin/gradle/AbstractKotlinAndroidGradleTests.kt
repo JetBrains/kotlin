@@ -140,6 +140,8 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
 
         // Convert the 'app' project to a library, publish the two without metadata,
         // check that the dependencies in the POMs are correctly rewritten:
+        val appGroupDir = "app/build/repo/com/example/"
+
         gradleSettingsScript().modify { it.replace("enableFeaturePreview", "//") }
         gradleBuildScript("app").modify {
             it.replace("com.android.application", "com.android.library")
@@ -152,19 +154,47 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
         }
         build("publish") {
             assertSuccessful()
-            val appGroupDir = "app/build/repo/com/example/"
             listOf("foobar", "foobaz").forEach { flavor ->
                 listOf("-debug", "").forEach { buildType ->
                     assertFileExists(appGroupDir + "app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0.aar")
                     assertFileExists(appGroupDir + "app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0-sources.jar")
                     val pomText = projectDir.resolve(
                         appGroupDir + "app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0.pom"
-                    ).readText()
-                    assertTrue { "<artifactId>lib-androidlib-$flavor$buildType</artifactId>" in pomText }
+                    ).readText().replace("\\s+".toRegex(), "")
+                    assertTrue {
+                        "<artifactId>lib-androidlib-$flavor$buildType</artifactId><version>1.0</version><scope>runtime</scope>" in pomText
+                    }
                 }
             }
             projectDir.resolve(groupDir).deleteRecursively()
         }
+
+        // Also check that api and runtimeOnly MPP dependencies get correctly published with the appropriate scope, KT-29476:
+        gradleBuildScript("app").modify {
+            it.replace("implementation project(':lib')", "api project(':lib')") + "\n" + """
+                kotlin.sourceSets.commonMain.dependencies {
+                    runtimeOnly(kotlin('reflect'))
+                }
+            """.trimIndent()
+        }
+        build("publish") {
+            assertSuccessful()
+            listOf("foobar", "foobaz").forEach { flavor ->
+                listOf("-debug", "").forEach { buildType ->
+                    val pomText = projectDir.resolve(
+                        appGroupDir + "app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0.pom"
+                    ).readText().replace("\\s+".toRegex(), "")
+                    assertTrue {
+                        "<artifactId>lib-androidlib-$flavor$buildType</artifactId><version>1.0</version><scope>compile</scope>" in pomText
+                    }
+                    assertTrue {
+                        val kotlinVersion = defaultBuildOptions().kotlinVersion
+                        "<artifactId>kotlin-reflect</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText
+                    }
+                }
+            }
+        }
+
     }
 
     @Test
