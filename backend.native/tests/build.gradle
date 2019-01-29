@@ -169,6 +169,9 @@ run {
 }
 
 task sanity {
+    if (!project.hasProperty("test.disable_update")) {
+        update_external_tests()
+    }
     dependsOn(tasksOf { it instanceof KonanTest && it.inDevelopersRun &&
             !it.getDependsOn().contains(':distPlatformLibs') })
     dependsOn(tasksOf { it instanceof RunStdlibTest })
@@ -3181,7 +3184,7 @@ task runKonanRegexTests(type: RunKonanTest) {
 
 task buildKonanStdlibTests(type: BuildKonanTest) {
     outputSourceSetName = "testOutputStdlib"
-    flags = [ "-Xmulti-platform", "-friend-modules", project.rootProject.file("dist/klib/common/stdlib") ]
+    flags = [ "-Xmulti-platform", "-friend-modules",  project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib") ]
     def testSources = externalStdlibTestsDir.absolutePath
     compileList = [ "$testSources/stdlib/test", "$testSources/stdlib/common",
                     "stdlib_external/utils.kt", "stdlib_external/jsCollectionFactoriesActuals.kt" ]
