@@ -73,4 +73,10 @@ kotlin {
             }
         }
     }
+
+    iosX64("iosSim") {
+        binaries {
+            framework()
+        }
+    }
 }
