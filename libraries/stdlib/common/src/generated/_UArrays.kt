@@ -1259,3 +1259,415 @@ public inline fun ShortArray.toUShortArray(): UShortArray {
     return UShortArray(this.copyOf())
 }
 
+/**
+ * Returns `true` if all elements match the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.all
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.all(predicate: (UInt) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.all
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.all(predicate: (ULong) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.all
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.all(predicate: (UByte) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.all
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.all(predicate: (UShort) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if array has at least one element.
+ *
+ * @sample samples.collections.Collections.Aggregates.any
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.any(): Boolean {
+    return storage.any()
+}
+
+/**
+ * Returns `true` if array has at least one element.
+ *
+ * @sample samples.collections.Collections.Aggregates.any
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.any(): Boolean {
+    return storage.any()
+}
+
+/**
+ * Returns `true` if array has at least one element.
+ *
+ * @sample samples.collections.Collections.Aggregates.any
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.any(): Boolean {
+    return storage.any()
+}
+
+/**
+ * Returns `true` if array has at least one element.
+ *
+ * @sample samples.collections.Collections.Aggregates.any
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.any(): Boolean {
+    return storage.any()
+}
+
+/**
+ * Returns `true` if at least one element matches the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.any(predicate: (UInt) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
+
+/**
+ * Returns `true` if at least one element matches the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.any(predicate: (ULong) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
+
+/**
+ * Returns `true` if at least one element matches the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.any(predicate: (UByte) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
+
+/**
+ * Returns `true` if at least one element matches the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.any(predicate: (UShort) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
+
+/**
+ * Returns the number of elements matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.count(predicate: (UInt) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) ++count
+    return count
+}
+
+/**
+ * Returns the number of elements matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.count(predicate: (ULong) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) ++count
+    return count
+}
+
+/**
+ * Returns the number of elements matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.count(predicate: (UByte) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) ++count
+    return count
+}
+
+/**
+ * Returns the number of elements matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.count(predicate: (UShort) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) ++count
+    return count
+}
+
+/**
+ * Returns `true` if the array has no elements.
+ *
+ * @sample samples.collections.Collections.Aggregates.none
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.none(): Boolean {
+    return isEmpty()
+}
+
+/**
+ * Returns `true` if the array has no elements.
+ *
+ * @sample samples.collections.Collections.Aggregates.none
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.none(): Boolean {
+    return isEmpty()
+}
+
+/**
+ * Returns `true` if the array has no elements.
+ *
+ * @sample samples.collections.Collections.Aggregates.none
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.none(): Boolean {
+    return isEmpty()
+}
+
+/**
+ * Returns `true` if the array has no elements.
+ *
+ * @sample samples.collections.Collections.Aggregates.none
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.none(): Boolean {
+    return isEmpty()
+}
+
+/**
+ * Returns `true` if no elements match the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.none(predicate: (UInt) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if no elements match the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.none(predicate: (ULong) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if no elements match the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.none(predicate: (UByte) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if no elements match the given [predicate].
+ *
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.none(predicate: (UShort) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.sumBy(selector: (UInt) -> UInt): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.sumBy(selector: (ULong) -> UInt): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.sumBy(selector: (UByte) -> UInt): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.sumBy(selector: (UShort) -> UInt): UInt {
+    var sum: UInt = 0u
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.sumByDouble(selector: (UInt) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.sumByDouble(selector: (ULong) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.sumByDouble(selector: (UByte) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.sumByDouble(selector: (UShort) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
