@@ -74,7 +74,10 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.findNext(input.toString(), startIndex)
 
-    /** Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
+    /**
+     * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
+     *
+     * @sample samples.text.Regexps.findAll
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> =
