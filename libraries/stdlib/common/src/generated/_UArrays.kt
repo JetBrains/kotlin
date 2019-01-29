@@ -216,6 +216,166 @@ public inline operator fun UShortArray.component5(): UShort {
 }
 
 /**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.indexOf(element: UInt): Int {
+    return storage.indexOf(element.toInt())
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.indexOf(element: ULong): Int {
+    return storage.indexOf(element.toLong())
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.indexOf(element: UByte): Int {
+    return storage.indexOf(element.toByte())
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.indexOf(element: UShort): Int {
+    return storage.indexOf(element.toShort())
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.indexOfFirst(predicate: (UInt) -> Boolean): Int {
+    return storage.indexOfFirst { predicate(it.toUInt()) }
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.indexOfFirst(predicate: (ULong) -> Boolean): Int {
+    return storage.indexOfFirst { predicate(it.toULong()) }
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.indexOfFirst(predicate: (UByte) -> Boolean): Int {
+    return storage.indexOfFirst { predicate(it.toUByte()) }
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.indexOfFirst(predicate: (UShort) -> Boolean): Int {
+    return storage.indexOfFirst { predicate(it.toUShort()) }
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.indexOfLast(predicate: (UInt) -> Boolean): Int {
+    return storage.indexOfLast { predicate(it.toUInt()) }
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.indexOfLast(predicate: (ULong) -> Boolean): Int {
+    return storage.indexOfLast { predicate(it.toULong()) }
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.indexOfLast(predicate: (UByte) -> Boolean): Int {
+    return storage.indexOfLast { predicate(it.toUByte()) }
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.indexOfLast(predicate: (UShort) -> Boolean): Int {
+    return storage.indexOfLast { predicate(it.toUShort()) }
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.lastIndexOf(element: UInt): Int {
+    return storage.lastIndexOf(element.toInt())
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.lastIndexOf(element: ULong): Int {
+    return storage.lastIndexOf(element.toLong())
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.lastIndexOf(element: UByte): Int {
+    return storage.lastIndexOf(element.toByte())
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.lastIndexOf(element: UShort): Int {
+    return storage.lastIndexOf(element.toShort())
+}
+
+/**
  * Returns a random element from this array.
  * 
  * @throws NoSuchElementException if this array is empty.
@@ -774,6 +934,78 @@ public inline fun UByteArray.copyOfRange(fromIndex: Int, toIndex: Int): UByteArr
 public inline fun UShortArray.copyOfRange(fromIndex: Int, toIndex: Int): UShortArray {
     return UShortArray(storage.copyOfRange(fromIndex, toIndex))
 }
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline val UIntArray.indices: IntRange
+    get() = storage.indices
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline val ULongArray.indices: IntRange
+    get() = storage.indices
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline val UByteArray.indices: IntRange
+    get() = storage.indices
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline val UShortArray.indices: IntRange
+    get() = storage.indices
+
+/**
+ * Returns the last valid index for the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline val UIntArray.lastIndex: Int
+    get() = storage.lastIndex
+
+/**
+ * Returns the last valid index for the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline val ULongArray.lastIndex: Int
+    get() = storage.lastIndex
+
+/**
+ * Returns the last valid index for the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline val UByteArray.lastIndex: Int
+    get() = storage.lastIndex
+
+/**
+ * Returns the last valid index for the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline val UShortArray.lastIndex: Int
+    get() = storage.lastIndex
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
