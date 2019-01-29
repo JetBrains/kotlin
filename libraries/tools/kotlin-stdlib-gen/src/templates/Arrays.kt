@@ -44,22 +44,30 @@ object ArrayOps : TemplateGroupBase() {
 
 
     val f_lastIndex = pval("lastIndex") {
-        include(ArraysOfObjects, ArraysOfPrimitives)
+        include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns the last valid index for the array." }
         returns("Int")
         body {
             "get() = size - 1"
         }
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "get() = storage.lastIndex" }
+        }
     }
 
     val f_indices = pval("indices") {
-        include(ArraysOfObjects, ArraysOfPrimitives)
+        include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns the range of valid indices for the array." }
         returns("IntRange")
         body {
             "get() = IntRange(0, lastIndex)"
+        }
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "get() = storage.indices" }
         }
     }
 

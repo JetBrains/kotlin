@@ -229,4 +229,51 @@ class UnsignedArraysTest {
         assertArrayContentEquals(uintArrayOf(1u, 2u, 3u, 4u), uintArrayOf(1u, 2u) + uintArrayOf(3u, 4u))
     }
 
+    @Test
+    fun indexOf() {
+        expect(-1) { ubyteArrayOf(1, 2, 3).indexOf(0) }
+        expect(0) { ushortArrayOf(1, 2, 3).indexOf(1) }
+        expect(1) { uintArrayOf(1, 2, 3).indexOf(2) }
+        expect(2) { ulongArrayOf(1, 2, 3).indexOf(3) }
+    }
+
+    @Test
+    fun indexOfFirst() {
+        expect(-1) { ubyteArrayOf(1, 2, 3).indexOfFirst { it == 5.toUByte() } }
+        expect(0) { ushortArrayOf(1, 2, 3).indexOfFirst { it % 2u == 1u } }
+        expect(1) { uintArrayOf(1, 2, 3).indexOfFirst { it % 2u == 0u } }
+        expect(2) { ulongArrayOf(1, 2, 3).indexOfFirst { it == 3.toULong() } }
+    }
+
+    @Test
+    fun lastIndexOf() {
+        expect(-1) { ubyteArrayOf(1, 2, 3).lastIndexOf(0) }
+        expect(0) { ushortArrayOf(1, 2, 3).lastIndexOf(1) }
+        expect(1) { uintArrayOf(2, 2, 3).lastIndexOf(2) }
+        expect(2) { ulongArrayOf(3, 2, 3).lastIndexOf(3) }
+    }
+
+    @Test
+    fun indexOfLast() {
+        expect(-1) { ubyteArrayOf(1, 2, 3).indexOfLast { it == 5.toUByte() } }
+        expect(2) { ushortArrayOf(1, 2, 3).indexOfLast { it % 2u == 1u } }
+        expect(1) { uintArrayOf(1, 2, 3).indexOfLast { it % 2u == 0u } }
+        expect(0) { ulongArrayOf(1, 2, 3).indexOfLast { it == 1.toULong() } }
+    }
+
+    @Test
+    fun indices() {
+        expect(0 until 0) { ubyteArrayOf().indices }
+        expect(0 until 1) { ushortArrayOf(1).indices }
+        expect(0 until 2) { uintArrayOf(1, 2).indices }
+        expect(0 until 3) { ulongArrayOf(1, 2, 3).indices }
+    }
+
+    @Test
+    fun lastIndex() {
+        expect(-1) { ubyteArrayOf().lastIndex }
+        expect(0) { ushortArrayOf(1).lastIndex }
+        expect(1) { uintArrayOf(1, 2).lastIndex }
+        expect(2) { ulongArrayOf(1, 2, 3).lastIndex }
+    }
 }
