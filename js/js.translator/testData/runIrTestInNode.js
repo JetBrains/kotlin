@@ -45,7 +45,7 @@ files.forEach(function (path) {
     }
 });
 
-var allFiles = [].concat(files, runtimeFiles);
+var allFiles = [].concat(runtimeFiles, files);
 
 // Evaluate files and run box function
 
