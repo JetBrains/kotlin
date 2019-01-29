@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UInjectionHost
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.env.kotlin.findElementByText
 import org.jetbrains.uast.test.env.kotlin.findElementByTextFromPsi
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import org.junit.Assert
 import org.junit.Test
-import kotlin.test.fail as kfail
 
 
 class KotlinUastApiTest : AbstractKotlinUastTest() {
@@ -174,21 +174,21 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     fun testWhenStringLiteral() {
         doTest("WhenStringLiteral") { _, file ->
 
-            file.findElementByTextFromPsi<ULiteralExpression>("abc").let { literalExpression ->
+            file.findElementByTextFromPsi<UInjectionHost>("\"abc\"").let { literalExpression ->
                 val psi = literalExpression.psi!!
-                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                Assert.assertTrue(psi is KtStringTemplateExpression)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findElementByTextFromPsi<ULiteralExpression>("def").let { literalExpression ->
+            file.findElementByTextFromPsi<UInjectionHost>("\"def\"").let { literalExpression ->
                 val psi = literalExpression.psi!!
-                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                Assert.assertTrue(psi is KtStringTemplateExpression)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findElementByTextFromPsi<ULiteralExpression>("def1").let { literalExpression ->
+            file.findElementByTextFromPsi<UInjectionHost>("\"def1\"").let { literalExpression ->
                 val psi = literalExpression.psi!!
-                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                Assert.assertTrue(psi is KtStringTemplateExpression)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, UBlockExpression::class.java)
             }
 
@@ -314,44 +314,6 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 assertEquals("Annotation", lightAnnotation.qualifiedName)
                 assertEquals("Annotation", (convertedUAnnotation as UAnchorOwner).uastAnchor?.sourcePsi?.text)
             }
-    }
-
-    @Test
-    fun testNestedAnnotationParameters() = doTest("AnnotationComplex") { _, file ->
-
-        fun UFile.annotationAndParam(refText: String, check: (PsiAnnotation, String?) -> Unit) {
-            findElementByTextFromPsi<UElement>(refText)
-                .let { expression ->
-                    val (annotation: PsiAnnotation, paramname: String?) =
-                        getContainingAnnotationEntry(expression) ?: kfail("annotation not found for '$refText' ($expression)")
-                    check(annotation, paramname)
-                }
-        }
-
-        file.annotationAndParam("sv1") { annotation, paramname ->
-            assertEquals("Annotation", annotation.qualifiedName)
-            assertEquals(null, paramname)
-        }
-        file.annotationAndParam("sv2") { annotation, paramname ->
-            assertEquals("Annotation", annotation.qualifiedName)
-            assertEquals(null, paramname)
-        }
-        file.annotationAndParam("sar1") { annotation, paramname ->
-            assertEquals("Annotation", annotation.qualifiedName)
-            assertEquals("strings", paramname)
-        }
-        file.annotationAndParam("sar2") { annotation, paramname ->
-            assertEquals("Annotation", annotation.qualifiedName)
-            assertEquals("strings", paramname)
-        }
-        file.annotationAndParam("[sar]1") { annotation, paramname ->
-            assertEquals("Annotation", annotation.qualifiedName)
-            assertEquals("strings", paramname)
-        }
-        file.annotationAndParam("[sar]2") { annotation, paramname ->
-            assertEquals("Annotation", annotation.qualifiedName)
-            assertEquals("strings", paramname)
-        }
     }
 
 

@@ -1,0 +1,14 @@
+UFile (package = )
+    UClass (name = IfStatementKt)
+        UAnnotationMethod (name = foo)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = x)
+                        UIfExpression
+                            UBinaryExpression (operator = !=)
+                                UPolyadicExpression (operator = +)
+                                    ULiteralExpression (value = "abc")
+                                UPolyadicExpression (operator = +)
+                                    ULiteralExpression (value = "def")
+                            ULiteralExpression (value = 1)
+                            ULiteralExpression (value = 0)
