@@ -30,6 +30,7 @@ import java.io.File
 import java.io.IOException
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
+import kotlin.test.assertTrue
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
 
@@ -59,7 +60,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                     rootSuite.addTest(this)
                 }
 
-                renameReport()
+                renameFlavorFolder()
                 enableD8(true)
                 runTestsOnEmulator(gradleRunner, TestSuite("D8")).apply {
                     (0 until this.countTestCases()).forEach {
@@ -95,22 +96,27 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
     }
 
     private fun processReport(suite: TestSuite, resultOutput: String) {
-        val reportFolder = reportFolder()
+        val reportFolder = File(flavorFolder())
         try {
-            val testCases = parseSingleReportInFolder(reportFolder)
-            testCases.forEach { aCase -> suite.addTest(aCase) }
-            Assert.assertNotEquals("There is no test results in report", 0, testCases.size.toLong())
+            val folders = reportFolder.listFiles()
+            assertTrue(folders != null && folders.isNotEmpty(), "No folders in ${reportFolder.path}")
+            folders.forEach {
+                assertTrue("${it.path} is not directory") { it.isDirectory }
+                val testCases = parseSingleReportInFolder(it)
+                testCases.forEach { aCase -> suite.addTest(aCase) }
+                Assert.assertNotEquals("There is no test results in report", 0, testCases.size.toLong())
+            }
         } catch (e: Exception) {
             throw RuntimeException("Can't parse test results in $reportFolder\n$resultOutput", e)
         }
     }
 
-    private fun renameReport() {
-        val reportFolder = File(reportFolder())
+    private fun renameFlavorFolder() {
+        val reportFolder = File(flavorFolder())
         reportFolder.renameTo(File(reportFolder.parentFile, reportFolder.name + "_dex"))
     }
 
-    private fun reportFolder() = pathManager.tmpFolder + "/build/test/results/connected/"
+    private fun flavorFolder() = pathManager.tmpFolder + "/build/test/results/connected/flavors"
 
     private fun runTestsOnEmulator(gradleRunner: GradleRunner, suite: TestSuite): TestSuite {
         val platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea")
@@ -153,11 +159,10 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
 
         @Throws(IOException::class, SAXException::class, ParserConfigurationException::class)
-        private fun parseSingleReportInFolder(reportFolder: String): List<TestCase> {
-            val folder = File(reportFolder)
+        private fun parseSingleReportInFolder(folder: File): List<TestCase> {
             val files = folder.listFiles()!!
             assert(files.size == 1) {
-                "Expecting one file but ${files.size}: ${files.joinToString { it.name }}"
+                "Expecting one file but ${files.size}: ${files.joinToString { it.name }} in ${folder.path}"
             }
             val reportFile = files[0]
 
