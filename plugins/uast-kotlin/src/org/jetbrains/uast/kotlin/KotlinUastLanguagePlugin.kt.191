@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -153,6 +154,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : UElement> convertToAlternatives(element: PsiElement, requiredTypes: Array<out Class<out T>>): Sequence<T> = when {
+        element is KtFile -> KotlinConverter.convertKtFile(element, null, requiredTypes) as Sequence<T>
         (element is KtProperty && !element.isLocal) -> KotlinConverter.convertNonLocalProperty(element, null, requiredTypes) as Sequence<T>
         element is KtParameter -> KotlinConverter.convertParameter(element, null, requiredTypes) as Sequence<T>
         element is KtClassOrObject -> KotlinConverter.convertClassOrObject(element, null, requiredTypes) as Sequence<T>
@@ -505,7 +507,7 @@ internal object KotlinConverter {
 
                 is KtParameter -> convertParameter(original, givenParent, this).firstOrNull()
 
-                is KtFile -> el<UFile> { KotlinUFile(original) }
+                is KtFile -> convertKtFile(original, givenParent, this).firstOrNull()
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement) }
                 is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
                 is KtCallExpression ->
@@ -590,6 +592,16 @@ internal object KotlinConverter {
             }
         )
     }
+
+    fun convertKtFile(
+        element: KtFile,
+        givenParent: UElement?,
+        requiredTypes: Array<out Class<out UElement>>
+    ): Sequence<UElement> = requiredTypes.accommodate(
+        alternative { KotlinUFile(element) },
+        alternative { element.findFacadeClass()?.let { KotlinUClass.create(it, givenParent) } }
+    )
+
 
     internal fun convertOrEmpty(expression: KtExpression?, parent: UElement?): UExpression {
         return expression?.let { convertExpression(it, parent, DEFAULT_EXPRESSION_TYPES_LIST) } ?: UastEmptyExpression
