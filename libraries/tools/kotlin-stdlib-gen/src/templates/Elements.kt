@@ -50,7 +50,7 @@ object Elements : TemplateGroupBase() {
     }
 
     val f_indexOf = fn("indexOf(element: T)") {
-        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
+        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Lists)
     } builder {
         doc { "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
@@ -98,13 +98,19 @@ object Elements : TemplateGroupBase() {
                 }
             }
             return -1
-           """
+            """
         }
         body(Lists) { "return indexOf(element)" }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            val signedPrimitiveName = primitive!!.name.drop(1)
+            body { "return storage.indexOf(element.to$signedPrimitiveName())" }
+        }
     }
 
     val f_lastIndexOf = fn("lastIndexOf(element: T)") {
-        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
+        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Lists)
     } builder {
         doc { "Returns last index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
@@ -153,14 +159,20 @@ object Elements : TemplateGroupBase() {
                 }
             }
             return -1
-           """
+            """
         }
         body(Lists) { "return lastIndexOf(element)" }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            val signedPrimitiveName = primitive!!.name.drop(1)
+            body { "return storage.lastIndexOf(element.to$signedPrimitiveName())" }
+        }
     }
 
     val f_indexOfFirst = fn("indexOfFirst(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         inline()
 
@@ -189,11 +201,16 @@ object Elements : TemplateGroupBase() {
             return -1
             """
         }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "return storage.indexOfFirst { predicate(it.to${primitive!!.name}()) }" }
+        }
     }
 
     val f_indexOfLast = fn("indexOfLast(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         inline()
 
@@ -233,6 +250,11 @@ object Elements : TemplateGroupBase() {
             }
             return -1
             """
+        }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "return storage.indexOfLast { predicate(it.to${primitive!!.name}()) }" }
         }
     }
 
