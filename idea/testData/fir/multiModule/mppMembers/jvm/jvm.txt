@@ -23,7 +23,7 @@ FILE: jvm.kt
 
         public final function test(): R|kotlin/Unit| {
             R|/A.foo|()
-            <Unresolved name: bar>#()
+            R|/A.bar|()
         }
 
     }

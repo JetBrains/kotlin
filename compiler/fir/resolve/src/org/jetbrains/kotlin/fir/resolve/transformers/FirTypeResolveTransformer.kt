@@ -26,18 +26,21 @@ import org.jetbrains.kotlin.fir.visitors.compose
 
 open class FirTypeResolveTransformer(
     private val traversedClassifiers: Set<FirMemberDeclaration> = setOf()
-) : FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority = false) {
+) : FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority = true) {
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         val session = file.session
-        towerScope.scopes += listOf(
-            // from high priority to low priority
-            FirExplicitSimpleImportingScope(file.imports, session),
-            FirSelfImportingScope(file.packageFqName, session),
-            FirDefaultSimpleImportingScope(session),
-            FirExplicitStarImportingScope(file.imports, session),
-            FirDefaultStarImportingScope(session)
-        )
-        return super.transformFile(file, data)
+        return withScopeCleanup {
+            towerScope.scopes += listOf(
+                // from low priority to high priority
+                FirDefaultStarImportingScope(session),
+                FirExplicitStarImportingScope(file.imports, session),
+                FirDefaultSimpleImportingScope(session),
+                FirSelfImportingScope(file.packageFqName, session),
+                // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
+                FirExplicitSimpleImportingScope(file.imports, session)
+            )
+            super.transformFile(file, data)
+        }
     }
 
     private fun resolveSuperTypesAndExpansions(element: FirMemberDeclaration) {
@@ -50,61 +53,61 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return withScopeCleanup {
-            regularClass.withTypeParametersScope {
-                resolveSuperTypesAndExpansions(regularClass)
-
-                val firProvider = FirProvider.getInstance(regularClass.session)
-                val classId = regularClass.symbol.classId
-                towerScope.scopes += FirNestedClassifierScope(classId, firProvider)
-                val companionObjects = regularClass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
-                for (companionObject in companionObjects) {
-                    towerScope.scopes += FirNestedClassifierScope(companionObject.symbol.classId, firProvider)
-                }
-
-                lookupSuperTypes(regularClass).mapTo(towerScope.scopes) {
-                    val symbol = it.symbol
-                    if (symbol is FirBasedSymbol<*>) {
-                        FirNestedClassifierScope(symbol.classId, FirProvider.getInstance(symbol.fir.session))
-                    } else {
-                        FirNestedClassifierScope(symbol.classId, FirSymbolProvider.getInstance(regularClass.session))
-                    }
-                }
-                super.transformRegularClass(regularClass, data)
+        withScopeCleanup {
+            regularClass.addTypeParametersScope()
+            resolveSuperTypesAndExpansions(regularClass)
+            regularClass.typeParameters.forEach {
+                it.accept(this, data)
             }
+        }
+        return withScopeCleanup {
+            val firProvider = FirProvider.getInstance(regularClass.session)
+            val classId = regularClass.symbol.classId
+            lookupSuperTypes(regularClass).asReversed().mapTo(towerScope.scopes) {
+                val symbol = it.symbol
+                if (symbol is FirBasedSymbol<*>) {
+                    FirNestedClassifierScope(symbol.classId, FirProvider.getInstance(symbol.fir.session))
+                } else {
+                    FirNestedClassifierScope(symbol.classId, FirSymbolProvider.getInstance(regularClass.session))
+                }
+            }
+            val companionObjects = regularClass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
+            for (companionObject in companionObjects) {
+                towerScope.scopes += FirNestedClassifierScope(companionObject.symbol.classId, firProvider)
+            }
+            towerScope.scopes += FirNestedClassifierScope(classId, firProvider)
+            regularClass.addTypeParametersScope()
+
+            super.transformRegularClass(regularClass, data)
         }
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        // TODO: Remove comment when KT-23742 fixed
-        // Warning: boxing inline class here ()
-        return typeAlias.withTypeParametersScope {
+        return withScopeCleanup {
+            typeAlias.addTypeParametersScope()
             resolveSuperTypesAndExpansions(typeAlias)
             super.transformTypeAlias(typeAlias, data)
         }
     }
 
 
-    private inline fun <T> FirMemberDeclaration.withTypeParametersScope(crossinline l: () -> T): T {
+    private fun FirMemberDeclaration.addTypeParametersScope() {
         val scopes = towerScope.scopes
         if (typeParameters.isNotEmpty()) {
             scopes += FirMemberTypeParameterScope(this)
         }
-        val result = l()
-        if (typeParameters.isNotEmpty()) {
-            scopes.removeAt(scopes.lastIndex)
-        }
-        return result
     }
 
     override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return property.withTypeParametersScope {
+        return withScopeCleanup {
+            property.addTypeParametersScope()
             super.transformProperty(property, data)
         }
     }
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return namedFunction.withTypeParametersScope {
+        return withScopeCleanup {
+            namedFunction.addTypeParametersScope()
             super.transformNamedFunction(namedFunction, data)
         }
     }
