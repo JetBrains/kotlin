@@ -141,7 +141,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         get() = File(taskBuildDirectory, "build-history.bin")
 
     @get:Input
-    internal var useModuleDetection: Boolean = false
+    internal open var useModuleDetection: Boolean = false
 
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
