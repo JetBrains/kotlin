@@ -216,7 +216,9 @@ open class RegressionsReporter : DefaultTask() {
                     "Please check files existance and their correctness.")
         }
 
-        val reportLink = tabUrl(buildId, buildTypeId, "report_project170_Benchmarks")
+        val reportLink = "http://kotlin-native-performance.labs.jb.gg/?" +
+                "report=bintray:$buildNumber:$target:$bintrayFileName&" +
+                "compareTo=bintray:$compareToBuildNumber:$target:$bintrayFileName"
 
         val title = "\n*Performance report for target $target (build $buildNumber)* - $reportLink\n"
         val header = "$title\n$changesInfo\n\nCompare to build $compareToBuildNumber: $compareToBuildLink\n\n"

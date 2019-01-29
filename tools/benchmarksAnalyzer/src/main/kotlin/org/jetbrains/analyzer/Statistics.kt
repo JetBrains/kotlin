@@ -36,9 +36,9 @@ data class MeanVarianceBenchmark(val meanBenchmark: BenchmarkResult, val varianc
 
     // Calculate difference in percentage compare to another.
     fun calcPercentageDiff(other: MeanVarianceBenchmark): MeanVariance {
-        assert(other.meanBenchmark.score > 0 &&
-                other.varianceBenchmark.score > 0 &&
-                other.meanBenchmark.score - other.varianceBenchmark.score != 0.0,
+        assert(other.meanBenchmark.score >= 0 &&
+                other.varianceBenchmark.score >= 0 &&
+                abs(other.meanBenchmark.score - other.varianceBenchmark.score) != 0.0,
                 { "Mean and variance should be positive and not equal!" })
         val mean = (meanBenchmark.score - other.meanBenchmark.score) / other.meanBenchmark.score
         val maxValueChange = abs(meanBenchmark.score + varianceBenchmark.score -
@@ -55,8 +55,8 @@ data class MeanVarianceBenchmark(val meanBenchmark: BenchmarkResult, val varianc
 
     // Calculate ratio value compare to another.
     fun calcRatio(other: MeanVarianceBenchmark): MeanVariance {
-        assert(other.meanBenchmark.score > 0 &&
-                other.varianceBenchmark.score > 0 &&
+        assert(other.meanBenchmark.score >= 0 &&
+                other.varianceBenchmark.score >= 0 &&
                 other.meanBenchmark.score - other.varianceBenchmark.score != 0.0,
                 { "Mean and variance should be positive and not equal!" })
         val mean = meanBenchmark.score / other.meanBenchmark.score
