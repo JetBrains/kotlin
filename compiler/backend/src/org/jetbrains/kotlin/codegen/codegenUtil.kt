@@ -447,26 +447,25 @@ fun CallableDescriptor.needsExperimentalCoroutinesWrapper() =
     (this as? DeserializedMemberDescriptor)?.coroutinesExperimentalCompatibilityMode == CoroutinesCompatibilityMode.NEEDS_WRAPPER
 
 fun recordCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingTrace: BindingTrace) {
-    fun storeLabelName(labelName: String) {
-        val functionDescriptor = bindingTrace[BindingContext.FUNCTION, declaration] ?: return
-        bindingTrace.record(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, functionDescriptor, labelName)
-    }
+    val labelName = getCallLabelForLambdaArgument(declaration, bindingTrace.bindingContext) ?: return
+    val functionDescriptor = bindingTrace[BindingContext.FUNCTION, declaration] ?: return
+    bindingTrace.record(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, functionDescriptor, labelName)
 
-    val lambdaExpression = declaration.parent as? KtLambdaExpression ?: return
+}
+
+fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext: BindingContext): String? {
+    val lambdaExpression = declaration.parent as? KtLambdaExpression ?: return null
     val lambdaExpressionParent = lambdaExpression.parent
 
     if (lambdaExpressionParent is KtLabeledExpression) {
-        lambdaExpressionParent.name?.let { labelName ->
-            storeLabelName(labelName)
-            return
-        }
+        lambdaExpressionParent.name?.let { return it }
     }
 
-    val lambdaArgument = lambdaExpression.parent as? KtLambdaArgument ?: return
-    val callExpression = lambdaArgument.parent as? KtCallExpression ?: return
-    val call = callExpression.getResolvedCall(bindingTrace.bindingContext) ?: return
+    val lambdaArgument = lambdaExpression.parent as? KtLambdaArgument ?: return null
+    val callExpression = lambdaArgument.parent as? KtCallExpression ?: return null
+    val call = callExpression.getResolvedCall(bindingContext) ?: return null
 
-    storeLabelName(call.resultingDescriptor.name.asString())
+    return call.resultingDescriptor.name.asString()
 }
 
 private val ARRAY_OF_STRINGS_TYPE = Type.getType("[Ljava/lang/String;")
