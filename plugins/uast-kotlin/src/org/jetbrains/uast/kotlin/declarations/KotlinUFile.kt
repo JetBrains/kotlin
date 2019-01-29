@@ -22,12 +22,17 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
 import java.util.*
 
-class KotlinUFile(override val psi: KtFile, override val languagePlugin: UastLanguagePlugin) : UFile, JvmDeclarationUElementPlaceholder {
+class KotlinUFile(
+    override val psi: KtFile,
+    override val languagePlugin: UastLanguagePlugin =
+        UastLanguagePlugin.getInstances().find { it.language == KotlinLanguage.INSTANCE } ?: KotlinUastLanguagePlugin()
+) : UFile, JvmDeclarationUElementPlaceholder {
     override val packageName: String
         get() = psi.packageFqName.asString()
 
