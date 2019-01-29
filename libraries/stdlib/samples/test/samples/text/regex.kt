@@ -51,7 +51,7 @@ class Regexps {
         val text = "Hello Alice. Hello Bob. Hello Eve."
         val regex = Regex("Hello (.*?)[.]")
         val matches = regex.findAll(text)
-        val names = matches.map(MatchResult::groupValues).map {it[1]} .joinToString(",")
-        assertPrints(names, "Alice,Bob,Eve")
+        val names = matches.map { it.groupValues[1] }.joinToString()
+        assertPrints(names, "Alice, Bob, Eve")
     }
 }
