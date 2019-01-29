@@ -346,7 +346,7 @@ internal object CheckReceivers : ResolutionPart() {
     override fun KotlinResolutionCandidate.workCount() = 2
 }
 
-internal object CheckArguments : ResolutionPart() {
+internal object CheckArgumentsInParenthesis : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val argument = kotlinCall.argumentsInParenthesis[workIndex]
         resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
