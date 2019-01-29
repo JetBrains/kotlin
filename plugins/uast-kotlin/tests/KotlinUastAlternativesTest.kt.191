@@ -6,7 +6,9 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertInstanceOf
 import org.jetbrains.uast.*
 import org.junit.Test
 
@@ -51,6 +53,71 @@ class KotlinUastAlternativesTest : AbstractKotlinUastTest() {
                     "@org.jetbrains.annotations.NotNull private var writebleProp: int = 0, " +
                             "public final fun getWritebleProp() : int = UastEmptyExpression, " +
                             "public final fun setWritebleProp(@null p: int) : void = UastEmptyExpression",
+                    it.joinToString(transform = UElement::asRenderString)
+                )
+            }
+
+        }
+    }
+
+
+    @Test
+    fun testParamAndPropertylternatives() {
+        doTest("ManyAlternatives") { name, file ->
+            val index = file.psi.text.indexOf("paramAndProp")
+            val ktProperty = PsiTreeUtil.getParentOfType(file.psi.findElementAt(index), KtParameter::class.java)!!
+            val plugin = UastLanguagePlugin.byLanguage(ktProperty.language)!!
+
+            plugin.convertToAlternatives<UElement>(ktProperty, arrayOf(UField::class.java)).let {
+                assertInstanceOf(it.single(), UField::class.java)
+                assertEquals(
+                    "@org.jetbrains.annotations.NotNull private final var paramAndProp: java.lang.String",
+                    it.joinToString(transform = UElement::asRenderString)
+                )
+            }
+
+            plugin.convertToAlternatives<UElement>(ktProperty, arrayOf(UParameter::class.java)).let {
+                assertInstanceOf(it.single(), UParameter::class.java)
+                assertEquals(
+                    "@org.jetbrains.annotations.NotNull var paramAndProp: java.lang.String",
+                    it.joinToString(transform = UElement::asRenderString)
+                )
+            }
+
+            plugin.convertToAlternatives<UElement>(ktProperty, arrayOf(UElement::class.java)).let {
+                assertEquals(
+                    "@org.jetbrains.annotations.NotNull var paramAndProp: java.lang.String, " +
+                            "@org.jetbrains.annotations.NotNull private final var paramAndProp: java.lang.String, " +
+                            "public final fun getParamAndProp() : java.lang.String = UastEmptyExpression",
+                    it.joinToString(transform = UElement::asRenderString)
+                )
+            }
+
+        }
+    }
+
+    @Test
+    fun testJustParamAlternatives() {
+        doTest("ManyAlternatives") { name, file ->
+            val index = file.psi.text.indexOf("justParam")
+            val ktProperty = PsiTreeUtil.getParentOfType(file.psi.findElementAt(index), KtParameter::class.java)!!
+            val plugin = UastLanguagePlugin.byLanguage(ktProperty.language)!!
+
+            plugin.convertToAlternatives<UElement>(ktProperty, arrayOf(UField::class.java)).let {
+                assertEquals("", it.joinToString(transform = UElement::asRenderString))
+            }
+
+            plugin.convertToAlternatives<UElement>(ktProperty, arrayOf(UParameter::class.java)).let {
+                assertInstanceOf(it.single(), UParameter::class.java)
+                assertEquals(
+                    "@org.jetbrains.annotations.NotNull var justParam: int",
+                    it.joinToString(transform = UElement::asRenderString)
+                )
+            }
+
+            plugin.convertToAlternatives<UElement>(ktProperty, arrayOf(UElement::class.java)).let {
+                assertEquals(
+                    "@org.jetbrains.annotations.NotNull var justParam: int",
                     it.joinToString(transform = UElement::asRenderString)
                 )
             }
