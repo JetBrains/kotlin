@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.irCall
 
 internal class KonanDefaultParameterInjector(private val konanContext: KonanBackendContext)
-    : DefaultParameterInjector(konanContext) {
+    : DefaultParameterInjector(konanContext, skipInline = false) {
 
     override fun nullConst(expression: IrElement, type: IrType): IrExpression {
         val symbols = konanContext.ir.symbols
