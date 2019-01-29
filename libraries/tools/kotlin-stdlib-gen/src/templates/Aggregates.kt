@@ -15,14 +15,20 @@ object Aggregates : TemplateGroupBase() {
             if (sequenceClassification.isEmpty()) {
                 sequenceClassification(terminal)
             }
+            specialFor(ArraysOfUnsigned) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+            }
         }
     }
 
     val f_all = fn("all(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc {
             """
             Returns `true` if all ${f.element.pluralize()} match the given [predicate].
@@ -45,9 +51,10 @@ object Aggregates : TemplateGroupBase() {
 
     val f_none_predicate = fn("none(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc {
             """
@@ -71,8 +78,10 @@ object Aggregates : TemplateGroupBase() {
 
     val f_none = fn("none()") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc {
             """
             Returns `true` if the ${f.collection} has no ${f.element.pluralize()}.
@@ -91,16 +100,18 @@ object Aggregates : TemplateGroupBase() {
                 """
             }
         }
-        specialFor(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
-            body { "return isEmpty()" }
+
+        body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            "return isEmpty()"
         }
     }
 
     val f_any_predicate = fn("any(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc {
             """
@@ -124,7 +135,7 @@ object Aggregates : TemplateGroupBase() {
 
     val f_any = fn("any()") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         doc {
             """
@@ -143,14 +154,20 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives) { "return !isEmpty()" }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "return storage.any()" }
+        }
     }
 
 
     val f_count_predicate = fn("count(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns the number of ${f.element.pluralize()} matching the given [predicate]." }
         returns("Int")
@@ -184,19 +201,21 @@ object Aggregates : TemplateGroupBase() {
             return count
             """
         }
-        specialFor(CharSequences, Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) { inlineOnly() }
+
+        specialFor(CharSequences, Maps, Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
+
         specialFor(CharSequences) {
             doc { "Returns the length of this char sequence." }
             body { "return length" }
         }
-        specialFor(Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
-            body { "return size" }
+        body(Maps, Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            "return size"
         }
     }
 
     val f_sumBy = fn("sumBy(selector: (T) -> Int)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
         doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
@@ -210,13 +229,30 @@ object Aggregates : TemplateGroupBase() {
             return sum
             """
         }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            signature("sumBy(selector: (T) -> UInt)")
+            returns("UInt")
+            body {
+                """
+                var sum: UInt = 0u
+                for (element in this) {
+                    sum += selector(element)
+                }
+                return sum
+                """
+            }
+        }
     }
 
     val f_sumByDouble = fn("sumByDouble(selector: (T) -> Double)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
         returns("Double")
         body {
