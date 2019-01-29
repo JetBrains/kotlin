@@ -1,4 +1,6 @@
-@file:Suppress("unused") // usages in build scripts are not tracked properly
+@file:Suppress("unused")
+
+// usages in build scripts are not tracked properly
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -28,13 +30,18 @@ fun Project.commonDep(group: String, artifact: String, vararg suffixesAndClassif
 }
 
 fun Project.commonVer(group: String, artifact: String) =
-        when {
-            rootProject.extra.has("versions.$artifact") -> rootProject.extra["versions.$artifact"]
-            rootProject.extra.has("versions.$group") -> rootProject.extra["versions.$group"]
-            else -> throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra")
-        }
+    when {
+        rootProject.extra.has("versions.$artifact") -> rootProject.extra["versions.$artifact"]
+        rootProject.extra.has("versions.$group") -> rootProject.extra["versions.$group"]
+        else -> throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra")
+    }
 
-fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File(rootDir, "dependencies"), subdir: String? = null, optional: Boolean = false): ConfigurableFileCollection {
+fun Project.preloadedDeps(
+    vararg artifactBaseNames: String,
+    baseDir: File = File(rootDir, "dependencies"),
+    subdir: String? = null,
+    optional: Boolean = false
+): ConfigurableFileCollection {
     val dir = if (subdir != null) File(baseDir, subdir) else baseDir
     if (!dir.exists() || !dir.isDirectory) {
         if (optional) return files()
@@ -42,9 +49,17 @@ fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File
     }
     val matchingFiles = dir.listFiles { file -> artifactBaseNames.any { file.matchMaybeVersionedArtifact(it) } }
     if (matchingFiles == null || matchingFiles.size < artifactBaseNames.size) {
-        throw GradleException("Not all matching artifacts '${artifactBaseNames.joinToString()}' found in the '$dir' " +
-                              "(missing: ${artifactBaseNames.filterNot { request -> matchingFiles.any { it.matchMaybeVersionedArtifact(request) } }.joinToString()};" +
-                              " found: ${matchingFiles?.joinToString { it.name }})")
+        throw GradleException(
+            "Not all matching artifacts '${artifactBaseNames.joinToString()}' found in the '$dir' " +
+                    "(missing: ${artifactBaseNames.filterNot { request ->
+                        matchingFiles.any {
+                            it.matchMaybeVersionedArtifact(
+                                request
+                            )
+                        }
+                    }.joinToString()};" +
+                    " found: ${matchingFiles?.joinToString { it.name }})"
+        )
     }
     return files(*matchingFiles.map { it.canonicalPath }.toTypedArray())
 }
@@ -73,8 +88,9 @@ fun DependencyHandler.projectArchives(name: String): ProjectDependency = project
 
 val Project.protobufVersion: String get() = findProperty("versions.protobuf") as String
 
-val Project.protobufRepo: String get() =
-    "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_Protobuf),status:SUCCESS,pinned:true,tag:$protobufVersion/artifacts/content/internal/repo/"
+val Project.protobufRepo: String
+    get() =
+        "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_Protobuf),status:SUCCESS,pinned:true,tag:$protobufVersion/artifacts/content/internal/repo/"
 
 fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufVersion"
 fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufVersion"
@@ -98,7 +114,6 @@ private fun String.toMaybeVersionedJarRegex(): Regex {
     val escaped = this.wildcardsToEscapedRegexString()
     return Regex(if (hasJarExtension) escaped else "$escaped(-\\d.*)?\\.jar") // TODO: consider more precise version part of the regex
 }
-
 
 
 fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = File(this.property("JDK_18") as String)): File? =
