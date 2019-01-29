@@ -36,7 +36,7 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
     public JUnit3RunnerWithInners(Class<?> klass) {
         super();
 
-        if ("true".equals(System.getProperty("use.pill"))) {
+        if ("true".equals(System.getProperty("use.jps"))) {
             delegateRunner = new JUnit3RunnerWithInnersForJPS(klass);
         }
         else {

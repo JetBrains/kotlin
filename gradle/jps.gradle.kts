@@ -19,7 +19,8 @@ fun org.jetbrains.gradle.ext.JUnit.configureForKotlin() {
         "-Didea.is.unit.test=true",
         "-Didea.home.path=$ideaSdkPath",
         "-Djps.kotlin.home=${ideaPluginDir.absolutePath}",
-        "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false"
+        "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false",
+        "-Duse.jps=true"
     ).joinToString(" ")
     envs = mapOf(
         "NO_FS_ROOTS_ACCESS_CHECK" to "true",
