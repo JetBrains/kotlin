@@ -8,6 +8,7 @@ package test.collections
 
 import test.collections.behaviors.collectionBehavior
 import test.collections.behaviors.listBehavior
+import test.collections.behaviors.iteratorBehavior
 import kotlin.test.*
 
 fun assertArrayContentEquals(expected: UIntArray, actual: UIntArray, message: String = "")      { assertTrue(expected contentEquals actual, message) }
@@ -39,7 +40,7 @@ class UnsignedArraysTest {
             assertEquals(index.toUByte(), initArray[index])
         }
     }
-    
+
     @Test
     fun ushortArrayInit() {
         val zeroArray = UShortArray(42)
@@ -53,7 +54,7 @@ class UnsignedArraysTest {
             assertEquals(index.toUShort(), initArray[index])
         }
     }
-    
+
     @Test
     fun uintArrayInit() {
         val zeroArray = UIntArray(42)
@@ -67,7 +68,7 @@ class UnsignedArraysTest {
             assertEquals(index.toUInt(), initArray[index])
         }
     }
-    
+
     @Test
     fun ulongArrayInit() {
         val zeroArray = ULongArray(42)
@@ -332,11 +333,10 @@ class UnsignedArraysTest {
 
     @Test
     fun sumByDouble() {
-        // TODO: .toInt().toDouble() -> .toDouble() when conversion from unsigned primitives to Double gets implemented.
-        assertEquals(3.0, ubyteArrayOf(0, 1, 2).sumByDouble { it.toInt().toDouble() })
-        assertEquals(1.0, ushortArrayOf(0, 1, 2).sumByDouble { (it % 2u).toInt().toDouble() })
-        assertEquals(0.0, uintArrayOf(0, 2, 4).sumByDouble { (it % 2u).toInt().toDouble() })
-        assertEquals(6.0, ulongArrayOf(2, 3, 4).sumByDouble { (it - 1u).toInt().toDouble() })
+        assertEquals(3.0, ubyteArrayOf(0, 1, 2).sumByDouble { it.toDouble() })
+        assertEquals(1.0, ushortArrayOf(0, 1, 2).sumByDouble { (it % 2u).toDouble() })
+        assertEquals(0.0, uintArrayOf(0, 2, 4).sumByDouble { (it % 2u).toDouble() })
+        assertEquals(6.0, ulongArrayOf(2, 3, 4).sumByDouble { (it - 1u).toDouble() })
     }
 
     @Test
@@ -352,14 +352,16 @@ class UnsignedArraysTest {
         assertEquals(genericArray.toList(), ulongArray.toList())
     }
 
-    @Test fun reversed() {
+    @Test
+    fun reversed() {
         expect(listOf(3u, 2u, 1u)) { uintArrayOf(1u, 2u, 3u).reversed() }
         expect(listOf<UByte>(3u, 2u, 1u)) { ubyteArrayOf(1u, 2u, 3u).reversed() }
         expect(listOf<UShort>(3u, 2u, 1u)) { ushortArrayOf(1u, 2u, 3u).reversed() }
         expect(listOf<ULong>(3u, 2u, 1u)) { ulongArrayOf(1u, 2u, 3u).reversed() }
     }
 
-    @Test fun reversedArray() {
+    @Test
+    fun reversedArray() {
         assertArrayContentEquals(uintArrayOf(3u, 2u, 1u), uintArrayOf(1u, 2u, 3u).reversedArray())
         assertArrayContentEquals(ubyteArrayOf(3u, 2u, 1u), ubyteArrayOf(1u, 2u, 3u).reversedArray())
         assertArrayContentEquals(ushortArrayOf(3u, 2u, 1u), ushortArrayOf(1u, 2u, 3u).reversedArray())
@@ -729,6 +731,96 @@ class UnsignedArraysTest {
         expect(2u) { ushortArrayOf(0, 1, 2).singleOrNull { it == 2.toUShort() } }
         expect(1u) { uintArrayOf(0, 1, 2).singleOrNull { it % 2u == 1u } }
         expect(null) { uintArrayOf().singleOrNull() }
-        expect(null) { ulongArrayOf(0, 1, 2).singleOrNull() { it % 2uL == 0uL } }
+        expect(null) { ulongArrayOf(0, 1, 2).singleOrNull { it % 2uL == 0uL } }
     }
+
+    @Test
+    fun map() {
+        assertEquals(listOf(), ubyteArrayOf().map { it })
+        assertEquals(listOf<UShort>(1, 2, 3), ushortArrayOf(1, 2, 3).map { it })
+        assertEquals(listOf<UInt>(2, 4, 6), uintArrayOf(1, 2, 3).map { 2u * it })
+        assertEquals(listOf<ULong>(0, 0, 0), ulongArrayOf(1, 2, 3).map { 0uL })
+    }
+
+    @Test
+    fun mapIndexed() {
+        assertEquals(listOf(), ubyteArrayOf().mapIndexed { _, e -> e })
+        assertEquals(listOf<UShort>(1, 2, 3), ushortArrayOf(1, 2, 3).mapIndexed { _, e -> e })
+        assertEquals(listOf(0, 1, 2), uintArrayOf(1, 2, 3).mapIndexed { index, _ -> index })
+        assertEquals(listOf(0, 0, 0), ulongArrayOf(1, 2, 3).mapIndexed { _, _ -> 0 })
+    }
+
+    @Test
+    fun groupBy() {
+        assertEquals(mapOf(), ubyteArrayOf().groupBy { k -> k })
+        assertEquals(
+            mapOf(
+                1.toUShort() to listOf<UShort>(1),
+                2.toUShort() to listOf<UShort>(2),
+                3.toUShort() to listOf<UShort>(3)
+            ),
+            ushortArrayOf(1, 2, 3).groupBy { k -> k }
+        )
+        assertEquals(
+            mapOf(
+                0.toUInt() to listOf("2"),
+                1.toUInt() to listOf("1", "3")
+            ),
+            uintArrayOf(1, 2, 3).groupBy({ k -> k % 2 }, { v -> v.toString() })
+        )
+        assertEquals(
+            mapOf(
+                0 to listOf(0, 0, 0)
+            ),
+            ulongArrayOf(1, 2, 3).groupBy({ 0 }, { 0 })
+        )
+    }
+
+    @Test
+    fun flatMap() {
+        assertEquals(listOf(), ubyteArrayOf().flatMap { listOf(it) })
+        assertEquals(listOf<UShort>(1, 2, 3), ushortArrayOf(1, 2, 3).flatMap { listOf(it) })
+        assertEquals(listOf<UInt>(1, 1, 2, 2, 3, 3), uintArrayOf(1, 2, 3).flatMap { listOf(it, it) })
+        assertEquals(listOf(), ulongArrayOf(1, 2, 3).flatMap { listOf<ULong>() })
+    }
+
+    @Test
+    fun withIndex() {
+        fun <T> assertIterableContentEquals(expected: Iterable<T>, actual: Iterable<T>) {
+            compare(expected.iterator(), actual.iterator()) { iteratorBehavior() }
+        }
+
+        assertIterableContentEquals(listOf(), ubyteArrayOf().withIndex())
+        assertIterableContentEquals(
+            listOf(
+                IndexedValue(0, 1.toUShort()),
+                IndexedValue(1, 2.toUShort()),
+                IndexedValue(2, 3.toUShort())
+            ),
+            ushortArrayOf(1, 2, 3).withIndex()
+        )
+        assertEquals(IndexedValue(1, 2.toUInt()), uintArrayOf(1, 2, 3).withIndex().minBy { it.value % 2 })
+        assertIterableContentEquals(listOf(0, 1, 2), ulongArrayOf(1, 2, 3).withIndex().map { it.index })
+    }
+
+    @Test
+    fun zip() {
+        assertEquals(listOf(), ubyteArrayOf().zip(ubyteArrayOf()))
+        assertEquals(
+            listOf(
+                1.toUShort() to 1.toUShort(),
+                2.toUShort() to 2.toUShort()
+            ),
+            ushortArrayOf(1, 2, 3).zip(ushortArrayOf(1, 2))
+        )
+        assertEquals(
+            listOf("1a", "2b", "3c"),
+            uintArrayOf(1, 2, 3).zip(arrayOf("a", "b", "c", "d")) { a, b -> a.toString() + b }
+        )
+        assertEquals(
+            listOf<ULong>(11, 12, 13),
+            ulongArrayOf(1, 2, 3).zip(listOf<ULong>(10, 10, 10)) { a, b -> a + b }
+        )
+    }
+
 }

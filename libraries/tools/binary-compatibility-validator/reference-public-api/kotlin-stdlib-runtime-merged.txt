@@ -2396,6 +2396,22 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun toUIntArray ([Lkotlin/UInt;)[I
 	public static final fun toULongArray ([Lkotlin/ULong;)[J
 	public static final fun toUShortArray ([Lkotlin/UShort;)[S
+	public static final fun withIndex--ajY-9A ([I)Ljava/lang/Iterable;
+	public static final fun withIndex-GBYM_sE ([B)Ljava/lang/Iterable;
+	public static final fun withIndex-QwZRm1k ([J)Ljava/lang/Iterable;
+	public static final fun withIndex-rL5Bavg ([S)Ljava/lang/Iterable;
+	public static final fun zip-C-E_24M ([I[Ljava/lang/Object;)Ljava/util/List;
+	public static final fun zip-F7u83W8 ([JLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun zip-HwE9HBo ([ILjava/lang/Iterable;)Ljava/util/List;
+	public static final fun zip-JGPC0-M ([SLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun zip-JQknh5Q ([BLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun zip-ctEhBpI ([I[I)Ljava/util/List;
+	public static final fun zip-f7H3mmw ([J[Ljava/lang/Object;)Ljava/util/List;
+	public static final fun zip-kdPth3s ([B[B)Ljava/util/List;
+	public static final fun zip-mazbYpA ([S[S)Ljava/util/List;
+	public static final fun zip-nl983wc ([B[Ljava/lang/Object;)Ljava/util/List;
+	public static final fun zip-uaTIQ5s ([S[Ljava/lang/Object;)Ljava/util/List;
+	public static final fun zip-us8wMrg ([J[J)Ljava/util/List;
 }
 
 public abstract class kotlin/collections/UByteIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
