@@ -180,14 +180,14 @@ open class DistModelBuilder(val rootProject: Project, pw: PrintWriter) {
                 })
             }
             sourcePath is CompositeFileCollection -> ctx.child("COMPOSITE FILE COLLECTION") { child ->
-                sourcePath.visitRootElements(object : FileCollectionVisitor {
+                sourcePath.visitLeafCollections(object : FileCollectionLeafVisitor {
                     override fun visitDirectoryTree(directoryTree: DirectoryFileTree) {
                         child.child("DIR TREE") {
                             it.addCopyOf(directoryTree.dir.path)
                         }
                     }
 
-                    override fun visitTree(fileTree: FileTreeInternal) {
+                    override fun visitGenericFileTree(fileTree: FileTreeInternal) {
                         child.child("TREE") {
                             processSourcePath(fileTree, it)
                         }
