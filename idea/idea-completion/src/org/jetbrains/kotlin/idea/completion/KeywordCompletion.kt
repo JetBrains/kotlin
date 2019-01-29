@@ -470,20 +470,18 @@ object KeywordCompletion {
         }
     }
 
-    private fun isModifierParentSupportedAtLanguageLevel(
-            keyword: KtKeywordToken,
-            target: KotlinTarget,
-            languageVersionSettings: LanguageVersionSettings
-    ): Boolean {
-        if (keyword == KtTokens.INNER_KEYWORD && target == ENUM_ENTRY) {
-            return languageVersionSettings.supportsFeature(LanguageFeature.InnerClassInEnumEntryClass)
-        }
-        return true
-    }
-
     // builds text within scope (or from the start of the file) before position element excluding almost all declarations
     private fun buildReducedContextBefore(builder: StringBuilder, position: PsiElement, scope: PsiElement?) {
         if (position == scope) return
+
+        if (position is KtCodeFragment) {
+            val ktContext = position.context as? KtElement ?: return
+            buildReducedContextBefore(builder, ktContext, scope)
+            return
+        } else if (position is PsiFile) {
+            return
+        }
+
         val parent = position.parent ?: return
 
         buildReducedContextBefore(builder, parent, scope)
