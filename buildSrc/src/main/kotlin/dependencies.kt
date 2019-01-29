@@ -67,12 +67,9 @@ fun Project.kotlinStdlib(suffix: String? = null): Any {
         dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"))
 }
 
-@Deprecated("Depend on the default configuration instead", ReplaceWith("project(name)"))
-fun DependencyHandler.projectDist(name: String): ProjectDependency = project(name)
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
-fun DependencyHandler.projectClasses(name: String): ProjectDependency = project(name, configuration = "classes-dirs")
 
 val Project.protobufVersion: String get() = findProperty("versions.protobuf") as String
 
