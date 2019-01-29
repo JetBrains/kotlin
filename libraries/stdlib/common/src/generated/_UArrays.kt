@@ -2524,6 +2524,638 @@ public inline fun ShortArray.toUShortArray(): UShortArray {
 }
 
 /**
+ * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UIntArray.flatMap(transform: (UInt) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> ULongArray.flatMap(transform: (ULong) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UByteArray.flatMap(transform: (UByte) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UShortArray.flatMap(transform: (UShort) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapTo(destination: C, transform: (UInt) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapTo(destination: C, transform: (ULong) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapTo(destination: C, transform: (UByte) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> UShortArray.flatMapTo(destination: C, transform: (UShort) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * 
+ * The returned map preserves the entry iteration order of the keys produced from the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K> UIntArray.groupBy(keySelector: (UInt) -> K): Map<K, List<UInt>> {
+    return groupByTo(LinkedHashMap<K, MutableList<UInt>>(), keySelector)
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * 
+ * The returned map preserves the entry iteration order of the keys produced from the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K> ULongArray.groupBy(keySelector: (ULong) -> K): Map<K, List<ULong>> {
+    return groupByTo(LinkedHashMap<K, MutableList<ULong>>(), keySelector)
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * 
+ * The returned map preserves the entry iteration order of the keys produced from the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K> UByteArray.groupBy(keySelector: (UByte) -> K): Map<K, List<UByte>> {
+    return groupByTo(LinkedHashMap<K, MutableList<UByte>>(), keySelector)
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * 
+ * The returned map preserves the entry iteration order of the keys produced from the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K> UShortArray.groupBy(keySelector: (UShort) -> K): Map<K, List<UShort>> {
+    return groupByTo(LinkedHashMap<K, MutableList<UShort>>(), keySelector)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * 
+ * The returned map preserves the entry iteration order of the keys produced from the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, V> UIntArray.groupBy(keySelector: (UInt) -> K, valueTransform: (UInt) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * 
+ * The returned map preserves the entry iteration order of the keys produced from the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, V> ULongArray.groupBy(keySelector: (ULong) -> K, valueTransform: (ULong) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * 
+ * The returned map preserves the entry iteration order of the keys produced from the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, V> UByteArray.groupBy(keySelector: (UByte) -> K, valueTransform: (UByte) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * 
+ * The returned map preserves the entry iteration order of the keys produced from the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, V> UShortArray.groupBy(keySelector: (UShort) -> K, valueTransform: (UShort) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * 
+ * @return The [destination] map.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, M : MutableMap<in K, MutableList<UInt>>> UIntArray.groupByTo(destination: M, keySelector: (UInt) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<UInt>() }
+        list.add(element)
+    }
+    return destination
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * 
+ * @return The [destination] map.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, M : MutableMap<in K, MutableList<ULong>>> ULongArray.groupByTo(destination: M, keySelector: (ULong) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<ULong>() }
+        list.add(element)
+    }
+    return destination
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * 
+ * @return The [destination] map.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, M : MutableMap<in K, MutableList<UByte>>> UByteArray.groupByTo(destination: M, keySelector: (UByte) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<UByte>() }
+        list.add(element)
+    }
+    return destination
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * 
+ * @return The [destination] map.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, M : MutableMap<in K, MutableList<UShort>>> UShortArray.groupByTo(destination: M, keySelector: (UShort) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<UShort>() }
+        list.add(element)
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * 
+ * @return The [destination] map.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UIntArray.groupByTo(destination: M, keySelector: (UInt) -> K, valueTransform: (UInt) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * 
+ * @return The [destination] map.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ULongArray.groupByTo(destination: M, keySelector: (ULong) -> K, valueTransform: (ULong) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * 
+ * @return The [destination] map.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UByteArray.groupByTo(destination: M, keySelector: (UByte) -> K, valueTransform: (UByte) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * 
+ * @return The [destination] map.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UShortArray.groupByTo(destination: M, keySelector: (UShort) -> K, valueTransform: (UShort) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UIntArray.map(transform: (UInt) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> ULongArray.map(transform: (ULong) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UByteArray.map(transform: (UByte) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UShortArray.map(transform: (UShort) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UIntArray.mapIndexed(transform: (index: Int, UInt) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> ULongArray.mapIndexed(transform: (index: Int, ULong) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UByteArray.mapIndexed(transform: (index: Int, UByte) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R> UShortArray.mapIndexed(transform: (index: Int, UShort) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> UIntArray.mapIndexedTo(destination: C, transform: (index: Int, UInt) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> ULongArray.mapIndexedTo(destination: C, transform: (index: Int, ULong) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> UByteArray.mapIndexedTo(destination: C, transform: (index: Int, UByte) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> UShortArray.mapIndexedTo(destination: C, transform: (index: Int, UShort) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> UIntArray.mapTo(destination: C, transform: (UInt) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> ULongArray.mapTo(destination: C, transform: (ULong) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> UByteArray.mapTo(destination: C, transform: (UByte) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, C : MutableCollection<in R>> UShortArray.mapTo(destination: C, transform: (UShort) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.withIndex(): Iterable<IndexedValue<UInt>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.withIndex(): Iterable<IndexedValue<ULong>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.withIndex(): Iterable<IndexedValue<UByte>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.withIndex(): Iterable<IndexedValue<UShort>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
@@ -3981,6 +4613,386 @@ public inline fun UShortArray.sumByDouble(selector: (UShort) -> Double): Double 
         sum += selector(element)
     }
     return sum
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun <R> UIntArray.zip(other: Array<out R>): List<Pair<UInt, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun <R> ULongArray.zip(other: Array<out R>): List<Pair<ULong, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun <R> UByteArray.zip(other: Array<out R>): List<Pair<UByte, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun <R> UShortArray.zip(other: Array<out R>): List<Pair<UShort, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] array with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, V> UIntArray.zip(other: Array<out R>, transform: (a: UInt, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] array with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, V> ULongArray.zip(other: Array<out R>, transform: (a: ULong, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] array with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, V> UByteArray.zip(other: Array<out R>, transform: (a: UByte, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] array with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, V> UShortArray.zip(other: Array<out R>, transform: (a: UShort, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` collection and [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun <R> UIntArray.zip(other: Iterable<R>): List<Pair<UInt, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` collection and [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun <R> ULongArray.zip(other: Iterable<R>): List<Pair<ULong, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` collection and [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun <R> UByteArray.zip(other: Iterable<R>): List<Pair<UByte, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` collection and [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun <R> UShortArray.zip(other: Iterable<R>): List<Pair<UShort, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] collection with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, V> UIntArray.zip(other: Iterable<R>, transform: (a: UInt, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] collection with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, V> ULongArray.zip(other: Iterable<R>, transform: (a: ULong, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] collection with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, V> UByteArray.zip(other: Iterable<R>, transform: (a: UByte, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] collection with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R, V> UShortArray.zip(other: Iterable<R>, transform: (a: UShort, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun UIntArray.zip(other: UIntArray): List<Pair<UInt, UInt>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun ULongArray.zip(other: ULongArray): List<Pair<ULong, ULong>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun UByteArray.zip(other: UByteArray): List<Pair<UByte, UByte>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+ * The returned list has length of the shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public infix fun UShortArray.zip(other: UShortArray): List<Pair<UShort, UShort>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] array with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest array.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <V> UIntArray.zip(other: UIntArray, transform: (a: UInt, b: UInt) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] array with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest array.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <V> ULongArray.zip(other: ULongArray, transform: (a: ULong, b: ULong) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] array with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest array.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <V> UByteArray.zip(other: UByteArray, transform: (a: UByte, b: UByte) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from the elements of `this` array and the [other] array with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest array.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <V> UShortArray.zip(other: UShortArray, transform: (a: UShort, b: UShort) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
 }
 
 /**
