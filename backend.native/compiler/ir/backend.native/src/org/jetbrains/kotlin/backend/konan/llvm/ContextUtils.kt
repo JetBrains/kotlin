@@ -141,8 +141,8 @@ internal interface ContextUtils : RuntimeAware {
     val staticData: StaticData
         get() = context.llvm.staticData
 
-    fun isExternal(descriptor: IrDeclaration): Boolean {
-        val pkg = descriptor.findPackage()
+    fun isExternal(declaration: IrDeclaration): Boolean {
+        val pkg = declaration.findPackage()
         return when (pkg) {
             is IrFile -> pkg.packageFragmentDescriptor.containingDeclaration != context.moduleDescriptor
             is IrExternalPackageFragment -> true

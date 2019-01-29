@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.konan.cgen.KotlinStubs
 import org.jetbrains.kotlin.backend.konan.cgen.generateCCall
 import org.jetbrains.kotlin.backend.konan.cgen.generateCFunctionPointer
 import org.jetbrains.kotlin.backend.konan.getInlinedClass
-import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
+import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
@@ -478,7 +478,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
                 context.ir.symbols.any.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
 
         irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isReal }.forEach { method ->
-            val overriddenMethodOfAny = method.allOverriddenDescriptors.firstOrNull {
+            val overriddenMethodOfAny = method.allOverriddenFunctions.firstOrNull {
                 it in methodsOfAny
             }
 

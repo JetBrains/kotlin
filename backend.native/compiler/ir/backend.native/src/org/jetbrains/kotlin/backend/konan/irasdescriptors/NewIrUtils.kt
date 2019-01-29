@@ -28,9 +28,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 val IrConstructor.constructedClass get() = this.parent as IrClass
 
-val <T : IrDeclaration> T.original get() = this
-val IrDeclaration.containingDeclaration get() = this.parent
-
 val IrDeclarationParent.fqNameSafe: FqName get() = when (this) {
     is IrPackageFragment -> this.fqName
     is IrDeclaration -> this.parent.fqNameSafe.child(this.name)
@@ -116,8 +113,6 @@ val IrProperty.konanBackingField: IrField?
         return null
     }
 
-val IrField.containingClass get() = this.parent as? IrClass
-
 val IrFunction.isReal get() = this.origin != IrDeclarationOrigin.FAKE_OVERRIDE
 
 // Note: psi2ir doesn't set `origin = FAKE_OVERRIDE` for fields and properties yet.
@@ -150,8 +145,6 @@ fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
 }
 
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
-
-internal val IrValueParameter.isValueParameter get() = this.index >= 0
 
 private val IrCall.annotationClass
     get() = (this.symbol.owner as IrConstructor).constructedClass

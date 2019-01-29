@@ -16,98 +16,96 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 
-internal class OverriddenFunctionDescriptor(
-    val descriptor: IrSimpleFunction,
-    overriddenDescriptor: IrSimpleFunction
+internal class OverriddenFunctionInfo(
+        val function: IrSimpleFunction,
+        val overriddenFunction: IrSimpleFunction
 ) {
-    val overriddenDescriptor = overriddenDescriptor.original
-
     val needBridge: Boolean
-        get() = descriptor.target.needBridgeTo(overriddenDescriptor)
+        get() = function.target.needBridgeTo(overriddenFunction)
 
     val bridgeDirections: BridgeDirections
-        get() = descriptor.target.bridgeDirectionsTo(overriddenDescriptor)
+        get() = function.target.bridgeDirectionsTo(overriddenFunction)
 
     val canBeCalledVirtually: Boolean
         get() {
-            if (overriddenDescriptor.isObjCClassMethod()) {
-                return descriptor.canObjCClassMethodBeCalledVirtually(this.overriddenDescriptor)
+            if (overriddenFunction.isObjCClassMethod()) {
+                return function.canObjCClassMethodBeCalledVirtually(overriddenFunction)
             }
 
-            return overriddenDescriptor.isOverridable
+            return overriddenFunction.isOverridable
         }
 
     val inheritsBridge: Boolean
-        get() = !descriptor.isReal
-                && descriptor.target.overrides(overriddenDescriptor)
-                && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()
+        get() = !function.isReal
+                && function.target.overrides(overriddenFunction)
+                && function.bridgeDirectionsTo(overriddenFunction).allNotNeeded()
 
     fun getImplementation(context: Context): IrSimpleFunction? {
-        val target = descriptor.target
+        val target = function.target
         val implementation = if (!needBridge)
             target
         else {
             val bridgeOwner = if (inheritsBridge) {
                 target // Bridge is inherited from superclass.
             } else {
-                descriptor
+                function
             }
-            context.specialDeclarationsFactory.getBridge(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
+            context.specialDeclarationsFactory.getBridge(OverriddenFunctionInfo(bridgeOwner, overriddenFunction))
         }
         return if (implementation.modality == Modality.ABSTRACT) null else implementation
     }
 
     override fun toString(): String {
-        return "(descriptor=$descriptor, overriddenDescriptor=$overriddenDescriptor)"
+        return "(descriptor=$function, overriddenDescriptor=$overriddenFunction)"
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is OverriddenFunctionDescriptor) return false
+        if (other !is OverriddenFunctionInfo) return false
 
-        if (descriptor != other.descriptor) return false
-        if (overriddenDescriptor != other.overriddenDescriptor) return false
+        if (function != other.function) return false
+        if (overriddenFunction != other.overriddenFunction) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = descriptor.hashCode()
-        result = 31 * result + overriddenDescriptor.hashCode()
+        var result = function.hashCode()
+        result = 31 * result + overriddenFunction.hashCode()
         return result
     }
 }
 
-internal class ClassVtablesBuilder(val classDescriptor: IrClass, val context: Context) {
+internal class ClassVtablesBuilder(val irClass: IrClass, val context: Context) {
     private val DEBUG = 0
 
     private inline fun DEBUG_OUTPUT(severity: Int, block: () -> Unit) {
         if (DEBUG > severity) block()
     }
 
-    val vtableEntries: List<OverriddenFunctionDescriptor> by lazy {
+    val vtableEntries: List<OverriddenFunctionInfo> by lazy {
 
-        assert(!classDescriptor.isInterface)
+        assert(!irClass.isInterface)
 
         DEBUG_OUTPUT(0) {
             println()
-            println("BUILDING vTable for ${classDescriptor.descriptor}")
+            println("BUILDING vTable for ${irClass.descriptor}")
         }
 
-        val superVtableEntries = if (classDescriptor.isSpecialClassWithNoSupertypes()) {
+        val superVtableEntries = if (irClass.isSpecialClassWithNoSupertypes()) {
             emptyList()
         } else {
-            val superClass = classDescriptor.getSuperClassNotAny() ?: context.ir.symbols.any.owner
+            val superClass = irClass.getSuperClassNotAny() ?: context.ir.symbols.any.owner
             context.getVtableBuilder(superClass).vtableEntries
         }
 
-        val methods = classDescriptor.sortedOverridableOrOverridingMethods
-        val newVtableSlots = mutableListOf<OverriddenFunctionDescriptor>()
+        val methods = irClass.sortedOverridableOrOverridingMethods
+        val newVtableSlots = mutableListOf<OverriddenFunctionInfo>()
 
         DEBUG_OUTPUT(0) {
             println()
             println("SUPER vTable:")
-            superVtableEntries.forEach { println("    ${it.overriddenDescriptor.descriptor} -> ${it.descriptor.descriptor}") }
+            superVtableEntries.forEach { println("    ${it.overriddenFunction.descriptor} -> ${it.function.descriptor}") }
 
             println()
             println("METHODS:")
@@ -118,57 +116,57 @@ internal class ClassVtablesBuilder(val classDescriptor: IrClass, val context: Co
         }
 
         val inheritedVtableSlots = superVtableEntries.map { superMethod ->
-            val overridingMethod = methods.singleOrNull { it.overrides(superMethod.descriptor) }
+            val overridingMethod = methods.singleOrNull { it.overrides(superMethod.function) }
             if (overridingMethod == null) {
 
-                DEBUG_OUTPUT(0) { println("Taking super ${superMethod.overriddenDescriptor.descriptor} -> ${superMethod.descriptor.descriptor}") }
+                DEBUG_OUTPUT(0) { println("Taking super ${superMethod.overriddenFunction.descriptor} -> ${superMethod.function.descriptor}") }
 
                 superMethod
             } else {
-                newVtableSlots.add(OverriddenFunctionDescriptor(overridingMethod, superMethod.descriptor))
+                newVtableSlots.add(OverriddenFunctionInfo(overridingMethod, superMethod.function))
 
-                DEBUG_OUTPUT(0) { println("Taking overridden ${superMethod.overriddenDescriptor.descriptor} -> ${overridingMethod.descriptor}") }
+                DEBUG_OUTPUT(0) { println("Taking overridden ${superMethod.overriddenFunction.descriptor} -> ${overridingMethod.descriptor}") }
 
-                OverriddenFunctionDescriptor(overridingMethod, superMethod.overriddenDescriptor)
+                OverriddenFunctionInfo(overridingMethod, superMethod.overriddenFunction)
             }
         }
 
         // Add all possible (descriptor, overriddenDescriptor) edges for now, redundant will be removed later.
-        methods.mapTo(newVtableSlots) { OverriddenFunctionDescriptor(it, it) }
+        methods.mapTo(newVtableSlots) { OverriddenFunctionInfo(it, it) }
 
-        val inheritedVtableSlotsSet = inheritedVtableSlots.map { it.descriptor to it.bridgeDirections }.toSet()
+        val inheritedVtableSlotsSet = inheritedVtableSlots.map { it.function to it.bridgeDirections }.toSet()
 
         val filteredNewVtableSlots = newVtableSlots
-                .filterNot { inheritedVtableSlotsSet.contains(it.descriptor to it.bridgeDirections) }
-                .distinctBy { it.descriptor to it.bridgeDirections }
-                .filter { it.descriptor.isOverridable }
+                .filterNot { inheritedVtableSlotsSet.contains(it.function to it.bridgeDirections) }
+                .distinctBy { it.function to it.bridgeDirections }
+                .filter { it.function.isOverridable }
 
         DEBUG_OUTPUT(0) {
             println()
             println("INHERITED vTable slots:")
-            inheritedVtableSlots.forEach { println("    ${it.overriddenDescriptor.descriptor} -> ${it.descriptor.descriptor}") }
+            inheritedVtableSlots.forEach { println("    ${it.overriddenFunction.descriptor} -> ${it.function.descriptor}") }
 
             println()
             println("MY OWN vTable slots:")
-            filteredNewVtableSlots.forEach { println("    ${it.overriddenDescriptor.descriptor} -> ${it.descriptor.descriptor}") }
+            filteredNewVtableSlots.forEach { println("    ${it.overriddenFunction.descriptor} -> ${it.function.descriptor}") }
         }
 
-        inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenDescriptor.uniqueId }
+        inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenFunction.uniqueId }
     }
 
     fun vtableIndex(function: IrSimpleFunction): Int {
-        val bridgeDirections = function.target.bridgeDirectionsTo(function.original)
-        val index = vtableEntries.indexOfFirst { it.descriptor == function.original && it.bridgeDirections == bridgeDirections }
-        if (index < 0) throw Error(function.toString() + " not in vtable of " + classDescriptor.toString())
+        val bridgeDirections = function.target.bridgeDirectionsTo(function)
+        val index = vtableEntries.indexOfFirst { it.function == function && it.bridgeDirections == bridgeDirections }
+        if (index < 0) throw Error(function.toString() + " not in vtable of " + irClass.toString())
         return index
     }
 
-    val methodTableEntries: List<OverriddenFunctionDescriptor> by lazy {
-        classDescriptor.sortedOverridableOrOverridingMethods
-                .flatMap { method -> method.allOverriddenDescriptors.map { OverriddenFunctionDescriptor(method, it) } }
+    val methodTableEntries: List<OverriddenFunctionInfo> by lazy {
+        irClass.sortedOverridableOrOverridingMethods
+                .flatMap { method -> method.allOverriddenFunctions.map { OverriddenFunctionInfo(method, it) } }
                 .filter { it.canBeCalledVirtually }
-                .distinctBy { it.overriddenDescriptor.uniqueId }
-                .sortedBy { it.overriddenDescriptor.uniqueId }
+                .distinctBy { it.overriddenFunction.uniqueId }
+                .sortedBy { it.overriddenFunction.uniqueId }
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }
 

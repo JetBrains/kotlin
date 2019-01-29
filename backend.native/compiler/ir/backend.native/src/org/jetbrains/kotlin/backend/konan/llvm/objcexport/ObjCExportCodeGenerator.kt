@@ -1010,7 +1010,7 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
         val implementation = if (this.modality == Modality.ABSTRACT) {
             null
         } else {
-            OverriddenFunctionDescriptor(
+            OverriddenFunctionInfo(
                     context.ir.get(this) as IrSimpleFunction,
                     context.ir.get(base) as IrSimpleFunction
             ).getImplementation(context)

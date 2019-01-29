@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -181,37 +180,35 @@ private val IrFunction.signature: String
 // TODO: rename to indicate that it has signature included
 internal val IrFunction.functionName: String
     get() {
-        with(this.original) { // basic support for generics
-            (if (this is IrConstructor && this.isObjCConstructor) this.getObjCInitMethod() else this)?.getObjCMethodInfo()?.let {
-                return buildString {
-                    if (extensionReceiverParameter != null) {
-                        append(extensionReceiverParameter!!.type.getClass()!!.name)
-                        append(".")
-                    }
+        (if (this is IrConstructor && this.isObjCConstructor) this.getObjCInitMethod() else this)?.getObjCMethodInfo()?.let {
+            return buildString {
+                if (extensionReceiverParameter != null) {
+                    append(extensionReceiverParameter!!.type.getClass()!!.name)
+                    append(".")
+                }
 
-                    append("objc:")
-                    append(it.selector)
-                    if (this@with is IrConstructor && this@with.isObjCConstructor) append("#Constructor")
+                append("objc:")
+                append(it.selector)
+                if (this@functionName is IrConstructor && this@functionName.isObjCConstructor) append("#Constructor")
 
-                    // We happen to have the clashing combinations such as
-                    //@ObjCMethod("issueChallengeToPlayers:message:", "objcKniBridge1165")
-                    //external fun GKScore.issueChallengeToPlayers(playerIDs: List<*>?, message: String?): Unit
-                    //@ObjCMethod("issueChallengeToPlayers:message:", "objcKniBridge1172")
-                    //external fun GKScore.issueChallengeToPlayers(playerIDs: List<*>?, message: String?): Unit
-                    // So disambiguate by the name of the bridge for now.
-                    // TODO: idealy we'd never generate such identical declarations.
+                // We happen to have the clashing combinations such as
+                //@ObjCMethod("issueChallengeToPlayers:message:", "objcKniBridge1165")
+                //external fun GKScore.issueChallengeToPlayers(playerIDs: List<*>?, message: String?): Unit
+                //@ObjCMethod("issueChallengeToPlayers:message:", "objcKniBridge1172")
+                //external fun GKScore.issueChallengeToPlayers(playerIDs: List<*>?, message: String?): Unit
+                // So disambiguate by the name of the bridge for now.
+                // TODO: idealy we'd never generate such identical declarations.
 
-                    if (this@with is IrSimpleFunction && this@with.hasObjCMethodAnnotation()) {
-                        this@with.objCMethodArgValue("selector") ?.let { append("#$it") }
-                        this@with.objCMethodArgValue("bridge") ?.let { append("#$it") }
-                    }
+                if (this@functionName is IrSimpleFunction && this@functionName.hasObjCMethodAnnotation()) {
+                    this@functionName.objCMethodArgValue("selector") ?.let { append("#$it") }
+                    this@functionName.objCMethodArgValue("bridge") ?.let { append("#$it") }
                 }
             }
-
-            val name = this.name.mangleIfInternal(this.module, this.visibility)
-
-            return "$name$signature"
         }
+
+        val name = this.name.mangleIfInternal(this.module, this.visibility)
+
+        return "$name$signature"
     }
 
 private fun Name.mangleIfInternal(moduleDescriptor: ModuleDescriptor, visibility: Visibility): String =
@@ -260,14 +257,13 @@ internal val IrField.symbolName: String
 
 // TODO: bring here dependencies of this method?
 internal fun RuntimeAware.getLlvmFunctionType(function: IrFunction): LLVMTypeRef {
-    val original = function.original
     val returnType = when {
-        original is IrConstructor -> voidType
-        original.isSuspend -> kObjHeaderPtr                // Suspend functions return Any?.
-        else -> getLLVMReturnType(original.returnType)
+        function is IrConstructor -> voidType
+        function.isSuspend -> kObjHeaderPtr                // Suspend functions return Any?.
+        else -> getLLVMReturnType(function.returnType)
     }
-    val paramTypes = ArrayList(original.allParameters.map { getLLVMType(it.type) })
-    if (original.isSuspend)
+    val paramTypes = ArrayList(function.allParameters.map { getLLVMType(it.type) })
+    if (function.isSuspend)
         paramTypes.add(kObjHeaderPtr)                       // Suspend functions have implicit parameter of type Continuation<>.
     if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
 

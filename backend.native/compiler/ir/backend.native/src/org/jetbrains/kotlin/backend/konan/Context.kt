@@ -123,12 +123,12 @@ internal class SpecialDeclarationsFactory(val context: Context) {
         return ordinals.getOrPut(enumClassDescriptor) { assignOrdinalsToEnumEntries(enumClassDescriptor) }[entryDescriptor]!!
     }
 
-    fun getBridge(overriddenFunctionDescriptor: OverriddenFunctionDescriptor): IrSimpleFunction {
-        val irFunction = overriddenFunctionDescriptor.descriptor
-        assert(overriddenFunctionDescriptor.needBridge) {
-            "Function ${irFunction.descriptor} is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor.descriptor}"
+    fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {
+        val irFunction = overriddenFunction.function
+        assert(overriddenFunction.needBridge) {
+            "Function ${irFunction.descriptor} is not needed in a bridge to call overridden function ${overriddenFunction.overriddenFunction.descriptor}"
         }
-        val bridgeDirections = overriddenFunctionDescriptor.bridgeDirections
+        val bridgeDirections = overriddenFunction.bridgeDirections
         return bridgesDescriptors.getOrPut(irFunction to bridgeDirections) {
             createBridge(irFunction, bridgeDirections)
         }

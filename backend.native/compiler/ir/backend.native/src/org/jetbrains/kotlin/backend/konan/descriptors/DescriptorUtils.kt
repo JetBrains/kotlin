@@ -127,7 +127,7 @@ internal fun IrFunction.needBridgeTo(target: IrFunction)
         = (0..this.valueParameters.size + 2).any { needBridgeToAt(target, it) }
 
 internal val IrSimpleFunction.target: IrSimpleFunction
-    get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
+    get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride())
 
 internal val IrFunction.target: IrFunction
     get() = when (this) {
@@ -181,7 +181,7 @@ internal class BridgeDirections(val array: Array<BridgeDirection>) {
     }
 }
 
-val IrSimpleFunction.allOverriddenDescriptors: Set<IrSimpleFunction>
+val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
     get() {
         val result = mutableSetOf<IrSimpleFunction>()
 
@@ -214,13 +214,13 @@ internal fun IrSimpleFunction.bridgeDirectionsTo(
     return ourDirections
 }
 
-tailrec internal fun IrDeclaration.findPackage(): IrPackageFragment {
+internal tailrec fun IrDeclaration.findPackage(): IrPackageFragment {
     val parent = this.parent
     return parent as? IrPackageFragment
             ?: (parent as IrDeclaration).findPackage()
 }
 
-fun IrFunction.isComparisonDescriptor(map: Map<SimpleType, IrSimpleFunction>): Boolean =
+fun IrFunction.isComparisonFunction(map: Map<SimpleType, IrSimpleFunction>): Boolean =
         this in map.values
 
 val IrDeclaration.isPropertyAccessor get() =
