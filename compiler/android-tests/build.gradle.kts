@@ -34,7 +34,7 @@ sourceSets {
 }
 
 projectTest {
-    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    dependsOn(":dist")
     doFirst {
         environment("kotlin.tests.android.timeout", "45")
     }

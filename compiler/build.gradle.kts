@@ -85,7 +85,7 @@ jar.from("../idea/resources") {
 }
 
 projectTest {
-    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     systemProperty("kotlin.suppress.expected.test.failures", project.findProperty("kotlin.suppress.expected.test.failures") ?: false)
