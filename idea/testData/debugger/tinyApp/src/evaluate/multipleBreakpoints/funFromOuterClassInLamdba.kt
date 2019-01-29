@@ -23,7 +23,7 @@ class Outer {
             // outer isn't captured in lambda
             lambda {
                 // EXPRESSION: foo() + 2
-                // RESULT: java.lang.AssertionError : Cannot find local variable: name = 'this@Outer', type = funFromOuterClassInLamdba.Outer
+                // RESULT: 'this@Outer' is not captured
                 //Breakpoint!
                 val a = 1
             }

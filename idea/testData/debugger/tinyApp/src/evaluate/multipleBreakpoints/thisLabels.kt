@@ -7,7 +7,7 @@ fun main() {
             //Breakpoint!
             block(3) c@ {
                 //Breakpoint!
-                val a = 5
+                val a = this@a + this@b + this@c
             }
         }
     }
@@ -28,4 +28,4 @@ fun <T> T.inlineBlock(t: T, block: T.() -> Unit) {
 // RESULT: 2: I
 
 // EXPRESSION: this + this@a + this@b + this@c
-// RESULT: 12: I
+// RESULT: 9: I

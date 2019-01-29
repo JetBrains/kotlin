@@ -22,7 +22,6 @@ import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
-import com.intellij.debugger.ui.impl.watch.NodeDescriptorImpl
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
@@ -35,9 +34,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.concurrency.Semaphore
-import com.intellij.xdebugger.XDebuggerManager
-import com.intellij.xdebugger.impl.XDebugSessionImpl
-import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
 import com.sun.jdi.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.jdi.asValue
@@ -55,7 +51,6 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -63,27 +58,15 @@ import java.util.concurrent.atomic.AtomicReference
 
 class KotlinCodeFragmentFactory : CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
-        val contextElement = getWrappedContextElement(project, context)
-        if (contextElement == null) {
-            LOG.warn("CodeFragment with null context created:\noriginalContext = ${context?.getElementTextWithContext()}")
+        val contextElement = getContextElement(context)
+
+        val constructor = when (item.kind) {
+            null -> error("Code fragment kind should be set")
+            CodeFragmentKind.EXPRESSION -> ::KtExpressionCodeFragment
+            CodeFragmentKind.CODE_BLOCK -> ::KtBlockCodeFragment
         }
-        val codeFragment = if (item.kind == CodeFragmentKind.EXPRESSION) {
-            KtExpressionCodeFragment(
-                project,
-                "fragment.kt",
-                item.text,
-                initImports(item.imports),
-                contextElement
-            )
-        } else {
-            KtBlockCodeFragment(
-                project,
-                "fragment.kt",
-                item.text,
-                initImports(item.imports),
-                contextElement
-            )
-        }
+
+        val codeFragment = constructor(project, "fragment.kt", item.text, initImports(item.imports), contextElement)
 
         codeFragment.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, { expression: KtExpression ->
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
@@ -135,19 +118,19 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                 }
 
                 val receiverTypeReference =
-                    frameDescriptor.thisObject?.let { createKotlinProperty(project, "this_0", it.type().name(), it) }?.typeReference
+                    frameDescriptor.thisObject?.let { createKotlinProperty(project, FAKE_JAVA_THIS_NAME, it.type().name(), it) }?.typeReference
                 val receiverTypeText = receiverTypeReference?.let { "${it.text}." } ?: ""
 
                 val kotlinVariablesText =
                     frameDescriptor.visibleVariables.entries.associate { it.key.name() to it.value }.kotlinVariablesAsText(project)
 
-                val fakeFunctionText = "fun ${receiverTypeText}_java_locals_debug_fun_() {\n$kotlinVariablesText\n}"
+                val fakeFunctionText = "fun ${receiverTypeText}$FAKE_JAVA_CONTEXT_FUNCTION_NAME() {\n$kotlinVariablesText\n}"
 
                 val fakeFile = createFakeFileWithJavaContextElement(fakeFunctionText, contextElement)
                 val fakeFunction = fakeFile.declarations.firstOrNull() as? KtFunction
                 val fakeContext = fakeFunction?.bodyBlockExpression?.statements?.lastOrNull()
 
-                return@putCopyableUserData wrapContextIfNeeded(project, contextElement, fakeContext) ?: emptyFile
+                return@putCopyableUserData fakeContext ?: emptyFile
             })
         }
 
@@ -219,12 +202,6 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         return import
     }
 
-    private fun getWrappedContextElement(project: Project, context: PsiElement?): PsiElement? {
-        val newContext = getContextElement(context)
-        if (newContext !is KtElement) return newContext
-        return wrapContextIfNeeded(project, context, newContext)
-    }
-
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         val kotlinCodeFragment = createCodeFragment(item, context, project)
         if (PsiTreeUtil.hasErrorElements(kotlinCodeFragment) && kotlinCodeFragment is KtExpressionCodeFragment) {
@@ -292,12 +269,11 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
     companion object {
         private val LOG = Logger.getInstance(this::class.java)
 
-        val LABEL_VARIABLE_VALUE_KEY: Key<Value> = Key.create<Value>("_label_variable_value_key_")
-
-        private const val DEBUG_LABEL_SUFFIX: String = "_DebugLabel"
-
         @TestOnly
         val DEBUG_CONTEXT_FOR_TESTS: Key<DebuggerContextImpl> = Key.create("DEBUG_CONTEXT_FOR_TESTS")
+
+        const val FAKE_JAVA_CONTEXT_FUNCTION_NAME = "_java_locals_debug_fun_"
+        const val FAKE_JAVA_THIS_NAME = "\$this\$_java_locals_debug_fun_"
 
         fun getContextElement(elementAt: PsiElement?): PsiElement? {
             if (elementAt == null) return null
@@ -333,17 +309,6 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                 ?.let { return it }
 
             return containingFile
-        }
-
-        //internal for tests
-        fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
-            @Suppress("UNCHECKED_CAST")
-            val variables = markupMap.entries.associate {
-                val (value, markup) = it
-                "${markup.text}$DEBUG_LABEL_SUFFIX" to value as? Value
-            }.filterValues { it != null } as Map<String, Value>
-
-            return variables.kotlinVariablesAsText(project) to variables
         }
 
         private fun Map<String, Value>.kotlinVariablesAsText(project: Project): String {
@@ -389,21 +354,6 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         }
     }
 
-    private fun wrapContextIfNeeded(project: Project, originalContext: PsiElement?, newContext: KtElement?): KtElement? {
-        val markupMap: Map<*, ValueMarkup>? =
-            if (ApplicationManager.getApplication().isUnitTestMode)
-                NodeDescriptorImpl.getMarkupMap(originalContext?.getCopyableUserData(DEBUG_CONTEXT_FOR_TESTS)?.debugProcess)
-            else
-                (XDebuggerManager.getInstance(project).currentSession as? XDebugSessionImpl)?.valueMarkers?.allMarkers
-
-        if (markupMap == null || markupMap.isEmpty()) return newContext
-
-        val (text, labels) = createCodeFragmentForLabeledObjects(project, markupMap)
-        if (text.isEmpty()) return newContext
-
-        return createWrappingContext(text, labels, newContext, project)
-    }
-
     private fun createFakeFileWithJavaContextElement(funWithLocalVariables: String, javaContext: PsiElement): KtFile {
         val javaFile = javaContext.containingFile as? PsiJavaFile
 
@@ -418,26 +368,5 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         sb.append(funWithLocalVariables)
 
         return KtPsiFactory(javaContext.project).createAnalyzableFile("fakeFileForJavaContextInDebugger.kt", sb.toString(), javaContext)
-    }
-
-    // internal for test
-    private fun createWrappingContext(
-        newFragmentText: String,
-        labels: Map<String, Value>,
-        originalContext: KtElement?,
-        project: Project
-    ): KtElement? {
-        val codeFragment = KtPsiFactory(project).createBlockCodeFragment(newFragmentText, originalContext)
-
-        codeFragment.accept(object : KtTreeVisitorVoid() {
-            override fun visitProperty(property: KtProperty) {
-                val reference = labels[property.name]
-                if (reference != null) {
-                    property.putUserData(LABEL_VARIABLE_VALUE_KEY, reference)
-                }
-            }
-        })
-
-        return codeFragment.getContentElement().statements.lastOrNull()
     }
 }

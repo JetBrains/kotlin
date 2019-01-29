@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
@@ -98,30 +95,40 @@ public class PackageCodegenImpl implements PackageCodegen {
         Type fileClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFileClassFqName());
         PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, fileClassType, file);
 
-        List<KtClassOrObject> classOrObjects = new ArrayList<>();
+        if (file instanceof KtCodeFragment) {
+            // Avoid generating light classes for code fragments
+            if (state.getClassBuilderMode().generateBodies
+                && state.getGenerateDeclaredClassFilter().shouldGenerateCodeFragment((KtCodeFragment) file)
+            ) {
+                CodeFragmentCodegen.createCodegen((KtCodeFragment) file, state, packagePartContext).generate();
+            }
+        } else {
+            List<KtClassOrObject> classOrObjects = new ArrayList<>();
 
-        for (KtDeclaration declaration : file.getDeclarations()) {
-            if (declaration instanceof KtClassOrObject) {
-                ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, declaration);
-                if (PsiUtilsKt.hasExpectModifier(declaration) &&
-                    (descriptor == null || !ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))) {
-                    continue;
+            for (KtDeclaration declaration : file.getDeclarations()) {
+                if (declaration instanceof KtClassOrObject) {
+                    ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, declaration);
+                    if (PsiUtilsKt.hasExpectModifier(declaration) &&
+                        (descriptor == null || !ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))) {
+                        continue;
+                    }
+
+                    KtClassOrObject classOrObject = (KtClassOrObject) declaration;
+                    if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
+                        classOrObjects.add(classOrObject);
+                    }
                 }
+                else if (declaration instanceof KtScript) {
+                    KtScript script = (KtScript) declaration;
 
-                KtClassOrObject classOrObject = (KtClassOrObject) declaration;
-                if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
-                    classOrObjects.add(classOrObject);
+                    if (state.getGenerateDeclaredClassFilter().shouldGenerateScript(script)) {
+                        ScriptCodegen.createScriptCodegen(script, state, packagePartContext).generate();
+                    }
                 }
             }
-            else if (declaration instanceof KtScript) {
-                KtScript script = (KtScript) declaration;
 
-                if (state.getGenerateDeclaredClassFilter().shouldGenerateScript(script)) {
-                    ScriptCodegen.createScriptCodegen(script, state, packagePartContext).generate();
-                }
-            }
+            generateClassesAndObjectsInFile(classOrObjects, packagePartContext);
         }
-        generateClassesAndObjectsInFile(classOrObjects, packagePartContext);
 
         if (!state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
 

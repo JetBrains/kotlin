@@ -457,14 +457,12 @@ class ResolveElementCache(
     }
 
     private fun codeFragmentAdditionalResolve(codeFragment: KtCodeFragment, bodyResolveMode: BodyResolveMode): BindingTrace {
-        val trace = createDelegatingTrace(codeFragment, bodyResolveMode.bindingTraceFilter)
-
         val contextResolveMode = if (bodyResolveMode == BodyResolveMode.PARTIAL)
             BodyResolveMode.PARTIAL_FOR_COMPLETION
         else
             bodyResolveMode
 
-        return codeFragmentAnalyzer.analyzeCodeFragment(codeFragment, trace, contextResolveMode)
+        return codeFragmentAnalyzer.analyzeCodeFragment(codeFragment, contextResolveMode)
     }
 
     private fun annotationAdditionalResolve(resolveSession: ResolveSession, ktAnnotationEntry: KtAnnotationEntry): BindingTrace {

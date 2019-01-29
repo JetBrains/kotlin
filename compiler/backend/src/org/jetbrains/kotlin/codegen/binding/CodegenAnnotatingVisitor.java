@@ -222,7 +222,15 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @Override
     public void visitKtFile(@NotNull KtFile file) {
-        nameStack.push(AsmUtil.internalNameByFqNameWithoutInnerClasses(file.getPackageFqName()));
+        String name;
+        if (file instanceof KtCodeFragment) {
+            CodeFragmentCodegenInfo info = CodeFragmentCodegen.getCodeFragmentInfo((KtCodeFragment) file);
+            name = info.getClassDescriptor().getName().asString() + "$" + info.getMethodDescriptor().getName().asString();
+        } else {
+            name = AsmUtil.internalNameByFqNameWithoutInnerClasses(file.getPackageFqName());
+        }
+
+        nameStack.push(name);
         visitKtElement(file);
         nameStack.pop();
     }

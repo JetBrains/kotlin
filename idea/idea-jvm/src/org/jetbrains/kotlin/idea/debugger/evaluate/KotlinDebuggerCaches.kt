@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.evaluation.EvaluateException
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.LibraryUtil
@@ -29,35 +28,31 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.MultiMap
-import org.apache.log4j.Logger
 import org.jetbrains.annotations.TestOnly
+import org.apache.log4j.Logger
 import org.jetbrains.eval4j.Value
-import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
 import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
 import org.jetbrains.kotlin.idea.debugger.createWeakBytecodeDebugInfoStorage
-import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class KotlinDebuggerCaches(project: Project) {
-
     private val cachedCompiledData = CachedValuesManager.getManager(project).createCachedValue(
         {
             CachedValueProvider.Result<MultiMap<String, CompiledDataDescriptor>>(
@@ -98,37 +93,39 @@ class KotlinDebuggerCaches(project: Project) {
 
         fun getInstance(project: Project) = ServiceManager.getService(project, KotlinDebuggerCaches::class.java)!!
 
-        fun getOrCreateCompiledData(
+        fun compileCodeFragmentCacheAware(
             codeFragment: KtCodeFragment,
             sourcePosition: SourcePosition,
-            evaluationContext: EvaluationContextImpl,
-            create: (KtCodeFragment, SourcePosition) -> CompiledDataDescriptor
-        ): CompiledDataDescriptor {
+            compileCode: () -> CompiledDataDescriptor,
+            force: Boolean = false
+        ): Pair<CompiledDataDescriptor, Boolean> {
             val evaluateExpressionCache = getInstance(codeFragment.project)
 
             val text = "${codeFragment.importsToString()}\n${codeFragment.text}"
 
-            val cached = synchronized<Collection<CompiledDataDescriptor>>(evaluateExpressionCache.cachedCompiledData) {
-                val cache = evaluateExpressionCache.cachedCompiledData.value!!
-
-                cache[text]
+            val cachedResults = synchronized<Collection<CompiledDataDescriptor>>(evaluateExpressionCache.cachedCompiledData) {
+                evaluateExpressionCache.cachedCompiledData.value[text]
             }
 
-            val answer = cached.firstOrNull {
-                it.sourcePosition == sourcePosition || evaluateExpressionCache.canBeEvaluatedInThisContext(it, evaluationContext)
-            }
-            if (answer != null) {
-                return answer
+            val existingResult = cachedResults.firstOrNull { it.sourcePosition == sourcePosition }
+            if (existingResult != null) {
+                if (force) {
+                    synchronized(evaluateExpressionCache.cachedCompiledData) {
+                        evaluateExpressionCache.cachedCompiledData.value.remove(text, existingResult)
+                    }
+                } else {
+                    return Pair(existingResult, true)
+                }
             }
 
-            val newCompiledData = create(codeFragment, sourcePosition)
+            val newCompiledData = compileCode()
             LOG.debug("Compile bytecode for ${codeFragment.text}")
 
             synchronized(evaluateExpressionCache.cachedCompiledData) {
                 evaluateExpressionCache.cachedCompiledData.value.putValue(text, newCompiledData)
             }
 
-            return newCompiledData
+            return Pair(newCompiledData, false)
         }
 
         fun <T : PsiElement> getOrComputeClassNames(psiElement: T?, create: (T) -> ComputedClassNames): List<String> {
@@ -214,32 +211,6 @@ class KotlinDebuggerCaches(project: Project) {
             getInstance(file.project).cachedTypeMappers.value[file] = typeMapper
         }
     }
-
-    private fun canBeEvaluatedInThisContext(compiledData: CompiledDataDescriptor, context: EvaluationContextImpl): Boolean {
-        val variableFinder = VariableFinder.instance(context) ?: return false
-
-        return compiledData.parameters.all { p ->
-            val (name, jetType) = p
-            val lookupResult = variableFinder.find(name, null) ?: return@all false
-            val value = lookupResult.value.asValue()
-
-            val thisDescriptor = value.asmType.getClassDescriptor(context.debugProcess.searchScope)
-            val superClassDescriptor = jetType.constructor.declarationDescriptor as? ClassDescriptor
-            return@all thisDescriptor != null && superClassDescriptor != null && runReadAction {
-                DescriptorUtils.isSubclass(
-                    thisDescriptor,
-                    superClassDescriptor
-                )
-            }
-        }
-    }
-
-    data class CompiledDataDescriptor(
-        val classes: List<ClassToLoad>,
-        val sourcePosition: SourcePosition,
-        val parameters: List<Parameter>,
-        val variablesCrossingInlineBounds: Set<String>
-    )
 
     data class Parameter(val callText: String, val type: KotlinType, val value: Value? = null, val error: EvaluateException? = null)
 

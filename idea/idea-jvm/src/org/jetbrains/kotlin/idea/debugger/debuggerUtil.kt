@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousCl
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmTypes
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 import java.util.*
@@ -239,15 +237,6 @@ fun findCallByEndToken(element: PsiElement): KtCallExpression? {
         }
         else -> null
     }
-}
-
-fun PropertyDescriptor.getBackingFieldName(): String? {
-    if (backingField == null) {
-        return null
-    }
-
-    val jvmNameAnnotation = DescriptorUtils.findJvmNameAnnotation(this) ?: return name.asString()
-    return jvmNameAnnotation.allValueArguments.values.singleOrNull()?.toString()
 }
 
 fun Type.isSubtype(className: String): Boolean = isSubtype(AsmType.getObjectType(className))

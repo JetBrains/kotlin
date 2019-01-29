@@ -46,10 +46,7 @@ import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import java.io.File
@@ -143,6 +140,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject) = true
             override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = processingClassOrObject.containingKtFile == psiFile
             override fun shouldGenerateScript(script: KtScript) = false
+            override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
         }
 
         val state = GenerationState.Builder(

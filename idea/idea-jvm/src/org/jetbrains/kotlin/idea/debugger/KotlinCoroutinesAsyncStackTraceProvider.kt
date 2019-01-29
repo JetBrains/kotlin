@@ -20,7 +20,7 @@ import com.intellij.xdebugger.frame.XNamedValue
 import com.sun.jdi.*
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
 import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
-import org.jetbrains.kotlin.idea.debugger.evaluate.VariableFinder.Companion.SUSPEND_LAMBDA_CLASSES
+import org.jetbrains.kotlin.idea.debugger.evaluate.variables.VariableFinder.Companion.SUSPEND_LAMBDA_CLASSES
 import org.jetbrains.kotlin.idea.debugger.evaluate.getInvokePolicy
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.evaluation.AbsentInformationEvaluateException
+import com.intellij.debugger.engine.evaluation.EvaluateException
+import com.intellij.debugger.engine.jdi.StackFrameProxy
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
@@ -41,6 +43,14 @@ fun Method.safeVariables(): List<LocalVariable>? {
 
 fun Method.safeArguments(): List<LocalVariable>? {
     return wrapAbsentInformationException { arguments() }
+}
+
+fun StackFrameProxy.safeLocation(): Location? {
+    return try {
+        this.location()
+    } catch (e: EvaluateException) {
+        null
+    }
 }
 
 fun Location.safeSourceName(): String? {

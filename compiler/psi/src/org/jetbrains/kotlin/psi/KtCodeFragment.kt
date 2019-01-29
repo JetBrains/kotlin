@@ -199,3 +199,5 @@ abstract class KtCodeFragment(
         private val LOG = Logger.getInstance(KtCodeFragment::class.java)
     }
 }
+
+var KtCodeFragment.externalDescriptors: List<DeclarationDescriptor>? by CopyablePsiUserDataProperty(Key.create("EXTERNAL_DESCRIPTORS"))

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -242,8 +243,20 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isDebuggerContext(@NotNull CodegenContext context) {
-        KtFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
-        return file != null && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode(file);
+        PsiFile file = null;
+
+        DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
+        if (contextDescriptor instanceof DeclarationDescriptorWithSource) {
+            SourceElement sourceElement = ((DeclarationDescriptorWithSource) contextDescriptor).getSource();
+            if (sourceElement instanceof PsiSourceElement) {
+                PsiElement psi = ((PsiSourceElement) sourceElement).getPsi();
+                if (psi != null) {
+                    file = psi.getContainingFile();
+                }
+            }
+        }
+
+        return file instanceof KtFile && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode((KtFile) file);
     }
 
     @Nullable

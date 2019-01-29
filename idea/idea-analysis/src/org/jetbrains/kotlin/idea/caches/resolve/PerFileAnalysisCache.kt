@@ -176,7 +176,9 @@ private object KotlinResolveDataProvider {
     ): AnalysisResult {
         try {
             if (analyzableElement is KtCodeFragment) {
-                return AnalysisResult.success(analyzeExpressionCodeFragment(codeFragmentAnalyzer, analyzableElement), moduleDescriptor)
+                val bodyResolveMode = BodyResolveMode.PARTIAL_FOR_COMPLETION
+                val bindingContext = codeFragmentAnalyzer.analyzeCodeFragment(analyzableElement, bodyResolveMode).bindingContext
+                return AnalysisResult.success(bindingContext, moduleDescriptor)
             }
 
             val trace = DelegatingBindingTrace(
@@ -216,20 +218,5 @@ private object KotlinResolveDataProvider {
 
             return AnalysisResult.internalError(BindingContext.EMPTY, e)
         }
-    }
-
-    private fun analyzeExpressionCodeFragment(codeFragmentAnalyzer: CodeFragmentAnalyzer, codeFragment: KtCodeFragment): BindingContext {
-        val contextElement = codeFragment.getContentElement()
-        val trace = if (contextElement != null) {
-            DelegatingBindingTrace(contextElement.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION), "Trace for code fragment resolution")
-        } else {
-            BindingTraceContext()
-        }
-
-        return codeFragmentAnalyzer.analyzeCodeFragment(
-            codeFragment,
-            trace,
-            BodyResolveMode.PARTIAL_FOR_COMPLETION //TODO: discuss it
-        ).bindingContext
     }
 }

@@ -6,7 +6,7 @@ Compile bytecode for prop += 1
 prop2 +=2
 prop + prop2
 
-// RESULT: instance of kotlin.Triple(id=ID): Lkotlin/Triple;
+// RESULT: 6: I
 Disconnected from the target VM
 
 Process finished with exit code 0

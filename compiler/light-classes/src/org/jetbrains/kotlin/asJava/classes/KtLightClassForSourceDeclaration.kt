@@ -337,6 +337,12 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             }
 
         fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
+            val containingFile = classOrObject.containingFile
+            if (containingFile is KtCodeFragment) {
+                // Avoid building light classes for code fragments
+                return null
+            }
+
             if (classOrObject.shouldNotBeVisibleAsLightClass()) {
                 return null
             }

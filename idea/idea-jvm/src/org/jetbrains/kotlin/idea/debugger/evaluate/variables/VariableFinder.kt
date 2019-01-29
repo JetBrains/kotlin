@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.debugger.evaluate
+package org.jetbrains.kotlin.idea.debugger.evaluate.variables
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
@@ -17,24 +17,26 @@ import org.jetbrains.kotlin.codegen.AsmUtil.getLabeledThisName
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.INLINE_TRANSFORMATION_SUFFIX
-import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
-import org.jetbrains.kotlin.codegen.topLevelClassAsmType
 import org.jetbrains.kotlin.idea.debugger.*
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.*
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.DebugLabelPropertyDescriptorProvider
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
-import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_3_FQ_NAME
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT
 import org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import kotlin.coroutines.Continuation
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 import com.sun.jdi.Type as JdiType
 
-class VariableFinder private constructor(private val context: EvaluationContextImpl, private val frameProxy: StackFrameProxyImpl) {
+class VariableFinder private constructor(private val context: ExecutionContext, private val frameProxy: StackFrameProxyImpl) {
     companion object {
-        private val COROUTINE_CONTEXT_SIMPLE_NAME = COROUTINE_CONTEXT_1_3_FQ_NAME.shortName().asString()
+        private const val USE_UNSAFE_FALLBACK = true
+
         val CONTINUATION_TYPE: AsmType = AsmType.getType(Continuation::class.java)
 
         val SUSPEND_LAMBDA_CLASSES = listOf(
@@ -42,18 +44,14 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             "kotlin.coroutines.jvm.internal.RestrictedSuspendLambda"
         )
 
-        fun instance(context: EvaluationContextImpl): VariableFinder? {
-            val frameProxy = context.frameProxy ?: return null
+        fun instance(context: ExecutionContext): VariableFinder? {
+            val frameProxy = context.evaluationContext.frameProxy ?: return null
             return VariableFinder(context, frameProxy)
-        }
-
-        fun unwrapRefValue(value: ObjectReference): Value? {
-            return NamedEntity("<nameForUnwrapOnly>", value.type()) { value }.unwrap().value()
         }
 
         fun variableNotFound(context: EvaluationContextImpl, message: String): Exception {
             val frameProxy = context.frameProxy
-            val location = frameProxy?.location()
+            val location = frameProxy?.safeLocation()
             val scope = context.debugProcess.searchScope
 
             val locationText = location?.run { "Location: ${sourceName()}:${lineNumber()}" } ?: "No location available"
@@ -98,12 +96,10 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             return Regex("^$escapedName(?:$escapedSuffix)*$")
         }
 
-        private fun AsmType.isFunctionType(): Boolean {
-            return sort == AsmType.OBJECT && internalName.startsWith(NUMBERED_FUNCTION_PREFIX)
-        }
-
         fun getInlineDepth(variables: List<LocalVariableProxyImpl>): Int {
-            val inlineFunVariables = variables.filter { it.name().startsWith(LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
+            val inlineFunVariables = variables
+                .filter { it.name().startsWith(LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
+
             if (inlineFunVariables.isEmpty()) {
                 return 0
             }
@@ -133,45 +129,42 @@ class VariableFinder private constructor(private val context: EvaluationContextI
         }
     }
 
-    sealed class VariableKind(val type: AsmType?) {
+    private val evaluatorValueConverter = EvaluatorValueConverter(context)
+
+    sealed class VariableKind(val asmType: AsmType) {
         abstract fun capturedNameMatches(name: String): Boolean
 
-        class Ordinary(val name: String, type: AsmType?) : VariableKind(type) {
+        class Ordinary(val name: String, asmType: AsmType) : VariableKind(asmType) {
             private val capturedNameRegex = getCapturedVariableNameRegex(getCapturedFieldName(this.name))
             override fun capturedNameMatches(name: String) = capturedNameRegex.matches(name)
         }
 
-        class UnlabeledThis(type: AsmType?) : VariableKind(type) {
+        // TODO Support overloaded local functions
+        class LocalFunction(val name: String, asmType: AsmType) : VariableKind(asmType) {
+            @Suppress("ConvertToStringTemplate")
+            override fun capturedNameMatches(name: String) = name == "$" + name
+        }
+
+        class UnlabeledThis(asmType: AsmType) : VariableKind(asmType) {
             override fun capturedNameMatches(name: String) =
-                (name == AsmUtil.CAPTURED_RECEIVER_FIELD || name.startsWith(AsmUtil.getCapturedFieldName(AsmUtil.LABELED_THIS_FIELD)))
+                (name == AsmUtil.CAPTURED_RECEIVER_FIELD || name.startsWith(getCapturedFieldName(AsmUtil.LABELED_THIS_FIELD)))
         }
 
-        class LabeledThis(val label: String, type: AsmType?) : VariableKind(type) {
-            private val capturedNameRegex = getCapturedVariableNameRegex(
-                getCapturedFieldName(getLabeledThisName(label, AsmUtil.LABELED_THIS_FIELD, AsmUtil.CAPTURED_RECEIVER_FIELD))
-            )
+        class OuterClassThis(asmType: AsmType) : VariableKind(asmType) {
+            override fun capturedNameMatches(name: String) = false
+        }
 
+        class FieldVar(val fieldName: String, asmType: AsmType) : VariableKind(asmType) {
+            // Captured 'field' are not supported yet
+            override fun capturedNameMatches(name: String) = false
+        }
+
+        class ExtensionThis(val label: String, asmType: AsmType) : VariableKind(asmType) {
+            val parameterName = getLabeledThisName(label, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
+            val fieldName = getLabeledThisName(label, getCapturedFieldName(AsmUtil.LABELED_THIS_FIELD), AsmUtil.CAPTURED_RECEIVER_FIELD)
+
+            private val capturedNameRegex = getCapturedVariableNameRegex(fieldName)
             override fun capturedNameMatches(name: String) = capturedNameRegex.matches(name)
-        }
-
-        fun typeMatches(type: JdiType?): Boolean {
-            if (type == null) return true
-            val asmType = this.type ?: return true
-
-            // Main path
-            if (asmType.descriptor == "Ljava/lang/Object;" || type.isSubtype(asmType)) {
-                return true
-            }
-
-            // The latter is for boxing interventions
-            fun box(desc: String) = JvmPrimitiveType.getByDesc(desc)?.wrapperFqName?.topLevelClassAsmType()?.descriptor
-
-            val asmTypeDescriptor = asmType.descriptor
-            val jdiTypeDescriptor = type.signature()
-
-            val boxedAsmType = box(asmTypeDescriptor) ?: asmTypeDescriptor
-            val boxedJdiType = box(jdiTypeDescriptor) ?: jdiTypeDescriptor
-            return boxedAsmType == boxedJdiType
         }
     }
 
@@ -180,36 +173,25 @@ class VariableFinder private constructor(private val context: EvaluationContextI
     private class NamedEntity(val name: String, val type: JdiType?, val value: () -> Value?) {
         companion object {
             fun of(field: Field, owner: ObjectReference): NamedEntity {
-                return NamedEntity(field.name(), field.safeType()) { owner.getValue(field) }.unwrap()
+                return NamedEntity(field.name(), field.safeType()) { owner.getValue(field) }
             }
 
             fun of(variable: LocalVariableProxyImpl, frameProxy: StackFrameProxyImpl): NamedEntity {
-                return NamedEntity(variable.name(), variable.safeType()) { frameProxy.getValue(variable) }.unwrap()
+                return NamedEntity(variable.name(), variable.safeType()) { frameProxy.getValue(variable) }
             }
-        }
-
-        fun unwrap(): NamedEntity {
-            if (type !is ClassType || !type.signature().startsWith("L" + AsmTypes.REF_TYPE_PREFIX)) {
-                return this
-            }
-
-            val obj = this.value() as? ObjectReference ?: return this
-            val field = type.fieldByName("element") ?: return this
-
-            val unwrappedValue = obj.getValue(field)
-            val unwrappedType = if (field.type() is PrimitiveType) field.type() else unwrappedValue?.type()
-            return NamedEntity(name, unwrappedType) { unwrappedValue }
         }
     }
 
-    fun find(name: String, type: AsmType?): Result? {
-        return when {
-            name.startsWith(AsmUtil.THIS + "@") -> {
-                val label = name.drop(AsmUtil.THIS.length + 1).also { require(it.isNotEmpty()) { "Invalid name '$name'" } }
-                findLabeledThis(VariableKind.LabeledThis(label, type))
-            }
-            name == AsmUtil.THIS -> findUnlabeledThis(VariableKind.UnlabeledThis(type))
-            else -> findOrdinary(VariableKind.Ordinary(name, type))
+    fun find(parameter: CodeFragmentParameter, asmType: AsmType): Result? {
+        return when (parameter.kind) {
+            Kind.ORDINARY -> findOrdinary(VariableKind.Ordinary(parameter.name, asmType))
+            Kind.FAKE_JAVA_OUTER_CLASS -> frameProxy.thisObject()?.let { Result(it) }
+            Kind.EXTENSION_RECEIVER -> findExtensionThis(VariableKind.ExtensionThis(parameter.name, asmType))
+            Kind.LOCAL_FUNCTION -> findLocalFunction(VariableKind.LocalFunction(parameter.name, asmType))
+            Kind.DISPATCH_RECEIVER -> findDispatchThis(VariableKind.OuterClassThis(asmType))
+            Kind.COROUTINE_CONTEXT -> findCoroutineContext()
+            Kind.FIELD_VAR -> findFieldVariable(VariableKind.FieldVar(parameter.name, asmType))
+            Kind.DEBUG_LABEL -> findDebugLabel(parameter.name)
         }
     }
 
@@ -227,11 +209,35 @@ class VariableFinder private constructor(private val context: EvaluationContextI
         return findCapturedVariable(kind, containingThis)
     }
 
-    private fun findLabeledThis(kind: VariableKind.LabeledThis): Result? {
+    private fun findFieldVariable(kind: VariableKind.FieldVar): Result? {
+        val thisObject = frameProxy.thisObject() ?: return null
+        val field = thisObject.referenceType().fieldByName(kind.fieldName) ?: return null
+        return Result(thisObject.getValue(field))
+    }
+
+    private fun findLocalFunction(kind: VariableKind.LocalFunction): Result? {
+        val variables = frameProxy.safeVisibleVariables()
+        
+        // Local variables – direct search, new convention
+        val newConventionName = AsmUtil.LOCAL_FUNCTION_VARIABLE_PREFIX + kind.name
+        findLocalVariable(variables, kind, newConventionName)?.let { return it }
+
+        // Local variables – direct search, old convention (before 1.3.30)
+        findLocalVariable(variables, kind, kind.name + "$")?.let { return it }
+        
+        // Recursive search in local receiver variables
+        findCapturedVariableInReceiver(variables, kind)?.let { return it }
+
+        // Recursive search in captured this
+        val containingThis = frameProxy.thisObject() ?: return null
+        return findCapturedVariable(kind, containingThis)
+    }
+
+    private fun findExtensionThis(kind: VariableKind.ExtensionThis): Result? {
         val variables = frameProxy.safeVisibleVariables()
 
         // Local variables – direct search
-        findLocalVariable(variables, kind, AsmUtil.LABELED_THIS_PARAMETER + kind.label)?.let { return it }
+        findLocalVariable(variables, kind, kind.parameterName)?.let { return it }
 
         // Recursive search in local receiver variables
         findCapturedVariableInReceiver(variables, kind)?.let { return it }
@@ -242,8 +248,56 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             findCapturedVariable(kind, containingThis)?.let { return it }
         }
 
-        // Fallback: find an unlabeled this with the compatible type
-        return findUnlabeledThis(VariableKind.UnlabeledThis(kind.type))
+        @Suppress("ConstantConditionIf")
+        if (USE_UNSAFE_FALLBACK) {
+            // Find an unlabeled this with the compatible type
+            findUnlabeledThis(VariableKind.UnlabeledThis(kind.asmType))?.let { return it }
+        }
+
+        return null
+    }
+
+    private fun findDispatchThis(kind: VariableKind.OuterClassThis): Result? {
+        val containingThis = frameProxy.thisObject()
+        if (containingThis != null) {
+            findCapturedVariable(kind, containingThis)?.let { return it }
+        }
+
+        if (isInsideDefaultImpls()) {
+            val variables = frameProxy.safeVisibleVariables()
+            findLocalVariable(variables, kind, getCapturedFieldName(AsmUtil.THIS))?.let { return it }
+        }
+
+        val variables = frameProxy.safeVisibleVariables()
+        val inlineDepth = getInlineDepth(variables)
+
+        if (inlineDepth > 0) {
+            variables.namedEntitySequence()
+                .filter { it.name.matches(inlinedThisRegex) && getInlineDepth(it.name) == inlineDepth && kind.typeMatches(it.type) }
+                .mapNotNull { it.unwrapAndCheck(kind) }
+                .firstOrNull()
+                ?.let { return it }
+        }
+
+        @Suppress("ConstantConditionIf")
+        if (USE_UNSAFE_FALLBACK) {
+            // Find an unlabeled this with the compatible type
+            findUnlabeledThis(VariableKind.UnlabeledThis(kind.asmType))?.let { return it }
+        }
+
+        return null
+    }
+
+    private fun findDebugLabel(name: String): Result? {
+        val markupMap = DebugLabelPropertyDescriptorProvider.getMarkupMap(context.evaluationContext.debugProcess)
+
+        for ((value, markup) in markupMap) {
+            if (markup.text == name) {
+                return Result(value)
+            }
+        }
+
+        return null
     }
 
     private fun findUnlabeledThis(kind: VariableKind.UnlabeledThis): Result? {
@@ -257,47 +311,35 @@ class VariableFinder private constructor(private val context: EvaluationContextI
     }
 
     private fun findLocalVariable(variables: List<LocalVariableProxyImpl>, kind: VariableKind, name: String): Result? {
+        val inlineDepth = getInlineDepth(variables)
+
+        if (inlineDepth > 0) {
+            val nameInlineAwareRegex = getLocalVariableNameRegexInlineAware(name)
+            variables.namedEntitySequence()
+                .filter { it.name.matches(nameInlineAwareRegex) && getInlineDepth(it.name) == inlineDepth && kind.typeMatches(it.type) }
+                .mapNotNull { it.unwrapAndCheck(kind) }
+                .firstOrNull()
+                ?.let { return it }
+        }
+
         variables.namedEntitySequence()
             .filter { it.name == name && kind.typeMatches(it.type) }
+            .mapNotNull { it.unwrapAndCheck(kind) }
             .firstOrNull()
-            ?.let { return Result(it.value()) }
-
-        val canBeLocalFunction = kind is VariableKind.Ordinary
-
-        if (canBeLocalFunction && kind.type?.isFunctionType() == true) {
-            variables.namedEntitySequence()
-                .filter { isLocalFunctionName(it.name, name) && kind.typeMatches(it.type) }
-                .firstOrNull()
-                ?.let { return Result(it.value()) }
-        }
-
-        val nameInlineAwareRegex = getLocalVariableNameRegexInlineAware(name)
-
-        val inlineDepth = getInlineDepth(variables)
-        variables.namedEntitySequence()
-            .filter { it.name.matches(nameInlineAwareRegex) && getInlineDepth(it.name) == inlineDepth && kind.typeMatches(it.type) }
-            .toList() // Sorted by will make a list anyway
-            .firstOrNull()
-            ?.let { return Result(it.value()) }
-
-        if (name == COROUTINE_CONTEXT_SIMPLE_NAME) {
-            val coroutineContext = findCoroutineContext()?.takeIf { kind.typeMatches(it.type()) }
-            if (coroutineContext != null) {
-                return Result(coroutineContext)
-            }
-        }
+            ?.let { return it }
 
         return null
     }
 
-    private fun isLocalFunctionName(name: String, functionName: String): Boolean {
-        @Suppress("ConvertToStringTemplate")
-        return name == functionName + "$" || name.startsWith(AsmUtil.LOCAL_FUNCTION_VARIABLE_PREFIX + name + "$")
+    private fun isInsideDefaultImpls(): Boolean {
+        val declaringType = frameProxy.safeLocation()?.declaringType() ?: return false
+        return declaringType.name().endsWith(JvmAbi.DEFAULT_IMPLS_SUFFIX)
     }
 
-    private fun findCoroutineContext(): ObjectReference? {
-        val method = frameProxy.location().safeMethod() ?: return null
-        return findCoroutineContextForLambda(method) ?: findCoroutineContextForMethod(method)
+    private fun findCoroutineContext(): Result? {
+        val method = frameProxy.safeLocation()?.safeMethod() ?: return null
+        val result = findCoroutineContextForLambda(method) ?: findCoroutineContextForMethod(method) ?: return null
+        return Result(result)
     }
 
     private fun findCoroutineContextForLambda(method: Method): ObjectReference? {
@@ -334,23 +376,22 @@ class VariableFinder private constructor(private val context: EvaluationContextI
             .methodsByName("getContext", "()Lkotlin/coroutines/CoroutineContext;").firstOrNull()
             ?: return null
 
-        val threadReference = frameProxy.threadProxy().threadReference.takeIf { it.isSuspended } ?: return null
-        val invokePolicy = context.suspendContext.getInvokePolicy()
-        return continuation.invokeMethod(threadReference, getContextMethod, emptyList(), invokePolicy) as? ObjectReference
+        return continuation.invokeMethod(context.thread, getContextMethod, emptyList(), context.invokePolicy) as? ObjectReference
     }
 
     private fun findCapturedVariableInReceiver(variables: List<LocalVariableProxyImpl>, kind: VariableKind): Result? {
         fun isReceiverOrPassedThis(name: String) =
             name.startsWith(AsmUtil.LABELED_THIS_PARAMETER)
                     || name == AsmUtil.RECEIVER_PARAMETER_NAME
-                    || name == AsmUtil.getCapturedFieldName(AsmUtil.THIS)
+                    || name == getCapturedFieldName(AsmUtil.THIS)
                     || inlinedThisRegex.matches(name)
 
-        if (kind is VariableKind.LabeledThis) {
+        if (kind is VariableKind.ExtensionThis) {
             variables.namedEntitySequence()
                 .filter { kind.capturedNameMatches(it.name) && kind.typeMatches(it.type) }
+                .mapNotNull { it.unwrapAndCheck(kind) }
                 .firstOrNull()
-                ?.let { return Result(it.value()) }
+                ?.let { return it }
         }
 
         return variables.namedEntitySequence()
@@ -360,30 +401,35 @@ class VariableFinder private constructor(private val context: EvaluationContextI
     }
 
     private fun findCapturedVariable(kind: VariableKind, parent: Value?): Result? {
-        if (parent != null && kind is VariableKind.UnlabeledThis && kind.typeMatches(parent.type())) {
+        val acceptsParentValue = kind is VariableKind.UnlabeledThis || kind is VariableKind.OuterClassThis
+        if (parent != null && acceptsParentValue && kind.typeMatches(parent.type())) {
             return Result(parent)
         }
 
         val fields = (parent as? ObjectReference)?.referenceType()?.fields() ?: return null
 
-        // Captured variables - direct search
-        fields.namedEntitySequence(parent)
-            .filter { kind.capturedNameMatches(it.name) && kind.typeMatches(it.type) }
-            .firstOrNull()
-            ?.let { return Result(it.value()) }
+        if (kind !is VariableKind.OuterClassThis) {
+            // Captured variables - direct search
+            fields.namedEntitySequence(parent)
+                .filter { kind.capturedNameMatches(it.name) && kind.typeMatches(it.type) }
+                .mapNotNull { it.unwrapAndCheck(kind) }
+                .firstOrNull()
+                ?.let { return it }
 
-        // Recursive search in captured receivers
-        fields.namedEntitySequence(parent)
-            .filter { isCapturedReceiverFieldName(it.name) }
-            .mapNotNull { findCapturedVariable(kind, it.value()) }
-            .firstOrNull()
-            ?.let { return it }
+            // Recursive search in captured receivers
+            fields.namedEntitySequence(parent)
+                .filter { isCapturedReceiverFieldName(it.name) }
+                .mapNotNull { findCapturedVariable(kind, it.value()) }
+                .firstOrNull()
+                ?.let { return it }
+        }
 
         // Recursive search in outer and captured this
         fields.namedEntitySequence(parent)
-            .filter { it.name == AsmUtil.getCapturedFieldName(AsmUtil.THIS) || it.name == AsmUtil.CAPTURED_THIS_FIELD }
+            .filter { it.name == getCapturedFieldName(AsmUtil.THIS) || it.name == AsmUtil.CAPTURED_THIS_FIELD }
+            .mapNotNull { findCapturedVariable(kind, it.value()) }
             .firstOrNull()
-            ?.let { return findCapturedVariable(kind, it.value()) }
+            ?.let { return it }
 
         return null
     }
@@ -393,6 +439,19 @@ class VariableFinder private constructor(private val context: EvaluationContextI
                 || name == AsmUtil.CAPTURED_RECEIVER_FIELD
     }
 
-    private fun List<Field>.namedEntitySequence(owner: ObjectReference) = asSequence().map { NamedEntity.of(it, owner) }
-    private fun List<LocalVariableProxyImpl>.namedEntitySequence() = asSequence().map { NamedEntity.of(it, frameProxy) }
+    private fun VariableKind.typeMatches(actualType: JdiType?): Boolean {
+        return evaluatorValueConverter.typeMatches(asmType, actualType)
+    }
+
+    private fun NamedEntity.unwrapAndCheck(kind: VariableKind): Result? {
+        return evaluatorValueConverter.coerce(value(), kind.asmType)
+    }
+
+    private fun List<Field>.namedEntitySequence(owner: ObjectReference): Sequence<NamedEntity> {
+        return asSequence().map { NamedEntity.of(it, owner) }
+    }
+
+    private fun List<LocalVariableProxyImpl>.namedEntitySequence(): Sequence<NamedEntity> {
+        return asSequence().map { NamedEntity.of(it, frameProxy) }
+    }
 }
