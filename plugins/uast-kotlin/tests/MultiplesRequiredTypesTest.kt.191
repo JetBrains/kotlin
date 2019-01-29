@@ -7,6 +7,7 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.kotlin.assertEqualsToFile
@@ -23,13 +24,16 @@ class MultiplesRequiredTypesTest : AbstractKotlinUastTest() {
     }
 
     private fun UFile.asMultiplesTargetConversionResult(): String {
-
+        val plugin = UastLanguagePlugin.byLanguage(KotlinLanguage.INSTANCE)!!
         val builder = StringBuilder()
         var level = 0
         (this.psi as KtFile).accept(object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 val uElement =
-                    element.toUElementOfExpectedTypes(UFile::class.java, UClass::class.java, UField::class.java, UMethod::class.java)
+                    plugin.convertElementWithParent(
+                        element,
+                        arrayOf(UFile::class.java, UClass::class.java, UField::class.java, UMethod::class.java)
+                    )
                 if (uElement != null) {
                     builder.append("    ".repeat(level))
                     builder.append(uElement.asLogString())
