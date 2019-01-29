@@ -1,39 +1,23 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
-import org.gradle.api.*
-import org.gradle.api.artifacts.*
-import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.*
+import org.gradle.api.GradleException
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.UnknownDomainObjectException
+import org.gradle.api.artifacts.ConfigurablePublishArtifact
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.tasks.AbstractCopyTask
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.*
 import java.io.File
 
-// can be used now only for the non-published projects, due to conflicts in the "archives" config
-// TODO: fix the problem above
-fun Project.classesDirsArtifact(): FileCollection {
-
-    task("uploadArchives") {
-        // hides rule-based task with the same name, which appears to be broken in this project
-    }
-
-    val classesDirsCfg = configurations.getOrCreate("classes-dirs")
-
-    val classesDirs = mainSourceSet.output.classesDirs
-
-    val classesTask = tasks["classes"]
-
-    afterEvaluate {
-        classesDirs.files.forEach {
-            addArtifact(classesDirsCfg, classesTask, it)
-        }
-    }
-
-    return classesDirs
-}
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
 
@@ -71,10 +55,11 @@ fun Project.runtimeJarArtifactBy(task: Task, artifactRef: Any, body: Configurabl
     }
 }
 
-fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
+fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
     extra["runtimeJarTask"] = task
     tasks.findByName("jar")?.let { defaultJarTask ->
-        configurations.getOrCreate("archives").artifacts.removeAll { (it as? ArchivePublishArtifact)?.archiveTask?.let { it == defaultJarTask } ?: false }
+        configurations.getOrCreate("archives")
+            .artifacts.removeAll { (it as? ArchivePublishArtifact)?.archiveTask?.let { it == defaultJarTask } ?: false }
     }
     return task.apply {
         setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
@@ -87,36 +72,35 @@ fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
 fun Project.runtimeJar(body: Jar.() -> Unit = {}): Jar = runtimeJar(getOrCreateTask("jar", body), { })
 
 fun Project.sourcesJar(sourceSet: String? = "main", body: Jar.() -> Unit = {}): Jar =
-        getOrCreateTask("sourcesJar") {
-            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-            classifier = "sources"
-            try {
-                if (sourceSet != null) {
-                    project.pluginManager.withPlugin("java-base") {
-                        from(project.javaPluginConvention().sourceSets[sourceSet].allSource)
-                    }
+    getOrCreateTask("sourcesJar") {
+        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        classifier = "sources"
+        try {
+            if (sourceSet != null) {
+                project.pluginManager.withPlugin("java-base") {
+                    from(project.javaPluginConvention().sourceSets[sourceSet].allSource)
                 }
-            } catch (e: UnknownDomainObjectException) {
-                // skip default sources location
             }
-            body()
-            project.addArtifact("archives", this, this)
+        } catch (e: UnknownDomainObjectException) {
+            // skip default sources location
         }
+        body()
+        project.addArtifact("archives", this, this)
+    }
 
-fun Project.javadocJar(body: Jar.() -> Unit = {}): Jar =
-        getOrCreateTask("javadocJar") {
-            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-            classifier = "javadoc"
-            tasks.findByName("javadoc")?.let{ it as Javadoc }?.takeIf { it.enabled }?.let {
-                dependsOn(it)
-                from(it.destinationDir)
-            }
-            body()
-            project.addArtifact("archives", this, this)
-        }
+fun Project.javadocJar(body: Jar.() -> Unit = {}): Jar = getOrCreateTask("javadocJar") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    classifier = "javadoc"
+    tasks.findByName("javadoc")?.let { it as Javadoc }?.takeIf { it.enabled }?.let {
+        dependsOn(it)
+        from(it.destinationDir)
+    }
+    body()
+    project.addArtifact("archives", this, this)
+}
 
 
-fun Project.standardPublicJars(): Unit {
+fun Project.standardPublicJars() {
     runtimeJar()
     sourcesJar()
     javadocJar()
@@ -156,10 +140,12 @@ fun Project.ideaPlugin(subdir: String = "lib"): Copy = ideaPlugin(subdir) {
     }
 }
 
-fun Project.dist(targetDir: File? = null,
-                 targetName: String? = null,
-                 fromTask: Task? = null,
-                 body: AbstractCopyTask.() -> Unit = {}): AbstractCopyTask {
+fun Project.dist(
+    targetDir: File? = null,
+    targetName: String? = null,
+    fromTask: Task? = null,
+    body: AbstractCopyTask.() -> Unit = {}
+): AbstractCopyTask {
     val distJarCfg = configurations.getOrCreate("distJar")
     val distLibDir: File by rootProject.extra
     val distJarName = targetName ?: (the<BasePluginConvention>().archivesBaseName + ".jar")
@@ -206,7 +192,7 @@ fun Project.addArtifact(configuration: Configuration, task: Task, artifactRef: A
 }
 
 fun Project.addArtifact(configurationName: String, task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) =
-        addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
+    addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
 
 fun Project.cleanArtifacts() {
     configurations["archives"].artifacts.let { artifacts ->
