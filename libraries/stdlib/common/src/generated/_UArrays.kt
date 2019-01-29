@@ -216,6 +216,478 @@ public inline operator fun UShortArray.component5(): UShort {
 }
 
 /**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.elementAt(index: Int): UInt {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.elementAt(index: Int): ULong {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.elementAt(index: Int): UByte {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.elementAt(index: Int): UShort {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UInt): UInt {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> ULong): ULong {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UByte): UByte {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UShort): UShort {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.elementAtOrNull(index: Int): UInt? {
+    return this.getOrNull(index)
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.elementAtOrNull(index: Int): ULong? {
+    return this.getOrNull(index)
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.elementAtOrNull(index: Int): UByte? {
+    return this.getOrNull(index)
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.elementAtOrNull(index: Int): UShort? {
+    return this.getOrNull(index)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.find(predicate: (UInt) -> Boolean): UInt? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.find(predicate: (ULong) -> Boolean): ULong? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.find(predicate: (UByte) -> Boolean): UByte? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.find(predicate: (UShort) -> Boolean): UShort? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.findLast(predicate: (UInt) -> Boolean): UInt? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.findLast(predicate: (ULong) -> Boolean): ULong? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.findLast(predicate: (UByte) -> Boolean): UByte? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.findLast(predicate: (UShort) -> Boolean): UShort? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns first element.
+ * @throws [NoSuchElementException] if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.first(): UInt {
+    return storage.first().toUInt()
+}
+
+/**
+ * Returns first element.
+ * @throws [NoSuchElementException] if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.first(): ULong {
+    return storage.first().toULong()
+}
+
+/**
+ * Returns first element.
+ * @throws [NoSuchElementException] if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.first(): UByte {
+    return storage.first().toUByte()
+}
+
+/**
+ * Returns first element.
+ * @throws [NoSuchElementException] if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.first(): UShort {
+    return storage.first().toUShort()
+}
+
+/**
+ * Returns the first element matching the given [predicate].
+ * @throws [NoSuchElementException] if no such element is found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
+
+/**
+ * Returns the first element matching the given [predicate].
+ * @throws [NoSuchElementException] if no such element is found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
+
+/**
+ * Returns the first element matching the given [predicate].
+ * @throws [NoSuchElementException] if no such element is found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
+
+/**
+ * Returns the first element matching the given [predicate].
+ * @throws [NoSuchElementException] if no such element is found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
+
+/**
+ * Returns the first element, or `null` if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.firstOrNull(): UInt? {
+    return if (isEmpty()) null else this[0]
+}
+
+/**
+ * Returns the first element, or `null` if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.firstOrNull(): ULong? {
+    return if (isEmpty()) null else this[0]
+}
+
+/**
+ * Returns the first element, or `null` if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.firstOrNull(): UByte? {
+    return if (isEmpty()) null else this[0]
+}
+
+/**
+ * Returns the first element, or `null` if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.firstOrNull(): UShort? {
+    return if (isEmpty()) null else this[0]
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.firstOrNull(predicate: (UInt) -> Boolean): UInt? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.firstOrNull(predicate: (ULong) -> Boolean): ULong? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.firstOrNull(predicate: (UByte) -> Boolean): UByte? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.firstOrNull(predicate: (UShort) -> Boolean): UShort? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.getOrElse(index: Int, defaultValue: (Int) -> UInt): UInt {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.getOrElse(index: Int, defaultValue: (Int) -> ULong): ULong {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.getOrElse(index: Int, defaultValue: (Int) -> UByte): UByte {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.getOrElse(index: Int, defaultValue: (Int) -> UShort): UShort {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.getOrNull(index: Int): UInt? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.getOrNull(index: Int): ULong? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.getOrNull(index: Int): UByte? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.getOrNull(index: Int): UShort? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
 @SinceKotlin("1.3")
@@ -336,6 +808,110 @@ public inline fun UShortArray.indexOfLast(predicate: (UShort) -> Boolean): Int {
 }
 
 /**
+ * Returns the last element.
+ * @throws [NoSuchElementException] if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.last(): UInt {
+    return storage.last().toUInt()
+}
+
+/**
+ * Returns the last element.
+ * @throws [NoSuchElementException] if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.last(): ULong {
+    return storage.last().toULong()
+}
+
+/**
+ * Returns the last element.
+ * @throws [NoSuchElementException] if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.last(): UByte {
+    return storage.last().toUByte()
+}
+
+/**
+ * Returns the last element.
+ * @throws [NoSuchElementException] if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.last(): UShort {
+    return storage.last().toUShort()
+}
+
+/**
+ * Returns the last element matching the given [predicate].
+ * @throws [NoSuchElementException] if no such element is found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.last(predicate: (UInt) -> Boolean): UInt {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
+
+/**
+ * Returns the last element matching the given [predicate].
+ * @throws [NoSuchElementException] if no such element is found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.last(predicate: (ULong) -> Boolean): ULong {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
+
+/**
+ * Returns the last element matching the given [predicate].
+ * @throws [NoSuchElementException] if no such element is found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.last(predicate: (UByte) -> Boolean): UByte {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
+
+/**
+ * Returns the last element matching the given [predicate].
+ * @throws [NoSuchElementException] if no such element is found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.last(predicate: (UShort) -> Boolean): UShort {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
+
+/**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
 @SinceKotlin("1.3")
@@ -373,6 +949,98 @@ public inline fun UByteArray.lastIndexOf(element: UByte): Int {
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.lastIndexOf(element: UShort): Int {
     return storage.lastIndexOf(element.toShort())
+}
+
+/**
+ * Returns the last element, or `null` if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.lastOrNull(): UInt? {
+    return if (isEmpty()) null else this[size - 1]
+}
+
+/**
+ * Returns the last element, or `null` if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.lastOrNull(): ULong? {
+    return if (isEmpty()) null else this[size - 1]
+}
+
+/**
+ * Returns the last element, or `null` if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.lastOrNull(): UByte? {
+    return if (isEmpty()) null else this[size - 1]
+}
+
+/**
+ * Returns the last element, or `null` if the array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.lastOrNull(): UShort? {
+    return if (isEmpty()) null else this[size - 1]
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.lastOrNull(predicate: (UInt) -> Boolean): UInt? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.lastOrNull(predicate: (ULong) -> Boolean): ULong? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.lastOrNull(predicate: (UByte) -> Boolean): UByte? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.lastOrNull(predicate: (UShort) -> Boolean): UShort? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
 }
 
 /**
@@ -473,6 +1141,246 @@ public fun UShortArray.random(random: Random): UShort {
     if (isEmpty())
         throw NoSuchElementException("Array is empty.")
     return get(random.nextInt(size))
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.single(): UInt {
+    return storage.single().toUInt()
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.single(): ULong {
+    return storage.single().toULong()
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.single(): UByte {
+    return storage.single().toUByte()
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.single(): UShort {
+    return storage.single().toUShort()
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.single(predicate: (UInt) -> Boolean): UInt {
+    var single: UInt? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as UInt
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.single(predicate: (ULong) -> Boolean): ULong {
+    var single: ULong? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as ULong
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.single(predicate: (UByte) -> Boolean): UByte {
+    var single: UByte? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as UByte
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.single(predicate: (UShort) -> Boolean): UShort {
+    var single: UShort? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as UShort
+}
+
+/**
+ * Returns single element, or `null` if the array is empty or has more than one element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.singleOrNull(): UInt? {
+    return if (size == 1) this[0] else null
+}
+
+/**
+ * Returns single element, or `null` if the array is empty or has more than one element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.singleOrNull(): ULong? {
+    return if (size == 1) this[0] else null
+}
+
+/**
+ * Returns single element, or `null` if the array is empty or has more than one element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.singleOrNull(): UByte? {
+    return if (size == 1) this[0] else null
+}
+
+/**
+ * Returns single element, or `null` if the array is empty or has more than one element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.singleOrNull(): UShort? {
+    return if (size == 1) this[0] else null
+}
+
+/**
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.singleOrNull(predicate: (UInt) -> Boolean): UInt? {
+    var single: UInt? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
+
+/**
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.singleOrNull(predicate: (ULong) -> Boolean): ULong? {
+    var single: ULong? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
+
+/**
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.singleOrNull(predicate: (UByte) -> Boolean): UByte? {
+    var single: UByte? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
+
+/**
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.singleOrNull(predicate: (UShort) -> Boolean): UShort? {
+    var single: UShort? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
 }
 
 /**
@@ -1297,7 +2205,7 @@ public inline fun ShortArray.toUShortArray(): UShortArray {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 @SinceKotlin("1.3")
@@ -1310,7 +2218,7 @@ public inline fun UIntArray.all(predicate: (UInt) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 @SinceKotlin("1.3")
@@ -1323,7 +2231,7 @@ public inline fun ULongArray.all(predicate: (ULong) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 @SinceKotlin("1.3")
@@ -1336,7 +2244,7 @@ public inline fun UByteArray.all(predicate: (UByte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 @SinceKotlin("1.3")
@@ -1349,7 +2257,7 @@ public inline fun UShortArray.all(predicate: (UShort) -> Boolean): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.any
  */
 @SinceKotlin("1.3")
@@ -1361,7 +2269,7 @@ public inline fun UIntArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.any
  */
 @SinceKotlin("1.3")
@@ -1373,7 +2281,7 @@ public inline fun ULongArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.any
  */
 @SinceKotlin("1.3")
@@ -1385,7 +2293,7 @@ public inline fun UByteArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.any
  */
 @SinceKotlin("1.3")
@@ -1397,7 +2305,7 @@ public inline fun UShortArray.any(): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 @SinceKotlin("1.3")
@@ -1410,7 +2318,7 @@ public inline fun UIntArray.any(predicate: (UInt) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 @SinceKotlin("1.3")
@@ -1423,7 +2331,7 @@ public inline fun ULongArray.any(predicate: (ULong) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 @SinceKotlin("1.3")
@@ -1436,7 +2344,7 @@ public inline fun UByteArray.any(predicate: (UByte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 @SinceKotlin("1.3")
@@ -1497,7 +2405,7 @@ public inline fun UShortArray.count(predicate: (UShort) -> Boolean): Int {
 
 /**
  * Returns `true` if the array has no elements.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.none
  */
 @SinceKotlin("1.3")
@@ -1509,7 +2417,7 @@ public inline fun UIntArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.none
  */
 @SinceKotlin("1.3")
@@ -1521,7 +2429,7 @@ public inline fun ULongArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.none
  */
 @SinceKotlin("1.3")
@@ -1533,7 +2441,7 @@ public inline fun UByteArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.none
  */
 @SinceKotlin("1.3")
@@ -1545,7 +2453,7 @@ public inline fun UShortArray.none(): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 @SinceKotlin("1.3")
@@ -1558,7 +2466,7 @@ public inline fun UIntArray.none(predicate: (UInt) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 @SinceKotlin("1.3")
@@ -1571,7 +2479,7 @@ public inline fun ULongArray.none(predicate: (ULong) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 @SinceKotlin("1.3")
@@ -1584,7 +2492,7 @@ public inline fun UByteArray.none(predicate: (UByte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 @SinceKotlin("1.3")

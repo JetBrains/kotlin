@@ -2312,6 +2312,18 @@ public final class kotlin/collections/UArraysKt {
 	public static synthetic fun fill-K6DWlUc$default ([JJIIILjava/lang/Object;)V
 	public static final fun fill-WpHrYlw ([BBII)V
 	public static synthetic fun fill-WpHrYlw$default ([BBIIILjava/lang/Object;)V
+	public static final fun firstOrNull--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun firstOrNull-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun firstOrNull-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun firstOrNull-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun getOrNull-PpDY95g ([BI)Lkotlin/UByte;
+	public static final fun getOrNull-nggk6HY ([SI)Lkotlin/UShort;
+	public static final fun getOrNull-qFRl0hI ([II)Lkotlin/UInt;
+	public static final fun getOrNull-r7IrZao ([JI)Lkotlin/ULong;
+	public static final fun lastOrNull--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun lastOrNull-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun lastOrNull-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun lastOrNull-rL5Bavg ([S)Lkotlin/UShort;
 	public static final fun plus-CFIt9YE ([ILjava/util/Collection;)[I
 	public static final fun plus-kzHmqpY ([JLjava/util/Collection;)[J
 	public static final fun plus-ojwP5H8 ([SLjava/util/Collection;)[S
@@ -2320,6 +2332,10 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun random-JzugnMA ([JLkotlin/random/Random;)J
 	public static final fun random-oSF2wD8 ([BLkotlin/random/Random;)B
 	public static final fun random-s5X_as8 ([SLkotlin/random/Random;)S
+	public static final fun singleOrNull--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun singleOrNull-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun singleOrNull-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun singleOrNull-rL5Bavg ([S)Lkotlin/UShort;
 	public static final fun toTypedArray--ajY-9A ([I)[Lkotlin/UInt;
 	public static final fun toTypedArray-GBYM_sE ([B)[Lkotlin/UByte;
 	public static final fun toTypedArray-QwZRm1k ([J)[Lkotlin/ULong;
