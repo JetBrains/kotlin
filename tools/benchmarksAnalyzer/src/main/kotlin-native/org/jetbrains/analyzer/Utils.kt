@@ -17,8 +17,8 @@
 package org.jetbrains.analyzer
 
 import platform.posix.*
-import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.*
+import libcurl.*
 
 actual fun readFile(fileName: String): String {
     val file = fopen(fileName, "r") ?: error("Cannot write file '$fileName'")
@@ -36,9 +36,9 @@ actual fun readFile(fileName: String): String {
     return text.toString()
 }
 
-actual fun format(number: Double, decimalNumber: Int): String {
+actual fun Double.format(decimalNumber: Int): String {
     var buffer = ByteArray(1024)
-    snprintf(buffer.refTo(0), buffer.size.toULong(), "%.${decimalNumber}f", number)
+    snprintf(buffer.refTo(0), buffer.size.toULong(), "%.${decimalNumber}f", this)
     return buffer.stringFromUtf8()
 }
 
@@ -51,9 +51,62 @@ actual fun writeToFile(fileName: String, text: String) {
     }
 }
 
-actual fun assert(value: Boolean, lazyMessage: () -> Any) {
+actual fun assert(value: Boolean, lazyMessage: () -> Any) =
     kotlin.assert(value, lazyMessage)
+
+class CUrl(url: String, user: String? = null, password: String? = null, followLocation: Boolean = false)  {
+    private val stableRef = StableRef.create(this)
+
+    private val curl = curl_easy_init()
+
+    init {
+        curl_easy_setopt(curl, CURLOPT_URL, url)
+        val writeData = staticCFunction(::collectResponse)
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeData)
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, stableRef.asCPointer())
+        if (followLocation) {
+            curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L)
+        }
+        user ?.let {
+            curl_easy_setopt(curl, CURLOPT_USERNAME, it)
+        }
+        password ?.let {
+            curl_easy_setopt(curl, CURLOPT_PASSWORD, it)
+        }
+    }
+
+    val body = StringBuilder()
+
+    fun fetch() {
+        val res = curl_easy_perform(curl)
+        if (res != CURLE_OK)
+            println("curl_easy_perform() failed: ${curl_easy_strerror(res)?.toKString()}")
+    }
+
+    fun close() {
+        curl_easy_cleanup(curl)
+        stableRef.dispose()
+    }
 }
 
-actual fun getEnv(variableName:String): String? =
-        getenv(variableName)?.toKString()
+fun CPointer<ByteVar>.toKString(length: Int): String {
+    val bytes = this.readBytes(length)
+    return bytes.stringFromUtf8()
+}
+
+fun collectResponse(buffer: CPointer<ByteVar>?, size: size_t, nitems: size_t, userdata: COpaquePointer?): size_t {
+    buffer ?: return 0u
+    userdata ?. let {
+        val data = buffer.toKString((size * nitems).toInt()).trim()
+        val curl = userdata.asStableRef<CUrl>().get()
+        curl.body.append(data)
+    }
+    return size * nitems
+}
+
+actual fun sendGetRequest(url: String, user: String?, password: String?, followLocation: Boolean) : String {
+    val curl = CUrl(url, user, password, followLocation)
+    curl.fetch()
+    curl.close()
+    return curl.body.toString()
+}

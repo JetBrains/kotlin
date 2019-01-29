@@ -72,7 +72,6 @@ kotlin {
 
     targets {
         fromPreset(presets.jvm, 'jvm') {
-            def mainOutput = compilations.main.output
             compilations.all {
                 tasks[compileKotlinTaskName].kotlinOptions {
                     jvmTarget = '1.8'
@@ -81,14 +80,47 @@ kotlin {
             }
         }
 
-        fromPreset(presets.mingwX64, 'windows')
-        fromPreset(presets.linuxX64, 'linux')
-        fromPreset(presets.macosX64, 'macos')
+        fromPreset(presets.mingwX64, 'windows') {
+            compilations.test.linkerOpts "-L${getMingwPath()}/lib"
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly "${getMingwPath()}/include"
+                }
+            }
+        }
+
+        fromPreset(presets.linuxX64, 'linux') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+                }
+            }
+            compilations.test.linkerOpts "-L${getMingwPath()}/lib"
+        }
+        fromPreset(presets.macosX64, 'macos') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                }
+            }
+        }
 
         configure([windows, linux, macos]) {
-            compilations.main.outputKinds('EXECUTABLE')
-            compilations.main.extraOpts '-opt'
-            compilations.main.buildTypes = [RELEASE]
+            binaries {
+                executable('benchmarksAnalyzer', [RELEASE]) {
+                    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                        println("-L${getMingwPath()}/lib")
+                        linkerOpts("-L${getMingwPath()}/lib")
+                    }
+                }
+            }
         }
     }
+}
+
+def getMingwPath() {
+    def directory = System.getenv("MINGW64_DIR")
+    if (directory == null)
+        directory = "c:/msys64/mingw64"
+    return directory
 }

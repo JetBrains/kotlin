@@ -113,6 +113,7 @@ task konanJsonReport {
                                                   'compileTime'    : nativeCompileTime]
         def output = MPPTools.createJsonReport(properties)
         new File("${buildDir.absolutePath}/${nativeJson}").write(output)
+        uploadBenchmarkResultToBintray(nativeJson)
     }
 }
 
@@ -126,6 +127,7 @@ task jvmJsonReport {
                                                   'compileTime'    : jvmCompileTime]
         def output = MPPTools.createJsonReport(properties)
         new File("${buildDir.absolutePath}/${jvmJson}").write(output)
+        uploadBenchmarkResultToBintray(jvmJson)
     }
 }
 
@@ -146,14 +148,41 @@ private def getCommonProperties() {
             'kotlinVersion': "${kotlinVersion}".toString()]
 }
 
+private def uploadBenchmarkResultToBintray(String fileName) {
+    def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
+    if (teamcityConfig) {
+        def buildProperties = new Properties()
+        buildProperties.load(new FileInputStream(teamcityConfig))
+        def user = buildProperties.getProperty("bintray.user")
+        def password = buildProperties.getProperty("bintray.apikey")
+        def buildNumber = buildProperties.getProperty("build.number")
+        def target = System.getProperty("os.name").replaceAll("\\s", "")
+        MPPTools.uploadFileToBintray("${bintrayUrl}", "${bintrayRepo}",
+                buildNumber, "${bintrayPackage}", "${target}/${buildNumber}/${fileName}",
+                "${buildDir.absolutePath}/${fileName}", user, password)
+    }
+}
+
 task bench(type:Exec) {
     dependsOn jvmRun
     dependsOn konanRun
     def extension = MPPTools.getNativeProgramExtension()
     def analyzer = MPPTools.findFile("${analyzerTool}${extension}", "${rootBuildDirectory}/${analyzerToolDirectory}")
     if (analyzer != null) {
-        commandLine "${analyzer}", "${buildDir.absolutePath}/${nativeJson}", "${buildDir.absolutePath}/${jvmJson}"
+        commandLine "${analyzer}", "-r", "text", "-r", "teamcity", "${buildDir.absolutePath}/${nativeJson}", "${buildDir.absolutePath}/${jvmJson}"
     } else {
         println("No analyzer $analyzerTool found in subdirectories of ${rootBuildDirectory}/${analyzerToolDirectory}")
     }
+}
+
+// Produce and send slack report.
+task slackReport(type: RegressionsReporter) {
+    // Create folder for report (root Kotlin project settings make create report in separate folder).
+    def reportDirectory = outputReport.substring(0, outputReport.lastIndexOf("/"))
+    mkdir reportDirectory
+    currentBenchmarksReportFile = "${buildDir.absolutePath}/${nativeJson}"
+    analyzer = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
+            "${rootBuildDirectory}/${analyzerToolDirectory}")
+    htmlReport = outputReport
+    defaultBranch = project.findProperty('kotlin.native.default.branch') ?: "master"
 }

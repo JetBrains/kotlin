@@ -26,7 +26,7 @@ import kotlin.math.sqrt
 // Entity to describe avarage values which conssists of mean and variance values.
 data class MeanVariance(val mean: Double, val variance: Double) {
     override fun toString(): String {
-        val format = { number: Double -> format(number, 2)}
+        val format = { number: Double -> number.format(2)}
         return "${format(mean)} ± ${format(variance)}"
     }
 }
@@ -66,10 +66,9 @@ data class MeanVarianceBenchmark(val meanBenchmark: BenchmarkResult, val varianc
         return MeanVariance(mean, ratioConfInt)
     }
 
-    override fun toString(): String {
-        val format = { number: Double -> format(number)}
-        return "${format(meanBenchmark.score)} ± ${format(varianceBenchmark.score)}"
-    }
+    override fun toString(): String =
+        "${meanBenchmark.score.format()} ± ${varianceBenchmark.score.format()}"
+
 }
 
 fun geometricMean(values: List<Double>) = values.map { it.pow(1.0 / values.size) }.reduce { a, b -> a * b }

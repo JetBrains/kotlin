@@ -324,6 +324,5 @@ data class JsonArray(val content: List<JsonElement>) : JsonElement(), List<JsonE
     override fun toString() = content.joinToString(prefix = "[", postfix = "]")
 }
 
-@PublishedApi
-internal fun unexpectedJson(key: String, expected: String): Nothing =
+fun unexpectedJson(key: String, expected: String): Nothing =
         throw JsonElementTypeMismatchException(key, expected)

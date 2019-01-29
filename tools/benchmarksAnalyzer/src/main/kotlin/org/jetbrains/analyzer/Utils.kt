@@ -17,7 +17,8 @@
 package org.jetbrains.analyzer
 
 expect fun readFile(fileName: String): String
-expect fun format(number: Double, decimalNumber: Int = 4): String
+expect fun Double.format(decimalNumber: Int = 4): String
 expect fun writeToFile(fileName: String, text: String)
 expect fun assert(value: Boolean, lazyMessage: () -> Any)
-expect fun getEnv(variableName:String): String?
+expect fun sendGetRequest(url: String, user: String? = null, password: String? = null,
+                          followLocation: Boolean = false) : String

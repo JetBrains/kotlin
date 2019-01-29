@@ -30,50 +30,6 @@ interface JsonSerializable {
     }
 }
 
-// Entity can be created from json description.
-interface ConvertedFromJson {
-    fun getRequiredField(data: JsonObject, fieldName: String): JsonElement {
-        return data.getOrNull(fieldName) ?: error("Field '$fieldName' doesn't exist in '$data'. Please, check origin files.")
-    }
-
-    fun getOptionalField(data: JsonObject, fieldName: String): JsonElement? {
-        return data.getOrNull(fieldName)
-    }
-
-    // Parse json array to list.
-    // Takes function to convert elements in array to expected type.
-    fun <T> arrayToList(array: JsonArray, convert: JsonArray.(Int) -> T?): List<T> {
-        var results = mutableListOf<T>()
-        var index = 0
-        var current: T? = array.convert(index)
-        while (current != null) {
-            results.add(current)
-            index++
-            current = array.convert(index)
-        }
-        return results
-    }
-
-    // Methods for conversion to expected type with checks of possibility of such conversions.
-    fun elementToDouble(element: JsonElement, name: String): Double =
-            if (element is JsonPrimitive)
-                element.double
-            else
-                error("Field '$name' in '$element' is expected to be a double number. Please, check origin files.")
-
-    fun elementToInt(element: JsonElement, name: String): Int =
-        if (element is JsonPrimitive)
-            element.int
-        else
-            error("Field '$name' in '$element' is expected to be an integer number. Please, check origin files.")
-
-    fun elementToString(element: JsonElement, name:String): String =
-            if (element is JsonLiteral)
-                element.unquoted()
-            else
-                error("Field '$name' in '$element' is expected to be a string. Please, check origin files.")
-}
-
 interface EntityFromJsonFactory<T>: ConvertedFromJson {
     fun create(data: JsonElement): T
 }
@@ -85,9 +41,9 @@ class BenchmarksReport(val env: Environment, benchmarksList: List<BenchmarkResul
     companion object: EntityFromJsonFactory<BenchmarksReport> {
         override fun create(data: JsonElement): BenchmarksReport {
             if (data is JsonObject) {
-                val env = Environment.create(getRequiredField(data, "env"))
-                val benchmarksObj = getRequiredField(data, "benchmarks")
-                val compiler = Compiler.create(getRequiredField(data, "kotlin"))
+                val env = Environment.create(data.getRequiredField("env"))
+                val benchmarksObj = data.getRequiredField("benchmarks")
+                val compiler = Compiler.create(data.getRequiredField("kotlin"))
                 val benchmarksList = parseBenchmarksArray(benchmarksObj)
                 return BenchmarksReport(env, benchmarksList, compiler)
             } else {
@@ -98,11 +54,7 @@ class BenchmarksReport(val env: Environment, benchmarksList: List<BenchmarkResul
         // Parse array with benchmarks to list
         fun parseBenchmarksArray(data: JsonElement): List<BenchmarkResult> {
             if (data is JsonArray) {
-                return arrayToList(data.jsonArray, { index ->
-                    if (this.getObjectOrNull(index) != null)
-                        BenchmarkResult.create(this.getObjectOrNull(index) as JsonObject)
-                    else null
-                })
+                return data.jsonArray.map { BenchmarkResult.create(it as JsonObject) }
             } else {
                 error("Benchmarks field is expected to be an array. Please, check origin files.")
             }
@@ -137,8 +89,8 @@ data class Compiler(val backend: Backend, val kotlinVersion: String): JsonSerial
     companion object: EntityFromJsonFactory<Compiler> {
         override fun create(data: JsonElement): Compiler {
             if (data is JsonObject) {
-                val backend = Backend.create(getRequiredField(data, "backend"))
-                val kotlinVersion = elementToString(getRequiredField(data, "kotlinVersion"), "kotlinVersion")
+                val backend = Backend.create(data.getRequiredField("backend"))
+                val kotlinVersion = elementToString(data.getRequiredField("kotlinVersion"), "kotlinVersion")
 
                 return Compiler(backend, kotlinVersion)
             } else {
@@ -154,16 +106,14 @@ data class Compiler(val backend: Backend, val kotlinVersion: String): JsonSerial
         companion object: EntityFromJsonFactory<Backend> {
             override fun create(data: JsonElement): Backend {
                 if (data is JsonObject) {
-                    val typeElement = getRequiredField(data, "type")
+                    val typeElement = data.getRequiredField("type")
                     if (typeElement is JsonLiteral) {
                         val type = backendTypeFromString(typeElement.unquoted()) ?: error("Backend type should be 'jvm' or 'native'")
-                        val version = elementToString(getRequiredField(data, "version"), "version")
-                        val flagsArray = getOptionalField(data, "flags")
+                        val version = elementToString(data.getRequiredField("version"), "version")
+                        val flagsArray = data.getOptionalField("flags")
                         var flags: List<String> = emptyList()
                         if (flagsArray != null && flagsArray is JsonArray) {
-                            flags = arrayToList(flagsArray.jsonArray, { index ->
-                                this.getPrimitiveOrNull(index)?.toString()
-                            })
+                            flags = flagsArray.jsonArray.map { it.toString() }
                         }
                         return Backend(type, version, flags)
                     } else {
@@ -211,8 +161,8 @@ data class Environment(val machine: Machine, val jdk: JDKInstance): JsonSerializ
     companion object: EntityFromJsonFactory<Environment> {
         override fun create(data: JsonElement): Environment {
             if (data is JsonObject) {
-                val machine = Machine.create(getRequiredField(data, "machine"))
-                val jdk = JDKInstance.create(getRequiredField(data, "jdk"))
+                val machine = Machine.create(data.getRequiredField("machine"))
+                val jdk = JDKInstance.create(data.getRequiredField("jdk"))
 
                 return Environment(machine, jdk)
             } else {
@@ -226,8 +176,8 @@ data class Environment(val machine: Machine, val jdk: JDKInstance): JsonSerializ
         companion object: EntityFromJsonFactory<Machine> {
             override fun create(data: JsonElement): Machine {
                 if (data is JsonObject) {
-                    val cpu = elementToString(getRequiredField(data, "cpu"), "cpu")
-                    val os = elementToString(getRequiredField(data, "os"), "os")
+                    val cpu = elementToString(data.getRequiredField("cpu"), "cpu")
+                    val os = elementToString(data.getRequiredField("os"), "os")
 
                     return Machine(cpu, os)
                 } else {
@@ -251,8 +201,8 @@ data class Environment(val machine: Machine, val jdk: JDKInstance): JsonSerializ
         companion object: EntityFromJsonFactory<JDKInstance> {
             override fun create(data: JsonElement): JDKInstance {
                 if (data is JsonObject) {
-                    val version = elementToString(getRequiredField(data, "version"), "version")
-                    val vendor = elementToString(getRequiredField(data, "vendor"), "vendor")
+                    val version = elementToString(data.getRequiredField("version"), "version")
+                    val vendor = elementToString(data.getRequiredField("vendor"), "vendor")
 
                     return JDKInstance(version, vendor)
                 } else {
@@ -291,15 +241,15 @@ class BenchmarkResult(val name: String, val status: Status,
 
         override fun create(data: JsonElement): BenchmarkResult {
             if (data is JsonObject) {
-                val name = elementToString(getRequiredField(data, "name"), "name")
-                val statusElement = getRequiredField(data, "status")
+                val name = elementToString(data.getRequiredField("name"), "name")
+                val statusElement = data.getRequiredField("status")
                 if (statusElement is JsonLiteral) {
                     val status = statusFromString(statusElement.unquoted())
                             ?: error("Status should be PASSED or FAILED")
-                    val score = elementToDouble(getRequiredField(data, "score"), "score")
-                    val runtimeInUs = elementToDouble(getRequiredField(data, "runtimeInUs"), "runtimeInUs")
-                    val repeat = elementToInt(getRequiredField(data, "repeat"), "repeat")
-                    val warmup = elementToInt(getRequiredField(data, "warmup"), "warmup")
+                    val score = elementToDouble(data.getRequiredField("score"), "score")
+                    val runtimeInUs = elementToDouble(data.getRequiredField("runtimeInUs"), "runtimeInUs")
+                    val repeat = elementToInt(data.getRequiredField("repeat"), "repeat")
+                    val warmup = elementToInt(data.getRequiredField("warmup"), "warmup")
 
                     return BenchmarkResult(name, status, score, runtimeInUs, repeat, warmup)
                 } else {

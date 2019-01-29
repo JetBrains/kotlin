@@ -50,9 +50,9 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
     var geoMeanScoreChange: ScoreChange? = null
         private set
 
-    // Changes in environment and tools.
-    val envChanges: List<FieldChange<String>>
-    val kotlinChanges: List<FieldChange<String>>
+    // Environment and tools.
+    val environments: Pair<Environment, Environment?>
+    val compilers: Pair<Compiler, Compiler?>
 
     // Countable properties.
     val failedBenchmarks: List<String>
@@ -74,6 +74,47 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
     val currentBenchmarksDuration: Map<String, Double>
         get() = benchmarksDurations.filter{ it.value.first != null }.map { it.key to it.value.first!! }.toMap()
 
+    val maximumRegression: Double
+        get() = getMaximumChange(regressions)
+
+    val maximumImprovement: Double
+        get() = getMaximumChange(improvements)
+
+    val regressionsGeometricMean: Double
+        get() = getGeometricMeanOfChanges(regressions)
+
+    val improvementsGeometricMean: Double
+        get() = getGeometricMeanOfChanges(improvements)
+
+    val envChanges: List<FieldChange<String>>
+        get() {
+            val previousEnvironment = environments.second
+            val currentEnvironment = environments.first
+            return previousEnvironment?.let {
+                mutableListOf<FieldChange<String>>().apply {
+                    addFieldChange("Machine CPU", previousEnvironment.machine.cpu, currentEnvironment.machine.cpu)
+                    addFieldChange("Machine OS", previousEnvironment.machine.os, currentEnvironment.machine.os)
+                    addFieldChange("JDK version", previousEnvironment.jdk.version, currentEnvironment.jdk.version)
+                    addFieldChange("JDK vendor", previousEnvironment.jdk.vendor, currentEnvironment.jdk.vendor)
+                }
+            } ?: listOf<FieldChange<String>>()
+        }
+
+    val kotlinChanges: List<FieldChange<String>>
+        get() {
+            val previousCompiler = compilers.second
+            val currentCompiler = compilers.first
+            return previousCompiler?.let {
+                mutableListOf<FieldChange<String>>().apply {
+                    addFieldChange("Backend type", previousCompiler.backend.type.type, currentCompiler.backend.type.type)
+                    addFieldChange("Backend version", previousCompiler.backend.version, currentCompiler.backend.version)
+                    addFieldChange("Backend flags", previousCompiler.backend.flags.toString(),
+                            currentCompiler.backend.flags.toString())
+                    addFieldChange("Kotlin version", previousCompiler.kotlinVersion, currentCompiler.kotlinVersion)
+                }
+            } ?: listOf<FieldChange<String>>()
+        }
+
     init {
         // Count avarage values for each benchmark.
         val currentBenchmarksTable = collectMeanResults(currentReport.benchmarks)
@@ -83,14 +124,30 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
         mergedReport = createMergedReport(currentBenchmarksTable, previousBenchmarksTable)
         benchmarksDurations = calculateBenchmarksDuration(currentReport, previousReport)
         geoMeanBenchmark = calculateGeoMeanBenchmark(currentBenchmarksTable, previousBenchmarksTable)
+        environments = Pair(currentReport.env, previousReport?.env)
+        compilers = Pair(currentReport.compiler, previousReport?.compiler)
+
         if (previousReport != null) {
             // Check changes in environment and tools.
-            envChanges = analyzeEnvChanges(currentReport.env, previousReport.env)
-            kotlinChanges = analyzeKotlinChanges(currentReport.compiler, previousReport.compiler)
             analyzePerformanceChanges()
+        }
+    }
+
+    private fun getMaximumChange(bucket: Map<String, ScoreChange>): Double =
+        // Maps of regressions and improvements are sorted.
+        if (bucket.isEmpty()) 0.0 else bucket.values.map { it.first.mean }.first()
+
+    private fun getGeometricMeanOfChanges(bucket: Map<String, ScoreChange>): Double {
+        if (bucket.isEmpty())
+            return 0.0
+        var percentsList = bucket.values.map { it.first.mean }
+        return if (percentsList.first() > 0.0) {
+            geometricMean(percentsList)
         } else {
-            envChanges = listOf<FieldChange<String>>()
-            kotlinChanges = listOf<FieldChange<String>>()
+            // Geometric mean can be counted on positive numbers.
+            val precision = abs(getMaximumChange(bucket)) + 1
+            percentsList = percentsList.map { it + precision }
+            geometricMean(percentsList) - precision
         }
     }
 
@@ -128,7 +185,7 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
                 if (previousBenchmarks == null || name !in previousBenchmarks) {
                     getOrPut(name) { SummaryBenchmark(current, null) }
                 } else {
-                    val previousBenchmark = previousBenchmarks[name]!!.meanBenchmark
+                    val previousBenchmark = previousBenchmarks.getValue(name).meanBenchmark
                     getOrPut(name) { SummaryBenchmark(current, previousBenchmarks[name]) }
                     // Explore change of status.
                     if (previousBenchmark.status != currentBenchmark.status) {
@@ -201,25 +258,6 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
     private fun <T> MutableList<FieldChange<T>>.addFieldChange(field: String, previous: T, current: T) {
         FieldChange.getFieldChangeOrNull(field, previous, current)?.let {
             add(it)
-        }
-    }
-
-    private fun analyzeEnvChanges(currentEnv: Environment, previousEnv: Environment): List<FieldChange<String>> {
-        return mutableListOf<FieldChange<String>>().apply {
-            addFieldChange("Machine CPU", previousEnv.machine.cpu, currentEnv.machine.cpu)
-            addFieldChange("Machine OS", previousEnv.machine.os, currentEnv.machine.os)
-            addFieldChange("JDK version", previousEnv.jdk.version, currentEnv.jdk.version)
-            addFieldChange("JDK vendor", previousEnv.jdk.vendor, currentEnv.jdk.vendor)
-        }
-    }
-
-    private fun analyzeKotlinChanges(currentCompiler: Compiler, previousCompiler: Compiler): List<FieldChange<String>> {
-        return mutableListOf<FieldChange<String>>().apply {
-            addFieldChange("Backend type", previousCompiler.backend.type.type, currentCompiler.backend.type.type)
-            addFieldChange("Backend version", previousCompiler.backend.version, currentCompiler.backend.version)
-            addFieldChange("Backend flags", previousCompiler.backend.flags.toString(),
-                    currentCompiler.backend.flags.toString())
-            addFieldChange( "Kotlin version", previousCompiler.kotlinVersion, currentCompiler.kotlinVersion)
         }
     }
 }

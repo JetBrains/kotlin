@@ -21,7 +21,10 @@ import org.jetbrains.analyzer.*
 import org.jetbrains.report.BenchmarkResult
 
 // Report render to text format.
-class TeamCityStatisticsRender: Render {
+class TeamCityStatisticsRender: Render() {
+    override val name: String
+        get() = "teamcity"
+
     private var content = StringBuilder()
 
     override fun render(report: SummaryBenchmarksReport, onlyChanges: Boolean): String {

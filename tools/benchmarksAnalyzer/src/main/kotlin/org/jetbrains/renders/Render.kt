@@ -22,9 +22,23 @@ import org.jetbrains.report.BenchmarkResult
 
 import kotlin.math.abs
 
-// Common interface for printing report in different formats.
-interface Render {
-    fun render(report: SummaryBenchmarksReport, onlyChanges: Boolean = false): String
+// Base class for printing report in different formats.
+abstract class Render {
+
+    companion object {
+        fun getRenderByName(name: String) =
+            when (name) {
+                "text" -> TextRender()
+                "html" -> HTMLRender()
+                "teamcity" -> TeamCityStatisticsRender()
+                else -> error("Unknown render $name")
+            }
+    }
+
+    abstract val name: String
+
+    abstract fun render(report: SummaryBenchmarksReport, onlyChanges: Boolean = false): String
+
     // Print report using render.
     fun print(report: SummaryBenchmarksReport, onlyChanges: Boolean = false, outputFile: String? = null) {
         val content = render(report, onlyChanges)
@@ -32,10 +46,16 @@ interface Render {
             writeToFile(outputFile, content)
         } ?: println(content)
     }
+
+    protected fun formatValue(number: Double, isPercent: Boolean = false): String =
+            if (isPercent) number.format(2) + "%" else number.format()
 }
 
 // Report render to text format.
-class TextRender: Render {
+class TextRender: Render() {
+    override val name: String
+        get() = "text"
+
     private val content = StringBuilder()
     private val headerSeparator = "================="
     private val wideColumnWidth = 50
@@ -50,7 +70,7 @@ class TextRender: Render {
         renderEnvChanges(report.kotlinChanges, "Compiler")
         renderStatusSummary(report)
         renderStatusChangesDetails(report.getBenchmarksWithChangedStatus())
-        renderPerformanceSummary(report.regressions, report.improvements)
+        renderPerformanceSummary(report)
         renderPerformanceDetails(report, onlyChanges)
         return content.toString()
     }
@@ -73,26 +93,6 @@ class TextRender: Render {
     fun renderEnvChanges(envChanges: List<FieldChange<String>>, bucketName: String) {
         if (!envChanges.isEmpty()) {
             append(ChangeReport(bucketName, envChanges).renderAsTextReport())
-        }
-    }
-
-    private fun printPerformanceBucket(bucket: Map<String, ScoreChange>, bucketName: String) {
-        if (!bucket.isEmpty()) {
-            var percentsList = bucket.values.map{ it.first.mean }
-            // Maps of regressions and improvements are sorted.
-            val maxValue = percentsList.first()
-            var geomeanValue: Double
-            if (percentsList.first() > 0.0) {
-                geomeanValue = geometricMean(percentsList)
-            } else {
-                // Geometric mean can be counted on positive numbers.
-                val precision = abs(maxValue) + 1
-                percentsList = percentsList.map{it + precision}
-                geomeanValue = geometricMean(percentsList) - precision
-            }
-
-            append("$bucketName: Maximum = ${formatValue(maxValue, true)}," +
-                    " Geometric mean = ${formatValue(geomeanValue, true)}")
         }
     }
 
@@ -127,19 +127,21 @@ class TextRender: Render {
         append()
     }
 
-    fun renderPerformanceSummary(regressions: Map<String, ScoreChange>,
-                                          improvements: Map<String, ScoreChange>) {
-        if (!regressions.isEmpty() || !improvements.isEmpty()) {
+    fun renderPerformanceSummary(report: SummaryBenchmarksReport) {
+        if (!report.regressions.isEmpty() || !report.improvements.isEmpty()) {
             append("Performance summary")
             append(headerSeparator)
-            printPerformanceBucket(regressions, "Regressions")
-            printPerformanceBucket(improvements, "Improvements")
+            if (!report.regressions.isEmpty()) {
+                append("Regressions: Maximum = ${formatValue(report.maximumRegression, true)}," +
+                        " Geometric mean = ${formatValue(report.regressionsGeometricMean, true)}")
+            }
+            if (!report.improvements.isEmpty()) {
+                append("Improvements: Maximum = ${formatValue(report.maximumImprovement, true)}," +
+                        " Geometric mean = ${formatValue(report.improvementsGeometricMean, true)}")
+            }
             append()
         }
     }
-
-    private fun formatValue(number: Double, isPercent: Boolean = false): String =
-            if (isPercent) format(number, 2) + "%" else format(number)
 
     private fun formatColumn(content:String, isWide: Boolean = false): String =
             content.padEnd(if (isWide) wideColumnWidth else standardColumnWidth, ' ')
@@ -151,8 +153,8 @@ class TextRender: Render {
             // Output changed benchmarks.
             for ((name, change) in bucket) {
                 append(formatColumn(name, true) +
-                        formatColumn(fullSet[name]!!.first!!.toString()) +
-                        formatColumn(fullSet[name]!!.second!!.toString()) +
+                        formatColumn(fullSet.getValue(name).first.toString()) +
+                        formatColumn(fullSet.getValue(name).second.toString()) +
                         formatColumn(change.first.toString() + " %") +
                         formatColumn(change.second.toString()))
             }
@@ -174,8 +176,8 @@ class TextRender: Render {
 
     private fun printPerformanceTableHeader(): Int {
         val wideColumns = listOf(formatColumn("Benchmark", true))
-        val standardColumns = listOf(formatColumn("Current score"),
-                formatColumn("Previous score"),
+        val standardColumns = listOf(formatColumn("First score"),
+                formatColumn("Second score"),
                 formatColumn("Percent"),
                 formatColumn("Ratio"))
         val tableWidth = wideColumnWidth * wideColumns.size + standardColumnWidth * standardColumns.size
