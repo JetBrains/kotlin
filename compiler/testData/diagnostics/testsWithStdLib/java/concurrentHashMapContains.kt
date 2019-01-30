@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FULL_JDK
 
 class A : java.util.concurrent.ConcurrentHashMap<String, Int>() {
@@ -27,8 +28,8 @@ fun main() {
 
     "" in (hm as Map<String, Int>)
     "" !in (hm as Map<String, Int>)
-    1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>in<!> (hm as Map<String, Int>)
-    1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>!in<!> (hm as Map<String, Int>)
+    1 <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>in<!> (hm as Map<String, Int>)
+    1 <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>!in<!> (hm as Map<String, Int>)
 
     val a = A()
     "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR!>in<!> a
@@ -43,8 +44,8 @@ fun main() {
 
     "" in (a as Map<String, Int>)
     "" !in (a as Map<String, Int>)
-    1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>in<!> (a as Map<String, Int>)
-    1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>!in<!> (a as Map<String, Int>)
+    1 <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>in<!> (a as Map<String, Int>)
+    1 <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>!in<!> (a as Map<String, Int>)
 
     val b = B()
     "" <!CONCURRENT_HASH_MAP_CONTAINS_OPERATOR!>in<!> b
@@ -57,8 +58,8 @@ fun main() {
 
     "" in (b as Map<String, Int>)
     "" !in (b as Map<String, Int>)
-    1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>in<!> (b as Map<String, Int>)
-    1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>!in<!> (b as Map<String, Int>)
+    1 <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>in<!> (b as Map<String, Int>)
+    1 <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>!in<!> (b as Map<String, Int>)
 
     // Actually, we could've allow calls here because the owner explicitly declared as operator, but semantics is still weird
     val c = C()
@@ -72,7 +73,7 @@ fun main() {
 
     "" in (c as Map<String, Int>)
     "" !in (c as Map<String, Int>)
-    1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>in<!> (c as Map<String, Int>)
-    1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>!in<!> (c as Map<String, Int>)
+    1 <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>in<!> (c as Map<String, Int>)
+    1 <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>!in<!> (c as Map<String, Int>)
 }
 

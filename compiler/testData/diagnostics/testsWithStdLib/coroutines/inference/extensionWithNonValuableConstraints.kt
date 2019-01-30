@@ -1,5 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !USE_EXPERIMENTAL: kotlin.Experimental
+// !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 
 @file:UseExperimental(ExperimentalTypeInference::class)
 
@@ -27,7 +29,7 @@ val test1 = generate {
     baseExtension()
 }
 
-val test2 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test2 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     baseExtension()
 }
 
@@ -36,21 +38,21 @@ val test3 = generate {
     outNullableAnyExtension()
 }
 
-val test4 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test4 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     outNullableAnyExtension()
 }
 
-val test5 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test5 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(42)
     outAnyExtension()
 }
 
-val test6 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test6 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield("bar")
     invNullableAnyExtension()
 }
 
-val test7 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test7 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield("baz")
     genericExtension<Int>()
 }

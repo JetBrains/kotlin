@@ -1,4 +1,5 @@
 //!DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 fun <@kotlin.internal.OnlyInputTypes T> assertEquals1(t1: T, t2: T) {}
@@ -10,7 +11,7 @@ class D
 
 fun test1(a: A, b: B, c: C) {
     assertEquals1(a, b)
-    <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>assertEquals1<!>(b, c)
+    <!OI;TYPE_INFERENCE_ONLY_INPUT_TYPES!>assertEquals1<!>(b, c)
 
     assertEquals1(3, 3)
     assertEquals1(1 or 2, 2 or 1)

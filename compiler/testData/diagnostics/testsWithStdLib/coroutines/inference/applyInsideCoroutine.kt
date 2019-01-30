@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 // !WITH_NEW_INFERENCE
+// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
 class Controller<T> {
@@ -8,26 +9,26 @@ class Controller<T> {
 
 fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
-val test1 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val <!NI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test1<!> = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     apply {
-        yield(4)
+        yield(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!>)
     }
 }
 
-val test2 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    yield(B)
+val <!NI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test2<!> = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    yield(<!NI;TYPE_MISMATCH!>B<!>)
     apply {
-        yield(C)
+        yield(<!NI;TYPE_MISMATCH!>C<!>)
     }
 }
 
-val test3 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val <!NI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test3<!> = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     this.<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>let<!> {
-        yield(B)
+        yield(<!NI;TYPE_MISMATCH!>B<!>)
     }
 
     apply {
-        yield(C)
+        yield(<!NI;TYPE_MISMATCH!>C<!>)
     }
 }
 

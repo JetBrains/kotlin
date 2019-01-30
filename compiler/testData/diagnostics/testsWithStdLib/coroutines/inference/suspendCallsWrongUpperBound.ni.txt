@@ -1,6 +1,6 @@
 package
 
-public val test: kotlin.String
+public val test: kotlin.Number
 public fun </*0*/ S : kotlin.Number> generate(/*0*/ g: suspend Controller<S>.() -> kotlin.Unit): S
 
 public final class Controller</*0*/ T : kotlin.Number> {
