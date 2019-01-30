@@ -71,6 +71,7 @@ private object CoroutineSuspendedMarker
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
 @SinceKotlin("1.3")
+@Suppress("UNCHECKED_CAST")
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
         completion: Continuation<T>
 ): Continuation<Unit> {
@@ -105,6 +106,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
 @SinceKotlin("1.3")
+@Suppress("UNCHECKED_CAST")
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
         receiver: R,
         completion: Continuation<T>
@@ -148,6 +150,7 @@ public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
  * The instance of [BaseContinuationImpl] is passed to the [block] so that it can be passed to the corresponding invocation.
  */
 @SinceKotlin("1.3")
+@Suppress("UNCHECKED_CAST")
 private inline fun <T> createCoroutineFromSuspendFunction(
         completion: Continuation<T>,
         crossinline block: (Continuation<T>) -> Any?

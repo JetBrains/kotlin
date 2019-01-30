@@ -11,11 +11,9 @@ import kotlin.random.*
 
 /** Copies typed varargs array to an array of objects */
 internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
-        if (isVarargs)
-            // if the array came from varargs and already is array of Any, copying isn't required.
-            @Suppress("UNCHECKED_CAST") (this as Array<out Any?>)
-        else
-            @Suppress("UNCHECKED_CAST") (this.copyOfUninitializedElements(this.size) as Array<out Any?>)
+        // if the array came from varargs and already is array of Any, copying isn't required.
+        if (isVarargs) this
+        else this.copyOfUninitializedElements(this.size)
 
 
 /**

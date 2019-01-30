@@ -35,6 +35,7 @@ public class WeakReference<T : Any> {
     /**
      * Returns either reference to an object or null, if it was collected.
      */
+    @Suppress("UNCHECKED_CAST")
     public fun get(): T? = pointer?.get() as T?
 }
 

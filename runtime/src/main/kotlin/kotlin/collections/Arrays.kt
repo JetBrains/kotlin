@@ -15,7 +15,7 @@ import kotlin.util.sortArray
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 public actual inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 
-
+@Suppress("NOTHING_TO_INLINE")
 @PublishedApi internal inline fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) {
     if (toIndex > size)
         throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
@@ -92,9 +92,8 @@ internal fun <T> Array<out T>.contentDeepHashCodeImpl(): Int {
     return result
 }
 
-internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
-    return (@Suppress("UNCHECKED_CAST")(arrayOfNulls<Any>(size)) as Array<T>)
-}
+@Suppress("UNCHECKED_CAST")
+internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> = arrayOfNulls<Any>(size) as Array<T>
 
 internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
     val array = arrayOfUninitializedElements<Any?>(collection.size)
@@ -105,6 +104,7 @@ internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
     return array
 }
 
+@Suppress("UNCHECKED_CAST")
 internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> {
     if (array.size < collection.size)
         return copyToArrayImpl(collection) as Array<T>
@@ -115,7 +115,7 @@ internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<
         array[index++] = iterator.next() as T
     }
     if (index < array.size) {
-        return (@Suppress("UNCHECKED_CAST")(array as Array<T>)).copyOf(index) as Array<T>
+        return array.copyOf(index) as Array<T>
     }
     return array
 }

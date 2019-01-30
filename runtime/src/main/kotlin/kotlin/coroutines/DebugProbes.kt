@@ -54,6 +54,7 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
  * [BaseContinuationImpl] class, despite the fact that the declared type of [frame]
  * parameter in this function is `Continuation<*>`. See [probeCoroutineCreated] for details.
  */
+@Suppress("UNUSED_PARAMETER")
 @SinceKotlin("1.3")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
 }
@@ -68,6 +69,7 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
  * [BaseContinuationImpl] class, despite the fact that the declared type of [frame]
  * parameter in this function is `Continuation<*>`. See [probeCoroutineCreated] for details.
  */
+@Suppress("UNUSED_PARAMETER")
 @SinceKotlin("1.3")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
 }

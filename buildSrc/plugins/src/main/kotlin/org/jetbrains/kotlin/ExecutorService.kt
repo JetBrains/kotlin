@@ -122,7 +122,7 @@ fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
     val stdOut = outStream.toString("UTF-8")
     val stdErr = errStream.toString("UTF-8")
 
-    return ProcessOutput(stdOut, stdErr, execResult!!.exitValue)
+    return ProcessOutput(stdOut, stdErr, execResult.exitValue)
 }
 
 fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,

@@ -34,8 +34,8 @@ open class KProperty0Impl<out R>(override val name: String, override val returnT
 
 @FixmeReflection
 open class KProperty1Impl<T, out R>(override val name: String, override val returnType: KType, val getter: (T) -> R): KProperty1<T, R> {
-    override fun get(p1: T): R {
-        return getter(p1)
+    override fun get(receiver: T): R {
+        return getter(receiver)
     }
     override fun invoke(p1: T): R {
         return getter(p1)
@@ -58,8 +58,8 @@ open class KProperty1Impl<T, out R>(override val name: String, override val retu
 
 @FixmeReflection
 open class KProperty2Impl<T1, T2, out R>(override val name: String, override val returnType: KType, val getter: (T1, T2) -> R): KProperty2<T1, T2, R> {
-    override fun get(p1: T1, p2: T2): R {
-        return getter(p1, p2)
+    override fun get(receiver1: T1, receiver2: T2): R {
+        return getter(receiver1, receiver2)
     }
     override fun invoke(p1: T1, p2: T2): R {
         return getter(p1, p2)
