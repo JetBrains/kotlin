@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 
 class JavaMemberByKotlinReferenceInplaceRenameHandler : MemberInplaceRenameHandler() {
     class Renamer(

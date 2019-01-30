@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 
 class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
     class FileRenamingPsiClassWrapper(

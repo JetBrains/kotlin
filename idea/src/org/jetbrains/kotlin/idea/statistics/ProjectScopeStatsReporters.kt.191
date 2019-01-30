@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.statistics
+package org.jetbrains.kotlin.idea.statistics
 
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
@@ -18,7 +18,7 @@ open class KotlinStatisticsTrigger {
 
         public fun trigger(trigger: KotlinEventTrigger, event: String) {
             val context = FeatureUsageData().addFeatureContext(FUSUsageContext.create(VERSION));
-            FUCounterUsageLogger.getInstance().logEvent(trigger.GROUP_ID, key, data);
+            FUCounterUsageLogger.getInstance().logEvent(trigger.GROUP_ID, event, context);
         }
     }
 }
