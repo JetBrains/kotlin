@@ -29,8 +29,11 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
         return result
     }
 
-    protected fun lookupSuperTypes(klass: FirRegularClass): List<ConeClassLikeType> {
-        return mutableListOf<ConeClassLikeType>().also { klass.symbol.collectSuperTypes(it) }
+    protected fun lookupSuperTypes(klass: FirRegularClass, lookupInterfaces: Boolean): List<ConeClassLikeType> {
+        return mutableListOf<ConeClassLikeType>().also {
+            if (lookupInterfaces) klass.symbol.collectSuperTypes(it)
+            else klass.symbol.collectSuperClasses(it)
+        }
     }
 
     private tailrec fun ConeClassLikeType.computePartialExpansion(): ConeClassLikeType? {
@@ -40,7 +43,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
         }
     }
 
-    private tailrec fun ConeClassLikeSymbol.collectSuperTypes(list: MutableList<ConeClassLikeType>) {
+    private tailrec fun ConeClassLikeSymbol.collectSuperClasses(list: MutableList<ConeClassLikeType>) {
         when (this) {
             is ConeClassSymbol -> {
                 val superClassType =
@@ -50,7 +53,27 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
                             it !is ConeClassErrorType && (it?.symbol as? ConeClassSymbol)?.kind == ClassKind.CLASS
                         } ?: return
                 list += superClassType
-                superClassType.symbol.collectSuperTypes(list)
+                superClassType.symbol.collectSuperClasses(list)
+            }
+            is ConeTypeAliasSymbol -> {
+                val expansion = expansionType?.computePartialExpansion() ?: return
+                expansion.symbol.collectSuperClasses(list)
+            }
+            else -> error("?!id:1")
+        }
+    }
+
+    private fun ConeClassLikeSymbol.collectSuperTypes(list: MutableList<ConeClassLikeType>) {
+        when (this) {
+            is ConeClassSymbol -> {
+                val superClassTypes =
+                    this.superTypes.mapNotNull { it.computePartialExpansion() }
+                list += superClassTypes
+                superClassTypes.forEach {
+                    if (it !is ConeClassErrorType) {
+                        it.symbol.collectSuperTypes(list)
+                    }
+                }
             }
             is ConeTypeAliasSymbol -> {
                 val expansion = expansionType?.computePartialExpansion() ?: return

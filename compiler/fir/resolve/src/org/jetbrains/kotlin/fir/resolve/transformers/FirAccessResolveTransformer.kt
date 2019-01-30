@@ -12,16 +12,12 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 
@@ -37,8 +33,9 @@ class FirAccessResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(rev
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup {
             val useSiteSession = regularClass.session
-            lookupSuperTypes(regularClass).asReversed()
+            lookupSuperTypes(regularClass, lookupInterfaces = true).asReversed()
                 .mapNotNullTo(towerScope.scopes) { useSiteSuperType ->
+                    if (useSiteSuperType is ConeClassErrorType) return@mapNotNullTo null
                     val symbol = useSiteSuperType.symbol
                     if (symbol is FirClassSymbol) {
                         FirClassDeclaredMemberScope(symbol.fir, useSiteSession)

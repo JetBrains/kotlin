@@ -34,7 +34,7 @@ FILE: jvm.kt
         public final function test(): R|kotlin/Unit| {
             R|/A.foo|()
             R|/X.bar|()
-            <Unresolved name: baz>#()
+            R|/Y.baz|()
         }
 
     }

@@ -13,9 +13,8 @@ actual open class A : X(), Y {
 class C : B() {
     fun test() {
         foo()
-        // This cannot be resolved yet due to lack of search symbols / projections
+        // This and next cannot be resolved yet due to lack of search symbols / projections
         bar()
-        // This cannot be resolved yet due to lack of interface lookup
         baz()
     }
 }
@@ -24,7 +23,6 @@ class D : A() {
     fun test() {
         foo()
         bar()
-        // This cannot be resolved yet due to lack of interface lookup
         baz()
     }
 }

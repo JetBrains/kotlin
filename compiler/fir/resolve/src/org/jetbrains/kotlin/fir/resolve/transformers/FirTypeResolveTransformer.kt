@@ -63,7 +63,7 @@ open class FirTypeResolveTransformer(
         return withScopeCleanup {
             val firProvider = FirProvider.getInstance(regularClass.session)
             val classId = regularClass.symbol.classId
-            lookupSuperTypes(regularClass).asReversed().mapTo(towerScope.scopes) {
+            lookupSuperTypes(regularClass, lookupInterfaces = false).asReversed().mapTo(towerScope.scopes) {
                 val symbol = it.symbol
                 if (symbol is FirBasedSymbol<*>) {
                     FirNestedClassifierScope(symbol.classId, FirProvider.getInstance(symbol.fir.session))
