@@ -91,8 +91,7 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
 
     @TestMetadata("ConflictingNameAppearsAndHasUsage7.kt")
     public void testConflictingNameAppearsAndHasUsage7() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage7.kt");
-        doTest(fileName);
+        runTest("idea/testData/addImport/ConflictingNameAppearsAndHasUsage7.kt");
     }
 
     @TestMetadata("ConflictingNameAppearsButUsageIsQualified.kt")
@@ -137,20 +136,17 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
 
     @TestMetadata("ConflictsExtensions.kt")
     public void testConflictsExtensions() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictsExtensions.kt");
-        doTest(fileName);
+        runTest("idea/testData/addImport/ConflictsExtensions.kt");
     }
 
     @TestMetadata("ConflictsExtensions1.kt")
     public void testConflictsExtensions1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictsExtensions1.kt");
-        doTest(fileName);
+        runTest("idea/testData/addImport/ConflictsExtensions1.kt");
     }
 
     @TestMetadata("DoNotDropConflictingOnStar.kt")
     public void testDoNotDropConflictingOnStar() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/DoNotDropConflictingOnStar.kt");
-        doTest(fileName);
+        runTest("idea/testData/addImport/DoNotDropConflictingOnStar.kt");
     }
 
     @TestMetadata("DropExplicitImports.kt")
