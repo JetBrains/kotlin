@@ -88,5 +88,6 @@ class ExtraFeaturesImpl(
 class KotlinMPPGradleModelImpl(
     override val sourceSets: Map<String, KotlinSourceSet>,
     override val targets: Collection<KotlinTarget>,
-    override val extraFeatures: ExtraFeatures
+    override val extraFeatures: ExtraFeatures,
+    override val kotlinNativeHome: String
 ) : KotlinMPPGradleModel

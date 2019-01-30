@@ -21,7 +21,7 @@ interface KonanLibraryLayout {
     // This is a default implementation. Can't make it an assignment.
     val target: KonanTarget? get() = null
 
-    val manifestFile get() = File(libDir, "manifest")
+    val manifestFile get() = File(libDir, KLIB_MANIFEST_FILE_NAME)
     val resourcesDir get() = File(libDir, "resources")
 
     val targetsDir get() = File(libDir, "targets")

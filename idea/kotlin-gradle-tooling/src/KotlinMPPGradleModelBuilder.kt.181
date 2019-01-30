@@ -24,6 +24,7 @@ import org.jetbrains.plugins.gradle.tooling.util.DependencyResolverImpl
 import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder
 import java.io.File
 import java.lang.reflect.Method
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel.Companion.NO_KOTLIN_NATIVE_HOME
 
 class KotlinMPPGradleModelBuilder : ModelBuilderService {
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
@@ -50,7 +51,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         computeSourceSetsDeferredInfo(sourceSets, targets)
         val coroutinesState = getCoroutinesState(project)
         reportUnresolvedDependencies(targets)
-        return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState))
+        return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState), NO_KOTLIN_NATIVE_HOME)
     }
 
     private fun reportUnresolvedDependencies(targets: Collection<KotlinTarget>) {
