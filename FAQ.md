@@ -69,17 +69,22 @@ targets {
 
 ### Q: How do I enable bitcode for my Kotlin framework?
 
-A: Use either `-Xembed-bitcode` or `-Xembed-bitcode-marker` compiler option
-or matching Gradle DSL statement, i.e.
+A: By default gradle plugin adds it on iOS target.
+ * For debug build it embeds placeholder LLVM IR data as a marker.
+ * For release build it embeds bitcode as data.
 
+Or commandline arguments: `-Xembed-bitcode` (for release) and `-Xembed-bitcode-marker` (debug)
+
+Setting this in a Gradle DSL: 
 <div class="sample" markdown="1" theme="idea" mode="groovy">
 
 ```groovy
 targets {
     fromPreset(presets.iosArm64, 'myapp') {
-       compilations.main.outputKinds 'FRAMEWORK'
-       compilations.main.extraOpts '-Xembed-bitcode' // for release binaries
-       // or '-Xembed-bitcode-marker' for debug binaries
+        compilations.main.outputKinds 'FRAMEWORK'
+        compilations.main.embedBitcode BitcodeEmbeddingMode.BITCODE // for release binaries
+        // or BitcodeEmbeddingMode.MARKER for debug binaries
+    }
 }
 ```
 
@@ -104,7 +109,7 @@ used to store different pointers to frozen objects in a frozen object and automa
 
 ### Q: How can I compile my project against the Kotlin/Native master?
 
-A: We release dev builds frequently, usually at least once a week. You can check the [list of available versions](https://bintray.com/jetbrains/kotlin-native-dependencies/kotlin-native-gradle-plugin). But if we recently fixed an issue and you want to check it before a release is done, you can do:
+A: One of the following should be done:
 
 <details>
     

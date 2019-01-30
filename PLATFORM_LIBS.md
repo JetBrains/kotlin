@@ -33,7 +33,7 @@ are a little different.
 
 There are many more platform libraries available for host and
 cross-compilation targets.  `Kotlin/Native` distribution provides access to
-`OpenGL`, `SDL`, `zlib` and other popular native libraries on
+`OpenGL`, `zlib` and other popular native libraries on
 applicable platforms.
 
 On Apple platforms `objc` library is provided for interoperability with [Objective-C](https://en.wikipedia.org/wiki/Objective-C).

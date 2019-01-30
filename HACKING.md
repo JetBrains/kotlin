@@ -70,8 +70,6 @@ To update the blackbox compiler tests set TeamCity build number in `gradle.prope
 
     testKotlinVersion=<build number>
 
-and run `./gradlew update_external_tests`
-
 * **-Pfilter** allows one to choose test files to run.
 
         ./gradlew -Pfilter=overflowLong.kt run_external
