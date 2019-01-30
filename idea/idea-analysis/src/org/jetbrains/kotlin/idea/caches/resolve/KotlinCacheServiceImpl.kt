@@ -394,7 +394,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
     private val scriptsCacheProvider = CachedValueProvider {
         CachedValueProvider.Result(
-            object : SLRUCache<Set<KtFile>, ProjectResolutionFacade>(2, 3) {
+            object : SLRUCache<Set<KtFile>, ProjectResolutionFacade>(10, 5) {
                 override fun createValue(files: Set<KtFile>) = createFacadeForFilesWithSpecialModuleInfo(files)
             },
             LibraryModificationTracker.getInstance(project),
