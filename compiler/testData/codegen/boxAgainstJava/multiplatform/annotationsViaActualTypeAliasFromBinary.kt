@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // !LANGUAGE: +MultiPlatformProjects
 // WITH_REFLECT
 // FILE: main.kt
