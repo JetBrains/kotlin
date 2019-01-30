@@ -24,8 +24,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.DirectoryAsPackageRenameHandler
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
-import org.jetbrains.kotlin.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 
 class KotlinDirectoryAsPackageRenameHandler : DirectoryAsPackageRenameHandler() {
     override fun isIdentifier(name: String, project: Project): Boolean = name.quoteIfNeeded().isIdentifier()
