@@ -21,6 +21,7 @@ const val IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE = "IGNORE_DATA_FLOW_IN_ASSERT"
 const val JVM_DEFAULT_MODE = "JVM_DEFAULT_MODE"
 const val SKIP_METADATA_VERSION_CHECK = "SKIP_METADATA_VERSION_CHECK"
 const val ALLOW_RESULT_RETURN_TYPE = "ALLOW_RESULT_RETURN_TYPE"
+const val SANITIZE_PARENTHESES = "SANITIZE_PARENTHESES"
 
 data class CompilerTestLanguageVersionSettings(
         private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
@@ -59,9 +60,11 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTes
     val enableJvmDefault = directiveMap[JVM_DEFAULT_MODE]?.let { JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.fromStringOrNull(it)!! }
     val skipMetadataVersionCheck = AnalysisFlags.skipMetadataVersionCheck to directiveMap.containsKey(SKIP_METADATA_VERSION_CHECK)
     val allowResultReturnType = AnalysisFlags.allowResultReturnType to directiveMap.containsKey(ALLOW_RESULT_RETURN_TYPE)
+    val sanitizeParentheses = JvmAnalysisFlags.sanitizeParentheses to directiveMap.containsKey(SANITIZE_PARENTHESES)
 
-    if (apiVersionString == null && languageFeaturesString == null && experimental == null &&
-        useExperimental == null && !ignoreDataFlowInAssert.second && !allowResultReturnType.second
+    if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null &&
+        !ignoreDataFlowInAssert.second && enableJvmDefault == null && !skipMetadataVersionCheck.second && !allowResultReturnType.second &&
+        !sanitizeParentheses.second
     ) {
         return null
     }
@@ -77,7 +80,8 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTes
         languageFeatures, apiVersion, languageVersion,
         mapOf(
             *listOfNotNull(
-                experimental, useExperimental, enableJvmDefault, ignoreDataFlowInAssert, skipMetadataVersionCheck, allowResultReturnType
+                experimental, useExperimental, enableJvmDefault, ignoreDataFlowInAssert, skipMetadataVersionCheck, allowResultReturnType,
+                sanitizeParentheses
             ).toTypedArray()
         )
     )

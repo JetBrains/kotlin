@@ -48,6 +48,9 @@ where advanced options include:
   -Xno-optimize              Disable optimizations
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
+  -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
+                             This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used as a workaround
+                             of an issue in the ASM bytecode framework. See KT-29475 for more details
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
   -Xsingle-module            Combine modules for source files and binary dependencies into a single module

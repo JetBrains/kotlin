@@ -14,4 +14,7 @@ object JvmAnalysisFlags {
 
     @JvmStatic
     val jvmDefaultMode by AnalysisFlag.Delegates.JvmDefaultModeDisabledByDefault
+
+    @JvmStatic
+    val sanitizeParentheses by AnalysisFlag.Delegates.Boolean
 }

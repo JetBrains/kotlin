@@ -1157,6 +1157,8 @@ public class KotlinTypeMapper {
             name += JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS;
         }
 
+        name = JvmCodegenUtil.sanitizeNameIfNeeded(name, languageVersionSettings);
+
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             if (Visibilities.isPrivate(descriptor.getVisibility()) && !(descriptor instanceof ConstructorDescriptor) && !"<clinit>".equals(name)) {
                 String partName = getPartSimpleNameForMangling(descriptor);

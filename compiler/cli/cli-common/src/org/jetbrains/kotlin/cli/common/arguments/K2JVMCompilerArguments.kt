@@ -253,6 +253,14 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var strictMetadataVersionSemantics: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xsanitize-parentheses",
+        description = "Transform '(' and ')' in method names to some other character sequence.\n" +
+                "This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used as a workaround\n" +
+                "of an issue in the ASM bytecode framework. See KT-29475 for more details"
+    )
+    var sanitizeParentheses: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xfriend-paths",
         valueDescription = "<path>",
         description = "Paths to output directories for friend modules (whose internals should be visible)"
@@ -268,11 +276,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         )
         result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
         JvmDefaultMode.fromStringOrNull(jvmDefault)?.let { result[JvmAnalysisFlags.jvmDefaultMode] = it }
-                ?: collector.report(
-                    CompilerMessageSeverity.ERROR,
-                    "Unknown @JvmDefault mode: $jvmDefault, " +
-                            "supported modes: ${JvmDefaultMode.values().map { it.description }}"
-                )
+            ?: collector.report(
+                CompilerMessageSeverity.ERROR,
+                "Unknown @JvmDefault mode: $jvmDefault, " +
+                        "supported modes: ${JvmDefaultMode.values().map { it.description }}"
+            )
+        result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         return result
     }
 
