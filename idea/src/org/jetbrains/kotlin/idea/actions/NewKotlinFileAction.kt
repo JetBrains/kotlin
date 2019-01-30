@@ -47,8 +47,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.statistics.KotlinEventTrigger
 import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
-import org.jetbrains.kotlin.statistics.KotlinIdeNewFileTemplateTrigger
 import java.util.*
 
 class NewKotlinFileAction : CreateFileFromTemplateAction(
@@ -194,7 +194,7 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
         private val FQNAME_SEPARATORS = charArrayOf('/', '\\', '.')
 
         fun createFileFromTemplateWithStat(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
-            KotlinStatisticsTrigger.trigger(KotlinIdeNewFileTemplateTrigger::class.java, template.name)
+            KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeNewFileTemplateTrigger, template.name)
             return createFileFromTemplate(name, template, dir)
         }
 

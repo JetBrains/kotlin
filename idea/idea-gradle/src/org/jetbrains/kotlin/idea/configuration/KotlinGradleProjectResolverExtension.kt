@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
@@ -36,8 +37,9 @@ import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.DataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
+import org.jetbrains.kotlin.idea.util.PsiPrecedences
+import org.jetbrains.kotlin.statistics.KotlinEventTrigger
 import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
-import org.jetbrains.kotlin.statistics.KotlinTargetTrigger
 import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalSourceSet
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency
@@ -47,8 +49,6 @@ import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.idea.util.PsiPrecedences
 
 var DataNode<ModuleData>.isResolved
         by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("IS_RESOLVED"), false)
@@ -200,7 +200,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         if (mppModel != null) {
             mppModel.targets.filterNot { it.name == "metadata" }.forEach { target ->
                 KotlinStatisticsTrigger.trigger(
-                        KotlinTargetTrigger::class.java,
+                        KotlinEventTrigger.KotlinGradleTargetTrigger,
                         "MPP.${target.platform.id + (target.presetName?.let { ".$it"} ?: "")}"
                 )
             }
@@ -224,7 +224,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.platformPluginId = gradleModel.platformPluginId
 
         KotlinStatisticsTrigger.trigger(
-                KotlinTargetTrigger::class.java,
+                KotlinEventTrigger.KotlinGradleTargetTrigger,
                 gradleModel.kotlinTarget ?: "unknown"
         )
 
