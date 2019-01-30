@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.platform.impl.isKotlinNative
-import org.jetbrains.kotlin.statistics.KotlinJPSTargetTrigger
-import org.jetbrains.kotlin.statistics.KotlinMavenTargetTrigger
+import org.jetbrains.kotlin.statistics.KotlinEventTrigger
 import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 
 class TargetRetrieveActivity : StartupActivity {
@@ -34,12 +33,12 @@ class TargetRetrieveActivity : StartupActivity {
             when {
                 buildSystem == BuildSystemType.JPS ->
                     KotlinStatisticsTrigger.trigger(
-                            KotlinJPSTargetTrigger::class.java,
+                            KotlinEventTrigger.KotlinJPSTargetTrigger,
                             platform
                     )
                 buildSystem.toString().toLowerCase().contains("maven") ->
                     KotlinStatisticsTrigger.trigger(
-                            KotlinMavenTargetTrigger::class.java,
+                            KotlinEventTrigger.KotlinMavenTargetTrigger,
                             platform
                     )
             }
