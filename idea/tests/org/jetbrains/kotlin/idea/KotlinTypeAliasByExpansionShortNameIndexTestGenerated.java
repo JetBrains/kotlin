@@ -39,6 +39,11 @@ public class KotlinTypeAliasByExpansionShortNameIndexTestGenerated extends Abstr
         runTest("idea/testData/typealiasExpansionIndex/generics.kt");
     }
 
+    @TestMetadata("recursion.kt")
+    public void testRecursion() throws Exception {
+        runTest("idea/testData/typealiasExpansionIndex/recursion.kt");
+    }
+
     @TestMetadata("simpleType.kt")
     public void testSimpleType() throws Exception {
         runTest("idea/testData/typealiasExpansionIndex/simpleType.kt");
