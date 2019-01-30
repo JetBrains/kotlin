@@ -1,3 +1,4 @@
+import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.exec.ExecRunner
 import com.moowork.gradle.node.npm.NpmExecRunner
 import com.moowork.gradle.node.npm.NpmTask
@@ -86,6 +87,8 @@ projectTest("quickTest") {
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
+
+extensions.getByType(NodeExtension::class.java).nodeModulesDir = testDataDir
 
 val npmInstall by tasks.getting(NpmTask::class) {
     setWorkingDir(testDataDir)
