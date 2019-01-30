@@ -620,6 +620,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/coroutineContextLambda.kt");
             }
 
+            @TestMetadata("defaultImplsMangling.kt")
+            public void testDefaultImplsMangling() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/defaultImplsMangling.kt");
+            }
+
             @TestMetadata("delegatedPropertyInClass.kt")
             public void testDelegatedPropertyInClass() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClass.kt");
@@ -758,6 +763,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("lambdaParameterMangling.kt")
             public void testLambdaParameterMangling() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/lambdaParameterMangling.kt");
+            }
+
+            @TestMetadata("lambdaThisMangling.kt")
+            public void testLambdaThisMangling() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/lambdaThisMangling.kt");
             }
 
             @TestMetadata("localFunctionMangling.kt")
