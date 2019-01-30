@@ -1,3 +1,66 @@
+# Google Internal Kotlin Mirror
+
+This is the Google internal mirror of the kotlin github repo. The purpose of
+this mirror is to allow reviews of changes internally before uploading them as
+pull requests at the official JetBrains github repo.
+
+## Cloning and adding commit hooks for code reviews
+
+```
+git clone sso://kotlin-internal/kotlin
+cd kotlin
+curl -Lo `git rev-parse --git-dir`/hooks/commit-msg https://gerrit-review.googlesource.com/tools/hooks/commit-msg ; chmod +x `git rev-parse --git-dir`/hooks/commit-msg
+```
+
+## Preparing change and uploading for code review
+
+Create a branch containing your changes. Commit changes locally, and make sure
+that there is only one commit on your branch (squash your branch if you have
+to). The commit hooks will add a `Change-Id` line in your commit message which
+will identify this change for code review. When addressing comments, make sure
+to commit them using `git commit -a --amend` to make sure to keep the same
+`Change-Id` so that the code review tool will not lose the association.
+
+Code reviews are uploaded with a push:
+
+```
+git push origin HEAD:refs/for/master
+```
+
+To add a reviewer from the command-line use:
+
+```
+git push origin HEAD:refs/for/master%r=ager@google.com
+```
+
+This will upload the review and print a URL for the codereview tool.
+
+## Adding JetBrains github as a remote
+
+Add the official JetBrains github repo as a remote called `upstream`:
+
+```
+git remote add upstream https://github.com/JetBrains/kotlin.git
+```
+
+## Updating the mirror with the latest version from upstream
+
+```
+git fetch upstream
+git checkout master
+git pull upstream master
+git push origin master
+```
+
+Updating the mirror sometimes contain a lot of files. If gerrit rejects
+the push just push directly.
+
+```
+git push sso://kotlin-internal.googlesource.com/_direct/kotlin master
+```
+
+---
+
 [![official project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 [![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_dev_Compiler.svg)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=Kotlin_dev_Compiler&branch_Kotlin_dev=%3Cdefault%3E&tab=buildTypeStatusDiv)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
