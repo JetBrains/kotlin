@@ -16,16 +16,20 @@ const val KLIB_METADATA_FILE_EXTENSION_WITH_DOT = ".$KLIB_METADATA_FILE_EXTENSIO
 
 const val KLIB_MODULE_METADATA_FILE_NAME = "module"
 
+const val KLIB_MANIFEST_FILE_NAME = "manifest"
+
 const val KONAN_STDLIB_NAME = "stdlib"
 
+const val KLIB_DIR_NAME = "klib"
+
 val KONAN_COMMON_LIBS_PATH: Path
-    get() = Paths.get("klib", "common")
+    get() = Paths.get(KLIB_DIR_NAME, "common")
 
 val KONAN_ALL_PLATFORM_LIBS_PATH: Path
-    get() = Paths.get("klib", "platform")
+    get() = Paths.get(KLIB_DIR_NAME, "platform")
 
 fun konanCommonLibraryPath(libraryName: String): Path = KONAN_COMMON_LIBS_PATH.resolve(libraryName)
 
 fun konanSpecificPlatformLibrariesPath(platform: String): Path = KONAN_ALL_PLATFORM_LIBS_PATH.resolve(platform)
 
-fun konanPlatformLibraryPath(platform: String, libraryName: String): Path = konanSpecificPlatformLibrariesPath(platform).resolve(libraryName)
+fun konanPlatformLibraryPath(libraryName: String, platform: String): Path = konanSpecificPlatformLibrariesPath(platform).resolve(libraryName)

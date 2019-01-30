@@ -102,4 +102,9 @@ interface KotlinMPPGradleModel : Serializable {
     val sourceSets: Map<String, KotlinSourceSet>
     val targets: Collection<KotlinTarget>
     val extraFeatures: ExtraFeatures
+    val kotlinNativeHome: String
+
+    companion object {
+        const val NO_KOTLIN_NATIVE_HOME = ""
+    }
 }

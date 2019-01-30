@@ -49,7 +49,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         computeSourceSetsDeferredInfo(sourceSets, targets)
         val coroutinesState = getCoroutinesState(project)
         reportUnresolvedDependencies(targets)
-        return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState))
+        return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState), null)
     }
 
     private fun reportUnresolvedDependencies(targets: Collection<KotlinTarget>) {

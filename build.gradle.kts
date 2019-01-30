@@ -544,6 +544,7 @@ tasks {
     create("idea-plugin-additional-tests") {
         dependsOn("dist")
         dependsOn(":idea:idea-gradle:test",
+                  ":idea:idea-gradle-native:test",
                   ":idea:idea-maven:test",
                   ":j2k:test",
                   ":eval4j:test")

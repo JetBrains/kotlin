@@ -64,13 +64,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         if (ExternalSystemApiUtil.find(ideModule, BuildScriptClasspathData.KEY) == null) {
-            val buildScriptClasspathModel = resolverCtx.getExtraProject(gradleModule, BuildScriptClasspathModel::class.java)
-            val classpathEntries = buildScriptClasspathModel?.classpath?.map {
-                BuildScriptClasspathData.ClasspathEntry(it.classes, it.sources, it.javadoc)
-            } ?: emptyList()
-            val buildScriptClasspathData = BuildScriptClasspathData(GradleConstants.SYSTEM_ID, classpathEntries).also {
-                it.gradleHomeDir = buildScriptClasspathModel?.gradleHomeDir
-            }
+            val buildScriptClasspathData = buildClasspathData(gradleModule, resolverCtx)
             ideModule.createChild(BuildScriptClasspathData.KEY, buildScriptClasspathData)
         }
 
@@ -347,17 +341,20 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) ?: return
             val sourceSetMap = ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS) ?: return
             val artifactsMap = ideProject.getUserData(CONFIGURATION_ARTIFACTS) ?: return
+            val substitutor = KotlinNativeLibrariesDependencySubstitutor(mppModel, gradleModule, resolverCtx)
             val processedModuleIds = HashSet<String>()
             processCompilations(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, compilation ->
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, compilation, resolverCtx))) {
+                    val substitutedDependencies = substitutor.substituteDependencies(compilation.dependencies)
                     buildDependencies(
                         resolverCtx,
                         sourceSetMap,
                         artifactsMap,
                         dataNode,
-                        preprocessDependencies(compilation.dependencies),
+                        preprocessDependencies(substitutedDependencies),
                         ideProject
                     )
+                    KotlinNativeLibrariesNameFixer.applyTo(dataNode)
                     for (sourceSet in compilation.sourceSets) {
                         if (sourceSet.fullName() == compilation.fullName()) continue
                         val targetDataNode = getSiblingKotlinModuleData(sourceSet, gradleModule, ideModule, resolverCtx) ?: continue
@@ -446,7 +443,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             else -> null
         }
 
-        private fun preprocessDependencies(dependencies: Set<KotlinDependency>): List<ExternalDependency> {
+        private fun preprocessDependencies(dependencies: Collection<KotlinDependency>): List<ExternalDependency> {
             return dependencies
                 .groupBy { it.id }
                 .mapValues { it.value.firstOrNull { it.scope == "COMPILE" } ?: it.value.lastOrNull() }

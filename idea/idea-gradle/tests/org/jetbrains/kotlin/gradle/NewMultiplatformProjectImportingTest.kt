@@ -330,14 +330,14 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 sourceFolder("shared/src/androidTest/resources", JavaResourceRootType.TEST_RESOURCE)
             }
             module("shared_iOSMain") {
-                libraryDependency("Gradle: Kotlin/Native:stdlib:0.9.3", DependencyScope.COMPILE)
+                libraryDependency("Kotlin/Native 0.9.3 - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
                 moduleDependency("shared_commonMain", DependencyScope.COMPILE)
                 sourceFolder("shared/src/iOSMain/kotlin", KotlinSourceRootType.Source)
                 sourceFolder("shared/src/iOSMain/resources", KotlinResourceRootType.Resource)
             }
             module("shared_iOSTest") {
-                libraryDependency("Gradle: Kotlin/Native:stdlib:0.9.3", DependencyScope.TEST)
+                libraryDependency("Kotlin/Native 0.9.3 - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
                 moduleDependency("shared_iOSMain", DependencyScope.TEST)
                 moduleDependency("shared_commonMain", DependencyScope.TEST)
