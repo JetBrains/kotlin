@@ -34,8 +34,18 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
         runTest("idea/testData/fir/multiModule/basic/");
     }
 
+    @TestMetadata("mppMemberType")
+    public void testMppMemberType() throws Exception {
+        runTest("idea/testData/fir/multiModule/mppMemberType/");
+    }
+
     @TestMetadata("mppMembers")
     public void testMppMembers() throws Exception {
         runTest("idea/testData/fir/multiModule/mppMembers/");
+    }
+
+    @TestMetadata("mppSuperTypes")
+    public void testMppSuperTypes() throws Exception {
+        runTest("idea/testData/fir/multiModule/mppSuperTypes/");
     }
 }

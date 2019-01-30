@@ -12,11 +12,16 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 
@@ -31,15 +36,17 @@ class FirAccessResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(rev
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup {
-            lookupSuperTypes(regularClass).asReversed().mapNotNullTo(towerScope.scopes) {
-                val symbol = it.symbol
-                if (symbol is FirClassSymbol) {
-                    FirClassDeclaredMemberScope(symbol.fir, symbol.fir.session)
-                } else {
-                    null
+            val useSiteSession = regularClass.session
+            lookupSuperTypes(regularClass).asReversed()
+                .mapNotNullTo(towerScope.scopes) { useSiteSuperType ->
+                    val symbol = useSiteSuperType.symbol
+                    if (symbol is FirClassSymbol) {
+                        FirClassDeclaredMemberScope(symbol.fir, useSiteSession)
+                    } else {
+                        null
+                    }
                 }
-            }
-            towerScope.scopes += FirClassDeclaredMemberScope(regularClass, regularClass.session)
+            towerScope.scopes += FirClassDeclaredMemberScope(regularClass, useSiteSession)
             super.transformRegularClass(regularClass, data)
         }
     }

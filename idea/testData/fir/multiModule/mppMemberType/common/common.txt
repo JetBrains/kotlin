@@ -1,0 +1,14 @@
+FILE: common.kt
+    public final expect class MyList {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final function get(i: R|kotlin/Int|): R|kotlin/Int|
+
+    }
+    public open class Wrapper {
+        public constructor(list: R|MyList|): super<R|kotlin/Any|>()
+
+        public final property list(val): R|MyList|
+            public get(): R|MyList|
+
+    }
