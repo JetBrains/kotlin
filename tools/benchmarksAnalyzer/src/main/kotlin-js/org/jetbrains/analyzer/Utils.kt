@@ -20,7 +20,6 @@ import org.w3c.xhr.*
 import kotlin.browser.*
 import kotlin.js.*
 
-
 actual fun readFile(fileName: String): String {
     error("Reading from local file for JS isn't supported")
 }

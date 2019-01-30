@@ -38,7 +38,7 @@ data class MeanVarianceBenchmark(val meanBenchmark: BenchmarkResult, val varianc
     fun calcPercentageDiff(other: MeanVarianceBenchmark): MeanVariance {
         assert(other.meanBenchmark.score >= 0 &&
                 other.varianceBenchmark.score >= 0 &&
-                abs(other.meanBenchmark.score - other.varianceBenchmark.score) != 0.0,
+                other.meanBenchmark.score - other.varianceBenchmark.score != 0.0,
                 { "Mean and variance should be positive and not equal!" })
         val mean = (meanBenchmark.score - other.meanBenchmark.score) / other.meanBenchmark.score
         val maxValueChange = abs(meanBenchmark.score + varianceBenchmark.score -

@@ -41,6 +41,7 @@ private def determinePreset() {
 }
 
 def hostPreset = determinePreset()
+def applicationName = 'Ring'
 
 kotlin {
     sourceSets {
@@ -104,13 +105,15 @@ task jvmRun(type: JavaExec)  {
 
 task konanJsonReport {
     doLast {
-        def nativeCompileTime = MPPTools.getNativeCompileTime('Ring')
+        def nativeExecutable = MPPTools.getKotlinNativeExecutable(kotlin.targets.native, "RELEASE")
+        def nativeCompileTime = MPPTools.getNativeCompileTime(applicationName)
         String benchContents = new File("${buildDir.absolutePath}/${nativeBenchResults}").text
         def properties = getCommonProperties() + ['type'           : 'native',
                                                   'compilerVersion': "${konanVersion}".toString(),
-                                                  'flags'          : kotlin.targets.native.compilations.main.extraOpts.collect{ '"' + it + '"'},
+                                                  'flags'          : kotlin.targets.native.compilations.main.extraOpts.collect{ "\"$it\"" },
                                                   'benchmarks'     : benchContents,
-                                                  'compileTime'    : nativeCompileTime]
+                                                  'compileTime'    : nativeCompileTime,
+                                                  'codeSize'       : MPPTools.getCodeSizeBenchmark(applicationName, nativeExecutable) ]
         def output = MPPTools.createJsonReport(properties)
         new File("${buildDir.absolutePath}/${nativeJson}").write(output)
         uploadBenchmarkResultToBintray(nativeJson)
@@ -119,12 +122,14 @@ task konanJsonReport {
 
 task jvmJsonReport {
     doLast {
-        def jvmCompileTime = MPPTools.getJvmCompileTime('Ring')
+        def jarPath = project.getTasks().getByName("jvmJar").archivePath
+        def jvmCompileTime = MPPTools.getJvmCompileTime(applicationName)
         String benchContents = new File("${buildDir.absolutePath}/${jvmBenchResults}").text
         def properties = getCommonProperties() + ['type'           : 'jvm',
                                                   'compilerVersion': "${buildKotlinVersion}".toString(),
                                                   'benchmarks'     : benchContents,
-                                                  'compileTime'    : jvmCompileTime]
+                                                  'compileTime'    : jvmCompileTime,
+                                                  'codeSize'       : MPPTools.getCodeSizeBenchmark(applicationName, "${jarPath}") ]
         def output = MPPTools.createJsonReport(properties)
         new File("${buildDir.absolutePath}/${jvmJson}").write(output)
         uploadBenchmarkResultToBintray(jvmJson)

@@ -76,6 +76,21 @@ fun getNativeProgramExtension(): String = when {
     else -> error("Unknown host")
 }
 
+fun getKotlinNativeExecutable(target: KotlinTarget, buildType: String) =
+        target.compilations.main.getBinary("EXECUTABLE", buildType).toString()
+
+fun getFileSize(filePath: String): Long? {
+    val file = File(filePath)
+    return if (file.exists()) file.length() else null
+}
+
+fun getCodeSizeBenchmark(programName: String, filePath: String): BenchmarkResult {
+    val codeSize = getFileSize(filePath)
+    return BenchmarkResult("$programName.codeSize",
+            codeSize?. let { BenchmarkResult.Status.PASSED } ?: run { BenchmarkResult.Status.FAILED },
+            codeSize?.toDouble() ?: 0.0, codeSize?.toDouble() ?: 0.0, 1, 0)
+}
+
 // Create benchmarks json report based on information get from gradle project
 fun createJsonReport(projectProperties: Map<String, Any>): String {
     fun getValue(key: String): String = projectProperties[key] as? String ?: "unknown"
@@ -89,7 +104,8 @@ fun createJsonReport(projectProperties: Map<String, Any>): String {
     val benchDesc = getValue("benchmarks")
     val benchmarksArray = JsonTreeParser.parse(benchDesc)
     val benchmarks = BenchmarksReport.parseBenchmarksArray(benchmarksArray)
-            .union(listOf<BenchmarkResult>(projectProperties["compileTime"] as BenchmarkResult)).toList()
+            .union(listOf<BenchmarkResult>(projectProperties["compileTime"] as BenchmarkResult,
+                                            projectProperties["codeSize"] as BenchmarkResult)).toList()
     val report = BenchmarksReport(env, benchmarks, kotlin)
     return report.toJson()
 }
