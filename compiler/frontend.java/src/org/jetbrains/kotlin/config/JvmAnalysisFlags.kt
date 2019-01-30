@@ -17,4 +17,7 @@ object JvmAnalysisFlags {
 
     @JvmStatic
     val inheritMultifileParts by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val sanitizeParentheses by AnalysisFlag.Delegates.Boolean
 }

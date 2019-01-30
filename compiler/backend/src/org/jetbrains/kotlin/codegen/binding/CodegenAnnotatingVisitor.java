@@ -443,7 +443,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @NotNull
     private MutableClosure recordClosure(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
-        return CodegenBinding.recordClosure(bindingTrace, classDescriptor, getProperEnclosingClass(), Type.getObjectType(name));
+        Type type = Type.getObjectType(JvmCodegenUtil.sanitizeNameIfNeeded(name, languageVersionSettings));
+        return CodegenBinding.recordClosure(bindingTrace, classDescriptor, getProperEnclosingClass(), type);
     }
 
     @Nullable

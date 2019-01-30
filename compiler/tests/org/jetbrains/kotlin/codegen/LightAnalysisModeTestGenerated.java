@@ -15143,6 +15143,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/mangling/noOverrideWithJava.kt");
         }
 
+        @TestMetadata("parentheses.kt")
+        public void testParentheses() throws Exception {
+            runTest("compiler/testData/codegen/box/mangling/parentheses.kt");
+        }
+
         @TestMetadata("publicOverride.kt")
         public void testPublicOverride() throws Exception {
             runTest("compiler/testData/codegen/box/mangling/publicOverride.kt");

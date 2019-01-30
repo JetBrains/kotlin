@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.JvmAnalysisFlags;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -379,5 +381,14 @@ public class JvmCodegenUtil {
 
     public static boolean isPolymorphicSignature(@NotNull FunctionDescriptor descriptor) {
         return descriptor.getAnnotations().hasAnnotation(new FqName("java.lang.invoke.MethodHandle.PolymorphicSignature"));
+    }
+
+    @NotNull
+    public static String sanitizeNameIfNeeded(@NotNull String name, @NotNull LanguageVersionSettings languageVersionSettings) {
+        if (languageVersionSettings.getFlag(JvmAnalysisFlags.getSanitizeParentheses())) {
+            return name.replace("(", "$_").replace(")", "$_");
+        }
+
+        return name;
     }
 }

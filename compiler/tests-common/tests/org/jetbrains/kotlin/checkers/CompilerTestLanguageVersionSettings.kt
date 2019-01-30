@@ -22,6 +22,7 @@ const val JVM_DEFAULT_MODE = "JVM_DEFAULT_MODE"
 const val SKIP_METADATA_VERSION_CHECK = "SKIP_METADATA_VERSION_CHECK"
 const val ALLOW_RESULT_RETURN_TYPE = "ALLOW_RESULT_RETURN_TYPE"
 const val INHERIT_MULTIFILE_PARTS = "INHERIT_MULTIFILE_PARTS"
+const val SANITIZE_PARENTHESES = "SANITIZE_PARENTHESES"
 
 data class CompilerTestLanguageVersionSettings(
         private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
@@ -61,10 +62,11 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTes
     val skipMetadataVersionCheck = AnalysisFlags.skipMetadataVersionCheck to directiveMap.containsKey(SKIP_METADATA_VERSION_CHECK)
     val allowResultReturnType = AnalysisFlags.allowResultReturnType to directiveMap.containsKey(ALLOW_RESULT_RETURN_TYPE)
     val inheritMultifileParts = JvmAnalysisFlags.inheritMultifileParts to directiveMap.containsKey(INHERIT_MULTIFILE_PARTS)
+    val sanitizeParentheses = JvmAnalysisFlags.sanitizeParentheses to directiveMap.containsKey(SANITIZE_PARENTHESES)
 
     if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null &&
         !ignoreDataFlowInAssert.second && enableJvmDefault == null && !skipMetadataVersionCheck.second && !allowResultReturnType.second &&
-        !inheritMultifileParts.second
+        !inheritMultifileParts.second && !sanitizeParentheses.second
     ) {
         return null
     }
@@ -81,7 +83,7 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTes
         mapOf(
             *listOfNotNull(
                 experimental, useExperimental, enableJvmDefault, ignoreDataFlowInAssert, skipMetadataVersionCheck, allowResultReturnType,
-                inheritMultifileParts
+                inheritMultifileParts, sanitizeParentheses
             ).toTypedArray()
         )
     )
