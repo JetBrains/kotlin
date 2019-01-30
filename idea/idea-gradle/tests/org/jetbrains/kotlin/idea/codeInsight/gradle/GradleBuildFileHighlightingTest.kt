@@ -9,12 +9,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.junit.Ignore
 import org.junit.Test
 
 class GradleBuildFileHighlightingTest : GradleImportingTestCase() {
@@ -22,26 +23,38 @@ class GradleBuildFileHighlightingTest : GradleImportingTestCase() {
     @TargetVersions("4.8+")
     @Test
     fun testKtsInJsProject() {
-        val files = configureByFiles()
+        val file = configureByFiles().buildGradleKtsFile()
         importProjectUsingSingeModulePerGradleProject()
 
-        checkHighlighting(files)
+        checkHighlighting(file)
     }
 
-    private fun checkHighlighting(files: List<VirtualFile>) {
-        for (file in files.filter { it.name.endsWith(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION) }) {
-            runReadAction {
-                val psiFile = PsiManager.getInstance(myProject).findFile(file) as? KtFile
-                    ?: error("Couldn't find psiFile for virtual file: ${file.canonicalPath}")
+    @Ignore
+    @TargetVersions("4.8+")
+    @Test
+    fun testComplexBuildGradleKts() {
+        val file = configureByFiles().buildGradleKtsFile()
 
-                ScriptDependenciesManager.updateScriptDependenciesSynchronously(file, myProject)
+        importProjectUsingSingeModulePerGradleProject()
 
-                val bindingContext = psiFile.analyze()
+        checkHighlighting(file)
+    }
 
-                val diagnostics = bindingContext.diagnostics.filter { it.severity == Severity.ERROR }
-                assert(diagnostics.isEmpty()) {
-                    "Diagnostic's list should be empty:\n ${diagnostics.joinToString("\n") { DefaultErrorMessages.render(it) }}"
-                }
+    private fun List<VirtualFile>.buildGradleKtsFile(): VirtualFile =
+        singleOrNull { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME } ?: error("Couldn't find any build.gradle.kts file")
+
+    private fun checkHighlighting(file: VirtualFile) {
+        runReadAction {
+            val psiFile = PsiManager.getInstance(myProject).findFile(file) as? KtFile
+                ?: error("Couldn't find psiFile for virtual file: ${file.canonicalPath}")
+
+            ScriptDependenciesManager.updateScriptDependenciesSynchronously(file, myProject)
+
+            val bindingContext = psiFile.analyzeWithContent()
+
+            val diagnostics = bindingContext.diagnostics.filter { it.severity == Severity.ERROR }
+            assert(diagnostics.isEmpty()) {
+                "Diagnostic's list should be empty:\n ${diagnostics.joinToString("\n") { DefaultErrorMessages.render(it) }}"
             }
         }
     }
