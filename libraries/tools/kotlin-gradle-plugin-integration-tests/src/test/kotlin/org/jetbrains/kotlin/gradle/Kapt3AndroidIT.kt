@@ -169,7 +169,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/BR.java")
 
             if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+                assertNoSuchFile("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
             }
 
             if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
