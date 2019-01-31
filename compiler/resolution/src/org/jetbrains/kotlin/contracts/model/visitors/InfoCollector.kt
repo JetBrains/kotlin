@@ -83,6 +83,8 @@ class InfoCollector(
 
     override fun visitConstant(esConstant: ESConstant): MutableContextInfo = MutableContextInfo.EMPTY
 
+    override fun visitReceiver(esReceiver: ESReceiver): MutableContextInfo = MutableContextInfo.EMPTY
+
     private fun <R> inverted(block: () -> R): R {
         isInverted = isInverted.not()
         val result = block()

@@ -62,4 +62,6 @@ class Substitutor(
     override fun visitVariable(esVariable: ESVariable): Computation? = substitutions[esVariable] ?: esVariable
 
     override fun visitConstant(esConstant: ESConstant): Computation? = esConstant
+
+    override fun visitReceiver(esReceiver: ESReceiver): ESReceiver = esReceiver
 }
