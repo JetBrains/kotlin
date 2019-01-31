@@ -162,15 +162,15 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             when {
                 output.contains("-Aandroid.databinding.enableV2=1") -> {
                     // databinding compiler v2 was introduced in AGP 3.1.0, was enabled by default in AGP 3.2.0
-                    assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+                    assertNoSuchFile("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
                     assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBindingImpl.java")
                 }
                 androidGradlePluginVersion == AGPVersion.v3_1_0 -> {
-                    assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+                    assertNoSuchFile("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
                     assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
                 }
                 else -> {
-                    assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapper.java")
+                    assertNoSuchFile("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapper.java")
                     assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
                 }
             }
