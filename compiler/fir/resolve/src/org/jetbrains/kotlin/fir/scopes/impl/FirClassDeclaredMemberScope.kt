@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.scopes.FirPosition
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirClassDeclaredMemberScope(
@@ -19,17 +22,23 @@ class FirClassDeclaredMemberScope(
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
     private val classId = klass.symbol.classId
 
-    override fun processClassifiersByName(
-        name: Name,
-        position: FirPosition,
-        processor: (ConeSymbol) -> Boolean
-    ): Boolean {
+    override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
         val symbols = provider.getCallableSymbols(CallableId(classId.packageFqName, classId.relativeClassName, name))
         for (symbol in symbols) {
-            if (!processor(symbol)) {
-                return false
+            if (symbol is ConeFunctionSymbol && !processor(symbol)) {
+                return STOP
             }
         }
-        return true
+        return NEXT
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (ConePropertySymbol) -> ProcessorAction): ProcessorAction {
+        val symbols = provider.getCallableSymbols(CallableId(classId.packageFqName, classId.relativeClassName, name))
+        for (symbol in symbols) {
+            if (symbol is ConePropertySymbol && !processor(symbol)) {
+                return STOP
+            }
+        }
+        return NEXT
     }
 }

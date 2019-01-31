@@ -8,6 +8,11 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
+import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -29,4 +34,27 @@ class FirCompositeScope(
         }
         return true
     }
+
+    private inline fun <T> processComposite(
+        process: FirScope.(Name, (T) -> ProcessorAction) -> ProcessorAction,
+        name: Name,
+        noinline processor: (T) -> ProcessorAction
+    ): ProcessorAction {
+        val scopes = if (reversedPriority) scopes.asReversed() else scopes
+        for (scope in scopes) {
+            if (!scope.process(name, processor)) {
+                return STOP
+            }
+        }
+        return NEXT
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
+        return processComposite(FirScope::processFunctionsByName, name, processor)
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (ConePropertySymbol) -> ProcessorAction): ProcessorAction {
+        return processComposite(FirScope::processPropertiesByName, name, processor)
+    }
+
 }
