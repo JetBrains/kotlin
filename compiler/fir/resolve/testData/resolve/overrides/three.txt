@@ -1,0 +1,32 @@
+FILE: three.kt
+    public abstract class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final function foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface Y {
+        public open function baz(): R|kotlin/Unit| {
+        }
+
+    }
+    public open class B : R|A|, R|Y| {
+        public constructor(): super<R|A|>()
+
+        public final function bar(): R|kotlin/Unit| {
+            R|/A.foo|()
+            R|/Y.baz|()
+        }
+
+    }
+    public final class C : R|B| {
+        public constructor(): super<R|B|>()
+
+        public final function test(): R|kotlin/Unit| {
+            R|/A.foo|()
+            R|/B.bar|()
+            R|/Y.baz|()
+        }
+
+    }

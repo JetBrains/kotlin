@@ -1,0 +1,21 @@
+FILE: jvm.kt
+    <T> public open actual class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public open actual function foo(arg: R|T|): R|kotlin/Unit| {
+        }
+
+        public open function bar(arg: R|T|): R|T| {
+            return@@@bar <Unresolved name: arg>#
+        }
+
+    }
+    public final class D : R|C| {
+        public constructor(): super<R|C|>()
+
+        public final function test(): R|kotlin/Unit| {
+            R|FakeOverride</A.foo>|(String())
+            R|FakeOverride</A.bar>|(String())
+        }
+
+    }

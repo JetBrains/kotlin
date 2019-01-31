@@ -13,8 +13,8 @@ FILE: jvm.kt
         public constructor(): super<R|B|>()
 
         public final function test(): R|kotlin/Unit| {
-            <Ambiguity: foo, [/A.foo, /A.foo]>#()
-            <Ambiguity: bar, [/A.bar, /A.bar]>#()
+            R|/A.foo|()
+            R|/A.bar|()
         }
 
     }

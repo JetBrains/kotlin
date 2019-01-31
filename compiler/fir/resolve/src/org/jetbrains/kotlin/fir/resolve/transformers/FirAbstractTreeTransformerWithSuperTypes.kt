@@ -29,9 +29,13 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
         return result
     }
 
-    protected fun lookupSuperTypes(klass: FirRegularClass, lookupInterfaces: Boolean): List<ConeClassLikeType> {
+    protected fun lookupSuperTypes(
+        klass: FirRegularClass,
+        lookupInterfaces: Boolean,
+        deep: Boolean
+    ): List<ConeClassLikeType> {
         return mutableListOf<ConeClassLikeType>().also {
-            if (lookupInterfaces) klass.symbol.collectSuperTypes(it)
+            if (lookupInterfaces) klass.symbol.collectSuperTypes(it, deep)
             else klass.symbol.collectSuperClasses(it)
         }
     }
@@ -63,21 +67,22 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
         }
     }
 
-    private fun ConeClassLikeSymbol.collectSuperTypes(list: MutableList<ConeClassLikeType>) {
+    private fun ConeClassLikeSymbol.collectSuperTypes(list: MutableList<ConeClassLikeType>, deep: Boolean) {
         when (this) {
             is ConeClassSymbol -> {
                 val superClassTypes =
                     this.superTypes.mapNotNull { it.computePartialExpansion() }
                 list += superClassTypes
-                superClassTypes.forEach {
-                    if (it !is ConeClassErrorType) {
-                        it.symbol.collectSuperTypes(list)
+                if (deep)
+                    superClassTypes.forEach {
+                        if (it !is ConeClassErrorType) {
+                            it.symbol.collectSuperTypes(list, deep)
+                        }
                     }
-                }
             }
             is ConeTypeAliasSymbol -> {
                 val expansion = expansionType?.computePartialExpansion() ?: return
-                expansion.symbol.collectSuperTypes(list)
+                expansion.symbol.collectSuperTypes(list, deep)
             }
             else -> error("?!id:1")
         }

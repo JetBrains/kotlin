@@ -22,7 +22,7 @@ FILE: jvm.kt
         public constructor(): super<R|B|>()
 
         public final function test(): R|kotlin/Unit| {
-            <Ambiguity: foo, [/A.foo, /A.foo]>#()
+            R|/A.foo|()
             <Unresolved name: bar>#()
             <Unresolved name: baz>#()
         }
@@ -33,8 +33,8 @@ FILE: jvm.kt
 
         public final function test(): R|kotlin/Unit| {
             R|/A.foo|()
-            <Ambiguity: bar, [/X.bar, /X.bar]>#()
-            <Ambiguity: baz, [/Y.baz, /Y.baz]>#()
+            R|/X.bar|()
+            R|/Y.baz|()
         }
 
     }
