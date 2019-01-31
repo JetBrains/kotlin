@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
-import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
-import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -379,5 +376,9 @@ public class ExpressionTypingServices {
         protected <K, V> boolean shouldBeHiddenFromParent(@NotNull WritableSlice<K, V> slice, K key) {
             return slice == BindingContext.EXPRESSION_EFFECTS;
         }
+    }
+
+    public LocalRedeclarationChecker createLocalRedeclarationChecker(BindingTrace trace) {
+        return new TraceBasedLocalRedeclarationChecker(trace, expressionTypingComponents.overloadChecker);
     }
 }

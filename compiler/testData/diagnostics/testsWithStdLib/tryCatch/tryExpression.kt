@@ -13,8 +13,8 @@ fun test0(): List<Int> = run {
     }
 }
 
-fun test1(): Map<Int, Int> = <!NI;TYPE_MISMATCH!>run {
-    <!NI;TYPE_MISMATCH!>try {
+fun test1(): Map<Int, Int> = run {
+    try {
         emptyMap()
     } catch (e: ExcA) {
         emptyMap()
@@ -22,13 +22,13 @@ fun test1(): Map<Int, Int> = <!NI;TYPE_MISMATCH!>run {
         e.map
     } finally {
         <!UNUSED_EXPRESSION!>""<!>
-    }<!>
-}<!>
+    }
+}
 
-fun test2(): Map<Int, Int> = <!NI;TYPE_MISMATCH!>run {
-    <!NI;TYPE_MISMATCH!>try {
+fun test2(): Map<Int, Int> = run {
+    <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>try {
         emptyMap()
     } catch (e: ExcA) {
-        <!OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>mapOf("" to "")<!>
+        <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>mapOf(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>"" to ""<!>)<!>
     }<!>
-}<!>
+}

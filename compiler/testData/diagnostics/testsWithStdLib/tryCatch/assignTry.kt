@@ -5,15 +5,15 @@ class ExcA : Exception()
 class ExcB : Exception()
 
 fun test2() {
-    val s: String? = try {
+    val s: String? = <!NI;TYPE_MISMATCH!>try {
         ""
     }
     catch (e: ExcA) {
         null
     }
     catch (e: ExcB) {
-        <!CONSTANT_EXPECTED_TYPE_MISMATCH!>10<!>
-    }
+        <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>10<!>
+    }<!>
     s<!UNSAFE_CALL!>.<!>length
 }
 
