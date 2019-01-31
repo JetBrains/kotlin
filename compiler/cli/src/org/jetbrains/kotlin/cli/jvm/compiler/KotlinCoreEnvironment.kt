@@ -36,6 +36,9 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.JDOMUtil
+import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
@@ -116,7 +119,10 @@ import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 import java.util.zip.ZipFile
+import javax.xml.stream.XMLInputFactory
 
 class KotlinCoreEnvironment private constructor(
     parentDisposable: Disposable,
@@ -606,6 +612,8 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
+            workaroundIbmJdkStaxReportCdataEventIssue()
+
             fun File.hasConfigFile(configFile: String): Boolean =
                 if (isDirectory) File(this, "META-INF" + File.separator + configFile).exists()
                 else try {
@@ -627,6 +635,38 @@ class KotlinCoreEnvironment private constructor(
                     )
 
             CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
+        }
+
+        private fun workaroundIbmJdkStaxReportCdataEventIssue() {
+            if (!SystemInfo.isIbmJvm) return
+
+            // On IBM JDK, XMLInputFactory does not support "report-cdata-event" property, but JDOMUtil sets it unconditionally in the
+            // static XML_INPUT_FACTORY field and fails with an exception (Logger.error throws exception in the compiler) if unsuccessful.
+            // Until this is fixed in the platform, we workaround the issue by setting that field to a value that does not attempt
+            // to set the unsupported property.
+            // See IDEA-206446 for more information
+            val field = JDOMUtil::class.java.getDeclaredField("XML_INPUT_FACTORY")
+            field.isAccessible = true
+            Field::class.java.getDeclaredField("modifiers")
+                .apply { isAccessible = true }
+                .setInt(field, field.modifiers and Modifier.FINAL.inv())
+            field.set(null, object : NotNullLazyValue<XMLInputFactory>() {
+                override fun compute(): XMLInputFactory {
+                    val factory: XMLInputFactory = try {
+                        // otherwise wst can be used (in tests/dev run)
+                        val clazz = Class.forName("com.sun.xml.internal.stream.XMLInputFactoryImpl")
+                        clazz.newInstance() as XMLInputFactory
+                    } catch (e: Exception) {
+                        // ok, use random
+                        XMLInputFactory.newFactory()
+                    }
+
+                    factory.setProperty(XMLInputFactory.IS_COALESCING, true)
+                    factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false)
+                    factory.setProperty(XMLInputFactory.SUPPORT_DTD, false)
+                    return factory
+                }
+            })
         }
 
         private fun registerApplicationServicesForCLI(applicationEnvironment: JavaCoreApplicationEnvironment) {
