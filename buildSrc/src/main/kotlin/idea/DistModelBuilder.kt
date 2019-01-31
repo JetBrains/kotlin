@@ -30,6 +30,7 @@ import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.util.PatternSet
 import org.gradle.internal.file.PathToFileResolver
 import org.gradle.jvm.tasks.Jar
 import java.io.File
@@ -163,7 +164,7 @@ open class DistModelBuilder(val rootProject: Project, pw: PrintWriter) {
                     }
                 })
             }
-            sourcePath is FileTreeAdapter && sourcePath.tree is MapFileTree -> ctx.child("FILE TREE ADAPTER OF MAP FILE TREE (${sourcePath.javaClass.simpleName})") { child ->
+            sourcePath is FileTreeAdapter && sourcePath.tree is GeneratedSingletonFileTree -> ctx.child("FILE TREE ADAPTER OF MAP FILE TREE (${sourcePath.javaClass.simpleName})") { child ->
                 sourcePath.visitContents(object : FileCollectionResolveContext {
                     override fun add(element: Any): FileCollectionResolveContext {
                         processSourcePath(element, child)
@@ -181,9 +182,9 @@ open class DistModelBuilder(val rootProject: Project, pw: PrintWriter) {
             }
             sourcePath is CompositeFileCollection -> ctx.child("COMPOSITE FILE COLLECTION") { child ->
                 sourcePath.visitLeafCollections(object : FileCollectionLeafVisitor {
-                    override fun visitDirectoryTree(directoryTree: DirectoryFileTree) {
-                        child.child("DIR TREE") {
-                            it.addCopyOf(directoryTree.dir.path)
+                    override fun visitFileTree(file: File, patternSet: PatternSet) {
+                        child.child("FILE TREE") {
+                            it.addCopyOf(file.path)
                         }
                     }
 
