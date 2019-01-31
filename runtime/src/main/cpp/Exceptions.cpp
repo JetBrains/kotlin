@@ -58,6 +58,13 @@ class AutoFree {
   }
 };
 
+// RuntimeUtiks.kt
+extern "C" void ReportUnhandledException(KRef throwable);
+extern "C" void ExceptionReporterLaunchpad(KRef reporter, KRef throwable);
+
+KRef currentUnhandledExceptionHook = nullptr;
+int32_t currentUnhandledExceptionHookLock = 0;
+
 #if USE_GCC_UNWIND
 struct Backtrace {
   Backtrace(int count, int skip) : index(0), skipCount(skip) {
@@ -206,10 +213,24 @@ void ThrowException(KRef exception) {
 #endif
 }
 
-void ReportUnhandledException(KRef e);
+OBJ_GETTER(Kotlin_setUnhandledExceptionHook, KRef hook) {
+  RETURN_RESULT_OF(SwapRefLocked,
+    &currentUnhandledExceptionHook, currentUnhandledExceptionHook, hook, &currentUnhandledExceptionHookLock);
+}
 
-RUNTIME_NORETURN void TerminateWithUnhandledException(KRef e) {
-  ReportUnhandledException(e);
+void OnUnhandledException(KRef throwable) {
+  ObjHolder handlerHolder;
+  auto* handler = SwapRefLocked(&currentUnhandledExceptionHook, currentUnhandledExceptionHook, nullptr,
+     &currentUnhandledExceptionHookLock, handlerHolder.slot());
+  if (handler == nullptr) {
+    ReportUnhandledException(throwable);
+  } else {
+    ExceptionReporterLaunchpad(handler, throwable);
+  }
+}
+
+RUNTIME_NORETURN void TerminateWithUnhandledException(KRef throwable) {
+  OnUnhandledException(throwable);
   konan::abort();
 }
 

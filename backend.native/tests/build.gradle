@@ -2036,6 +2036,13 @@ task extend_exception(type: RunKonanTest) {
     source = "runtime/exceptions/extend0.kt"
 }
 
+task custom_hook(type: RunStandaloneKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
+    goldValue = "value 42: Error\n"
+    expectedExitStatus = 1
+    source = "runtime/exceptions/custom_hook.kt"
+}
+
 task runtime_math_exceptions(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32')
     source = "stdlib_external/numbers/MathExceptionTest.kt"

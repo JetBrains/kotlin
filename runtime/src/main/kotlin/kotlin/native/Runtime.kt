@@ -4,6 +4,9 @@
  */
 package kotlin.native
 
+import kotlin.native.concurrent.isFrozen
+import kotlin.native.concurrent.InvalidMutabilityException
+
 /**
  * Initializes Kotlin runtime for the current thread, if not inited already.
  */
@@ -24,3 +27,26 @@ public class IncorrectDereferenceException : RuntimeException {
 
     constructor(message: String) : super(message)
 }
+
+/**
+ * Typealias describing custom exception reporting hook.
+ */
+public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
+
+/**
+ * Install custom unhandled exception hook. Returns old hook, or null if it was not specified.
+ * Hook is invoked whenever there's uncaught exception reaching boundaries of the Kotlin world,
+ * i.e. top level main(), or when Objective-C to Kotlin call not marked with @Throws throws an exception.
+ * Hook must be a frozen lambda, so that it could be called from any thread/worker.
+ * Hook is invoked once, and is cleared afterwards, so that memory leak detection works as expected even
+ * with custom exception hooks.
+ */
+public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook? {
+    if (!hook.isFrozen) {
+        throw InvalidMutabilityException("Unhandled exception hook must be frozen")
+    }
+    return setUnhandledExceptionHook0(hook)
+}
+
+@SymbolName("Kotlin_setUnhandledExceptionHook")
+external private fun setUnhandledExceptionHook0(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook?
