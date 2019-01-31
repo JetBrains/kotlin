@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -24,6 +25,8 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
@@ -38,6 +41,8 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+
+private const val TIMEOUT_FOR_IMPORT_OPTIMIZING_MS: Long = 700L
 
 class ExtractDeclarationFromCurrentFileIntention :
         SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Extract declaration from current file"),
@@ -92,7 +97,9 @@ class ExtractDeclarationFromCurrentFileIntention :
                         true,
                         true,
                         true,
-                        null
+                        MoveCallback {
+                            runBlocking { withTimeoutOrNull(TIMEOUT_FOR_IMPORT_OPTIMIZING_MS) { OptimizeImportsProcessor(project, file).run() } }
+                        }
                 ).show()
             }
             return
@@ -112,6 +119,7 @@ class ExtractDeclarationFromCurrentFileIntention :
                     val newDeclaration = newFile.declarations.first()
                     NavigationUtil.activateFileWithPsiElement(newFile)
                     FileEditorManager.getInstance(project).selectedTextEditor?.moveCaret(newDeclaration.startOffset + originalOffset)
+                    runBlocking { withTimeoutOrNull(TIMEOUT_FOR_IMPORT_OPTIMIZING_MS) { OptimizeImportsProcessor(project, file).run() } }
                 }
         )
 
