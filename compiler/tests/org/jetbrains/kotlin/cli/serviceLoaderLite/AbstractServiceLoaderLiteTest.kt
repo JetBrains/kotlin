@@ -37,7 +37,7 @@ abstract class AbstractServiceLoaderLiteTest : TestCaseWithTmpdir() {
     }
 
     protected fun writeJar(fileName: String, vararg entries: Entry): File {
-        val file = File(tmpdir, fileName)
+        val file = File(tmpdir, "$fileName.jar")
         if (file.exists()) {
             throw IllegalStateException("File $fileName already exists")
         }
