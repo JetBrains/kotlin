@@ -199,7 +199,7 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
             .filter { !isHidden(it, inlineDepth) }
             .partition {
                 it.name() == THIS
-                        || it.name() == AsmUtil.getCapturedFieldName(AsmUtil.THIS)
+                        || it.name() == AsmUtil.THIS_IN_DEFAULT_IMPLS
                         || it.name().startsWith(AsmUtil.LABELED_THIS_PARAMETER)
                         || (VariableFinder.inlinedThisRegex.matches(it.name()))
             }
@@ -231,7 +231,7 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
                 val label = name.drop(AsmUtil.LABELED_THIS_PARAMETER.length)
                 clone(getThisName(label), label)
             }
-            name == AsmUtil.getCapturedFieldName(AsmUtil.THIS) -> clone(THIS + " (outer)", null)
+            name == AsmUtil.THIS_IN_DEFAULT_IMPLS -> clone(THIS + " (outer)", null)
             name == AsmUtil.RECEIVER_PARAMETER_NAME -> clone(THIS + " (receiver)", null)
             VariableFinder.inlinedThisRegex.matches(name) -> {
                 val label = generateThisLabel(frame.getValue(this)?.type())

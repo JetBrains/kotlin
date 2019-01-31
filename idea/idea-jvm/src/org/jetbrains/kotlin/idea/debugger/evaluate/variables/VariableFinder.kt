@@ -265,7 +265,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
 
         if (isInsideDefaultImpls()) {
             val variables = frameProxy.safeVisibleVariables()
-            findLocalVariable(variables, kind, getCapturedFieldName(AsmUtil.THIS))?.let { return it }
+            findLocalVariable(variables, kind, AsmUtil.THIS_IN_DEFAULT_IMPLS)?.let { return it }
         }
 
         val variables = frameProxy.safeVisibleVariables()
@@ -383,7 +383,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
         fun isReceiverOrPassedThis(name: String) =
             name.startsWith(AsmUtil.LABELED_THIS_PARAMETER)
                     || name == AsmUtil.RECEIVER_PARAMETER_NAME
-                    || name == getCapturedFieldName(AsmUtil.THIS)
+                    || name == AsmUtil.THIS_IN_DEFAULT_IMPLS
                     || inlinedThisRegex.matches(name)
 
         if (kind is VariableKind.ExtensionThis) {
@@ -426,7 +426,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
 
         // Recursive search in outer and captured this
         fields.namedEntitySequence(parent)
-            .filter { it.name == getCapturedFieldName(AsmUtil.THIS) || it.name == AsmUtil.CAPTURED_THIS_FIELD }
+            .filter { it.name == AsmUtil.THIS_IN_DEFAULT_IMPLS || it.name == AsmUtil.CAPTURED_THIS_FIELD }
             .mapNotNull { findCapturedVariable(kind, it.value()) }
             .firstOrNull()
             ?.let { return it }

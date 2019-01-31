@@ -100,6 +100,8 @@ public class AsmUtil {
 
     public static final String THIS = "this";
 
+    public static final String THIS_IN_DEFAULT_IMPLS = "$this";
+
     public static final String LABELED_THIS_FIELD = THIS + "_";
 
     public static final String LABELED_THIS_PARAMETER = "$" + THIS + "$";
