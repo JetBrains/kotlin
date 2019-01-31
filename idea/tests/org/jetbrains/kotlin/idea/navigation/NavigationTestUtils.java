@@ -56,8 +56,9 @@ public final class NavigationTestUtils {
     }
 
     public static void assertGotoDataMatching(Editor editor, GotoTargetHandler.GotoData gotoData, boolean renderModule) {
+        String documentText = editor.getDocument().getText();
         // Get expected references from the tested document
-        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
+        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(documentText, "// REF:");
         for (int i = 0; i < expectedReferences.size(); i++) {
             String expectedText = expectedReferences.get(i);
             expectedText = expectedText.replace("\\n", "\n");
@@ -70,9 +71,14 @@ public final class NavigationTestUtils {
         Collections.sort(expectedReferences);
 
         if (gotoData != null) {
-            List<PsiElement> distinctTargets = ArraysKt.distinctBy(gotoData.targets, element -> LightClassUtilsKt.getUnwrapped(element));
+            List<PsiElement> targets;
+            if (InTextDirectivesUtils.isDirectiveDefined(documentText, "// DISTINCT_REF")) {
+                targets = ArraysKt.distinctBy(gotoData.targets, element -> LightClassUtilsKt.getUnwrapped(element));
+            } else {
+                targets = Arrays.asList(gotoData.targets);
+            }
             // Transform given reference result to strings
-            List<String> psiElements = Lists.transform(distinctTargets, new Function<PsiElement, String>() {
+            List<String> psiElements = Lists.transform(targets, new Function<PsiElement, String>() {
                 @Override
                 public String apply(@Nullable PsiElement element) {
                     Assert.assertNotNull(element);

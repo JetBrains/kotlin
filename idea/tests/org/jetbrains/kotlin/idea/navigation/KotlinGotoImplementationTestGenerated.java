@@ -104,6 +104,11 @@ public class KotlinGotoImplementationTestGenerated extends AbstractKotlinGotoImp
         runTest("idea/testData/navigation/implementations/ImplementGenericWithPrimitives.kt");
     }
 
+    @TestMetadata("ImplementsInInlineClass.kt")
+    public void testImplementsInInlineClass() throws Exception {
+        runTest("idea/testData/navigation/implementations/ImplementsInInlineClass.kt");
+    }
+
     @TestMetadata("ObjectImported.kt")
     public void testObjectImported() throws Exception {
         runTest("idea/testData/navigation/implementations/ObjectImported.kt");
@@ -112,6 +117,11 @@ public class KotlinGotoImplementationTestGenerated extends AbstractKotlinGotoImp
     @TestMetadata("OverridesInEnumEntries.kt")
     public void testOverridesInEnumEntries() throws Exception {
         runTest("idea/testData/navigation/implementations/OverridesInEnumEntries.kt");
+    }
+
+    @TestMetadata("OverridesInInlineClass.kt")
+    public void testOverridesInInlineClass() throws Exception {
+        runTest("idea/testData/navigation/implementations/OverridesInInlineClass.kt");
     }
 
     @TestMetadata("PropertyOverriddenNavigation.kt")
