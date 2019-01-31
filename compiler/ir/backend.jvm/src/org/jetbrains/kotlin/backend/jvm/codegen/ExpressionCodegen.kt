@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.dump
@@ -455,10 +457,52 @@ class ExpressionCodegen(
     }
 
     override fun visitSetField(expression: IrSetField, data: BlockInfo): StackValue {
+        val expressionValue = expression.value
+        if (irFunction is IrConstructor && irFunction.isPrimary) {
+            // Do not add redundant field initializers that initialize to default values.
+            // "expression.origin == null" means that the field is initialized when it is declared,
+            // i.e., not in an initializer block or constructor body.
+            if (expression.origin == null && expressionValue is IrConst<*> && isDefaultValueForType(
+                    expression.symbol.owner.type, expressionValue
+                )
+            ) return none()
+        }
         expression.markLineNumber(startOffset = true)
         val fieldValue = generateFieldValue(expression, data)
-        fieldValue.store(expression.value.accept(this, data), mv)
+        fieldValue.store(expressionValue.accept(this, data), mv)
         return none()
+    }
+
+
+    /**
+     * Returns true if the given constant value is the JVM's default value for the given type.
+     * See: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.3
+     */
+    private fun isDefaultValueForType(fieldType: IrType, constExpression: IrConst<*>): Boolean {
+        val value = constExpression.value
+        val type = constExpression.asmType
+        if (isPrimitive(type)) {
+            if (!fieldType.isMarkedNullable() && value is Number) {
+                if (type in setOf(Type.INT_TYPE, Type.BYTE_TYPE, Type.LONG_TYPE, Type.SHORT_TYPE) && value.toLong() == 0L) {
+                    return true
+                }
+                if (type === Type.DOUBLE_TYPE && value.toDouble().equals(0.0)) {
+                    return true
+                }
+                if (type === Type.FLOAT_TYPE && value.toFloat().equals(0.0f)) {
+                    return true
+                }
+            }
+            if (type === Type.BOOLEAN_TYPE && value is Boolean && !value) {
+                return true
+            }
+            if (type === Type.CHAR_TYPE && value is Char && value.toInt() == 0) {
+                return true
+            }
+        } else if (value == null) {
+            return true
+        }
+        return false
     }
 
     private fun generateLocal(symbol: IrSymbol, type: Type): StackValue {
