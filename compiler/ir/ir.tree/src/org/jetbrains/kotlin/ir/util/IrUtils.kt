@@ -379,6 +379,11 @@ tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     }
 }
 
+fun IrAnnotationContainer.getAnnotation(name: FqName) =
+    annotations.find {
+        it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
+    }
+
 fun IrAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {
         it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name

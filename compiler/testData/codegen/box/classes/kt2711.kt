@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class IntRange {
     operator fun contains(a: Int) = (1..2).contains(a)
 }

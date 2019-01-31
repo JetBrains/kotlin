@@ -126,6 +126,9 @@ abstract class BasicBoxTest(
             val testPackage = testFactory.testPackage
             val testFunction = TEST_FUNCTION
 
+            val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
+            val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
+
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependencies.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
                 val friends = module.friends.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
@@ -135,14 +138,11 @@ abstract class BasicBoxTest(
                     file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
                     outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction,
-                    runtimeType
+                    runtimeType, isMainModule = (mainModuleName == module.name)
                 )
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) Pair(outputFileName, module) else null
             }
-
-            val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
-            val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
 
             val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(COMMON_FILES_DIR_PATH, JavaScript.EXTENSION)
             val localCommonFile = file.parent + "/" + COMMON_FILES_NAME + JavaScript.DOT_EXTENSION
@@ -315,7 +315,8 @@ abstract class BasicBoxTest(
         mainCallParameters: MainCallParameters,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime
+        runtime: JsIrTestRuntime,
+        isMainModule: Boolean
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -337,7 +338,7 @@ abstract class BasicBoxTest(
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime, isMainModule
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
@@ -385,7 +386,7 @@ abstract class BasicBoxTest(
 
         translateFiles(
             translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime, false
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -450,7 +451,8 @@ abstract class BasicBoxTest(
         remap: Boolean,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime
+        runtime: JsIrTestRuntime,
+        isMainModule: Boolean
     ) {
         val translator = K2JSTranslator(config)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -467,18 +469,9 @@ abstract class BasicBoxTest(
         val outputDir = outputFile.parentFile ?: error("Parent file for output file should not be null, outputFilePath: " + outputFile.path)
         outputFiles.writeAllTo(outputDir)
 
-        if (config.moduleKind == ModuleKind.COMMON_JS) {
+        if (config.moduleKind != ModuleKind.PLAIN) {
             val content = FileUtil.loadFile(outputFile, true)
-            val wrappedContent = "$KOTLIN_TEST_INTERNAL.beginModule();\n" +
-                                 "$content\n" +
-                                 "$KOTLIN_TEST_INTERNAL.endModule(\"${StringUtil.escapeStringCharacters(config.moduleId)}\");"
-            FileUtil.writeToFile(outputFile, wrappedContent)
-        }
-        else if (config.moduleKind == ModuleKind.AMD || config.moduleKind == ModuleKind.UMD) {
-            val content = FileUtil.loadFile(outputFile, true)
-            val wrappedContent = "if (typeof $KOTLIN_TEST_INTERNAL !== \"undefined\") { " +
-                                 "$KOTLIN_TEST_INTERNAL.setModuleId(\"${StringUtil.escapeStringCharacters(config.moduleId)}\"); }\n" +
-                                 "$content\n"
+            val wrappedContent = wrapWithModuleEmulationMarkers(content, moduleId = config.moduleId, moduleKind = config.moduleKind)
             FileUtil.writeToFile(outputFile, wrappedContent)
         }
 
@@ -494,6 +487,28 @@ abstract class BasicBoxTest(
 
         processJsProgram(translationResult.program, units.filterIsInstance<TranslationUnit.SourceFile>().map { it.file })
         checkSourceMap(outputFile, translationResult.program, remap)
+    }
+
+    protected fun wrapWithModuleEmulationMarkers(
+        content: String,
+        moduleKind: ModuleKind,
+        moduleId: String
+    ): String {
+        val escapedModuleId = StringUtil.escapeStringCharacters(moduleId)
+
+        return when (moduleKind) {
+
+            ModuleKind.COMMON_JS -> "$KOTLIN_TEST_INTERNAL.beginModule();\n" +
+                    "$content\n" +
+                    "$KOTLIN_TEST_INTERNAL.endModule(\"$escapedModuleId\");"
+
+            ModuleKind.AMD, ModuleKind.UMD ->
+                "if (typeof $KOTLIN_TEST_INTERNAL !== \"undefined\") { " +
+                        "$KOTLIN_TEST_INTERNAL.setModuleId(\"$escapedModuleId\"); }\n" +
+                        "$content\n"
+
+            ModuleKind.PLAIN -> content
+        }
     }
 
     private fun processJsProgram(program: JsProgram, psiFiles: List<KtFile>) {

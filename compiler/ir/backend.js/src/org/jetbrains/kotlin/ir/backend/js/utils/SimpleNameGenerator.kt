@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.backend.common.ir.isStatic
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isDynamic
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInlined
@@ -100,6 +98,11 @@ class SimpleNameGenerator : NameGenerator {
 
             if (declaration.isDynamic()) {
                 return@getOrPut nameDeclarator(declaration.descriptor.name.asString())
+            }
+
+            val jsName = declaration.getJsName()
+            if (jsName != null) {
+                return@getOrPut context.currentScope.declareName(jsName)
             }
 
             if (declaration.isEffectivelyExternal()) {

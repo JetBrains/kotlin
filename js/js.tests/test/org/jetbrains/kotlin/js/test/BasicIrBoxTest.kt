@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.js.test
 
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.ir.backend.js.Result
+import org.jetbrains.kotlin.ir.backend.js.ModuleType
+import org.jetbrains.kotlin.ir.backend.js.CompiledModule
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-private var runtimeResults = mutableMapOf<JsIrTestRuntime, Result>()
+private var runtimeResults = mutableMapOf<JsIrTestRuntime, CompiledModule>()
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -41,7 +42,7 @@ abstract class BasicIrBoxTest(
     // TODO Design incremental compilation for IR and add test support
     override val incrementalCompilationChecksEnabled = false
 
-    private val compilationCache = mutableMapOf<String, Result>()
+    private val compilationCache = mutableMapOf<String, CompiledModule>()
 
     override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
         compilationCache.clear()
@@ -59,7 +60,8 @@ abstract class BasicIrBoxTest(
         remap: Boolean,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime
+        runtime: JsIrTestRuntime,
+        isMainModule: Boolean
     ) {
         val filesToCompile = units
             .map { (it as TranslationUnit.SourceFile).file }
@@ -94,14 +96,15 @@ abstract class BasicIrBoxTest(
         val runtimeFile = File(runtime.path)
         val runtimeResult = runtimeResults.getOrPut(runtime) {
             runtimeConfiguration.put(CommonConfigurationKeys.MODULE_NAME, "JS_IR_RUNTIME")
-            val result = compile(config.project, runtime.sources.map(::createPsiFile), runtimeConfiguration)
-            runtimeFile.write(result.generatedCode)
+            val result = compile(config.project, runtime.sources.map(::createPsiFile), runtimeConfiguration, moduleType = ModuleType.TEST_RUNTIME)
+            runtimeFile.write(result.generatedCode!!)
             result
         }
 
         val dependencyNames = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
-        val dependencies = listOf(runtimeResult.moduleDescriptor) + dependencyNames.mapNotNull { compilationCache[it]?.moduleDescriptor }
-        val irDependencies = listOf(runtimeResult.moduleFragment) + compilationCache.values.map { it.moduleFragment }
+        val dependencies = listOf(runtimeResult) + dependencyNames.mapNotNull {
+            compilationCache[it]
+        }
 
 //        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, setOf("UnitMaterializationLowering"))
 //        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, setOf("ReturnableBlockLowering"))
@@ -112,18 +115,21 @@ abstract class BasicIrBoxTest(
             config.project,
             filesToCompile,
             config.configuration,
-            FqName((testPackage?.let { "$it." } ?: "") + testFunction),
+            listOf(FqName((testPackage?.let { "$it." } ?: "") + testFunction)),
             dependencies,
-            irDependencies,
-            runtimeResult.moduleDescriptor as ModuleDescriptorImpl
+            runtimeResult,
+            moduleType = if (isMainModule) ModuleType.MAIN else ModuleType.SECONDARY
         )
 
         compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
 
-        // Prefix to help node.js runner find runtime
-        val runtimePrefix = "// RUNTIME: [\"${runtimeFile.path}\"]\n"
-
-        outputFile.write(runtimePrefix + result.generatedCode)
+        val generatedCode = result.generatedCode
+        if (generatedCode != null) {
+            // Prefix to help node.js runner find runtime
+            val runtimePrefix = "// RUNTIME: [\"${runtimeFile.path}\"]\n"
+            val wrappedCode = wrapWithModuleEmulationMarkers(generatedCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+            outputFile.write(runtimePrefix + wrappedCode)
+        }
     }
 
     override fun runGeneratedCode(
@@ -137,7 +143,7 @@ abstract class BasicIrBoxTest(
     ) {
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files
-        nashornIrJsTestCheckers[runtime]!!.check(jsFiles, null, null, testFunction, expectedResult, false)
+        nashornIrJsTestCheckers[runtime]!!.check(jsFiles, testModuleName, null, testFunction, expectedResult, withModuleSystem)
     }
 }
 

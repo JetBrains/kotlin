@@ -5,25 +5,22 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.addChild
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class MoveBodilessDeclarationsToSeparatePlace() : FileLoweringPass {
+fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module: IrModuleFragment) {
 
-    constructor(context: JsIrBackendContext) : this()
-
-    private val builtInClasses = listOf(
+    val builtInClasses = listOf(
         "String",
         "Nothing",
         "Array",
@@ -44,10 +41,10 @@ class MoveBodilessDeclarationsToSeparatePlace() : FileLoweringPass {
         "Double"
     ).map { Name.identifier(it) }.toSet()
 
-    private fun isBuiltInClass(declaration: IrDeclaration): Boolean =
+    fun isBuiltInClass(declaration: IrDeclaration): Boolean =
         declaration is IrClass && declaration.name in builtInClasses
 
-    private val packageFragment = IrExternalPackageFragmentImpl(object : IrExternalPackageFragmentSymbol {
+    val packageFragment = IrExternalPackageFragmentImpl(object : IrExternalPackageFragmentSymbol {
         override val descriptor: PackageFragmentDescriptor
             get() = error("Operation is unsupported")
 
@@ -61,16 +58,31 @@ class MoveBodilessDeclarationsToSeparatePlace() : FileLoweringPass {
         }
     }, FqName.ROOT)
 
-    override fun lower(irFile: IrFile) {
+
+    fun lowerFile(irFile: IrFile): IrFile? {
+        if (irFile.getJsModule() != null || irFile.getJsQualifier() != null) {
+            context.packageLevelJsModules.add(irFile)
+            return null
+        }
+
         val it = irFile.declarations.iterator()
 
         while (it.hasNext()) {
             val d = it.next()
 
             if (d.isEffectivelyExternal() || isBuiltInClass(d)) {
+
+                if (d.getJsModule() != null)
+                    context.declarationLevelJsModules.add(d)
+
                 it.remove()
                 packageFragment.addChild(d)
             }
         }
+        return irFile
+    }
+
+    module.files.transformFlat { irFile ->
+        listOfNotNull(lowerFile(irFile))
     }
 }

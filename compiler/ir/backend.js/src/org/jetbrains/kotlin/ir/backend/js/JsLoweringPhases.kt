@@ -10,16 +10,13 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.CoroutineIntrinsicLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.SuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.ReturnableBlockLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.replaceUnboundSymbols
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 
 private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<IrFile>) = files.forEach { runOnFilePostfix(it) }
@@ -68,8 +65,10 @@ private fun makeCustomJsModulePhase(
     }
 )
 
-private val moveBodilessDeclarationsToSeparatePlacePhase = makeJsModulePhase(
-    ::MoveBodilessDeclarationsToSeparatePlace,
+private val moveBodilessDeclarationsToSeparatePlacePhase = makeCustomJsModulePhase(
+    { context, module ->
+        moveBodilessDeclarationsToSeparatePlace(context, module)
+    },
     name = "MoveBodilessDeclarationsToSeparatePlace",
     description = "Move `external` and `built-in` declarations into separate place to make the following lowerings do not care about them"
 )
@@ -78,12 +77,6 @@ private val expectDeclarationsRemovingPhase = makeJsModulePhase(
     ::ExpectDeclarationsRemoving,
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
-)
-
-private val coroutineIntrinsicLoweringPhase = makeJsModulePhase(
-    ::CoroutineIntrinsicLowering,
-    name = "CoroutineIntrinsicLowering",
-    description = "Replace common coroutine intrinsics with platform specific ones"
 )
 
 private val arrayInlineConstructorLoweringPhase = makeJsModulePhase(
@@ -98,13 +91,6 @@ private val lateinitLoweringPhase = makeJsModulePhase(
     description = "Insert checks for lateinit field references"
 )
 
-private val moduleCopyingPhase = makeCustomJsModulePhase(
-    { context, module -> context.moduleFragmentCopy = module.deepCopyWithSymbols() },
-    name = "ModuleCopying",
-    description = "<Supposed to be removed> Copy current module to make it accessible from different one",
-    prerequisite = setOf(lateinitLoweringPhase)
-)
-
 private val functionInliningPhase = makeCustomJsModulePhase(
     { context, module ->
         FunctionInlining(context).inline(module)
@@ -113,7 +99,7 @@ private val functionInliningPhase = makeCustomJsModulePhase(
     },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
-    prerequisite = setOf(moduleCopyingPhase, lateinitLoweringPhase, arrayInlineConstructorLoweringPhase, coroutineIntrinsicLoweringPhase)
+    prerequisite = setOf(lateinitLoweringPhase, arrayInlineConstructorLoweringPhase)
 )
 
 private val removeInlineFunctionsWithReifiedTypeParametersLoweringPhase = makeJsModulePhase(
@@ -196,7 +182,7 @@ private val suspendFunctionsLoweringPhase = makeJsModulePhase(
     ::SuspendFunctionsLowering,
     name = "SuspendFunctionsLowering",
     description = "Transform suspend functions into CoroutineImpl instance and build state machine",
-    prerequisite = setOf(unitMaterializationLoweringPhase, coroutineIntrinsicLoweringPhase)
+    prerequisite = setOf(unitMaterializationLoweringPhase)
 )
 
 private val privateMembersLoweringPhase = makeJsModulePhase(
@@ -347,21 +333,13 @@ private val callsLoweringPhase = makeJsModulePhase(
     description = "Handle intrinsics"
 )
 
-private val irToJsPhase = makeCustomJsModulePhase(
-    { context, module -> context.jsProgram = IrModuleToJsTransformer(context).let { module.accept(it, null) } },
-    name = "IrModuleToJsTransformer",
-    description = "Generate JsAst from IrTree"
-)
-
 val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = moveBodilessDeclarationsToSeparatePlacePhase then
             expectDeclarationsRemovingPhase then
-            coroutineIntrinsicLoweringPhase then
             arrayInlineConstructorLoweringPhase then
             lateinitLoweringPhase then
-            moduleCopyingPhase then
             functionInliningPhase then
             removeInlineFunctionsWithReifiedTypeParametersLoweringPhase then
             throwableSuccessorsLoweringPhase then
@@ -396,6 +374,5 @@ val jsPhases = namedIrModulePhase(
             blockDecomposerLoweringPhase then
             primitiveCompanionLoweringPhase then
             constLoweringPhase then
-            callsLoweringPhase then
-            irToJsPhase
+            callsLoweringPhase
 )

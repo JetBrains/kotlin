@@ -48,13 +48,17 @@ class JsIrBackendContext(
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
     override val configuration: CompilerConfiguration,
-    val dependencies: List<IrModuleFragment>
+    val dependencies: List<CompiledModule>,
+    val moduleType: ModuleType
 ) : CommonBackendContext {
 
     override val builtIns = module.builtIns
 
     val phaseConfig = PhaseConfig(jsPhases, configuration)
     override var inVerbosePhase: Boolean = false
+
+    val packageLevelJsModules = mutableListOf<IrFile>()
+    val declarationLevelJsModules = mutableListOf<IrDeclaration>()
 
     val internalPackageFragmentDescriptor = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
     val implicitDeclarationFile by lazy {
@@ -175,9 +179,6 @@ class JsIrBackendContext(
     val dynamicType = IrDynamicTypeImpl(createDynamicType(builtIns), emptyList(), Variance.INVARIANT)
 
     val originalModuleIndex = ModuleIndex(irModuleFragment)
-
-    lateinit var moduleFragmentCopy: IrModuleFragment
-    lateinit var jsProgram: JsNode
 
     fun getOperatorByName(name: Name, type: KotlinType) = operatorMap[name]?.get(type)
 
