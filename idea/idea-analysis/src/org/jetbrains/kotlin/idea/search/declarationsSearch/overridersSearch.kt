@@ -174,7 +174,7 @@ fun PsiMethod.forEachOverridingMethod(
     val ktMember = this.unwrapped as? KtNamedDeclaration ?: return true
     val ktClass = runReadAction { ktMember.containingClassOrObject as? KtClass } ?: return true
     return forEachKotlinOverride(ktClass, listOf(ktMember), scope) { _, overrider ->
-        val lightMethods = runReadAction { overrider.toPossiblyFakeLightMethods() }
+        val lightMethods = runReadAction { overrider.toPossiblyFakeLightMethods().distinctBy { it.unwrapped } }
         lightMethods.all { processor(it) }
     }
 }
