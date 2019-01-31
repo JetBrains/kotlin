@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-class FirFunctionSymbol(override val callableId: CallableId) : ConeFunctionSymbol, AbstractFirBasedSymbol<FirCallableMember>() {
+class FirFunctionSymbol(
+    override val callableId: CallableId,
+    val isFakeOverride: Boolean = false
+) : ConeFunctionSymbol, AbstractFirBasedSymbol<FirCallableMember>() {
     override val parameters: List<ConeKotlinType>
         get() = emptyList()
 }

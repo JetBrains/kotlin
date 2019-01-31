@@ -17,24 +17,46 @@ import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
-abstract class FirAbstractCallableMember(
-    session: FirSession,
-    psi: PsiElement?,
-    final override val symbol: FirBasedSymbol<FirCallableMember>,
-    name: Name,
-    visibility: Visibility,
-    modality: Modality?,
-    isExpect: Boolean,
-    isActual: Boolean,
-    isOverride: Boolean,
-    final override var receiverType: FirType?,
-    final override var returnType: FirType
-) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, isExpect, isActual), FirCallableMember {
+abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCallableMember {
 
-    init {
+    final override val symbol: FirBasedSymbol<FirCallableMember>
+    final override var receiverType: FirType?
+    final override var returnType: FirType
+
+    constructor(
+        session: FirSession,
+        psi: PsiElement?,
+        symbol: FirBasedSymbol<FirCallableMember>,
+        name: Name,
+        receiverType: FirType?,
+        returnType: FirType
+    ) : super(session, psi, name) {
+        this.symbol = symbol
         symbol.bind(this)
+        this.receiverType = receiverType
+        this.returnType = returnType
+    }
+
+    constructor(
+        session: FirSession,
+        psi: PsiElement?,
+        symbol: FirBasedSymbol<FirCallableMember>,
+        name: Name,
+        visibility: Visibility,
+        modality: Modality?,
+        isExpect: Boolean,
+        isActual: Boolean,
+        isOverride: Boolean,
+        receiverType: FirType?,
+        returnType: FirType
+    ) : super(session, psi, name, visibility, modality, isExpect, isActual) {
+        this.symbol = symbol
+        symbol.bind(this)
+        this.receiverType = receiverType
+        this.returnType = returnType
         status.isOverride = isOverride
     }
+
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         receiverType = receiverType?.transformSingle(transformer, data)

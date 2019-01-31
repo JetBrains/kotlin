@@ -20,29 +20,39 @@ import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
-class FirMemberFunctionImpl(
-    session: FirSession,
-    psi: PsiElement?,
-    symbol: FirFunctionSymbol,
-    name: Name,
-    visibility: Visibility,
-    modality: Modality?,
-    isExpect: Boolean,
-    isActual: Boolean,
-    isOverride: Boolean,
-    isOperator: Boolean,
-    isInfix: Boolean,
-    isInline: Boolean,
-    isTailRec: Boolean,
-    isExternal: Boolean,
-    isSuspend: Boolean,
-    receiverType: FirType?,
-    returnType: FirType
-) : FirAbstractCallableMember(
-    session, psi, symbol, name, visibility, modality,
-    isExpect, isActual, isOverride, receiverType, returnType
-), FirNamedFunction, FirModifiableFunction {
-    init {
+class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, FirModifiableFunction {
+
+    constructor(
+        session: FirSession,
+        psi: PsiElement?,
+        symbol: FirFunctionSymbol,
+        name: Name,
+        receiverType: FirType?,
+        returnType: FirType
+    ) : super(session, psi, symbol, name, receiverType, returnType)
+
+    constructor(
+        session: FirSession,
+        psi: PsiElement?,
+        symbol: FirFunctionSymbol,
+        name: Name,
+        visibility: Visibility,
+        modality: Modality?,
+        isExpect: Boolean,
+        isActual: Boolean,
+        isOverride: Boolean,
+        isOperator: Boolean,
+        isInfix: Boolean,
+        isInline: Boolean,
+        isTailRec: Boolean,
+        isExternal: Boolean,
+        isSuspend: Boolean,
+        receiverType: FirType?,
+        returnType: FirType
+    ) : super(
+        session, psi, symbol, name, visibility, modality,
+        isExpect, isActual, isOverride, receiverType, returnType
+    ) {
         status.isOperator = isOperator
         status.isInfix = isInfix
         status.isInline = isInline

@@ -26,23 +26,30 @@ object StarProjection : ConeKotlinTypeProjection() {
         get() = ProjectionKind.STAR
 }
 
-class ConeKotlinTypeProjectionIn(val type: ConeKotlinType) : ConeKotlinTypeProjection() {
+interface ConeTypedProjection {
+    val type: ConeKotlinType
+}
+
+class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection(), ConeTypedProjection {
     override val kind: ProjectionKind
         get() = ProjectionKind.IN
 }
 
-class ConeKotlinTypeProjectionOut(val type: ConeKotlinType) : ConeKotlinTypeProjection() {
+class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : ConeKotlinTypeProjection(), ConeTypedProjection {
     override val kind: ProjectionKind
         get() = ProjectionKind.OUT
 }
 
 // We assume type IS an invariant type projection to prevent additional wrapper here
 // (more exactly, invariant type projection contains type)
-sealed class ConeKotlinType : ConeKotlinTypeProjection() {
+sealed class ConeKotlinType : ConeKotlinTypeProjection(), ConeTypedProjection {
     override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
     abstract val typeArguments: Array<out ConeKotlinTypeProjection>
+
+    override val type: ConeKotlinType
+        get() = this
 }
 
 class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {

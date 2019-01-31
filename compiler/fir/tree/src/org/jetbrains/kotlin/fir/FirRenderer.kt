@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinType
@@ -697,7 +698,15 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
         print("R|")
+        val isFakeOverride = (resolvedCallableReference.callableSymbol as? FirFunctionSymbol)?.isFakeOverride == true
+
+        if (isFakeOverride) {
+            print("FakeOverride<")
+        }
         print(resolvedCallableReference.callableSymbol.callableId)
+        if (isFakeOverride) {
+            print(">")
+        }
         print("|")
     }
 

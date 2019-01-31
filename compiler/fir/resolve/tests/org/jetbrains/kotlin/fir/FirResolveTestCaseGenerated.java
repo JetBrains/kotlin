@@ -259,6 +259,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         public void testSimple() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/overrides/simple.kt");
         }
+
+        @TestMetadata("simpleFakeOverride.kt")
+        public void testSimpleFakeOverride() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/overrides/simpleFakeOverride.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolve/references")
