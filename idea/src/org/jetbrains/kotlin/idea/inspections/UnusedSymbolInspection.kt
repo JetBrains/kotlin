@@ -119,7 +119,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
         private fun isCheapEnoughToSearchUsages(declaration: KtNamedDeclaration): PsiSearchHelper.SearchCostResult {
             val project = declaration.project
-            val psiSearchHelper = PsiSearchHelper.getInstance(project)
+            val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(project)
 
             val useScope = psiSearchHelper.getUseScope(declaration)
             if (useScope is GlobalSearchScope) {
