@@ -127,7 +127,10 @@ task modularJar(type: Jar) {
     manifestAttributes(manifest, project, 'Main', true)
     classifier = 'modular'
 
-    from zipTree(jar.outputs.files.singleFile)
+    from zipTree(jar.outputs.files.singleFile).matching {
+        // Beware of Gradle problem: changing exclude spec doesn't affect Jar task up-to-dateness
+        exclude('kotlin/native/**')
+    }
     from sourceSets.java9.output
 }
 
