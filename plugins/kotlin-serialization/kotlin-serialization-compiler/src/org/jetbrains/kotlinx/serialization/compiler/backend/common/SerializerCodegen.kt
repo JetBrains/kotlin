@@ -110,22 +110,14 @@ abstract class SerializerCodegen(
     }
 
     private fun generateSaveIfNeeded(): Boolean {
-        val function = getMemberToGenerate(
-            serializerDescriptor, SerialEntityNames.SAVE,
-            serializerDescriptor::checkSaveMethodResult, serializerDescriptor::checkSaveMethodParameters
-        )
-            ?: return false
+        val function = getSyntheticSaveMember(serializerDescriptor) ?: return false
         checkSerializability()
         generateSave(function)
         return true
     }
 
     private fun generateLoadIfNeeded(): Boolean {
-        val function = getMemberToGenerate(
-            serializerDescriptor, SerialEntityNames.LOAD,
-            serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters
-        )
-            ?: return false
+        val function = getSyntheticLoadMember(serializerDescriptor) ?: return false
         checkSerializability()
         generateLoad(function)
         return true
@@ -160,4 +152,16 @@ abstract class SerializerCodegen(
 
     protected fun ClassDescriptor.getFuncDesc(funcName: String): Sequence<FunctionDescriptor> =
         unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence().filterIsInstance<FunctionDescriptor>()
+
+    companion object {
+        fun getSyntheticLoadMember(serializerDescriptor: ClassDescriptor): FunctionDescriptor? = getMemberToGenerate(
+            serializerDescriptor, SerialEntityNames.LOAD,
+            serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters
+        )
+
+        fun getSyntheticSaveMember(serializerDescriptor: ClassDescriptor): FunctionDescriptor? = getMemberToGenerate(
+            serializerDescriptor, SerialEntityNames.SAVE,
+            serializerDescriptor::checkSaveMethodResult, serializerDescriptor::checkSaveMethodParameters
+        )
+    }
 }
