@@ -329,6 +329,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/redundantInitializerNumber.kt");
     }
 
+    @TestMetadata("redundantValInitializer.kt")
+    public void testRedundantValInitializer() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/redundantValInitializer.kt");
+    }
+
     @TestMetadata("reifiedAsCheck.kt")
     public void testReifiedAsCheck() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/reifiedAsCheck.kt");
