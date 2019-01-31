@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea.index;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
@@ -37,11 +37,6 @@ public class KotlinTypeAliasByExpansionShortNameIndexTestGenerated extends Abstr
     @TestMetadata("generics.kt")
     public void testGenerics() throws Exception {
         runTest("idea/testData/typealiasExpansionIndex/generics.kt");
-    }
-
-    @TestMetadata("recursion.kt")
-    public void testRecursion() throws Exception {
-        runTest("idea/testData/typealiasExpansionIndex/recursion.kt");
     }
 
     @TestMetadata("simpleType.kt")
