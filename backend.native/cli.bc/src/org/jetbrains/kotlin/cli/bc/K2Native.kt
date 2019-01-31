@@ -35,10 +35,9 @@ private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManag
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override fun createMetadataVersion(p0: IntArray): BinaryVersion = KonanMetadataVersion(*p0)
 
-    private val performanceManager by lazy {
+    override val performanceManager:CommonCompilerPerformanceManager by lazy {
         K2NativeCompilerPerformanceManager()
     }
-    override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
 
     override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
                            @NotNull configuration: CompilerConfiguration,
