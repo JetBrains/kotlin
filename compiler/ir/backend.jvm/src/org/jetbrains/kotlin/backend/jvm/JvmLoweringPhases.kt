@@ -183,7 +183,6 @@ private val BridgePhase = makeJvmPhase(
     description = "Generate bridges"
 )
 
-
 private val JvmOverloadsAnnotationPhase = makeJvmPhase(
     { context, file -> JvmOverloadsAnnotationLowering(context).lower(file) },
     name = "JvmOverloadsAnnotation",
@@ -216,6 +215,13 @@ private val ToArrayPhase = makeJvmPhase(
     name = "ToArray",
     description = "Handle toArray functions"
 )
+
+private val JvmTypeOperatorLowering = makeJvmPhase(
+    { context, file -> JvmTypeOperatorLowering(context).lower(file) },
+    name = "JvmTypeOperatorLoweringPhase",
+    description = "Handle JVM-specific type operator lowerings"
+)
+
 
 private val JvmBuiltinOptimizationLowering = makeJvmPhase(
     { context, file -> JvmBuiltinOptimizationLowering(context).lower(file) },
@@ -273,6 +279,7 @@ val jvmPhases = listOf(
 
     TailrecPhase,
     ToArrayPhase,
+    JvmTypeOperatorLowering,
     JvmBuiltinOptimizationLowering,
 
     makePatchParentsPhase(3),
