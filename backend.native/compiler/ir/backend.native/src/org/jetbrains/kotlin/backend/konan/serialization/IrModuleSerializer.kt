@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.descriptors.findTopLevelDeclaration
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.isSerializableExpectClass
+import org.jetbrains.kotlin.backend.konan.ir.lineStartOffsets
 import org.jetbrains.kotlin.backend.konan.library.SerializedIr
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind.*
@@ -1046,6 +1047,7 @@ internal class IrModuleSerializer(
 
     fun serializeFileEntry(entry: SourceManager.FileEntry) = KonanIr.FileEntry.newBuilder()
         .setName(serializeString(entry.name))
+        .addAllLineStartOffsets(entry.lineStartOffsets.asIterable())
         .build()
 
     val topLevelDeclarations = mutableMapOf<UniqId, ByteArray>()
@@ -1053,7 +1055,7 @@ internal class IrModuleSerializer(
     fun serializeIrFile(file: IrFile): KonanIr.IrFile {
         val proto = KonanIr.IrFile.newBuilder()
             .setFileEntry(serializeFileEntry(file.fileEntry))
-            .setFqName(file.fqName.toString())
+            .setFqName(serializeString(file.fqName.toString()))
 
         file.declarations.forEach {
             if (it is IrTypeAlias) return@forEach

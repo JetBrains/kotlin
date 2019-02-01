@@ -9,23 +9,48 @@ import org.jetbrains.kotlin.backend.konan.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.SourceManager.FileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrTerminalDeclarationReferenceBase
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.name.FqName
+
+val File.lineStartOffsets: IntArray get() {
+    // TODO: could be incorrect, if file is not in system's line terminator format.
+    // Maybe use (0..document.lineCount - 1)
+    //                .map { document.getLineStartOffset(it) }
+    //                .toIntArray()
+    // as in PSI.
+    val separatorLength = System.lineSeparator().length
+    val buffer = mutableListOf<Int>()
+    var currentOffset = 0
+    this.forEachLine { line ->
+        buffer.add(currentOffset)
+        currentOffset += line.length + separatorLength
+    }
+    buffer.add(currentOffset)
+    return buffer.toIntArray()
+}
+
+val FileEntry.lineStartOffsets get() = File(name).let {
+    if (it.exists && it.isFile) it.lineStartOffsets else IntArray(0)
+}
+
 
 //-----------------------------------------------------------------------------//
 /**
@@ -37,33 +62,7 @@ import org.jetbrains.kotlin.name.FqName
  * compilation stage (perhaps in or before inline face)
 */
 
-class NaiveSourceBasedFileEntryImpl(override val name: String) : SourceManager.FileEntry {
-
-    private val lineStartOffsets: IntArray
-
-    //-------------------------------------------------------------------------//
-
-    init {
-        val file = File(name)
-        if (file.isFile) {
-            // TODO: could be incorrect, if file is not in system's line terminator format.
-            // Maybe use (0..document.lineCount - 1)
-            //                .map { document.getLineStartOffset(it) }
-            //                .toIntArray()
-            // as in PSI.
-            val separatorLength = System.lineSeparator().length
-            val buffer = mutableListOf<Int>()
-            var currentOffset = 0
-            file.forEachLine { line ->
-                buffer.add(currentOffset)
-                currentOffset += line.length + separatorLength
-            }
-            buffer.add(currentOffset)
-            lineStartOffsets = buffer.toIntArray()
-        } else {
-            lineStartOffsets = IntArray(0)
-        }
-    }
+class NaiveSourceBasedFileEntryImpl(override val name: String, val lineStartOffsets: IntArray = IntArray(0)) : SourceManager.FileEntry {
 
     //-------------------------------------------------------------------------//
 
@@ -216,4 +215,49 @@ internal class IrPrivateClassReferenceImpl(startOffset: Int,
 {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitClassReference(this, data)
+}
+
+class KonanIrReturnableBlockImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override val symbol: IrReturnableBlockSymbol,
+    origin: IrStatementOrigin? = null,
+    val sourceFile: IrFile? = null
+) :
+    IrContainerExpressionBase(startOffset, endOffset, type, origin),
+    IrReturnableBlock {
+
+    override val descriptor = symbol.descriptor
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrReturnableBlockSymbol,
+        origin: IrStatementOrigin?,
+        statements: List<IrStatement>,
+        sourceFile: IrFile? = null
+    ) : this(startOffset, endOffset, type, symbol, origin, sourceFile) {
+        this.statements.addAll(statements)
+    }
+
+    override val sourceFileName: String = sourceFile?.fileEntry?.name ?: "no source file"
+
+    init {
+        symbol.bind(this)
+    }
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitBlock(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        statements.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        statements.forEachIndexed { i, irStatement ->
+            statements[i] = irStatement.transform(transformer, data)
+        }
+    }
 }

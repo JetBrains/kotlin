@@ -310,10 +310,13 @@ class KonanIrModuleDeserializer(
     }
 
     fun deserializeIrFile(fileProto: KonanIr.IrFile, moduleDescriptor: ModuleDescriptor, deserializeAllDeclarations: Boolean): IrFile {
-        val fileEntry = NaiveSourceBasedFileEntryImpl(deserializeString(fileProto.fileEntry.name))
+        val fileEntry = NaiveSourceBasedFileEntryImpl(
+            deserializeString(fileProto.fileEntry.name),
+            fileProto.fileEntry.lineStartOffsetsList.toIntArray()
+        )
 
         // TODO: we need to store "" in protobuf, I suppose. Or better yet, reuse fqname storage from metadata.
-        val fqName = if (fileProto.fqName == "<root>") FqName.ROOT else FqName(fileProto.fqName)
+        val fqName = deserializeString(fileProto.fqName).let { if (it == "<root>") FqName.ROOT else FqName(it) }
 
         val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
 

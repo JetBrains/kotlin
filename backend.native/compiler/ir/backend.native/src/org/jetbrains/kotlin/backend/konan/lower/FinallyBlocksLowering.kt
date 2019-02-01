@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.ir.KonanIrReturnableBlockImpl
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.file
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -93,7 +95,7 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-        if (expression !is IrReturnableBlockImpl)
+        if (expression !is IrReturnableBlock)
             return super.visitContainerExpression(expression)
 
         using(ReturnableScope(expression.symbol)) {
@@ -292,7 +294,7 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
 
     private inline fun IrBuilderWithScope.irReturnableBlock(symbol: IrReturnableBlockSymbol,
                                                             type: IrType, body: IrBlockBuilder.() -> Unit) =
-            IrReturnableBlockImpl(startOffset, endOffset, type, symbol, null,
+            KonanIrReturnableBlockImpl(startOffset, endOffset, type, symbol, null,
                     IrBlockBuilder(context, scope, startOffset, endOffset, null, type)
                             .block(body).statements)
 }

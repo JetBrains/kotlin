@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -857,7 +856,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrWhen                -> return evaluateWhen                   (value)
             is IrThrow               -> return evaluateThrow                  (value)
             is IrTry                 -> return evaluateTry                    (value)
-            is IrReturnableBlockImpl -> return evaluateReturnableBlock        (value)
+            is IrReturnableBlock     -> return evaluateReturnableBlock        (value)
             is IrContainerExpression -> return evaluateContainerExpression    (value)
             is IrWhileLoop           -> return evaluateWhileLoop              (value)
             is IrDoWhileLoop         -> return evaluateDoWhileLoop            (value)
@@ -1661,14 +1660,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
-    fun getFileEntry(sourceFileName: String): SourceManager.FileEntry =
-         // We must cache file entries, otherwise we reparse same file many times.
-         context.fileEntryCache.getOrPut(sourceFileName) {
-                NaiveSourceBasedFileEntryImpl(sourceFileName)
-            }
+    val dummyFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("no source file"))
 
     private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlock) :
-            FileScope(IrFileImpl(getFileEntry(returnableBlock.sourceFileName))) {
+            FileScope((returnableBlock as? KonanIrReturnableBlockImpl)?.sourceFile ?: dummyFile) {
 
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null

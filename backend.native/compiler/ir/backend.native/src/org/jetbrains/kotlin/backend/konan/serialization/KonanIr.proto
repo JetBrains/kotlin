@@ -80,15 +80,15 @@ message IrDeclarationContainer {
     repeated IrDeclaration declaration = 1;
 }
 
-message FileEntry { // TODO: extend me.
+message FileEntry {
     required String name = 1;
+    repeated int32 line_start_offsets = 2;
 }
 
 message IrFile {
     repeated UniqId declaration_id = 1;
     required FileEntry file_entry = 2;
-    // TODO: we need a better string management. See metadata serialization as an example.
-    required string fq_name = 3;
+    required String fq_name = 3;
 }
 
 message IrModule {

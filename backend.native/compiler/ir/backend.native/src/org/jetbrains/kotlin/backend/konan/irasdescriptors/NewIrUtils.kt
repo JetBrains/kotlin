@@ -193,11 +193,11 @@ val IrDeclaration.isSetter get() = this is IrSimpleFunction && this == this.corr
 
 val IrDeclaration.isAccessor get() = this.isGetter || this.isSetter
 
-val IrDeclaration.fileEntry: SourceManager.FileEntry get() = parent.let {
+val IrDeclaration.file: IrFile get() = parent.let {
     when (it) {
-        is IrFile -> it.fileEntry
+        is IrFile -> it
         is IrPackageFragment -> TODO("Unknown file")
-        is IrDeclaration -> it.fileEntry
+        is IrDeclaration -> it.file
         else -> TODO("Unexpected declaration parent")
     }
 }
