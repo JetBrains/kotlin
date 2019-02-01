@@ -172,7 +172,7 @@ fun test16to8CustomBorders() {
     checkUtf16to8Replacing("Hello!", intArrayOf('e'.toInt(), 'l'.toInt()), 1, 2)
     checkUtf16to8Replacing("Hello!", intArrayOf('o'.toInt(), '!'.toInt()), 4, 2)
     checkUtf16to8Replacing("Hello!", intArrayOf(), 0, 0)
-    checkUtf16to8Replacing("Hello!", intArrayOf(), 10, 0)
+    checkUtf16to8Replacing("Hello!", intArrayOf(), 6, 0)
 
     checkUtf16to8Replacing("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128), 0, 4)
@@ -206,7 +206,7 @@ fun test16to8CustomBorders() {
     checkUtf16to8Throwing("Hello!", intArrayOf('e'.toInt(), 'l'.toInt()), 1, 2)
     checkUtf16to8Throwing("Hello!", intArrayOf('o'.toInt(), '!'.toInt()), 4, 2)
     checkUtf16to8Throwing("Hello!", intArrayOf(), 0, 0)
-    checkUtf16to8Throwing("Hello!", intArrayOf(), 10, 0)
+    checkUtf16to8Throwing("Hello!", intArrayOf(), 6, 0)
 
     checkUtf16to8Throwing("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128), 0, 4)

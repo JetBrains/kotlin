@@ -50,7 +50,7 @@ OBJ_GETTER(utf8ToUtf16Impl, const char* rawString, const char* end, uint32_t cha
 template<utf16to8 conversion>
 OBJ_GETTER(utf16ToUtf8Impl, KString thiz, KInt start, KInt size) {
   RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
-  if (start < 0 || size < 0 || size > thiz->count_ - start) {
+  if (start < 0 || size < 0 || (size > static_cast<KInt>(thiz->count_) - start)) {
     ThrowArrayIndexOutOfBoundsException();
   }
   const KChar* utf16 = CharArrayAddressOfElementAt(thiz, start);
@@ -963,8 +963,8 @@ KBoolean Kotlin_String_regionMatches(KString thiz, KInt thizOffset,
                                      KString other, KInt otherOffset,
                                      KInt length, KBoolean ignoreCase) {
   if (length < 0 ||
-      thizOffset < 0 || length > thiz->count_ - thizOffset ||
-      otherOffset < 0 || length > other->count_ - otherOffset) {
+      thizOffset < 0 || length > static_cast<KInt>(thiz->count_) - thizOffset ||
+      otherOffset < 0 || length > static_cast<KInt>(other->count_) - otherOffset) {
     return false;
   }
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, thizOffset);
@@ -1111,7 +1111,7 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
   if (fromIndex >= thiz->count_) {
     return (other->count_ == 0) ? thiz->count_ : -1;
   }
-  if (other->count_ > thiz->count_ - fromIndex) {
+  if (other->count_ > static_cast<KInt>(thiz->count_) - fromIndex) {
     return -1;
   }
   // An empty string can be always found.
