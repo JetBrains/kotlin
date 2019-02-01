@@ -3794,6 +3794,11 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             runTest("j2k/testData/fileOrElement/postProcessing/IfToSafeCall.java");
         }
 
+        @TestMetadata("java8MapForEachWithFullJdk.java")
+        public void testJava8MapForEachWithFullJdk() throws Exception {
+            runTest("j2k/testData/fileOrElement/postProcessing/java8MapForEachWithFullJdk.java");
+        }
+
         @TestMetadata("NotIs.java")
         public void testNotIs() throws Exception {
             runTest("j2k/testData/fileOrElement/postProcessing/NotIs.java");
