@@ -489,11 +489,10 @@ class PSICallResolver(
 
         val resolvedTypeArguments = resolveTypeArguments(context, oldCall.typeArguments)
 
-        val argumentsInParenthesis = if (oldCall.callType != Call.CallType.ARRAY_SET_METHOD && oldCall.functionLiteralArguments.isEmpty()) {
-            oldCall.valueArguments
-        } else {
-            oldCall.valueArguments.dropLast(1)
-        }
+        val lambdasOutsideParenthesis = oldCall.functionLiteralArguments.size
+        val extraArgumentsNumber = if (oldCall.callType == Call.CallType.ARRAY_SET_METHOD) 1 else lambdasOutsideParenthesis
+
+        val argumentsInParenthesis = oldCall.valueArguments.dropLast(extraArgumentsNumber)
 
         val externalLambdaArguments = oldCall.functionLiteralArguments
         val resolvedArgumentsInParenthesis = resolveArgumentsInParenthesis(context, argumentsInParenthesis)
@@ -504,7 +503,7 @@ class PSICallResolver(
             }
             oldCall.valueArguments.last()
         } else {
-            if (externalLambdaArguments.size > 2) {
+            if (externalLambdaArguments.size > 1) {
                 externalLambdaArguments.drop(1).mapNotNull { it.getLambdaExpression() }.forEach {
                     context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(it))
                 }

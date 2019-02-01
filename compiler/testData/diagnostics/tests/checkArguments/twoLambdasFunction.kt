@@ -6,7 +6,7 @@ fun test(x: () -> Unit, y: () -> Unit) {
 }
 
 fun main() {
-    <!OI;NO_VALUE_FOR_PARAMETER!>test<!> {
+    <!NO_VALUE_FOR_PARAMETER!>test<!> {
         1
     } <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{
         2
