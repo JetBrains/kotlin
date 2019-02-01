@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -202,7 +203,12 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
             parameterDescriptor.destructuringVariables.associate { it.name to it }
         else
             mapOf(parameterDescriptor.name to parameterDescriptor)
-        return callExpression.valueArguments.flatMap { arg ->
+
+        val callee = (callExpression.calleeExpression as? KtNameReferenceExpression)?.let {
+            val descriptor = variableDescriptorByName[it.getReferencedNameAsName()]
+            if (descriptor != null && it.getReferenceTargets(context).singleOrNull() == descriptor) listOf(it) else null
+        } ?: emptyList()
+        return callee + callExpression.valueArguments.flatMap { arg ->
             arg.collectDescendantsOfType<KtNameReferenceExpression>().filter {
                 val descriptor = variableDescriptorByName[it.getReferencedNameAsName()]
                 descriptor != null && it.getResolvedCall(context)?.resultingDescriptor == descriptor

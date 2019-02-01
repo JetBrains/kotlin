@@ -15204,6 +15204,31 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/replaceSingleLineLetIntention/inWithRangeMultipleParam.kt");
         }
 
+        @TestMetadata("invokeCall.kt")
+        public void testInvokeCall() throws Exception {
+            runTest("idea/testData/intentions/replaceSingleLineLetIntention/invokeCall.kt");
+        }
+
+        @TestMetadata("invokeCall2.kt")
+        public void testInvokeCall2() throws Exception {
+            runTest("idea/testData/intentions/replaceSingleLineLetIntention/invokeCall2.kt");
+        }
+
+        @TestMetadata("invokeCall3.kt")
+        public void testInvokeCall3() throws Exception {
+            runTest("idea/testData/intentions/replaceSingleLineLetIntention/invokeCall3.kt");
+        }
+
+        @TestMetadata("invokeCall4.kt")
+        public void testInvokeCall4() throws Exception {
+            runTest("idea/testData/intentions/replaceSingleLineLetIntention/invokeCall4.kt");
+        }
+
+        @TestMetadata("invokeCall5.kt")
+        public void testInvokeCall5() throws Exception {
+            runTest("idea/testData/intentions/replaceSingleLineLetIntention/invokeCall5.kt");
+        }
+
         @TestMetadata("lambdaWithBinaryExpression.kt")
         public void testLambdaWithBinaryExpression() throws Exception {
             runTest("idea/testData/intentions/replaceSingleLineLetIntention/lambdaWithBinaryExpression.kt");
