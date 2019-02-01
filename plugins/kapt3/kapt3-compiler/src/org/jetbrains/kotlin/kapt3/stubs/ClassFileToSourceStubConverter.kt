@@ -425,6 +425,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
 
         val declaration = kaptContext.origins[clazz]?.element as? KtClassOrObject ?: return defaultSuperTypes
+        val declarationDescriptor = kaptContext.bindingContext[BindingContext.CLASS, declaration] ?: return defaultSuperTypes
+
+        if (typeMapper.mapType(declarationDescriptor) != Type.getObjectType(clazz.name)) {
+            return defaultSuperTypes
+        }
 
         val (superClass, superInterfaces) = partitionSuperTypes(declaration) ?: return defaultSuperTypes
 
