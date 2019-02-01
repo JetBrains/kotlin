@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
@@ -112,12 +111,6 @@ class TypeResolver(
         if (cachedType != null) return type(cachedType)
 
         val resolvedTypeSlice = if (c.abbreviated) BindingContext.ABBREVIATED_TYPE else BindingContext.TYPE
-
-        val debugType = typeReference.debugTypeInfo
-        if (debugType != null) {
-            c.trace.record(resolvedTypeSlice, typeReference, debugType)
-            return type(debugType)
-        }
 
         val annotations = resolveTypeAnnotations(c, typeReference)
         val type = resolveTypeElement(c, annotations, typeReference.modifierList, typeReference.typeElement)

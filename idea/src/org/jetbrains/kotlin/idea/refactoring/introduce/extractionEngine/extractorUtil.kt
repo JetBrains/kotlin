@@ -47,8 +47,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.codeFragmentUtil.DEBUG_TYPE_REFERENCE_STRING
-import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
-import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -56,7 +54,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isFlexible
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
 private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: DescriptorRenderer): CallableBuilder {
@@ -654,18 +651,6 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
     val shouldInsert = !(generatorOptions.inTempFile || generatorOptions.target == ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION)
     val declaration = createDeclaration().let { if (shouldInsert) insertDeclaration(it, anchor) else it }
     adjustDeclarationBody(declaration)
-
-    if (declaration is KtNamedFunction && declaration.getContainingKtFile().suppressDiagnosticsInDebugMode) {
-        declaration.receiverTypeReference?.debugTypeInfo = descriptor.receiverParameter?.getParameterType(true)
-
-        for ((i, param) in declaration.valueParameters.withIndex()) {
-            param.typeReference?.debugTypeInfo = descriptor.parameters[i].getParameterType(true)
-        }
-
-        if (declaration.typeReference != null) {
-            declaration.typeReference?.debugTypeInfo = descriptor.returnType.builtIns.anyType
-        }
-    }
 
     if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, Collections.emptyMap())
 
