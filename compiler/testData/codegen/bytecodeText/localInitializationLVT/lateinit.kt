@@ -9,4 +9,4 @@ fun test(): Char {
 }
 
 // 2 ASTORE 0
-// 1 LOCALVARIABLE c Ljava/lang/Object; L1 L12 0
+// 1 LOCALVARIABLE c Ljava/lang/Object; L1 L.* 0

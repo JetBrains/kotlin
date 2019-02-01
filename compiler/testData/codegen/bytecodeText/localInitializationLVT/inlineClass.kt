@@ -9,4 +9,4 @@ fun test(): UInt {
 }
 
 // 2 ISTORE 0
-// 1 LOCALVARIABLE c I L1 L11 0
+// 1 LOCALVARIABLE c I L1 L.* 0

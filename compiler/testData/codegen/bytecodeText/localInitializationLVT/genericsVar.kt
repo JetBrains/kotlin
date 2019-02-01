@@ -15,4 +15,4 @@ fun test() {
 // two in foo and two in test
 
 // 2 ASTORE 2
-// 1 LOCALVARIABLE t\$iv Lkotlin/jvm/internal/Ref\$ObjectRef; L3 L13 2
+// 1 LOCALVARIABLE t\$iv Lkotlin/jvm/internal/Ref\$ObjectRef; L3 L.* 2

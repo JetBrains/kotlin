@@ -11,4 +11,4 @@ fun test(): Char {
 
 // The first on declaration, the other on initialization
 // 2 ISTORE 0
-// 1 LOCALVARIABLE c C L1 L14 0
+// 1 LOCALVARIABLE c C L1 L.* 0

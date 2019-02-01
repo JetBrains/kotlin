@@ -9,4 +9,4 @@ fun test(): java.lang.Integer {
 }
 
 // 2 ASTORE 0
-// 1 LOCALVARIABLE c Ljava/lang/Integer; L1 L11 0
+// 1 LOCALVARIABLE c Ljava/lang/Integer; L1 L.* 0
