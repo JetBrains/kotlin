@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 fun test(): java.lang.Integer {
     var c: java.lang.Integer
     run {
