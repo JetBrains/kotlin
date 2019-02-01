@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,6 +27,9 @@ class IrInlineCodegen(
     typeParameterMappings: TypeParameterMappings,
     sourceCompiler: SourceCompilerForInline
 ) : InlineCodegen<ExpressionCodegen>(codegen, state, function, typeParameterMappings, sourceCompiler), IrCallGenerator {
+    override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
+        // TODO: JVM assertions are not implemented yet in IR backend
+    }
 
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
         val lambdaInfo = next as IrExpressionLambdaImpl

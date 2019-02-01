@@ -1,14 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ClosureCodegen
-import org.jetbrains.kotlin.codegen.IrExpressionLambda
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
@@ -578,6 +575,23 @@ class MethodInliner(
                                     className, inliningContext.nameGenerator, isAlreadyRegenerated(className), fieldInsnNode
                                 )
                             )
+                        } else if (fieldInsnNode.isCheckAssertionsStatus()) {
+                            fieldInsnNode.owner = inlineCallSiteInfo.ownerClassName
+                            if (inliningContext.isInliningLambda) {
+                                if (inliningContext.lambdaInfo!!.isCrossInline) {
+                                    assert(inliningContext.parent?.parent is RegeneratedClassContext) {
+                                        "$inliningContext grandparent shall be RegeneratedClassContext but got ${inliningContext.parent?.parent}"
+                                    }
+                                    inliningContext.parent!!.parent!!.generateAssertField = true
+                                } else {
+                                    assert(inliningContext.parent != null) {
+                                        "$inliningContext parent shall not be null"
+                                    }
+                                    inliningContext.parent!!.generateAssertField = true
+                                }
+                            } else {
+                                inliningContext.generateAssertField = true
+                            }
                         }
                     }
 

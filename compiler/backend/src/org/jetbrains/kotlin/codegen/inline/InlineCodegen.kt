@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -299,8 +299,12 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         defaultSourceMapper.callSiteMarker = null
 
+        generateAssertFieldIfNeeded(info)
+
         return result
     }
+
+    protected abstract fun generateAssertFieldIfNeeded(info: RootInliningContext)
 
     private fun isInlinedToInlineFunInKotlinRuntime(): Boolean {
         val codegen = this.codegen as? ExpressionCodegen ?: return false
@@ -660,6 +664,12 @@ class PsiInlineCodegen(
     typeParameterMappings: TypeParameterMappings,
     sourceCompiler: SourceCompilerForInline
 ) : InlineCodegen<ExpressionCodegen>(codegen, state, function, typeParameterMappings, sourceCompiler), CallGenerator {
+
+    override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
+        if (info.generateAssertField) {
+            codegen.parentCodegen.generateAssertField()
+        }
+    }
 
     override fun genCallInner(
         callableMethod: Callable,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,12 +21,14 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-val assertionsDisabledFieldName = "\$assertionsDisabled"
+const val ASSERTIONS_DISABLED_FIELD_NAME = "\$assertionsDisabled"
 private const val ALWAYS_ENABLED_ASSERT_FUNCTION_NAME = "alwaysEnabledAssert"
 private const val LAMBDA_INTERNAL_NAME = "kotlin/jvm/functions/Function0"
 private const val ASSERTION_ERROR_INTERNAL_NAME = "java/lang/AssertionError"
@@ -42,6 +44,9 @@ private fun FunctionDescriptor.isBuiltinAlwaysEnabledAssertWithoutLambda() =
 
 fun FunctionDescriptor.isBuiltinAlwaysEnabledAssert() =
     this.isBuiltinAlwaysEnabledAssertWithLambda() || this.isBuiltinAlwaysEnabledAssertWithoutLambda()
+
+fun FieldInsnNode.isCheckAssertionsStatus() =
+    opcode == Opcodes.GETSTATIC && name == ASSERTIONS_DISABLED_FIELD_NAME && desc == Type.BOOLEAN_TYPE.descriptor
 
 fun createMethodNodeForAlwaysEnabledAssert(
     functionDescriptor: FunctionDescriptor,
@@ -131,17 +136,16 @@ private fun inlineAlwaysInlineAssert(resolvedCall: ResolvedCall<*>, codegen: Exp
     )
 }
 
-fun generateAssertionsDisabledFieldInitialization(parentCodegen: MemberCodegen<*>) {
-    parentCodegen.v.newField(
-        JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_STATIC or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC, assertionsDisabledFieldName,
+fun generateAssertionsDisabledFieldInitialization(classBuilder: ClassBuilder, clInitBuilder: MethodVisitor) {
+    classBuilder.newField(
+        JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_STATIC or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC, ASSERTIONS_DISABLED_FIELD_NAME,
         "Z", null, null
     )
-    val clInitCodegen = parentCodegen.createOrGetClInitCodegen()
-    MemberCodegen.markLineNumberForElement(parentCodegen.element.psiOrParent, clInitCodegen.v)
     val thenLabel = Label()
     val elseLabel = Label()
-    with(clInitCodegen.v) {
-        aconst(Type.getObjectType(parentCodegen.v.thisName))
+    with(InstructionAdapter(clInitBuilder)) {
+        mark(Label())
+        aconst(Type.getObjectType(classBuilder.thisName))
         invokevirtual("java/lang/Class", "desiredAssertionStatus", "()Z", false)
         ifne(thenLabel)
         iconst(1)
@@ -151,7 +155,7 @@ fun generateAssertionsDisabledFieldInitialization(parentCodegen: MemberCodegen<*
         iconst(0)
 
         mark(elseLabel)
-        putstatic(parentCodegen.v.thisName, assertionsDisabledFieldName, "Z")
+        putstatic(classBuilder.thisName, ASSERTIONS_DISABLED_FIELD_NAME, "Z")
     }
 }
 
