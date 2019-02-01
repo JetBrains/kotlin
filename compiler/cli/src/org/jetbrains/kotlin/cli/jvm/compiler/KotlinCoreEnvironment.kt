@@ -20,7 +20,10 @@ import com.intellij.codeInsight.ContainerProvider
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
-import com.intellij.core.*
+import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.core.CoreJavaFileManager
+import com.intellij.core.JavaCoreApplicationEnvironment
+import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
@@ -32,7 +35,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -76,9 +78,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider
-import org.jetbrains.kotlin.cli.common.script.CliScriptDependenciesProvider
-import org.jetbrains.kotlin.cli.common.script.CliScriptReportSink
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -113,10 +112,6 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
-import org.jetbrains.kotlin.script.ScriptReportSink
-import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.lang.reflect.Field
@@ -224,35 +219,12 @@ class KotlinCoreEnvironment private constructor(
             extension.updateConfiguration(configuration)
         }
 
-        // If not disabled explicitly, we should always support at least the standard script definition
-        if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
-            StandardScriptDefinition !in configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
-        ) {
-            configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
-        }
-
-        val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
-        if (scriptDefinitionProvider != null) {
-            scriptDefinitionProvider.setScriptDefinitionsSources(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
-            scriptDefinitionProvider.setScriptDefinitions(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
-
-            // Register new file extensions
-            val fileTypeRegistry = FileTypeRegistry.getInstance() as CoreFileTypeRegistry
-
-            scriptDefinitionProvider.getKnownFilenameExtensions().filter {
-                fileTypeRegistry.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
-            }.forEach {
-                fileTypeRegistry.registerFileType(KotlinFileType.INSTANCE, it)
-            }
-        }
-
         sourceFiles += createKtFiles(project)
 
-        if (scriptDefinitionProvider != null) {
-            val (classpath, newSources, _) = collectScriptsCompilationDependencies(configuration, project, sourceFiles)
-            configuration.addJvmClasspathRoots(classpath)
-            sourceFiles += newSources
-        }
+        val (newSourcesClasspath, newSources, _) = collectScriptsCompilationDependencies(configuration, project, sourceFiles)
+        configuration.addJvmClasspathRoots(newSourcesClasspath)
+        sourceFiles += newSources
+
         sourceFiles.sortBy { it.virtualFile.path }
 
         val jdkHome = configuration.get(JVMConfigurationKeys.JDK_HOME)
@@ -702,18 +674,9 @@ class KotlinCoreEnvironment private constructor(
         @JvmStatic
         fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment, messageCollector: MessageCollector?) {
             with(projectEnvironment.project) {
-                val scriptDefinitionProvider = CliScriptDefinitionProvider()
-                registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
-                registerService(
-                    ScriptDependenciesProvider::class.java,
-                    CliScriptDependenciesProvider(projectEnvironment.project)
-                )
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
                 registerService(ModuleAnnotationsResolver::class.java, CliModuleAnnotationsResolver())
-                if (messageCollector != null) {
-                    registerService(ScriptReportSink::class.java, CliScriptReportSink(messageCollector))
-                }
             }
         }
 
