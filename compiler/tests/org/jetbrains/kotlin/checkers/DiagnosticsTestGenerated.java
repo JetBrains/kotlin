@@ -2917,6 +2917,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             public void testSpreadVarargs() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/checkArguments/SpreadVarargs.kt");
             }
+
+            @TestMetadata("twoLambdasFunction.kt")
+            public void testTwoLambdasFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/checkArguments/twoLambdasFunction.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/classLiteral")
