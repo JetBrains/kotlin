@@ -107,9 +107,6 @@ public class KotlinTestUtils {
     private static final boolean DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND =
             Boolean.getBoolean("org.jetbrains.kotlin.dont.ignore.tests.working.on.compatible.backend");
 
-    private static final boolean SKIP_IR_TESTS =
-            Boolean.getBoolean("org.jetbrains.kotlin.skip.ir.tests");
-
 
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
@@ -1048,8 +1045,6 @@ public class KotlinTestUtils {
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
     public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
-        if (SKIP_IR_TESTS && (targetBackend == TargetBackend.JS_IR || targetBackend == TargetBackend.JVM_IR)) return;
-
         File testDataFile = new File(testDataFilePath);
 
         boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile);

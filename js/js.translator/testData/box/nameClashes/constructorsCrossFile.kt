@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1276
 // FILE: lib.kt
 
-// Force contructor renaming
+// Force constructor renaming
 val dummy = run {
     if (false) {
         js("A")
@@ -19,7 +19,7 @@ inline fun ok() = A("O").s + A('K').s
 // FILE: main.kt
 
 
-// TODO add directives for primary contructor invocations
+// TODO add directives for primary constructor invocations
 // CHECK_CALLED_IN_SCOPE: function=A_init_0 scope=box
 // CHECK_NOT_CALLED_IN_SCOPE: function=A_init scope=box
 fun box(): String {

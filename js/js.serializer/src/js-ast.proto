@@ -394,10 +394,10 @@ message Fragment {
     optional string package_fqn = 10;
     optional Statement tests_invocation = 11;
     optional Statement main_invocation = 12;
-    repeated InlinedWrapper inlined_function_wrappers = 13;
+    repeated InlinedLocalDeclarations inlined_local_declarations = 13;
 }
 
-message InlinedWrapper {
+message InlinedLocalDeclarations {
     required string tag = 1;
     required GlobalBlock block = 2;
 }

@@ -175,7 +175,7 @@ class Merger(
 
         fragment.tests?.let { rename(it) }
         fragment.mainFunction?.let { rename(it) }
-        fragment.inlinedFunctionWrappers.values.forEach { rename(it) }
+        fragment.inlinedLocalDeclarations.values.forEach { rename(it) }
     }
 
     private fun <T : JsNode> Map<JsName, JsName>.rename(rootNode: T): T {
@@ -210,7 +210,7 @@ class Merger(
             fragment.tryUpdateMain()
             addExportStatements(fragment)
 
-            fragment.inlinedFunctionWrappers.forEach { (tag, imports) ->
+            fragment.inlinedLocalDeclarations.forEach { (tag, imports) ->
                 importedFunctionWrappers.putIfAbsent(tag, imports)
             }
 

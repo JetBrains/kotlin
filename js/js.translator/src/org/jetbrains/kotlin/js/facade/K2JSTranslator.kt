@@ -224,7 +224,7 @@ class K2JSTranslator @JvmOverloads constructor(
             add(fragment.initializerBlock)
             fragment.tests?.let { add(it) }
             fragment.mainFunction?.let { add(it) }
-            addAll(fragment.inlinedFunctionWrappers.values)
+            addAll(fragment.inlinedLocalDeclarations.values)
         })
 
         val definedNames = collectDefinedNamesInAllScopes(allCode)

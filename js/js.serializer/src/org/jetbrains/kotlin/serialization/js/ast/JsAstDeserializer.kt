@@ -107,8 +107,8 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             fragment.mainFunction = deserialize(proto.mainInvocation)
         }
 
-        proto.inlinedFunctionWrappersList.forEach {
-            fragment.inlinedFunctionWrappers[it.tag] = deserializeGlobalBlock(it.block)
+        proto.inlinedLocalDeclarationsList.forEach {
+            fragment.inlinedLocalDeclarations[it.tag] = deserializeGlobalBlock(it.block)
         }
 
         return fragment

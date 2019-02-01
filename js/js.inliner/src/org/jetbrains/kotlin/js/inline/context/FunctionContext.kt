@@ -157,7 +157,7 @@ class FunctionContext(
 
     private fun fragmentByTag(tag: String): JsProgramFragment? {
         return inliner.translationResult.inlineFunctionTagMap[tag]?.let { unit ->
-            inliner.translationResult.translate(unit).fragment.also { loadFragment(it) }
+            inliner.translationResult.getTranslationResult(unit).fragment.also { loadFragment(it) }
         }
     }
 

@@ -115,13 +115,13 @@ class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsNam
             fragmentBuilder.setMainInvocation(serialize(it))
         }
 
-        fragment.inlinedFunctionWrappers.forEach {(tag, block) ->
-            val builder = InlinedWrapper.newBuilder().apply {
+        fragment.inlinedLocalDeclarations.forEach { (tag, block) ->
+            val builder = InlinedLocalDeclarations.newBuilder().apply {
                 setTag(tag)
                 setBlock(serializeBlock(block))
             }
 
-            fragmentBuilder.addInlinedFunctionWrappers(builder.build())
+            fragmentBuilder.addInlinedLocalDeclarations(builder.build())
         }
 
         jsAstValidator?.let { it(fragment, nameMap.keys) }

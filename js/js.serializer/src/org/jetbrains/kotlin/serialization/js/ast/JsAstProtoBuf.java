@@ -30454,18 +30454,18 @@ public final class JsAstProtoBuf {
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement getMainInvocation();
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
      */
-    java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> 
-        getInlinedFunctionWrappersList();
+    java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations> 
+        getInlinedLocalDeclarationsList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
      */
-    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper getInlinedFunctionWrappers(int index);
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations getInlinedLocalDeclarations(int index);
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
      */
-    int getInlinedFunctionWrappersCount();
+    int getInlinedLocalDeclarationsCount();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Fragment}
@@ -30638,10 +30638,10 @@ public final class JsAstProtoBuf {
             }
             case 106: {
               if (!((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
-                inlinedFunctionWrappers_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper>();
+                inlinedLocalDeclarations_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations>();
                 mutable_bitField0_ |= 0x00001000;
               }
-              inlinedFunctionWrappers_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.PARSER, extensionRegistry));
+              inlinedLocalDeclarations_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations.PARSER, extensionRegistry));
               break;
             }
           }
@@ -30671,7 +30671,7 @@ public final class JsAstProtoBuf {
           inlineModule_ = java.util.Collections.unmodifiableList(inlineModule_);
         }
         if (((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
-          inlinedFunctionWrappers_ = java.util.Collections.unmodifiableList(inlinedFunctionWrappers_);
+          inlinedLocalDeclarations_ = java.util.Collections.unmodifiableList(inlinedLocalDeclarations_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -31026,39 +31026,39 @@ public final class JsAstProtoBuf {
       return mainInvocation_;
     }
 
-    public static final int INLINED_FUNCTION_WRAPPERS_FIELD_NUMBER = 13;
-    private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> inlinedFunctionWrappers_;
+    public static final int INLINED_LOCAL_DECLARATIONS_FIELD_NUMBER = 13;
+    private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations> inlinedLocalDeclarations_;
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> getInlinedFunctionWrappersList() {
-      return inlinedFunctionWrappers_;
+    public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations> getInlinedLocalDeclarationsList() {
+      return inlinedLocalDeclarations_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
      */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapperOrBuilder> 
-        getInlinedFunctionWrappersOrBuilderList() {
-      return inlinedFunctionWrappers_;
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarationsOrBuilder> 
+        getInlinedLocalDeclarationsOrBuilderList() {
+      return inlinedLocalDeclarations_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
      */
-    public int getInlinedFunctionWrappersCount() {
-      return inlinedFunctionWrappers_.size();
+    public int getInlinedLocalDeclarationsCount() {
+      return inlinedLocalDeclarations_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
      */
-    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper getInlinedFunctionWrappers(int index) {
-      return inlinedFunctionWrappers_.get(index);
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations getInlinedLocalDeclarations(int index) {
+      return inlinedLocalDeclarations_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
      */
-    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapperOrBuilder getInlinedFunctionWrappersOrBuilder(
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarationsOrBuilder getInlinedLocalDeclarationsOrBuilder(
         int index) {
-      return inlinedFunctionWrappers_.get(index);
+      return inlinedLocalDeclarations_.get(index);
     }
 
     private void initFields() {
@@ -31074,7 +31074,7 @@ public final class JsAstProtoBuf {
       packageFqn_ = "";
       testsInvocation_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.getDefaultInstance();
       mainInvocation_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.getDefaultInstance();
-      inlinedFunctionWrappers_ = java.util.Collections.emptyList();
+      inlinedLocalDeclarations_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -31148,8 +31148,8 @@ public final class JsAstProtoBuf {
           return false;
         }
       }
-      for (int i = 0; i < getInlinedFunctionWrappersCount(); i++) {
-        if (!getInlinedFunctionWrappers(i).isInitialized()) {
+      for (int i = 0; i < getInlinedLocalDeclarationsCount(); i++) {
+        if (!getInlinedLocalDeclarations(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -31197,8 +31197,8 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         output.writeMessage(12, mainInvocation_);
       }
-      for (int i = 0; i < inlinedFunctionWrappers_.size(); i++) {
-        output.writeMessage(13, inlinedFunctionWrappers_.get(i));
+      for (int i = 0; i < inlinedLocalDeclarations_.size(); i++) {
+        output.writeMessage(13, inlinedLocalDeclarations_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -31257,9 +31257,9 @@ public final class JsAstProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(12, mainInvocation_);
       }
-      for (int i = 0; i < inlinedFunctionWrappers_.size(); i++) {
+      for (int i = 0; i < inlinedLocalDeclarations_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(13, inlinedFunctionWrappers_.get(i));
+          .computeMessageSize(13, inlinedLocalDeclarations_.get(i));
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -31379,7 +31379,7 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000400);
         mainInvocation_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000800);
-        inlinedFunctionWrappers_ = java.util.Collections.emptyList();
+        inlinedLocalDeclarations_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00001000);
         return this;
       }
@@ -31459,10 +31459,10 @@ public final class JsAstProtoBuf {
         }
         result.mainInvocation_ = mainInvocation_;
         if (((bitField0_ & 0x00001000) == 0x00001000)) {
-          inlinedFunctionWrappers_ = java.util.Collections.unmodifiableList(inlinedFunctionWrappers_);
+          inlinedLocalDeclarations_ = java.util.Collections.unmodifiableList(inlinedLocalDeclarations_);
           bitField0_ = (bitField0_ & ~0x00001000);
         }
-        result.inlinedFunctionWrappers_ = inlinedFunctionWrappers_;
+        result.inlinedLocalDeclarations_ = inlinedLocalDeclarations_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -31549,13 +31549,13 @@ public final class JsAstProtoBuf {
         if (other.hasMainInvocation()) {
           mergeMainInvocation(other.getMainInvocation());
         }
-        if (!other.inlinedFunctionWrappers_.isEmpty()) {
-          if (inlinedFunctionWrappers_.isEmpty()) {
-            inlinedFunctionWrappers_ = other.inlinedFunctionWrappers_;
+        if (!other.inlinedLocalDeclarations_.isEmpty()) {
+          if (inlinedLocalDeclarations_.isEmpty()) {
+            inlinedLocalDeclarations_ = other.inlinedLocalDeclarations_;
             bitField0_ = (bitField0_ & ~0x00001000);
           } else {
-            ensureInlinedFunctionWrappersIsMutable();
-            inlinedFunctionWrappers_.addAll(other.inlinedFunctionWrappers_);
+            ensureInlinedLocalDeclarationsIsMutable();
+            inlinedLocalDeclarations_.addAll(other.inlinedLocalDeclarations_);
           }
           
         }
@@ -31631,8 +31631,8 @@ public final class JsAstProtoBuf {
             return false;
           }
         }
-        for (int i = 0; i < getInlinedFunctionWrappersCount(); i++) {
-          if (!getInlinedFunctionWrappers(i).isInitialized()) {
+        for (int i = 0; i < getInlinedLocalDeclarationsCount(); i++) {
+          if (!getInlinedLocalDeclarations(i).isInitialized()) {
             
             return false;
           }
@@ -32785,127 +32785,127 @@ public final class JsAstProtoBuf {
         return this;
       }
 
-      private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> inlinedFunctionWrappers_ =
+      private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations> inlinedLocalDeclarations_ =
         java.util.Collections.emptyList();
-      private void ensureInlinedFunctionWrappersIsMutable() {
+      private void ensureInlinedLocalDeclarationsIsMutable() {
         if (!((bitField0_ & 0x00001000) == 0x00001000)) {
-          inlinedFunctionWrappers_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper>(inlinedFunctionWrappers_);
+          inlinedLocalDeclarations_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations>(inlinedLocalDeclarations_);
           bitField0_ |= 0x00001000;
          }
       }
 
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> getInlinedFunctionWrappersList() {
-        return java.util.Collections.unmodifiableList(inlinedFunctionWrappers_);
+      public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations> getInlinedLocalDeclarationsList() {
+        return java.util.Collections.unmodifiableList(inlinedLocalDeclarations_);
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public int getInlinedFunctionWrappersCount() {
-        return inlinedFunctionWrappers_.size();
+      public int getInlinedLocalDeclarationsCount() {
+        return inlinedLocalDeclarations_.size();
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper getInlinedFunctionWrappers(int index) {
-        return inlinedFunctionWrappers_.get(index);
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations getInlinedLocalDeclarations(int index) {
+        return inlinedLocalDeclarations_.get(index);
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public Builder setInlinedFunctionWrappers(
-          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper value) {
+      public Builder setInlinedLocalDeclarations(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureInlinedFunctionWrappersIsMutable();
-        inlinedFunctionWrappers_.set(index, value);
+        ensureInlinedLocalDeclarationsIsMutable();
+        inlinedLocalDeclarations_.set(index, value);
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public Builder setInlinedFunctionWrappers(
-          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.Builder builderForValue) {
-        ensureInlinedFunctionWrappersIsMutable();
-        inlinedFunctionWrappers_.set(index, builderForValue.build());
+      public Builder setInlinedLocalDeclarations(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations.Builder builderForValue) {
+        ensureInlinedLocalDeclarationsIsMutable();
+        inlinedLocalDeclarations_.set(index, builderForValue.build());
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public Builder addInlinedFunctionWrappers(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper value) {
+      public Builder addInlinedLocalDeclarations(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureInlinedFunctionWrappersIsMutable();
-        inlinedFunctionWrappers_.add(value);
+        ensureInlinedLocalDeclarationsIsMutable();
+        inlinedLocalDeclarations_.add(value);
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public Builder addInlinedFunctionWrappers(
-          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper value) {
+      public Builder addInlinedLocalDeclarations(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureInlinedFunctionWrappersIsMutable();
-        inlinedFunctionWrappers_.add(index, value);
+        ensureInlinedLocalDeclarationsIsMutable();
+        inlinedLocalDeclarations_.add(index, value);
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public Builder addInlinedFunctionWrappers(
-          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.Builder builderForValue) {
-        ensureInlinedFunctionWrappersIsMutable();
-        inlinedFunctionWrappers_.add(builderForValue.build());
+      public Builder addInlinedLocalDeclarations(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations.Builder builderForValue) {
+        ensureInlinedLocalDeclarationsIsMutable();
+        inlinedLocalDeclarations_.add(builderForValue.build());
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public Builder addInlinedFunctionWrappers(
-          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.Builder builderForValue) {
-        ensureInlinedFunctionWrappersIsMutable();
-        inlinedFunctionWrappers_.add(index, builderForValue.build());
+      public Builder addInlinedLocalDeclarations(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations.Builder builderForValue) {
+        ensureInlinedLocalDeclarationsIsMutable();
+        inlinedLocalDeclarations_.add(index, builderForValue.build());
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public Builder addAllInlinedFunctionWrappers(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper> values) {
-        ensureInlinedFunctionWrappersIsMutable();
+      public Builder addAllInlinedLocalDeclarations(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations> values) {
+        ensureInlinedLocalDeclarationsIsMutable();
         org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-            values, inlinedFunctionWrappers_);
+            values, inlinedLocalDeclarations_);
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public Builder clearInlinedFunctionWrappers() {
-        inlinedFunctionWrappers_ = java.util.Collections.emptyList();
+      public Builder clearInlinedLocalDeclarations() {
+        inlinedLocalDeclarations_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00001000);
 
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper inlined_function_wrappers = 13;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations inlined_local_declarations = 13;</code>
        */
-      public Builder removeInlinedFunctionWrappers(int index) {
-        ensureInlinedFunctionWrappersIsMutable();
-        inlinedFunctionWrappers_.remove(index);
+      public Builder removeInlinedLocalDeclarations(int index) {
+        ensureInlinedLocalDeclarationsIsMutable();
+        inlinedLocalDeclarations_.remove(index);
 
         return this;
       }
@@ -32921,8 +32921,8 @@ public final class JsAstProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Fragment)
   }
 
-  public interface InlinedWrapperOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
+  public interface InlinedLocalDeclarationsOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
@@ -32949,30 +32949,30 @@ public final class JsAstProtoBuf {
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.GlobalBlock getBlock();
   }
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper}
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations}
    */
-  public static final class InlinedWrapper extends
+  public static final class InlinedLocalDeclarations extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
-      InlinedWrapperOrBuilder {
-    // Use InlinedWrapper.newBuilder() to construct.
-    private InlinedWrapper(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations)
+      InlinedLocalDeclarationsOrBuilder {
+    // Use InlinedLocalDeclarations.newBuilder() to construct.
+    private InlinedLocalDeclarations(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private InlinedWrapper(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+    private InlinedLocalDeclarations(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
-    private static final InlinedWrapper defaultInstance;
-    public static InlinedWrapper getDefaultInstance() {
+    private static final InlinedLocalDeclarations defaultInstance;
+    public static InlinedLocalDeclarations getDefaultInstance() {
       return defaultInstance;
     }
 
-    public InlinedWrapper getDefaultInstanceForType() {
+    public InlinedLocalDeclarations getDefaultInstanceForType() {
       return defaultInstance;
     }
 
     private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-    private InlinedWrapper(
+    private InlinedLocalDeclarations(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -33035,18 +33035,18 @@ public final class JsAstProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static org.jetbrains.kotlin.protobuf.Parser<InlinedWrapper> PARSER =
-        new org.jetbrains.kotlin.protobuf.AbstractParser<InlinedWrapper>() {
-      public InlinedWrapper parsePartialFrom(
+    public static org.jetbrains.kotlin.protobuf.Parser<InlinedLocalDeclarations> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<InlinedLocalDeclarations>() {
+      public InlinedLocalDeclarations parsePartialFrom(
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return new InlinedWrapper(input, extensionRegistry);
+        return new InlinedLocalDeclarations(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public org.jetbrains.kotlin.protobuf.Parser<InlinedWrapper> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<InlinedLocalDeclarations> getParserForType() {
       return PARSER;
     }
 
@@ -33172,53 +33172,53 @@ public final class JsAstProtoBuf {
       return super.writeReplace();
     }
 
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(byte[] data)
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseFrom(byte[] data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseFrom(
         byte[] data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseDelimitedFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseDelimitedFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseDelimitedFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -33227,21 +33227,21 @@ public final class JsAstProtoBuf {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper prototype) {
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
 
     /**
-     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper}
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations}
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper, Builder>
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations, Builder>
         implements
-        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapperOrBuilder {
-      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.newBuilder()
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations)
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarationsOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -33265,20 +33265,20 @@ public final class JsAstProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.getDefaultInstance();
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations.getDefaultInstance();
       }
 
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper build() {
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper result = buildPartial();
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations build() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper buildPartial() {
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper(this);
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations buildPartial() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -33293,8 +33293,8 @@ public final class JsAstProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper other) {
-        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations other) {
+        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations.getDefaultInstance()) return this;
         if (other.hasTag()) {
           bitField0_ |= 0x00000001;
           tag_ = other.tag_;
@@ -33328,11 +33328,11 @@ public final class JsAstProtoBuf {
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper parsedMessage = null;
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedWrapper) e.getUnfinishedMessage();
+          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlinedLocalDeclarations) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -33479,15 +33479,15 @@ public final class JsAstProtoBuf {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations)
     }
 
     static {
-      defaultInstance = new InlinedWrapper(true);
+      defaultInstance = new InlinedLocalDeclarations(true);
       defaultInstance.initFields();
     }
 
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.InlinedWrapper)
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.InlinedLocalDeclarations)
   }
 
   public interface ImportedModuleOrBuilder extends

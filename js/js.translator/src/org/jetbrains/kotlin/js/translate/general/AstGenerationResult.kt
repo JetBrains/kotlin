@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
-import org.jetbrains.kotlin.js.inline.util.toIdentitySet
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
@@ -46,7 +45,7 @@ class AstGenerationResult(
     private val sourceRoots = config.sourceMapRoots.map { File(it) }
     private val deserializer = JsAstDeserializer(merger.program, sourceRoots)
 
-    fun translate(unit: TranslationUnit): FileTranslationResult =
+    fun getTranslationResult(unit: TranslationUnit): FileTranslationResult =
         when (unit) {
             is TranslationUnit.SourceFile -> translatedSourceFiles[unit]!!
             is TranslationUnit.BinaryAst -> cache.getOrPut(unit) {
@@ -62,7 +61,7 @@ class AstGenerationResult(
         }
 
     fun buildProgram(): Pair<JsProgram, List<String>> {
-        val fragments = units.map { translate(it).fragment }
+        val fragments = units.map { getTranslationResult(it).fragment }
         fragments.forEach { merger.addFragment(it) }
         return merger.buildProgram() to merger.importedModules.map { it.externalName }
     }

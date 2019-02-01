@@ -701,12 +701,12 @@ public final class StaticContext {
 
     @Nullable
     private JsName getModuleInnerName(@NotNull DeclarationDescriptor descriptor) {
-        JsImportedModule module = getJsImportedModuleModule(descriptor);
+        JsImportedModule module = getJsImportedModule(descriptor);
         return module == null ? null : module.getInternalName();
     }
 
     @Nullable
-    public JsImportedModule getJsImportedModuleModule(@NotNull DeclarationDescriptor descriptor) {
+    private JsImportedModule getJsImportedModule(@NotNull DeclarationDescriptor descriptor) {
         ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
         if (currentModule == module) {
             return currentModuleAsImported;
@@ -840,7 +840,7 @@ public final class StaticContext {
         String moduleName = suggestModuleName(declaration);
         if (moduleName.equals(Namer.KOTLIN_LOWER_NAME)) return null;
 
-        JsImportedModule importedModule = getJsImportedModuleModule(declaration);
+        JsImportedModule importedModule = getJsImportedModule(declaration);
         if (importedModule == null) return null;
 
         return exportModuleForInline(moduleName, importedModule);

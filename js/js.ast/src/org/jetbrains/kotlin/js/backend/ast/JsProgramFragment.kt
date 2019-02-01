@@ -17,5 +17,5 @@ class JsProgramFragment(val scope: JsScope, val packageFqn: String) {
     val inlineModuleMap: MutableMap<String, JsExpression> = LinkedHashMap()
     var tests: JsStatement? = null
     var mainFunction: JsStatement? = null
-    val inlinedFunctionWrappers = mutableMapOf<String, JsGlobalBlock>()
+    val inlinedLocalDeclarations = mutableMapOf<String, JsGlobalBlock>()
 }

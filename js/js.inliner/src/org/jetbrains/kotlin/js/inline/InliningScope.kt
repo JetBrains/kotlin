@@ -140,7 +140,7 @@ class ProgramFragmentInliningScope(
 
     val allCode: JsBlock
         get() = JsBlock(
-            JsBlock(fragment.inlinedFunctionWrappers.values.toList()),
+            JsBlock(fragment.inlinedLocalDeclarations.values.toList()),
             fragment.declarationBlock,
             fragment.exportBlock,
             JsExpressionStatement(JsFunction(JsDynamicScope, fragment.initializerBlock, ""))
@@ -192,7 +192,7 @@ class ProgramFragmentInliningScope(
 
     override fun addInlinedDeclaration(tag: String?, declaration: JsStatement) {
         if (tag != null) {
-            fragment.inlinedFunctionWrappers.computeIfAbsent(tag) { JsGlobalBlock() }.statements.add(declaration)
+            fragment.inlinedLocalDeclarations.computeIfAbsent(tag) { JsGlobalBlock() }.statements.add(declaration)
         } else {
             additionalDeclarations.add(declaration)
         }
@@ -233,7 +233,7 @@ class PublicInlineFunctionInliningScope(
     val wrapperBody: JsBlock,
     override val fragment: JsProgramFragment
 ) : InliningScope() {
-    val existingImports = mutableMapOf<String, JsName>().also { map ->
+    private val existingImports = mutableMapOf<String, JsName>().also { map ->
         for (s in wrapperBody.statements) {
             if (s !is JsVars) continue
 
@@ -243,7 +243,7 @@ class PublicInlineFunctionInliningScope(
         }
     }
 
-    val additionalStatements = mutableListOf<JsStatement>()
+    private val additionalStatements = mutableListOf<JsStatement>()
 
     override fun addInlinedDeclaration(tag: String?, declaration: JsStatement) {
         additionalStatements.add(declaration)
