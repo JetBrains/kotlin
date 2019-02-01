@@ -93,6 +93,7 @@ internal fun parseTranslationUnit(
         compilerArgs: List<String>,
         options: Int
 ): CXTranslationUnit {
+
     memScoped {
         val result = clang_parseTranslationUnit(
                 index,

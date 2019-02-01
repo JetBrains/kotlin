@@ -83,7 +83,7 @@ abstract class CValues<T : CVariable> : CValuesRef<T>() {
     /**
      * Copies the values to [placement] and returns the pointer to the copy.
      */
-    override abstract fun getPointer(scope: AutofreeScope): CPointer<T>
+    abstract override fun getPointer(scope: AutofreeScope): CPointer<T>
 
     // TODO: optimize
     override fun equals(other: Any?): Boolean {

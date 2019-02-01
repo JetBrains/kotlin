@@ -84,7 +84,7 @@ const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "-headerFilterAdditionalSearc
 
 fun <T: CommonToolArguments> parseCommandLine(args: Array<String>, arguments: T): T {
     parseCommandLineArguments(args.asList(), arguments)
-    reportArgumentParseProblems(arguments.errors)
+    arguments.errors?.let { reportArgumentParseProblems(it) }
     return arguments
 }
 
