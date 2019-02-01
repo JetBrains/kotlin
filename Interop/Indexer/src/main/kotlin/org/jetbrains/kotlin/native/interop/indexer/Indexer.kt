@@ -99,7 +99,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
                 all[key] = value
 
                 val headerId = getHeaderId(getContainingFile(cursor))
-                if (!library.headerInclusionPolicy.excludeAll(headerId)) {
+                if (!library.headerExclusionPolicy.excludeAll(headerId)) {
                     // This declaration is used, and thus should be included:
                     included.add(value)
                 }
@@ -917,8 +917,7 @@ fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): NativeIndex 
 }
 
 private fun indexDeclarations(nativeIndex: NativeIndexImpl) {
-    val index = clang_createIndex(0, 0)!!
-    try {
+    withIndex { index ->
         val translationUnit = nativeIndex.library.parse(index, options = CXTranslationUnit_DetailedPreprocessingRecord)
         try {
             translationUnit.ensureNoCompileErrors()
@@ -959,7 +958,5 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl) {
         } finally {
             clang_disposeTranslationUnit(translationUnit)
         }
-    } finally {
-        clang_disposeIndex(index)
     }
 }

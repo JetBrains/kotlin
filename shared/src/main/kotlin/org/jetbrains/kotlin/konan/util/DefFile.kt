@@ -32,6 +32,10 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
             properties.getSpaceSeparated("headers")
         }
 
+        val modules by lazy {
+            properties.getSpaceSeparated("modules")
+        }
+
         val language by lazy {
             properties.getProperty("language")
         }

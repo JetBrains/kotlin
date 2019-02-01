@@ -29,7 +29,9 @@ interface HeaderInclusionPolicy {
      * or `null` for builtin declarations.
      */
     fun excludeUnused(headerName: String?): Boolean
+}
 
+interface HeaderExclusionPolicy {
     /**
      * Whether all declarations from this header should be excluded.
      *
@@ -37,18 +39,34 @@ interface HeaderInclusionPolicy {
      * but not included into the root collections.
      */
     fun excludeAll(headerId: HeaderId): Boolean
-
-    // TODO: these methods should probably be combined into the only one, but it would require some refactoring.
 }
 
-data class NativeLibrary(val includes: List<String>,
-                         val additionalPreambleLines: List<String>,
-                         val compilerArgs: List<String>,
+sealed class NativeLibraryHeaderFilter {
+    class NameBased(
+            val policy: HeaderInclusionPolicy,
+            val excludeDepdendentModules: Boolean
+    ) : NativeLibraryHeaderFilter()
+
+    class Predefined(val headers: Set<String>) : NativeLibraryHeaderFilter()
+}
+
+interface Compilation {
+    val includes: List<String>
+    val additionalPreambleLines: List<String>
+    val compilerArgs: List<String>
+    val language: Language
+}
+
+// TODO: consider replacing inheritance by composition and turning Compilation into final class.
+
+data class NativeLibrary(override val includes: List<String>,
+                         override val additionalPreambleLines: List<String>,
+                         override val compilerArgs: List<String>,
                          val headerToIdMapper: HeaderToIdMapper,
-                         val language: Language,
+                         override val language: Language,
                          val excludeSystemLibs: Boolean, // TODO: drop?
-                         val excludeDepdendentModules: Boolean,
-                         val headerInclusionPolicy: HeaderInclusionPolicy)
+                         val headerExclusionPolicy: HeaderExclusionPolicy,
+                         val headerFilter: NativeLibraryHeaderFilter) : Compilation
 
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).

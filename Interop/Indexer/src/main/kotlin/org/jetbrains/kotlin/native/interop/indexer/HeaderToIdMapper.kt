@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.native.interop.indexer
 
-import java.nio.file.Paths
+import java.io.File
 
 class HeaderToIdMapper(sysRoot: String) {
     private val headerPathToId = mutableMapOf<String, HeaderId>()
-    private val sysRoot = Paths.get(sysRoot).normalize()
+    private val sysRoot = File(sysRoot).canonicalFile.toPath()
 
     internal fun getHeaderId(filePath: String) = headerPathToId.getOrPut(filePath) {
-        val path = Paths.get(filePath)
+        val path = File(filePath).canonicalFile.toPath()
         val headerIdValue = if (path.startsWith(sysRoot)) {
             val relative = sysRoot.relativize(path)
             relative.toString()

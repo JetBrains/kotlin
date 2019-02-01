@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.jetbrains.kotlin.native.interop.indexer.HeaderId
-import org.jetbrains.kotlin.native.interop.indexer.HeaderInclusionPolicy
-import org.jetbrains.kotlin.native.interop.indexer.Location
+import org.jetbrains.kotlin.native.interop.indexer.*
 
 interface Imports {
     fun getPackage(location: Location): String?
@@ -31,10 +29,7 @@ class ImportsImpl(internal val headerIdToPackage: Map<HeaderId, String>) : Impor
 
 }
 
-class HeadersInclusionPolicyImpl(
-        private val nameGlobs: List<String>,
-        private val importsImpl: ImportsImpl
-) : HeaderInclusionPolicy {
+class HeaderInclusionPolicyImpl(private val nameGlobs: List<String>) : HeaderInclusionPolicy {
 
     override fun excludeUnused(headerName: String?): Boolean {
         if (nameGlobs.isEmpty()) {
@@ -48,6 +43,11 @@ class HeadersInclusionPolicyImpl(
 
         return nameGlobs.all { !headerName.matchesToGlob(it) }
     }
+}
+
+class HeaderExclusionPolicyImpl(
+        private val importsImpl: ImportsImpl
+) : HeaderExclusionPolicy {
 
     override fun excludeAll(headerId: HeaderId): Boolean {
         return headerId in importsImpl.headerIdToPackage

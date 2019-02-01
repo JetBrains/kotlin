@@ -337,20 +337,49 @@ internal fun buildNativeLibrary(
         })
     }
 
-    val excludeSystemLibs = def.config.excludeSystemLibs
-    val excludeDependentModules = def.config.excludeDependentModules
+    val compilation = object : Compilation {
+        override val includes = headerFiles
+        override val additionalPreambleLines = def.defHeaderLines
+        override val compilerArgs = compilerOpts + tool.platformCompilerOpts
+        override val language = language
+    }
 
-    val headerFilterGlobs = def.config.headerFilter
-    val headerInclusionPolicy = HeadersInclusionPolicyImpl(headerFilterGlobs, imports)
+    val headerFilter: NativeLibraryHeaderFilter
+    val includes: List<String>
+
+    val modules = def.config.modules
+
+    if (modules.isEmpty()) {
+        val excludeDependentModules = def.config.excludeDependentModules
+
+        val headerFilterGlobs = def.config.headerFilter
+        val headerInclusionPolicy = HeaderInclusionPolicyImpl(headerFilterGlobs)
+
+        headerFilter = NativeLibraryHeaderFilter.NameBased(headerInclusionPolicy, excludeDependentModules)
+        includes = headerFiles
+    } else {
+        require(language == Language.OBJECTIVE_C) { "cinterop supports 'modules' only when 'language = Objective-C'" }
+        require(headerFiles.isEmpty()) { "cinterop doesn't support having headers and modules specified at the same time" }
+        require(def.config.headerFilter.isEmpty()) { "cinterop doesn't support 'headerFilter' with 'modules'" }
+
+        val modulesInfo = getModulesInfo(compilation, modules)
+
+        headerFilter = NativeLibraryHeaderFilter.Predefined(modulesInfo.ownHeaders)
+        includes = modulesInfo.topLevelHeaders
+    }
+
+    val excludeSystemLibs = def.config.excludeSystemLibs
+
+    val headerExclusionPolicy = HeaderExclusionPolicyImpl(imports)
 
     return NativeLibrary(
-            includes = headerFiles,
-            additionalPreambleLines = def.defHeaderLines,
-            compilerArgs = compilerOpts + tool.platformCompilerOpts,
+            includes = includes,
+            additionalPreambleLines = compilation.additionalPreambleLines,
+            compilerArgs = compilation.compilerArgs,
             headerToIdMapper = HeaderToIdMapper(sysRoot = tool.sysRoot),
-            language = language,
+            language = compilation.language,
             excludeSystemLibs = excludeSystemLibs,
-            excludeDepdendentModules = excludeDependentModules,
-            headerInclusionPolicy = headerInclusionPolicy
+            headerExclusionPolicy = headerExclusionPolicy,
+            headerFilter = headerFilter
     )
 }

@@ -50,8 +50,7 @@ private fun expandMacros(
     // so precompile library headers to significantly speed up the parsing:
     val library = originalLibrary.precompileHeaders()
 
-    val index = clang_createIndex(excludeDeclarationsFromPCH = 1, displayDiagnostics = 0)!!
-    try {
+    withIndex(excludeDeclarationsFromPCH = true) { index ->
         val sourceFile = library.createTempSource()
         // We disable implicit function declaration to filter out cases when a macro is expanded as a function
         // or function-like construction (e.g. #define FOO throw()) but such a function is undeclared.
@@ -65,9 +64,6 @@ private fun expandMacros(
         } finally {
             clang_disposeTranslationUnit(translationUnit)
         }
-
-    } finally {
-        clang_disposeIndex(index)
     }
 }
 
