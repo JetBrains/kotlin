@@ -52,41 +52,33 @@ private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.Sta
 fun parseLanguageVersionSettingsOrDefault(directiveMap: Map<String, String>): CompilerTestLanguageVersionSettings =
     parseLanguageVersionSettings(directiveMap) ?: defaultLanguageVersionSettings()
 
-fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTestLanguageVersionSettings? {
-    val apiVersionString = directiveMap[API_VERSION_DIRECTIVE]
-    val languageFeaturesString = directiveMap[LANGUAGE_DIRECTIVE]
-    val experimental = directiveMap[EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlags.experimental to it }
-    val useExperimental = directiveMap[USE_EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlags.useExperimental to it }
-    val ignoreDataFlowInAssert = AnalysisFlags.ignoreDataFlowInAssert to directiveMap.containsKey(IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE)
-    val enableJvmDefault = directiveMap[JVM_DEFAULT_MODE]?.let { JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.fromStringOrNull(it)!! }
-    val skipMetadataVersionCheck = AnalysisFlags.skipMetadataVersionCheck to directiveMap.containsKey(SKIP_METADATA_VERSION_CHECK)
-    val allowResultReturnType = AnalysisFlags.allowResultReturnType to directiveMap.containsKey(ALLOW_RESULT_RETURN_TYPE)
-    val inheritMultifileParts = JvmAnalysisFlags.inheritMultifileParts to directiveMap.containsKey(INHERIT_MULTIFILE_PARTS)
-    val sanitizeParentheses = JvmAnalysisFlags.sanitizeParentheses to directiveMap.containsKey(SANITIZE_PARENTHESES)
+fun parseLanguageVersionSettings(directives: Map<String, String>): CompilerTestLanguageVersionSettings? {
+    val apiVersionString = directives[API_VERSION_DIRECTIVE]
+    val languageFeaturesString = directives[LANGUAGE_DIRECTIVE]
 
-    if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null &&
-        !ignoreDataFlowInAssert.second && enableJvmDefault == null && !skipMetadataVersionCheck.second && !allowResultReturnType.second &&
-        !inheritMultifileParts.second && !sanitizeParentheses.second
-    ) {
+    val analysisFlags = listOfNotNull(
+        analysisFlag(AnalysisFlags.experimental, directives[EXPERIMENTAL_DIRECTIVE]?.split(' ')),
+        analysisFlag(AnalysisFlags.useExperimental, directives[USE_EXPERIMENTAL_DIRECTIVE]?.split(' ')),
+        analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives[JVM_DEFAULT_MODE]?.let { JvmDefaultMode.fromStringOrNull(it) }),
+        analysisFlag(AnalysisFlags.ignoreDataFlowInAssert, if (IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE in directives) true else null),
+        analysisFlag(AnalysisFlags.skipMetadataVersionCheck, if (SKIP_METADATA_VERSION_CHECK in directives) true else null),
+        analysisFlag(AnalysisFlags.allowResultReturnType, if (ALLOW_RESULT_RETURN_TYPE in directives) true else null),
+        analysisFlag(JvmAnalysisFlags.inheritMultifileParts, if (INHERIT_MULTIFILE_PARTS in directives) true else null),
+        analysisFlag(JvmAnalysisFlags.sanitizeParentheses, if (SANITIZE_PARENTHESES in directives) true else null)
+    )
+
+    if (apiVersionString == null && languageFeaturesString == null && analysisFlags.isEmpty()) {
         return null
     }
 
     val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
-                     ?: error("Unknown API version: $apiVersionString")
+        ?: error("Unknown API version: $apiVersionString")
 
     val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
 
     val languageFeatures = languageFeaturesString?.let(::collectLanguageFeatureMap).orEmpty()
 
-    return CompilerTestLanguageVersionSettings(
-        languageFeatures, apiVersion, languageVersion,
-        mapOf(
-            *listOfNotNull(
-                experimental, useExperimental, enableJvmDefault, ignoreDataFlowInAssert, skipMetadataVersionCheck, allowResultReturnType,
-                inheritMultifileParts, sanitizeParentheses
-            ).toTypedArray()
-        )
-    )
+    return CompilerTestLanguageVersionSettings(languageFeatures, apiVersion, languageVersion, mapOf(*analysisFlags.toTypedArray()))
 }
 
 fun defaultLanguageVersionSettings(): CompilerTestLanguageVersionSettings =
@@ -105,6 +97,10 @@ fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, envir
     val languageVersionSettings = parseLanguageVersionSettingsOrDefault(directives)
     environment.configuration.languageVersionSettings = languageVersionSettings
 }
+
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+private fun <T : Any> analysisFlag(flag: AnalysisFlag<T>, value: @kotlin.internal.NoInfer T?): Pair<AnalysisFlag<T>, T>? =
+    value?.let(flag::to)
 
 private val languagePattern = Pattern.compile("(\\+|\\-|warn:)(\\w+)\\s*")
 
