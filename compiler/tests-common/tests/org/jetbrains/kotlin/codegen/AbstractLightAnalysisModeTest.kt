@@ -61,7 +61,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         val testFiles = loadMultiFiles(files, environment.project)
         val classFileFactory = GenerationUtils.compileFiles(testFiles.psiFiles, environment, TEST_LIGHT_ANALYSIS).factory
 
-        return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter(), replaceHash = false)
+        return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter())
     }
 
     protected fun compileWithFullAnalysis(
@@ -94,7 +94,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
             private fun shouldFilterClass(descriptor: ClassDescriptor): Boolean {
                 return descriptor.visibility == Visibilities.LOCAL || descriptor is SyntheticClassDescriptorForLambda
             }
-        }, replaceHash = false)
+        })
     }
 
     private open class ListAnalysisFilter : BytecodeListingTextCollectingVisitor.Filter {

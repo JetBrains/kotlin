@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.platform.orDefault
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -642,7 +641,7 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         override fun logLine(message: String?) {
-            logBuf.append(KotlinTestUtils.replaceHashWithStar(message!!.replace("^$rootPath/".toRegex(), "  "))).append('\n')
+            logBuf.append(message!!.replace("^$rootPath/".toRegex(), "  ")).append('\n')
         }
     }
 }

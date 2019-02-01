@@ -45,29 +45,18 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
     companion object {
         @JvmOverloads
         fun getText(
-                factory: ClassFileFactory,
-                filter: Filter = Filter.EMPTY,
-                replaceHash: Boolean = true,
-                withSignatures: Boolean = false
-        ) =
-                factory.getClassFiles()
-                        .sortedBy { it.relativePath }
-                        .mapNotNull {
-                            val cr = ClassReader(it.asByteArray())
-                            val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures)
-                            cr.accept(visitor, ClassReader.SKIP_CODE)
+            factory: ClassFileFactory,
+            filter: Filter = Filter.EMPTY,
+            withSignatures: Boolean = false
+        ) = factory.getClassFiles()
+            .sortedBy { it.relativePath }
+            .mapNotNull {
+                val cr = ClassReader(it.asByteArray())
+                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures)
+                cr.accept(visitor, ClassReader.SKIP_CODE)
 
-                            if (!filter.shouldWriteClass(cr.access, cr.className)) {
-                                return@mapNotNull null
-                            }
-
-                            if (replaceHash) {
-                                KotlinTestUtils.replaceHash(visitor.text, "HASH")
-                            }
-                            else {
-                                visitor.text
-                            }
-                        }.joinToString("\n\n", postfix = "\n")
+                if (!filter.shouldWriteClass(cr.access, cr.className)) null else visitor.text
+            }.joinToString("\n\n", postfix = "\n")
     }
 
     interface Filter {

@@ -300,9 +300,6 @@ public class KotlinTestUtils {
         }
     };
 
-    // We suspect sequences of eight consecutive hexadecimal digits to be a package part hash code
-    private static final Pattern STRIP_PACKAGE_PART_HASH_PATTERN = Pattern.compile("\\$([0-9a-f]{8})");
-
     private KotlinTestUtils() {
     }
 
@@ -1263,20 +1260,6 @@ public class KotlinTestUtils {
     @NotNull
     public static File replaceExtension(@NotNull File file, @Nullable String newExtension) {
         return new File(file.getParentFile(), FileUtil.getNameWithoutExtension(file) + (newExtension == null ? "" : "." + newExtension));
-    }
-
-    @NotNull
-    public static String replaceHashWithStar(@NotNull String string) {
-        return replaceHash(string, "*");
-    }
-
-    public static String replaceHash(@NotNull String string, @NotNull String replacement) {
-        //TODO: hashes are still used in SamWrapperCodegen
-        Matcher matcher = STRIP_PACKAGE_PART_HASH_PATTERN.matcher(string);
-        if (matcher.find()) {
-            return matcher.replaceAll("\\$" + replacement);
-        }
-        return string;
     }
 
     public static boolean isAllFilesPresentTest(String testName) {
