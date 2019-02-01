@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics Foundation Security darwin posix
 language = Objective-C
 package = platform.ModelIO
-headers = ModelIO/ModelIO.h
-
-headerFilter = ModelIO/**
+modules = ModelIO
 
 compilerOpts = -framework ModelIO
 linkerOpts = -framework ModelIO

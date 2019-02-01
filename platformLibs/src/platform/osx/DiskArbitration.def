@@ -1,9 +1,7 @@
 depends = CoreFoundation IOKit darwin libkern posix
 language = Objective-C
 package = platform.DiskArbitration
-headers = DiskArbitration/DiskArbitration.h
-
-headerFilter = DiskArbitration/**
+modules = DiskArbitration
 
 compilerOpts = -framework DiskArbitration
 linkerOpts = -framework DiskArbitration

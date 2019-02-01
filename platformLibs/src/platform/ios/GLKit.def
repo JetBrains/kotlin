@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal ModelIO OpenGLES2 OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.GLKit
-headers = GLKit/GLKit.h
-
-headerFilter = GLKit/**
+modules = GLKit
 
 compilerOpts = -framework GLKit
 linkerOpts = -framework GLKit

@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation Foundation IOSurface Security darwin posix
 language = Objective-C
 package = platform.Metal
-headers = Metal/Metal.h
-
-headerFilter = Metal/**
+modules = Metal
 
 compilerOpts = -framework Metal
 linkerOpts = -framework Metal

@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation Foundation Security darwin posix
 language = Objective-C
 package = platform.CoreSpotlight
-headers = CoreSpotlight/CoreSpotlight.h
-
-headerFilter = CoreSpotlight/**
+modules = CoreSpotlight
 
 compilerOpts = -framework CoreSpotlight
 linkerOpts = -framework CoreSpotlight

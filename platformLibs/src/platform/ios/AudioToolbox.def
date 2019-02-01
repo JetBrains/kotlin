@@ -1,12 +1,7 @@
 depends = CFNetwork CoreAudio CoreFoundation CoreMIDI Foundation Security darwin posix
 language = Objective-C
 package = platform.AudioToolbox
-headers = AudioToolbox/AudioToolbox.h \
-    AudioUnit/AUAudioUnit.h AudioUnit/AUComponent.h AudioUnit/AudioComponent.h \
-    AudioUnit/AudioUnit.h AudioUnit/AudioUnitProperties.h AudioUnit/AUAudioUnitImplementation.h \
-    AudioUnit/AUParameters.h AudioUnit/AudioOutputUnit.h AudioUnit/AudioUnitParameters.h AudioUnit/MusicDevice.h
-
-headerFilter = AudioToolbox/** AudioUnit/**
+modules = AudioToolbox AudioUnit
 
 compilerOpts = -framework AudioToolbox
 linkerOpts = -framework AudioToolbox

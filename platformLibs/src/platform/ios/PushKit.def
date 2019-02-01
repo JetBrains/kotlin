@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation Foundation Security darwin posix
 language = Objective-C
 package = platform.PushKit
-headers = PushKit/PushKit.h
-
-headerFilter = PushKit/**
+modules = PushKit
 
 compilerOpts = -framework PushKit
 linkerOpts = -framework PushKit

@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation Foundation Security darwin posix
 language = Objective-C
 package = platform.CoreBluetooth
-headers = CoreBluetooth/CoreBluetooth.h
-
-headerFilter = CoreBluetooth/**
+modules = CoreBluetooth
 
 compilerOpts = -framework CoreBluetooth
 linkerOpts = -framework CoreBluetooth

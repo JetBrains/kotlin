@@ -1,10 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration IOKit ImageIO Security darwin libkern osx posix
 language = Objective-C
 package = platform.ApplicationServices
-headers = ApplicationServices/ApplicationServices.h
-
-headerFilter = ApplicationServices/** ATS/** ColorSync/** HIServices/** \
-    LangAnalysis/** PrintCore/** QD/** SpeechSynthesis/**
+modules = ApplicationServices ColorSync
 
 excludedFunctions = kSpeechSynthesizerInfoManufacturer
 

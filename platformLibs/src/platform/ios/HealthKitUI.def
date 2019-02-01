@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation HealthKit IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.HealthKitUI
-headers = HealthKitUI/HealthKitUI.h
-
-headerFilter = HealthKitUI/**
+modules = HealthKitUI
 
 compilerOpts = -framework HealthKitUI
 linkerOpts = -framework HealthKitUI

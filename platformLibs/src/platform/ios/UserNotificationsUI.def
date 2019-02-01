@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.UserNotificationsUI
-headers = UserNotificationsUI/UserNotificationsUI.h
-
-headerFilter = UserNotificationsUI/**
+modules = UserNotificationsUI
 
 compilerOpts = -framework UserNotificationsUI
 linkerOpts = -framework UserNotificationsUI

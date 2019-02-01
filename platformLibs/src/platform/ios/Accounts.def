@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation Foundation Security darwin posix
 language = Objective-C
 package = platform.Accounts
-headers = Accounts/Accounts.h
-
-headerFilter = Accounts/**
+modules = Accounts
 
 compilerOpts = -framework Accounts
 linkerOpts = -framework Accounts

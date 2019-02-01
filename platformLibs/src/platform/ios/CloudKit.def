@@ -1,9 +1,7 @@
 depends = CFNetwork Contacts CoreFoundation CoreLocation Foundation Security darwin posix
 language = Objective-C
 package = platform.CloudKit
-headers = CloudKit/CloudKit.h
-
-headerFilter = CloudKit/**
+modules = CloudKit
 
 compilerOpts = -framework CloudKit
 linkerOpts = -framework CloudKit

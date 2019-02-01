@@ -1,9 +1,7 @@
 depends = CoreFoundation darwin posix
 language = Objective-C
 package = platform.CoreServices
-headers = CoreServices/CoreServices.h
-
-headerFilter = CoreServices/**
+modules = CoreServices
 
 compilerOpts = -framework CoreServices
 linkerOpts = -framework CoreServices

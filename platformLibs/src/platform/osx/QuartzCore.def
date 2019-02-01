@@ -1,9 +1,7 @@
 depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security darwin libkern osx posix
 language = Objective-C
 package = platform.QuartzCore
-headers = QuartzCore/QuartzCore.h QuartzCore/CIImage.h QuartzCore/CIColor.h
-
-headerFilter = QuartzCore/**
+modules = QuartzCore
 
 compilerOpts = -framework QuartzCore
 linkerOpts = -framework QuartzCore

@@ -1,9 +1,7 @@
 depends = AVFoundation AVKit AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.iAd
-headers = iAd/iAd.h
-
-headerFilter = iAd/**
+modules = iAd
 
 compilerOpts = -framework iAd
 linkerOpts = -framework iAd

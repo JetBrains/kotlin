@@ -1,9 +1,7 @@
 depends = CoreFoundation Security darwin posix
 language = Objective-C
 package = platform.Network
-headers = Network/Network.h
-
-headerFilter = Network/**
+modules = Network
 
 compilerOpts = -framework Network
 linkerOpts = -framework Network

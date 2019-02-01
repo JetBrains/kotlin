@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation Foundation Security darwin posix
 language = Objective-C
 package = platform.AdSupport
-headers = AdSupport/AdSupport.h
-
-headerFilter = AdSupport/**
+modules = AdSupport
 
 compilerOpts = -framework AdSupport
 linkerOpts = -framework AdSupport

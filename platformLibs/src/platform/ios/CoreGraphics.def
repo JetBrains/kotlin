@@ -1,9 +1,7 @@
 depends = CoreFoundation darwin posix
 language = Objective-C
 package = platform.CoreGraphics
-headers = CoreGraphics/CoreGraphics.h
-
-headerFilter = CoreGraphics/**
+modules = CoreGraphics
 
 compilerOpts = -framework CoreGraphics
 linkerOpts = -framework CoreGraphics

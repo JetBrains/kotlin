@@ -1,9 +1,7 @@
 depends = AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation IOSurface Metal OpenGLESCommon Security darwin posix
 language = Objective-C
 package = platform.MediaToolbox
-headers = MediaToolbox/MediaToolbox.h
-
-headerFilter = MediaToolbox/**
+modules = MediaToolbox
 
 compilerOpts = -framework MediaToolbox
 linkerOpts = -framework MediaToolbox

@@ -1,9 +1,8 @@
 depends = CoreFoundation darwin posix
 language = Objective-C
 package = platform.Security
-headers = Security/Security.h Security/SecureTransport.h
+modules = Security
 
-headerFilter = Security/**
 excludedFunctions = CSSMOID_APPLE_EXTENSION_DEVELOPER_AUTHENTICATION CSSMOID_APPLE_EXTENSION_PROVISIONING_PROFILE_SIGNING \
                     CSSMOID_APPLE_EXTENSION_SERVER_AUTHENTICATION CSSMOID_APPLE_TP_PCS_ESCROW_SERVICE \
 		    CSSMOID_APPLE_TP_PROVISIONING_PROFILE_SIGNING CSSMOID_DES_CBC CSSMOID_DomainComponent CSSMOID_InhibitAnyPolicy \

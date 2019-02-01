@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation GLKit IOSurface ImageIO Metal OpenGLESCommon QuartzCore SceneKit Security SpriteKit UIKit darwin posix
 language = Objective-C
 package = platform.GameplayKit
-headers = GameplayKit/GameplayKit.h
-
-headerFilter = GameplayKit/**
+modules = GameplayKit
 
 compilerOpts = -framework GameplayKit
 linkerOpts = -framework GameplayKit

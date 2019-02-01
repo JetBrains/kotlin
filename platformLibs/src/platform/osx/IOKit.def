@@ -1,9 +1,7 @@
 depends = CoreFoundation darwin libkern posix
 language = Objective-C
 package = platform.IOKit
-headers = IOKit/IOKitLib.h IOKit/hidsystem/IOLLEvent.h
-
-headerFilter = IOKit/**
+modules = IOKit
 
 compilerOpts = -framework IOKit
 linkerOpts = -framework IOKit

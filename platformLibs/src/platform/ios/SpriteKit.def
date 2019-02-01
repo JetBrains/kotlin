@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation GLKit IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.SpriteKit
-headers = SpriteKit/SpriteKit.h
-
-headerFilter = SpriteKit/**
+modules = SpriteKit
 
 compilerOpts = -framework SpriteKit
 linkerOpts = -framework SpriteKit

@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.Messages
-headers = Messages/Messages.h
-
-headerFilter = Messages/**
+modules = Messages
 
 compilerOpts = -framework Messages
 linkerOpts = -framework Messages

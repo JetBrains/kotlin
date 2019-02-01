@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Intents Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.IntentsUI
-headers = IntentsUI/IntentsUI.h
-
-headerFilter = IntentsUI/**
+modules = IntentsUI
 
 compilerOpts = -framework IntentsUI
 linkerOpts = -framework IntentsUI

@@ -1,9 +1,7 @@
 depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.AVKit
-headers = AVKit/AVKit.h
-
-headerFilter = AVKit/**
+modules = AVKit
 
 compilerOpts = -framework AVKit
 linkerOpts = -framework AVKit

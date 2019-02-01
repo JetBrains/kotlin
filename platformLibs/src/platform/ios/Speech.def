@@ -1,9 +1,7 @@
 depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreMIDI CoreMedia CoreVideo EAGL Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security darwin posix
 language = Objective-C
 package = platform.Speech
-headers = Speech/Speech.h
-
-headerFilter = Speech/**
+modules = Speech
 
 compilerOpts = -framework Speech
 linkerOpts = -framework Speech

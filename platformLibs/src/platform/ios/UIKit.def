@@ -1,9 +1,7 @@
 depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security darwin posix
 language = Objective-C
 package = platform.UIKit
-headers = UIKit/UIKit.h
-
-headerFilter = UIKit/** DocumentManager/**
+modules = UIKit
 
 compilerOpts = -framework UIKit
 linkerOpts = -framework UIKit
