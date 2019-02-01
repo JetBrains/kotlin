@@ -32,7 +32,7 @@ enum SideEffects {
 }
 
 message JsImportedModule {
-    required string external_name = 1;
+    required int32 external_name = 1;
     required int32 internal_name = 2;
     optional Expression plain_reference = 3;
 }
@@ -398,7 +398,7 @@ message Fragment {
 }
 
 message InlinedLocalDeclarations {
-    required string tag = 1;
+    required int32 tag = 1;
     required GlobalBlock block = 2;
 }
 

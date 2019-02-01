@@ -831,18 +831,13 @@ public final class DebugJsAstProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required string external_name = 1;</code>
+     * <code>required int32 external_name = 1;</code>
      */
     boolean hasExternalName();
     /**
-     * <code>required string external_name = 1;</code>
+     * <code>required int32 external_name = 1;</code>
      */
-    java.lang.String getExternalName();
-    /**
-     * <code>required string external_name = 1;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getExternalNameBytes();
+    int getExternalName();
 
     /**
      * <code>required int32 internal_name = 2;</code>
@@ -918,10 +913,9 @@ public final class DebugJsAstProtoBuf {
               }
               break;
             }
-            case 10: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+            case 8: {
               bitField0_ |= 0x00000001;
-              externalName_ = bs;
+              externalName_ = input.readInt32();
               break;
             }
             case 16: {
@@ -983,45 +977,18 @@ public final class DebugJsAstProtoBuf {
 
     private int bitField0_;
     public static final int EXTERNAL_NAME_FIELD_NUMBER = 1;
-    private java.lang.Object externalName_;
+    private int externalName_;
     /**
-     * <code>required string external_name = 1;</code>
+     * <code>required int32 external_name = 1;</code>
      */
     public boolean hasExternalName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string external_name = 1;</code>
+     * <code>required int32 external_name = 1;</code>
      */
-    public java.lang.String getExternalName() {
-      java.lang.Object ref = externalName_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          externalName_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string external_name = 1;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getExternalNameBytes() {
-      java.lang.Object ref = externalName_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        externalName_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public int getExternalName() {
+      return externalName_;
     }
 
     public static final int INTERNAL_NAME_FIELD_NUMBER = 2;
@@ -1061,7 +1028,7 @@ public final class DebugJsAstProtoBuf {
     }
 
     private void initFields() {
-      externalName_ = "";
+      externalName_ = 0;
       internalName_ = 0;
       plainReference_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Expression.getDefaultInstance();
     }
@@ -1093,7 +1060,7 @@ public final class DebugJsAstProtoBuf {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getExternalNameBytes());
+        output.writeInt32(1, externalName_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(2, internalName_);
@@ -1112,7 +1079,7 @@ public final class DebugJsAstProtoBuf {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(1, getExternalNameBytes());
+          .computeInt32Size(1, externalName_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -1240,7 +1207,7 @@ public final class DebugJsAstProtoBuf {
 
       public Builder clear() {
         super.clear();
-        externalName_ = "";
+        externalName_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         internalName_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -1311,9 +1278,7 @@ public final class DebugJsAstProtoBuf {
       public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.JsImportedModule other) {
         if (other == org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.JsImportedModule.getDefaultInstance()) return this;
         if (other.hasExternalName()) {
-          bitField0_ |= 0x00000001;
-          externalName_ = other.externalName_;
-          onChanged();
+          setExternalName(other.getExternalName());
         }
         if (other.hasInternalName()) {
           setInternalName(other.getInternalName());
@@ -1362,78 +1327,34 @@ public final class DebugJsAstProtoBuf {
       }
       private int bitField0_;
 
-      private java.lang.Object externalName_ = "";
+      private int externalName_ ;
       /**
-       * <code>required string external_name = 1;</code>
+       * <code>required int32 external_name = 1;</code>
        */
       public boolean hasExternalName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required string external_name = 1;</code>
+       * <code>required int32 external_name = 1;</code>
        */
-      public java.lang.String getExternalName() {
-        java.lang.Object ref = externalName_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            externalName_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public int getExternalName() {
+        return externalName_;
       }
       /**
-       * <code>required string external_name = 1;</code>
+       * <code>required int32 external_name = 1;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getExternalNameBytes() {
-        java.lang.Object ref = externalName_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          externalName_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>required string external_name = 1;</code>
-       */
-      public Builder setExternalName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
+      public Builder setExternalName(int value) {
+        bitField0_ |= 0x00000001;
         externalName_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string external_name = 1;</code>
+       * <code>required int32 external_name = 1;</code>
        */
       public Builder clearExternalName() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        externalName_ = getDefaultInstance().getExternalName();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required string external_name = 1;</code>
-       */
-      public Builder setExternalNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        externalName_ = value;
+        externalName_ = 0;
         onChanged();
         return this;
       }
@@ -45140,18 +45061,13 @@ public final class DebugJsAstProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required string tag = 1;</code>
+     * <code>required int32 tag = 1;</code>
      */
     boolean hasTag();
     /**
-     * <code>required string tag = 1;</code>
+     * <code>required int32 tag = 1;</code>
      */
-    java.lang.String getTag();
-    /**
-     * <code>required string tag = 1;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getTagBytes();
+    int getTag();
 
     /**
      * <code>required .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock block = 2;</code>
@@ -45218,10 +45134,9 @@ public final class DebugJsAstProtoBuf {
               }
               break;
             }
-            case 10: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+            case 8: {
               bitField0_ |= 0x00000001;
-              tag_ = bs;
+              tag_ = input.readInt32();
               break;
             }
             case 18: {
@@ -45278,45 +45193,18 @@ public final class DebugJsAstProtoBuf {
 
     private int bitField0_;
     public static final int TAG_FIELD_NUMBER = 1;
-    private java.lang.Object tag_;
+    private int tag_;
     /**
-     * <code>required string tag = 1;</code>
+     * <code>required int32 tag = 1;</code>
      */
     public boolean hasTag() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string tag = 1;</code>
+     * <code>required int32 tag = 1;</code>
      */
-    public java.lang.String getTag() {
-      java.lang.Object ref = tag_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          tag_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string tag = 1;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getTagBytes() {
-      java.lang.Object ref = tag_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        tag_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public int getTag() {
+      return tag_;
     }
 
     public static final int BLOCK_FIELD_NUMBER = 2;
@@ -45341,7 +45229,7 @@ public final class DebugJsAstProtoBuf {
     }
 
     private void initFields() {
-      tag_ = "";
+      tag_ = 0;
       block_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -45370,7 +45258,7 @@ public final class DebugJsAstProtoBuf {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getTagBytes());
+        output.writeInt32(1, tag_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(2, block_);
@@ -45386,7 +45274,7 @@ public final class DebugJsAstProtoBuf {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(1, getTagBytes());
+          .computeInt32Size(1, tag_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -45510,7 +45398,7 @@ public final class DebugJsAstProtoBuf {
 
       public Builder clear() {
         super.clear();
-        tag_ = "";
+        tag_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         if (blockBuilder_ == null) {
           block_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock.getDefaultInstance();
@@ -45575,9 +45463,7 @@ public final class DebugJsAstProtoBuf {
       public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlinedLocalDeclarations other) {
         if (other == org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlinedLocalDeclarations.getDefaultInstance()) return this;
         if (other.hasTag()) {
-          bitField0_ |= 0x00000001;
-          tag_ = other.tag_;
-          onChanged();
+          setTag(other.getTag());
         }
         if (other.hasBlock()) {
           mergeBlock(other.getBlock());
@@ -45621,78 +45507,34 @@ public final class DebugJsAstProtoBuf {
       }
       private int bitField0_;
 
-      private java.lang.Object tag_ = "";
+      private int tag_ ;
       /**
-       * <code>required string tag = 1;</code>
+       * <code>required int32 tag = 1;</code>
        */
       public boolean hasTag() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required string tag = 1;</code>
+       * <code>required int32 tag = 1;</code>
        */
-      public java.lang.String getTag() {
-        java.lang.Object ref = tag_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            tag_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public int getTag() {
+        return tag_;
       }
       /**
-       * <code>required string tag = 1;</code>
+       * <code>required int32 tag = 1;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getTagBytes() {
-        java.lang.Object ref = tag_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          tag_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>required string tag = 1;</code>
-       */
-      public Builder setTag(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
+      public Builder setTag(int value) {
+        bitField0_ |= 0x00000001;
         tag_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string tag = 1;</code>
+       * <code>required int32 tag = 1;</code>
        */
       public Builder clearTag() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        tag_ = getDefaultInstance().getTag();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required string tag = 1;</code>
-       */
-      public Builder setTagBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        tag_ = value;
+        tag_ = 0;
         onChanged();
         return this;
       }
@@ -53199,7 +53041,7 @@ public final class DebugJsAstProtoBuf {
       "o\022)org.jetbrains.kotlin.serialization.js" +
       ".ast\"0\n\010Location\022\021\n\tstartLine\030\001 \002(\005\022\021\n\ts" +
       "tartChar\030\002 \002(\005\"\220\001\n\020JsImportedModule\022\025\n\re" +
-      "xternal_name\030\001 \002(\t\022\025\n\rinternal_name\030\002 \002(" +
+      "xternal_name\030\001 \002(\005\022\025\n\rinternal_name\030\002 \002(" +
       "\005\022N\n\017plain_reference\030\003 \001(\01325.org.jetbrai" +
       "ns.kotlin.serialization.js.ast.Expressio" +
       "n\"\203\016\n\nExpression\022\016\n\006fileId\030\001 \001(\005\022E\n\010loca" +
@@ -53465,7 +53307,7 @@ public final class DebugJsAstProtoBuf {
       "tatement\022g\n\032inlined_local_declarations\030\r" +
       " \003(\0132C.org.jetbrains.kotlin.serializatio" +
       "n.js.ast.InlinedLocalDeclarations\"n\n\030Inl",
-      "inedLocalDeclarations\022\013\n\003tag\030\001 \002(\t\022E\n\005bl" +
+      "inedLocalDeclarations\022\013\n\003tag\030\001 \002(\005\022E\n\005bl" +
       "ock\030\002 \002(\01326.org.jetbrains.kotlin.seriali" +
       "zation.js.ast.GlobalBlock\"\224\001\n\016ImportedMo" +
       "dule\022\030\n\020external_name_id\030\001 \002(\005\022\030\n\020intern" +

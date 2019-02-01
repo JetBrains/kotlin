@@ -108,7 +108,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         }
 
         proto.inlinedLocalDeclarationsList.forEach {
-            fragment.inlinedLocalDeclarations[it.tag] = deserializeGlobalBlock(it.block)
+            fragment.inlinedLocalDeclarations[deserializeString(it.tag)] = deserializeGlobalBlock(it.block)
         }
 
         return fragment
@@ -292,7 +292,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
     }
 
     private fun deserializeJsImportedModule(proto: JsAstProtoBuf.JsImportedModule): JsImportedModule {
-        return JsImportedModule(proto.externalName, deserializeName(proto.internalName), if (proto.hasPlainReference()) deserialize(proto.plainReference!!) else null)
+        return JsImportedModule(deserializeString(proto.externalName), deserializeName(proto.internalName), if (proto.hasPlainReference()) deserialize(proto.plainReference!!) else null)
     }
 
     private fun deserializeNoMetadata(proto: Expression): JsExpression = when (proto.expressionCase) {

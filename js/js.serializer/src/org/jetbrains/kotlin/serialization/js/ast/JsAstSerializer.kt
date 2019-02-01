@@ -117,7 +117,7 @@ class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsNam
 
         fragment.inlinedLocalDeclarations.forEach { (tag, block) ->
             val builder = InlinedLocalDeclarations.newBuilder().apply {
-                setTag(tag)
+                setTag(serialize(tag))
                 setBlock(serializeBlock(block))
             }
 
@@ -474,7 +474,7 @@ class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsNam
 
     private fun serialize(module: JsImportedModule): JsAstProtoBuf.JsImportedModule {
         val moduleBuilder = JsAstProtoBuf.JsImportedModule.newBuilder()
-        moduleBuilder.externalName = module.externalName
+        moduleBuilder.externalName = serialize(module.externalName)
         moduleBuilder.internalName = serialize(module.internalName)
         module.plainReference?.let {
             moduleBuilder.plainReference = serialize(it)
