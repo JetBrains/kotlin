@@ -170,7 +170,7 @@ class StubGenerator(
 
     val functionsToBind = nativeIndex.functions.filter { it.name !in excludedFunctions }
 
-    private val macroConstantsByName = nativeIndex.macroConstants.associateBy { it.name }
+    private val macroConstantsByName = (nativeIndex.macroConstants + nativeIndex.wrappedMacros).associateBy { it.name }
 
     val kotlinFile = object : KotlinFile(pkgName, namesToBeDeclared = computeNamesToBeDeclared()) {
         override val mappingBridgeGenerator: MappingBridgeGenerator

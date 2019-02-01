@@ -41,6 +41,10 @@ int global_var = 5;
 #define PTR_SUM (INT_PTR + 1)
 #define PTR_SUM_EXPECTED (sizeof(int) + 1)
 
+enum {
+    INT_CALL = 1 // Should be replaced by macro below.
+};
+
 #define PTR_CALL ptr_call()
 #define INT_CALL int_call()
 #define CALL_SUM (int_call() + int_call())
