@@ -51,7 +51,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
     private val targetDirectoryField = TextFieldWithHistoryWithBrowseButton()
-    private val searchReferencesCb = NonFocusableCheckBox("Search ${UIUtil.MNEMONIC}references").apply { isSelected = true }
+    private val searchReferencesCb = NonFocusableCheckBox("Search r${UIUtil.MNEMONIC}eferences").apply { isSelected = true }
     private val openInEditorCb = NonFocusableCheckBox("Open moved files in editor")
     private val updatePackageDirectiveCb = NonFocusableCheckBox()
 
