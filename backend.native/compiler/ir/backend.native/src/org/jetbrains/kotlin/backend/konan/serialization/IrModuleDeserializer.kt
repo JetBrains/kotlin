@@ -1111,8 +1111,6 @@ abstract class IrModuleDeserializer(
 
         parent?.let { declaration.parent = it }
 
-        val sourceFileName = proto.fileName
-
         val descriptor = declaration.descriptor
 
         if (descriptor is WrappedDeclarationDescriptor<*>) {

@@ -616,7 +616,6 @@ message IrDeclaration {
     required Coordinates coordinates = 2;
     required Annotations annotations = 3;
     required IrDeclarator declarator = 4;
-    required String file_name = 5; // TODO: files should be communicated some other way, I suppose.
 }
 
 /* ------- IrStatements --------------------------------------------- */

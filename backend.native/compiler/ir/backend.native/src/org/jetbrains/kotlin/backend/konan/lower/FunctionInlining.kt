@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.fileEntry
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.isInlineParameter
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -148,7 +149,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                 }
             }
 
-            val sourceFileName = context.ir.originalModuleIndex.declarationToFile[callee.descriptor.original] ?: ""
+            val sourceFileName = callee.fileEntry.name
 
             val transformer = ParameterSubstitutor()
             statements.transform { it.transform(transformer, data = null) }

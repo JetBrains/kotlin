@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -191,3 +192,12 @@ val IrDeclaration.isGetter get() = this is IrSimpleFunction && this == this.corr
 val IrDeclaration.isSetter get() = this is IrSimpleFunction && this == this.correspondingProperty?.setter
 
 val IrDeclaration.isAccessor get() = this.isGetter || this.isSetter
+
+val IrDeclaration.fileEntry: SourceManager.FileEntry get() = parent.let {
+    when (it) {
+        is IrFile -> it.fileEntry
+        is IrPackageFragment -> TODO("Unknown file")
+        is IrDeclaration -> it.fileEntry
+        else -> TODO("Unexpected declaration parent")
+    }
+}
