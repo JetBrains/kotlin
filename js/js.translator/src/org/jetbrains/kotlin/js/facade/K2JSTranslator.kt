@@ -169,7 +169,7 @@ class K2JSTranslator @JvmOverloads constructor(
         bindingTrace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ) {
-        if (incrementalResults == null) return
+        if (incrementalResults == null && !shouldValidateJsAst) return
 
         val serializer = JsAstSerializer(if (shouldValidateJsAst) ::validateJsAst else null) { file ->
             try {
@@ -197,11 +197,11 @@ class K2JSTranslator @JvmOverloads constructor(
             val header = serializeHeader(fileTranslationResult.inlineFunctionTags)
 
             val ioFile = VfsUtilCore.virtualToIoFile(file.virtualFile)
-            incrementalResults.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst, header)
+            incrementalResults?.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst, header)
         }
 
         val settings = config.configuration.languageVersionSettings
-        incrementalResults.processHeader(KotlinJavascriptSerializationUtil.serializeHeader(moduleDescriptor, null, settings).toByteArray())
+        incrementalResults?.processHeader(KotlinJavascriptSerializationUtil.serializeHeader(moduleDescriptor, null, settings).toByteArray())
     }
 
     fun serializeHeader(importedTags: Set<String>): ByteArray {
@@ -212,6 +212,7 @@ class K2JSTranslator @JvmOverloads constructor(
         return output.toByteArray()
     }
 
+    // Checks that all non-temporary serialized JsName's are either declared locally, or linked via a NameBinding
     private fun validateJsAst(fragment: JsProgramFragment, serializedNames: Set<JsName>) {
         val knownNames = mutableSetOf<JsName>().apply {
             fragment.nameBindings.mapTo(this) { it.name }
