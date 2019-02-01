@@ -28,15 +28,14 @@ class KotlinCoroutinesAsyncStackTraceProvider : AsyncStackTraceProvider {
     private companion object {
         const val DEBUG_METADATA_KT = "kotlin.coroutines.jvm.internal.DebugMetadataKt"
 
-        fun classByName(name: String, frameProxy: StackFrameProxyImpl, suspendContext: SuspendContextImpl): ReferenceType? {
-            val virtualMachine = frameProxy.virtualMachine
+        fun classByName(name: String, frame: StackFrameProxyImpl, threadReference: ThreadReference, invokePolicy: Int): ReferenceType? {
+            val virtualMachine = frame.virtualMachine
             val classClass = virtualMachine.classesByName(Class::class.java.name).firstIsInstanceOrNull<ClassType>() ?: return null
             val forNameMethod = classClass.methodsByName("forName").first { it.signature() == "(Ljava/lang/String;)Ljava/lang/Class;" }
 
             try {
-                val threadReference = frameProxy.threadProxy().threadReference
                 val args = listOf(virtualMachine.mirrorOf(name))
-                val result = classClass.invokeMethod(threadReference, forNameMethod, args, suspendContext.getInvokePolicy())
+                val result = classClass.invokeMethod(threadReference, forNameMethod, args, invokePolicy)
 
                 if (result is ClassObjectReference) {
                     return result.reflectedType()
@@ -66,9 +65,11 @@ class KotlinCoroutinesAsyncStackTraceProvider : AsyncStackTraceProvider {
     fun getAsyncStackTrace(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
         val location = frameProxy.location()
         val method = location.safeMethod() ?: return null
-        val debugMetadataKtType = classByName(DEBUG_METADATA_KT, frameProxy, suspendContext) as? ClassType ?: return null
+        val threadReference = frameProxy.threadProxy().threadReference.takeIf { it.isSuspended } ?: return null
+        val invokePolicy = suspendContext.getInvokePolicy()
+        val debugMetadataKtType = classByName(DEBUG_METADATA_KT, frameProxy, threadReference, invokePolicy) as? ClassType ?: return null
 
-        val context = Context(suspendContext, frameProxy, method, debugMetadataKtType)
+        val context = Context(suspendContext, frameProxy, method, debugMetadataKtType, threadReference, invokePolicy)
         return context.getAsyncStackTraceForSuspendLambda() ?: context.getAsyncStackTraceForSuspendFunction()
     }
 
@@ -124,7 +125,9 @@ class KotlinCoroutinesAsyncStackTraceProvider : AsyncStackTraceProvider {
         val suspendContext: SuspendContextImpl,
         val frameProxy: StackFrameProxyImpl,
         val method: Method,
-        private val debugMetadataKtType: ClassType
+        private val debugMetadataKtType: ClassType,
+        private val threadReference: ThreadReference,
+        private val invokePolicy: Int
     ) {
         val evaluationContext: EvaluationContextImpl by lazy { EvaluationContextImpl(suspendContext, frameProxy) }
 
@@ -134,9 +137,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : AsyncStackTraceProvider {
                 "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)Ljava/lang/StackTraceElement;"
             ).firstOrNull() ?: return null
 
-            val threadReference = frameProxy.threadProxy().threadReference.takeIf { it.isSuspended } ?: return null
             val args = listOf(continuation)
-            val invokePolicy = suspendContext.getInvokePolicy()
 
             val stackTraceElement = debugMetadataKtType
                 .invokeMethod(threadReference, getStackTraceElementMethod, args, invokePolicy) as? ObjectReference ?: return null
@@ -153,7 +154,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : AsyncStackTraceProvider {
             val methodName = (getValue("getMethodName", "()Ljava/lang/String;") as? StringReference)?.value() ?: return null
             val lineNumber = (getValue("getLineNumber", "()I") as? IntegerValue)?.value()?.takeIf { it >= 0 } ?: return null
 
-            val locationClass = classByName(className, frameProxy, suspendContext) ?: return null
+            val locationClass = classByName(className, frameProxy, threadReference, invokePolicy) ?: return null
             return GeneratedLocation(suspendContext.debugProcess, locationClass, methodName, lineNumber)
         }
 
@@ -163,9 +164,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : AsyncStackTraceProvider {
                 "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;"
             ).firstOrNull() ?: return null
 
-            val threadReference = frameProxy.threadProxy().threadReference.takeIf { it.isSuspended } ?: return null
             val args = listOf(continuation)
-            val invokePolicy = suspendContext.getInvokePolicy()
 
             val rawSpilledVariables = debugMetadataKtType
                 .invokeMethod(threadReference, getSpilledVariableFieldMappingMethod, args, invokePolicy) as? ArrayReference ?: return null
