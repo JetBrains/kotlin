@@ -263,26 +263,26 @@ fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boole
 }
 
 fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor, bindingContext: BindingContext): Boolean {
-    if (!target.canBeReferencedViaImport()) return false
-
     if (this is KDocReference) return element.getQualifiedName().size == 1
+    val referenceExpression = this.element as? KtNameReferenceExpression ?: return false
+    return referenceExpression.canBeResolvedViaImport(target, bindingContext)
+}
 
+fun KtSimpleNameExpression.canBeResolvedViaImport(target: DeclarationDescriptor, bindingContext: BindingContext): Boolean {
+    if (!target.canBeReferencedViaImport()) return false
     if (target.isExtension) return true // assume that any type of reference can use imports when resolved to extension
 
-    val referenceExpression = this.element as? KtNameReferenceExpression ?: return false
-    val callTypeAndReceiver = CallTypeAndReceiver.detect(referenceExpression)
-
+    val callTypeAndReceiver = CallTypeAndReceiver.detect(this)
     if (callTypeAndReceiver.receiver != null) {
         if (target !is PropertyDescriptor || !target.type.isExtensionFunctionType) return false
         if (callTypeAndReceiver !is CallTypeAndReceiver.DOT && callTypeAndReceiver !is CallTypeAndReceiver.SAFE) return false
 
-        val resolvedCall = bindingContext[BindingContext.CALL, referenceExpression].getResolvedCall(bindingContext)
-                                   as? VariableAsFunctionResolvedCall ?: return false
+        val resolvedCall = bindingContext[BindingContext.CALL, this].getResolvedCall(bindingContext)
+                as? VariableAsFunctionResolvedCall ?: return false
         if (resolvedCall.variableCall.explicitReceiverKind.isDispatchReceiver) return false
     }
 
-    if (element.parent is KtThisExpression || element.parent is KtSuperExpression) return false // TODO: it's a bad design of PSI tree, we should change it
-
+    if (parent is KtThisExpression || parent is KtSuperExpression) return false // TODO: it's a bad design of PSI tree, we should change it
     return true
 }
 
