@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.AbbreviatedType
 
 class RedundantExplicitTypeInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
@@ -22,6 +23,7 @@ class RedundantExplicitTypeInspection : AbstractKotlinInspection() {
             val initializer = property.initializer ?: return
 
             val type = property.resolveToDescriptorIfAny()?.type ?: return
+            if (type is AbbreviatedType) return
             when (initializer) {
                 is KtConstantExpression -> {
                     when (initializer.node.elementType) {
