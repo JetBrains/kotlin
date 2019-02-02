@@ -133,7 +133,7 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
             val function = usage.getParentOfTypesAndPredicate<KtDeclarationWithBody>(
                 true, KtNamedFunction::class.java, KtPropertyAccessor::class.java
             ) { true }
-            val insideInlineFun = function?.let { it.hasModifier(KtTokens.INLINE_KEYWORD) && !function.isPrivate() } ?: false
+            val insideInlineFun = function.insideInline() || (function as? KtPropertyAccessor)?.property.insideInline()
             if (insideInlineFun) {
                 otherUsageFound = true
                 false
@@ -144,6 +144,8 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
         })
         return inClassUsageFound && !otherUsageFound
     }
+
+    private fun KtModifierListOwner?.insideInline() = this?.let { it.hasModifier(KtTokens.INLINE_KEYWORD) && !it.isPrivate() } ?: false
 
     private fun registerProblem(holder: ProblemsHolder, declaration: KtDeclaration) {
         val modifierListOwner = declaration.getParentOfType<KtModifierListOwner>(false) ?: return
