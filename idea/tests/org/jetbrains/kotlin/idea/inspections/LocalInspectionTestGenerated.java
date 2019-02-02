@@ -4849,6 +4849,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testTop() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantExplicitType/top.kt");
         }
+
+        @TestMetadata("typealias.kt")
+        public void testTypealias() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantExplicitType/typealias.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantGetter")
