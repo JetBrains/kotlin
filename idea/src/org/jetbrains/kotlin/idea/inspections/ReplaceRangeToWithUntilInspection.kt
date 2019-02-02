@@ -23,14 +23,11 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.intentions.getArguments
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.*
 
 class ReplaceRangeToWithUntilInspection : AbstractPrimitiveRangeToInspection() {
     override fun visitRangeToExpression(expression: KtExpression, holder: ProblemsHolder) {
-        if (expression.getArguments()?.second?.isMinusOne() != true) return
+        if (expression.getArguments()?.second?.deparenthesize()?.isMinusOne() != true) return
 
         holder.registerProblem(
             expression,
@@ -52,7 +49,7 @@ class ReplaceRangeToWithUntilInspection : AbstractPrimitiveRangeToInspection() {
                 KtPsiFactory(element).createExpressionByPattern(
                     "$0 until $1",
                     args.first ?: return,
-                    (args.second as? KtBinaryExpression)?.left ?: return
+                    (args.second?.deparenthesize() as? KtBinaryExpression)?.left ?: return
                 )
             )
         }
@@ -67,3 +64,5 @@ class ReplaceRangeToWithUntilInspection : AbstractPrimitiveRangeToInspection() {
         return rightValue == 1
     }
 }
+
+private fun KtExpression.deparenthesize() = KtPsiUtil.safeDeparenthesize(this)
