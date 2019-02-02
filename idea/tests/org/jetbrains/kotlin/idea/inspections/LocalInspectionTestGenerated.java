@@ -4971,6 +4971,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/it.kt");
         }
 
+        @TestMetadata("nestedLambda.kt")
+        public void testNestedLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/nestedLambda.kt");
+        }
+
+        @TestMetadata("nestedLambda2.kt")
+        public void testNestedLambda2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/nestedLambda2.kt");
+        }
+
+        @TestMetadata("nestedLambda3.kt")
+        public void testNestedLambda3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/nestedLambda3.kt");
+        }
+
         @TestMetadata("noExpectedType.kt")
         public void testNoExpectedType() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/noExpectedType.kt");
