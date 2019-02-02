@@ -6255,6 +6255,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replaceRangeToWithUntil/operatorLong.kt");
         }
 
+        @TestMetadata("parentheses.kt")
+        public void testParentheses() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceRangeToWithUntil/parentheses.kt");
+        }
+
         @TestMetadata("plusOne.kt")
         public void testPlusOne() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceRangeToWithUntil/plusOne.kt");
