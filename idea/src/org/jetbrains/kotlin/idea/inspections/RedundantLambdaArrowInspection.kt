@@ -16,7 +16,9 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -57,6 +59,13 @@ class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
             if (valueArgumentCall != null) {
                 val argumentMatch = valueArgumentCall.resolveToCall()?.getArgumentMapping(valueArgument) as? ArgumentMatch
                 if (argumentMatch?.valueParameter?.original?.type?.isTypeParameter() == true) return
+            }
+
+            val functionLiteralDescriptor = functionLiteral.descriptor
+            if (functionLiteralDescriptor != null) {
+                if (functionLiteral.anyDescendantOfType<KtNameReferenceExpression> {
+                        it.text == "it" && it.resolveToCall()?.resultingDescriptor?.containingDeclaration != functionLiteralDescriptor
+                    }) return
             }
 
             val startOffset = functionLiteral.startOffset
