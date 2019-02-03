@@ -26,6 +26,7 @@
 
   <extensions defaultExtensionNs="appcode">
     <xcodeTemplatePathsProvider implementation="org.jetbrains.konan.AppCodeKonanTemplatesProvider"/>
+    <xcodeExternalBuildProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeGradleKonanExternalBuildProvider"/>
   </extensions>
 
   <application-components>

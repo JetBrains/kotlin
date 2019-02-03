@@ -128,18 +128,20 @@ private fun getBuildAndRunConfigurations(
     return buildAndRunConfigurations
 }
 
-private fun runBuildTasks(
+fun runBuildTasks(
     project: Project,
     executionName: String,
     taskNames: List<String>,
     projectPath: String,
-    activateToolWindowBeforeRun: Boolean
+    activateToolWindowBeforeRun: Boolean,
+    parameters: String = ""
 ): Boolean {
     val settings = ExternalSystemTaskExecutionSettings().apply {
         this.executionName = executionName
         externalProjectPath = projectPath
         this.taskNames = taskNames
         externalSystemIdString = GradleConstants.SYSTEM_ID.id
+        scriptParameters = parameters
     }
 
     val userData = UserDataHolderBase()

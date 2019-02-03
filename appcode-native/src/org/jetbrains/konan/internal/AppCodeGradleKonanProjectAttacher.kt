@@ -6,41 +6,69 @@
 package org.jetbrains.konan.internal
 
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.components.ProjectComponent
+import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
+import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.cidr.xcode.model.XcodeMetaData
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.plugins.gradle.service.project.GradleNotification
 import org.jetbrains.plugins.gradle.service.project.GradleProjectOpenProcessor
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.io.File
+import java.nio.file.Paths
 
-class AppCodeGradleKonanProjectAttacher(val project: Project) : ProjectComponent {
+class AppCodeGradleKonanProjectAttacher(
+    private val project: Project
+) : ProjectComponent {
+
+    private val messageBusConnection = project.messageBus.connect()
+
+    init {
+        messageBusConnection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
+            refreshOCRoots()
+        })
+    }
 
     override fun projectOpened() {
-        if (GradleSettings.getInstance(project).linkedProjectsSettings.isEmpty()) {
-            val parentDir = "${project.baseDir.parent.path}/"
-            val baseDir = "${project.baseDir.path}/"
-            val gradleFile = FileUtil.findFirstThatExist(
-                baseDir + GradleConstants.DEFAULT_SCRIPT_NAME,
-                baseDir + GradleConstants.KOTLIN_DSL_SCRIPT_NAME,
-                parentDir + GradleConstants.DEFAULT_SCRIPT_NAME,
-                parentDir + GradleConstants.KOTLIN_DSL_SCRIPT_NAME
-            )
+        ExternalProjectsManager.getInstance(project).runWhenInitialized {
+            if (!GradleSettings.getInstance(project).linkedProjectsSettings.isEmpty()) {
+                return@runWhenInitialized
+            }
 
-            if (gradleFile != null) {
+            findGradleProject()?.let {
                 val message = GradleBundle.message("gradle.notifications.unlinked.project.found.msg", "import")
 
                 GradleNotification.getInstance(project).showBalloon(
                     GradleBundle.message("gradle.notifications.unlinked.project.found.title"),
                     message,
                     NotificationType.INFORMATION
-                ) { _, event ->
+                ) { notification, event ->
                     if (event.description == "import") {
-                        GradleProjectOpenProcessor.attachGradleProjectAndRefresh(project, gradleFile.absolutePath)
+                        notification.expire()
+                        GradleProjectOpenProcessor.attachGradleProjectAndRefresh(project, it.absolutePath)
                     }
                 }
             }
         }
     }
+
+    private fun findGradleProject(): File? {
+        val baseDir = Paths.get(project.baseDir.path, "Supporting Files")
+        return FileUtil.findFirstThatExist(
+            "$baseDir${GradleConstants.DEFAULT_SCRIPT_NAME}",
+            "$baseDir${GradleConstants.KOTLIN_DSL_SCRIPT_NAME}"
+        )
+    }
+
+    private fun refreshOCRoots() {
+        TransactionGuard.getInstance().submitTransactionAndWait {
+            runWriteAction { XcodeMetaData.getInstance(project).updateContentRoots() }
+        }
+    }
+
 }
