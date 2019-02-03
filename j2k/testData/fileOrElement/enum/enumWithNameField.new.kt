@@ -1,5 +1,5 @@
 internal enum class E {
     I;
 
-    private val name: String? = null
+    private override val name: String? = null
 }

@@ -1,5 +1,5 @@
 // ERROR: No value passed for parameter 'field'
-import kotlinApi.property
+import kotlinApi.KotlinClass
 
 internal class C : KotlinClass() {
     fun foo() {

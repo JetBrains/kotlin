@@ -1,4 +1,4 @@
-test@ for (i in 0..max!!) {
+test@ for (i in 0..max) {
     var n: Int = substring!!.length()
     var j = i
     var k = 0

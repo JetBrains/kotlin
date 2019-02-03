@@ -1,6 +1,5 @@
 // !forceNotNullTypes: false
 // !specifyLocalVariableTypeByDefault: true
-import java.util.HashSet;
 
 class Foo {
   void foo(HashSet o) {
