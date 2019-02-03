@@ -22,26 +22,19 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.math.BigInteger
 
-fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Nullable): JKClassType {
-    val symbol =
-        symbolProvider.provideDirectSymbol(
-            resolveFqName(ClassId.fromString(name), symbolProvider.symbolsByPsi.keys.first())!!
-        ) as JKClassSymbol
-    return JKClassTypeImpl(symbol, emptyList(), nullability)
-}
+fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Nullable): JKClassType =
+    JKClassTypeImpl(
+        symbolProvider.provideByFqName(name),
+        emptyList(),
+        nullability
+    )
 
 private fun JKType.classSymbol(symbolProvider: JKSymbolProvider) =
     when (this) {
         is JKClassType -> classReference
-        is JKJavaPrimitiveType -> {
-            val psiClass = resolveFqName(
-                ClassId.fromString(jvmPrimitiveType.primitiveType.typeFqName.asString()),
-                symbolProvider.symbolsByPsi.keys.first()
-            )
-            psiClass?.let { klass ->
-                symbolProvider.provideDirectSymbol(klass) as? JKClassSymbol
-            }
-        }
+        is JKJavaPrimitiveType ->
+            symbolProvider.provideByFqName(jvmPrimitiveType.primitiveType.typeFqName.asString())
+
         else -> null
     }
 
@@ -285,14 +278,7 @@ fun useExpression(
     body: JKStatement,
     symbolProvider: JKSymbolProvider
 ): JKExpression {
-    val useSymbol =
-        symbolProvider
-            .provideDirectSymbol(
-                resolveFqName(
-                    ClassId.fromString("kotlin.io.use"),
-                    symbolProvider.symbolsByPsi.keys.first()
-                )!!
-            ) as JKMethodSymbol
+    val useSymbol = symbolProvider.provideByFqName<JKMethodSymbol>("kotlin.io.use")
     val lambdaParameter =
         JKParameterImpl(JKTypeElementImpl(JKNoTypeImpl), variableIdentifier)
 

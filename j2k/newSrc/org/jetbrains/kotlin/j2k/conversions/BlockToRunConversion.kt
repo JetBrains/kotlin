@@ -23,20 +23,13 @@ class BlockToRunConversion(private val context: ConversionContext) : RecursiveAp
         val parentDeclaration = element.parentOfType<JKDeclaration>() ?: return recurse(element)
         val psiContext = parentDeclaration.psi ?: return recurse(element)
 
-        val unitType =
-            context.symbolProvider.provideDirectSymbol(
-                resolveFqName(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()), psiContext)!!
-            )
-        val runSymbol = context.symbolProvider.provideDirectSymbol(
-            multiResolveFqName(ClassId.fromString("kotlin/run"), psiContext).first()
-        )
 
         element.invalidate()
         val lambda = JKLambdaExpressionImpl(
             JKBlockStatementImpl(element.block),
             emptyList()
         )
-        val call = JKKtCallExpressionImpl(runSymbol as JKMethodSymbol, JKExpressionListImpl(listOf(lambda)))
+        val call = JKKtCallExpressionImpl(context.symbolProvider.provideByFqName("kotlin.run", true), JKExpressionListImpl(listOf(lambda)))
         return recurse(JKExpressionStatementImpl(call))
     }
 

@@ -67,12 +67,10 @@ fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
 
 fun ClassId.toKtClassType(
     symbolProvider: JKSymbolProvider,
-    nullability: Nullability = Nullability.Default,
-    context: PsiElement = symbolProvider.symbolsByPsi.keys.first()
-): JKType {
-    val typeSymbol = symbolProvider.provideDirectSymbol(resolveFqName(this, context)!!) as JKClassSymbol
-    return JKClassTypeImpl(typeSymbol, emptyList(), nullability)
-}
+    nullability: Nullability = Nullability.Default
+): JKType =
+    JKClassTypeImpl(symbolProvider.provideByFqName(this), emptyList(), nullability)
+
 
 fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Default): JKType {
     return when (this) {

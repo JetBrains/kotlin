@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 class JKSymbolProvider {
+    val symbolsByFqName = mutableMapOf<String, JKSymbol>()
     val symbolsByPsi = mutableMapOf<PsiElement, JKSymbol>()
     val symbolsByJK = mutableMapOf<JKDeclaration, JKSymbol>()
 
@@ -89,30 +90,50 @@ class JKSymbolProvider {
         JKUniverseMethodSymbol(this).also { it.target = jk }
     } as JKMethodSymbol
 
-    internal inline fun <reified T : JKSymbol> provideByFqName(classId: ClassId, context: PsiElement = symbolsByPsi.keys.first()): T {
-        return resolveFqName(classId, context)?.let(::provideDirectSymbol).safeAs<T>() ?: when {
-            isAssignable<T, JKUnresolvedMethod>() -> JKUnresolvedMethod(classId.asSingleFqName().asString().replace('/', '.'))
-            isAssignable<T, JKUnresolvedField>() -> JKUnresolvedField(classId.asSingleFqName().asString().replace('/', '.'), this)
-            else -> JKUnresolvedClassSymbol(classId.asSingleFqName().asString().replace('/', '.'))
+    internal inline fun <reified T : JKSymbol> provideByFqName(
+        classId: ClassId,
+        multiResolve: Boolean = false,
+        context: PsiElement = symbolsByPsi.keys.first()
+    ): T {
+        val fqName = classId.asSingleFqName().asString().replace('/', '.')
+        if (fqName in symbolsByFqName) {
+            return symbolsByFqName[fqName] as T
+        }
+        val resolved =
+            if (multiResolve) multiResolveFqName(classId, context).firstOrNull()
+            else resolveFqName(classId, context)
+        val symbol = resolved?.let(::provideDirectSymbol).safeAs<T>()
+        return symbol ?: when {
+            isAssignable<T, JKUnresolvedMethod>() -> JKUnresolvedMethod(fqName)
+            isAssignable<T, JKUnresolvedField>() -> JKUnresolvedField(fqName, this)
+            else -> JKUnresolvedClassSymbol(fqName)
         } as T
     }
 
-    internal inline fun <reified T : JKSymbol> provideByFqNameMulti(fqName: String, context: PsiElement = symbolsByPsi.keys.first()): T {
-        return multiResolveFqName(ClassId.fromString(fqName), context).firstOrNull()?.let(::provideDirectSymbol).safeAs<T>() ?: when {
-            isAssignable<T, JKUnresolvedMethod>() -> JKUnresolvedMethod(fqName.replace('/', '.'))
-            isAssignable<T, JKUnresolvedField>() -> JKUnresolvedField(fqName.replace('/', '.'), this)
-            else -> JKUnresolvedClassSymbol(fqName.replace('/', '.'))
-        } as T
-    }
+    @Deprecated("", ReplaceWith("provideByFqName(fqName, true, context)"))
+    internal inline fun <reified T : JKSymbol> provideByFqNameMulti(fqName: String, context: PsiElement = symbolsByPsi.keys.first()): T =
+        provideByFqName(ClassId.fromString(fqName), true, context)
 
-    internal inline fun <reified T : JKSymbol> provideByFqName(fqName: String, context: PsiElement = symbolsByPsi.keys.first()): T =
-        provideByFqName(ClassId.fromString(fqName), context)
+    internal inline fun <reified T : JKSymbol> provideByFqName(
+        fqName: String,
+        multiResolve: Boolean = false,
+        context: PsiElement = symbolsByPsi.keys.first()
+    ): T =
+        provideByFqName(ClassId.fromString(fqName), multiResolve, context)
 
-    internal inline fun <reified T : JKSymbol> provideByFqName(fqName: FqName, context: PsiElement = symbolsByPsi.keys.first()): T =
-        provideByFqName(fqName.asString(), context)
+    internal inline fun <reified T : JKSymbol> provideByFqName(
+        fqName: FqName,
+        multiResolve: Boolean = false,
+        context: PsiElement = symbolsByPsi.keys.first()
+    ): T =
+        provideByFqName(fqName.asString(), multiResolve, context)
 
-    internal inline fun <reified T : JKSymbol> provideByFqName(fqName: FqNameUnsafe, context: PsiElement = symbolsByPsi.keys.first()): T =
-        provideByFqName(fqName.asString(), context)
+    internal inline fun <reified T : JKSymbol> provideByFqName(
+        fqName: FqNameUnsafe,
+        multiResolve: Boolean = false,
+        context: PsiElement = symbolsByPsi.keys.first()
+    ): T =
+        provideByFqName(fqName.asString(), multiResolve, context)
 
 
     private inner class ElementVisitor : JavaElementVisitor() {

@@ -213,11 +213,7 @@ class JKUnresolvedField(override val target: String, private val symbolProvider:
         get() {
             val resolvedType = (target as? PsiReferenceExpressionImpl)?.type
             if (resolvedType != null) return resolvedType.toJK(symbolProvider)
-
-            val nothingSymbol = (symbolProvider.provideDirectSymbol(
-                resolveFqName(ClassId.fromString("kotlin.Nothing"), symbolProvider.symbolsByPsi.keys.first())!!
-            ) as JKClassSymbol)
-            return JKClassTypeImpl(nothingSymbol, emptyList())
+            return JKClassTypeImpl(symbolProvider.provideByFqName("kotlin.Nothing"), emptyList())
         }
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.

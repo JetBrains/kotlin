@@ -229,9 +229,7 @@ class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase(
 fun JKLiteralExpression.LiteralType.toJkType(symbolProvider: JKSymbolProvider): JKType {
     fun defaultTypeByName(name: String) =
         JKClassTypeImpl(
-            symbolProvider.provideDirectSymbol(
-                resolveFqName(ClassId.fromString("kotlin.$name"), symbolProvider.symbolsByPsi.keys.first())!!
-            ) as JKClassSymbol, emptyList(), Nullability.NotNull
+            symbolProvider.provideByFqName("kotlin.$name"), emptyList(), Nullability.NotNull
         )
 
     return when (this) {
