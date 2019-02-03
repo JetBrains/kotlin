@@ -165,16 +165,6 @@ object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
                 action.invoke(element.project, null, element.containingKtFile)
             },
 
-            SingleProcessing(object : J2kPostProcessing {
-                override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? =
-                    {
-                        OptimizeImportsProcessor(element.project, element.containingKtFile).run()
-                        PsiDocumentManager.getInstance(element.project).commitAllDocuments()
-                    }
-
-                override val writeActionNeeded: Boolean = true
-            }),
-
             SingleProcessing(RemoveRedundantTypeQualifierProcessing()),
             SingleProcessing(RemoveRedundantExpressionQualifierProcessing()),
 

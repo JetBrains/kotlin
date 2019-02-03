@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.editor.RangeMarker
@@ -74,7 +75,7 @@ class J2kPostProcessor(
                     }
                 else -> error("Processing tree is corrupted")
             }
-
+        OptimizeImportsProcessor(file.project, file.containingKtFile).run()
         val groupsOfProcessings = postProcessingRegistrar.mainProcessings.flattenToGroups()
 
         runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
