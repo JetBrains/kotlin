@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.parenthesizeIfBinaryExpression
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
@@ -97,7 +98,7 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
                 is JKMethodCallExpression -> {
                     val arguments = from.arguments::expressions.detached()
                     JKQualifiedExpressionImpl(
-                        arguments.first(),
+                        arguments.first().parenthesizeIfBinaryExpression(),
                         JKKtQualifierImpl.DOT,
                         JKKtCallExpressionImpl(
                             context.symbolProvider.provideByFqNameMulti(fqName),
