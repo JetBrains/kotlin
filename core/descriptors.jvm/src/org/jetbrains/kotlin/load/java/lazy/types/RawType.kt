@@ -149,7 +149,7 @@ internal object RawSubstitution : TypeSubstitution() {
 
             moduleDescriptor
                 .resolveClassByFqName(fqName, NoLookupLocation.FOR_ALREADY_TRACKED)
-                ?.getMemberScope(RawSubstitution) ?: memberScope
+                ?.getMemberScope(RawSubstitution, moduleDescriptor) ?: memberScope
         } to true
     }
 

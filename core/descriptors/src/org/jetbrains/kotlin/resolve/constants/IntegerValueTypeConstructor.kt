@@ -82,6 +82,7 @@ class IntegerValueTypeConstructor(
     private fun unsignedType(classId: ClassId): SimpleType = module.findClassAcrossModuleDependencies(classId)!!.defaultType
 
     override fun getSupertypes(): Collection<KotlinType> = supertypes
+    override fun getSupertypes(module: ModuleDescriptor): Collection<KotlinType> = supertypes
 
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
 

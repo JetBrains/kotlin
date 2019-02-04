@@ -162,7 +162,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
 
     @Override
     @NotNull
-    public MemberScope getUnsubstitutedMemberScope() {
+    public MemberScope getUnsubstitutedMemberScope(@NotNull ModuleDescriptor moduleDescriptor) {
         return MemberScope.Empty.INSTANCE; // used for getDefaultType
     }
 

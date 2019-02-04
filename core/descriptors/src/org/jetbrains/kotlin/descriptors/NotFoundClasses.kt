@@ -73,7 +73,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         override fun isExternal() = false
         override val annotations: Annotations get() = Annotations.EMPTY
 
-        override fun getUnsubstitutedMemberScope() = MemberScope.Empty
+        override fun getUnsubstitutedMemberScope(module: ModuleDescriptor) = MemberScope.Empty
         override fun getStaticScope() = MemberScope.Empty
         override fun getConstructors(): Collection<ClassConstructorDescriptor> = emptySet()
         override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = null

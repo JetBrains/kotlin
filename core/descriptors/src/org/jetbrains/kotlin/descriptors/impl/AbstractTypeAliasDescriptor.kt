@@ -109,6 +109,9 @@ abstract class AbstractTypeAliasDescriptor(
         override fun getSupertypes(): Collection<KotlinType> =
             declarationDescriptor.underlyingType.constructor.supertypes
 
+        override fun getSupertypes(moduleDescriptor: ModuleDescriptor) =
+            declarationDescriptor.underlyingType.constructor.getSupertypes(moduleDescriptor)
+
         override fun isFinal(): Boolean =
             declarationDescriptor.underlyingType.constructor.isFinal
 

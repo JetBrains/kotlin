@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 
 import java.util.Collection;
@@ -36,6 +37,10 @@ public interface TypeConstructor {
     @NotNull
     @ReadOnly
     List<TypeParameterDescriptor> getParameters();
+
+    @NotNull
+    @ReadOnly
+    Collection<KotlinType> getSupertypes(@NotNull ModuleDescriptor moduleDescriptor);
 
     @NotNull
     @ReadOnly

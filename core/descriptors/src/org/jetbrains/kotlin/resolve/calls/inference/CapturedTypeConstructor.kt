@@ -53,6 +53,8 @@ class CapturedTypeConstructorImpl(
         return listOf(superType)
     }
 
+    override fun getSupertypes(moduleDescriptor: ModuleDescriptor) = getSupertypes()
+
     override fun isFinal() = true
 
     override fun isDenotable() = false

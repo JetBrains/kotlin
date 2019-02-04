@@ -40,7 +40,7 @@ class ScriptProvidedPropertiesDescriptor(script: LazyScriptDescriptor) :
         )
     }
 
-    override fun getUnsubstitutedMemberScope(): MemberScope = memberScope()
+    override fun getUnsubstitutedMemberScope(moduleDescriptor: ModuleDescriptor): MemberScope = memberScope()
 
     val properties: () -> List<ScriptProvidedPropertyDescriptor> = script.resolveSession.storageManager.createLazyValue {
         script.scriptDefinition().providedProperties.mapNotNull { (name, type) ->

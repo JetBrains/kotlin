@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -82,28 +83,46 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
-        MemberScope memberScope = original.getMemberScope(typeArguments);
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments, @NotNull ModuleDescriptor moduleDescriptor) {
+        MemberScope memberScope = original.getMemberScope(typeArguments, moduleDescriptor);
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
         return new SubstitutingScope(memberScope, getSubstitutor());
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution, @NotNull ModuleDescriptor moduleDescriptor) {
+        MemberScope memberScope = original.getMemberScope(typeSubstitution, moduleDescriptor);
+        if (originalSubstitutor.isEmpty()) {
+            return memberScope;
+        }
+        return new SubstitutingScope(memberScope, getSubstitutor());
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+        return getMemberScope(typeArguments, DescriptorUtils.getContainingModule(this));
     }
 
     @NotNull
     @Override
     public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
-        MemberScope memberScope = original.getMemberScope(typeSubstitution);
-        if (originalSubstitutor.isEmpty()) {
-            return memberScope;
-        }
-        return new SubstitutingScope(memberScope, getSubstitutor());
+        return getMemberScope(typeSubstitution, DescriptorUtils.getContainingModule(this));
     }
 
     @NotNull
     @Override
     public MemberScope getUnsubstitutedMemberScope() {
-        MemberScope memberScope = original.getUnsubstitutedMemberScope();
+        return getUnsubstitutedMemberScope(DescriptorUtils.getContainingModule(original));
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getUnsubstitutedMemberScope(@NotNull ModuleDescriptor moduleDescriptor) {
+        MemberScope memberScope = original.getUnsubstitutedMemberScope(moduleDescriptor);
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }

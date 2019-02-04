@@ -112,9 +112,18 @@ open class KnownClassDescriptor(
 
     override fun getMemberScope(typeArguments: MutableList<out TypeProjection>): MemberScope = MemberScope.Empty
     override fun getMemberScope(typeSubstitution: TypeSubstitution): MemberScope = MemberScope.Empty
+
+    override fun getMemberScope(
+        typeArguments: MutableList<out TypeProjection>,
+        moduleDescriptor: ModuleDescriptor
+    ): MemberScope = MemberScope.Empty
+
+    override fun getMemberScope(typeSubstitution: TypeSubstitution, moduleDescriptor: ModuleDescriptor): MemberScope = MemberScope.Empty
+
     override fun getStaticScope(): MemberScope = MemberScope.Empty
     override fun getUnsubstitutedInnerClassesScope(): MemberScope = MemberScope.Empty
     override fun getUnsubstitutedMemberScope(): MemberScope = MemberScope.Empty
+    override fun getUnsubstitutedMemberScope(moduleDescriptor: ModuleDescriptor): MemberScope = MemberScope.Empty
 
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = null
 

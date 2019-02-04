@@ -19,12 +19,19 @@ import java.util.List;
 public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters, ClassOrPackageFragmentDescriptor {
     @NotNull
     MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
+    @NotNull
+    MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments, @NotNull ModuleDescriptor moduleDescriptor);
 
     @NotNull
     MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution);
+    @NotNull
+    MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution, @NotNull ModuleDescriptor moduleDescriptor);
 
     @NotNull
     MemberScope getUnsubstitutedMemberScope();
+
+    @NotNull
+    MemberScope getUnsubstitutedMemberScope(@NotNull ModuleDescriptor moduleDescriptor);
 
     @NotNull
     MemberScope getUnsubstitutedInnerClassesScope();

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
@@ -33,6 +34,7 @@ class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debu
     NewTypeVariableConstructor {
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
     override fun getSupertypes(): Collection<KotlinType> = emptyList()
+    override fun getSupertypes(module: ModuleDescriptor): Collection<KotlinType> = getSupertypes()
     override fun isFinal(): Boolean = false
     override fun isDenotable(): Boolean = false
     override fun getDeclarationDescriptor(): ClassifierDescriptor? = null

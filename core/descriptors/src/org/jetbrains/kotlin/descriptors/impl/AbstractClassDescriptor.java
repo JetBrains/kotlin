@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
@@ -50,8 +51,8 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
                             @Override
                             public MemberScope invoke(ModuleDescriptor moduleDescriptor) {
                                 ClassDescriptor descriptor = KotlinTypeKt.refineDescriptor(AbstractClassDescriptor.this, moduleDescriptor);
-                                if (descriptor == null) return getUnsubstitutedMemberScope();
-                                return descriptor.getUnsubstitutedMemberScope();
+                                if (descriptor == null) return getUnsubstitutedMemberScope(moduleDescriptor);
+                                return descriptor.getUnsubstitutedMemberScope(moduleDescriptor);
                             }
                         }
                 );
@@ -97,23 +98,41 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments, @NotNull ModuleDescriptor moduleDescriptor) {
         assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Illegal number of type arguments: expected "
                                                                                      + getTypeConstructor().getParameters().size() + " but was " + typeArguments.size()
                                                                                      + " for " + getTypeConstructor() + " " + getTypeConstructor().getParameters();
-        if (typeArguments.isEmpty()) return getUnsubstitutedMemberScope();
+        if (typeArguments.isEmpty()) return getUnsubstitutedMemberScope(moduleDescriptor);
 
         TypeSubstitutor substitutor = TypeConstructorSubstitution.create(getTypeConstructor(), typeArguments).buildSubstitutor();
-        return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
+        return new SubstitutingScope(getUnsubstitutedMemberScope(moduleDescriptor), substitutor);
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution, @NotNull ModuleDescriptor moduleDescriptor) {
+        if (typeSubstitution.isEmpty()) return getUnsubstitutedMemberScope(moduleDescriptor);
+
+        TypeSubstitutor substitutor = TypeSubstitutor.create(typeSubstitution);
+        return new SubstitutingScope(getUnsubstitutedMemberScope(moduleDescriptor), substitutor);
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+        return getMemberScope(typeArguments, DescriptorUtils.getContainingModule(this));
     }
 
     @NotNull
     @Override
     public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
-        if (typeSubstitution.isEmpty()) return getUnsubstitutedMemberScope();
+        return getMemberScope(typeSubstitution, DescriptorUtils.getContainingModule(this));
+    }
 
-        TypeSubstitutor substitutor = TypeSubstitutor.create(typeSubstitution);
-        return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
+    @NotNull
+    @Override
+    public MemberScope getUnsubstitutedMemberScope() {
+        return getUnsubstitutedMemberScope(DescriptorUtils.getContainingModule(this));
     }
 
     @NotNull

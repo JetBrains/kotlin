@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
@@ -52,7 +53,10 @@ class DeserializedClassDescriptor(
 
     private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(c.storageManager, this) else MemberScope.Empty
     private val typeConstructor = DeserializedClassTypeConstructor()
-    private val memberScope = DeserializedClassMemberScope()
+
+    private val memberScopeHolder = ScopesHolderForClass.create(this, c.storageManager, this::DeserializedClassMemberScope)
+
+    private val memberScope get() = memberScopeHolder().getScope(module)
     private val enumEntries = if (kind == ClassKind.ENUM_CLASS) EnumEntryClassDescriptors() else null
 
     private val containingDeclaration = outerContext.containingDeclaration
@@ -98,7 +102,8 @@ class DeserializedClassDescriptor(
 
     override fun isExternal() = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
 
-    override fun getUnsubstitutedMemberScope(): MemberScope = memberScope
+    override fun getUnsubstitutedMemberScope(moduleDescriptor: ModuleDescriptor): MemberScope =
+        memberScopeHolder().getScope(moduleDescriptor)
 
     override fun getStaticScope() = staticScope
 
@@ -200,7 +205,7 @@ class DeserializedClassDescriptor(
             get() = SupertypeLoopChecker.EMPTY
     }
 
-    private inner class DeserializedClassMemberScope : DeserializedMemberScope(
+    private inner class DeserializedClassMemberScope(private val moduleDescriptor: ModuleDescriptor) : DeserializedMemberScope(
         c, classProto.functionList, classProto.propertyList, classProto.typeAliasList,
         classProto.nestedClassNameList.map(c.nameResolver::getName).let { { it } } // workaround KT-13454
     ) {
@@ -226,7 +231,7 @@ class DeserializedClassDescriptor(
 
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
             val fromSupertypes = ArrayList<SimpleFunctionDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+            for (supertype in classDescriptor.getTypeConstructor().getSupertypes(moduleDescriptor)) {
                 fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
 
@@ -240,7 +245,7 @@ class DeserializedClassDescriptor(
 
         override fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
             val fromSupertypes = ArrayList<PropertyDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+            for (supertype in classDescriptor.getTypeConstructor().getSupertypes(moduleDescriptor)) {
                 fromSupertypes.addAll(supertype.memberScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
             generateFakeOverrides(name, fromSupertypes, descriptors)

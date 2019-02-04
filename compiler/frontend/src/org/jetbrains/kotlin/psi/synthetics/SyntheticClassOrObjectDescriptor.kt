@@ -87,7 +87,7 @@ class SyntheticClassOrObjectDescriptor(
     override fun getConstructors() = listOf(_unsubstitutedPrimaryConstructor()) + secondaryConstructors
     override fun getDeclaredTypeParameters() = typeParameters
     override fun getStaticScope() = MemberScope.Empty
-    override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
+    override fun getUnsubstitutedMemberScope(moduleDescriptor: ModuleDescriptor) = unsubstitutedMemberScope
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
 
     init {

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 class FunctionPlaceholders(private val builtIns: KotlinBuiltIns) {
@@ -51,6 +52,8 @@ class FunctionPlaceholderTypeConstructor(
     override fun getSupertypes(): Collection<KotlinType> {
         return errorTypeConstructor.supertypes
     }
+
+    override fun getSupertypes(moduleDescriptor: ModuleDescriptor) = errorTypeConstructor.supertypes
 
     override fun isFinal(): Boolean {
         return errorTypeConstructor.isFinal

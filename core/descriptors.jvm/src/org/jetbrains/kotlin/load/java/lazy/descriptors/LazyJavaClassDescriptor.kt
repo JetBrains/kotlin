@@ -99,6 +99,7 @@ class LazyJavaClassDescriptor(
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
 
     private val unsubstitutedMemberScope = LazyJavaClassMemberScope(c, this, jClass)
+    override fun getUnsubstitutedMemberScope(moduleDescriptor: ModuleDescriptor) = unsubstitutedMemberScope
     override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
 
     private val innerClassesScope = InnerClassesScopeWrapper(getUnsubstitutedMemberScope())
