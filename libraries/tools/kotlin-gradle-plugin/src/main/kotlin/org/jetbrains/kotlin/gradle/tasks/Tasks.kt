@@ -312,7 +312,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal abstract fun getSourceRoots(): SourceRoots
 
     /**
-     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
     internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)

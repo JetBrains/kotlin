@@ -57,7 +57,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
         get() = task.project
 
     /**
-     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
     fun runJvmCompilerAsync(
@@ -88,7 +88,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
     }
 
     /**
-     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
     fun runJsCompilerAsync(
@@ -103,7 +103,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
     }
 
     /**
-     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
     fun runMetadataCompilerAsync(
