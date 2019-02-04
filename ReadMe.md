@@ -83,7 +83,7 @@ Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
 ### Building for different versions of IntelliJ IDEA and Android Studio
 
-Kotlin plugin is indented to work with several recent versions of IntelliJ IDEA and Android Studio. Each platform is allowed to have a different set of features and might provide a slightly different API. Instead of using several parallel Git branches, project stores everything in a single branch, but files may have counterparts with version extensions (\*.as32, \*.172, \*.181). The primary file is expected to be replaced with its counterpart when targeting non-default platform.
+Kotlin plugin is intended to work with several recent versions of IntelliJ IDEA and Android Studio. Each platform is allowed to have a different set of features and might provide a slightly different API. Instead of using several parallel Git branches, project stores everything in a single branch, but files may have counterparts with version extensions (\*.as32, \*.172, \*.181). The primary file is expected to be replaced with its counterpart when targeting non-default platform.
 
 More detailed description of this scheme can be found at https://github.com/JetBrains/bunches/blob/master/ReadMe.md.
 
