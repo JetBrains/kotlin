@@ -3880,6 +3880,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/inline/fakeOverrideInlining.kt");
         }
 
+        @TestMetadata("fakeOverrideInliningCrossModule.kt")
+        public void testFakeOverrideInliningCrossModule() throws Exception {
+            runTest("js/js.translator/testData/box/inline/fakeOverrideInliningCrossModule.kt");
+        }
+
         @TestMetadata("faultyRedundantCallElimination.kt")
         public void testFaultyRedundantCallElimination() throws Exception {
             runTest("js/js.translator/testData/box/inline/faultyRedundantCallElimination.kt");
