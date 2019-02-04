@@ -39,7 +39,7 @@ import java.util.*
 interface PostProcessor {
     fun insertImport(file: KtFile, fqName: FqName)
 
-    fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?, settings: ConverterSettings?)
+    fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?)
 }
 
 enum class ParseContext {
@@ -48,9 +48,9 @@ enum class ParseContext {
 }
 
 class JavaToKotlinConverter(
-        private val project: Project,
-        private val settings: ConverterSettings,
-        private val services: JavaToKotlinConverterServices
+    private val project: Project,
+    private val settings: ConverterSettings,
+    private val services: JavaToKotlinConverterServices
 ) {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
@@ -141,25 +141,25 @@ class JavaToKotlinConverter(
     }
 
     private data class ReferenceInfo(
-            val reference: PsiReference,
-            val target: PsiElement,
-            val file: PsiFile,
-            val processings: Collection<UsageProcessing>
+        val reference: PsiReference,
+        val target: PsiElement,
+        val file: PsiFile,
+        val processings: Collection<UsageProcessing>
     ) {
         val depth: Int by lazy(LazyThreadSafetyMode.NONE) { target.parentsWithSelf.takeWhile { it !is PsiFile }.count() }
         val offset: Int by lazy(LazyThreadSafetyMode.NONE) { reference.element.textRange.startOffset }
     }
 
     private fun buildExternalCodeProcessing(
-            usageProcessings: Map<PsiElement, Collection<UsageProcessing>>,
-            inConversionScope: (PsiElement) -> Boolean
+        usageProcessings: Map<PsiElement, Collection<UsageProcessing>>,
+        inConversionScope: (PsiElement) -> Boolean
     ): ExternalCodeProcessing? {
         if (usageProcessings.isEmpty()) return null
 
         val map: Map<PsiElement, Collection<UsageProcessing>> = usageProcessings.values
-                .flatten()
-                .filter { it.javaCodeProcessors.isNotEmpty() || it.kotlinCodeProcessors.isNotEmpty() }
-                .groupBy { it.targetElement }
+            .flatten()
+            .filter { it.javaCodeProcessors.isNotEmpty() || it.kotlinCodeProcessors.isNotEmpty() }
+            .groupBy { it.targetElement }
         if (map.isEmpty()) return null
 
         return object: ExternalCodeProcessing {
@@ -176,14 +176,14 @@ class JavaToKotlinConverter(
                     progress.checkCanceled()
 
                     ProgressManager.getInstance().runProcess(
-                            {
-                                val searchJava = processings.any { it.javaCodeProcessors.isNotEmpty() }
-                                val searchKotlin = processings.any { it.kotlinCodeProcessors.isNotEmpty() }
-                                services.referenceSearcher.findUsagesForExternalCodeProcessing(psiElement, searchJava, searchKotlin)
-                                        .filterNot { inConversionScope(it.element) }
-                                        .mapTo(refs) { ReferenceInfo(it, psiElement, it.element.containingFile, processings) }
-                            },
-                            ProgressPortionReporter(progress, i / map.size.toDouble(), 1.0 / map.size))
+                        {
+                            val searchJava = processings.any { it.javaCodeProcessors.isNotEmpty() }
+                            val searchKotlin = processings.any { it.kotlinCodeProcessors.isNotEmpty() }
+                            services.referenceSearcher.findUsagesForExternalCodeProcessing(psiElement, searchJava, searchKotlin)
+                                .filterNot { inConversionScope(it.element) }
+                                .mapTo(refs) { ReferenceInfo(it, psiElement, it.element.containingFile, processings) }
+                        },
+                        ProgressPortionReporter(progress, i / map.size.toDouble(), 1.0 / map.size))
 
                 }
 
@@ -245,37 +245,37 @@ class JavaToKotlinConverter(
         private var pass = 1
 
         fun <TInputItem, TOutputItem> processItems(
-                fractionPortion: Double,
-                inputItems: Iterable<TInputItem>,
-                processItem: (TInputItem) -> TOutputItem
+            fractionPortion: Double,
+            inputItems: Iterable<TInputItem>,
+            processItem: (TInputItem) -> TOutputItem
         ): List<TOutputItem> {
             val outputItems = ArrayList<TOutputItem>()
             // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
             ProgressManager.getInstance().runProcess(
-                    {
-                        progress?.text = "$progressText ($fileCountText) - pass $pass of 3"
+                {
+                    progress?.text = "$progressText ($fileCountText) - pass $pass of 3"
 
-                        for ((i, item) in inputItems.withIndex()) {
-                            progress?.checkCanceled()
-                            progress?.fraction = fraction + fractionPortion * i / fileCount
+                    for ((i, item) in inputItems.withIndex()) {
+                        progress?.checkCanceled()
+                        progress?.fraction = fraction + fractionPortion * i / fileCount
 
-                            progress?.text2 = files!![i].virtualFile.presentableUrl
+                        progress?.text2 = files!![i].virtualFile.presentableUrl
 
-                            outputItems.add(processItem(item))
-                        }
+                        outputItems.add(processItem(item))
+                    }
 
-                        pass++
-                        fraction += fractionPortion
-                    },
-                    EmptyProgressIndicator())
+                    pass++
+                    fraction += fractionPortion
+                },
+                EmptyProgressIndicator())
             return outputItems
         }
     }
 
     private class ProgressPortionReporter(
-            indicator: ProgressIndicator,
-            private val start: Double,
-            private val portion: Double
+        indicator: ProgressIndicator,
+        private val start: Double,
+        private val portion: Double
     ) : DelegatingProgressIndicator(indicator) {
 
         init {
