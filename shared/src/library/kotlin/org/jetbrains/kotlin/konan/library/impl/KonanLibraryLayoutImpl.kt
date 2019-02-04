@@ -19,7 +19,7 @@ private class ZippedKonanLibraryLayout(val klibFile: File, override val target: 
 
     override val libraryName = klibFile.path.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT)
 
-    override val libDir: File= File("/")
+    override val libDir = File("/")
 
     override fun <T> realFiles(action: (KonanLibraryLayout) -> T): T {
         return action(FileExtractor(this))!!
@@ -69,6 +69,8 @@ private class FileExtractor(val zippedLibraryLayout: ZippedKonanLibraryLayout): 
     override val nativeDir: File by lazy { extractDir(super.nativeDir) }
 
     override val linkdataDir: File by lazy { extractDir(super.linkdataDir) }
+
+    override val irFile: File by lazy { extract(super.irFile) }
 
     fun extract(file: File): File = zippedLibraryLayout.klibFile.withZipFileSystem { zipFileSystem ->
         val temporary = createTempFile(file.name)

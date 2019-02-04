@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.konan.util.removeSuffixIfPresent
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.RandomAccessFile
 import java.net.URI
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 
@@ -108,8 +111,17 @@ data class File constructor(internal val javaPath: Path) {
             return FileVisitResult.CONTINUE
         }
         })
-
     }
+
+    fun map(mode: FileChannel.MapMode = FileChannel.MapMode.READ_ONLY,
+            start: Long = 0, size: Long = -1): MappedByteBuffer {
+        val file = RandomAccessFile(path,
+                if (mode == FileChannel.MapMode.READ_ONLY) "r" else "rw")
+        val fileSize = if (mode == FileChannel.MapMode.READ_ONLY)
+            file.length() else size.also { assert(size != -1L) }
+        return file.channel.map(mode, start, fileSize) // Shall we .also { file.close() }?
+    }
+
     fun deleteOnExit(): File {
         // Works only on the default file system, 
         // but that's okay for now.

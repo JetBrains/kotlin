@@ -33,7 +33,7 @@ class LinkData(
 
 class SerializedIr (
     val module: ByteArray,
-    val declarations: Map<UniqId, ByteArray>,
+    val combinedDeclarationFilePath: String,
     val debugIndex: Map<UniqId, String>
 )
 

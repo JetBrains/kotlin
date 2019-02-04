@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.library.impl
 
 import org.jetbrains.kotlin.backend.konan.library.LinkData
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 
 internal class MetadataWriterImpl(libraryLayout: KonanLibraryLayout): KonanLibraryLayout by libraryLayout {
@@ -25,13 +26,9 @@ internal class MetadataWriterImpl(libraryLayout: KonanLibraryLayout): KonanLibra
                 packageFragmentFile(packageFqName, "${withLeadingZeros(i)}_$shortName").writeBytes(fragment)
             }
         }
-        linkData.ir?.declarations?.forEach {
-            val index = it.key.index.toULong().toString(16)
-            val file = if (it.key.isLocal)
-                hiddenDeclarationFile(index)
-            else
-                visibleDeclarationFile(index)
-            file.writeBytes(it.value)
+        linkData.ir?.combinedDeclarationFilePath?.let {
+            // TODO: use Files.move.
+            File(it).copyTo(irFile)
         }
         val lines = linkData.ir?.debugIndex?.map { entry -> "${entry.key}: ${entry.value}" }
         if (lines != null) irIndex.writeLines(lines)

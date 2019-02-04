@@ -84,9 +84,22 @@ class KonanLibraryImpl(
                 }
             }
 
-    override val irHeader: ByteArray? by lazy { layout.inPlace { library -> library.irHeader.let { if (it.exists) metadataReader.loadIrHeader(library) else null }}}
+    override val irHeader: ByteArray? by lazy { layout.inPlace { library -> library.irHeader.let {
+        if (it.exists) loadIrHeader() else null }
+    }}
 
-    override fun irDeclaration(index: Long, isLocal: Boolean) = layout.inPlace { metadataReader.loadIrDeclaraton(it, index, isLocal) }
+    override fun irDeclaration(index: Long, isLocal: Boolean) = loadIrDeclaraton(index, isLocal)
 
     override fun toString() = "$libraryName[default=$isDefault]"
+
+    private val combinedDeclarations: CombinedIrFileReader by lazy {
+        CombinedIrFileReader(layout.realFiles {
+            it.irFile
+        })
+    }
+    private fun loadIrHeader(): ByteArray =
+            layout.inPlace {  it.irHeader.readBytes() }
+
+    private fun loadIrDeclaraton(index: Long, isLocal: Boolean) =
+            combinedDeclarations.declarationBytes(DeclarationId(index, isLocal))
 }

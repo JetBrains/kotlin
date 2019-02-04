@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.konan.library.impl.CombinedIrFileWriter
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 
@@ -117,8 +118,8 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
 
     phaser.phase(KonanPhase.SERIALIZER) {
         val declarationTable = DeclarationTable(context.irModule!!.irBuiltins, DescriptorTable())
-        val serializedIr = IrModuleSerializer(context, declarationTable, bodiesOnlyForInlines = context.config.isInteropStubs).serializedIrModule(context.irModule!!)
-
+        val serializedIr = IrModuleSerializer(
+                context, declarationTable, bodiesOnlyForInlines = context.config.isInteropStubs).serializedIrModule(context.irModule!!)
         val serializer = KonanSerializationUtil(context, context.config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, declarationTable)
         context.serializedLinkData =
             serializer.serializeModule(context.moduleDescriptor, /*if (!context.config.isInteropStubs) serializedIr else null*/ serializedIr)
