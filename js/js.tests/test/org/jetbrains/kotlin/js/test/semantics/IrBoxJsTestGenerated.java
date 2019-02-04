@@ -4060,6 +4060,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/inline/lambdaReassignmentWithCapture.kt");
         }
 
+        @TestMetadata("localDeclarationsClash.kt")
+        public void testLocalDeclarationsClash() throws Exception {
+            runTest("js/js.translator/testData/box/inline/localDeclarationsClash.kt");
+        }
+
         @TestMetadata("localInlineExtensionFunction.kt")
         public void testLocalInlineExtensionFunction() throws Exception {
             runTest("js/js.translator/testData/box/inline/localInlineExtensionFunction.kt");

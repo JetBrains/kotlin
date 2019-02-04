@@ -125,6 +125,7 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
 }
 
 fun collectDefinedNamesInAllScopes(scope: JsNode): Set<JsName> {
+    // Order is important for the local declaration deduplication
     val names = mutableSetOf<JsName>()
 
     object : RecursiveJsVisitor() {
