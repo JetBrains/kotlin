@@ -1411,6 +1411,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/bridges/strListContains.kt");
         }
 
+        @TestMetadata("strListRemove.kt")
+        public void testStrListRemove() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/strListRemove.kt");
+        }
+
         @TestMetadata("traitImplInheritsTraitImpl.kt")
         public void testTraitImplInheritsTraitImpl() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/traitImplInheritsTraitImpl.kt");

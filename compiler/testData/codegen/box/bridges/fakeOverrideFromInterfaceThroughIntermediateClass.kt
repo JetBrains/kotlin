@@ -1,5 +1,3 @@
-// KT-4145
-
 interface A {
     fun foo(): Any
 }
