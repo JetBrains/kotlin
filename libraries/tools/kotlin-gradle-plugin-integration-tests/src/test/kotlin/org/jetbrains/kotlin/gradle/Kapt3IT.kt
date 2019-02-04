@@ -577,4 +577,14 @@ open class Kapt3IT : Kapt3BaseIT() {
 
         testResolveAllConfigurations()
     }
+
+    @Test
+    fun testMPPKaptPresence() {
+        val project = Project("mpp-kapt-presence", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":dac:jdk:kaptGenerateStubsKotlin", ":dac:jdk:compileKotlin")
+        }
+    }
 }
