@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
-import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
-import org.jetbrains.kotlin.gradle.util.isWindows
-import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
@@ -1550,6 +1547,44 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("tasks") {
                 assertSuccessful()
             }
+        }
+    }
+
+    @Test
+    fun testIncrementalCompilation() = with(Project("new-mpp-jvm-js-ic", gradleVersion)) {
+        build("build") {
+            assertSuccessful()
+        }
+
+        val libCommonClassKt = projectDir.getFileByName("LibCommonClass.kt")
+        val libCommonClassJsKt = projectDir.getFileByName("LibCommonClassJs.kt")
+        libCommonClassJsKt.modify { it.checkedReplace("platform = \"js\"", "platform = \"Kotlin/JS\"") }
+
+        val libCommonClassJvmKt = projectDir.getFileByName("LibCommonClassJvm.kt")
+        libCommonClassJvmKt.modify { it.checkedReplace("platform = \"jvm\"", "platform = \"Kotlin/JVM\"") }
+        build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(libCommonClassKt, libCommonClassJsKt, libCommonClassJvmKt))
+        }
+
+        val libJvmPlatformUtilKt = projectDir.getFileByName("libJvmPlatformUtil.kt")
+        libJvmPlatformUtilKt.modify {
+            it.checkedReplace("fun libJvmPlatformUtil", "inline fun libJvmPlatformUtil")
+        }
+        build("build") {
+            assertSuccessful()
+            val useLibJvmPlatformUtilKt = projectDir.getFileByName("useLibJvmPlatformUtil.kt")
+            assertCompiledKotlinSources(project.relativize(libJvmPlatformUtilKt, useLibJvmPlatformUtilKt))
+        }
+
+        val libJsPlatformUtilKt = projectDir.getFileByName("libJsPlatformUtil.kt")
+        libJsPlatformUtilKt.modify {
+            it.checkedReplace("fun libJsPlatformUtil", "inline fun libJsPlatformUtil")
+        }
+        build("build") {
+            assertSuccessful()
+            val useLibJsPlatformUtilKt = projectDir.getFileByName("useLibJsPlatformUtil.kt")
+            assertCompiledKotlinSources(project.relativize(libJsPlatformUtilKt, useLibJsPlatformUtilKt))
         }
     }
 }

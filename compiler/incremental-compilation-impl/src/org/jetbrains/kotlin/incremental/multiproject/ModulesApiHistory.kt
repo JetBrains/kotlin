@@ -91,6 +91,11 @@ abstract class ModulesApiHistoryBase(protected val modulesInfo: IncrementalModul
 
 class ModulesApiHistoryJvm(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(modulesInfo) {
     override fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
+        val moduleInfoFromJar = modulesInfo.jarToModule[jar]
+        if (moduleInfoFromJar != null) {
+            return Either.Success(setOf(moduleInfoFromJar.buildHistoryFile))
+        }
+
         val classListFile = modulesInfo.jarToClassListFile[jar] ?: return Either.Error("Unknown jar: $jar")
         if (!classListFile.isFile) return Either.Error("Class list file does not exist $classListFile")
 
