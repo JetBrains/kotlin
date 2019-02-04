@@ -304,6 +304,11 @@ class NewCodeBuilder {
             if (parameter.isVarArgs) {
                 printer.printWithNoIndent("vararg ")
             }
+            if (parameter.parent is JKKtPrimaryConstructor
+                && (parameter.parent?.parent?.parent as? JKClass)?.classKind == JKClass.ClassKind.ANNOTATION
+            ) {//TODO get rid of
+                printer.print(" val ")
+            }
             parameter.name.accept(this)
             if (parameter.type.present() && parameter.type.type !is JKContextType) {
                 printer.printWithNoIndent(":")
@@ -313,6 +318,14 @@ class NewCodeBuilder {
                 printer.printWithNoIndent(" = ")
                 parameter.initializer.accept(this)
             }
+        }
+
+        override fun visitKtAnnotationArrayInitializerExpression(ktAnnotationArrayInitializerExpression: JKKtAnnotationArrayInitializerExpression) {
+            printer.print("[")
+            renderList(ktAnnotationArrayInitializerExpression.initializers) {
+                it.accept(this)
+            }
+            printer.print("]")
         }
 
         override fun visitForLoopVariable(forLoopVariable: JKForLoopVariable) {
@@ -796,11 +809,21 @@ class NewCodeBuilder {
         override fun visitAnnotation(annotation: JKAnnotation) {
             printer.printWithNoIndent("@")
             printer.printWithNoIndent(annotation.classSymbol.displayName().escapedAsQualifiedName())
-            if (annotation.arguments.expressions.isNotEmpty()) {
+            if (annotation.arguments.isNotEmpty()) {
                 printer.par {
-                    annotation.arguments.accept(this)
+                    renderList(annotation.arguments) { it.accept(this) }
                 }
             }
+        }
+
+        override fun visitAnnotationNameParameter(annotationNameParameter: JKAnnotationNameParameter) {
+            annotationNameParameter.name.accept(this)
+            printer.print(" = ")
+            annotationNameParameter.value.accept(this)
+        }
+
+        override fun visitAnnotationParameter(annotationParameter: JKAnnotationParameter) {
+            annotationParameter.value.accept(this)
         }
 
         override fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) {
@@ -851,9 +874,6 @@ private inline fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
     val tail = if (size <= 1) null else subList(1, size)
     return head to tail
 }
-
-private inline fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? =
-    classBody.declarations.firstIsInstanceOrNull()
 
 
 private inline fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKType): Boolean {

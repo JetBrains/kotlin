@@ -110,3 +110,7 @@ interface JKKtTryCatchSection : JKTreeElement {
     var parameter: JKParameter
     var block: JKBlock
 }
+
+interface JKKtAnnotationArrayInitializerExpression : JKExpression, JKBranchElement {
+    val initializers: List<JKAnnotationMemberValue>
+}

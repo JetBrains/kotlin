@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.jvmAnnotation
 import org.jetbrains.kotlin.j2k.tree.*
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.j2k.tree.impl.psi
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DefaultArgumentsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
-
 
     private fun JKMethod.canNotBeMerged(): Boolean =
         modality == Modality.ABSTRACT ||
@@ -56,8 +54,8 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
                 val targetParameter = calledMethod.parameters[i]
                 val argument = call.arguments.expressions[i]
                 if (parameter.name.value != targetParameter.name.value) continue@checkMethod
-                if (parameter.type.type != targetParameter.type.type) continue@checkMethod
-                if (argument !is JKFieldAccessExpression || argument.identifier.target != parameter) continue@checkMethod
+//                if (parameter.type.type != targetParameter.type.type) continue@checkMethod
+//                if (argument !is JKFieldAccessExpression || argument.identifier.target != parameter) continue@checkMethod
             }
 
 
@@ -86,7 +84,7 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
         }
 
         for (method in element.declarationList) {
-            if (method !is JKMethod) continue
+            if (method !is JKJavaMethod) continue
             if (method.hasParametersWithDefaultValues() && (method.visibility == Visibility.PUBLIC || method.visibility == Visibility.INTERNAL)) {
                 method.annotationList.annotations += jvmAnnotation("JvmOverloads", context.symbolProvider)
             }

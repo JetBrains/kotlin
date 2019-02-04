@@ -498,10 +498,10 @@ class JKAnnotationListImpl(annotations: List<JKAnnotation> = emptyList()) : JKAn
 }
 
 class JKAnnotationImpl(
-    override val classSymbol: JKClassSymbol,
-    arguments: JKExpressionList = JKExpressionListImpl()
+    override var classSymbol: JKClassSymbol,
+    arguments: List<JKAnnotationParameter> = emptyList()
 ) : JKAnnotation, JKBranchElementBase() {
-    override var arguments: JKExpressionList by child(arguments)
+    override var arguments: List<JKAnnotationParameter> by children(arguments)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
 }
 
@@ -525,4 +525,20 @@ class JKImportStatementImpl(name: JKNameIdentifier) : JKImportStatement, JKBranc
     override val name: JKNameIdentifier by child(name)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitImportStatement(this, data)
+}
+
+class JKAnnotationParameterImpl(value: JKAnnotationMemberValue) : JKAnnotationParameter, JKBranchElementBase() {
+    override var value: JKAnnotationMemberValue by child(value)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotationParameter(this, data)
+}
+
+class JKAnnotationNameParameterImpl(
+    value: JKAnnotationMemberValue,
+    name: JKNameIdentifier
+) : JKAnnotationNameParameter, JKBranchElementBase() {
+    override var value: JKAnnotationMemberValue by child(value)
+    override val name: JKNameIdentifier by child(name)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotationNameParameter(this, data)
 }

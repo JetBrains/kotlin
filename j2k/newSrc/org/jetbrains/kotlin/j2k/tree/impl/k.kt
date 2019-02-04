@@ -175,7 +175,7 @@ class JKKtConstructorImpl(
 }
 
 class JKKtPrimaryConstructorImpl(
-    name: JKNameIdentifier,
+    name: JKNameIdentifier,//TODO not needed
     parameters: List<JKParameter>,
     delegationCall: JKExpression,
     annotationList: JKAnnotationList,

@@ -10,29 +10,8 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKBranchElementBase
 
 abstract class MatchBasedConversion : SequentialBaseConversion {
 
-    fun <R : JKTreeElement, T> applyRecursive(element: R, data: T, func: (JKTreeElement, T) -> JKTreeElement): R {
-        if (element is JKBranchElementBase) {
-            val iter = element.children.listIterator()
-            while (iter.hasNext()) {
-                val child = iter.next()
-
-                if (child is List<*>) {
-                    iter.set(applyRecursiveToList(element, child as List<JKTreeElement>, iter, data, func))
-                } else if (child is JKTreeElement) {
-                    val newChild = func(child, data)
-                    if (child !== newChild) {
-                        child.detach(element)
-                        iter.set(newChild)
-                        newChild.attach(element)
-                        onElementChanged(newChild, child)
-                    }
-                } else {
-                    error("unsupported child type: ${child::class}")
-                }
-            }
-        }
-        return element
-    }
+    fun <R : JKTreeElement, T> applyRecursive(element: R, data: T, func: (JKTreeElement, T) -> JKTreeElement): R  =
+        org.jetbrains.kotlin.j2k.tree.applyRecursive(element, data, ::onElementChanged, func)
 
     inline fun <R : JKTreeElement> applyRecursive(element: R, crossinline func: (JKTreeElement) -> JKTreeElement): R {
         return applyRecursive(element, null) { it, _ -> func(it) }

@@ -133,3 +133,7 @@ interface JKJavaSynchronizedStatement : JKStatement, JKBranchElement {
     val lockExpression: JKExpression
     val body: JKBlock
 }
+
+interface JKJavaAnnotationMethod : JKMethod, JKBranchElement {
+    val defaultValue: JKAnnotationMemberValue
+}

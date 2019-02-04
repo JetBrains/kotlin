@@ -173,7 +173,9 @@ class JavaToJKTreeBuilder(
 
         fun PsiPrefixExpression.toJK(): JKExpression {
             return JKPrefixExpressionImpl(operand.toJK(), operationSign.tokenType.toJK()).let {
-                if (it.operator.token.text in listOf("+", "-") && it.expression is JKLiteralExpression) {
+                if (it.operator.token in listOf(JavaTokenType.PLUS, JavaTokenType.MINUS)
+                    && it.expression is JKLiteralExpression
+                ) {
                     JKJavaLiteralExpressionImpl(
                         it.operator.token.text + (it.expression as JKLiteralExpression).literal,
                         (it.expression as JKLiteralExpression).type
@@ -423,6 +425,7 @@ class JavaToJKTreeBuilder(
                     when (it) {
                         is PsiEnumConstant -> it.toJK()
                         is PsiClass -> it.toJK()
+                        is PsiAnnotationMethod -> it.toJK()
                         is PsiMethod -> it.toJK()
                         is PsiField -> it.toJK()
                         is PsiClassInitializer -> it.toJK()
@@ -552,8 +555,17 @@ class JavaToJKTreeBuilder(
         fun PsiAnnotation.toJK(): JKAnnotation =
             JKAnnotationImpl(
                 symbolProvider.provideSymbol(nameReferenceElement!!),
-                with(expressionTreeMapper) {
-                    JKExpressionListImpl(parameterList.attributes.map { (it.value as? PsiExpression).toJK() })
+                parameterList.attributes.map { parameter ->
+                    if (parameter.nameIdentifier != null) {
+                        JKAnnotationNameParameterImpl(
+                            parameter.value?.toJK() ?: JKStubExpressionImpl(),
+                            JKNameIdentifierImpl(parameter.name!!)
+                        )
+                    } else {
+                        JKAnnotationParameterImpl(
+                            parameter.value?.toJK() ?: JKStubExpressionImpl()
+                        )
+                    }
                 }
             )
 
@@ -561,12 +573,36 @@ class JavaToJKTreeBuilder(
             findTagByName("deprecated")?.let { tag ->
                 JKAnnotationImpl(
                     symbolProvider.provideByFqName("kotlin.Deprecated"),
-                    JKExpressionListImpl(
-                        stringLiteral(tag.content(), symbolProvider)
+                    listOf(
+                        JKAnnotationParameterImpl(stringLiteral(tag.content(), symbolProvider))
                     )
                 )
             }
 
+        private fun PsiAnnotationMemberValue.toJK(): JKAnnotationMemberValue =
+            when (this) {
+                is PsiExpression -> with(expressionTreeMapper) { toJK() }
+                is PsiAnnotation -> toJK()
+                is PsiArrayInitializerMemberValue ->
+                    JKKtAnnotationArrayInitializerExpressionImpl(
+                        initializers.map { it.toJK() }
+                    )
+                else -> TODO(this::class.toString())
+            }
+
+        fun PsiAnnotationMethod.toJK(): JKJavaAnnotationMethod =
+            JKJavaAnnotationMethodImpl(
+                with(expressionTreeMapper) {
+                    returnTypeElement?.toJK()
+                        ?: JKTypeElementImpl(JKJavaVoidType).takeIf { isConstructor }
+                        ?: TODO()
+                },
+                JKNameIdentifierImpl(name),
+                defaultValue?.toJK() ?: JKStubExpressionImpl()
+            ).also {
+                it.psi = this
+                symbolProvider.provideUniverseSymbol(this, it)
+            }
 
         fun PsiMethod.toJK(): JKJavaMethod {
             return JKJavaMethodImpl(

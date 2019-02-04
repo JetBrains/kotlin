@@ -12,14 +12,19 @@ import org.jetbrains.kotlin.j2k.tree.*
 class InterfaceWithFieldConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
-        if (element.classKind != JKClass.ClassKind.INTERFACE) return recurse(element)
-        val finalFields = element.declarationList
+        if (element.classKind != JKClass.ClassKind.INTERFACE
+            && element.classKind != JKClass.ClassKind.ANNOTATION
+        ) return recurse(element)
+
+        val fieldsToMoveToCompanion = element.declarationList
             .filterIsInstance<JKField>()
-            .filter { it.modality == Modality.FINAL }
-        if (finalFields.isNotEmpty()) {
-            element.classBody.declarations -= finalFields
+            .filter { field ->
+                field.modality == Modality.FINAL || element.classKind == JKClass.ClassKind.ANNOTATION
+            }
+        if (fieldsToMoveToCompanion.isNotEmpty()) {
+            element.classBody.declarations -= fieldsToMoveToCompanion
             val companion = element.getOrCreateCompainonObject()
-            companion.classBody.declarations += finalFields
+            companion.classBody.declarations += fieldsToMoveToCompanion
         }
         return recurse(element)
     }

@@ -25,7 +25,9 @@ object ConversionsRunner {
         batchPipe {
             //Java --> Kotlin conversions
             +JavaModifiersConversion(context)
-            +JavaAnnotationsConversion()
+            +JavaAnnotationsConversion(context)
+            +AnnotationClassConversion(context)
+            +AnnotationConversion(context)
             +ModalityConversion(context)
             +AssignmentAsExpressionToAlsoConversion(context)
             +AssignmentStatementValCreationConversion(context)

@@ -101,7 +101,7 @@ fun JKClassSymbol.displayName() =
     when (this) {
         is JKUniverseClassSymbol ->
             target.psi<PsiClass>()
-                ?.let { it.nameWithOuterClasses() }
+                ?.nameWithOuterClasses()
                 ?: name
         is JKMultiverseClassSymbol -> target.nameWithOuterClasses()
         else -> name

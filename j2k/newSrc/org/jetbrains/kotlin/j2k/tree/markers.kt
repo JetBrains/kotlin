@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.tree.impl.JKBranchElementBase
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import kotlin.reflect.KProperty0
@@ -133,3 +134,64 @@ fun <T : JKElement> T.detached(from: JKElement): T =
 
 fun <T : JKBranchElement> T.invalidated(): T =
     also { it.invalidate() }
+
+
+fun <R : JKTreeElement, T> applyRecursive(
+    element: R,
+    data: T,
+    onElementChanged: (JKTreeElement, JKTreeElement) -> Unit,
+    func: (JKTreeElement, T) -> JKTreeElement
+): R {
+    fun <T> applyRecursiveToList(
+        element: JKTreeElement,
+        child: List<JKTreeElement>,
+        iter: MutableListIterator<Any>,
+        data: T,
+        func: (JKTreeElement, T) -> JKTreeElement
+    ): List<JKTreeElement> {
+
+        val newChild = child.map {
+            func(it, data)
+        }
+
+        child.forEach { it.detach(element) }
+        iter.set(child)
+        newChild.forEach { it.attach(element) }
+        newChild.zip(child).forEach { (old, new) ->
+            if (old !== new) {
+                onElementChanged(new, old)
+            }
+        }
+        return newChild
+    }
+
+    if (element is JKBranchElementBase) {
+        val iter = element.children.listIterator()
+        while (iter.hasNext()) {
+            val child = iter.next()
+
+            if (child is List<*>) {
+                iter.set(applyRecursiveToList(element, child as List<JKTreeElement>, iter, data, func))
+            } else if (child is JKTreeElement) {
+                val newChild = func(child, data)
+                if (child !== newChild) {
+                    child.detach(element)
+                    iter.set(newChild)
+                    newChild.attach(element)
+                    onElementChanged(newChild, child)
+                }
+            } else {
+                error("unsupported child type: ${child::class}")
+            }
+        }
+    }
+    return element
+}
+
+fun <R : JKTreeElement> applyRecursive(
+    element: R,
+    func: (JKTreeElement) -> JKTreeElement
+): R = applyRecursive(element, null, { _, _ -> }) { it, _ -> func(it) }
+
+
+

@@ -37,6 +37,7 @@ class JKSymbolProvider {
                 is KtNamedFunction -> JKMultiverseFunctionSymbol(psi, this)
                 is KtProperty -> JKMultiversePropertySymbol(psi, this)
                 is KtParameter -> JKMultiversePropertySymbol(psi, this)
+                is PsiParameter -> JKMultiverseFieldSymbol(psi, this)
                 is PsiLocalVariable -> JKMultiverseFieldSymbol(psi, this)
                 else -> TODO(psi::class.toString())
             }

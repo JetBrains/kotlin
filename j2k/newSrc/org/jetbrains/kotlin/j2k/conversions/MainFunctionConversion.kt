@@ -30,7 +30,7 @@ class MainFunctionConversion(private val context: ConversionContext) : Recursive
             element.annotationList.annotations +=
                     JKAnnotationImpl(
                         context.symbolProvider.provideByFqName("kotlin.jvm.JvmStatic"),
-                        JKExpressionListImpl()
+                        emptyList()
                     )
         }
         return recurse(element)

@@ -383,3 +383,31 @@ class JKJavaSynchronizedStatementImpl(
     override val body: JKBlock by child(body)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaSynchronizedStatement(this, data)
 }
+
+class JKJavaAnnotationMethodImpl(
+    returnType: JKTypeElement,
+    name: JKNameIdentifier,
+    defaultValue: JKAnnotationMemberValue
+) : JKJavaAnnotationMethod, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var returnType: JKTypeElement by child(returnType)
+    override var name: JKNameIdentifier by child(name)
+    override var parameters: List<JKParameter> by children()
+    override var defaultValue: JKAnnotationMemberValue by child(defaultValue)
+    override var block: JKBlock by child(JKBodyStub)
+    override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
+    override var annotationList: JKAnnotationList by child(JKAnnotationListImpl())
+    override var extraModifiers: List<ExtraModifier> = emptyList()
+    override var visibility: Visibility = Visibility.PUBLIC
+    override var modality: Modality = Modality.FINAL
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAnnotationMethod(this, data)
+}
+
+class JKKtAnnotationArrayInitializerExpressionImpl(initializers: List<JKAnnotationMemberValue>) : JKKtAnnotationArrayInitializerExpression,
+    JKBranchElementBase() {
+    constructor(vararg initializers: JKAnnotationMemberValue) : this(initializers.toList())
+
+    override val initializers: List<JKAnnotationMemberValue> by children(initializers)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAnnotationArrayInitializerExpression(this, data)
+}

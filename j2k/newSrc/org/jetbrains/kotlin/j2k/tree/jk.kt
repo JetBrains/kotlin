@@ -83,9 +83,17 @@ interface JKAnnotationList : JKTreeElement {
     var annotations: List<JKAnnotation>
 }
 
-interface JKAnnotation : JKTreeElement {
-    val classSymbol: JKClassSymbol
-    var arguments: JKExpressionList
+interface JKAnnotation : JKAnnotationMemberValue {
+    var classSymbol: JKClassSymbol
+    var arguments: List<JKAnnotationParameter>
+}
+
+interface JKAnnotationParameter : JKTreeElement {
+    var value: JKAnnotationMemberValue
+}
+
+interface JKAnnotationNameParameter : JKAnnotationParameter {
+    val name: JKNameIdentifier
 }
 
 interface JKAnnotationListOwner : JKTreeElement {
@@ -207,7 +215,7 @@ interface JKNameIdentifier : JKIdentifier {
     val value: String
 }
 
-interface JKExpression : JKTreeElement
+interface JKExpression : JKTreeElement, JKAnnotationMemberValue
 
 interface JKExpressionStatement : JKStatement, JKBranchElement {
     val expression: JKExpression
@@ -411,7 +419,7 @@ interface JKPackageDeclaration : JKDeclaration {
 
 interface JKClassLiteralExpression : JKExpression {
     val classType: JKTypeElement
-    val literalType: LiteralType
+    var literalType: LiteralType
 
     enum class LiteralType {
         KOTLIN_CLASS,
@@ -420,3 +428,5 @@ interface JKClassLiteralExpression : JKExpression {
         JAVA_VOID_TYPE
     }
 }
+
+interface JKAnnotationMemberValue : JKTreeElement

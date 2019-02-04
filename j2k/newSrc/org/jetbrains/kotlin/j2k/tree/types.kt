@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.JKSymbolProvider
+import org.jetbrains.kotlin.j2k.ast.ArrayType
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.kotlinTypeByName
@@ -59,6 +60,7 @@ fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
             }
             JKClassTypeImpl(symbol, listOf(classType.type), Nullability.NotNull)
         }
+        is JKKtAnnotationArrayInitializerExpression -> JKNoTypeImpl //TODO
 
         else -> TODO(this::class.java.toString())
     }
@@ -166,6 +168,26 @@ fun JKClassSymbol.toKtType(): KotlinType? {
     return classDescriptor?.defaultType
 }
 
+fun JKType.applyRecursive(transform: (JKType) -> JKType?): JKType =
+    transform(this) ?: when (this) {
+        is JKTypeParameterTypeImpl -> this
+        is JKClassTypeImpl ->
+            JKClassTypeImpl(
+                classReference,
+                parameters.map { it.applyRecursive(transform) },
+                nullability
+            )
+        is JKNoType -> this
+        is JKJavaVoidType -> this
+        is JKJavaPrimitiveType -> this
+        is JKJavaArrayType -> JKJavaArrayTypeImpl(type.applyRecursive(transform), nullability)
+        is JKContextType -> JKContextType
+        is JKJavaDisjunctionType ->
+            JKJavaDisjunctionTypeImpl(disjunctions.map { it.applyRecursive(transform) }, nullability)
+        is JKStarProjectionType -> this
+        else -> TODO(this::class.toString())
+    }
+
 inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability): T =
     if (nullability == newNullability) this
     else when (this) {
@@ -181,22 +203,18 @@ inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability)
     } as T
 
 fun <T : JKType> T.updateNullabilityRecursively(newNullability: Nullability): T =
-    if (nullability == newNullability) this
-    else when (this) {
-        is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(name, newNullability)
-        is JKClassTypeImpl ->
-            JKClassTypeImpl(
-                classReference,
-                parameters.map { it.updateNullabilityRecursively(newNullability) },
-                newNullability
-            )
-        is JKNoType -> this
-        is JKJavaVoidType -> this
-        is JKJavaPrimitiveType -> this
-        is JKJavaArrayType -> JKJavaArrayTypeImpl(type.updateNullabilityRecursively(newNullability), newNullability)
-        is JKContextType -> JKContextType
-        is JKJavaDisjunctionType -> this
-        else -> TODO(this::class.toString())
+    applyRecursive {
+        when (it) {
+            is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(it.name, newNullability)
+            is JKClassTypeImpl ->
+                JKClassTypeImpl(
+                    it.classReference,
+                    it.parameters.map { it.updateNullabilityRecursively(newNullability) },
+                    newNullability
+                )
+            is JKJavaArrayType -> JKJavaArrayTypeImpl(it.type.updateNullabilityRecursively(newNullability), newNullability)
+            else -> null
+        }
     } as T
 
 fun JKJavaMethod.returnTypeNullability(context: ConversionContext): Nullability =
@@ -331,3 +349,14 @@ private fun JKMethod.findSuperMethodSymbol(symbolProvider: JKSymbolProvider): JK
         ?.let {
             symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol
         }
+
+fun JKType.replaceJavaClassWithKotlinClassType(symbolProvider: JKSymbolProvider): JKType =
+    applyRecursive { type ->
+        if (type is JKClassType && type.classReference.fqName == "java.lang.Class") {
+            JKClassTypeImpl(
+                symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.kClass),
+                type.parameters.map { it.replaceJavaClassWithKotlinClassType(symbolProvider) },
+                Nullability.NotNull
+            )
+        } else null
+    }

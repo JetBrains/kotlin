@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.math.BigInteger
 
 fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Nullable): JKClassType {
@@ -282,11 +283,11 @@ fun jvmAnnotation(name: String, symbolProvider: JKSymbolProvider) =
 fun throwAnnotation(throws: List<JKType>, symbolProvider: JKSymbolProvider) =
     JKAnnotationImpl(
         symbolProvider.provideByFqName("kotlin.jvm.Throws"),
-        JKExpressionListImpl(
-            throws.map {
+        throws.map {
+            JKAnnotationParameterImpl(
                 JKClassLiteralExpressionImpl(JKTypeElementImpl(it), JKClassLiteralExpression.LiteralType.KOTLIN_CLASS)
-            }
-        )
+            )
+        }
     )
 
 fun JKAnnotationList.annotationByFqName(fqName: String): JKAnnotation? =
@@ -473,4 +474,46 @@ fun runExpression(body: JKStatement, symbolProvider: JKSymbolProvider): JKExpres
         symbolProvider.provideByFqNameMulti("kotlin.run"),
         JKExpressionListImpl(listOf(lambda))
     )
+}
+
+
+fun JKAnnotationMemberValue.toExpression(symbolProvider: JKSymbolProvider): JKExpression {
+    fun handleAnnotationParameter(element: JKTreeElement): JKTreeElement =
+        when (element) {
+            is JKClassLiteralExpression ->
+                element.also {
+                    element.literalType = JKClassLiteralExpression.LiteralType.KOTLIN_CLASS
+                }
+            is JKTypeElement ->
+                JKTypeElementImpl(element.type.replaceJavaClassWithKotlinClassType(symbolProvider))
+            else -> applyRecursive(element, ::handleAnnotationParameter)
+        }
+
+    return handleAnnotationParameter(
+        when {
+            this is JKStubExpression -> this
+            this is JKAnnotation ->
+                JKJavaNewExpressionImpl(
+                    classSymbol,
+                    JKExpressionListImpl(arguments.map { it.value.detached(this).toExpression(symbolProvider) }),
+                    JKTypeArgumentListImpl()
+                )
+            this is JKKtAnnotationArrayInitializerExpression ->
+                JKKtAnnotationArrayInitializerExpressionImpl(initializers.map { it.detached(this).toExpression(symbolProvider) })
+            this is JKExpression -> this
+            else -> error("Bad initializer")
+        }
+    ) as JKExpression
+}
+
+inline fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? =
+    classBody.declarations.firstIsInstanceOrNull()
+
+fun JKAnnotation.isVarargsArgument(index: Int): Boolean {
+    val target = classSymbol.target
+    return when (target) {
+        is JKClass -> target.primaryConstructor()?.parameters?.getOrNull(index)?.isVarArgs
+        is PsiClass -> target.methods.getOrNull(index)?.isVarArgs
+        else -> false
+    } ?: false
 }
