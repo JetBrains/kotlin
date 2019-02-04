@@ -18,9 +18,6 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 // TODO: implement pure Ir-based function (see IrTypeUtils.kt)
 
 @Deprecated("Use pure Ir helper")
-fun IrType.isPrimitiveArray() = KotlinBuiltIns.isPrimitiveArray(toKotlinType())
-
-@Deprecated("Use pure Ir helper")
 fun IrType.getPrimitiveArrayElementType() = KotlinBuiltIns.getPrimitiveArrayElementType(toKotlinType())
 
 @Deprecated("Use pure Ir helper")
