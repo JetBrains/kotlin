@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.isNullable
 
 
 class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
@@ -93,7 +92,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             isLhsPrimitive && lhsJsType == rhsJsType && lhsJsType != PrimitiveType.FLOATING_POINT_NUMBER ->
                 chooseEqualityOperatorForPrimitiveTypes(call)
 
-            !isLhsPrimitive && !lhs.type.toKotlinType().isNullable() && equalsMethod != null ->
+            !isLhsPrimitive && !lhs.type.isNullable() && equalsMethod != null ->
                 irCall(call, equalsMethod.symbol, firstArgumentAsDispatchReceiver = true)
 
             else ->

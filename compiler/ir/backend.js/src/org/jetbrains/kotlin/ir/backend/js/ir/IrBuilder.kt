@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
@@ -287,5 +288,32 @@ fun IrClass.simpleFunctions(): List<IrSimpleFunction> = this.declarations.flatMa
         is IrSimpleFunction -> listOf(it)
         is IrProperty -> listOfNotNull(it.getter, it.setter)
         else -> emptyList()
+    }
+}
+
+fun Scope.createTmpVariable(
+    irExpression: IrExpression,
+    nameHint: String? = null,
+    isMutable: Boolean = false,
+    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+    irType: IrType? = null
+): IrVariable {
+    val varType = irType ?: irExpression.type
+    val descriptor = WrappedVariableDescriptor()
+    val symbol = IrVariableSymbolImpl(descriptor)
+    return IrVariableImpl(
+        irExpression.startOffset,
+        irExpression.endOffset,
+        origin,
+        symbol,
+        Name.identifier(nameHint ?: "tmp"),
+        varType,
+        isMutable,
+        false,
+        false
+    ).apply {
+        initializer = irExpression
+        parent = getLocalDeclarationParent()
+        descriptor.bind(this)
     }
 }
