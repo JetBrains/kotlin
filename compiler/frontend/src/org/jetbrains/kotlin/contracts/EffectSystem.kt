@@ -132,7 +132,7 @@ class EffectSystem(
     }
 
     private fun getNonTrivialComputation(expression: KtExpression, trace: BindingTrace, moduleDescriptor: ModuleDescriptor): Computation? {
-        val visitor = EffectsExtractingVisitor(trace, moduleDescriptor, dataFlowValueFactory, constants)
+        val visitor = EffectsExtractingVisitor(trace, moduleDescriptor, dataFlowValueFactory, constants, languageVersionSettings)
         return visitor.extractOrGetCached(expression).takeUnless { it == UNKNOWN_COMPUTATION }
     }
 }

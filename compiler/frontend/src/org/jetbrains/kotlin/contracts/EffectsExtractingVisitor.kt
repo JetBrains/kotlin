@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.contracts
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
@@ -56,7 +58,8 @@ class EffectsExtractingVisitor(
     private val trace: BindingTrace,
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
-    private val constants: ESConstants
+    private val constants: ESConstants,
+    private val languageVersionSettings: LanguageVersionSettings
 ) : KtVisitor<Computation, Unit>() {
     private val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns
 
@@ -162,7 +165,13 @@ class EffectsExtractingVisitor(
 
     private fun ReceiverValue.toComputation(): Computation = when (this) {
         is ExpressionReceiver -> extractOrGetCached(expression)
-        is ExtensionReceiver -> ESReceiverWithDataFlowValue(this, createDataFlowValue())
+        is ExtensionReceiver -> {
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ContractsOnCallsWithImplicitReceiver)) {
+                ESReceiverWithDataFlowValue(this, createDataFlowValue())
+            } else {
+                UNKNOWN_COMPUTATION
+            }
+        }
         else -> UNKNOWN_COMPUTATION
     }
 
