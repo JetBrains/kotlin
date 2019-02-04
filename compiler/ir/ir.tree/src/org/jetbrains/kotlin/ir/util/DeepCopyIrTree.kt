@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
+@Suppress("DEPRECATION")
 inline fun <reified T : IrElement> T.deepCopyOld(): T =
     transform(DeepCopyIrTree(), null).patchDeclarationParents() as T
 
 @Deprecated("Creates unbound symbols")
+@Suppress("DEPRECATION")
 open class DeepCopyIrTree : IrElementTransformerVoid() {
 
     protected open fun mapDeclarationOrigin(declarationOrigin: IrDeclarationOrigin) = declarationOrigin
@@ -644,6 +646,26 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             expression.startOffset, expression.endOffset,
             expression.type,
             expression.value.transform()
+        )
+
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression): IrDynamicOperatorExpression =
+        IrDynamicOperatorExpressionImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type,
+            expression.operator,
+            expression.valueArgumentsCount
+        ).apply {
+            for (i in 0 until expression.valueArgumentsCount) {
+                putValueArgument(i, expression.getValueArgument(i)?.transform())
+            }
+        }
+
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression): IrDynamicMemberExpression =
+        IrDynamicMemberExpressionImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type,
+            expression.memberName,
+            expression.receiver.transform()
         )
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration): IrErrorDeclaration =

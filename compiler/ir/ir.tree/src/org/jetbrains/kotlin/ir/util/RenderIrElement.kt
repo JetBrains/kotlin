@@ -346,6 +346,12 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitCatch(aCatch: IrCatch, data: Nothing?): String =
         "CATCH parameter=${aCatch.parameter.ref()}"
 
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: Nothing?): String =
+        "DYN_OP operator=${expression.operator} type=${expression.type.render()}"
+
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?): String =
+        "DYN_MEMBER memberName='${expression.memberName}' type=${expression.type.render()}"
+
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
         "ERROR_DECL ${declaration.descriptor::class.java.simpleName} ${declaration.descriptor.ref()}"
 
