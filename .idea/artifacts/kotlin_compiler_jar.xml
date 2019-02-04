@@ -36,6 +36,7 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/trove4j.jar" path-in-jar="/" />
       <element id="module-output" name="org.jetbrains.kotlin.backend-common.main" />
       <element id="module-output" name="org.jetbrains.kotlin.backend.js.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.backend.jvm.main" />
       <element id="module-output" name="org.jetbrains.kotlin.backend.main" />
       <element id="module-output" name="org.jetbrains.kotlin.cli-common.main" />
       <element id="module-output" name="org.jetbrains.kotlin.cli.main" />
