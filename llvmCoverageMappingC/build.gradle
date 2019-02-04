@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.konan.target.ClangArgs
 
 model {
   components {
-    debugInfo(NativeLibrarySpec) {
+    coverageMapping(NativeLibrarySpec) {
       sources.cpp.source.srcDirs "src/main/cpp"
 
         binaries.withType(StaticLibraryBinarySpec) { binary ->

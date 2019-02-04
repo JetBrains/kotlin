@@ -106,6 +106,6 @@ open class Command(initialCommand: List<String>) {
     }
 
     private fun log() {
-        if (logger != null) logger!! { command.toList<String>().joinToString(" ") }
+        if (logger != null) logger!! { command.joinToString(" ") }
     }
 }

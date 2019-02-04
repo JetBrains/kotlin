@@ -5,6 +5,7 @@
 
 import groovy.json.JsonOutput
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 import java.nio.file.Paths
@@ -3209,6 +3210,70 @@ task runKonanRegexTests(type: RunKonanTest) {
     source = "harmony_regex/ModeTest.kt"
     useFilter = false
     runnerLogger = RunKonanTest.Logger.GTEST
+}
+
+task coverage_basic_program(type: RunStandaloneKonanTest) {
+
+    disabled = project.testTarget != "ios_x64" && project.testTarget != "macos_x64"
+
+    description = "Test that `-Xcoverage` generates correct __llvm_coverage information"
+
+    def dir = buildDir.absolutePath
+    createOutputDirectory()
+    
+    flags = ["-Xcoverage-file=$dir/program.profraw", "-Xcoverage", "-entry", "coverage.basic.program.main"]
+    source = "$projectDir/coverage/basic/program/main.kt"
+
+    doLast {
+        execLlvm("llvm-profdata") {
+            args "merge"
+            args "$dir/program.profraw"
+            args "-o", "$dir/program.profdata"
+        }
+        // Should fail in case of corrupted __llvm_coverage.
+        execLlvm("llvm-cov") {
+            def program = buildExePath()
+            def suffix = target.family.exeSuffix
+            args "report"
+            args "$program.$suffix"
+            args "-instr-profile", "$dir/program.profdata"
+        }
+    }
+}
+
+task coverage_basic_library(type: RunStandaloneKonanTest) {
+
+    disabled = project.testTarget != "ios_x64" && project.testTarget != "macos_x64"
+
+    description = "Test that `-Xlibrary-to-cover` generates correct __llvm_coverage information"
+
+    def dir = buildDir.absolutePath
+    createOutputDirectory()
+
+    doFirst {
+        def konancScript = isWindows() ? "konanc.bat" : "konanc"
+        def konanc = "$dist/bin/$konancScript"
+        "$konanc $projectDir/coverage/basic/library/library.kt -p library -o $dir/lib_to_cover".execute().waitFor()
+    }
+    
+    flags = ["-Xcoverage-file=$dir/program.profraw", "-l", "$dir/lib_to_cover", "-Xlibrary-to-cover=$dir/lib_to_cover.klib", "-entry", "coverage.basic.library.main"]
+    source = "$projectDir/coverage/basic/library/main.kt"
+
+    doLast {
+        execLlvm("llvm-profdata") {
+            args "merge"
+            args "$dir/program.profraw"
+            args "-o", "$dir/program.profdata"
+        }
+        // Should fail in case of corrupted __llvm_coverage.
+        execLlvm("llvm-cov") {
+            def program = buildExePath()
+            def suffix = target.family.exeSuffix
+            args "report"
+            args "$program.$suffix"
+            args "-instr-profile", "$dir/program.profdata"
+        }
+    }
 }
 
 task buildKonanStdlibTests(type: BuildKonanTest) {

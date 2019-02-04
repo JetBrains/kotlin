@@ -45,6 +45,15 @@ internal class LinkStage(val context: Context) {
         addAll(elements.filter { !it.isEmpty() })
     }
 
+    private val exportedSymbols = context.coverage.addExportedSymbols()
+
+    private fun mangleSymbol(symbol: String) =
+            if (target.family == Family.IOS || target.family == Family.OSX) {
+                "_$symbol"
+            } else {
+                symbol
+            }
+
     private fun runTool(command: List<String>) = runTool(*command.toTypedArray())
     private fun runTool(vararg command: String) =
             Command(*command)
@@ -65,6 +74,8 @@ internal class LinkStage(val context: Context) {
         }
         command.addNonEmpty(platform.llvmLtoDynamicFlags)
         command.addNonEmpty(files)
+        // Prevent symbols from being deleted by DCE.
+        command.addNonEmpty(exportedSymbols.map { "-exported-symbol=${mangleSymbol(it)}"} )
         runTool(command)
 
         return combined
@@ -208,6 +219,7 @@ internal class LinkStage(val context: Context) {
     val objectFiles = mutableListOf<String>()
 
     fun makeObjectFiles() {
+
         val bitcodeFiles = listOf(emitted) +
                 libraries.map { it.bitcodePaths }.flatten().filter { it.isBitcode }
 

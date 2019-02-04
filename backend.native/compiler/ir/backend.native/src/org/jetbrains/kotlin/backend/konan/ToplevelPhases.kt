@@ -275,6 +275,7 @@ internal val bitcodePhase = namedIrModulePhase(
                 escapeAnalysisPhase then
                 codegenPhase then
                 finalizeDebugInfoPhase then
+                bitcodePassesPhase then
                 cStubsPhase
 )
 

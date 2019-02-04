@@ -133,15 +133,32 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
     private val libtool = "$absoluteTargetToolchain/usr/bin/libtool"
     private val linker = "$absoluteTargetToolchain/usr/bin/ld"
     private val dsymutil = "$absoluteLlvmHome/bin/llvm-dsymutil"
-    private val compilerRtLibrary: String? by lazy {
-            val suffix = when (configurables.target.family) {
+
+    private fun provideCompilerRtLibrary(libraryName: String): String? {
+        val suffix = if (libraryName.isNotEmpty() && target == KonanTarget.IOS_X64) {
+            "iossim"
+        } else {
+            when (val family = configurables.target.family) {
                 Family.OSX -> "osx"
                 Family.IOS -> "ios"
-                else -> TODO()
+                else -> error("Family $family is unsupported")
             }
-            val dir = File("$absoluteTargetToolchain/usr/lib/clang/").listFiles.firstOrNull()?.absolutePath
-            if (dir != null) "$dir/lib/darwin/libclang_rt.$suffix.a" else null
         }
+        val dir = File("$absoluteTargetToolchain/usr/lib/clang/").listFiles.firstOrNull()?.absolutePath
+        val mangledName = if (libraryName.isEmpty()) "" else "${libraryName}_"
+
+        return if (dir != null) "$dir/lib/darwin/libclang_rt.$mangledName$suffix.a" else null
+    }
+
+    private val compilerRtLibrary: String? by lazy {
+        provideCompilerRtLibrary("")
+    }
+
+    // Code coverage requires this library.
+    private val profileLibrary: String? by lazy {
+        provideCompilerRtLibrary("profile")
+    }
+
     private val osVersionMinFlags: List<String> by lazy {
         listOf(osVersionMinFlagLd, osVersionMin + ".0")
     }
@@ -171,6 +188,7 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
             if (dynamic) +linkerDynamicFlags
             +linkerKonanFlags
             if (compilerRtLibrary != null) +compilerRtLibrary!!
+            if (profileLibrary != null) +profileLibrary!!
             +libraries
             +linkerArgs
             +rpath(dynamic)

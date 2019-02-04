@@ -80,11 +80,12 @@ task renamePackage {
 kotlinNativeInterop {
     llvm {
         dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
+        dependsOn ":llvmCoverageMappingC:coverageMappingStaticLibrary"
         defFile 'llvm.def'
         if (!project.parent.convention.plugins.platformInfo.isWindows())
             compilerOpts "-fPIC"
-        compilerOpts "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
-        linkerOpts "-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static"
+        compilerOpts "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include", "-I${project(':llvmCoverageMappingC').projectDir}/src/main/include"
+        linkerOpts "-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static", "-L${project(':llvmCoverageMappingC').buildDir}/libs/coverageMapping/static"
     }
 
     hash { // TODO: copy-pasted from ':common:compileHash'

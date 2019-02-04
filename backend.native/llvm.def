@@ -1,7 +1,7 @@
 headers = llvm-c/Core.h llvm-c/Target.h llvm-c/Analysis.h llvm-c/BitWriter.h \
-    llvm-c/BitReader.h llvm-c/Linker.h DebugInfoC.h
+    llvm-c/BitReader.h llvm-c/Linker.h DebugInfoC.h CoverageMappingC.h
 
-headerFilter = llvm-c/* DebugInfoC.h
+headerFilter = llvm-c/* DebugInfoC.h CoverageMappingC.h
 
 compilerOpts = -std=c99 \
     -Wall -W -Wno-unused-parameter -Wwrite-strings -Wmissing-field-initializers \
@@ -16,11 +16,12 @@ linkerOpts = -fvisibility-inlines-hidden \
     -pedantic -Wno-long-long -Wcovered-switch-default -Wnon-virtual-dtor -Wdelete-non-virtual-dtor \
     -std=c++11 \
     -DNDEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS \
-    -ldebugInfo -lLLVMTarget -lLLVMMC -lLLVMLinker -lLLVMTransformUtils -lLLVMBitWriter \
+    -ldebugInfo -lcoverageMapping -lLLVMCoverage -lLLVMTarget -lLLVMInstrumentation \
+    -lLLVMMC -lLLVMLinker -lLLVMTransformUtils -lLLVMBitWriter \
     -lLLVMBitReader -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMMC \
     -lLLVMCore -lLLVMBinaryFormat -lLLVMSupport -lLLVMDemangle
 
-# ./llvm-config --libs analysis bitreader bitwriter core linker target
+# ./llvm-config --libs analysis bitreader bitwriter core linker target coverage
 
 
 linkerOpts.osx = -fPIC \
