@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -106,6 +108,10 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
             put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
 
             put(CommonConfigurationKeys.MODULE_NAME, "test-module")
+
+            if (sourceFile.extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) {
+                loadScriptingPlugin(this)
+            }
         }
     }
 
