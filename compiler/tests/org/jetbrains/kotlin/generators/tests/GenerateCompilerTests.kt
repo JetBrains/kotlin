@@ -54,8 +54,7 @@ fun main(args: Array<String>) {
     testGroup("compiler/tests", "compiler/testData") {
 
         testClass<AbstractDiagnosticsTest> {
-            model("diagnostics/tests")
-            model("diagnostics/tests/script", extension = "kts")
+            model("diagnostics/tests", pattern = "^(.*)\\.kts?$")
             model("codegen/box/diagnostics")
         }
 

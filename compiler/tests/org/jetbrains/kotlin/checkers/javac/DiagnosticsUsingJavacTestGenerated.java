@@ -858,11 +858,6 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/annotations/ConstructorCall.kt");
             }
 
-            @TestMetadata("DanglingInScript.kt")
-            public void testDanglingInScript() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/DanglingInScript.kt");
-            }
-
             @TestMetadata("DanglingMixed.kt")
             public void testDanglingMixed() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/DanglingMixed.kt");
@@ -16172,11 +16167,6 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclaringPrivateToFile.kt");
             }
 
-            @TestMetadata("ScriptAndClassConflict.kt")
-            public void testScriptAndClassConflict() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/redeclarations/ScriptAndClassConflict.kt");
-            }
-
             @TestMetadata("SingletonAndFunctionSameName.kt")
             public void testSingletonAndFunctionSameName() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/redeclarations/SingletonAndFunctionSameName.kt");
@@ -18448,11 +18438,6 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
 
             public void testAllFilesPresentInScript() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/script"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("varInScript.kt")
-            public void testVarInScript() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/script/varInScript.kt");
             }
         }
 
@@ -20919,11 +20904,6 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("noLocalDelegatedProperty.kt")
             public void testNoLocalDelegatedProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noLocalDelegatedProperty.kt");
-            }
-
-            @TestMetadata("noLocalDelegatedPropertyInScript.kt")
-            public void testNoLocalDelegatedPropertyInScript() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noLocalDelegatedPropertyInScript.kt");
             }
 
             @TestMetadata("noMultiplatformProjects.kt")

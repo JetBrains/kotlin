@@ -2512,11 +2512,6 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overrideDifferentExperimentalities.kt");
         }
 
-        @TestMetadata("scripts.kt")
-        public void testScripts() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/scripts.kt");
-        }
-
         @TestMetadata("topLevel.kt")
         public void testTopLevel() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/topLevel.kt");
