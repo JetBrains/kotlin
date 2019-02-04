@@ -36,37 +36,39 @@ fun collectScriptsCompilationDependencies(
     var remainingSources = initialSources
     val knownSourcePaths = initialSources.mapNotNullTo(HashSet()) { it.virtualFile?.path }
     val importsProvider = ScriptDependenciesProvider.getInstance(project)
-    while (true) {
-        val newRemainingSources = ArrayList<KtFile>()
-        for (source in remainingSources) {
-            val dependencies = importsProvider.getScriptDependencies(source)
-            if (dependencies != null) {
-                collectedClassPath.addAll(dependencies.classpath)
+    if (importsProvider != null) {
+        while (true) {
+            val newRemainingSources = ArrayList<KtFile>()
+            for (source in remainingSources) {
+                val dependencies = importsProvider.getScriptDependencies(source)
+                if (dependencies != null) {
+                    collectedClassPath.addAll(dependencies.classpath)
 
-                val sourceDependenciesRoots = dependencies.scripts.map {
-                    KotlinSourceRoot(it.path, false)
-                }
-                val sourceDependencies =
-                    KotlinCoreEnvironment.createSourceFilesFromSourceRoots(
-                        configuration, project, sourceDependenciesRoots,
-                        // TODO: consider receiving and using precise location from the resolver in the future
-                        source.virtualFile?.path?.let { CompilerMessageLocation.create(it) }
-                    )
-                if (sourceDependencies.isNotEmpty()) {
-                    collectedSourceDependencies.add(ScriptsCompilationDependencies.SourceDependencies(source, sourceDependencies))
+                    val sourceDependenciesRoots = dependencies.scripts.map {
+                        KotlinSourceRoot(it.path, false)
+                    }
+                    val sourceDependencies =
+                        KotlinCoreEnvironment.createSourceFilesFromSourceRoots(
+                            configuration, project, sourceDependenciesRoots,
+                            // TODO: consider receiving and using precise location from the resolver in the future
+                            source.virtualFile?.path?.let { CompilerMessageLocation.create(it) }
+                        )
+                    if (sourceDependencies.isNotEmpty()) {
+                        collectedSourceDependencies.add(ScriptsCompilationDependencies.SourceDependencies(source, sourceDependencies))
 
-                    val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.virtualFile.path) }
-                    for (newSource in newSources) {
-                        collectedSources.add(newSource)
-                        newRemainingSources.add(newSource)
-                        knownSourcePaths.add(newSource.virtualFile.path)
+                        val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.virtualFile.path) }
+                        for (newSource in newSources) {
+                            collectedSources.add(newSource)
+                            newRemainingSources.add(newSource)
+                            knownSourcePaths.add(newSource.virtualFile.path)
+                        }
                     }
                 }
             }
-        }
-        if (newRemainingSources.isEmpty()) break
-        else {
-            remainingSources = newRemainingSources
+            if (newRemainingSources.isEmpty()) break
+            else {
+                remainingSources = newRemainingSources
+            }
         }
     }
     return ScriptsCompilationDependencies(

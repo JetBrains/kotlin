@@ -179,7 +179,7 @@ class FileScopeFactory(
 
         private fun createDefaultImportResolversForFile(): DefaultImportResolvers {
             val extraImports = file.takeIf { it.isScript() }?.let { ktFile ->
-                val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project).getScriptDependencies(ktFile.originalFile)
+                val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project)?.getScriptDependencies(ktFile.originalFile)
                 scriptDependencies?.imports?.map { DefaultImportImpl(ImportPath.fromString(it)) }
             }.orEmpty()
 

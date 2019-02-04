@@ -139,6 +139,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     ?: return COMPILATION_ERROR
 
                 val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(environment.project)
+                if (scriptDefinitionProvider == null) {
+                    messageCollector.report(ERROR, "Unable to process the script, scripting plugin is not configured")
+                    return COMPILATION_ERROR
+                }
                 val scriptFile = File(sourcePath)
                 if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
                     val extensionHint =

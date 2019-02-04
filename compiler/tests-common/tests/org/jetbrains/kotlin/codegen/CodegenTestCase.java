@@ -439,14 +439,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         ScriptDependenciesProvider externalImportsProvider =
                 ScriptDependenciesProvider.Companion.getInstance(myEnvironment.getProject());
-        myEnvironment.getSourceFiles().forEach(
-                file -> {
-                    ScriptDependencies dependencies = externalImportsProvider.getScriptDependencies(file);
-                    if (dependencies != null) {
-                        files.addAll(dependencies.getClasspath());
+        if (externalImportsProvider != null) {
+            myEnvironment.getSourceFiles().forEach(
+                    file -> {
+                        ScriptDependencies dependencies = externalImportsProvider.getScriptDependencies(file);
+                        if (dependencies != null) {
+                            files.addAll(dependencies.getClasspath());
+                        }
                     }
-                }
-        );
+            );
+        }
 
         try {
             URL[] result = new URL[files.size()];

@@ -37,7 +37,7 @@ interface ScriptDefinitionProvider {
     fun getKnownFilenameExtensions(): Sequence<String>
 
     companion object {
-        fun getInstance(project: Project): ScriptDefinitionProvider =
+        fun getInstance(project: Project): ScriptDefinitionProvider? =
             ServiceManager.getService(project, ScriptDefinitionProvider::class.java)
     }
 }
@@ -51,7 +51,7 @@ fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefin
         return null
     }
 
-    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project)
+    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) ?: return null
     val psiFile = PsiManager.getInstance(project).findFile(file)
     if (psiFile != null) {
         if (psiFile !is KtFile) return null

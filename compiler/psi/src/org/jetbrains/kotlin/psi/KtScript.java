@@ -30,6 +30,9 @@ import java.util.List;
 public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implements KtDeclarationContainer {
     public KotlinScriptDefinition getKotlinScriptDefinition() {
         ScriptDefinitionProvider definitionsProvider = ScriptDefinitionProvider.Companion.getInstance(getProject());
+        if (definitionsProvider == null) {
+            throw new IllegalStateException("Unable to use KtScript: ScriptDefinitionProvider is not configured.");
+        }
         KotlinScriptDefinition definition = definitionsProvider.findScriptDefinition(getContainingKtFile().getName());
         return definition != null ? definition : definitionsProvider.getDefaultScriptDefinition();
     }
