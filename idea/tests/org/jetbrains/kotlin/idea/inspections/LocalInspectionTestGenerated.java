@@ -5206,6 +5206,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/redundantRequireNotNullCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantRequireNotNullCall extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantRequireNotNullCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantRequireNotNullCall"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("checkNotNull.kt")
+        public void testCheckNotNull() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/checkNotNull.kt");
+        }
+
+        @TestMetadata("notNull.kt")
+        public void testNotNull() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/notNull.kt");
+        }
+
+        @TestMetadata("notNull2.kt")
+        public void testNotNull2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/notNull2.kt");
+        }
+
+        @TestMetadata("notNull3.kt")
+        public void testNotNull3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/notNull3.kt");
+        }
+
+        @TestMetadata("nullable.kt")
+        public void testNullable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/nullable.kt");
+        }
+
+        @TestMetadata("nullable2.kt")
+        public void testNullable2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/nullable2.kt");
+        }
+
+        @TestMetadata("require.kt")
+        public void testRequire() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/require.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/redundantReturnLabel")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
