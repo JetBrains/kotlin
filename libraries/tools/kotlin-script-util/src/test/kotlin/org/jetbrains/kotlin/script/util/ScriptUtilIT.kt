@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.CompilationException
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
 import org.junit.Test
@@ -140,6 +142,8 @@ done
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script-util-test")
                 add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+
+                add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
             }
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -105,6 +106,8 @@ class ScriptTest : KtUsefulTestCase() {
             if (saveClassesDir != null) {
                 configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)
             }
+
+            loadScriptingPlugin(configuration)
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

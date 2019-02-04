@@ -25,6 +25,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testRuntime(project(":kotlin-reflect"))
     testCompile(commonDep("junit:junit"))
+    testCompile(project(":kotlin-scripting-compiler"))
     testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
     testRuntime("com.jcabi:jcabi-aether:1.0-SNAPSHOT")
     testRuntime("org.sonatype.aether:aether-api:1.13.1")

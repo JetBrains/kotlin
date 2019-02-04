@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContextOrStlib
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -60,11 +61,14 @@ class CustomScriptCodegenTest : CodegenTestCase() {
             emptyList(),
             emptyList()
         )
+
         if (scriptDefinitions.isNotEmpty()) {
             configureScriptDefinitions(
                 scriptDefinitions.asList(), configuration, this::class.java.classLoader, MessageCollector.NONE, emptyMap()
             )
         }
+
+        loadScriptingPlugin(configuration)
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
