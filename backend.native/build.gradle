@@ -51,6 +51,7 @@ compileCompilerKotlin {
     // The protobuf plugin specifies this dependency for java by itself,
     // but not for Kotlin.
     dependsOn('generateCompilerProto')
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 compileCompilerJava {
