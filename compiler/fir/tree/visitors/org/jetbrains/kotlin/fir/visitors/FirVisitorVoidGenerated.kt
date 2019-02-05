@@ -152,30 +152,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(statement, null)
     }
 
-    open fun visitAccess(access: FirAccess) {
-        visitStatement(access, null)
-    }
-
-    open fun visitAccessExpression(accessExpression: FirAccessExpression) {
-        visitAccess(accessExpression, null)
-    }
-
-    open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
-        visitAccessExpression(callableReferenceAccess, null)
-    }
-
-    open fun visitAssignment(assignment: FirAssignment) {
-        visitAccess(assignment, null)
-    }
-
-    open fun visitPropertyAssignment(propertyAssignment: FirPropertyAssignment) {
-        visitAssignment(propertyAssignment, null)
-    }
-
-    open fun visitModifiableAccess(modifiableAccess: FirModifiableAccess) {
-        visitAccess(modifiableAccess, null)
-    }
-
     open fun visitClass(klass: FirClass) {
         visitStatement(klass, null)
     }
@@ -288,6 +264,30 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitLoop(whileLoop, null)
     }
 
+    open fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
+        visitStatement(qualifiedAccess, null)
+    }
+
+    open fun visitAssignment(assignment: FirAssignment) {
+        visitQualifiedAccess(assignment, null)
+    }
+
+    open fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
+        visitAssignment(variableAssignment, null)
+    }
+
+    open fun visitModifiableQualifiedAccess(modifiableQualifiedAccess: FirModifiableQualifiedAccess) {
+        visitQualifiedAccess(modifiableQualifiedAccess, null)
+    }
+
+    open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+        visitQualifiedAccess(qualifiedAccessExpression, null)
+    }
+
+    open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
+        visitQualifiedAccessExpression(callableReferenceAccess, null)
+    }
+
     open fun visitTargetElement(targetElement: FirTargetElement) {
         visitElement(targetElement, null)
     }
@@ -350,14 +350,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitWhenBranch(whenBranch: FirWhenBranch) {
         visitElement(whenBranch, null)
-    }
-
-    final override fun visitAccess(access: FirAccess, data: Nothing?) {
-        visitAccess(access)
-    }
-
-    final override fun visitAccessExpression(accessExpression: FirAccessExpression, data: Nothing?) {
-        visitAccessExpression(accessExpression)
     }
 
     final override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?) {
@@ -532,16 +524,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitMemberDeclaration(memberDeclaration)
     }
 
-    final override fun visitModifiableAccess(modifiableAccess: FirModifiableAccess, data: Nothing?) {
-        visitModifiableAccess(modifiableAccess)
-    }
-
     final override fun visitModifiableClass(modifiableClass: FirModifiableClass, data: Nothing?) {
         visitModifiableClass(modifiableClass)
     }
 
     final override fun visitModifiableFunction(modifiableFunction: FirModifiableFunction, data: Nothing?) {
         visitModifiableFunction(modifiableFunction)
+    }
+
+    final override fun visitModifiableQualifiedAccess(modifiableQualifiedAccess: FirModifiableQualifiedAccess, data: Nothing?) {
+        visitModifiableQualifiedAccess(modifiableQualifiedAccess)
     }
 
     final override fun visitNamedDeclaration(namedDeclaration: FirNamedDeclaration, data: Nothing?) {
@@ -572,8 +564,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitPropertyAccessor(propertyAccessor)
     }
 
-    final override fun visitPropertyAssignment(propertyAssignment: FirPropertyAssignment, data: Nothing?) {
-        visitPropertyAssignment(propertyAssignment)
+    final override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: Nothing?) {
+        visitQualifiedAccess(qualifiedAccess)
+    }
+
+    final override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?) {
+        visitQualifiedAccessExpression(qualifiedAccessExpression)
     }
 
     final override fun visitReference(reference: FirReference, data: Nothing?) {
@@ -674,6 +670,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitVariable(variable: FirVariable, data: Nothing?) {
         visitVariable(variable)
+    }
+
+    final override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?) {
+        visitVariableAssignment(variableAssignment)
     }
 
     final override fun visitWhenBranch(whenBranch: FirWhenBranch, data: Nothing?) {

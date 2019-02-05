@@ -253,8 +253,8 @@ internal fun generateIncrementOrDecrementBlock(
     }
 }
 
-internal fun generateAccessExpression(session: FirSession, psi: PsiElement?, name: Name): FirAccessExpression =
-    FirAccessExpressionImpl(session, psi).apply {
+internal fun generateAccessExpression(session: FirSession, psi: PsiElement?, name: Name): FirQualifiedAccessExpression =
+    FirQualifiedAccessExpressionImpl(session, psi).apply {
         calleeReference = FirSimpleNamedReference(session, psi, name)
     }
 
@@ -292,10 +292,10 @@ internal fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, specialName: String, initializer: FirExpression
 ): FirVariable = generateTemporaryVariable(session, psi, Name.special("<$specialName>"), initializer)
 
-private fun FirModifiableAccess.initializeLValue(
+private fun FirModifiableQualifiedAccess.initializeLValue(
     session: FirSession,
     left: KtExpression?,
-    convertQualified: KtQualifiedExpression.() -> FirAccess?
+    convertQualified: KtQualifiedExpression.() -> FirQualifiedAccess?
 ): FirReference {
     return when (left) {
         is KtSimpleNameExpression -> {
@@ -337,12 +337,12 @@ internal fun KtExpression?.generateAssignment(
         val arrayExpression = this.arrayExpression
         val arraySet = FirArraySetCallImpl(session, psi, value, operation).apply {
             for (indexExpression in indexExpressions) {
-                arguments += indexExpression.convert()
+                indexes += indexExpression.convert()
             }
         }
         if (arrayExpression is KtSimpleNameExpression) {
             return arraySet.apply {
-                calleeReference = initializeLValue(session, arrayExpression) { convert() as? FirAccess }
+                lValue = initializeLValue(session, arrayExpression) { convert() as? FirQualifiedAccess }
             }
         }
         return FirBlockImpl(session, arrayExpression).apply {
@@ -351,7 +351,7 @@ internal fun KtExpression?.generateAssignment(
                 session, this@generateAssignment, name,
                 arrayExpression?.convert() ?: FirErrorExpressionImpl(session, arrayExpression, "No array expression")
             )
-            statements += arraySet.apply { calleeReference = FirSimpleNamedReference(session, arrayExpression, name) }
+            statements += arraySet.apply { lValue = FirSimpleNamedReference(session, arrayExpression, name) }
         }
     }
     if (operation != FirOperation.ASSIGN &&
@@ -364,12 +364,12 @@ internal fun KtExpression?.generateAssignment(
                 session, this@generateAssignment, name,
                 this@generateAssignment?.convert() ?: FirErrorExpressionImpl(session, this@generateAssignment, "No LValue in assignment")
             )
-            statements += FirPropertyAssignmentImpl(session, psi, value, operation).apply {
-                calleeReference = FirSimpleNamedReference(session, this@generateAssignment, name)
+            statements += FirVariableAssignmentImpl(session, psi, value, operation).apply {
+                lValue = FirSimpleNamedReference(session, this@generateAssignment, name)
             }
         }
     }
-    return FirPropertyAssignmentImpl(session, psi, value, operation).apply {
-        calleeReference = initializeLValue(session, this@generateAssignment) { convert() as? FirAccess }
+    return FirVariableAssignmentImpl(session, psi, value, operation).apply {
+        lValue = initializeLValue(session, this@generateAssignment) { convert() as? FirQualifiedAccess }
     }
 }

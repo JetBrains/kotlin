@@ -16,7 +16,7 @@ class FirFunctionCallImpl(
     session: FirSession,
     psi: PsiElement?,
     override var safe: Boolean = false
-) : FirAbstractCall(session, psi), FirFunctionCall, FirModifiableAccess {
+) : FirAbstractCall(session, psi), FirFunctionCall, FirModifiableQualifiedAccess {
     override val typeArguments = mutableListOf<FirTypeProjection>()
 
     override lateinit var calleeReference: FirNamedReference

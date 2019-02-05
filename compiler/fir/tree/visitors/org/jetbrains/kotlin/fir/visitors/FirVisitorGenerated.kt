@@ -152,30 +152,6 @@ abstract class FirVisitor<out R, in D> {
         return visitElement(statement, data)
     }
 
-    open fun visitAccess(access: FirAccess, data: D): R {
-        return visitStatement(access, data)
-    }
-
-    open fun visitAccessExpression(accessExpression: FirAccessExpression, data: D): R {
-        return visitAccess(accessExpression, data)
-    }
-
-    open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: D): R {
-        return visitAccessExpression(callableReferenceAccess, data)
-    }
-
-    open fun visitAssignment(assignment: FirAssignment, data: D): R {
-        return visitAccess(assignment, data)
-    }
-
-    open fun visitPropertyAssignment(propertyAssignment: FirPropertyAssignment, data: D): R {
-        return visitAssignment(propertyAssignment, data)
-    }
-
-    open fun visitModifiableAccess(modifiableAccess: FirModifiableAccess, data: D): R {
-        return visitAccess(modifiableAccess, data)
-    }
-
     open fun visitClass(klass: FirClass, data: D): R {
         return visitStatement(klass, data)
     }
@@ -286,6 +262,30 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitWhileLoop(whileLoop: FirWhileLoop, data: D): R {
         return visitLoop(whileLoop, data)
+    }
+
+    open fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): R {
+        return visitStatement(qualifiedAccess, data)
+    }
+
+    open fun visitAssignment(assignment: FirAssignment, data: D): R {
+        return visitQualifiedAccess(assignment, data)
+    }
+
+    open fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: D): R {
+        return visitAssignment(variableAssignment, data)
+    }
+
+    open fun visitModifiableQualifiedAccess(modifiableQualifiedAccess: FirModifiableQualifiedAccess, data: D): R {
+        return visitQualifiedAccess(modifiableQualifiedAccess, data)
+    }
+
+    open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): R {
+        return visitQualifiedAccess(qualifiedAccessExpression, data)
+    }
+
+    open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: D): R {
+        return visitQualifiedAccessExpression(callableReferenceAccess, data)
     }
 
     open fun visitTargetElement(targetElement: FirTargetElement, data: D): R {

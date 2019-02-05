@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirAssignment : FirAccess {
-    val value: FirExpression
+interface FirAssignment : FirQualifiedAccess {
+    val lValue: FirReference get() = calleeReference
+
+    val rValue: FirExpression
 
     val operation: FirOperation
 
@@ -16,7 +19,7 @@ interface FirAssignment : FirAccess {
         visitor.visitAssignment(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        value.accept(visitor, data)
+        rValue.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }
 }

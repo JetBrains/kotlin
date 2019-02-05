@@ -1247,7 +1247,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         override fun visitQualifiedExpression(expression: KtQualifiedExpression, data: Unit): FirElement {
             val selector = expression.selectorExpression
                 ?: return FirErrorExpressionImpl(session, expression, "Qualified expression without selector")
-            val firSelector = selector.toFirExpression() as FirModifiableAccess
+            val firSelector = selector.toFirExpression() as FirModifiableQualifiedAccess
             firSelector.safe = expression is KtSafeQualifiedExpression
             firSelector.explicitReceiver = expression.receiverExpression.toFirExpression()
             return firSelector
@@ -1255,14 +1255,14 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
 
         override fun visitThisExpression(expression: KtThisExpression, data: Unit): FirElement {
             val labelName = expression.getLabelName()
-            return FirAccessExpressionImpl(session, expression).apply {
+            return FirQualifiedAccessExpressionImpl(session, expression).apply {
                 calleeReference = FirExplicitThisReference(session, expression, labelName)
             }
         }
 
         override fun visitSuperExpression(expression: KtSuperExpression, data: Unit): FirElement {
             val superType = expression.superTypeQualifier
-            return FirAccessExpressionImpl(session, expression).apply {
+            return FirQualifiedAccessExpressionImpl(session, expression).apply {
                 calleeReference = FirExplicitSuperReference(session, expression, superType.toFirOrImplicitType())
             }
         }

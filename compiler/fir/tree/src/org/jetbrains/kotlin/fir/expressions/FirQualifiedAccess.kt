@@ -5,14 +5,22 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.VisitedSupertype
+import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirAccessExpression : @VisitedSupertype FirAccess, FirExpression {
+interface FirQualifiedAccess : FirStatement {
+    val calleeReference: FirReference
+
+    val safe: Boolean get() = false
+
+    val explicitReceiver: FirExpression? get() = null
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitAccessExpression(this, data)
+        visitor.visitQualifiedAccess(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirAccess>.acceptChildren(visitor, data)
+        calleeReference.accept(visitor, data)
+        explicitReceiver?.accept(visitor, data)
+        super.acceptChildren(visitor, data)
     }
 }

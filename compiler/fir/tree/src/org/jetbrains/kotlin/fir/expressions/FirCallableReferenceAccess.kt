@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirCallableReferenceAccess : FirAccessExpression {
+interface FirCallableReferenceAccess : FirQualifiedAccessExpression {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitCallableReferenceAccess(this, data)
 }

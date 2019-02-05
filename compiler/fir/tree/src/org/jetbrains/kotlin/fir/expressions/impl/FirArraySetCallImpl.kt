@@ -22,13 +22,13 @@ class FirArraySetCallImpl(
     value: FirExpression,
     operation: FirOperation
 ) : FirAbstractAssignment(session, psi, value, operation, false), FirArraySetCall {
-    override val arguments = mutableListOf<FirExpression>()
+    override val indexes = mutableListOf<FirExpression>()
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         super<FirArraySetCall>.accept(visitor, data)
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        arguments.transformInplace(transformer, data)
+        indexes.transformInplace(transformer, data)
 
         return super<FirAbstractAssignment>.transformChildren(transformer, data)
     }

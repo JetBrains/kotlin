@@ -711,11 +711,11 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print(">")
     }
 
-    override fun visitAccess(access: FirAccess) {
-        val explicitReceiver = access.explicitReceiver
+    override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
+        val explicitReceiver = qualifiedAccess.explicitReceiver
         if (explicitReceiver != null) {
             explicitReceiver.accept(this)
-            if (access.safe) {
+            if (qualifiedAccess.safe) {
                 print("?.")
             } else {
                 print(".")
@@ -730,39 +730,39 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         callableReferenceAccess.calleeReference.accept(this)
     }
 
-    override fun visitAccessExpression(accessExpression: FirAccessExpression) {
-        accessExpression.annotations.renderAnnotations()
-        visitAccess(accessExpression)
-        accessExpression.calleeReference.accept(this)
+    override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+        qualifiedAccessExpression.annotations.renderAnnotations()
+        visitQualifiedAccess(qualifiedAccessExpression)
+        qualifiedAccessExpression.calleeReference.accept(this)
     }
 
     override fun visitAssignment(assignment: FirAssignment) {
         print(assignment.operation.operator)
         print(" ")
-        assignment.value.accept(this)
+        assignment.rValue.accept(this)
     }
 
-    override fun visitPropertyAssignment(propertyAssignment: FirPropertyAssignment) {
-        propertyAssignment.annotations.renderAnnotations()
-        visitAccess(propertyAssignment)
-        propertyAssignment.calleeReference.accept(this)
+    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
+        variableAssignment.annotations.renderAnnotations()
+        visitQualifiedAccess(variableAssignment)
+        variableAssignment.lValue.accept(this)
         print(" ")
-        visitAssignment(propertyAssignment)
+        visitAssignment(variableAssignment)
     }
 
     override fun visitArraySetCall(arraySetCall: FirArraySetCall) {
         arraySetCall.annotations.renderAnnotations()
-        visitAccess(arraySetCall)
-        arraySetCall.calleeReference.accept(this)
+        visitQualifiedAccess(arraySetCall)
+        arraySetCall.lValue.accept(this)
         print("[")
-        arraySetCall.arguments.renderSeparated()
+        arraySetCall.indexes.renderSeparated()
         print("] ")
         visitAssignment(arraySetCall)
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall) {
         functionCall.annotations.renderAnnotations()
-        visitAccess(functionCall)
+        visitQualifiedAccess(functionCall)
         functionCall.calleeReference.accept(this)
         if (functionCall.typeArguments.isNotEmpty()) {
             print("<")

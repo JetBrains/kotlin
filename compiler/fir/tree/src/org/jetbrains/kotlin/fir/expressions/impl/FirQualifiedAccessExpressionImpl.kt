@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAssignment
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 
-class FirPropertyAssignmentImpl(
+class FirQualifiedAccessExpressionImpl(
     session: FirSession,
     psi: PsiElement?,
-    value: FirExpression,
-    operation: FirOperation,
     safe: Boolean = false
-) : FirAbstractAssignment(session, psi, value, operation, safe), FirPropertyAssignment
+) : FirAbstractQualifiedAccess(session, psi, safe), FirQualifiedAccessExpression
