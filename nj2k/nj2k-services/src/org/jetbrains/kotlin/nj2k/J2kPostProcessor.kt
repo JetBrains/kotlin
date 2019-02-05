@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.nj2k
+package org.jetbrains.kotlin.nj2k
 
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.application.ApplicationManager
@@ -24,13 +24,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
-import kotlinx.coroutines.experimental.withContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessing
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -63,49 +63,48 @@ class NewJ2kPostProcessor(
         PROCESS
     }
 
+    private fun List<NewJ2kPostProcessing>.runProcessings(file: KtFile, rangeMarker: RangeMarker?): Boolean {
+        var modificationStamp: Long? = file.modificationStamp
+        val elementToActions = runReadAction {
+            collectAvailableActions(this, file, rangeMarker)
+        }
+
+        for ((element, action, _, writeActionNeeded) in elementToActions) {
+            if (element.isValid) {
+                if (writeActionNeeded) {
+                    runWriteAction {
+                        action()
+                    }
+                } else {
+                    action()
+                }
+            } else {
+                modificationStamp = null
+            }
+        }
+
+        return modificationStamp != file.modificationStamp && elementToActions.isNotEmpty()
+    }
+
+    private fun Processing.runProcessings(file: KtFile, rangeMarker: RangeMarker?) {
+        when (this) {
+            is SingleOneTimeProcessing -> listOf(processing).runProcessings(file, rangeMarker)
+            is RepeatableProcessingGroup ->
+                do {
+                    val needContinue = processings.runProcessings(file, rangeMarker)
+                } while (needContinue)
+            is OneTimeProcessingGroup ->
+                processings.forEach { it.runProcessings(file, rangeMarker) }
+        }
+    }
+
 
     override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) {
-        fun Processing.flattenToGroups(): List<List<NewJ2kPostProcessing>> =
-            when (this) {
-                is SingleProcessing -> listOf(listOf(this.processing))
-                is ProcessingGroup ->
-                    if (processings.all { it is SingleProcessing }) {
-                        listOf(processings.map { (it as SingleProcessing).processing })
-                    } else {
-                        processings.flatMap { it.flattenToGroups() }
-                    }
-                else -> error("Processing tree is corrupted")
-            }
         OptimizeImportsProcessor(file.project, file.containingKtFile).run()
-        val groupsOfProcessings = NewJ2KPostProcessingRegistrar.mainProcessings.flattenToGroups()
 
         runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
-            for (processings in groupsOfProcessings) {
-                do {
-                    var modificationStamp: Long? = file.modificationStamp
-                    val elementToActions = runReadAction {
-                        collectAvailableActions(processings, file, rangeMarker)
-                    }
+            NewJ2KPostProcessingRegistrar.mainProcessings.runProcessings(file, rangeMarker)
 
-                    withContext(EDT) {
-                        for ((element, action, _, writeActionNeeded) in elementToActions) {
-                            if (element.isValid) {
-                                if (writeActionNeeded) {
-                                    runWriteAction {
-                                        action()
-                                    }
-                                } else {
-                                    action()
-                                }
-                            } else {
-                                modificationStamp = null
-                            }
-                        }
-                    }
-
-                    if (modificationStamp == file.modificationStamp) break
-                } while (elementToActions.isNotEmpty())
-            }
 
             if (formatCode) {
                 withContext(EDT) {

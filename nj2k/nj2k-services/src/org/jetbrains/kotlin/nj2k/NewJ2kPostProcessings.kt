@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInspection.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -65,8 +63,12 @@ interface NewJ2kPostProcessing {
 }
 
 interface Processing
-data class SingleProcessing(val processing: NewJ2kPostProcessing) : Processing
-data class ProcessingGroup(val processings: List<Processing>) : Processing {
+data class SingleOneTimeProcessing(val processing: NewJ2kPostProcessing) : Processing
+data class RepeatableProcessingGroup(val processings: List<NewJ2kPostProcessing>) : Processing {
+    constructor(vararg processings: NewJ2kPostProcessing) : this(processings.toList())
+}
+
+data class OneTimeProcessingGroup(val processings: List<Processing>) : Processing {
     constructor(vararg processings: Processing) : this(processings.toList())
 }
 
@@ -74,8 +76,9 @@ object NewJ2KPostProcessingRegistrar {
 
     private fun Processing.processings(): Sequence<NewJ2kPostProcessing> =
         when (this) {
-            is SingleProcessing -> sequenceOf(processing)
-            is ProcessingGroup -> processings.asSequence().flatMap { it.processings() }
+            is SingleOneTimeProcessing -> sequenceOf(processing)
+            is RepeatableProcessingGroup -> processings.asSequence()
+            is OneTimeProcessingGroup -> processings.asSequence().flatMap { it.processings() }
             else -> sequenceOf()
         }
 
@@ -84,49 +87,46 @@ object NewJ2KPostProcessingRegistrar {
 
     fun priority(processing: NewJ2kPostProcessing): Int = processingsToPriorityMap[processing]!!
 
-    val mainProcessings = ProcessingGroup(
-        SingleProcessing(VarToVal()),
-        ProcessingGroup(
-            SingleProcessing(ConvertGettersAndSetters()),
-            registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection()),
-            registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection()),
-            registerGeneralInspectionBasedProcessing(RedundantGetterInspection()),
-            registerGeneralInspectionBasedProcessing(RedundantSetterInspection())
-        ),
-        SingleProcessing(ConvertDataClass()),
-        ProcessingGroup(
+    val mainProcessings = OneTimeProcessingGroup(
+        SingleOneTimeProcessing(VarToVal()),
+        SingleOneTimeProcessing(ConvertGettersAndSetters()),
+        SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection())),
+        SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection())),
+        SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantGetterInspection())),
+        SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantSetterInspection())),
+        SingleOneTimeProcessing(ConvertDataClass()),
+        RepeatableProcessingGroup(
             registerGeneralInspectionBasedProcessing(ExplicitThisInspection()),
-
-            SingleProcessing(RemoveExplicitTypeArgumentsProcessing()),
-            SingleProcessing(RemoveRedundantOverrideVisibilityProcessing()),
+            RemoveExplicitTypeArgumentsProcessing(),
+            RemoveRedundantOverrideVisibilityProcessing(),
             registerInspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection()),
             registerGeneralInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
-            SingleProcessing(FixObjectStringConcatenationProcessing()),
-            SingleProcessing(ConvertToStringTemplateProcessing()),
-            SingleProcessing(UsePropertyAccessSyntaxProcessing()),
-            SingleProcessing(UninitializedVariableReferenceFromInitializerToThisReferenceProcessing()),
-            SingleProcessing(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing()),
-            SingleProcessing(RemoveRedundantSamAdaptersProcessing()),
-            SingleProcessing(RemoveRedundantCastToNullableProcessing()),
+            FixObjectStringConcatenationProcessing(),
+            ConvertToStringTemplateProcessing(),
+            UsePropertyAccessSyntaxProcessing(),
+            UninitializedVariableReferenceFromInitializerToThisReferenceProcessing(),
+            UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing(),
+            RemoveRedundantSamAdaptersProcessing(),
+            RemoveRedundantCastToNullableProcessing(),
             registerInspectionBasedProcessing(ReplacePutWithAssignmentInspection()),
-            SingleProcessing(UseExpressionBodyProcessing()),
+            UseExpressionBodyProcessing(),
             registerInspectionBasedProcessing(UnnecessaryVariableInspection()),
-            SingleProcessing(
-                object : NewJ2kPostProcessing {
-                    override val writeActionNeeded: Boolean = true
-                    private val processing = registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection())
 
-                    override fun createAction(element: KtElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
-                        if (settings?.specifyLocalVariableTypeByDefault == true) return null
+            object : NewJ2kPostProcessing {
+                override val writeActionNeeded: Boolean = true
+                private val processing = registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection())
 
-                        return processing.processing.createAction(element, diagnostics)
-                    }
+                override fun createAction(element: KtElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+                    if (settings?.specifyLocalVariableTypeByDefault == true) return null
+
+                    return processing.createAction(element, diagnostics)
                 }
-            ),
+            }
+            ,
             registerGeneralInspectionBasedProcessing(RedundantUnitReturnTypeInspection()),
 
-            SingleProcessing(RemoveExplicitPropertyType()),
-            SingleProcessing(RemoveRedundantNullability()),
+            RemoveExplicitPropertyType(),
+            RemoveRedundantNullability(),
 
             registerGeneralInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false)),
 
@@ -141,7 +141,6 @@ object NewJ2KPostProcessingRegistrar {
                     it
                 ) as KtReturnExpression).returnedExpression.isTrivialStatementBody()
             },
-
 
             registerInspectionBasedProcessing(IfThenToSafeAccessInspection()),
             registerInspectionBasedProcessing(IfThenToSafeAccessInspection()),
@@ -170,8 +169,8 @@ object NewJ2KPostProcessingRegistrar {
                 action.invoke(element.project, null, element.containingKtFile)
             },
 
-            SingleProcessing(RemoveRedundantTypeQualifierProcessing()),
-            SingleProcessing(RemoveRedundantExpressionQualifierProcessing()),
+            RemoveRedundantTypeQualifierProcessing(),
+            RemoveRedundantExpressionQualifierProcessing(),
 
             registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
                 val expression = RemoveUselessCastFix.invoke(element)
@@ -215,7 +214,7 @@ object NewJ2KPostProcessingRegistrar {
             },
 
             registerDiagnosticBasedProcessingFactory(
-                    Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
+                Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
             ) { element: KtSimpleNameExpression, _: Diagnostic ->
                 val property = element.mainReference.resolve() as? KtProperty
                 if (property == null) {
@@ -253,7 +252,7 @@ object NewJ2KPostProcessingRegistrar {
     private inline fun <reified TElement : KtElement, TIntention : SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
         intention: TIntention,
         noinline additionalChecker: (TElement) -> Boolean = { true }
-    ) = SingleProcessing(object : NewJ2kPostProcessing {
+    ) = object : NewJ2kPostProcessing {
         // Intention can either need or not need write action
         override val writeActionNeeded = intention.startInWriteAction()
 
@@ -269,13 +268,12 @@ object NewJ2KPostProcessingRegistrar {
             }
         }
     }
-    )
 
 
     private inline fun <TInspection : AbstractKotlinInspection> registerGeneralInspectionBasedProcessing(
         inspection: TInspection,
         acceptInformationLevel: Boolean = false
-    ) = SingleProcessing(object : NewJ2kPostProcessing {
+    ) = (object : NewJ2kPostProcessing {
         override val writeActionNeeded = false
 
         fun <D : CommonProblemDescriptor> QuickFix<D>.applyFixSmart(project: Project, descriptor: D) {
@@ -347,7 +345,7 @@ object NewJ2KPostProcessingRegistrar {
 
         inspection: TInspection,
         acceptInformationLevel: Boolean = false
-    ) = SingleProcessing(object : NewJ2kPostProcessing {
+    ) = object : NewJ2kPostProcessing {
         // Inspection can either need or not need write action
         override val writeActionNeeded = inspection.startFixInWriteAction
 
@@ -366,27 +364,28 @@ object NewJ2KPostProcessingRegistrar {
                 }
             }
         }
-    })
+    }
 
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessing(
         vararg diagnosticFactory: DiagnosticFactory<*>,
         crossinline fix: (TElement, Diagnostic) -> Unit
-    ) = registerDiagnosticBasedProcessingFactory(*diagnosticFactory) { element: TElement, diagnostic: Diagnostic ->
-        {
-            fix(
-                element,
-                diagnostic
-            )
+    ) = object : NewJ2kPostProcessing {
+        override val writeActionNeeded = true
+
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (!TElement::class.java.isInstance(element)) return null
+            val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory in diagnosticFactory } ?: return null
+            return {
+                fix(element as TElement, diagnostic)
+            }
         }
     }
-
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessingFactory(
         vararg diagnosticFactory: DiagnosticFactory<*>,
         crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
-    ) = SingleProcessing(object : NewJ2kPostProcessing {
-        // ???
+    ) = object : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
@@ -394,7 +393,7 @@ object NewJ2KPostProcessingRegistrar {
             val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory in diagnosticFactory } ?: return null
             return fixFactory(element as TElement, diagnostic)
         }
-    })
+    }
 
 
     private class RemoveExplicitPropertyType : NewJ2kPostProcessing {
