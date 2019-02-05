@@ -125,7 +125,6 @@ kotlin {
             binaries {
                 executable('benchmarksAnalyzer', [RELEASE]) {
                     if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-                        println("-L${getMingwPath()}/lib")
                         linkerOpts("-L${getMingwPath()}/lib")
                     }
                 }
