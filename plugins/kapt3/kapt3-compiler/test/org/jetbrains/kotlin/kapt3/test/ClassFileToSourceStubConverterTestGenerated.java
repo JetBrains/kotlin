@@ -369,6 +369,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/repeatableAnnotations.kt");
     }
 
+    @TestMetadata("secondaryConstructor.kt")
+    public void testSecondaryConstructor() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/secondaryConstructor.kt");
+    }
+
     @TestMetadata("severalPackageParts.kt")
     public void testSeveralPackageParts() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/severalPackageParts.kt");
