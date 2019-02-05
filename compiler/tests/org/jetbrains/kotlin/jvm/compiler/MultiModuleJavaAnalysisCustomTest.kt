@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -71,7 +71,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
             modulePlatforms = { JvmPlatform.multiTargetPlatform },
             moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-            resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
+            resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
             platformParameters = { _ ->
                 JvmPlatformParameters(
                     packagePartProviderFactory = { PackagePartProvider.Empty },

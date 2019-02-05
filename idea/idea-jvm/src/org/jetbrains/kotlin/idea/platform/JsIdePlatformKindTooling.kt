@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.gradle.KotlinPlatform
-import org.jetbrains.kotlin.idea.caches.resolve.JsAnalyzerFacade
+import org.jetbrains.kotlin.idea.caches.resolve.JsResolverForModuleFactory
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
@@ -49,7 +49,7 @@ class JsIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override fun compilerArgumentsForProject(project: Project) = Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings
 
-    override val resolverForModuleFactory = JsAnalyzerFacade
+    override val resolverForModuleFactory = JsResolverForModuleFactory
 
     override val mavenLibraryIds = listOf(PathUtil.JS_LIB_NAME, MAVEN_OLD_JS_STDLIB_ID)
     override val gradlePluginId = "kotlin-platform-js"

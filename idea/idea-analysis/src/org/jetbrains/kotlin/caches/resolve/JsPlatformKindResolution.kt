@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
-import org.jetbrains.kotlin.idea.caches.resolve.JsAnalyzerFacade
+import org.jetbrains.kotlin.idea.caches.resolve.JsResolverForModuleFactory
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -27,7 +27,7 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
     override val kind get() = JsIdePlatformKind
 
     override val resolverForModuleFactory: ResolverForModuleFactory
-        get() = JsAnalyzerFacade
+        get() = JsResolverForModuleFactory
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
         return JsPlatform.builtIns

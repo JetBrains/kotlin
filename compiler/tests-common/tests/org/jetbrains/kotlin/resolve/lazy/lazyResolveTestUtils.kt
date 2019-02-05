@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
@@ -44,7 +44,7 @@ fun createResolveSessionForFiles(
         { ModuleContent(it, syntheticFiles, GlobalSearchScope.allScope(project)) },
         modulePlatforms = { JvmPlatform.multiTargetPlatform },
         moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-        resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
+        resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
         platformParameters = { _ ->
             JvmPlatformParameters(
                 packagePartProviderFactory = { PackagePartProvider.Empty },
