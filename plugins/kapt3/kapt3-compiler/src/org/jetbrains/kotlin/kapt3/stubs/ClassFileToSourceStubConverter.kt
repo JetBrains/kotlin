@@ -264,10 +264,12 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             }
 
             val isCallableImport = importedReference is CallableDescriptor
+            val isEnumEntry = (importedReference as? ClassDescriptor)?.kind == ClassKind.ENUM_ENTRY
             val isAllUnderClassifierImport = importDirective.isAllUnder && importedReference is ClassifierDescriptor
 
-            if (isCallableImport || isAllUnderClassifierImport)
+            if (isCallableImport || isEnumEntry || isAllUnderClassifierImport) {
                 continue@loop
+            }
 
             val importedExpr = treeMaker.FqName(importedFqName.asString())
 
