@@ -186,6 +186,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super3.kt");
         }
 
+        @TestMetadata("kt19389.kt")
+        public void testKt19389() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt19389.kt");
+        }
+
         @TestMetadata("kt19399.kt")
         public void testKt19399() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt19399.kt");

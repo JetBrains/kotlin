@@ -69,6 +69,8 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtils2Kt.initDefaultSourceMappingIfNeeded;
 import static org.jetbrains.kotlin.load.java.JvmAbi.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_GET;
+import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_SET;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -1020,6 +1022,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @Override
             public void visitSuperExpression(@NotNull KtSuperExpression expression) {
                 lookupInContext(ExpressionCodegen.getSuperCallLabelTarget(context, expression));
+            }
+
+            @Override
+            public void visitArrayAccessExpression(@NotNull KtArrayAccessExpression expression) {
+                ResolvedCall<FunctionDescriptor> resolvedGetCall = bindingContext.get(INDEXED_LVALUE_GET, expression);
+                if (resolvedGetCall != null) {
+                    ReceiverValue receiver = resolvedGetCall.getDispatchReceiver();
+                    lookupReceiver(receiver);
+                }
+
+                ResolvedCall<FunctionDescriptor> resolvedSetCall = bindingContext.get(INDEXED_LVALUE_SET, expression);
+                if (resolvedSetCall != null) {
+                    ReceiverValue receiver = resolvedSetCall.getDispatchReceiver();
+                    lookupReceiver(receiver);
+                }
+                super.visitArrayAccessExpression(expression);
             }
         };
 

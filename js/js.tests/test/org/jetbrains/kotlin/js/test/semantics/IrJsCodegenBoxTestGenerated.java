@@ -3136,6 +3136,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/closures/kt11634_4.kt");
         }
 
+        @TestMetadata("kt19389.kt")
+        public void testKt19389() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/kt19389.kt");
+        }
+
+        @TestMetadata("kt19389_set.kt")
+        public void testKt19389_set() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/kt19389_set.kt");
+        }
+
         @TestMetadata("kt2151.kt")
         public void testKt2151() throws Exception {
             runTest("compiler/testData/codegen/box/closures/kt2151.kt");
