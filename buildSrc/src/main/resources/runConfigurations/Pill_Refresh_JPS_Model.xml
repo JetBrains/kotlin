@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="[PILL] Refresh PILL Model" type="GradleRunConfiguration" factoryName="Gradle" singleton="true">
+  <configuration default="false" name="[Pill] Refresh PILL Model" type="GradleRunConfiguration" factoryName="Gradle" singleton="true">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />

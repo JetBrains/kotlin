@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="[PILL] JVM Backend Tests" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="[Pill] JVM Backend Tests" type="JUnit" factoryName="JUnit">
     <module name="compiler.test" />
     <extension name="coverage">
       <pattern>

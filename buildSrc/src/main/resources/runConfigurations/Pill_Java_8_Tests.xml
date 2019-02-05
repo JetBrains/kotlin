@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="[PILL] Java 8 Tests" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="[Pill] Java 8 Tests" type="JUnit" factoryName="JUnit">
     <module name="tests-java8.test" />
     <extension name="coverage">
       <pattern>

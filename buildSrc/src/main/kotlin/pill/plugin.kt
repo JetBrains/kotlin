@@ -176,7 +176,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     private fun removeJpsAndPillRunConfigurations() {
         File(projectDir, ".idea/runConfigurations")
             .walk()
-            .filter { (it.name.startsWith("JPS_") || it.name.startsWith("PILL_")) && it.extension.toLowerCase() == "xml" }
+            .filter { (it.name.startsWith("JPS_") || it.name.startsWith("Pill_")) && it.extension.toLowerCase() == "xml" }
             .forEach { it.delete() }
     }
 
