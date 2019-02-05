@@ -31,6 +31,7 @@ abstract class Render {
                 "text" -> TextRender()
                 "html" -> HTMLRender()
                 "teamcity" -> TeamCityStatisticsRender()
+                "statistics" -> StatisticsRender()
                 else -> error("Unknown render $name")
             }
     }

@@ -185,9 +185,18 @@ task slackReport(type: RegressionsReporter) {
     // Create folder for report (root Kotlin project settings make create report in separate folder).
     def reportDirectory = outputReport.substring(0, outputReport.lastIndexOf("/"))
     mkdir reportDirectory
+    mkdir "../targetsResults"
     currentBenchmarksReportFile = "${buildDir.absolutePath}/${nativeJson}"
     analyzer = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
             "${rootBuildDirectory}/${analyzerToolDirectory}")
     htmlReport = outputReport
     defaultBranch = project.findProperty('kotlin.native.default.branch') ?: "master"
+    def target = System.getProperty("os.name")
+    summaryFile = "../targetsResults/${target}.txt"
+}
+
+task slackSummary(type: RegressionsSummaryReporter) {
+    targetsResultFiles = ["Linux": "../targetsResults/Linux.txt",
+                          "MacOSX": "../targetsResults/Mac OS X.txt",
+                          "Windows": "../targetsResults/Windows 10.txt"]
 }

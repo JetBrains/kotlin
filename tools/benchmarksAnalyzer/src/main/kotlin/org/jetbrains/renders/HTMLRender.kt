@@ -468,6 +468,26 @@ class HTMLRender: Render() {
                 }
             }
         }
+
+        if (!report.addedBenchmarks.isEmpty()) {
+            renderCollapsedData("Added", true) {
+                table {
+                    attributes["class"] = "table table-sm table-striped table-hover"
+                    attributes["style"] = "width:initial; font-size: 11pt;"
+                    renderTableFromList(report.addedBenchmarks, "Added benchmarks")
+                }
+            }
+        }
+
+        if (!report.removedBenchmarks.isEmpty()) {
+            renderCollapsedData("Removed", true) {
+                table {
+                    attributes["class"] = "table table-sm table-striped table-hover"
+                    attributes["style"] = "width:initial; font-size: 11pt;"
+                    renderTableFromList(report.removedBenchmarks, "Removed benchmarks")
+                }
+            }
+        }
     }
 
     private fun BodyTag.renderPerformanceSummary(report: SummaryBenchmarksReport) {
