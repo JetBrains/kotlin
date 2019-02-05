@@ -258,6 +258,15 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         }
     }
 
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            expression.receiver.accept(this, "receiver")
+            for ((i, arg) in expression.arguments.withIndex()) {
+                arg.accept(this, i.toString())
+            }
+        }
+    }
+
     private inline fun IrElement.dumpLabeledElementWith(label: String, body: () -> Unit) {
         printer.println(accept(elementRenderer, null).withLabel(label))
         indented(body)

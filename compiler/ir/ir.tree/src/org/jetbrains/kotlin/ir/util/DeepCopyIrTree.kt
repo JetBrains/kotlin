@@ -652,12 +652,10 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
         IrDynamicOperatorExpressionImpl(
             expression.startOffset, expression.endOffset,
             expression.type,
-            expression.operator,
-            expression.valueArgumentsCount
+            expression.operator
         ).apply {
-            for (i in 0 until expression.valueArgumentsCount) {
-                putValueArgument(i, expression.getValueArgument(i)?.transform())
-            }
+            receiver = expression.receiver.transform()
+            expression.arguments.mapTo(arguments) { it.transform() }
         }
 
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression): IrDynamicMemberExpression =

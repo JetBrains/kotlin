@@ -10,11 +10,22 @@ interface IrDynamicExpression : IrExpression
 interface IrDynamicOperatorExpression : IrDynamicExpression {
     val operator: IrDynamicOperator
 
-    val valueArgumentsCount: Int
-    fun getValueArgument(index: Int): IrExpression?
-    fun putValueArgument(index: Int, valueArgument: IrExpression?)
-    fun removeValueArgument(index: Int)
+    var receiver: IrExpression
+
+    val arguments: MutableList<IrExpression>
 }
+
+var IrDynamicOperatorExpression.left: IrExpression
+    get() = receiver
+    set(value) {
+        receiver = value
+    }
+
+var IrDynamicOperatorExpression.right: IrExpression
+    get() = arguments[0]
+    set(value) {
+        arguments[0] = value
+    }
 
 interface IrDynamicMemberExpression : IrDynamicExpression {
     val memberName: String

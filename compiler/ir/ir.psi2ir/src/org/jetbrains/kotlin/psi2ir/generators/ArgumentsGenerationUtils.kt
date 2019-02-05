@@ -280,7 +280,7 @@ fun Generator.getSuperQualifier(resolvedCall: ResolvedCall<*>): ClassDescriptor?
     return getOrFail(BindingContext.REFERENCE_TARGET, superCallExpression.instanceReference) as ClassDescriptor
 }
 
-fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuilder {
+fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>, isVariableAsFunctionCall: Boolean = false): CallBuilder {
     if (resolvedCall.isExtensionInvokeCall()) {
         return pregenerateExtensionInvokeCall(resolvedCall)
     }

@@ -41,6 +41,11 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irJsText/dynamic"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("dynamicCall.kt")
+        public void testDynamicCall() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicCall.kt");
+        }
+
         @TestMetadata("dynamicMemberAccess.kt")
         public void testDynamicMemberAccess() throws Exception {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberAccess.kt");
