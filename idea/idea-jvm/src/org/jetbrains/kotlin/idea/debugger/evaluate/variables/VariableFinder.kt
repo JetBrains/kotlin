@@ -237,7 +237,8 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
         val variables = frameProxy.safeVisibleVariables()
 
         // Local variables – direct search
-        findLocalVariable(variables, kind, kind.parameterName)?.let { return it }
+        val namePredicate = fun(name: String) = name == kind.parameterName || name.startsWith(kind.parameterName + '$')
+        findLocalVariable(variables, kind, namePredicate)?.let { return it }
 
         // Recursive search in local receiver variables
         findCapturedVariableInReceiver(variables, kind)?.let { return it }
@@ -311,19 +312,43 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
     }
 
     private fun findLocalVariable(variables: List<LocalVariableProxyImpl>, kind: VariableKind, name: String): Result? {
+        return findLocalVariable(variables, kind) { it == name }
+    }
+
+    private fun findLocalVariable(
+        variables: List<LocalVariableProxyImpl>,
+        kind: VariableKind,
+        namePredicate: (String) -> Boolean
+    ): Result? {
         val inlineDepth = getInlineDepth(variables)
 
         if (inlineDepth > 0) {
-            val nameInlineAwareRegex = getLocalVariableNameRegexInlineAware(name)
+            val inlineAwareNamePredicate = fun(name: String): Boolean {
+                var endIndex = name.length
+                var depth = 0
+
+                val suffixLen = INLINE_FUN_VAR_SUFFIX.length
+                while (endIndex >= suffixLen) {
+                    if (name.substring(endIndex - suffixLen, endIndex) != INLINE_FUN_VAR_SUFFIX) {
+                        break
+                    }
+
+                    depth++
+                    endIndex -= suffixLen
+                }
+
+                return namePredicate(name.take(endIndex))
+            }
+
             variables.namedEntitySequence()
-                .filter { it.name.matches(nameInlineAwareRegex) && getInlineDepth(it.name) == inlineDepth && kind.typeMatches(it.type) }
+                .filter { inlineAwareNamePredicate(it.name) && getInlineDepth(it.name) == inlineDepth && kind.typeMatches(it.type) }
                 .mapNotNull { it.unwrapAndCheck(kind) }
                 .firstOrNull()
                 ?.let { return it }
         }
 
         variables.namedEntitySequence()
-            .filter { it.name == name && kind.typeMatches(it.type) }
+            .filter { namePredicate(it.name) && kind.typeMatches(it.type) }
             .mapNotNull { it.unwrapAndCheck(kind) }
             .firstOrNull()
             ?.let { return it }
