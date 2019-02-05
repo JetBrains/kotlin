@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
@@ -46,7 +46,8 @@ internal val jvmPhases = namedIrFilePhase(
             jvmLateinitPhase then
 
             moveCompanionObjectFieldsPhase then
-            constAndJvmFieldPropertiesPhase then
+            constPhase then
+            propertiesToFieldsPhase then
             propertiesPhase then
             annotationPhase then
 
