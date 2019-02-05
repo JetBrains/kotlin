@@ -3,10 +3,9 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.report
+package org.jetbrains.kotlin.gradle.report
 
-import org.jetbrains.kotlin.incremental.ICReporter
-
-internal interface RemoteICReporter : ICReporter {
-    fun flush()
+enum class BuildReportMode {
+    SIMPLE,
+    VERBOSE
 }

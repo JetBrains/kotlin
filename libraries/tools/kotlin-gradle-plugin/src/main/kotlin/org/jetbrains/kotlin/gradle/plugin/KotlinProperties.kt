@@ -59,6 +59,9 @@ internal class PropertiesProvider(private val project: Project) {
     val buildReportEnabled: Boolean
         get() = booleanProperty("kotlin.build.report.enable") ?: false
 
+    val buildReportVerbose: Boolean
+        get() = booleanProperty("kotlin.build.report.verbose") ?: false
+
     val buildReportDir: File?
         get() = property("kotlin.build.report.dir")?.let { File(it) }
 

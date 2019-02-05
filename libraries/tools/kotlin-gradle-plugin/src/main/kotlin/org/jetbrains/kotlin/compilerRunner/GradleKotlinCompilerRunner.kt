@@ -142,7 +142,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             buildFile = buildFile,
             outputFiles = environment.outputFiles.toList(),
             taskPath = task.path,
-            reportExecutionResult = environment.reportExecutionResult
+            buildReportMode = environment.buildReportMode
         )
         TaskLoggers.put(task.path, task.logger)
         runCompilerAsync(workArgs)

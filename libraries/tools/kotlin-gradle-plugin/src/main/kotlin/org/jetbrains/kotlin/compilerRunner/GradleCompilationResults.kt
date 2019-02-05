@@ -39,7 +39,8 @@ internal class GradleCompilationResults(
                     log.kotlinDebug { "compiler exit code: $exitCode" }
                 }
             }
-            CompilationResultCategory.IC_LOG.code -> {
+            CompilationResultCategory.BUILD_REPORT_LINES.code,
+            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code -> {
                 @Suppress("UNCHECKED_CAST")
                 icLogLines = value as? List<String>
             }

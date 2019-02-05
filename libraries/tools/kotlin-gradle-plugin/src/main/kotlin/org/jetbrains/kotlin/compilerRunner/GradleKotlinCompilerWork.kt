@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
@@ -54,7 +55,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val buildFile: File?,
     val outputFiles: List<File>,
     val taskPath: String,
-    val reportExecutionResult: Boolean
+    val buildReportMode: BuildReportMode?
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -92,7 +93,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val buildFile = config.buildFile
     private val outputFiles = config.outputFiles
     private val taskPath = config.taskPath
-    private val reportExecutionResult = config.reportExecutionResult
+    private val buildReportMode = config.buildReportMode
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -253,9 +254,11 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         val knownChangedFiles = icEnv.changedFiles as? ChangedFiles.Known
 
         val requestedCompilationResults = EnumSet.of(CompilationResultCategory.IC_COMPILE_ITERATION)
-        if (reportExecutionResult) {
-            requestedCompilationResults.add(CompilationResultCategory.IC_LOG)
-        }
+        when (buildReportMode) {
+            BuildReportMode.SIMPLE -> CompilationResultCategory.BUILD_REPORT_LINES
+            BuildReportMode.VERBOSE -> CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES
+            null -> null
+        }?.let { requestedCompilationResults.add(it) }
 
         val compilationOptions = IncrementalCompilationOptions(
             areFileChangesKnown = knownChangedFiles != null,
@@ -366,7 +369,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
 
     private inline fun reportExecutionResultIfNeeded(fn: () -> TaskExecutionResult) {
-        if (reportExecutionResult) {
+        if (buildReportMode != null) {
             val result = fn()
             TaskExecutionResults[taskPath] = result
         }

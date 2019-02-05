@@ -43,10 +43,12 @@ internal fun configureBuildReporter(gradle: Gradle, log: Logger) {
     val reporter = KotlinBuildReporter(perfReportFile)
     gradle.addBuildListener(reporter)
 
+    val buildReportMode = if (properties.buildReportVerbose) BuildReportMode.VERBOSE else BuildReportMode.SIMPLE
+
     gradle.taskGraph.whenReady { graph ->
         graph.allTasks.asSequence()
             .filterIsInstance<AbstractKotlinCompile<*>>()
-            .forEach { it.reportExecutionResult = true }
+            .forEach { it.buildReportMode = buildReportMode }
     }
 
     log.kotlinDebug { "Configured Kotlin build reporter" }

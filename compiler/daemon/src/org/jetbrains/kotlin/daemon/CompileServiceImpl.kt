@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
-import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
-import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
-import org.jetbrains.kotlin.daemon.report.RemoteICReporter
+import org.jetbrains.kotlin.daemon.report.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -501,7 +498,7 @@ class CompileServiceImpl(
         }
         args.freeArgs = freeArgsWithoutKotlinFiles
 
-        val reporter = RemoteICReporter(servicesFacade, compilationResults, incrementalCompilationOptions)
+        val reporter = getICReporter(servicesFacade, compilationResults, incrementalCompilationOptions)
 
         val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
             ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
@@ -533,8 +530,6 @@ class CompileServiceImpl(
         compilerMessageCollector: MessageCollector,
         daemonMessageReporter: DaemonMessageReporter
     ): ExitCode {
-        val reporter = RemoteICReporter(servicesFacade, compilationResults, incrementalCompilationOptions)
-
         val moduleFile = k2jvmArgs.buildFile?.let(::File)
         assert(moduleFile?.exists() ?: false) { "Module does not exist ${k2jvmArgs.buildFile}" }
 
@@ -574,6 +569,7 @@ class CompileServiceImpl(
 
         val workingDir = incrementalCompilationOptions.workingDir
 
+        val reporter = getICReporter(servicesFacade, compilationResults, incrementalCompilationOptions)
         val modulesApiHistory = incrementalCompilationOptions.run {
             reporter.report { "Use module detection: ${multiModuleICSettings.useModuleDetection}" }
 

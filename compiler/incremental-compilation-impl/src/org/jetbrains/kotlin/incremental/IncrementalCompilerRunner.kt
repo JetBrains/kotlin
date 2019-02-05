@@ -144,10 +144,6 @@ abstract class IncrementalCompilerRunner<
 
         if (dirtySourcesSinceLastTimeFile.exists()) {
             val files = dirtySourcesSinceLastTimeFile.readLines().map(::File)
-            if (files.isNotEmpty()) {
-                reporter.reportVerbose { "Source files added since last compilation: ${reporter.pathsAsString(files)}" }
-            }
-
             dirtyFiles.add(files, "was not compiled last time")
         }
     }

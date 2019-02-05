@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import java.io.File
 
@@ -16,7 +17,7 @@ internal class GradleCompilerEnvironment(
     messageCollector: GradlePrintingMessageCollector,
     outputItemsCollector: OutputItemsCollector,
     val outputFiles: FileCollection,
-    val reportExecutionResult: Boolean,
+    val buildReportMode: BuildReportMode?,
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment? = null
 ) : CompilerEnvironment(Services.EMPTY, messageCollector, outputItemsCollector) {
     val toolsJar: File? by lazy { findToolsJar() }

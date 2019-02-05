@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.incremental.utils
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.incremental.ICReporter
+import org.jetbrains.kotlin.incremental.ICReporterBase
 import java.io.File
 
-class TestICReporter : ICReporter {
+class TestICReporter : ICReporterBase() {
     private val compiledSourcesMutable = arrayListOf<File>()
 
     val compiledSources: List<File>
