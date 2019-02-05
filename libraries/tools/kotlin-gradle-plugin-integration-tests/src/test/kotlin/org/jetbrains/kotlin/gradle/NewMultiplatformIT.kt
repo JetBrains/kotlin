@@ -988,8 +988,8 @@ class NewMultiplatformIT : BaseGradleIT() {
             // Check that bitcode is disabled for iOS simulator.
             build("linkReleaseFrameworkIosSim", "linkDebugFrameworkIosSim") {
                 assertSuccessful()
-                assertFileExists("build/bin/iosSim/releaseFramework/native-binary.framework")
-                assertFileExists("build/bin/iosSim/debugFramework/native-binary.framework")
+                assertFileExists("build/bin/iosSim/releaseFramework/native_binary.framework")
+                assertFileExists("build/bin/iosSim/debugFramework/native_binary.framework")
                 checkFrameworkCompilationCommandLine {
                     assertFalse(it.contains("-Xembed-bitcode"))
                     assertFalse(it.contains("-Xembed-bitcode-marker"))
