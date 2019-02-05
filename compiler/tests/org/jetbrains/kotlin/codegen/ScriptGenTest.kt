@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -124,6 +125,7 @@ class ScriptGenTest : CodegenTestCase() {
             addKotlinSourceRoots(sourcePaths.map { "${KotlinTestUtils.getTestDataPathBase()}/codegen/$it" })
             addJvmClasspathRoots(additionalDependencies)
         }
+        loadScriptingPlugin(configuration)
 
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
