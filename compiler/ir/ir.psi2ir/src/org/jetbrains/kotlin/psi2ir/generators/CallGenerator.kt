@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
@@ -165,35 +166,52 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
     ): IrExpression {
         val getMethodDescriptor = descriptor.unwrappedGetMethod
         val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
+        val irType = descriptor.type.toIrType()
 
-        return if (getMethodDescriptor != null) {
-            call.callReceiver.adjustForCallee(getMethodDescriptor).call { dispatchReceiverValue, extensionReceiverValue ->
-                val getterSymbol = context.symbolTable.referenceFunction(getMethodDescriptor.original)
-                IrGetterCallImpl(
-                    startOffset, endOffset,
-                    descriptor.type.toIrType(),
-                    getterSymbol,
-                    getMethodDescriptor,
-                    descriptor.typeParametersCount,
-                    dispatchReceiverValue?.load(),
-                    extensionReceiverValue?.load(),
-                    IrStatementOrigin.GET_PROPERTY,
-                    superQualifierSymbol
-                ).apply {
-                    putTypeArguments(call.typeArguments) { it.toIrType() }
-                }
-            }
-        } else {
+        return if (getMethodDescriptor == null) {
             call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
                 val fieldSymbol = context.symbolTable.referenceField(descriptor.original)
                 IrGetFieldImpl(
                     startOffset, endOffset,
                     fieldSymbol,
-                    descriptor.type.toIrType(),
+                    irType,
                     dispatchReceiverValue?.load(),
                     IrStatementOrigin.GET_PROPERTY,
                     superQualifierSymbol
                 )
+            }
+        } else {
+            call.callReceiver.adjustForCallee(getMethodDescriptor).call { dispatchReceiverValue, extensionReceiverValue ->
+                if (descriptor.isDynamic()) {
+                    val dispatchReceiver = dispatchReceiverValue?.load()
+                        ?: throw AssertionError("Dynamic member reference $descriptor should have a dispatch receiver")
+
+                    if (extensionReceiverValue != null) {
+                        throw AssertionError("Dynamic member reference $descriptor should have no extension receiver")
+                    }
+
+                    IrDynamicMemberExpressionImpl(
+                        startOffset, endOffset,
+                        irType,
+                        descriptor.name.asString(),
+                        dispatchReceiver
+                    )
+                } else {
+                    val getterSymbol = context.symbolTable.referenceFunction(getMethodDescriptor.original)
+                    IrGetterCallImpl(
+                        startOffset, endOffset,
+                        irType,
+                        getterSymbol,
+                        getMethodDescriptor,
+                        descriptor.typeParametersCount,
+                        dispatchReceiverValue?.load(),
+                        extensionReceiverValue?.load(),
+                        IrStatementOrigin.GET_PROPERTY,
+                        superQualifierSymbol
+                    ).apply {
+                        putTypeArguments(call.typeArguments) { it.toIrType() }
+                    }
+                }
             }
         }
     }
