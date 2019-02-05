@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -159,8 +158,7 @@ private fun ExtractionData.getResultTypeAndExpressions(
 
     val resultTypes = instructions.mapNotNull(::instructionToType)
     val commonSupertype = if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else module.builtIns.defaultReturnType
-    val resultType =
-        if (options.allowSpecialClassNames) commonSupertype else commonSupertype.approximateWithResolvableType(targetScope, false)
+    val resultType = commonSupertype.approximateWithResolvableType(targetScope, false)
 
     val expressions = instructions.mapNotNull { instructionToExpression(it, false) }
 
@@ -482,9 +480,6 @@ internal fun KotlinType.processTypeIfExtractable(
                 extractable
             }
 
-            options.allowSpecialClassNames && typeToCheck.isSpecial() ->
-                extractable
-
             typeToCheck.isError ->
                 false
 
@@ -536,7 +531,7 @@ internal class MutableParameter(
         } else originalType
     }
 
-    private val parameterTypeCandidates: List<KotlinType> by lazy {
+    private val allParameterTypeCandidates: List<KotlinType> by lazy {
         writable = false
 
         val typePredicate = and(typePredicates)
@@ -562,17 +557,12 @@ internal class MutableParameter(
         typeSet.toList()
     }
 
-    override fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<KotlinType> {
-        return if (!allowSpecialClassNames) {
-            parameterTypeCandidates.filter { it.isExtractable(targetScope) }
-        } else {
-            parameterTypeCandidates
-        }
+    override fun getParameterTypeCandidates(): List<KotlinType> {
+        return allParameterTypeCandidates.filter { it.isExtractable(targetScope) }
     }
 
-    override fun getParameterType(allowSpecialClassNames: Boolean): KotlinType {
-        return getParameterTypeCandidates(allowSpecialClassNames).firstOrNull() ?: defaultType
-    }
+    override val parameterType: KotlinType
+        get() = getParameterTypeCandidates().firstOrNull() ?: defaultType
 
     override fun copy(name: String, parameterType: KotlinType): Parameter = DelegatingParameter(this, name, parameterType)
 }
@@ -580,10 +570,9 @@ internal class MutableParameter(
 private class DelegatingParameter(
     val original: Parameter,
     override val name: String,
-    val parameterType: KotlinType
+    override val parameterType: KotlinType
 ) : Parameter by original {
     override fun copy(name: String, parameterType: KotlinType): Parameter = DelegatingParameter(original, name, parameterType)
-    override fun getParameterType(allowSpecialClassNames: Boolean) = parameterType
 }
 
 private fun ExtractionData.checkDeclarationsMovingOutOfScope(

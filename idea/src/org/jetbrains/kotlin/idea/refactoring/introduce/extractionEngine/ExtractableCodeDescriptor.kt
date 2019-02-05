@@ -56,9 +56,9 @@ interface Parameter {
     val mirrorVarName: String?
     val receiverCandidate: Boolean
 
-    fun getParameterType(allowSpecialClassNames: Boolean): KotlinType
+    val parameterType: KotlinType
 
-    fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<KotlinType>
+    fun getParameterTypeCandidates(): List<KotlinType>
 
     fun copy(name: String, parameterType: KotlinType): Parameter
 }
@@ -167,7 +167,7 @@ interface OutputValue {
         val parameter: Parameter,
         override val originalExpressions: List<KtExpression>
     ) : OutputValue {
-        override val valueType: KotlinType get() = parameter.getParameterType(false)
+        override val valueType: KotlinType get() = parameter.parameterType
     }
 
     class Initializer(

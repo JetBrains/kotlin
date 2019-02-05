@@ -435,7 +435,7 @@ fun doExtractFunction(fixture: CodeInsightTestFixture, file: KtFile) {
                     val allParameters = listOfNotNull(descriptor.receiverParameter) + descriptor.parameters
                     val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
                     val actualTypes = allParameters.map {
-                        it.getParameterTypeCandidates(false).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
+                        it.getParameterTypeCandidates().map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                     }.joinToString()
 
                     if (actualNames.size != 1 || expectedNames.isNotEmpty()) {

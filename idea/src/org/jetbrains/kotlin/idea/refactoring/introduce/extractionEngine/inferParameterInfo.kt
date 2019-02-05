@@ -149,15 +149,13 @@ internal fun ExtractionData.inferParametersInfo(
     val existingParameterNames = hashSetOf<String>()
     for ((descriptorToExtract, parameter) in extractedDescriptorToParameter) {
         if (!parameter
-                .getParameterType(options.allowSpecialClassNames)
+                .parameterType
                 .processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options, targetScope)
         ) continue
 
         with(parameter) {
             if (currentName == null) {
-                currentName =
-                        KotlinNameSuggester.suggestNamesByType(getParameterType(options.allowSpecialClassNames), varNameValidator, "p")
-                            .first()
+                currentName = KotlinNameSuggester.suggestNamesByType(parameterType, varNameValidator, "p").first()
             }
 
             require(currentName != null)

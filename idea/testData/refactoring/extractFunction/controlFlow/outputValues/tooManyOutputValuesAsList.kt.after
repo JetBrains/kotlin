@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// OPTIONS: true, true, false, false, false, false
+// OPTIONS: true, true, false, false, false
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int

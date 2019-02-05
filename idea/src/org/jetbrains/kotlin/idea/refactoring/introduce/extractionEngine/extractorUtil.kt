@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.Weak
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
-import org.jetbrains.kotlin.psi.codeFragmentUtil.DEBUG_TYPE_REFERENCE_STRING
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -97,16 +96,10 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
             }
         )
 
-        fun KotlinType.typeAsString(): String {
-            return if (config.descriptor.extractionData.options.allowSpecialClassNames && isSpecial()) {
-                DEBUG_TYPE_REFERENCE_STRING
-            } else {
-                renderer.renderType(this)
-            }
-        }
+        fun KotlinType.typeAsString() = renderer.renderType(this)
 
         config.descriptor.receiverParameter?.let {
-            val receiverType = it.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames)
+            val receiverType = it.parameterType
             val receiverTypeAsString = receiverType.typeAsString()
             receiver(if (receiverType.isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
         }
@@ -114,10 +107,7 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
         name(config.generatorOptions.dummyName ?: config.descriptor.name)
 
         config.descriptor.parameters.forEach { parameter ->
-            param(
-                parameter.name,
-                parameter.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames).typeAsString()
-            )
+            param(parameter.name, parameter.parameterType.typeAsString())
         }
 
         with(config.descriptor.returnType) {
@@ -225,8 +215,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
         return if (matched) newControlFlow else null
     }
 
-    val unifierParameters =
-        parameters.map { UnifierParameter(it.originalDescriptor, it.getParameterType(extractionData.options.allowSpecialClassNames)) }
+    val unifierParameters = parameters.map { UnifierParameter(it.originalDescriptor, it.parameterType) }
 
     val unifier = KotlinPsiUnifier(unifierParameters, true)
 
