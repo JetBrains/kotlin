@@ -31,6 +31,8 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.DocumentationURLs.LATE_INITIALIZED_PROPERTIES_AND_VARIABLES_URL
+import org.jetbrains.kotlin.idea.DocumentationURLs.TAIL_RECURSIVE_FUNCTIONS_URL
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -62,6 +64,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+private object DocumentationURLs {
+    const val LATE_INITIALIZED_PROPERTIES_AND_VARIABLES_URL =
+        "http://kotlinlang.org/docs/reference/properties.html#late-initialized-properties-and-variables"
+
+    const val TAIL_RECURSIVE_FUNCTIONS_URL =
+        "http://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions"
+}
 
 class HtmlClassifierNamePolicy(val base: ClassifierNamePolicy) : ClassifierNamePolicy {
     override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
@@ -281,8 +291,17 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 return renderKotlinDeclaration(origin, quickNavigation)
             } else if (element.isModifier()) {
                 when(element.text) {
-                    KtTokens.LATEINIT_KEYWORD.value -> return """lateinit allows initializing a <a href="http://kotlinlang.org/docs/reference/properties.html#late-initialized-properties-and-variables">non-null property outside of a constructor</a>"""
-                    KtTokens.TAILREC_KEYWORD.value -> return """tailrec marks a function as <a href="http://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions">tail-recursive</a> (allowing the compiler to replace recursion with iteration)"""
+                    KtTokens.LATEINIT_KEYWORD.value -> {
+                        return "lateinit allows initializing a ${a(
+                            LATE_INITIALIZED_PROPERTIES_AND_VARIABLES_URL,
+                            "non-null property outside of a constructor"
+                        )}"
+                    }
+
+                    KtTokens.TAILREC_KEYWORD.value -> {
+                        return "tailrec marks a function as ${a(TAIL_RECURSIVE_FUNCTIONS_URL, "tail-recursive")} " +
+                                "(allowing the compiler to replace recursion with iteration)"
+                    }
                 }
             }
 
@@ -383,7 +402,6 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             }
         }
 
-
         private fun StringBuilder.renderDefinition(descriptor: DeclarationDescriptor, renderer: DescriptorRenderer) {
             if (!DescriptorUtils.isLocal(descriptor)) {
                 val containingDeclaration = descriptor.containingDeclaration
@@ -467,6 +485,10 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
         private inline fun StringBuilder.wrapTag(tag: String, crossinline body: () -> Unit) {
             wrap("<$tag>", "</$tag>", body)
+        }
+
+        private fun a(url: String, text: String): String {
+            return """<a href="$url">$text</a>"""
         }
 
         private fun mixKotlinToJava(

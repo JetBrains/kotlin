@@ -10,6 +10,7 @@
       <w>infos</w>
       <w>intrinsics</w>
       <w>kdoc</w>
+      <w>lateinit</w>
       <w>memoize</w>
       <w>memoized</w>
       <w>multiline</w>
@@ -23,6 +24,7 @@
       <w>subclassed</w>
       <w>subgraph</w>
       <w>substep</w>
+      <w>tailrec</w>
     </words>
   </dictionary>
 </component>
