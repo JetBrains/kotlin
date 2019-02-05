@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RedundantEnumConstructorInvocationInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = enumEntryVisitor(fun(enumEntry) {
-        val valueArgumentList = enumEntry.valueArgumentList() ?: return
+        val valueArgumentList = enumEntry.valueArgumentListIfEmpty() ?: return
         holder.registerProblem(
             valueArgumentList,
             "Redundant enum constructor invocation",
@@ -39,12 +39,12 @@ private class RemoveEnumConstructorInvocationFix : LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         descriptor.psiElement.getStrictParentOfType<KtEnumEntry>()?.containingClass()?.body?.getChildrenOfType<KtEnumEntry>()?.forEach {
-            it.valueArgumentList()?.delete()
+            it.valueArgumentListIfEmpty()?.delete()
         }
     }
 }
 
-private fun KtEnumEntry.valueArgumentList(): KtValueArgumentList? {
+private fun KtEnumEntry.valueArgumentListIfEmpty(): KtValueArgumentList? {
     val superTypeCallEntry = initializerList?.initializers?.singleOrNull() as? KtSuperTypeCallEntry ?: return null
     val valueArgumentList = superTypeCallEntry.valueArgumentList ?: return null
     if (valueArgumentList.arguments.isNotEmpty()) return null
