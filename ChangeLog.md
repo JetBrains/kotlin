@@ -1,5 +1,52 @@
 # CHANGELOG
 
+## 1.3.21
+
+### Compiler
+
+#### Fixes
+
+- [`KT-29475`](https://youtrack.jetbrains.com/issue/KT-29475) IllegalArgumentException at getAbstractTypeFromDescriptor with deeply nested expression inside function named with a right parenthesis
+- [`KT-29479`](https://youtrack.jetbrains.com/issue/KT-29479) WARN: Could not read file on Java classes from JDK 11+
+- [`KT-29360`](https://youtrack.jetbrains.com/issue/KT-29360) Kotlin 1.3.20-eap-100: This marker function should never been called. Looks like compiler did not eliminate it properly. Please, report an issue if you caught this exception.
+
+### IDE
+
+#### Fixes
+
+- [`KT-29486`](https://youtrack.jetbrains.com/issue/KT-29486) Throwable: "Could not find correct module information" through IdeaKotlinUastResolveProviderService.getBindingContext() and ReplaceWithAnnotationAnalyzer.analyzeOriginal()
+- [`KT-29394`](https://youtrack.jetbrains.com/issue/KT-29394) Kotlin 1.3.20 EAP: Excess log messages with `kotlin.parallel.tasks.in.project=true`
+- [`KT-29474`](https://youtrack.jetbrains.com/issue/KT-29474) Regression in 1.3.20: Kotlin IDE plugin parses all *.gradle.kts files when any class in buildSrc is opened
+- [`KT-29290`](https://youtrack.jetbrains.com/issue/KT-29290) Warning "function returning deferred with a name that does not end with async" should not be displayed for let/also/apply...
+- [`KT-29494`](https://youtrack.jetbrains.com/issue/KT-29494) Don't report BooleanLiteralArgumentInspection in batch (offline) mode with INFORMATION severity
+- [`KT-29525`](https://youtrack.jetbrains.com/issue/KT-29525) turning on parallel tasks causes java.lang.NoClassDefFoundError: Could not initialize class kotlin.Unit sometimes
+- [`KT-27769`](https://youtrack.jetbrains.com/issue/KT-27769) Change the DSL marker icon
+- [`KT-29118`](https://youtrack.jetbrains.com/issue/KT-29118) Log polluted with multiple "Kotlin does not support alternative resolve" reports
+
+### IDE. Multiplatform
+
+- [`KT-29476`](https://youtrack.jetbrains.com/issue/KT-29476) 1.3.20 MPP Android publishing common api configuration with runtime scope
+- [`KT-29725`](https://youtrack.jetbrains.com/issue/KT-29725) MPP Gradle 5.2: NoSuchMethodError in WrapUtil
+- [`KT-29485`](https://youtrack.jetbrains.com/issue/KT-29485) In MPP with Gradle module metadata, POM rewriting does not replace the root module publication with a platform one if the former has a custom artifact ID
+- [`KT-28128`](https://youtrack.jetbrains.com/issue/KT-28128) MPP Kotlin/Native re-downloads POM files on IDE Gradle refresh
+
+### IDE. REPL
+
+- [`KT-29400`](https://youtrack.jetbrains.com/issue/KT-29400) IDE REPL in Gradle project: "IllegalStateException: consoleView must not be null" on module build
+
+### Tools. CLI
+
+- [`KT-29596`](https://youtrack.jetbrains.com/issue/KT-29596) "AssertionError: Cannot load extensions/common.xml from kotlin-compiler.jar" on IBM JDK 8
+
+### Tools. Scripts
+
+- [`KT-29490`](https://youtrack.jetbrains.com/issue/KT-29490) Regression in 1.3.20: Kotlin Jsr223 script engine cannot handle functional return types
+
+### Tools. Kapt
+
+- [`KT-29481`](https://youtrack.jetbrains.com/issue/KT-29481) Annotation processors run on androidTest source set even without the kaptAndroidTest declaration
+- [`KT-29513`](https://youtrack.jetbrains.com/issue/KT-29513) kapt throws "ZipException: zip END header not found", when Graal SVM jar in classpath
+
 ## 1.3.20
 
 ### Android
