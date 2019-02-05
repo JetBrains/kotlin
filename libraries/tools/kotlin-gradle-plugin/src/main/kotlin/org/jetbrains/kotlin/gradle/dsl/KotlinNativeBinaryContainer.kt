@@ -26,14 +26,14 @@ open class KotlinNativeBinaryContainer @Inject constructor(
 ) : AbstractKotlinNativeBinaryContainer(),
     DomainObjectSet<NativeBinary> by backingContainer
 {
-    override val project: Project
+    final override val project: Project
         get() = target.project
 
     private val defaultCompilation: KotlinNativeCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
     private val nameToBinary = mutableMapOf<String, NativeBinary>()
-    internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = WrapUtil.toNamedDomainObjectSet(PrefixGroup::class.java)
+    internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = project.container(PrefixGroup::class.java)
 
     // region DSL getters.
     private inline fun <reified T : NativeBinary> getBinary(
