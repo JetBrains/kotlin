@@ -32,11 +32,7 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtFunction;
-import org.jetbrains.kotlin.psi.KtSuperTypeListEntry;
-import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -256,7 +252,7 @@ public class JvmCodegenUtil {
             }
         }
 
-        return file instanceof KtFile && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode((KtFile) file);
+        return file instanceof KtCodeFragment;
     }
 
     @Nullable

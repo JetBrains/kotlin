@@ -149,7 +149,6 @@ fun PsiElement.isInJavaSourceRoot(): Boolean =
 fun KtFile.createTempCopy(text: String? = null): KtFile {
     val tmpFile = KtPsiFactory(this).createAnalyzableFile(name, text ?: this.text ?: "", this)
     tmpFile.originalFile = this
-    tmpFile.suppressDiagnosticsInDebugMode = suppressDiagnosticsInDebugMode
     return tmpFile
 }
 
