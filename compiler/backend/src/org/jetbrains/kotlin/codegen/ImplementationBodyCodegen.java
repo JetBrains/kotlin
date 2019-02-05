@@ -67,6 +67,7 @@ import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isGenericToArray;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isNonGenericToArray;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.getDelegatedLocalVariableMetadata;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtils2Kt.initDefaultSourceMappingIfNeeded;
 import static org.jetbrains.kotlin.load.java.JvmAbi.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_GET;
@@ -975,7 +976,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         ClassDescriptor classDescriptor = ((ConstructorDescriptor) containingDeclaration).getConstructedClass();
                         if (classDescriptor == ImplementationBodyCodegen.this.descriptor) return;
                     }
-                    lookupInContext(descriptor);
+                    if (lookupInContext(descriptor)) {
+                        if (isDelegatedLocalVariable(descriptor)) {
+                            VariableDescriptor metadata = getDelegatedLocalVariableMetadata((VariableDescriptor) descriptor, bindingContext);
+                            lookupInContext(metadata);
+                        }
+                    }
                 }
             }
 
@@ -998,8 +1004,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
 
-            private void lookupInContext(@NotNull DeclarationDescriptor toLookup) {
-                context.lookupInContext(toLookup, StackValue.LOCAL_0, state, true);
+            private boolean lookupInContext(@NotNull DeclarationDescriptor toLookup) {
+                return context.lookupInContext(toLookup, StackValue.LOCAL_0, state, true) != null;
             }
 
             @Override
