@@ -78,7 +78,7 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
 
         frameworksToBuild.let {
             it.frameworks.forEach { framework ->
-                runBuildTasks(
+                GradleKonanBuild.runBuildTasks(
                     project,
                     "$taskDescription ${it.name}",
                     listOf("${framework.name}:$taskName"),

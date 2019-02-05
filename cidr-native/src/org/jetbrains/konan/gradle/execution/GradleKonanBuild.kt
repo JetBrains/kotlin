@@ -110,6 +110,53 @@ object GradleKonanBuild {
             runBuildTasks(project, message("execution.compileConfiguration.name", name), listOf(artifactBuildTaskName), projectPath, false)
         }
     }
+
+    fun runBuildTasks(
+        project: Project,
+        executionName: String,
+        taskNames: List<String>,
+        projectPath: String,
+        activateToolWindowBeforeRun: Boolean,
+        parameters: String? = null
+    ): Boolean {
+        val settings = ExternalSystemTaskExecutionSettings().apply {
+            this.executionName = executionName
+            externalProjectPath = projectPath
+            this.taskNames = taskNames
+            externalSystemIdString = GradleConstants.SYSTEM_ID.id
+            scriptParameters = parameters
+        }
+
+        val userData = UserDataHolderBase()
+        userData.putUserData(PROGRESS_LISTENER_KEY, BuildViewManager::class.java)
+
+        val result = Ref.create(false)
+        val finished = Semaphore(1)
+        val taskCallback = object : TaskCallback {
+            override fun onSuccess() {
+                result.set(true)
+                finished.up()
+            }
+
+            override fun onFailure() {
+                result.set(false)
+                finished.up()
+            }
+        }
+
+        ExternalSystemUtil.runTask(
+            settings,
+            DefaultRunExecutor.EXECUTOR_ID,
+            project,
+            GradleConstants.SYSTEM_ID,
+            taskCallback,
+            ProgressExecutionMode.IN_BACKGROUND_ASYNC,
+            activateToolWindowBeforeRun,
+            userData
+        )
+        finished.waitFor()
+        return result.get()
+    }
 }
 
 private fun getBuildAndRunConfigurations(
@@ -126,53 +173,6 @@ private fun getBuildAndRunConfigurations(
         return null
     }
     return buildAndRunConfigurations
-}
-
-fun runBuildTasks(
-    project: Project,
-    executionName: String,
-    taskNames: List<String>,
-    projectPath: String,
-    activateToolWindowBeforeRun: Boolean,
-    parameters: String = ""
-): Boolean {
-    val settings = ExternalSystemTaskExecutionSettings().apply {
-        this.executionName = executionName
-        externalProjectPath = projectPath
-        this.taskNames = taskNames
-        externalSystemIdString = GradleConstants.SYSTEM_ID.id
-        scriptParameters = parameters
-    }
-
-    val userData = UserDataHolderBase()
-    userData.putUserData(PROGRESS_LISTENER_KEY, BuildViewManager::class.java)
-
-    val result = Ref.create(false)
-    val finished = Semaphore(1)
-    val taskCallback = object : TaskCallback {
-        override fun onSuccess() {
-            result.set(true)
-            finished.up()
-        }
-
-        override fun onFailure() {
-            result.set(false)
-            finished.up()
-        }
-    }
-
-    ExternalSystemUtil.runTask(
-        settings,
-        DefaultRunExecutor.EXECUTOR_ID,
-        project,
-        GradleConstants.SYSTEM_ID,
-        taskCallback,
-        ProgressExecutionMode.IN_BACKGROUND_ASYNC,
-        activateToolWindowBeforeRun,
-        userData
-    )
-    finished.waitFor()
-    return result.get()
 }
 
 private fun handleExecutionError(project: Project, executionName: String, problems: BuildConfigurationProblems) {
