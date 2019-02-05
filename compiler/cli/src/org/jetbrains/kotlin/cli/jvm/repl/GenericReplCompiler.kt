@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -125,8 +124,7 @@ open class GenericReplCompiler(
                 classpathAddendum ?: emptyList(),
                 generationState.replSpecific.resultType?.let {
                     DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it)
-                },
-                type?.isFunctionType ?: false
+                }
             )
         }
     }
