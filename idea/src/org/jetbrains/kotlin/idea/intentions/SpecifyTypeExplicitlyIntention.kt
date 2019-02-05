@@ -33,12 +33,14 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.getResolvableApproximations
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -183,7 +185,18 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             items: List<KotlinType>, defaultItem: KotlinType
         ) : ChooseValueExpression<KotlinType>(items, defaultItem) {
             override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(element)
-            override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
+
+            override fun getResult(element: KotlinType): String {
+                val renderType = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
+                val descriptor = element.constructor.declarationDescriptor
+                if (descriptor?.name?.asString() == renderType) {
+                    val className = (DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtClass)?.nameIdentifier?.text
+                    if (className != null && className != className.unquote()) {
+                        return className
+                    }
+                }
+                return renderType
+            }
         }
 
         fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {

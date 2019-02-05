@@ -16216,6 +16216,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/specifyTypeExplicitly/anonymousObject.kt");
         }
 
+        @TestMetadata("backticked.kt")
+        public void testBackticked() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/backticked.kt");
+        }
+
         @TestMetadata("badCaretPosition.kt")
         public void testBadCaretPosition() throws Exception {
             runTest("idea/testData/intentions/specifyTypeExplicitly/badCaretPosition.kt");
