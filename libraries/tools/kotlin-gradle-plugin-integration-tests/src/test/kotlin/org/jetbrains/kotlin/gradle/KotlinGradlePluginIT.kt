@@ -807,4 +807,12 @@ class KotlinGradleIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testBuildReportSmokeTest() = with(Project("simpleProject")) {
+        build("assemble", "-Pkotlin.build.report.enable=true") {
+            assertSuccessful()
+            assertContains("Kotlin build report is written to")
+        }
+    }
 }
