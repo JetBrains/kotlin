@@ -92,13 +92,8 @@ class FunctionDefinitionLoader(
 
 
     private fun lookUpFunctionIndirect(call: JsInvocation, fragment: JsProgramFragment): InlineFunctionDefinition? {
-        /** remove ending `()` */
-        val callQualifier: JsExpression = if (isCallInvocation(call)) {
-            (call.qualifier as JsNameRef).qualifier!!
-        } else {
-            call.qualifier
-        }
-
+        /** Try loading via `descriptor` metadata.
+         *  In case of private inline properties that's the only way... */
         call.descriptor?.let { descriptor ->
             fragmentInfo[fragment]?.let { info ->
                 info.localAccessors[descriptor]?.let { fn ->
@@ -107,6 +102,13 @@ class FunctionDefinitionLoader(
                     }
                 }
             }
+        }
+
+        /** remove ending `()` */
+        val callQualifier: JsExpression = if (isCallInvocation(call)) {
+            (call.qualifier as JsNameRef).qualifier!!
+        } else {
+            call.qualifier
         }
 
         /** process cases 2, 3 */
