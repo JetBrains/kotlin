@@ -259,8 +259,19 @@ abstract class BaseGradleIT {
 
     // Basically the same as `Project.build`, tells gradle to wait for debug on 5005 port
     // Faster to type than `project.build("-Dorg.gradle.debug=true")` or `project.build(options = defaultBuildOptions().copy(debug = true))`
+    @Deprecated("Use, but do not commit!")
     fun Project.debug(vararg params: String, options: BuildOptions = defaultBuildOptions(), check: CompiledProject.() -> Unit) {
         build(*params, options = options.copy(debug = true), check = check)
+    }
+
+    @Deprecated("Use, but do not commit!")
+    fun Project.debugKotlinDaemon(
+        vararg params: String,
+        debugPort: Int = 5006,
+        options: BuildOptions = defaultBuildOptions(),
+        check: CompiledProject.() -> Unit
+    ) {
+        build(*params, options = options.copy(kotlinDaemonDebugPort = debugPort), check = check)
     }
 
     fun Project.build(vararg params: String, options: BuildOptions = defaultBuildOptions(), check: CompiledProject.() -> Unit) {
