@@ -119,6 +119,7 @@ internal class KotlinBuildReporter(private val perfReportFile: File) : BuildAdap
     }
 
     private fun taskOverview(): String {
+        if (kotlinTaskTimeNs.isEmpty()) return buildString { appendln("No Kotlin task was run") }
         val sb = StringBuilder()
         val kotlinTotalTimeNs = kotlinTaskTimeNs.values.sum()
         val ktTaskPercent = (kotlinTotalTimeNs.toDouble() / allTasksTimeNs * 100).asString(1)
