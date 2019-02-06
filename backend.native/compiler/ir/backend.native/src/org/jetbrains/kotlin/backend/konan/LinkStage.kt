@@ -15,6 +15,18 @@ typealias BitcodeFile = String
 typealias ObjectFile = String
 typealias ExecutableFile = String
 
+private fun determineLinkerOutput(context: Context): LinkerOutputKind =
+    when (context.config.produce) {
+        CompilerOutputKind.FRAMEWORK -> {
+            val staticFramework = context.config.configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
+            if (staticFramework) LinkerOutputKind.STATIC_LIBRARY else LinkerOutputKind.DYNAMIC_LIBRARY
+        }
+        CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
+        CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
+        CompilerOutputKind.PROGRAM -> LinkerOutputKind.EXECUTABLE
+        else -> TODO("${context.config.produce} should not reach native linker stage")
+    }
+
 internal class LinkStage(val context: Context) {
 
     private val config = context.config.configuration
@@ -24,12 +36,8 @@ internal class LinkStage(val context: Context) {
 
     private val optimize = context.shouldOptimize()
     private val debug = context.config.debug
-    private val linkerOutput = when (context.config.produce) {
-        CompilerOutputKind.DYNAMIC, CompilerOutputKind.FRAMEWORK -> LinkerOutputKind.DYNAMIC_LIBRARY
-        CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
-        CompilerOutputKind.PROGRAM -> LinkerOutputKind.EXECUTABLE
-        else -> TODO("${context.config.produce} should not reach native linker stage")
-    }
+    private val linkerOutput = determineLinkerOutput(context)
+
     private val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
     private val emitted = context.bitcodeFileName
     private val libraries = context.llvm.librariesToLink

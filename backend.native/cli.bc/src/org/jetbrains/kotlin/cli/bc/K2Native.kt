@@ -149,6 +149,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(LIST_TARGETS, arguments.listTargets)
                 put(OPTIMIZATION, arguments.optimization)
                 put(DEBUG, arguments.debug)
+                put(STATIC_FRAMEWORK, selectFrameworkType(configuration, arguments, outputKind))
 
                 put(PRINT_IR, arguments.printIr)
                 put(PRINT_IR_WITH_DESCRIPTORS, arguments.printIrWithDescriptors)
@@ -216,6 +217,23 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 CLITool.doMain(K2Native(), options.toTypedArray())
             }
         }
+    }
+}
+
+private fun selectFrameworkType(
+    configuration: CompilerConfiguration,
+    arguments: K2NativeCompilerArguments,
+    outputKind: CompilerOutputKind
+): Boolean {
+    return if (outputKind != CompilerOutputKind.FRAMEWORK && arguments.staticFramework) {
+        configuration.report(
+            STRONG_WARNING,
+            "'$STATIC_FRAMEWORK_FLAG' is only supported when producing frameworks, " +
+            "but the compiler is producing ${outputKind.name.toLowerCase()}"
+        )
+        false
+    } else {
+       arguments.staticFramework
     }
 }
 

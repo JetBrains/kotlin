@@ -134,6 +134,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xruntime", deprecatedName = "--runtime", valueDescription = "<path>", description = "Override standard 'runtime.bc' location")
     var runtimeFile: String? = null
 
+    @Argument(value = STATIC_FRAMEWORK_FLAG, description = "Create a framework with a static library instead of a dynamic one")
+    var staticFramework: Boolean = false
+
     @Argument(value = "-Xtemporary-files-dir", deprecatedName = "--temporary_files_dir", valueDescription = "<path>", description = "Save temporary files to the given directory")
     var temporaryFilesDir: String? = null
 
@@ -168,3 +171,4 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
 const val EMBED_BITCODE_FLAG = "-Xembed-bitcode"
 const val EMBED_BITCODE_MARKER_FLAG = "-Xembed-bitcode-marker"
+const val STATIC_FRAMEWORK_FLAG = "-Xstatic-framework"
