@@ -81,7 +81,7 @@ fun main(args: Array<String>) {
 
     val options = listOf(
             OptionDescriptor(ArgType.String(), "output", "o", "Output file"),
-            OptionDescriptor(ArgType.Double(), "eps", "e", "Meaningful performance changes", "0.5"),
+            OptionDescriptor(ArgType.Double(), "eps", "e", "Meaningful performance changes", "1.0"),
             OptionDescriptor(ArgType.Boolean(), "short", "s", "Show short version of report", "false"),
             OptionDescriptor(ArgType.Choice(listOf("text", "html", "teamcity", "statistics")),
                     "renders", "r", "Renders for showing information", "text", isMultiple = true),

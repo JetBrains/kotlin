@@ -20,7 +20,7 @@ import octoTest
 import kotlin.math.sqrt
 import org.jetbrains.report.BenchmarkResult
 
-val BENCHMARK_SIZE = 100
+const val BENCHMARK_SIZE = 10000
 
 //-----------------------------------------------------------------------------//
 

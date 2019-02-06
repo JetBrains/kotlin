@@ -142,12 +142,12 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
             return 0.0
         var percentsList = bucket.values.map { it.first.mean }
         return if (percentsList.first() > 0.0) {
-            geometricMean(percentsList)
+            geometricMean(percentsList, benchmarksNumber)
         } else {
             // Geometric mean can be counted on positive numbers.
             val precision = abs(getMaximumChange(bucket)) + 1
             percentsList = percentsList.map { it + precision }
-            geometricMean(percentsList) - precision
+            geometricMean(percentsList, benchmarksNumber) - precision
         }
     }
 
