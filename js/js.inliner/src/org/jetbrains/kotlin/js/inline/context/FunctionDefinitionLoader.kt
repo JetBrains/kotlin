@@ -25,25 +25,18 @@ import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import java.util.HashMap
 
-class FunctionContext(
-    val inliner: JsInliner
+class FunctionDefinitionLoader(
+    private val inliner: JsInliner
 ) {
-    fun getFunctionDefinition(call: JsInvocation, scope: InliningScope): InlineFunctionDefinition {
-        return getFunctionDefinitionImpl(call, scope)!!
+    fun getFunctionDefinition(call: JsInvocation, fragment: JsProgramFragment): InlineFunctionDefinition {
+        return getFunctionDefinitionImpl(call, fragment)!!
     }
 
-    fun hasFunctionDefinition(call: JsInvocation, scope: InliningScope): Boolean {
-        return getFunctionDefinitionImpl(call, scope) != null
+    fun hasFunctionDefinition(call: JsInvocation, fragment: JsProgramFragment): Boolean {
+        return getFunctionDefinitionImpl(call, fragment) != null
     }
 
     val functionsByFunctionNodes = HashMap<JsFunction, FunctionWithWrapper>()
-
-    fun scopeForFragment(fragment: JsProgramFragment) = if (fragment in inliner.translationResult.newFragments) {
-        inliningScopeCache.computeIfAbsent(fragment) {
-            loadFragment(fragment)
-            ProgramFragmentInliningScope(fragment)
-        }
-    } else null
 
     /**
      * Gets function definition by invocation.
@@ -75,11 +68,11 @@ class FunctionContext(
      * 5. Qualifier can be JsNameRef with ref to case [3]
      *    in case of local function with closure.
      */
-    private fun getFunctionDefinitionImpl(call: JsInvocation, scope: InliningScope): InlineFunctionDefinition? {
+    private fun getFunctionDefinitionImpl(call: JsInvocation, fragment: JsProgramFragment): InlineFunctionDefinition? {
         // Ensure we have the local function information
-        assert(scope.fragment in inliningScopeCache)
+        loadFragment(fragment)
 
-        return lookUpFunctionDirect(call) ?: lookUpFunctionIndirect(call, scope) ?: lookUpFunctionExternal(call, scope.fragment)
+        return lookUpFunctionDirect(call) ?: lookUpFunctionIndirect(call, fragment) ?: lookUpFunctionExternal(call, fragment)
     }
 
     private val functionReader = FunctionReader(inliner.reporter, inliner.config)
@@ -98,7 +91,7 @@ class FunctionContext(
         fragmentInfo[fragment]?.run { accessors[functionTag] }
 
 
-    private fun lookUpFunctionIndirect(call: JsInvocation, scope: InliningScope): InlineFunctionDefinition? {
+    private fun lookUpFunctionIndirect(call: JsInvocation, fragment: JsProgramFragment): InlineFunctionDefinition? {
         /** remove ending `()` */
         val callQualifier: JsExpression = if (isCallInvocation(call)) {
             (call.qualifier as JsNameRef).qualifier!!
@@ -107,10 +100,10 @@ class FunctionContext(
         }
 
         call.descriptor?.let { descriptor ->
-            fragmentInfo[scope.fragment]?.let { info ->
+            fragmentInfo[fragment]?.let { info ->
                 info.localAccessors[descriptor]?.let { fn ->
                     return InlineFunctionDefinition(fn, null).also { def ->
-                        inliner.process(def, call, scope)
+                        inliner.process(def, call, fragment)
                     }
                 }
             }
@@ -121,10 +114,10 @@ class FunctionContext(
         return when (qualifier) {
             is JsInvocation -> {
                 tryExtractCallableReference(qualifier) ?: getSimpleName(qualifier)?.let { simpleName ->
-                    lookUpStaticFunction(simpleName, scope.fragment)?.let { if (isFunctionCreator(it.function)) it else null }
+                    lookUpStaticFunction(simpleName, fragment)?.let { if (isFunctionCreator(it.function)) it else null }
                 }
             }
-            is JsNameRef -> lookUpStaticFunction(qualifier.name, scope.fragment)
+            is JsNameRef -> lookUpStaticFunction(qualifier.name, fragment)
 
             // Since we could get functionWithWrapper as a simple function directly from staticRef (which always points on implementation)
             // we should check if we have a known wrapper for it
@@ -132,14 +125,12 @@ class FunctionContext(
             else -> null
         }?.let {
             InlineFunctionDefinition(it, null).also { definition ->
-                if (scope.fragment in inliner.translationResult.newFragments) {
-                    inliner.process(definition, call, scope)
+                if (fragment in inliner.translationResult.newFragments) {
+                    inliner.process(definition, call, fragment)
                 }
             }
         }
     }
-
-    private val inliningScopeCache = mutableMapOf<JsProgramFragment, ProgramFragmentInliningScope>()
 
     private fun loadFragment(fragment: JsProgramFragment) {
         fragmentInfo.computeIfAbsent(fragment) {
@@ -172,10 +163,8 @@ class FunctionContext(
 
         val definition = InlineFunctionDefinition(fn, tag)
 
-        // Process definition if it is in the new fragments
-        scopeForFragment(definitionFragment)?.let { definitionScope ->
-            inliner.process(definition, call, definitionScope)
-        }
+        // Make sure definition has it's own inline calls inlined.
+        inliner.process(definition, call, definitionFragment)
 
         return definition
     }

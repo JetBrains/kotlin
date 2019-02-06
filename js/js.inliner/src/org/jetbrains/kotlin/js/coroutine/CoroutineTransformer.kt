@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineableCoroutineBody
 import org.jetbrains.kotlin.js.inline.InlineSuspendFunctionSplitter
-import org.jetbrains.kotlin.js.inline.ProgramFragmentInliningScope
+import org.jetbrains.kotlin.js.inline.ImportInfoFragmentInliningScope
 import org.jetbrains.kotlin.js.translate.declaration.transformCoroutineMetadataToSpecialFunctions
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -72,9 +72,9 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
 fun transformCoroutines(fragments: Iterable<JsProgramFragment>) {
     val coroutineTransformer = CoroutineTransformer()
     for (fragment in fragments) {
-        val scope = ProgramFragmentInliningScope(fragment)
-        InlineSuspendFunctionSplitter(scope).accept(scope.allCode)
-        coroutineTransformer.accept(scope.allCode)
-        scope.update()
+        ImportInfoFragmentInliningScope.process(fragment) { scope ->
+            InlineSuspendFunctionSplitter(scope).accept(scope.allCode)
+            coroutineTransformer.accept(scope.allCode)
+        }
     }
 }

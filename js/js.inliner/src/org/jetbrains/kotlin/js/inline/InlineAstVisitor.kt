@@ -19,9 +19,10 @@ import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class InlinerImpl(
-    val jsInliner: JsInliner,
-    val scope: InliningScope
+// Visits AST, detects inline function declarations and invocations.
+class InlineAstVisitor(
+    private val jsInliner: JsInliner,
+    private val scope: InliningScope
 ) : JsVisitorWithContextImpl() {
 
     override fun visit(x: JsBinaryOperation, ctx: JsContext<*>): Boolean {
@@ -32,7 +33,7 @@ class InlinerImpl(
                 val name = left.name
                 if (name != null) {
                     extractFunction(right)?.let { function ->
-                        jsInliner.process(InlineFunctionDefinition(function, null), null, scope)
+                        jsInliner.process(InlineFunctionDefinition(function, null), null, scope.fragment)
                     }
                 }
             }
@@ -46,7 +47,7 @@ class InlinerImpl(
         val name = x.name
         if (initializer != null && name != null) {
             extractFunction(initializer)?.let { function ->
-                jsInliner.process(InlineFunctionDefinition(function, null), null, scope)
+                jsInliner.process(InlineFunctionDefinition(function, null), null, scope.fragment)
             }
         }
 
@@ -55,7 +56,7 @@ class InlinerImpl(
 
     override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
         InlineMetadata.decompose(x)?.let {
-            jsInliner.process(InlineFunctionDefinition(it.function, it.tag.value), x, scope)
+            jsInliner.process(InlineFunctionDefinition(it.function, it.tag.value), x, scope.fragment)
         }
 
         return super.visit(x, ctx)
@@ -129,7 +130,7 @@ class InlinerImpl(
 
     private fun hasToBeInlined(call: JsInvocation): Boolean {
         val strategy = call.inlineStrategy
-        return if (strategy == null || !strategy.isInline) false else jsInliner.functionContext.hasFunctionDefinition(call, scope)
+        return if (strategy == null || !strategy.isInline) false else jsInliner.functionDefinitionLoader.hasFunctionDefinition(call, scope.fragment)
     }
 
     private fun patchReturnsFromSecondaryConstructor(function: JsFunction) {

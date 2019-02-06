@@ -23,15 +23,15 @@ sealed class InliningScope {
 
     abstract val fragment: JsProgramFragment
 
-    abstract fun addInlinedDeclaration(tag: String?, declaration: JsStatement)
+    protected abstract fun addInlinedDeclaration(tag: String?, declaration: JsStatement)
 
-    abstract fun hasImport(name: JsName, tag: String): JsName?
+    protected abstract fun hasImport(name: JsName, tag: String): JsName?
 
-    abstract fun addImport(tag: String, vars: JsVars)
+    protected abstract fun addImport(tag: String, vars: JsVars)
 
-    open fun addLocalDeclarationBinding(inlineFunctionTag: String, name: JsName, index: Int) {}
+    protected open fun addLocalDeclarationBinding(inlineFunctionTag: String, name: JsName, index: Int) {}
 
-    open fun preprocess(statement: JsStatement) {}
+    protected open fun preprocess(statement: JsStatement) {}
 
     abstract fun update()
 
@@ -97,7 +97,7 @@ sealed class InliningScope {
                     newReplacements[name] = replacement
                 }
 
-            // Add local declarations to the nae bindings in order to correctly rename usages of the same imported local declaraions
+            // Add local declarations to the name bindings in order to correctly rename usages of the same imported local declaraions
             definition.tag?.let { tag ->
                 localDeclarations.forEachIndexed { index, name ->
                     addLocalDeclarationBinding(tag, name, index)
@@ -146,7 +146,7 @@ sealed class InliningScope {
     }
 }
 
-class ProgramFragmentInliningScope(
+class ImportInfoFragmentInliningScope private constructor(
     override val fragment: JsProgramFragment
 ) : InliningScope() {
 
@@ -242,11 +242,18 @@ class ProgramFragmentInliningScope(
             }
         }.internalName
     }
+
+    companion object {
+        fun process(fragment: JsProgramFragment, fn: (ImportInfoFragmentInliningScope) -> Unit) {
+            val scope = ImportInfoFragmentInliningScope(fragment)
+            fn(scope)
+            scope.update()
+        }
+    }
 }
 
-class PublicInlineFunctionInliningScope(
-    val function: JsFunction,
-    val wrapperBody: JsBlock,
+class ImportIntoWrapperInliningScope private constructor(
+    private val wrapperBody: JsBlock,
     override val fragment: JsProgramFragment
 ) : InliningScope() {
     private val existingImports = mutableMapOf<String, JsName>().also { map ->
@@ -274,5 +281,13 @@ class PublicInlineFunctionInliningScope(
 
     override fun update() {
         wrapperBody.statements.addAll(0, additionalStatements)
+    }
+
+    companion object {
+        fun process(wrapperBody: JsBlock, fragment: JsProgramFragment, fn: (ImportIntoWrapperInliningScope) -> Unit) {
+            val scope = ImportIntoWrapperInliningScope(wrapperBody, fragment)
+            fn(scope)
+            scope.update()
+        }
     }
 }

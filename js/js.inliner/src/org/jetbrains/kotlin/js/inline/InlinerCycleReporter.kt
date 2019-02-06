@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsInvocation
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.backend.ast.metadata.psiElement
-import org.jetbrains.kotlin.js.inline.context.FunctionContext
+import org.jetbrains.kotlin.js.inline.context.FunctionDefinitionLoader
 import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import java.util.*
@@ -26,7 +26,7 @@ import java.util.*
  */
 class InlinerCycleReporter(
     val trace: DiagnosticSink,
-    private val functionContext: FunctionContext
+    private val functionDefinitionLoader: FunctionDefinitionLoader
 ) {
 
     private enum class VisitedState { IN_PROCESS, PROCESSED }
@@ -43,7 +43,7 @@ class InlinerCycleReporter(
 
     // Puts `function` on the `namedFunctionsStack` for inline call cycles reporting
     fun <T> withFunction(function: JsFunction, body: () -> T): T {
-        if (function in functionContext.functionsByFunctionNodes.keys) {
+        if (function in functionDefinitionLoader.functionsByFunctionNodes.keys) {
             namedFunctionsStack.push(function)
         }
 

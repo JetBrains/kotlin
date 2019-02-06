@@ -10,8 +10,12 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineableCoroutineBody
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 
+// Goes through `suspend inline` function definitions and transforms into two entites:
+// 1. A `suspend` function definition, which could be invoked at run time
+// 2. A `suspend inline` function definition, which doesn't work at run time, but is understood by the inliner.
+// TODO remove the wrapped version for `private inline suspend fun`'s
 class InlineSuspendFunctionSplitter(
-    val scope: ProgramFragmentInliningScope
+    val scope: ImportInfoFragmentInliningScope
 ) : JsVisitorWithContextImpl() {
 
     override fun endVisit(x: JsExpressionStatement, ctx: JsContext<*>) {
