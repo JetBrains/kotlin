@@ -42,15 +42,4 @@
     </component>
   </project-components>
 
-  <actions>
-    <action id="Konan.Build" class="org.jetbrains.konan.gradle.execution.KonanBuildConfigurationAction" icon="AllIcons.Actions.Compile" use-shortcut-of="CompileDirty">
-      <add-to-group group-id="ToolbarRunGroup" relative-to-action="RunConfiguration" anchor="before"/>
-      <add-to-group group-id="TouchBarDefault" relative-to-action="RunConfiguration" anchor="before"/>
-      <add-to-group group-id="AppCode.BuildMenu" relative-to-action="Build" anchor="before"/>
-    </action>
-    <action id="Konan.Clean" class="org.jetbrains.konan.gradle.execution.KonanCleanProjectAction">
-      <add-to-group group-id="AppCode.BuildMenu" relative-to-action="Clean" anchor="before"/>
-    </action>
-  </actions>
-
 </idea-plugin>
