@@ -156,6 +156,10 @@ task start(dependsOn: "${hostName}Start")
 def commonSrc = file('build/stdlib')
 
 task unzipStdlibSources(type: Copy) {
+    if (project.hasProperty("kotlinProjectPath")) {
+        dependsOn gradle.includedBuild('kotlin').task(":kotlin-stdlib-common:sourcesJar")
+    }
+
     def jarFiles = configurations.kotlin_common_stdlib_src.files +
             configurations.kotlin_test_common_src.files +
             configurations.kotlin_test_annotations_common_src.files
