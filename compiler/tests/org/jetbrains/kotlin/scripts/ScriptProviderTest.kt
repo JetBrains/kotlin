@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.scripts
 
-import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptDefinitionsSource
+import org.jetbrains.kotlin.scripting.legacy.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import org.junit.Test

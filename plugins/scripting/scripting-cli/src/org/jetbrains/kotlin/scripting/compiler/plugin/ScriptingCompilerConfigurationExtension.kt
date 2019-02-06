@@ -10,9 +10,8 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider
-import org.jetbrains.kotlin.cli.common.script.CliScriptDependenciesProvider
-import org.jetbrains.kotlin.cli.common.script.CliScriptReportSink
+import org.jetbrains.kotlin.scripting.legacy.CliScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.legacy.CliScriptReportSink
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.scripting.legacy.CliScriptDefinitionProvider
 import java.io.File
 
 class ScriptingCompilerConfigurationExtension(val project: MockProject) : CompilerConfigurationExtension {
@@ -108,7 +108,9 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         if (messageCollector != null) {
-            project.registerService(ScriptReportSink::class.java, CliScriptReportSink(messageCollector))
+            project.registerService(ScriptReportSink::class.java,
+                                    CliScriptReportSink(messageCollector)
+            )
         }
     }
 }

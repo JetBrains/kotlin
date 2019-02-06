@@ -14,7 +14,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSessionBase
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
 import java.io.File
@@ -39,11 +37,6 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     "kt",
     KotlinParserDefinition()
 ) {
-    override fun setUp() {
-        super.setUp()
-        project.registerService(ScriptDefinitionProvider::class.java, CliScriptDefinitionProvider::class.java)
-    }
-
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
     private fun createFile(filePath: String, fileType: IElementType): PsiFile {

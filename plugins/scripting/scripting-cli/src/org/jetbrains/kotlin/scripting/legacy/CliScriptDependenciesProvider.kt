@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.script
+package org.jetbrains.kotlin.scripting.legacy
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
