@@ -413,7 +413,7 @@ class ExperimentalPluginTests {
             hosts.map { HostManager().targetByName(it) }.forEach {
                 val task = tasks.findByName("compileDebug${it.name.capitalize()}KotlinNative")
 
-                if (it == HostManager.host) {
+                if (HostManager().enabled.contains(it)) {
                     assertNotNull(task)
                 } else {
                     assertNull(task)
