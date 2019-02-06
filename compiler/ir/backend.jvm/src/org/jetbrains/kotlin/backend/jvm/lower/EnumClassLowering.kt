@@ -195,13 +195,14 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             return enumEntryClass
         }
 
-        private fun createFieldForEnumEntry(enumEntry: IrEnumEntry): IrField {
-            return context.declarationFactory.getFieldForEnumEntry(enumEntry, enumEntry.initializerExpression!!.type).also {
+        private fun createFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
+            context.declarationFactory.getFieldForEnumEntry(
+                enumEntry, (enumEntry.correspondingClass ?: enumEntry.parentAsClass).defaultType
+            ).also {
                 it.initializer = IrExpressionBodyImpl(enumEntry.initializerExpression!!)
                 enumEntryFields.add(it)
                 enumEntriesByField[it] = enumEntry
             }
-        }
 
         private fun setupSynthesizedEnumClassMembers() {
             val irField = createSyntheticValuesFieldDeclaration()
