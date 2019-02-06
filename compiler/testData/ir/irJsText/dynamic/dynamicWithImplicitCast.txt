@@ -1,0 +1,33 @@
+FILE fqName:<root> fileName:/dynamicWithImplicitCast.kt
+  FUN name:test1 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Int flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1(dynamic): Int'
+        WHEN type=kotlin.Int origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence]
+              GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+            then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
+              $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence]
+                GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Int type=kotlin.Int value=-1
+  FUN name:test2 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Int flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2(dynamic): Int'
+        WHEN type=kotlin.Int origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+              GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+            then: CALL '<get-size>(): Int' type=kotlin.Int origin=GET_PROPERTY
+              $this: TYPE_OP type=kotlin.Array<out kotlin.Any?> origin=IMPLICIT_CAST typeOperand=kotlin.Array<out kotlin.Any?>
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+                GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Int type=kotlin.Int value=-1

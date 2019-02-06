@@ -37,13 +37,12 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.isError
-import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.types.upperIfFlexible
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
     element.transformChildren(InsertImplicitCasts(context.builtIns, context.irBuiltIns, context.typeTranslator), null)
@@ -94,10 +93,10 @@ open class InsertImplicitCasts(
             statements.forEachIndexed { i, irStatement ->
                 if (irStatement is IrExpression) {
                     statements[i] =
-                            if (i == lastIndex)
-                                irStatement.cast(type)
-                            else
-                                irStatement.coerceToUnit()
+                        if (i == lastIndex)
+                            irStatement.cast(type)
+                        else
+                            irStatement.coerceToUnit()
                 }
             }
         }
@@ -219,13 +218,17 @@ open class InsertImplicitCasts(
         val valueType = this.type.originalKotlinType!!
 
         return when {
-            KotlinBuiltIns.isUnit(expectedType) ->
+            expectedType.isUnit() ->
                 coerceToUnit()
 
-            valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() -> {
-                val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
-                implicitCast(nonNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
-            }
+            valueType.isDynamic() && !expectedType.isDynamic() ->
+                if (expectedType.isNullableAny())
+                    this
+                else
+                    implicitCast(expectedType, IrTypeOperator.IMPLICIT_CAST)
+
+            valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() ->
+                implicitNonNull(valueType, expectedType)
 
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType.makeNullable()) ->
                 this
@@ -241,6 +244,11 @@ open class InsertImplicitCasts(
                 implicitCast(targetType, IrTypeOperator.IMPLICIT_CAST)
             }
         }
+    }
+
+    private fun IrExpression.implicitNonNull(valueType: KotlinType, expectedType: KotlinType): IrExpression {
+        val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
+        return implicitCast(nonNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
     }
 
     private fun IrExpression.implicitCast(

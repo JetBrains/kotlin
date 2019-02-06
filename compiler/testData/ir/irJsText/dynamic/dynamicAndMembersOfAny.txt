@@ -1,0 +1,26 @@
+FILE fqName:<root> fileName:/dynamicAndMembersOfAny.kt
+  FUN name:test1 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.String flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1(dynamic): String'
+        CALL 'toString(): String' type=kotlin.String origin=null
+          $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags: superTypes:[]
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+  FUN name:test2 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Int flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2(dynamic): Int'
+        CALL 'hashCode(): Int' type=kotlin.Int origin=null
+          $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags: superTypes:[]
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+  FUN name:test3 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test3(dynamic): Boolean'
+        CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
+          $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags: superTypes:[]
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          other: CONST Int type=kotlin.Int value=42
