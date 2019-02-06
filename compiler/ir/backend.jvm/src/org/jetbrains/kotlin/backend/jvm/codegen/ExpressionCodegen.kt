@@ -376,13 +376,12 @@ class ExpressionCodegen(
         if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
             mv.aconst(null)
             mv.athrow()
-        } else if (expression.descriptor !is ConstructorDescriptor) {
-            return returnType?.run { coerceNotToUnit(callable.returnType, returnType, this) } ?: onStack(callable.returnType, returnType)
-        } else {
+            return expression.onStack
+        } else if (expression.descriptor is ConstructorDescriptor) {
             return none()
         }
 
-        return expression.onStack
+        return coerceNotToUnit(callable.returnType, returnType, expression.type.toKotlinType())
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BlockInfo): StackValue {
