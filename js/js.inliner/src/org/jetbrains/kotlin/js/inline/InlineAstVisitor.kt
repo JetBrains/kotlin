@@ -24,39 +24,17 @@ class InlineAstVisitor(
     private val jsInliner: JsInliner,
     private val scope: InliningScope
 ) : JsVisitorWithContextImpl() {
-
-    override fun visit(x: JsBinaryOperation, ctx: JsContext<*>): Boolean {
-        val assignment = JsAstUtils.decomposeAssignment(x)
-        if (assignment != null) {
-            val (left, right) = assignment
-            if (left is JsNameRef) {
-                val name = left.name
-                if (name != null) {
-                    extractFunction(right)?.let { function ->
-                        jsInliner.process(InlineFunctionDefinition(function, null), null, scope.fragment)
-                    }
-                }
-            }
-        }
-
-        return super.visit(x, ctx)
-    }
-
-    override fun visit(x: JsVars.JsVar, ctx: JsContext<*>): Boolean {
-        val initializer = x.initExpression
-        val name = x.name
-        if (initializer != null && name != null) {
-            extractFunction(initializer)?.let { function ->
-                jsInliner.process(InlineFunctionDefinition(function, null), null, scope.fragment)
-            }
-        }
-
-        return super.visit(x, ctx)
-    }
-
     override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
+        // Is it `defineInlineFunction('tag', ...)`?
         InlineMetadata.decompose(x)?.let {
             jsInliner.process(InlineFunctionDefinition(it.function, it.tag.value), x, scope.fragment)
+            return false
+        }
+
+        // Is it `wrapFunction(...)`?
+        InlineMetadata.tryExtractFunction(x)?.let {
+            jsInliner.process(InlineFunctionDefinition(it, null), x, scope.fragment)
+            return false
         }
 
         return super.visit(x, ctx)
