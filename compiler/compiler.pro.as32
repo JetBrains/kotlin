@@ -59,6 +59,9 @@ messages/**)
 # Depends on apache batick which has lots of dependencies
 -dontwarn com.intellij.util.SVGLoader*
 
+# The appropriate jar is either loaded separately or added explicitly to the classpath then needed
+-dontwarn org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
+
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
 #-libraryjars '<bootstrap.runtime>'

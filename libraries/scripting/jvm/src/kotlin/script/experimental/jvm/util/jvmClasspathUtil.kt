@@ -22,6 +22,10 @@ internal const val KOTLIN_JAVA_STDLIB_JAR = "kotlin-stdlib.jar"
 internal const val KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar"
 internal const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar"
 internal const val TROVE4J_JAR = "trove4j.jar"
+internal const val KOTLIN_SCRIPTING_COMPILER_JAR = "kotlin-scripting-compiler.jar"
+internal const val KOTLIN_SCRIPTING_COMPILER_EMBEDDABLE_JAR = "kotlin-scripting-compiler-embeddable.jar"
+internal const val KOTLIN_SCRIPTING_COMMON_JAR = "kotlin-scripting-common.jar"
+internal const val KOTLIN_SCRIPTING_JVM_JAR = "kotlin-scripting-jvm.jar"
 
 internal const val KOTLIN_COMPILER_NAME = "kotlin-compiler"
 internal const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"
@@ -158,6 +162,14 @@ object KotlinJars {
     }
 
     val compilerClasspath: List<File> by lazy {
+        findCompilerClasspath(withScripting = false)
+    }
+
+    val compilerWithScriptingClasspath: List<File> by lazy {
+        findCompilerClasspath(withScripting = true)
+    }
+
+    private fun findCompilerClasspath(withScripting: Boolean): List<File> {
         val kotlinCompilerJars = listOf(
             KOTLIN_COMPILER_JAR,
             KOTLIN_COMPILER_EMBEDDABLE_JAR
@@ -168,22 +180,32 @@ object KotlinJars {
             KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
             TROVE4J_JAR
         )
-        val kotlinBaseJars = kotlinCompilerJars + kotlinLibsJars
+        val kotlinScriptingJars = if (withScripting) listOf(
+            KOTLIN_SCRIPTING_COMPILER_JAR,
+            KOTLIN_SCRIPTING_COMPILER_EMBEDDABLE_JAR,
+            KOTLIN_SCRIPTING_COMMON_JAR,
+            KOTLIN_SCRIPTING_JVM_JAR
+        ) else emptyList()
+
+        val kotlinBaseJars = kotlinCompilerJars + kotlinLibsJars + kotlinScriptingJars
 
         val classpath = explicitCompilerClasspath
-                        // search classpath from context classloader and `java.class.path` property
-                        ?: (classpathFromFQN(
-                            Thread.currentThread().contextClassLoader,
-                            "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
-                        )
-                            ?: classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIf { it.isNotEmpty() }
-                            ?: classpathFromClasspathProperty()
-                           )?.filter { f -> kotlinBaseJars.any { f.matchMaybeVersionedFile(it) } }?.takeIf { it.isNotEmpty() }
+        // search classpath from context classloader and `java.class.path` property
+            ?: (classpathFromFQN( Thread.currentThread().contextClassLoader, "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler" )
+                ?: classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIf { it.isNotEmpty() }
+                ?: classpathFromClasspathProperty()
+                    )?.filter { f -> kotlinBaseJars.any { f.matchMaybeVersionedFile(it) } }?.takeIf { it.isNotEmpty() }
         // if autodetected, additionally check for presence of the compiler jars
-        if (classpath == null || (explicitCompilerClasspath == null && classpath.none { f -> kotlinCompilerJars.any { f.matchMaybeVersionedFile(it) } })) {
+        if (classpath == null || (explicitCompilerClasspath == null && classpath.none { f ->
+                kotlinCompilerJars.any {
+                    f.matchMaybeVersionedFile(
+                        it
+                    )
+                }
+            })) {
             throw FileNotFoundException("Cannot find kotlin compiler jar, set kotlin.compiler.classpath property to proper location")
         }
-        classpath!!
+        return classpath!!
     }
 
     fun getLib(propertyName: String, jarName: String, markerClass: KClass<*>, classLoader: ClassLoader? = null): File? =

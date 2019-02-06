@@ -68,6 +68,9 @@ messages/**)
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreter
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreterFactory
 
+# The appropriate jar is either loaded separately or added explicitly to the classpath then needed
+-dontwarn org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
+
 -dontwarn org.jdom.xpath.jaxen.*
 -dontwarn com.intellij.util.io.Decompressor*
 -dontwarn org.w3c.dom.Location
