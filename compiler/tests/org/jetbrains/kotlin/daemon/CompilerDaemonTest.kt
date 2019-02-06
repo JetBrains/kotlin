@@ -51,10 +51,20 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     data class CompilerResults(val resultCode: Int, val out: String)
 
     val compilerClassPath = listOf(
-            File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"))
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")
+    )
+    val scriptingCompilerClassPath = listOf(
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-scripting-compiler.jar"),
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-scripting-common.jar"),
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-scripting-jvm.jar")
+    )
     val daemonClientClassPath = listOf( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client.jar"),
                                         File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"))
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
+
+    val compilerWithScriptingId by lazy(LazyThreadSafetyMode.NONE) {
+        CompilerId.makeCompilerId(compilerClassPath + scriptingCompilerClassPath)
+    }
 
     private fun compileOnDaemon(clientAliveFile: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, vararg args: String): CompilerResults {
         val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientAliveFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -710,8 +720,30 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
+    fun testDaemonReplScriptingNotInClasspathError() {
+        withDaemon(compilerId) { daemon ->
+            var repl: KotlinRemoteReplCompilerClient? = null
+            var isErrorThrown = false
+            try {
+                repl = KotlinRemoteReplCompilerClient(
+                    daemon, null, CompileService.TargetPlatform.JVM, emptyArray(), TestMessageCollector(),
+                    classpathFromClassloader(), ScriptWithNoParam::class.qualifiedName!!
+                )
+            } catch (e: Exception) {
+                TestCase.assertEquals(
+                    "Unable to use scripting/REPL in the daemon, no kotlin-scripting-compiler.jar or its dependencies are found in the compiler classpath",
+                    e.message
+                )
+                isErrorThrown = true
+            } finally {
+                repl?.dispose()
+            }
+            TestCase.assertTrue("Expecting exception that kotlin-scripting-plugin is not found in the classpath", isErrorThrown)
+        }
+    }
+
     fun testDaemonReplLocalEvalNoParams() {
-        withDaemon { daemon ->
+        withDaemon(compilerWithScriptingId) { daemon ->
             val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM,
                                                       emptyArray(),
                                                       TestMessageCollector(),
@@ -726,7 +758,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     fun testDaemonReplLocalEvalStandardTemplate() {
-        withDaemon { daemon ->
+        withDaemon(compilerWithScriptingId) { daemon ->
             val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM, emptyArray(),
                                                       TestMessageCollector(),
                                                       classpathFromClassloader(),
@@ -775,7 +807,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
 
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+                val daemon = KotlinCompilerClient.connectToCompileService(compilerWithScriptingId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
                 assertNotNull("failed to connect daemon", daemon)
 
                 val replCompiler = KotlinRemoteReplCompilerClient(daemon!!, null, CompileService.TargetPlatform.JVM,
@@ -809,7 +841,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    internal fun withDaemon(body: (CompileService) -> Unit) {
+    internal fun withDaemon(compilerId: CompilerId = this.compilerId, body: (CompileService) -> Unit) {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = makeTestDaemonOptions(getTestName(true))
             withLogFile("kotlin-daemon-test") { logFile ->
