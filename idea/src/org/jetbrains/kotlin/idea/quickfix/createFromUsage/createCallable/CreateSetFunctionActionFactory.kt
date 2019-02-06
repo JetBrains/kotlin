@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.inspections.isReadOnlyCollectionOrMap
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
@@ -26,6 +28,8 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Parame
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -43,6 +47,7 @@ object CreateSetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet 
             ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE))
         }
         val assignmentExpr = QuickFixUtil.getParentElementOfType(diagnostic, KtOperationExpression::class.java) ?: return null
+        if (arrayExpr.getType(arrayExpr.analyze(BodyResolveMode.PARTIAL))?.isReadOnlyCollectionOrMap(builtIns) == true) return null
         val valType = when (assignmentExpr) {
             is KtBinaryExpression -> {
                 TypeInfo(assignmentExpr.right ?: return null, Variance.IN_VARIANCE)
