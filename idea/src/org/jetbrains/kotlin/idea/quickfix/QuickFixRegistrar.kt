@@ -598,5 +598,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         TYPE_MISMATCH.registerFactory(SurroundWithLambdaFix)
         CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(SurroundWithLambdaFix)
+
+        NO_SET_METHOD.registerFactory(ChangeToMutableCollectionFix)
     }
 }

@@ -2062,6 +2062,44 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/changeToMutableCollection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeToMutableCollection extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInChangeToMutableCollection() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeToMutableCollection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("list.kt")
+        public void testList() throws Exception {
+            runTest("idea/testData/quickfix/changeToMutableCollection/list.kt");
+        }
+
+        @TestMetadata("list2.kt")
+        public void testList2() throws Exception {
+            runTest("idea/testData/quickfix/changeToMutableCollection/list2.kt");
+        }
+
+        @TestMetadata("map.kt")
+        public void testMap() throws Exception {
+            runTest("idea/testData/quickfix/changeToMutableCollection/map.kt");
+        }
+
+        @TestMetadata("map2.kt")
+        public void testMap2() throws Exception {
+            runTest("idea/testData/quickfix/changeToMutableCollection/map2.kt");
+        }
+
+        @TestMetadata("set.kt")
+        public void testSet() throws Exception {
+            runTest("idea/testData/quickfix/changeToMutableCollection/set.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/changeToUseSpreadOperator")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
