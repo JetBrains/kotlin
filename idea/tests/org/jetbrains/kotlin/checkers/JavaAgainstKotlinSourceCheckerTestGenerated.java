@@ -141,6 +141,11 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ReturnInnerClasses.kt");
         }
 
+        @TestMetadata("ThrowsOnGenericMethod.kt")
+        public void testThrowsOnGenericMethod() throws Exception {
+            runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ThrowsOnGenericMethod.kt");
+        }
+
         @TestMetadata("TopLevelFunctionInDataFlowInspection.kt")
         public void testTopLevelFunctionInDataFlowInspection() throws Exception {
             runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/TopLevelFunctionInDataFlowInspection.kt");
