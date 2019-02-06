@@ -79,9 +79,14 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.owner.kind) {
         ClassKind.OBJECT -> {
+            val obj = expression.symbol.owner
             val className = context.getNameForSymbol(expression.symbol)
-            val getInstanceName = className.ident + "_getInstance"
-            JsInvocation(JsNameRef(getInstanceName))
+            if (obj.isEffectivelyExternal()) {
+                className.makeRef()
+            } else {
+                val getInstanceName = className.ident + "_getInstance"
+                JsInvocation(JsNameRef(getInstanceName))
+            }
         }
         else -> TODO()
     }
@@ -130,6 +135,19 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val jsDispatchReceiver = expression.dispatchReceiver?.accept(this, context)
         val jsExtensionReceiver = expression.extensionReceiver?.accept(this, context)
         val arguments = translateCallArguments(expression, context)
+
+        // Transform external property accessor call
+        if (function is IrSimpleFunction) {
+            val property = function.correspondingProperty
+            if (property != null && property.isEffectivelyExternal()) {
+                val nameRef = JsNameRef(property.name.identifier, jsDispatchReceiver)
+                return when (function) {
+                    property.getter -> nameRef
+                    property.setter -> jsAssignment(nameRef, arguments.single())
+                    else -> error("Function must be an accessor of corresponding property")
+                }
+            }
+        }
 
         if (isNativeInvoke(expression)) {
             return JsInvocation(jsDispatchReceiver!!, arguments)
