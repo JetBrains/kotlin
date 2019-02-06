@@ -40,7 +40,7 @@ internal fun configureBuildReporter(gradle: Gradle, log: Logger) {
     val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
 
     val perfReportFile = perfLogDir.resolve("${gradle.rootProject.name}-build-$ts.txt")
-    val reporter = KotlinBuildReporter(perfReportFile)
+    val reporter = KotlinBuildReporter(gradle, perfReportFile)
     gradle.addBuildListener(reporter)
 
     val buildReportMode = if (properties.buildReportVerbose) BuildReportMode.VERBOSE else BuildReportMode.SIMPLE
@@ -54,7 +54,10 @@ internal fun configureBuildReporter(gradle: Gradle, log: Logger) {
     log.kotlinDebug { "Configured Kotlin build reporter" }
 }
 
-internal class KotlinBuildReporter(private val perfReportFile: File) : BuildAdapter(), TaskExecutionListener {
+internal class KotlinBuildReporter(
+    private val gradle: Gradle,
+    private val perfReportFile: File
+) : BuildAdapter(), TaskExecutionListener {
     init {
         val dir = perfReportFile.parentFile
         check(dir.isDirectory) { "$dir does not exist or is a file" }
@@ -111,15 +114,38 @@ internal class KotlinBuildReporter(private val perfReportFile: File) : BuildAdap
     override fun buildFinished(result: BuildResult) {
         val logger = result.gradle?.rootProject?.logger
         try {
-            perfReportFile.writeText(taskOverview() + tasksSb.toString())
+            perfReportFile.writeText(buildInfo(result) + taskOverview() + tasksSb.toString())
             logger?.lifecycle("Kotlin build report is written to ${perfReportFile.canonicalPath}")
         } catch (e: Throwable) {
             logger?.error("Could not write Kotlin build report to ${perfReportFile.canonicalPath}", e)
         }
     }
 
+    private fun buildInfo(result: BuildResult): String {
+        val startParams = arrayListOf<String>()
+        gradle.startParameter.apply {
+            startParams.add("tasks = ${taskRequests.joinToString { it.args.toString() }}")
+            startParams.add("excluded tasks = $excludedTaskNames")
+            startParams.add("current dir = $currentDir")
+            startParams.add("project properties args = $projectProperties")
+            startParams.add("system properties args = $systemPropertiesArgs")
+        }
+
+        return buildString {
+            appendln("Gradle start parameters:")
+            startParams.forEach {
+                appendln("  $it")
+            }
+            if (result.failure != null) {
+                appendln("Build failed: ${result.failure}")
+            }
+            appendln()
+        }
+    }
+
     private fun taskOverview(): String {
         if (kotlinTaskTimeNs.isEmpty()) return buildString { appendln("No Kotlin task was run") }
+
         val sb = StringBuilder()
         val kotlinTotalTimeNs = kotlinTaskTimeNs.values.sum()
         val ktTaskPercent = (kotlinTotalTimeNs.toDouble() / allTasksTimeNs * 100).asString(1)
