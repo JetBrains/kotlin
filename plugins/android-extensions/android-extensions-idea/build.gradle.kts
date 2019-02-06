@@ -57,7 +57,7 @@ dependencies {
         testRuntime(intellijPluginDep("maven"))
     }
     testRuntime(intellijPluginDep("android"))
-    (Platform[181].orHigher.or(Ide.AS31)) {
+    if (Platform[181].orHigher()) {
         testRuntime(intellijPluginDep("smali"))
     }
 }
