@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.org.objectweb.asm.Opcodes
 
@@ -82,10 +80,8 @@ class MultifileClassPartCodegen(
     }
 
     override fun generateBody() {
-        for (declaration in CodegenUtil.getDeclarationsToGenerate(element, state.bindingContext)) {
-            if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
-                genSimpleMember(declaration)
-            }
+        for (declaration in CodegenUtil.getMemberDeclarationsToGenerate(element)) {
+            genSimpleMember(declaration)
         }
 
         if (state.classBuilderMode.generateBodies) {

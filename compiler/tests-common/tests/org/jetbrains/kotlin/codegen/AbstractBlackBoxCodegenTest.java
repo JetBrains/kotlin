@@ -12,8 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.TestsRuntimeError;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -29,7 +28,7 @@ import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGene
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
-    public static final boolean IGNORE_EXPECTED_FAILURES =
+    private static final boolean IGNORE_EXPECTED_FAILURES =
             Boolean.getBoolean("kotlin.suppress.expected.test.failures");
 
     @Override
@@ -103,7 +102,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         // If there are many files, the first 'box(): String' function will be executed.
         GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader(reportProblems);
         for (KtFile firstFile : myFiles.getPsiFiles()) {
-            String className = getFacadeFqName(firstFile, classFileFactory.getGenerationState().getBindingContext());
+            String className = getFacadeFqName(firstFile);
             if (className == null) continue;
             Class<?> aClass = getGeneratedClass(generatedClassLoader, className);
             try {
@@ -127,13 +126,10 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     @Nullable
-    private static String getFacadeFqName(@NotNull KtFile firstFile, @NotNull BindingContext bindingContext) {
-        for (KtDeclaration declaration : CodegenUtil.getDeclarationsToGenerate(firstFile, bindingContext)) {
-            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
-                return JvmFileClassUtil.getFileClassInfoNoResolve(firstFile).getFacadeClassFqName().asString();
-            }
-        }
-        return null;
+    private static String getFacadeFqName(@NotNull KtFile file) {
+        return CodegenUtil.getMemberDeclarationsToGenerate(file).isEmpty()
+               ? null
+               : JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName().asString();
     }
 
     protected TargetBackend getBackend() {

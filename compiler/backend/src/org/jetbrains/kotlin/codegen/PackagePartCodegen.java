@@ -19,13 +19,12 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.util.ArrayUtil;
 import kotlin.Pair;
 import kotlin.Unit;
-import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.MemberDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -33,7 +32,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtAnnotationEntry;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
@@ -90,10 +91,8 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
 
     @Override
     protected void generateBody() {
-        for (KtDeclaration declaration : CodegenUtil.getDeclarationsToGenerate(element, state.getBindingContext())) {
-            if (declaration instanceof KtNamedFunction || declaration instanceof KtProperty || declaration instanceof KtTypeAlias) {
-                genSimpleMember(declaration);
-            }
+        for (KtDeclaration declaration : CodegenUtil.getMemberDeclarationsToGenerate(element)) {
+            genSimpleMember(declaration);
         }
 
         if (state.getClassBuilderMode().generateBodies) {
@@ -122,21 +121,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             @NotNull MemberCodegen<? extends KtFile> codegen,
             @NotNull Type packagePartType
     ) {
-        BindingContext bindingContext = codegen.bindingContext;
-        List<KtDeclaration> allDeclarations = CodegenUtil.getDeclarationsToGenerate(codegen.element, bindingContext);
-        List<DeclarationDescriptor> members = CollectionsKt.mapNotNull(allDeclarations, declaration -> {
-            if (declaration instanceof KtNamedFunction) {
-                return bindingContext.get(BindingContext.FUNCTION, declaration);
-            }
-            else if (declaration instanceof KtProperty) {
-                return bindingContext.get(BindingContext.VARIABLE, declaration);
-            }
-            else if (declaration instanceof KtTypeAlias) {
-                return bindingContext.get(BindingContext.TYPE_ALIAS, declaration);
-            }
-
-            return null;
-        });
+        List<MemberDescriptor> members = CodegenUtil.getMemberDescriptorsToGenerate(codegen.element, codegen.bindingContext);
 
         JvmSerializerExtension extension = new JvmSerializerExtension(codegen.v.getSerializationBindings(), codegen.state);
         DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(extension);

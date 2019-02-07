@@ -25,13 +25,20 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.PackageDescriptorUtilKt;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -91,15 +98,16 @@ public class PackageCodegenImpl implements PackageCodegen {
         Type fileClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFileClassFqName());
         PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, fileClassType, file);
 
-        boolean generatePackagePart = false;
-
         List<KtClassOrObject> classOrObjects = new ArrayList<>();
 
-        for (KtDeclaration declaration : CodegenUtil.getDeclarationsToGenerate(file, state.getBindingContext())) {
-            if (isFilePartDeclaration(declaration)) {
-                generatePackagePart = true;
-            }
-            else if (declaration instanceof KtClassOrObject) {
+        for (KtDeclaration declaration : file.getDeclarations()) {
+            if (declaration instanceof KtClassOrObject) {
+                ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, declaration);
+                if (PsiUtilsKt.hasExpectModifier(declaration) &&
+                    (descriptor == null || !ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))) {
+                    continue;
+                }
+
                 KtClassOrObject classOrObject = (KtClassOrObject) declaration;
                 if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
                     classOrObjects.add(classOrObject);
@@ -115,17 +123,15 @@ public class PackageCodegenImpl implements PackageCodegen {
         }
         generateClassesAndObjectsInFile(classOrObjects, packagePartContext);
 
-        if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
+        if (!state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
+
+        if (CodegenUtil.getMemberDeclarationsToGenerate(file).isEmpty()) return;
 
         state.getFactory().getPackagePartRegistry().addPart(packageFragment.getFqName(), fileClassType.getInternalName(), null);
 
         ClassBuilder builder = state.getFactory().newVisitor(JvmDeclarationOriginKt.PackagePart(file, packageFragment), fileClassType, file);
 
         new PackagePartCodegen(builder, file, fileClassType, packagePartContext, state).generate();
-    }
-
-    public static boolean isFilePartDeclaration(KtDeclaration declaration) {
-        return declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias;
     }
 
     @Nullable
