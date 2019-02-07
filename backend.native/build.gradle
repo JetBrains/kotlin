@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.target.HostManager
+
 /*
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
@@ -208,12 +210,12 @@ task teamcityPublishStdLibSources {
 // konan.home, --runtime, -Djava.library.path etc
 
 targetList.each { target ->
-    def konanJvmArgs = ["-ea", "-Xmx3G",
-                        "-Dkonan.home=${rootProject.projectDir}",
-                        "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
-                        "-Dfile.encoding=UTF-8"]
+    def konanJvmArgs =  [*HostManager.regularJvmArgs,
+            "-Dkonan.home=${rootProject.projectDir}",
+            "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
+    ]
 
-    def defaultArgs = ['-nopack', '-nostdlib', '-nodefaultlibs', '-ea']
+    def defaultArgs = ['-nopack', '-nostdlib', '-nodefaultlibs']
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,

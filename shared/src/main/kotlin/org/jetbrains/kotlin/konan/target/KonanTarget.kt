@@ -249,6 +249,10 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             else -> throw TargetSupportException("Unknown host target: ${host_os()} ${host_arch()}")
         }
 
+        // Note Hotspot-specific VM option enforcing C1-only, critical for decent compilation speed.
+        val defaultJvmArgs = listOf("-XX:TieredStopAtLevel=1", "-ea", "-Dfile.encoding=UTF-8")
+        val regularJvmArgs = defaultJvmArgs + "-Xmx3G"
+
         val hostIsMac   = (host.family == Family.OSX)
         val hostIsLinux = (host.family == Family.LINUX)
         val hostIsMingw = (host.family == Family.MINGW)

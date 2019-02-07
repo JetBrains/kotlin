@@ -58,7 +58,7 @@ internal abstract class KonanCliRunner(
             project.fileTree("${project.konanHome}/konan/lib/")
             .apply { include("*.jar")  }
 
-    override val jvmArgs = mutableListOf("-ea").apply {
+    override val jvmArgs = HostManager.defaultJvmArgs.toMutableList().apply {
         if (additionalJvmArgs.none { it.startsWith("-Xmx") } &&
             project.jvmArgs.none { it.startsWith("-Xmx") }) {
             add("-Xmx3G")
