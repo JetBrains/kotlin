@@ -243,13 +243,12 @@ class ExpressionCodegen(
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo): StackValue {
-        // Empty blocks with nothing type should not generate a value on the stack. They
-        // arise for if statements with missing branches such as: if (expr) else 42
-        if (expression.statements.size == 0 && expression.type.isNothing()) return none()
         val result = expression.statements.fold(none()) { _, exp ->
             //coerceNotToUnit(r.type, Type.VOID_TYPE)
             exp.accept(this, data)
         }
+        // Blocks with nothing type do not generate a value on the stack.
+        if (expression.type.isNothing()) return none()
         return coerceNotToUnit(result.type, result.kotlinType, expression.type.toKotlinType())
     }
 
