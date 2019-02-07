@@ -92,11 +92,15 @@ interface KotlinPaths {
         SamWithReceiver(PathUtil.SAM_WITH_RECEIVER_PLUGIN_NAME),
         Trove4j(PathUtil.TROVE4J_NAME),
         Compiler(PathUtil.KOTLIN_COMPILER_NAME),
+        ScriptingPlugin(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME),
+        ScriptingLib(PathUtil.KOTLIN_SCRIPTING_COMMON_NAME),
+        ScriptingJvmLib(PathUtil.KOTLIN_SCRIPTING_JVM_NAME),
     }
 
     enum class ClassPaths(val contents: List<Jar> = emptyList()) {
         Empty(),
-        Compiler(Jars.Compiler, Jars.StdLib, Jars.Reflect, Jars.ScriptRuntime, Jars.Trove4j),
+        Compiler(Jar.Compiler, Jar.StdLib, Jar.Reflect, Jar.ScriptRuntime, Jar.Trove4j),
+        CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingLib, Jar.ScriptingJvmLib)
         ;
 
         constructor(vararg jars: Jar) : this(jars.asList())
