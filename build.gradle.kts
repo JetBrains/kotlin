@@ -10,7 +10,7 @@ import org.gradle.kotlin.dsl.*
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.30-dev-1297", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.30-dev-1419", onlySuccessBootstrap = false))
 
     repositories.withRedirector(project) {
         bootstrapKotlinRepo?.let(::maven)
