@@ -111,11 +111,14 @@ val platformDepsJar by task<Zip> {
 task<Copy>("appcodePlugin") {
     into(appcodePluginDir)
     from(cidrPluginDir) { exclude("lib/kotlin-plugin.jar") }
-    from(jar) { into("lib") }
-    from(platformDepsJar) { into("lib") }
-    from(zipTree(platformDepsZip.singleFile).files) {
-        exclude("**/$platformDepsJarName")
-        into("lib")
+    into("lib") {
+        from(jar)
+        from(platformDepsJar)
+        from(zipTree(platformDepsZip.singleFile).files) {
+            exclude("**/$platformDepsJarName")
+        }
     }
-    from(File(project(":kotlin-ultimate:appcode-native").projectDir, "templates")) { into("templates") }
+    into("templates") {
+        from(File(project(":kotlin-ultimate:appcode-native").projectDir, "templates"))
+    }
 }
