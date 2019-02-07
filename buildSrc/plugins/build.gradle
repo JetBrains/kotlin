@@ -20,27 +20,27 @@ buildscript {
     ext.rootBuildDirectory = "$rootDir/.."
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+    dependencies{
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$buildKotlinVersion"
+    }
+    
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'kotlinx-serialization'
 
-repositories {
-    maven {
-        url buildKotlinCompilerRepo
-    }
-    maven {
-        url 'https://cache-redirector.jetbrains.com/maven-central'
-    }
-}
+/* don't use repositories: gradle will ignore it anyway, but may confuse gradle build engineer, see outer build.gradle */
 
 dependencies {
     compile gradleApi()
     compile localGroovy()
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$buildKotlinVersion"
     compile group: 'com.ullink.slack', name: 'simpleslackapi', version: '0.6.0'
     // An artifact from the included build 'shared' cannot be used here due to https://github.com/gradle/gradle/issues/3768
     // TODO: Remove this hack when the bug is fixed
     compile project(':shared')
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0"
 }
 
 rootProject.dependencies {

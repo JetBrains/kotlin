@@ -28,5 +28,7 @@ allprojects {
         maven {
             url 'https://cache-redirector.jetbrains.com/maven-central'
         }
+
+        maven { url "https://kotlin.bintray.com/kotlinx" }
     }
 }

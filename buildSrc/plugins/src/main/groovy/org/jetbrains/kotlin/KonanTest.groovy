@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin
 
-import groovy.json.JsonOutput
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
@@ -330,12 +329,6 @@ abstract class KonanTest extends JavaExec {
     }
 }
 
-class TestFailedException extends RuntimeException {
-    TestFailedException(String s) {
-        super(s)
-    }
-}
-
 abstract class ExtKonanTest extends KonanTest {
 
     ExtKonanTest() {
@@ -424,6 +417,9 @@ class BuildKonanTest extends ExtKonanTest {
  * Runs test built with Konan's TestRunner
  */
 class RunKonanTest extends ExtKonanTest {
+    /**
+     * overrides [KonanTest::inDevelopersRun] used in [:backend.native:tests:sanity]
+     */
     public def inDevelopersRun = true
 
     public def buildTaskName = 'buildKonanTests'
@@ -473,6 +469,9 @@ class RunKonanTest extends ExtKonanTest {
 }
 
 class RunStdlibTest extends RunKonanTest {
+    /**
+     * overrides [KonanTest::inDevelopersRun] used in [:backend.native:tests:sanity]
+     */
     public def inDevelopersRun = false
     public def statistics = new Statistics()
 
@@ -504,8 +503,10 @@ class RunStdlibTest extends RunKonanTest {
                 def n = matcher[0][1] as Integer
                 statistics.fail(n)
             }
-            if (statistics.total == 0) {
-                statistics.error(testsTotal != 0 ? testsTotal : 1)
+            use(KonanTestSuiteReportKt) {
+                if (statistics.total == 0) {
+                    statistics.error(testsTotal != 0 ? testsTotal : 1)
+                }
             }
         }
     }
@@ -515,6 +516,9 @@ class RunStdlibTest extends RunKonanTest {
  * Compiles and executes test as a standalone binary
  */
 class RunStandaloneKonanTest extends KonanTest {
+    /**
+     * overrides [KonanTest::inDevelopersRun] used in [:backend.native:tests:sanity]
+     */
     public def inDevelopersRun = true
 
     void compileTest(List<String> filesToCompile, String exe) {
@@ -527,6 +531,9 @@ class RunStandaloneKonanTest extends KonanTest {
 // project.exec + a shell script isolate the jvm
 // from IDEA. Use the RunKonanTest instead.
 class RunDriverKonanTest extends KonanTest {
+    /**
+     * overrides [KonanTest::inDevelopersRun] used in [:backend.native:tests:sanity]
+     */
     public def inDevelopersRun = true
 
     RunDriverKonanTest() {
@@ -565,6 +572,9 @@ class RunDriverKonanTest extends KonanTest {
 }
 
 class RunInteropKonanTest extends KonanTest {
+    /**
+     * overrides [KonanTest::inDevelopersRun] used in [:backend.native:tests:sanity]
+     */
     public def inDevelopersRun = true
 
     private String interop
@@ -593,8 +603,10 @@ class RunInteropKonanTest extends KonanTest {
 }
 
 class LinkKonanTest extends KonanTest {
+    /**
+     * overrides [KonanTest::inDevelopersRun] used in [:backend.native:tests:sanity]
+     */
     public def inDevelopersRun = true
-
     protected String lib
 
     void compileTest(List<String> filesToCompile, String exe) {
@@ -607,9 +619,12 @@ class LinkKonanTest extends KonanTest {
 }
 
 class DynamicKonanTest extends KonanTest {
-    protected String cSource
-
+    /**
+     * overrides [KonanTest::inDevelopersRun] used in [:backend.native:tests:sanity]
+     */
     public def inDevelopersRun = true
+
+    protected String cSource
 
     void compileTest(List<String> filesToCompile, String exe) {
         def libname = "testlib"
@@ -640,13 +655,15 @@ class DynamicKonanTest extends KonanTest {
     }
 }
 class RunExternalTestGroup extends RunStandaloneKonanTest {
-    def inDevelopersRun = false
+    /**
+     * overrides [KonanTest::inDevelopersRun] used in [:backend.native:tests:sanity]
+     */
+    public def inDevelopersRun = false
 
     def groupDirectory = "."
     def outputSourceSetName = "testOutputExternal"
     String filter = project.findProperty("filter")
-    Map<String, TestResult> results = [:]
-    Statistics statistics = new Statistics()
+    def testGroupReporter = new KonanTestGroupReportEnvironment(project)
 
     RunExternalTestGroup() {
     }
@@ -933,79 +950,53 @@ fun runTest() {
             }
         }
 
-        statistics = new Statistics()
-        def testSuite = createTestSuite(name, statistics)
-        testSuite.start()
-        // Build tests in the group
-        flags = (flags ?: []) + "-tr"
-        def compileList = []
-        ktFiles.each {
-            source = project.relativePath(it)
-            if (isEnabledForNativeBackend(source)) {
-                // Create separate output directory for each test in the group.
-                outputDirectory = outputRootDirectory + "/${it.name}"
-                project.file(outputDirectory).mkdirs()
-                parseLanguageFlags()
-                compileList.addAll(createTestFiles())
-            }
-        }
-        compileList.add(project.file("testUtils.kt").absolutePath)
-        compileList.add(project.file("helpers.kt").absolutePath)
-        try {
-            runCompiler(compileList, buildExePath(), flags)
-        } catch (Exception ex) {
-            println("ERROR: Compilation failed for test suite: ${testSuite.name} with exception: ${ex}")
-            println("The following files were unable to compile:")
-            ktFiles.each { println it.name }
-            statistics.error(ktFiles.size())
-            testSuite.finish()
-            throw new RuntimeException("Compilation failed", ex)
-        }
-
-        // Run the tests.
-        def currentResult = null
-        outputDirectory = outputRootDirectory
-        arguments = (arguments ?: []) + "--ktest_logger=SILENT"
-        ktFiles.each {
-            source = project.relativePath(it)
-            def savedArgs = arguments
-            arguments += "--ktest_filter=_${normalize(it.name)}.*"
-            println("TEST: $it.name (done: $statistics.total/${ktFiles.size()}, passed: $statistics.passed, skipped: $statistics.skipped)")
-            def testCase = testSuite.createTestCase(it.name)
-            testCase.start()
-            if (isEnabledForNativeBackend(source)) {
-                try {
-                    println(source)
-                    super.executeTest()
-                    currentResult = testCase.pass()
-                } catch (TestFailedException e) {
-                    currentResult = testCase.fail(e)
-                } catch (Exception ex) {
-                    ex.printStackTrace()
-                    currentResult = testCase.error(ex)
+        testGroupReporter.suite(name) { suite ->
+            // Build tests in the group
+            flags = (flags ?: []) + "-tr"
+            def compileList = []
+            ktFiles.each {
+                source = project.relativePath(it)
+                if (isEnabledForNativeBackend(source)) {
+                    // Create separate output directory for each test in the group.
+                    outputDirectory = outputRootDirectory + "/${it.name}"
+                    project.file(outputDirectory).mkdirs()
+                    parseLanguageFlags()
+                    compileList.addAll(createTestFiles())
                 }
-            } else {
-                currentResult = testCase.skip()
             }
-            arguments = savedArgs
-            println("TEST $currentResult.status\n")
-            if (currentResult.status == TestStatus.ERROR || currentResult.status == TestStatus.FAILED) {
-                println("Command to reproduce: ./gradlew $name -Pfilter=${it.name}\n")
+            compileList.add(project.file("testUtils.kt").absolutePath)
+            compileList.add(project.file("helpers.kt").absolutePath)
+            try {
+                runCompiler(compileList, buildExePath(), flags)
+            } catch (Exception ex) {
+                project.logger.quiet("ERROR: Compilation failed for test suite: $name with exception", ex)
+                project.logger.quiet("The following files were unable to compile:")
+                ktFiles.each { project.logger.quiet(it.name) }
+                suite.abort(ex, ktFiles.size())
+                throw new RuntimeException("Compilation failed", ex)
             }
-            results.put(it.name, currentResult)
+
+            // Run the tests.
+            def currentResult = null
+            outputDirectory = outputRootDirectory
+            arguments = (arguments ?: []) + "--ktest_logger=SILENT"
+            ktFiles.each { file ->
+                source = project.relativePath(file)
+                def savedArgs = arguments
+                arguments += "--ktest_filter=_${normalize(file.name)}.*"
+                use(KonanTestSuiteReportKt) {
+                    project.logger.quiet("TEST: $file.name (done: $testGroupReporter.statistics.total/${ktFiles.size()}, passed: $testGroupReporter.statistics.passed, skipped: $testGroupReporter.statistics.skipped)")
+                }
+                if (isEnabledForNativeBackend(source)) {
+                    suite.executeTest(file.name) {
+                       project.logger.quiet(source)
+                       super.executeTest()
+                    }
+                } else {
+                    suite.skipTest(file.name)
+                }
+                arguments = savedArgs
+            }
         }
-        testSuite.finish()
-
-        // Save the report.
-        def reportFile = project.file("${outputRootDirectory}/results.json")
-        def json = JsonOutput.toJson(["statistics" : statistics, "tests" : results])
-        reportFile.write(JsonOutput.prettyPrint(json))
-        println("TOTAL PASSED: $statistics.passed/$statistics.total (SKIPPED: $statistics.skipped)")
-    }
-
-    KonanTestSuite createTestSuite(String name, Statistics statistics) {
-        if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null)
-            return new TeamcityKonanTestSuite(name, statistics)
-        return new KonanTestSuite(name, statistics)
     }
 }
