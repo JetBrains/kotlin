@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
         name = "ContextLLVMSetup",
-        description = "Set up Context for LLVM bitcode generation",
+        description = "Set up Context for LLVM Bitcode generation",
         op = { context, _ ->
             // Note that we don't set module target explicitly.
             // It is determined by the target of runtime.bc
@@ -30,7 +30,7 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
 
 internal val RTTIPhase = makeKonanModuleOpPhase(
         name = "RTTI",
-        description = "RTTI Generation",
+        description = "RTTI generation",
         op = { context, irModule -> irModule.acceptVoid(RTTIGeneratorVisitor(context)) }
 )
 
@@ -129,7 +129,7 @@ internal val serializeDFGPhase = makeKonanModuleOpPhase(
 
 internal val codegenPhase = makeKonanModuleOpPhase(
         name = "Codegen",
-        description = "Code Generation",
+        description = "Code generation",
         op = { context, irModule ->
             irModule.acceptVoid(context.codegenVisitor)
         }
@@ -172,4 +172,3 @@ internal val printBitcodePhase = makeKonanModuleOpPhase(
             }
         }
 )
-

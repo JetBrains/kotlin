@@ -155,7 +155,7 @@ internal val initializersPhase = makeKonanFileLoweringPhase(
 internal val sharedVariablesPhase = makeKonanFileLoweringPhase(
         ::SharedVariablesLowering,
         name = "SharedVariables",
-        description = "Shared Variable Lowering",
+        description = "Shared variable lowering",
         prerequisite = setOf(initializersPhase)
 )
 
@@ -165,14 +165,14 @@ internal val localFunctionsPhase = makeKonanFileOpPhase(
             LocalDeclarationsLowering(context).runOnFilePostfix(irFile)
         },
         name = "LocalFunctions",
-        description = "Local Function Lowering",
+        description = "Local function lowering",
         prerequisite = setOf(sharedVariablesPhase)
 )
 
 internal val tailrecPhase = makeKonanFileLoweringPhase(
         ::TailrecLowering,
         name = "Tailrec",
-        description = "tailrec lowering",
+        description = "Tailrec lowering",
         prerequisite = setOf(localFunctionsPhase)
 )
 
@@ -182,7 +182,7 @@ internal val defaultParameterExtentPhase = makeKonanFileOpPhase(
             KonanDefaultParameterInjector(context).lower(irFile)
         },
         name = "DefaultParameterExtent",
-        description = "Default Parameter Extent Lowering",
+        description = "Default parameter extent lowering",
         prerequisite = setOf(tailrecPhase, enumConstructorsPhase)
 )
 
@@ -208,7 +208,7 @@ internal val dataClassesPhase = makeKonanFileLoweringPhase(
 internal val builtinOperatorPhase = makeKonanFileLoweringPhase(
         ::BuiltinOperatorLowering,
         name = "BuiltinOperators",
-        description = "BuiltIn Operators Lowering",
+        description = "BuiltIn operators lowering",
         prerequisite = setOf(defaultParameterExtentPhase)
 )
 
@@ -241,7 +241,7 @@ internal val delegationPhase = makeKonanFileLoweringPhase(
 internal val callableReferencePhase = makeKonanFileLoweringPhase(
         ::CallableReferenceLowering,
         name = "CallableReference",
-        description = "Callable references Lowering",
+        description = "Callable references lowering",
         prerequisite = setOf(delegationPhase) // TODO: make weak dependency on `testProcessorPhase`
 )
 
@@ -306,4 +306,3 @@ internal val returnsInsertionPhase = makeKonanFileLoweringPhase(
         description = "Returns insertion for Unit functions",
         prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase)
 )
-

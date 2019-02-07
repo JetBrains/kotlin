@@ -223,7 +223,7 @@ internal val toplevelPhase = namedUnitPhase(
                                 ) then
                                 namedIrModulePhase(
                                         name = "Bitcode",
-                                        description = "LLVM BitCode Generation",
+                                        description = "LLVM Bitcode generation",
                                         lower = contextLLVMSetupPhase then
                                                 RTTIPhase then
                                                 generateDebugInfoHeaderPhase then
