@@ -1,0 +1,5 @@
+FILE: jvm.kt
+    public final class A : R|Some| {
+        public constructor(): super<R|Some|>()
+
+    }

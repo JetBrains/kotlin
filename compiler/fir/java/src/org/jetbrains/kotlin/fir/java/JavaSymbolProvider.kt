@@ -7,29 +7,212 @@ package org.jetbrains.kotlin.fir.java
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.fir.java.symbols.JavaClassSymbol
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
+import org.jetbrains.kotlin.fir.types.FirResolvedType
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
+import org.jetbrains.kotlin.types.Variance
 
 class JavaSymbolProvider(
+    val session: FirSession,
     val project: Project,
     private val searchScope: GlobalSearchScope
 ) : AbstractFirSymbolProvider() {
-    override fun getCallableSymbols(callableId: CallableId): List<ConeSymbol> {
-        // TODO
-        return emptyList()
+
+    private val facade: KotlinJavaPsiFacade get() = KotlinJavaPsiFacade.getInstance(project)
+
+    private fun JavaAnnotation.toFirAnnotationCall(): FirAnnotationCall {
+        return FirAnnotationCallImpl(
+            session, psi = null, useSiteTarget = null,
+            annotationType = FirResolvedTypeImpl(
+                session = session,
+                psi = null,
+                type = ConeClassTypeImpl(FirClassSymbol(classId!!), emptyArray()),
+                isNullable = true,
+                annotations = emptyList()
+            )
+        ).apply {
+            for (argument in this@toFirAnnotationCall.arguments) {
+                arguments += argument.toFirExpression()
+            }
+        }
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeSymbol? {
-        return classCache.lookupCacheOrCalculate(classId) {
-            val facade = KotlinJavaPsiFacade.getInstance(project)
-            val foundClass = facade.findClass(JavaClassFinder.Request(classId), searchScope)
-            foundClass?.let { javaClass -> JavaClassSymbol(javaClass) }
+    private fun JavaAnnotationArgument.toFirExpression(): FirExpression {
+        // TODO: this.name
+        return when (this) {
+            is JavaLiteralAnnotationArgument -> when (value) {
+                null -> FirConstExpressionImpl(session, null, IrConstKind.Null, null)
+                else -> FirErrorExpressionImpl(session, null, "Unknown value in JavaLiteralAnnotationArgument: $value")
+            }
+            is JavaArrayAnnotationArgument -> FirArrayOfCallImpl(session, null).apply {
+                for (element in getElements()) {
+                    arguments += element.toFirExpression()
+                }
+            }
+            // TODO
+            //is JavaEnumValueAnnotationArgument -> {}
+            is JavaClassObjectAnnotationArgument -> FirGetClassCallImpl(session, null).apply {
+                // TODO
+                //arguments += getReferencedType().toFirType()
+            }
+            is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall()
+            else -> FirErrorExpressionImpl(session, null, "Unknown JavaAnnotationArgument: ${this::class.java}")
+        }
+    }
+
+    private fun JavaClassifierType.toFirResolvedType(): FirResolvedType {
+        val coneType = when (val classifier = classifier) {
+            is JavaClass -> {
+                val symbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(classifier.classId!!) as ConeClassSymbol
+                ConeClassTypeImpl(symbol, typeArguments = typeArguments.map { it.toConeProjection() }.toTypedArray())
+            }
+            is JavaTypeParameter -> {
+                // TODO: it's unclear how to identify type parameter by the symbol
+                // TODO: some type parameter cache (provider?)
+                val symbol = createTypeParameterSymbol(classifier.name)
+                ConeTypeParameterTypeImpl(symbol)
+            }
+            else -> ConeClassErrorType(reason = "Unexpected classifier: $classifier")
+        }
+        return FirResolvedTypeImpl(
+            session, psi = null, type = coneType,
+            isNullable = false, annotations = annotations.map { it.toFirAnnotationCall() }
+        )
+    }
+
+    private fun JavaType.toFirResolvedType(): FirResolvedType {
+        if (this is JavaClassifierType) return toFirResolvedType()
+        return FirResolvedTypeImpl(
+            session, psi = null, type = ConeClassErrorType("Unexpected JavaType: $this"),
+            isNullable = false, annotations = emptyList()
+        )
+    }
+
+    private fun JavaType.toConeProjection(): ConeKotlinTypeProjection {
+        if (this is JavaClassifierType) {
+            return toFirResolvedType().type
+        }
+        return ConeClassErrorType("Unexpected type argument: $this")
+    }
+
+    private fun createTypeParameterSymbol(name: Name): FirTypeParameterSymbol {
+        val firSymbol = FirTypeParameterSymbol()
+        FirTypeParameterImpl(session, null, firSymbol, name, variance = Variance.INVARIANT, isReified = false)
+        return firSymbol
+    }
+
+    private fun FirAbstractAnnotatedElement.addAnnotationsFrom(javaAnnotationOwner: JavaAnnotationOwner) {
+        for (annotation in javaAnnotationOwner.annotations) {
+            annotations += annotation.toFirAnnotationCall()
+        }
+    }
+
+    private fun findClass(classId: ClassId): JavaClass? = facade.findClass(JavaClassFinder.Request(classId), searchScope)
+
+    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
+        return callableCache.lookupCacheOrCalculate(callableId) {
+            val classId = callableId.classId ?: return@lookupCacheOrCalculate emptyList()
+            val classSymbol = getClassLikeSymbolByFqName(classId) as? FirClassSymbol
+                ?: return@lookupCacheOrCalculate emptyList()
+            val firClass = classSymbol.fir as FirModifiableClass
+            val callableSymbols = mutableListOf<ConeCallableSymbol>()
+            findClass(classId)?.let { javaClass ->
+                if (firClass.declarations.isEmpty()) {
+                    for (javaMethod in javaClass.methods) {
+                        val methodName = javaMethod.name
+                        val methodId = CallableId(callableId.packageName, callableId.className, methodName)
+                        val methodSymbol = FirFunctionSymbol(methodId)
+                        val memberFunction = FirMemberFunctionImpl(
+                            session, null, methodSymbol, methodName,
+                            javaMethod.visibility, javaMethod.modality,
+                            isExpect = false, isActual = false, isOverride = false,
+                            isOperator = true, isInfix = false, isInline = false,
+                            isTailRec = false, isExternal = false, isSuspend = false,
+                            receiverType = null, returnType = javaMethod.returnType.toFirResolvedType()
+                        ).apply {
+                            for (typeParameter in javaMethod.typeParameters) {
+                                typeParameters += createTypeParameterSymbol(typeParameter.name).fir
+                            }
+                            addAnnotationsFrom(javaMethod)
+                            for (valueParameter in javaMethod.valueParameters) {
+                                valueParameters += FirValueParameterImpl(
+                                    session, null, valueParameter.name ?: Name.special("<anonymous Java parameter>"),
+                                    returnType = valueParameter.type.toFirResolvedType(),
+                                    defaultValue = null, isCrossinline = false, isNoinline = false,
+                                    isVararg = valueParameter.isVararg
+                                )
+                            }
+                        }
+                        firClass.declarations += memberFunction
+                    }
+                }
+                for (declaration in firClass.declarations) {
+                    if (declaration is FirNamedFunction) {
+                        val methodId = CallableId(callableId.packageName, callableId.className, declaration.name)
+                        if (methodId == callableId) {
+                            val symbol = declaration.symbol as ConeCallableSymbol
+                            callableSymbols += symbol
+                        }
+                    }
+                }
+            }
+            callableSymbols
+        }.orEmpty()
+    }
+
+    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
+        return classCache.lookupCacheOrCalculateWithPostCompute(classId, {
+            val foundClass = findClass(classId)
+            if (foundClass == null) {
+                null to null
+            } else {
+                FirClassSymbol(classId) to foundClass
+            }
+        }) { firSymbol, foundClass ->
+            foundClass?.let { javaClass ->
+                FirClassImpl(
+                    session, null, firSymbol as FirClassSymbol, javaClass.name,
+                    javaClass.visibility, javaClass.modality,
+                    isExpect = false, isActual = false,
+                    classKind = javaClass.classKind,
+                    isInner = !javaClass.isStatic, isCompanion = false,
+                    isData = false, isInline = false
+                ).apply {
+                    for (typeParameter in javaClass.typeParameters) {
+                        typeParameters += createTypeParameterSymbol(typeParameter.name).fir
+                    }
+                    addAnnotationsFrom(javaClass)
+                    for (supertype in javaClass.supertypes) {
+                        superTypes += supertype.toFirResolvedType()
+                    }
+                }
+            }
         }
     }
 

@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 // NB: with className == null we are at top level
 data class CallableId(val packageName: FqName, val className: FqName?, val callableName: Name) {
+    val classId: ClassId? get() = className?.let { ClassId(packageName, it, false) }
+
     constructor(packageName: FqName, callableName: Name): this(packageName, null, callableName)
 
     override fun toString(): String {

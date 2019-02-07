@@ -27,7 +27,7 @@ class FirJavaModuleBasedSession(
             FirCompositeSymbolProvider(
                 listOf(
                     service<FirProvider>(),
-                    JavaSymbolProvider(sessionProvider.project, scope),
+                    JavaSymbolProvider(this, sessionProvider.project, scope),
                     FirDependenciesSymbolProviderImpl(this)
                 )
             )
@@ -47,7 +47,7 @@ class FirLibrarySession(
             FirCompositeSymbolProvider(
                 listOf(
                     FirLibrarySymbolProviderImpl(this),
-                    JavaSymbolProvider(sessionProvider.project, scope),
+                    JavaSymbolProvider(this, sessionProvider.project, scope),
                     FirDependenciesSymbolProviderImpl(this)
                 )
             )

@@ -24,12 +24,14 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         }
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeSymbol? {
-        return (getFirClassifierByFqName(classId) as? FirSymbolOwner<*>)?.symbol
+    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
+        return (getFirClassifierByFqName(classId) as? FirSymbolOwner<*>)?.symbol as? ConeClassLikeSymbol
     }
 
-    override fun getCallableSymbols(callableId: CallableId): List<ConeSymbol> {
-        return (callableMap[callableId] ?: emptyList()).filterIsInstance<FirSymbolOwner<*>>().map { it.symbol }
+    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
+        return (callableMap[callableId] ?: emptyList())
+            .filterIsInstance<FirSymbolOwner<*>>()
+            .mapNotNull { it.symbol as? ConeCallableSymbol }
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
