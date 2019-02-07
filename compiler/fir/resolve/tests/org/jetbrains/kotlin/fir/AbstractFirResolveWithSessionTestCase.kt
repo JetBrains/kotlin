@@ -5,13 +5,24 @@
 
 package org.jetbrains.kotlin.fir
 
+import com.intellij.openapi.extensions.Extensions
+import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 
 abstract class AbstractFirResolveWithSessionTestCase : KotlinTestWithEnvironment() {
+
+    override fun setUp() {
+        super.setUp()
+
+        Extensions.getArea(project)
+            .getExtensionPoint(PsiElementFinder.EP_NAME)
+            .unregisterExtension(JavaElementFinder::class.java)
+    }
 
     open fun createSession(sourceScope: GlobalSearchScope): FirSession {
         val moduleInfo = FirTestModuleInfo()
