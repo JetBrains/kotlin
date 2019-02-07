@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.name
 import java.util.*
 
 object NameUtils {
-    private val SANITIZE_AS_JAVA_INVALID_CHARACTERS = "[^\\p{L}\\p{Digit}]".toRegex()
+    private val SANITIZE_AS_JAVA_INVALID_CHARACTERS = "[^\\p{L}\\p{Digit}\\$]".toRegex()
 
     @JvmStatic
     fun sanitizeAsJavaIdentifier(name: String): String {

@@ -1,11 +1,20 @@
-// IGNORE_BACKEND: JVM_IR
-fun box() : String {
+class C() {
+    fun foo(): Int {
+        fun local(i: Int = 1): Int {
+            return i
+        }
+        return local()
+    }
+}
 
-
-    fun local(i: Int = 1) : Int {
+fun box(): String {
+    fun local(i: Int = 1): Int {
         return i
     }
 
-    return if (local() != 1) "fail" else "OK"
-}
+    if (local() != 1) return "Fail 1"
+    if (local(2) != 2) return "Fail 2"
+    if (C().foo() != 1) return "Fail 3"
 
+    return "OK"
+}

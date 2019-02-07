@@ -302,7 +302,8 @@ public class AsmUtil {
     }
 
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
-        return isStaticKind(kind) ||
+        return isStaticDeclaration(functionDescriptor) ||
+               isStaticKind(kind) ||
                KotlinTypeMapper.isStaticAccessor(functionDescriptor) ||
                CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
     }

@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 val jvmDefaultArgumentStubPhase = makeIrFilePhase(
@@ -43,12 +42,35 @@ val jvmDefaultArgumentStubPhase = makeIrFilePhase(
 open class DefaultArgumentStubGenerator(
     open val context: CommonBackendContext,
     private val skipInlineMethods: Boolean = true
-) : DeclarationContainerLoweringPass {
+) : FileLoweringPass {
 
-    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
+    override fun lower(irFile: IrFile) {
+        irFile.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+
+                // Functions may be in a DeclarationContainer (e.g., in a class) or in a StatementContainer (e.g., local functions).
+                when (element) {
+                    is IrDeclarationContainer -> transformDeclarationContainer(element)
+                    is IrStatementContainer -> transformStatementContainer(element)
+                }
+            }
+        })
+    }
+
+    private fun transformDeclarationContainer(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.transformDeclarationsFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)
                 lower(memberDeclaration)
+            else
+                null
+        }
+    }
+
+    private fun transformStatementContainer(irStatementContainer: IrStatementContainer) {
+        irStatementContainer.statements.transformFlat { statement ->
+            if (statement is IrFunction)
+                lower(statement)
             else
                 null
         }
