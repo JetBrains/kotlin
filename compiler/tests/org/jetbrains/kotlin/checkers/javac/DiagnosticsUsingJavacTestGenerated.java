@@ -3109,6 +3109,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/classObjects/typeParametersInAnnonymousObject.kt");
             }
 
+            @TestMetadata("typeParametersInAnnonymousObject_after.kt")
+            public void testTypeParametersInAnnonymousObject_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/typeParametersInAnnonymousObject_after.kt");
+            }
+
             @TestMetadata("typeParametersInObject.kt")
             public void testTypeParametersInObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/classObjects/typeParametersInObject.kt");

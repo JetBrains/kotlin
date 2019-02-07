@@ -13,10 +13,14 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -226,11 +230,22 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             KtTypeParameterList typeParameterList = classInfo.getTypeParameterList();
             if (typeParameterList == null) return Collections.emptyList();
 
+            boolean isAnonymousObject = (classInfo.getClassKind() == ClassKind.CLASS) && (classInfo.getCorrespondingClassOrObject() instanceof KtObjectDeclaration);
+
             if (classInfo.getClassKind() == ClassKind.ENUM_CLASS) {
                 c.getTrace().report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
             }
             if (classInfo.getClassKind() == ClassKind.OBJECT) {
                 c.getTrace().report(TYPE_PARAMETERS_IN_OBJECT.on(typeParameterList));
+            }
+            if (isAnonymousObject) {
+                DiagnosticFactory0<KtTypeParameterList> diagnosticFactory;
+                if (c.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProhibitTypeParametersInAnonymousObjects)) {
+                    diagnosticFactory = TYPE_PARAMETERS_IN_OBJECT;
+                } else {
+                    diagnosticFactory = TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT;
+                }
+                c.getTrace().report(diagnosticFactory.on(typeParameterList));
             }
 
             List<KtTypeParameter> typeParameters = typeParameterList.getParameters();

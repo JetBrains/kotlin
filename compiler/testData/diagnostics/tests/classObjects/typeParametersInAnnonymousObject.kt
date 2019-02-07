@@ -2,23 +2,23 @@
 // ISSUE: KT-28999
 
 fun case_1() {
-    val x = object<T> { } // type of x is <anonymous object><T>
+    val x = object<!TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT!><T><!> { } // type of x is <anonymous object><T>
 }
 
 fun case_2() {
-    val x = object<T : Number, K: Comparable<K>> { }
+    val x = object<!TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT!><T : Number, K: Comparable<K>><!> { }
 }
 
 fun case_3() {
-    val x = object<T> <!SYNTAX!>where <!DEBUG_INFO_MISSING_UNRESOLVED!>T<!> : <!DEBUG_INFO_MISSING_UNRESOLVED!>Comparable<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>T<!>><!> { } // ERROR: Where clause is not allowed for objects
+    val x = object<!TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT!><T><!> <!SYNTAX!>where <!DEBUG_INFO_MISSING_UNRESOLVED!>T<!> : <!DEBUG_INFO_MISSING_UNRESOLVED!>Comparable<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>T<!>><!> { } // ERROR: Where clause is not allowed for objects
 }
 
-val x = object<T, K: Comparable<K>> {
+val x = object<!TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT!><T, K: Comparable<K>><!> {
     fun test() = 10 <!UNCHECKED_CAST!>as T<!> // OK
 }
 
 fun case_4() {
-    val x = object<T> {
+    val x = object<!TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT!><T><!> {
         fun test() = 10 <!UNCHECKED_CAST!>as T<!>
     }
 
@@ -26,7 +26,7 @@ fun case_4() {
 }
 
 inline fun <reified T> case_5() {
-    val x = object<T> {
+    val x = object<!TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT!><T><!> {
         fun test() = 10 <!UNCHECKED_CAST!>as T<!>
     }
 
