@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.serialization;
 
-import com.intellij.openapi.util.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;

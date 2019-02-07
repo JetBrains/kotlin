@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -423,7 +423,7 @@ public class PropertyCodegen {
 
         String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);
 
-        v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
+        v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, new Pair<>(type, name));
 
         if (isBackingFieldOwner) {
             FieldVisitor fv = builder.newField(
