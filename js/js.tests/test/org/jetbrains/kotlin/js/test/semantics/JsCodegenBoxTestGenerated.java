@@ -8225,6 +8225,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/delegatedProperty/local/kt19690.kt");
             }
 
+            @TestMetadata("kt21085.kt")
+            public void testKt21085() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/local/kt21085.kt");
+            }
+
             @TestMetadata("kt23117.kt")
             public void testKt23117() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/local/kt23117.kt");
@@ -19092,6 +19097,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
             public void testAllFilesPresentInSuperConstructor() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/super/superConstructor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("kt13846.kt")
+            public void testKt13846() throws Exception {
+                runTest("compiler/testData/codegen/box/super/superConstructor/kt13846.kt");
             }
 
             @TestMetadata("kt17464_arrayOf.kt")
