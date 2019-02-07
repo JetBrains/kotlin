@@ -251,6 +251,7 @@ message IrPropertyReference {
     optional IrSymbol setter = 3;
     optional IrStatementOrigin origin = 4;
     required MemberAccessCommon member_access = 5;
+    optional DescriptorReference descriptor = 6; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
 }
 
 message IrComposite {
