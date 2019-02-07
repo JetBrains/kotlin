@@ -60,8 +60,8 @@ class AppCodeGradleKonanProjectAttacher(
     private fun findGradleProject(): File? {
         val baseDir = Paths.get(project.baseDir.path, "Supporting Files")
         return FileUtil.findFirstThatExist(
-            "$baseDir${GradleConstants.DEFAULT_SCRIPT_NAME}",
-            "$baseDir${GradleConstants.KOTLIN_DSL_SCRIPT_NAME}"
+            "$baseDir/${GradleConstants.DEFAULT_SCRIPT_NAME}",
+            "$baseDir/${GradleConstants.KOTLIN_DSL_SCRIPT_NAME}"
         )
     }
 
