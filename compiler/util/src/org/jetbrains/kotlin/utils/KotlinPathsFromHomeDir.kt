@@ -22,54 +22,10 @@ import java.io.File
 
 class KotlinPathsFromHomeDir(
     override val homePath: File // kotlinc directory
-) : KotlinPaths {
+) : KotlinPathsFromBaseDirectory(File(homePath, "lib")) {
 
-    override val libPath: File
-        get() = File(homePath, "lib")
+    // TODO: extend when needed
+    val libsWithSources = setOf(KotlinPaths.Jar.StdLib, KotlinPaths.Jar.JsStdLib)
 
-    override val stdlibPath: File
-        get() = getLibraryFile(PathUtil.KOTLIN_JAVA_STDLIB_JAR)
-
-    override val reflectPath: File
-        get() = getLibraryFile(PathUtil.KOTLIN_JAVA_REFLECT_JAR)
-
-    override val scriptRuntimePath: File
-        get() = getLibraryFile(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR)
-
-    override val kotlinTestPath: File
-        get() = getLibraryFile(PathUtil.KOTLIN_TEST_JAR)
-
-    override val stdlibSourcesPath: File
-        get() = getLibraryFile(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR)
-
-    override val jsStdLibJarPath: File
-        get() = getLibraryFile(PathUtil.JS_LIB_JAR_NAME)
-
-    override val jsStdLibSrcJarPath: File
-        get() = getLibraryFile(PathUtil.JS_LIB_SRC_JAR_NAME)
-
-    override val jsKotlinTestJarPath: File
-        get() = getLibraryFile(PathUtil.KOTLIN_TEST_JS_JAR)
-
-    override val allOpenPluginJarPath: File
-        get() = getLibraryFile(PathUtil.ALLOPEN_PLUGIN_JAR_NAME)
-
-    override val noArgPluginJarPath: File
-        get() = getLibraryFile(PathUtil.NOARG_PLUGIN_JAR_NAME)
-
-    override val samWithReceiverJarPath: File
-        get() = getLibraryFile(PathUtil.SAM_WITH_RECEIVER_PLUGIN_JAR_NAME)
-
-    override val trove4jJarPath: File
-        get() = getLibraryFile(PathUtil.TROVE4J_NAME)
-
-    override val compilerClasspath: List<File>
-        get() = listOf(stdlibPath, reflectPath, scriptRuntimePath, trove4jJarPath)
-
-    override val compilerPath: File
-        get() = getLibraryFile(PathUtil.KOTLIN_COMPILER_JAR)
-
-    private fun getLibraryFile(fileName: String): File {
-        return File(libPath, fileName)
-    }
+    override fun sourcesJar(jar: KotlinPaths.Jar): File? = if (jar in libsWithSources) super.sourcesJar(jar) else null
 }
