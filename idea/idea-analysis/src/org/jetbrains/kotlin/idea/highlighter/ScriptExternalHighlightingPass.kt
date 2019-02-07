@@ -31,8 +31,13 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.ex.StatusBarEx
 import com.intellij.psi.PsiFile
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.script.experimental.dependencies.ScriptReport
 
@@ -44,6 +49,23 @@ class ScriptExternalHighlightingPass(
 
     override fun doApplyInformationToEditor() {
         val document = document ?: return
+
+        if (!file.isScript()) return
+
+        if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
+            UIUtil.invokeLaterIfNeeded {
+                val ideFrame = WindowManager.getInstance().getIdeFrame(file.project)
+                if (ideFrame != null) {
+                    val statusBar = ideFrame.statusBar as StatusBarEx
+                    statusBar.notifyProgressByBalloon(
+                        MessageType.WARNING,
+                        "Highlighting in scripts is not available until all Script Definitions are loaded",
+                        null,
+                        null
+                    )
+                }
+            }
+        }
 
         val reports = file.virtualFile.getUserData(IdeScriptReportSink.Reports) ?: return
 

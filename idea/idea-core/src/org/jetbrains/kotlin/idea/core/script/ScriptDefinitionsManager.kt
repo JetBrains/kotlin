@@ -74,6 +74,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? {
         if (nonScriptFileName(fileName)) return null
+        if (!isReady()) return null
 
         val cached = synchronized(scriptDefinitionsCacheLock) { scriptDefinitionsCache.get(fileName) }
         if (cached != null) return cached
@@ -141,6 +142,12 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         return definitions ?: kotlin.run {
             reloadScriptDefinitions()
             definitions!!
+        }
+    }
+
+    fun isReady(): Boolean {
+        return definitionsByContributor.keys.all { contributor ->
+            contributor.isReady()
         }
     }
 
@@ -271,6 +278,7 @@ interface ScriptDefinitionContributor {
     val id: String
 
     fun getDefinitions(): List<KotlinScriptDefinition>
+    fun isReady() = true
 
     companion object {
         val EP_NAME: ExtensionPointName<ScriptDefinitionContributor> =

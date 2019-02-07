@@ -6,25 +6,20 @@
 package org.jetbrains.kotlin.idea.script
 
 import com.intellij.ProjectTopics
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-class ScriptTemplatesFromDependenciesProvider(private val project: Project) : ScriptDefinitionContributor {
+class ScriptTemplatesFromDependenciesProvider(project: Project) : AsyncScriptDefinitionsContributor(project) {
 
     private var templates: TemplatesWithCp? = null
     private val templatesLock = ReentrantReadWriteLock()
@@ -34,6 +29,7 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent) {
                 if (project.isInitialized) {
+                    forceStartUpdate = true
                     asyncRunUpdateScriptTemplates()
                 }
             }
@@ -41,69 +37,27 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
     }
 
     override val id = "ScriptTemplatesFromDependenciesProvider"
+    override val progressMessage = "Kotlin: scanning dependencies for script definitions..."
 
-    override fun getDefinitions(): List<KotlinScriptDefinition> {
-        val templatesCopy = templatesLock.read {
-            if (templates == null) {
-                syncUpdateScriptTemplates(false)
-            }
-            templates ?: return emptyList()
-        }
-        return loadDefinitionsFromTemplates(
-            templateClassNames = templatesCopy.templates,
-            templateClasspath = templatesCopy.classpath,
-            environment = mapOf(
-                "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File)
-            )
-        )
-    }
-
-    private var areRootsChanged = false
-    private var backgroundTask: TemplatesCollectorBackgroundTask? = null
-    private val backgroundTaskLock = ReentrantReadWriteLock()
-
-    private inner class TemplatesCollectorBackgroundTask
-        : Task.Backgroundable(project, "Kotlin: scanning dependencies for script definitions...", true) {
-
-        override fun run(indicator: ProgressIndicator) {
-            while (true) {
-                backgroundTaskLock.read {
-                    if (indicator.isCanceled || !areRootsChanged) {
-                        backgroundTaskLock.write {
-                            backgroundTask = null
-                        }
-                        return
-                    }
-                    areRootsChanged = false
-                }
-                if (syncUpdateScriptTemplates(true)) {
-                    ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this@ScriptTemplatesFromDependenciesProvider)
-                }
-            }
-        }
-    }
-
-    private fun asyncRunUpdateScriptTemplates() {
-        backgroundTaskLock.write {
-            areRootsChanged = true
-            if (backgroundTask == null) {
-                backgroundTask = TemplatesCollectorBackgroundTask()
-                backgroundTask!!.queue()
-            }
-        }
-    }
-
-    private fun syncUpdateScriptTemplates(force: Boolean): Boolean {
-        val wasRunning = templatesLock.isWriteLocked
-        templatesLock.write {
-            if (wasRunning && !force && templates != null) return true
+    override fun loadScriptDefinitions(previous: List<KotlinScriptDefinition>?): List<KotlinScriptDefinition> {
+        val templatesCopy = templatesLock.write {
             val newTemplates = scriptDefinitionsFromDependencies(project)
             if (newTemplates != templates) {
                 templates = newTemplates
-                return true
+                return@write newTemplates
             }
-            return false
+            return@write null
         }
+        if (templatesCopy != null) {
+            return loadDefinitionsFromTemplates(
+                templateClassNames = templatesCopy.templates,
+                templateClasspath = templatesCopy.classpath,
+                environment = mapOf(
+                    "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File)
+                )
+            )
+        }
+        return previous ?: emptyList()
     }
 }
 
