@@ -5,19 +5,10 @@
 
 package org.jetbrains.konan
 
-import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.PathManager
 import com.jetbrains.cidr.xcode.templates.XcodeTemplatePathsProvider
 import java.io.File
 
-class AppCodeKonanTemplatesProvider: XcodeTemplatePathsProvider {
-  override fun getTemplatePaths(): List<File> {
-    val path = if (PluginManagerCore.isRunningFromSources()) {
-      PathManager.getHomePath() + "/plugins/kotlin-native/kotlin-native-appcode/templates"
-    }
-    else {
-      PathManager.getPluginsPath() + "/kotlinNative-appcode/templates/"
-    }
-    return listOf(File(path))
-  }
+class AppCodeKonanTemplatesProvider : XcodeTemplatePathsProvider {
+    override fun getTemplatePaths(): List<File> = listOf(File(PathManager.getPluginsPath() + "/Kotlin/templates/"))
 }
