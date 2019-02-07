@@ -1,7 +1,6 @@
 package
 
-public fun test_1(/*0*/ d: Data<out kotlin.Any>): kotlin.Unit
-public fun test_2(/*0*/ a: kotlin.collections.MutableList<out kotlin.Int?>?): kotlin.Unit
+public fun test(/*0*/ d: Data<out kotlin.Any>): kotlin.Unit
 
 public final class Data</*0*/ T> {
     public constructor Data</*0*/ T>(/*0*/ s: T)

@@ -19819,6 +19819,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt2851.kt");
                 }
 
+                @TestMetadata("kt29767.kt")
+                public void testKt29767() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt29767.kt");
+                }
+
                 @TestMetadata("kt4009.kt")
                 public void testKt4009() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt4009.kt");
