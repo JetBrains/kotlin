@@ -461,7 +461,7 @@ abstract class BasicBoxTest(
         runtime: JsIrTestRuntime,
         isMainModule: Boolean
     ) {
-        val translator = K2JSTranslator(config, true)
+        val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
 
         if (translationResult !is TranslationResult.Success) {
