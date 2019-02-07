@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.ir.util.isKFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.types.KotlinType
@@ -54,7 +55,7 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
 internal val IrFunction.isFunctionInvoke: Boolean
     get() {
         val dispatchReceiver = dispatchReceiverParameter ?: return false
-        assert(!dispatchReceiver.type.isFunctionTypeOrSubtype())
+        assert(!dispatchReceiver.type.isKFunction())
 
         return dispatchReceiver.type.isFunctionTypeOrSubtype() &&
                 /*this.isOperator &&*/ this.name == OperatorNameConventions.INVOKE

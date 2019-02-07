@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataSerializerProtocol
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -44,10 +43,15 @@ class IrKlibProtoBufModuleDeserializer(
 
     var deserializedModuleDescriptor: ModuleDescriptor? = null
     var deserializedModuleProtoSymbolTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.IrSymbolTable>()
+    var deserializedModuleProtoStringTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.StringTable>()
     var deserializedModuleProtoTypeTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.IrTypeTable>()
 
     val resolvedForwardDeclarations = mutableMapOf<UniqIdKey, UniqIdKey>()
-    val descriptorReferenceDeserializer = DescriptorReferenceDeserializer(currentModule, resolvedForwardDeclarations)
+    val descriptorReferenceDeserializer = DescriptorReferenceDeserializer(currentModule, resolvedForwardDeclarations, {
+                    knownBuiltInsDescriptors[it]?.index ?: if (isBuiltInFunction(it)) FUNCTION_INDEX_START + builtInFunctionId(it) else null
+        }, { (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_CLASS_OFFSET) <= it && it < (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_GAP) }, {
+            builtIns.builtIns.getBuiltInClassByFqName(it)
+        })
 
     val moduleRoot = libraryDir
     val irDirectory = File(libraryDir, "ir/")
@@ -94,7 +98,7 @@ class IrKlibProtoBufModuleDeserializer(
                     ?: WrappedEnumEntryDescriptor()
             )
         IrKlibProtoBuf.IrSymbolKind.STANDALONE_FIELD_SYMBOL ->
-            IrFieldSymbolImpl(WrappedFieldDescriptor())
+            symbolTable.referenceField(WrappedFieldDescriptor())
 
         IrKlibProtoBuf.IrSymbolKind.FIELD_SYMBOL ->
             symbolTable.referenceField(
@@ -135,6 +139,9 @@ class IrKlibProtoBufModuleDeserializer(
         return deserializeIrTypeData(typeData)
     }
 
+    override fun deserializeString(proto: IrKlibProtoBuf.String) =
+        deserializedModuleProtoStringTables[deserializedModuleDescriptor]!!.getStrings(proto.index)
+
     fun deserializeIrSymbolData(proto: IrKlibProtoBuf.IrSymbolData): IrSymbol {
         val key = proto.uniqId.uniqIdKey(deserializedModuleDescriptor!!)
         val topLevelKey = proto.topLevelUniqId.uniqIdKey(deserializedModuleDescriptor!!)
@@ -166,11 +173,18 @@ class IrKlibProtoBufModuleDeserializer(
     }
 
     override fun deserializeDescriptorReference(proto: IrKlibProtoBuf.DescriptorReference) =
-        descriptorReferenceDeserializer.deserializeDescriptorReference(proto, {
-            knownBuiltInsDescriptors[it]?.index ?: if (isBuiltInFunction(it)) FUNCTION_INDEX_START + builtInFunctionId(it) else null
-        }, { (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_CLASS_OFFSET) <= it && it < (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_GAP) }, {
-            builtIns.builtIns.getBuiltInClassByFqName(it)
-        })
+        descriptorReferenceDeserializer.deserializeDescriptorReference(
+            deserializeString(proto.packageFqName),
+            deserializeString(proto.classFqName),
+            deserializeString(proto.name),
+            if (proto.hasUniqId()) proto.uniqId.index else null,
+            isEnumEntry = proto.isEnumEntry,
+            isEnumSpecial = proto.isEnumSpecial,
+            isDefaultConstructor = proto.isDefaultConstructor,
+            isFakeOverride = proto.isFakeOverride,
+            isGetter = proto.isGetter,
+            isSetter = proto.isSetter
+        )
 
     private val ByteArray.codedInputStream: org.jetbrains.kotlin.protobuf.CodedInputStream
         get() {
@@ -282,6 +296,9 @@ class IrKlibProtoBufModuleDeserializer(
                         classDescriptor,
                         classDescriptor.modality
                 ) { symbol: IrClassSymbol -> IrClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, symbol) }
+                .also {
+                    it.parent = file
+                }
                 declaration
 
             }
@@ -290,10 +307,13 @@ class IrKlibProtoBufModuleDeserializer(
     }
 
     fun deserializeIrFile(fileProto: IrKlibProtoBuf.IrFile, moduleDescriptor: ModuleDescriptor, deserializeAllDeclarations: Boolean): IrFile {
-        val fileEntry = NaiveSourceBasedFileEntryImpl(fileProto.fileEntry.name)
+        val fileEntry = NaiveSourceBasedFileEntryImpl(
+            deserializeString(fileProto.fileEntry.name),
+            fileProto.fileEntry.lineStartOffsetsList.toIntArray()
+        )
 
         // TODO: we need to store "" in protobuf, I suppose. Or better yet, reuse fqname storage from metadata.
-        val fqName = if (fileProto.fqName == "<root>") FqName.ROOT else FqName(fileProto.fqName)
+        val fqName = deserializeString(fileProto.fqName).let { if (it == "<root>") FqName.ROOT else FqName(it) }
 
         val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
 
@@ -316,18 +336,17 @@ class IrKlibProtoBufModuleDeserializer(
 
         deserializedModuleDescriptor = moduleDescriptor
         deserializedModuleProtoSymbolTables.put(moduleDescriptor, proto.symbolTable)
+        deserializedModuleProtoStringTables.put(moduleDescriptor, proto.stringTable)
         deserializedModuleProtoTypeTables.put(moduleDescriptor, proto.typeTable)
 
-        var i = 0
         val files = proto.fileList.map {
-            i++
-//            if (i >= 41)
-//                descriptorReferenceDeserializer.doCrash = true
             deserializeIrFile(it, moduleDescriptor, deserializeAllDeclarations)
         }
         val module = IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
         module.patchDeclarationParents(null)
-        return module
+        return module.also {
+            it.files.removeAll { f -> f.name == Namer.DYNAMIC_FILE_NAME }
+        }
     }
 
     fun deserializeIrModule(moduleDescriptor: ModuleDescriptor, byteArray: ByteArray, deserializeAllDeclarations: Boolean = false): IrModuleFragment {

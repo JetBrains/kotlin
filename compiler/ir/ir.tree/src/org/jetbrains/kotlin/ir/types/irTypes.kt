@@ -70,6 +70,7 @@ fun IrType.makeNullable(addKotlinType:Boolean = true) =
     else
         this
 
+// TODO: get rid of this
 var irTypeKotlinBuiltIns: KotlinBuiltIns? = null
 
 fun IrType.toKotlinType(): KotlinType {

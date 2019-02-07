@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.CompilerPhaseManager
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -85,7 +84,7 @@ fun compile(
     TopDownAnalyzerFacadeForJS.checkForErrors(files, analysisResult.bindingContext)
 
     val symbolTable = SymbolTable()
-//    irDependencyModules.forEach { symbolTable.loadModule(it) }
+    if (!isKlibCompilation) irDependencyModules.forEach { symbolTable.loadModule(it) }
 
     val psi2IrTranslator = Psi2IrTranslator(configuration.languageVersionSettings)
     val psi2IrContext = psi2IrTranslator.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
@@ -105,6 +104,10 @@ fun compile(
 
     if (isKlibCompilation) {
         val logggg = object : LoggingContext {
+            override var inVerbosePhase: Boolean
+                get() = TODO("not implemented")
+                set(_) {}
+
             override fun log(message: () -> String) {}
         }
 
@@ -173,8 +176,7 @@ fun compile(
         )
 
         md.initialize(CompositePackageFragmentProvider(packageProviders))
-        md.setDependencies(listOf(md/*, builtIns.builtInsModule*/))
-
+        md.setDependencies(listOf(md))
 
         val st = SymbolTable()
 
@@ -198,7 +200,7 @@ fun compile(
 
         deserializedModuleFragment.replaceUnboundSymbols(context)
 
-        jsPhases.invokeToplevel(context.phaseConfig, context, moduleFragment)
+        jsPhases.invokeToplevel(context.phaseConfig, context, deserializedModuleFragment)
 
         return Result(md, context.jsProgram.toString(), null)
     } else {

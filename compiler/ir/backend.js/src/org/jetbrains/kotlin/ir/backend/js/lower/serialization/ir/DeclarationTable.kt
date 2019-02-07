@@ -19,17 +19,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
 import java.util.regex.Pattern
 
-fun <K, V> MutableMap<K, V>.putOnce(k:K, v: V): Unit {
-    assert(!this.containsKey(k) || this[k] == v) {
-        "adding $v for $k, but it is already ${this[k]} for $k"
-    }
-    this.put(k, v)
-}
-
 class DescriptorTable {
     private val descriptors = mutableMapOf<DeclarationDescriptor, Long>()
     fun put(descriptor: DeclarationDescriptor, uniqId: UniqId) {
-        descriptors.putOnce(descriptor, uniqId.index)
+        descriptors.getOrPut(descriptor) { uniqId.index }
     }
     fun get(descriptor: DeclarationDescriptor) = descriptors[descriptor]
 }
@@ -54,35 +47,27 @@ class DeclarationTable(val builtIns: IrBuiltIns, val descriptorTable: Descriptor
         currentIndex += BUILT_IN_UNIQ_ID_GAP
     }
 
-    fun uniqIdByDeclaration(value: IrDeclaration): UniqId {
-        val index = table.getOrPut(value) {
-
-            if (isBuiltInFunction(value)) {
-                UniqId(FUNCTION_INDEX_START + builtInFunctionId(value), false)
-            } else if (value.origin == IrDeclarationOrigin.FAKE_OVERRIDE ||
-                !value.isExported()
-                    || value is IrVariable
-                    || value is IrTypeParameter
-                    || value is IrValueParameter
-                    || value is IrAnonymousInitializerImpl
-            ) {
-
-                val desc = value.descriptor
-                if (desc is CallableDescriptor) {
-                    if (desc.visibility == Visibilities.PUBLIC || value.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
-                        fun foo(){}
-                        foo()
-                    }
-                }
-                UniqId(currentIndex++, true)
-            } else {
-                UniqId(value.uniqIdIndex, false)
-            }
+    fun uniqIdByDeclaration(value: IrDeclaration) = table.getOrPut(value) {
+        val index = if (isBuiltInFunction(value)) {
+            UniqId(FUNCTION_INDEX_START + builtInFunctionId(value), false)
+        } else if (value.origin == IrDeclarationOrigin.FAKE_OVERRIDE ||
+            !value.isExported()
+            || value is IrVariable
+            || value is IrTypeParameter
+            || value is IrValueParameter
+            || value is IrAnonymousInitializerImpl
+        ) {
+            UniqId(currentIndex++, true)
+        } else {
+            UniqId(value.uniqIdIndex, false)
         }
 
-        debugIndex.put(index, "${if (index.isLocal) "" else value.uniqSymbolName()} descriptor = ${value.descriptor}")
+        // It can grow as large as 1/3 of ir/* size.
+        // debugIndex.put(index) {
+        //     "${if (index.isLocal) "" else value.uniqSymbolName()} descriptor = ${value.descriptor}"
+        //}.also {it == null}
 
-        return index
+        index
     }
 }
 

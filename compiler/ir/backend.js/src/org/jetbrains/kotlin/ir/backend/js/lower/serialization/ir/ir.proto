@@ -5,9 +5,9 @@ option java_outer_classname = "IrKlibProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
 message DescriptorReference {
-  required string package_fq_name = 1;
-  required string class_fq_name = 2;
-  required string name = 3;
+  required String package_fq_name = 1;
+  required String class_fq_name = 2;
+  required String name = 3;
   optional UniqId uniq_id = 4;
   optional bool is_getter = 5 [default = false];
   optional bool is_setter = 6 [default = false];
@@ -28,28 +28,85 @@ message Coordinates {
   required int32 end_offset = 2;
 }
 
+message Visibility {
+  required String name = 1;
+}
+
+message IrStatementOrigin {
+  required String name = 1;
+}
+
+enum KnownOrigin {
+  CUSTOM = 1;
+  DEFINED = 2;
+  FAKE_OVERRIDE = 3;
+  FOR_LOOP_ITERATOR = 4;
+  FOR_LOOP_VARIABLE = 5;
+  FOR_LOOP_IMPLICIT_VARIABLE = 6;
+  PROPERTY_BACKING_FIELD = 7;
+  DEFAULT_PROPERTY_ACCESSOR = 8;
+  DELEGATE = 9;
+  DELEGATED_PROPERTY_ACCESSOR = 10;
+  DELEGATED_MEMBER = 11;
+  ENUM_CLASS_SPECIAL_MEMBER = 12;
+  FUNCTION_FOR_DEFAULT_PARAMETER = 13;
+  FILE_CLASS = 14;
+  GENERATED_DATA_CLASS_MEMBER = 15;
+  GENERATED_INLINE_CLASS_MEMBER = 16;
+  LOCAL_FUNCTION_FOR_LAMBDA = 17;
+  CATCH_PARAMETER = 19;
+  INSTANCE_RECEIVER = 20;
+  PRIMARY_CONSTRUCTOR_PARAMETER = 21;
+  IR_TEMPORARY_VARIABLE = 22;
+  IR_EXTERNAL_DECLARATION_STUB = 23;
+  IR_EXTERNAL_JAVA_DECLARATION_STUB = 24;
+  IR_BUILTINS_STUB = 25;
+  BRIDGE = 26;
+  FIELD_FOR_ENUM_ENTRY = 27;
+  FIELD_FOR_ENUM_VALUES = 28;
+  FIELD_FOR_OBJECT_INSTANCE = 29;
+}
+
+message IrDeclarationOrigin {
+  oneof either {
+    KnownOrigin origin = 1;
+    String custom = 2;
+  }
+}
+
 /* ------ Top Level---------------------------------------------- */
 
 message IrDeclarationContainer {
   repeated IrDeclaration declaration = 1;
 }
 
-message FileEntry { // TODO: extend me.
-                    required string name = 1;
+message FileEntry {
+  required String name = 1;
+  repeated int32 line_start_offsets = 2;
 }
 
 message IrFile {
   repeated UniqId declaration_id = 1;
   required FileEntry file_entry = 2;
-  // TODO: we need a better string management. See metadata serialization as an example.
-  required string fq_name = 3;
+  required String fq_name = 3;
 }
 
 message IrModule {
-  required string name = 1;
+  required String name = 1;
   repeated IrFile file = 2;
   required IrSymbolTable symbol_table = 3;
   required IrTypeTable type_table = 4;
+  required StringTable string_table = 5;
+}
+
+/* ------ String Table ------------------------------------------ */
+
+message String {
+  required int32 index = 1;
+}
+
+message StringTable {
+  repeated string strings = 1;
 }
 
 /* ------ IrSymbols --------------------------------------------- */
@@ -74,7 +131,7 @@ message IrSymbolData {
   required IrSymbolKind kind = 1;
   required UniqId uniq_id = 2;
   required UniqId top_level_uniq_id = 3;
-  optional string fqname = 4;
+  optional String fqname = 4;
   optional DescriptorReference descriptor_reference = 5;
 }
 
@@ -153,7 +210,7 @@ message IrTypeIndex {
 
 message IrBreak {
   required int32 loop_id = 1;
-  optional string label = 2;
+  optional String label = 2;
 }
 
 message IrBlock {
@@ -183,7 +240,7 @@ message IrCall {
 
 message IrFunctionReference {
   required IrSymbol symbol = 1;
-  optional string origin = 2;
+  optional IrStatementOrigin origin = 2;
   required MemberAccessCommon member_access = 3;
 }
 
@@ -192,8 +249,9 @@ message IrPropertyReference {
   optional IrSymbol field = 1;
   optional IrSymbol getter = 2;
   optional IrSymbol setter = 3;
-  optional string origin = 4;
+  optional IrStatementOrigin origin = 4;
   required MemberAccessCommon member_access = 5;
+  optional DescriptorReference descriptor = 6; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
 }
 
 message IrComposite {
@@ -216,13 +274,13 @@ message IrConst {
     int64 long = 7;
     float float = 8;
     double double = 9;
-    string string = 10;
+    String string = 10;
   }
 }
 
 message IrContinue {
   required int32 loop_id = 1;
-  optional string label = 2;
+  optional String label = 2;
 }
 
 message IrDelegatingConstructorCall {
@@ -272,7 +330,7 @@ message IrInstanceInitializerCall {
 message Loop {
   required int32 loop_id = 1;
   required IrExpression condition = 2;
-  optional string label = 3;
+  optional String label = 3;
   optional IrExpression body = 4;
 }
 
@@ -411,8 +469,8 @@ message IrFunction {
 }
 
 message IrFunctionBase {
-  required string name = 1;
-  required string visibility = 2;
+  required String name = 1;
+  required Visibility visibility = 2;
   required bool is_inline = 3;
   required bool is_external = 4;
   required IrTypeParameterContainer type_parameters = 5;
@@ -433,8 +491,8 @@ message IrConstructor {
 message IrField {
   required IrSymbol symbol = 1;
   optional IrExpression initializer = 2;
-  required string name = 3;
-  required string visibility = 4;
+  required String name = 3;
+  required Visibility visibility = 4;
   required bool is_final = 5;
   required bool is_external = 6;
   required bool is_static = 7;
@@ -443,8 +501,8 @@ message IrField {
 
 message IrProperty {
   optional DescriptorReference descriptor = 1; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
-  required string name = 2;
-  required string visibility = 3;
+  required String name = 2;
+  required Visibility visibility = 3;
   required ModalityKind modality = 4;
   required bool is_var = 5;
   required bool is_const = 6;
@@ -457,7 +515,7 @@ message IrProperty {
 }
 
 message IrVariable {
-  required string name = 1;
+  required String name = 1;
   required IrSymbol symbol = 2;
   required IrTypeIndex type = 3;
   required bool is_var = 4;
@@ -484,7 +542,7 @@ enum ModalityKind { // It is ModalityKind to not clash with Modality in descript
 
 message IrValueParameter {
   required IrSymbol symbol = 1;
-  required string name = 2;
+  required String name = 2;
   required int32 index = 3;
   required IrTypeIndex type = 4;
   optional IrTypeIndex vararg_element_type = 5;
@@ -495,7 +553,7 @@ message IrValueParameter {
 
 message IrTypeParameter {
   required IrSymbol symbol = 1;
-  required string name = 2;
+  required String name = 2;
   required int32 index = 3;
   required IrTypeVariance variance = 4;
   repeated IrTypeIndex super_type = 5;
@@ -508,9 +566,9 @@ message IrTypeParameterContainer {
 
 message IrClass {
   required IrSymbol symbol = 1;
-  required string name = 2;
+  required String name = 2;
   required ClassKind kind = 3;
-  required string visibility = 4;
+  required Visibility visibility = 4;
   required ModalityKind modality = 5;
   // TODO: consider using flags for the booleans.
   required bool is_companion = 6;
@@ -528,7 +586,7 @@ message IrEnumEntry {
   required IrSymbol symbol = 1;
   optional IrExpression initializer = 2;
   optional IrDeclaration corresponding_class = 3;
-  required string name = 4;
+  required String name = 4;
 }
 
 message IrAnonymousInit {
@@ -554,17 +612,11 @@ message IrDeclarator {
   }
 }
 
-message IrDeclarationOrigin {
-  required string name = 1;
-}
-
 message IrDeclaration {
   required IrDeclarationOrigin origin = 1;
   required Coordinates coordinates = 2;
   required Annotations annotations = 3;
   required IrDeclarator declarator = 4;
-  //repeated IrDeclaration nested = 5;
-  required string file_name = 5; // TODO: files should be communicated some other way, I suppose.
 }
 
 /* ------- IrStatements --------------------------------------------- */

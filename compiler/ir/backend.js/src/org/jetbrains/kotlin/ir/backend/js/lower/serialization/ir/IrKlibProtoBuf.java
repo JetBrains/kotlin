@@ -9,6 +9,296 @@ public final class IrKlibProtoBuf {
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
   }
   /**
+   * Protobuf enum {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin}
+   */
+  public enum KnownOrigin
+      implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+    /**
+     * <code>CUSTOM = 1;</code>
+     */
+    CUSTOM(0, 1),
+    /**
+     * <code>DEFINED = 2;</code>
+     */
+    DEFINED(1, 2),
+    /**
+     * <code>FAKE_OVERRIDE = 3;</code>
+     */
+    FAKE_OVERRIDE(2, 3),
+    /**
+     * <code>FOR_LOOP_ITERATOR = 4;</code>
+     */
+    FOR_LOOP_ITERATOR(3, 4),
+    /**
+     * <code>FOR_LOOP_VARIABLE = 5;</code>
+     */
+    FOR_LOOP_VARIABLE(4, 5),
+    /**
+     * <code>FOR_LOOP_IMPLICIT_VARIABLE = 6;</code>
+     */
+    FOR_LOOP_IMPLICIT_VARIABLE(5, 6),
+    /**
+     * <code>PROPERTY_BACKING_FIELD = 7;</code>
+     */
+    PROPERTY_BACKING_FIELD(6, 7),
+    /**
+     * <code>DEFAULT_PROPERTY_ACCESSOR = 8;</code>
+     */
+    DEFAULT_PROPERTY_ACCESSOR(7, 8),
+    /**
+     * <code>DELEGATE = 9;</code>
+     */
+    DELEGATE(8, 9),
+    /**
+     * <code>DELEGATED_PROPERTY_ACCESSOR = 10;</code>
+     */
+    DELEGATED_PROPERTY_ACCESSOR(9, 10),
+    /**
+     * <code>DELEGATED_MEMBER = 11;</code>
+     */
+    DELEGATED_MEMBER(10, 11),
+    /**
+     * <code>ENUM_CLASS_SPECIAL_MEMBER = 12;</code>
+     */
+    ENUM_CLASS_SPECIAL_MEMBER(11, 12),
+    /**
+     * <code>FUNCTION_FOR_DEFAULT_PARAMETER = 13;</code>
+     */
+    FUNCTION_FOR_DEFAULT_PARAMETER(12, 13),
+    /**
+     * <code>FILE_CLASS = 14;</code>
+     */
+    FILE_CLASS(13, 14),
+    /**
+     * <code>GENERATED_DATA_CLASS_MEMBER = 15;</code>
+     */
+    GENERATED_DATA_CLASS_MEMBER(14, 15),
+    /**
+     * <code>GENERATED_INLINE_CLASS_MEMBER = 16;</code>
+     */
+    GENERATED_INLINE_CLASS_MEMBER(15, 16),
+    /**
+     * <code>LOCAL_FUNCTION_FOR_LAMBDA = 17;</code>
+     */
+    LOCAL_FUNCTION_FOR_LAMBDA(16, 17),
+    /**
+     * <code>CATCH_PARAMETER = 19;</code>
+     */
+    CATCH_PARAMETER(17, 19),
+    /**
+     * <code>INSTANCE_RECEIVER = 20;</code>
+     */
+    INSTANCE_RECEIVER(18, 20),
+    /**
+     * <code>PRIMARY_CONSTRUCTOR_PARAMETER = 21;</code>
+     */
+    PRIMARY_CONSTRUCTOR_PARAMETER(19, 21),
+    /**
+     * <code>IR_TEMPORARY_VARIABLE = 22;</code>
+     */
+    IR_TEMPORARY_VARIABLE(20, 22),
+    /**
+     * <code>IR_EXTERNAL_DECLARATION_STUB = 23;</code>
+     */
+    IR_EXTERNAL_DECLARATION_STUB(21, 23),
+    /**
+     * <code>IR_EXTERNAL_JAVA_DECLARATION_STUB = 24;</code>
+     */
+    IR_EXTERNAL_JAVA_DECLARATION_STUB(22, 24),
+    /**
+     * <code>IR_BUILTINS_STUB = 25;</code>
+     */
+    IR_BUILTINS_STUB(23, 25),
+    /**
+     * <code>BRIDGE = 26;</code>
+     */
+    BRIDGE(24, 26),
+    /**
+     * <code>FIELD_FOR_ENUM_ENTRY = 27;</code>
+     */
+    FIELD_FOR_ENUM_ENTRY(25, 27),
+    /**
+     * <code>FIELD_FOR_ENUM_VALUES = 28;</code>
+     */
+    FIELD_FOR_ENUM_VALUES(26, 28),
+    /**
+     * <code>FIELD_FOR_OBJECT_INSTANCE = 29;</code>
+     */
+    FIELD_FOR_OBJECT_INSTANCE(27, 29),
+    ;
+
+    /**
+     * <code>CUSTOM = 1;</code>
+     */
+    public static final int CUSTOM_VALUE = 1;
+    /**
+     * <code>DEFINED = 2;</code>
+     */
+    public static final int DEFINED_VALUE = 2;
+    /**
+     * <code>FAKE_OVERRIDE = 3;</code>
+     */
+    public static final int FAKE_OVERRIDE_VALUE = 3;
+    /**
+     * <code>FOR_LOOP_ITERATOR = 4;</code>
+     */
+    public static final int FOR_LOOP_ITERATOR_VALUE = 4;
+    /**
+     * <code>FOR_LOOP_VARIABLE = 5;</code>
+     */
+    public static final int FOR_LOOP_VARIABLE_VALUE = 5;
+    /**
+     * <code>FOR_LOOP_IMPLICIT_VARIABLE = 6;</code>
+     */
+    public static final int FOR_LOOP_IMPLICIT_VARIABLE_VALUE = 6;
+    /**
+     * <code>PROPERTY_BACKING_FIELD = 7;</code>
+     */
+    public static final int PROPERTY_BACKING_FIELD_VALUE = 7;
+    /**
+     * <code>DEFAULT_PROPERTY_ACCESSOR = 8;</code>
+     */
+    public static final int DEFAULT_PROPERTY_ACCESSOR_VALUE = 8;
+    /**
+     * <code>DELEGATE = 9;</code>
+     */
+    public static final int DELEGATE_VALUE = 9;
+    /**
+     * <code>DELEGATED_PROPERTY_ACCESSOR = 10;</code>
+     */
+    public static final int DELEGATED_PROPERTY_ACCESSOR_VALUE = 10;
+    /**
+     * <code>DELEGATED_MEMBER = 11;</code>
+     */
+    public static final int DELEGATED_MEMBER_VALUE = 11;
+    /**
+     * <code>ENUM_CLASS_SPECIAL_MEMBER = 12;</code>
+     */
+    public static final int ENUM_CLASS_SPECIAL_MEMBER_VALUE = 12;
+    /**
+     * <code>FUNCTION_FOR_DEFAULT_PARAMETER = 13;</code>
+     */
+    public static final int FUNCTION_FOR_DEFAULT_PARAMETER_VALUE = 13;
+    /**
+     * <code>FILE_CLASS = 14;</code>
+     */
+    public static final int FILE_CLASS_VALUE = 14;
+    /**
+     * <code>GENERATED_DATA_CLASS_MEMBER = 15;</code>
+     */
+    public static final int GENERATED_DATA_CLASS_MEMBER_VALUE = 15;
+    /**
+     * <code>GENERATED_INLINE_CLASS_MEMBER = 16;</code>
+     */
+    public static final int GENERATED_INLINE_CLASS_MEMBER_VALUE = 16;
+    /**
+     * <code>LOCAL_FUNCTION_FOR_LAMBDA = 17;</code>
+     */
+    public static final int LOCAL_FUNCTION_FOR_LAMBDA_VALUE = 17;
+    /**
+     * <code>CATCH_PARAMETER = 19;</code>
+     */
+    public static final int CATCH_PARAMETER_VALUE = 19;
+    /**
+     * <code>INSTANCE_RECEIVER = 20;</code>
+     */
+    public static final int INSTANCE_RECEIVER_VALUE = 20;
+    /**
+     * <code>PRIMARY_CONSTRUCTOR_PARAMETER = 21;</code>
+     */
+    public static final int PRIMARY_CONSTRUCTOR_PARAMETER_VALUE = 21;
+    /**
+     * <code>IR_TEMPORARY_VARIABLE = 22;</code>
+     */
+    public static final int IR_TEMPORARY_VARIABLE_VALUE = 22;
+    /**
+     * <code>IR_EXTERNAL_DECLARATION_STUB = 23;</code>
+     */
+    public static final int IR_EXTERNAL_DECLARATION_STUB_VALUE = 23;
+    /**
+     * <code>IR_EXTERNAL_JAVA_DECLARATION_STUB = 24;</code>
+     */
+    public static final int IR_EXTERNAL_JAVA_DECLARATION_STUB_VALUE = 24;
+    /**
+     * <code>IR_BUILTINS_STUB = 25;</code>
+     */
+    public static final int IR_BUILTINS_STUB_VALUE = 25;
+    /**
+     * <code>BRIDGE = 26;</code>
+     */
+    public static final int BRIDGE_VALUE = 26;
+    /**
+     * <code>FIELD_FOR_ENUM_ENTRY = 27;</code>
+     */
+    public static final int FIELD_FOR_ENUM_ENTRY_VALUE = 27;
+    /**
+     * <code>FIELD_FOR_ENUM_VALUES = 28;</code>
+     */
+    public static final int FIELD_FOR_ENUM_VALUES_VALUE = 28;
+    /**
+     * <code>FIELD_FOR_OBJECT_INSTANCE = 29;</code>
+     */
+    public static final int FIELD_FOR_OBJECT_INSTANCE_VALUE = 29;
+
+
+    public final int getNumber() { return value; }
+
+    public static KnownOrigin valueOf(int value) {
+      switch (value) {
+        case 1: return CUSTOM;
+        case 2: return DEFINED;
+        case 3: return FAKE_OVERRIDE;
+        case 4: return FOR_LOOP_ITERATOR;
+        case 5: return FOR_LOOP_VARIABLE;
+        case 6: return FOR_LOOP_IMPLICIT_VARIABLE;
+        case 7: return PROPERTY_BACKING_FIELD;
+        case 8: return DEFAULT_PROPERTY_ACCESSOR;
+        case 9: return DELEGATE;
+        case 10: return DELEGATED_PROPERTY_ACCESSOR;
+        case 11: return DELEGATED_MEMBER;
+        case 12: return ENUM_CLASS_SPECIAL_MEMBER;
+        case 13: return FUNCTION_FOR_DEFAULT_PARAMETER;
+        case 14: return FILE_CLASS;
+        case 15: return GENERATED_DATA_CLASS_MEMBER;
+        case 16: return GENERATED_INLINE_CLASS_MEMBER;
+        case 17: return LOCAL_FUNCTION_FOR_LAMBDA;
+        case 19: return CATCH_PARAMETER;
+        case 20: return INSTANCE_RECEIVER;
+        case 21: return PRIMARY_CONSTRUCTOR_PARAMETER;
+        case 22: return IR_TEMPORARY_VARIABLE;
+        case 23: return IR_EXTERNAL_DECLARATION_STUB;
+        case 24: return IR_EXTERNAL_JAVA_DECLARATION_STUB;
+        case 25: return IR_BUILTINS_STUB;
+        case 26: return BRIDGE;
+        case 27: return FIELD_FOR_ENUM_ENTRY;
+        case 28: return FIELD_FOR_ENUM_VALUES;
+        case 29: return FIELD_FOR_OBJECT_INSTANCE;
+        default: return null;
+      }
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<KnownOrigin>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<KnownOrigin>
+        internalValueMap =
+          new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<KnownOrigin>() {
+            public KnownOrigin findValueByNumber(int number) {
+              return KnownOrigin.valueOf(number);
+            }
+          };
+
+    private final int value;
+
+    private KnownOrigin(int index, int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin)
+  }
+
+  /**
    * Protobuf enum {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrSymbolKind}
    */
   public enum IrSymbolKind
@@ -589,46 +879,31 @@ public final class IrKlibProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>required string package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
      */
     boolean hasPackageFqName();
     /**
-     * <code>required string package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
      */
-    java.lang.String getPackageFqName();
-    /**
-     * <code>required string package_fq_name = 1;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getPackageFqNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getPackageFqName();
 
     /**
-     * <code>required string class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
      */
     boolean hasClassFqName();
     /**
-     * <code>required string class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
      */
-    java.lang.String getClassFqName();
-    /**
-     * <code>required string class_fq_name = 2;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getClassFqNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getClassFqName();
 
     /**
-     * <code>required string name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 3;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
 
     /**
      * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.UniqId uniq_id = 4;</code>
@@ -753,21 +1028,42 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 10: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = packageFqName_.toBuilder();
+              }
+              packageFqName_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(packageFqName_);
+                packageFqName_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000001;
-              packageFqName_ = bs;
               break;
             }
             case 18: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = classFqName_.toBuilder();
+              }
+              classFqName_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(classFqName_);
+                classFqName_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              classFqName_ = bs;
               break;
             }
             case 26: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000004;
-              name_ = bs;
               break;
             }
             case 34: {
@@ -853,129 +1149,48 @@ public final class IrKlibProtoBuf {
 
     private int bitField0_;
     public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 1;
-    private java.lang.Object packageFqName_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String packageFqName_;
     /**
-     * <code>required string package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
      */
     public boolean hasPackageFqName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
      */
-    public java.lang.String getPackageFqName() {
-      java.lang.Object ref = packageFqName_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          packageFqName_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string package_fq_name = 1;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getPackageFqNameBytes() {
-      java.lang.Object ref = packageFqName_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        packageFqName_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getPackageFqName() {
+      return packageFqName_;
     }
 
     public static final int CLASS_FQ_NAME_FIELD_NUMBER = 2;
-    private java.lang.Object classFqName_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String classFqName_;
     /**
-     * <code>required string class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
      */
     public boolean hasClassFqName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
      */
-    public java.lang.String getClassFqName() {
-      java.lang.Object ref = classFqName_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          classFqName_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string class_fq_name = 2;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getClassFqNameBytes() {
-      java.lang.Object ref = classFqName_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        classFqName_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getClassFqName() {
+      return classFqName_;
     }
 
     public static final int NAME_FIELD_NUMBER = 3;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required string name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 3;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     public static final int UNIQ_ID_FIELD_NUMBER = 4;
@@ -1099,9 +1314,9 @@ public final class IrKlibProtoBuf {
     }
 
     private void initFields() {
-      packageFqName_ = "";
-      classFqName_ = "";
-      name_ = "";
+      packageFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      classFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       uniqId_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.UniqId.getDefaultInstance();
       isGetter_ = false;
       isSetter_ = false;
@@ -1129,6 +1344,18 @@ public final class IrKlibProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!getPackageFqName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getClassFqName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (hasUniqId()) {
         if (!getUniqId().isInitialized()) {
           memoizedIsInitialized = 0;
@@ -1143,13 +1370,13 @@ public final class IrKlibProtoBuf {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getPackageFqNameBytes());
+        output.writeMessage(1, packageFqName_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getClassFqNameBytes());
+        output.writeMessage(2, classFqName_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, getNameBytes());
+        output.writeMessage(3, name_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(4, uniqId_);
@@ -1186,15 +1413,15 @@ public final class IrKlibProtoBuf {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(1, getPackageFqNameBytes());
+          .computeMessageSize(1, packageFqName_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getClassFqNameBytes());
+          .computeMessageSize(2, classFqName_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(3, getNameBytes());
+          .computeMessageSize(3, name_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -1322,11 +1549,11 @@ public final class IrKlibProtoBuf {
 
       public Builder clear() {
         super.clear();
-        packageFqName_ = "";
+        packageFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        classFqName_ = "";
+        classFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
         uniqId_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.UniqId.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -1418,19 +1645,13 @@ public final class IrKlibProtoBuf {
       public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference other) {
         if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance()) return this;
         if (other.hasPackageFqName()) {
-          bitField0_ |= 0x00000001;
-          packageFqName_ = other.packageFqName_;
-          
+          mergePackageFqName(other.getPackageFqName());
         }
         if (other.hasClassFqName()) {
-          bitField0_ |= 0x00000002;
-          classFqName_ = other.classFqName_;
-          
+          mergeClassFqName(other.getClassFqName());
         }
         if (other.hasName()) {
-          bitField0_ |= 0x00000004;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         if (other.hasUniqId()) {
           mergeUniqId(other.getUniqId());
@@ -1474,6 +1695,18 @@ public final class IrKlibProtoBuf {
           
           return false;
         }
+        if (!getPackageFqName().isInitialized()) {
+          
+          return false;
+        }
+        if (!getClassFqName().isInitialized()) {
+          
+          return false;
+        }
+        if (!getName().isInitialized()) {
+          
+          return false;
+        }
         if (hasUniqId()) {
           if (!getUniqId().isInitialized()) {
             
@@ -1502,231 +1735,183 @@ public final class IrKlibProtoBuf {
       }
       private int bitField0_;
 
-      private java.lang.Object packageFqName_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String packageFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string package_fq_name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
        */
       public boolean hasPackageFqName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required string package_fq_name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
        */
-      public java.lang.String getPackageFqName() {
-        java.lang.Object ref = packageFqName_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            packageFqName_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getPackageFqName() {
+        return packageFqName_;
       }
       /**
-       * <code>required string package_fq_name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getPackageFqNameBytes() {
-        java.lang.Object ref = packageFqName_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          packageFqName_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setPackageFqName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        packageFqName_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
       }
       /**
-       * <code>required string package_fq_name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
        */
       public Builder setPackageFqName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        packageFqName_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        packageFqName_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
         return this;
       }
       /**
-       * <code>required string package_fq_name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
+       */
+      public Builder mergePackageFqName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            packageFqName_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          packageFqName_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(packageFqName_).mergeFrom(value).buildPartial();
+        } else {
+          packageFqName_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String package_fq_name = 1;</code>
        */
       public Builder clearPackageFqName() {
+        packageFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000001);
-        packageFqName_ = getDefaultInstance().getPackageFqName();
-        
-        return this;
-      }
-      /**
-       * <code>required string package_fq_name = 1;</code>
-       */
-      public Builder setPackageFqNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        packageFqName_ = value;
-        
         return this;
       }
 
-      private java.lang.Object classFqName_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String classFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string class_fq_name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
        */
       public boolean hasClassFqName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string class_fq_name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
        */
-      public java.lang.String getClassFqName() {
-        java.lang.Object ref = classFqName_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            classFqName_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getClassFqName() {
+        return classFqName_;
       }
       /**
-       * <code>required string class_fq_name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getClassFqNameBytes() {
-        java.lang.Object ref = classFqName_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          classFqName_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setClassFqName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        classFqName_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>required string class_fq_name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
        */
       public Builder setClassFqName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        classFqName_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        classFqName_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>required string class_fq_name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
+       */
+      public Builder mergeClassFqName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            classFqName_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          classFqName_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(classFqName_).mergeFrom(value).buildPartial();
+        } else {
+          classFqName_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String class_fq_name = 2;</code>
        */
       public Builder clearClassFqName() {
+        classFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        classFqName_ = getDefaultInstance().getClassFqName();
-        
-        return this;
-      }
-      /**
-       * <code>required string class_fq_name = 2;</code>
-       */
-      public Builder setClassFqNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        classFqName_ = value;
-        
         return this;
       }
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000004;
+        return this;
       }
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
         return this;
       }
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000004);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 3;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        name_ = value;
-        
         return this;
       }
 
@@ -2917,6 +3102,1361 @@ public final class IrKlibProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Coordinates)
   }
 
+  public interface VisibilityOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+     */
+    boolean hasName();
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility}
+   */
+  public static final class Visibility extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility)
+      VisibilityOrBuilder {
+    // Use Visibility.newBuilder() to construct.
+    private Visibility(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private Visibility(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final Visibility defaultInstance;
+    public static Visibility getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public Visibility getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private Visibility(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<Visibility> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Visibility>() {
+      public Visibility parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new Visibility(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<Visibility> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int NAME_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+     */
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
+    }
+
+    private void initFields() {
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, name_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(1, name_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility)
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.VisibilityOrBuilder {
+      // Construct using org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility build() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility buildPartial() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility result = new org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.name_ = name_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility other) {
+        if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance()) return this;
+        if (other.hasName()) {
+          mergeName(other.getName());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasName()) {
+          
+          return false;
+        }
+        if (!getName().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        name_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder setName(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility)
+    }
+
+    static {
+      defaultInstance = new Visibility(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility)
+  }
+
+  public interface IrStatementOriginOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+     */
+    boolean hasName();
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin}
+   */
+  public static final class IrStatementOrigin extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin)
+      IrStatementOriginOrBuilder {
+    // Use IrStatementOrigin.newBuilder() to construct.
+    private IrStatementOrigin(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private IrStatementOrigin(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final IrStatementOrigin defaultInstance;
+    public static IrStatementOrigin getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public IrStatementOrigin getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private IrStatementOrigin(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<IrStatementOrigin> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<IrStatementOrigin>() {
+      public IrStatementOrigin parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new IrStatementOrigin(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<IrStatementOrigin> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int NAME_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+     */
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
+    }
+
+    private void initFields() {
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, name_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(1, name_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin)
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOriginOrBuilder {
+      // Construct using org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin build() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin buildPartial() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin result = new org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.name_ = name_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin other) {
+        if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance()) return this;
+        if (other.hasName()) {
+          mergeName(other.getName());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasName()) {
+          
+          return false;
+        }
+        if (!getName().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        name_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder setName(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin)
+    }
+
+    static {
+      defaultInstance = new IrStatementOrigin(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin)
+  }
+
+  public interface IrDeclarationOriginOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin origin = 1;</code>
+     */
+    boolean hasOrigin();
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin origin = 1;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin getOrigin();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+     */
+    boolean hasCustom();
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getCustom();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin}
+   */
+  public static final class IrDeclarationOrigin extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
+      IrDeclarationOriginOrBuilder {
+    // Use IrDeclarationOrigin.newBuilder() to construct.
+    private IrDeclarationOrigin(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private IrDeclarationOrigin(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final IrDeclarationOrigin defaultInstance;
+    public static IrDeclarationOrigin getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public IrDeclarationOrigin getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private IrDeclarationOrigin(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin value = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin.valueOf(rawValue);
+              if (value == null) {
+                unknownFieldsCodedOutput.writeRawVarint32(tag);
+                unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+              } else {
+                eitherCase_ = 1;
+                either_ = value;
+              }
+              break;
+            }
+            case 18: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (eitherCase_ == 2) {
+                subBuilder = ((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) either_).toBuilder();
+              }
+              either_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) either_);
+                either_ = subBuilder.buildPartial();
+              }
+              eitherCase_ = 2;
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<IrDeclarationOrigin> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<IrDeclarationOrigin>() {
+      public IrDeclarationOrigin parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new IrDeclarationOrigin(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<IrDeclarationOrigin> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    private int eitherCase_ = 0;
+    private java.lang.Object either_;
+    public enum EitherCase
+        implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+      ORIGIN(1),
+      CUSTOM(2),
+      EITHER_NOT_SET(0);
+      private int value = 0;
+      private EitherCase(int value) {
+        this.value = value;
+      }
+      public static EitherCase valueOf(int value) {
+        switch (value) {
+          case 1: return ORIGIN;
+          case 2: return CUSTOM;
+          case 0: return EITHER_NOT_SET;
+          default: throw new java.lang.IllegalArgumentException(
+            "Value is undefined for this oneof enum.");
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public EitherCase
+    getEitherCase() {
+      return EitherCase.valueOf(
+          eitherCase_);
+    }
+
+    public static final int ORIGIN_FIELD_NUMBER = 1;
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin origin = 1;</code>
+     */
+    public boolean hasOrigin() {
+      return eitherCase_ == 1;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin origin = 1;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin getOrigin() {
+      if (eitherCase_ == 1) {
+        return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin) either_;
+      }
+      return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin.CUSTOM;
+    }
+
+    public static final int CUSTOM_FIELD_NUMBER = 2;
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+     */
+    public boolean hasCustom() {
+      return eitherCase_ == 2;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getCustom() {
+      if (eitherCase_ == 2) {
+         return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) either_;
+      }
+      return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+    }
+
+    private void initFields() {
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (hasCustom()) {
+        if (!getCustom().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (eitherCase_ == 1) {
+        output.writeEnum(1, ((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin) either_).getNumber());
+      }
+      if (eitherCase_ == 2) {
+        output.writeMessage(2, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) either_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (eitherCase_ == 1) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(1, ((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin) either_).getNumber());
+      }
+      if (eitherCase_ == 2) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) either_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOriginOrBuilder {
+      // Construct using org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        eitherCase_ = 0;
+        either_ = null;
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin build() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin buildPartial() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin result = new org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (eitherCase_ == 1) {
+          result.either_ = either_;
+        }
+        if (eitherCase_ == 2) {
+          result.either_ = either_;
+        }
+        result.bitField0_ = to_bitField0_;
+        result.eitherCase_ = eitherCase_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin other) {
+        if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin.getDefaultInstance()) return this;
+        switch (other.getEitherCase()) {
+          case ORIGIN: {
+            setOrigin(other.getOrigin());
+            break;
+          }
+          case CUSTOM: {
+            mergeCustom(other.getCustom());
+            break;
+          }
+          case EITHER_NOT_SET: {
+            break;
+          }
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (hasCustom()) {
+          if (!getCustom().isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int eitherCase_ = 0;
+      private java.lang.Object either_;
+      public EitherCase
+          getEitherCase() {
+        return EitherCase.valueOf(
+            eitherCase_);
+      }
+
+      public Builder clearEither() {
+        eitherCase_ = 0;
+        either_ = null;
+        return this;
+      }
+
+      private int bitField0_;
+
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin origin = 1;</code>
+       */
+      public boolean hasOrigin() {
+        return eitherCase_ == 1;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin origin = 1;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin getOrigin() {
+        if (eitherCase_ == 1) {
+          return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin) either_;
+        }
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin.CUSTOM;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin origin = 1;</code>
+       */
+      public Builder setOrigin(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.KnownOrigin value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        eitherCase_ = 1;
+        either_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.KnownOrigin origin = 1;</code>
+       */
+      public Builder clearOrigin() {
+        if (eitherCase_ == 1) {
+          eitherCase_ = 0;
+          either_ = null;
+          
+        }
+        return this;
+      }
+
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+       */
+      public boolean hasCustom() {
+        return eitherCase_ == 2;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getCustom() {
+        if (eitherCase_ == 2) {
+          return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) either_;
+        }
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+       */
+      public Builder setCustom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        either_ = value;
+
+        eitherCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+       */
+      public Builder setCustom(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        either_ = builderForValue.build();
+
+        eitherCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+       */
+      public Builder mergeCustom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (eitherCase_ == 2 &&
+            either_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          either_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) either_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          either_ = value;
+        }
+
+        eitherCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String custom = 2;</code>
+       */
+      public Builder clearCustom() {
+        if (eitherCase_ == 2) {
+          eitherCase_ = 0;
+          either_ = null;
+          
+        }
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
+    }
+
+    static {
+      defaultInstance = new IrDeclarationOrigin(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
+  }
+
   public interface IrDeclarationContainerOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationContainer)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
@@ -3415,25 +4955,29 @@ public final class IrKlibProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
-    java.lang.String getName();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
+
     /**
-     * <code>required string name = 1;</code>
+     * <code>repeated int32 line_start_offsets = 2;</code>
      */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    java.util.List<java.lang.Integer> getLineStartOffsetsList();
+    /**
+     * <code>repeated int32 line_start_offsets = 2;</code>
+     */
+    int getLineStartOffsetsCount();
+    /**
+     * <code>repeated int32 line_start_offsets = 2;</code>
+     */
+    int getLineStartOffsets(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.FileEntry}
-   *
-   * <pre>
-   * TODO: extend me.
-   * </pre>
    */
   public static final class FileEntry extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
@@ -3483,9 +5027,37 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 10: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000001;
-              name_ = bs;
+              break;
+            }
+            case 16: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                lineStartOffsets_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              lineStartOffsets_.add(input.readInt32());
+              break;
+            }
+            case 18: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
+                lineStartOffsets_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                lineStartOffsets_.add(input.readInt32());
+              }
+              input.popLimit(limit);
               break;
             }
           }
@@ -3496,6 +5068,9 @@ public final class IrKlibProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          lineStartOffsets_ = java.util.Collections.unmodifiableList(lineStartOffsets_);
+        }
         try {
           unknownFieldsCodedOutput.flush();
         } catch (java.io.IOException e) {
@@ -3523,49 +5098,45 @@ public final class IrKlibProtoBuf {
 
     private int bitField0_;
     public static final int NAME_FIELD_NUMBER = 1;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
+    }
+
+    public static final int LINE_START_OFFSETS_FIELD_NUMBER = 2;
+    private java.util.List<java.lang.Integer> lineStartOffsets_;
+    /**
+     * <code>repeated int32 line_start_offsets = 2;</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getLineStartOffsetsList() {
+      return lineStartOffsets_;
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>repeated int32 line_start_offsets = 2;</code>
      */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public int getLineStartOffsetsCount() {
+      return lineStartOffsets_.size();
+    }
+    /**
+     * <code>repeated int32 line_start_offsets = 2;</code>
+     */
+    public int getLineStartOffsets(int index) {
+      return lineStartOffsets_.get(index);
     }
 
     private void initFields() {
-      name_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      lineStartOffsets_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3577,6 +5148,10 @@ public final class IrKlibProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -3585,7 +5160,10 @@ public final class IrKlibProtoBuf {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getNameBytes());
+        output.writeMessage(1, name_);
+      }
+      for (int i = 0; i < lineStartOffsets_.size(); i++) {
+        output.writeInt32(2, lineStartOffsets_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -3598,7 +5176,16 @@ public final class IrKlibProtoBuf {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(1, getNameBytes());
+          .computeMessageSize(1, name_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < lineStartOffsets_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(lineStartOffsets_.get(i));
+        }
+        size += dataSize;
+        size += 1 * getLineStartOffsetsList().size();
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -3674,10 +5261,6 @@ public final class IrKlibProtoBuf {
 
     /**
      * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.FileEntry}
-     *
-     * <pre>
-     * TODO: extend me.
-     * </pre>
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
@@ -3698,8 +5281,10 @@ public final class IrKlibProtoBuf {
 
       public Builder clear() {
         super.clear();
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
+        lineStartOffsets_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -3727,6 +5312,11 @@ public final class IrKlibProtoBuf {
           to_bitField0_ |= 0x00000001;
         }
         result.name_ = name_;
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          lineStartOffsets_ = java.util.Collections.unmodifiableList(lineStartOffsets_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.lineStartOffsets_ = lineStartOffsets_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -3734,8 +5324,16 @@ public final class IrKlibProtoBuf {
       public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.FileEntry other) {
         if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.FileEntry.getDefaultInstance()) return this;
         if (other.hasName()) {
-          bitField0_ |= 0x00000001;
-          name_ = other.name_;
+          mergeName(other.getName());
+        }
+        if (!other.lineStartOffsets_.isEmpty()) {
+          if (lineStartOffsets_.isEmpty()) {
+            lineStartOffsets_ = other.lineStartOffsets_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureLineStartOffsetsIsMutable();
+            lineStartOffsets_.addAll(other.lineStartOffsets_);
+          }
           
         }
         setUnknownFields(
@@ -3745,6 +5343,10 @@ public final class IrKlibProtoBuf {
 
       public final boolean isInitialized() {
         if (!hasName()) {
+          
+          return false;
+        }
+        if (!getName().isInitialized()) {
           
           return false;
         }
@@ -3770,78 +5372,128 @@ public final class IrKlibProtoBuf {
       }
       private int bitField0_;
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
         return this;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = getDefaultInstance().getName();
+        return this;
+      }
+
+      private java.util.List<java.lang.Integer> lineStartOffsets_ = java.util.Collections.emptyList();
+      private void ensureLineStartOffsetsIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          lineStartOffsets_ = new java.util.ArrayList<java.lang.Integer>(lineStartOffsets_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+      /**
+       * <code>repeated int32 line_start_offsets = 2;</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getLineStartOffsetsList() {
+        return java.util.Collections.unmodifiableList(lineStartOffsets_);
+      }
+      /**
+       * <code>repeated int32 line_start_offsets = 2;</code>
+       */
+      public int getLineStartOffsetsCount() {
+        return lineStartOffsets_.size();
+      }
+      /**
+       * <code>repeated int32 line_start_offsets = 2;</code>
+       */
+      public int getLineStartOffsets(int index) {
+        return lineStartOffsets_.get(index);
+      }
+      /**
+       * <code>repeated int32 line_start_offsets = 2;</code>
+       */
+      public Builder setLineStartOffsets(
+          int index, int value) {
+        ensureLineStartOffsetsIsMutable();
+        lineStartOffsets_.set(index, value);
         
         return this;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>repeated int32 line_start_offsets = 2;</code>
        */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
+      public Builder addLineStartOffsets(int value) {
+        ensureLineStartOffsetsIsMutable();
+        lineStartOffsets_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 line_start_offsets = 2;</code>
+       */
+      public Builder addAllLineStartOffsets(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureLineStartOffsetsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, lineStartOffsets_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 line_start_offsets = 2;</code>
+       */
+      public Builder clearLineStartOffsets() {
+        lineStartOffsets_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
         
         return this;
       }
@@ -3885,30 +5537,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.FileEntry getFileEntry();
 
     /**
-     * <code>required string fq_name = 3;</code>
-     *
-     * <pre>
-     * TODO: we need a better string management. See metadata serialization as an example.
-     * </pre>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
      */
     boolean hasFqName();
     /**
-     * <code>required string fq_name = 3;</code>
-     *
-     * <pre>
-     * TODO: we need a better string management. See metadata serialization as an example.
-     * </pre>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
      */
-    java.lang.String getFqName();
-    /**
-     * <code>required string fq_name = 3;</code>
-     *
-     * <pre>
-     * TODO: we need a better string management. See metadata serialization as an example.
-     * </pre>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getFqNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getFqName();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrFile}
@@ -3982,9 +5617,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 26: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = fqName_.toBuilder();
+              }
+              fqName_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(fqName_);
+                fqName_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              fqName_ = bs;
               break;
             }
           }
@@ -4075,63 +5717,24 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int FQ_NAME_FIELD_NUMBER = 3;
-    private java.lang.Object fqName_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String fqName_;
     /**
-     * <code>required string fq_name = 3;</code>
-     *
-     * <pre>
-     * TODO: we need a better string management. See metadata serialization as an example.
-     * </pre>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
      */
     public boolean hasFqName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string fq_name = 3;</code>
-     *
-     * <pre>
-     * TODO: we need a better string management. See metadata serialization as an example.
-     * </pre>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
      */
-    public java.lang.String getFqName() {
-      java.lang.Object ref = fqName_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          fqName_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string fq_name = 3;</code>
-     *
-     * <pre>
-     * TODO: we need a better string management. See metadata serialization as an example.
-     * </pre>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getFqNameBytes() {
-      java.lang.Object ref = fqName_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        fqName_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getFqName() {
+      return fqName_;
     }
 
     private void initFields() {
       declarationId_ = java.util.Collections.emptyList();
       fileEntry_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.FileEntry.getDefaultInstance();
-      fqName_ = "";
+      fqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -4157,6 +5760,10 @@ public final class IrKlibProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!getFqName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -4171,7 +5778,7 @@ public final class IrKlibProtoBuf {
         output.writeMessage(2, fileEntry_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(3, getFqNameBytes());
+        output.writeMessage(3, fqName_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -4192,7 +5799,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(3, getFqNameBytes());
+          .computeMessageSize(3, fqName_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -4292,7 +5899,7 @@ public final class IrKlibProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         fileEntry_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.FileEntry.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
-        fqName_ = "";
+        fqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
@@ -4350,9 +5957,7 @@ public final class IrKlibProtoBuf {
           mergeFileEntry(other.getFileEntry());
         }
         if (other.hasFqName()) {
-          bitField0_ |= 0x00000004;
-          fqName_ = other.fqName_;
-          
+          mergeFqName(other.getFqName());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -4375,6 +5980,10 @@ public final class IrKlibProtoBuf {
           }
         }
         if (!getFileEntry().isInitialized()) {
+          
+          return false;
+        }
+        if (!getFqName().isInitialized()) {
           
           return false;
         }
@@ -4585,103 +6194,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object fqName_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String fqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string fq_name = 3;</code>
-       *
-       * <pre>
-       * TODO: we need a better string management. See metadata serialization as an example.
-       * </pre>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
        */
       public boolean hasFqName() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required string fq_name = 3;</code>
-       *
-       * <pre>
-       * TODO: we need a better string management. See metadata serialization as an example.
-       * </pre>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
        */
-      public java.lang.String getFqName() {
-        java.lang.Object ref = fqName_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            fqName_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getFqName() {
+        return fqName_;
       }
       /**
-       * <code>required string fq_name = 3;</code>
-       *
-       * <pre>
-       * TODO: we need a better string management. See metadata serialization as an example.
-       * </pre>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getFqNameBytes() {
-        java.lang.Object ref = fqName_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          fqName_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setFqName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        fqName_ = value;
+
+        bitField0_ |= 0x00000004;
+        return this;
       }
       /**
-       * <code>required string fq_name = 3;</code>
-       *
-       * <pre>
-       * TODO: we need a better string management. See metadata serialization as an example.
-       * </pre>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
        */
       public Builder setFqName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        fqName_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        fqName_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
         return this;
       }
       /**
-       * <code>required string fq_name = 3;</code>
-       *
-       * <pre>
-       * TODO: we need a better string management. See metadata serialization as an example.
-       * </pre>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
+       */
+      public Builder mergeFqName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            fqName_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          fqName_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(fqName_).mergeFrom(value).buildPartial();
+        } else {
+          fqName_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fq_name = 3;</code>
        */
       public Builder clearFqName() {
+        fqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000004);
-        fqName_ = getDefaultInstance().getFqName();
-        
-        return this;
-      }
-      /**
-       * <code>required string fq_name = 3;</code>
-       *
-       * <pre>
-       * TODO: we need a better string management. See metadata serialization as an example.
-       * </pre>
-       */
-      public Builder setFqNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        fqName_ = value;
-        
         return this;
       }
 
@@ -4701,18 +6270,13 @@ public final class IrKlibProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 1;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
 
     /**
      * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrFile file = 2;</code>
@@ -4745,6 +6309,15 @@ public final class IrKlibProtoBuf {
      * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrTypeTable type_table = 4;</code>
      */
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrTypeTable getTypeTable();
+
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+     */
+    boolean hasStringTable();
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable getStringTable();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrModule}
@@ -4797,9 +6370,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 10: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000001;
-              name_ = bs;
               break;
             }
             case 18: {
@@ -4834,6 +6414,19 @@ public final class IrKlibProtoBuf {
                 typeTable_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000004;
+              break;
+            }
+            case 42: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = stringTable_.toBuilder();
+              }
+              stringTable_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(stringTable_);
+                stringTable_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
               break;
             }
           }
@@ -4874,45 +6467,18 @@ public final class IrKlibProtoBuf {
 
     private int bitField0_;
     public static final int NAME_FIELD_NUMBER = 1;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 1;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     public static final int FILE_FIELD_NUMBER = 2;
@@ -4980,11 +6546,27 @@ public final class IrKlibProtoBuf {
       return typeTable_;
     }
 
+    public static final int STRING_TABLE_FIELD_NUMBER = 5;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable stringTable_;
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+     */
+    public boolean hasStringTable() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable getStringTable() {
+      return stringTable_;
+    }
+
     private void initFields() {
-      name_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       file_ = java.util.Collections.emptyList();
       symbolTable_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbolTable.getDefaultInstance();
       typeTable_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrTypeTable.getDefaultInstance();
+      stringTable_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -5001,6 +6583,14 @@ public final class IrKlibProtoBuf {
         return false;
       }
       if (!hasTypeTable()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasStringTable()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getName().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -5026,7 +6616,7 @@ public final class IrKlibProtoBuf {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getNameBytes());
+        output.writeMessage(1, name_);
       }
       for (int i = 0; i < file_.size(); i++) {
         output.writeMessage(2, file_.get(i));
@@ -5036,6 +6626,9 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeMessage(4, typeTable_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(5, stringTable_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -5048,7 +6641,7 @@ public final class IrKlibProtoBuf {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(1, getNameBytes());
+          .computeMessageSize(1, name_);
       }
       for (int i = 0; i < file_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -5061,6 +6654,10 @@ public final class IrKlibProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(4, typeTable_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(5, stringTable_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -5156,7 +6753,7 @@ public final class IrKlibProtoBuf {
 
       public Builder clear() {
         super.clear();
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
         file_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -5164,6 +6761,8 @@ public final class IrKlibProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         typeTable_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrTypeTable.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000008);
+        stringTable_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -5204,6 +6803,10 @@ public final class IrKlibProtoBuf {
           to_bitField0_ |= 0x00000004;
         }
         result.typeTable_ = typeTable_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.stringTable_ = stringTable_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -5211,9 +6814,7 @@ public final class IrKlibProtoBuf {
       public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrModule other) {
         if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrModule.getDefaultInstance()) return this;
         if (other.hasName()) {
-          bitField0_ |= 0x00000001;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         if (!other.file_.isEmpty()) {
           if (file_.isEmpty()) {
@@ -5231,6 +6832,9 @@ public final class IrKlibProtoBuf {
         if (other.hasTypeTable()) {
           mergeTypeTable(other.getTypeTable());
         }
+        if (other.hasStringTable()) {
+          mergeStringTable(other.getStringTable());
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -5246,6 +6850,14 @@ public final class IrKlibProtoBuf {
           return false;
         }
         if (!hasTypeTable()) {
+          
+          return false;
+        }
+        if (!hasStringTable()) {
+          
+          return false;
+        }
+        if (!getName().isInitialized()) {
           
           return false;
         }
@@ -5285,79 +6897,63 @@ public final class IrKlibProtoBuf {
       }
       private int bitField0_;
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
         return this;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
-        
         return this;
       }
 
@@ -5606,6 +7202,66 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable stringTable_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+       */
+      public boolean hasStringTable() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable getStringTable() {
+        return stringTable_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+       */
+      public Builder setStringTable(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        stringTable_ = value;
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+       */
+      public Builder setStringTable(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.Builder builderForValue) {
+        stringTable_ = builderForValue.build();
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+       */
+      public Builder mergeStringTable(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable value) {
+        if (((bitField0_ & 0x00000010) == 0x00000010) &&
+            stringTable_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.getDefaultInstance()) {
+          stringTable_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.newBuilder(stringTable_).mergeFrom(value).buildPartial();
+        } else {
+          stringTable_ = value;
+        }
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable string_table = 5;</code>
+       */
+      public Builder clearStringTable() {
+        stringTable_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrModule)
     }
 
@@ -5615,6 +7271,820 @@ public final class IrKlibProtoBuf {
     }
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrModule)
+  }
+
+  public interface StringOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required int32 index = 1;</code>
+     */
+    boolean hasIndex();
+    /**
+     * <code>required int32 index = 1;</code>
+     */
+    int getIndex();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String}
+   */
+  public static final class String extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String)
+      StringOrBuilder {
+    // Use String.newBuilder() to construct.
+    private String(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private String(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final String defaultInstance;
+    public static String getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public String getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private String(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              index_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<String> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<String>() {
+      public String parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new String(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<String> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int INDEX_FIELD_NUMBER = 1;
+    private int index_;
+    /**
+     * <code>required int32 index = 1;</code>
+     */
+    public boolean hasIndex() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required int32 index = 1;</code>
+     */
+    public int getIndex() {
+      return index_;
+    }
+
+    private void initFields() {
+      index_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasIndex()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, index_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(1, index_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String)
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringOrBuilder {
+      // Construct using org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        index_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String build() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String buildPartial() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String result = new org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.index_ = index_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String other) {
+        if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) return this;
+        if (other.hasIndex()) {
+          setIndex(other.getIndex());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasIndex()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private int index_ ;
+      /**
+       * <code>required int32 index = 1;</code>
+       */
+      public boolean hasIndex() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 index = 1;</code>
+       */
+      public int getIndex() {
+        return index_;
+      }
+      /**
+       * <code>required int32 index = 1;</code>
+       */
+      public Builder setIndex(int value) {
+        bitField0_ |= 0x00000001;
+        index_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required int32 index = 1;</code>
+       */
+      public Builder clearIndex() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        index_ = 0;
+        
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String)
+    }
+
+    static {
+      defaultInstance = new String(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String)
+  }
+
+  public interface StringTableOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>repeated string strings = 1;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getStringsList();
+    /**
+     * <code>repeated string strings = 1;</code>
+     */
+    int getStringsCount();
+    /**
+     * <code>repeated string strings = 1;</code>
+     */
+    java.lang.String getStrings(int index);
+    /**
+     * <code>repeated string strings = 1;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getStringsBytes(int index);
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable}
+   */
+  public static final class StringTable extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable)
+      StringTableOrBuilder {
+    // Use StringTable.newBuilder() to construct.
+    private StringTable(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private StringTable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final StringTable defaultInstance;
+    public static StringTable getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public StringTable getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private StringTable(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                strings_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              strings_.add(bs);
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          strings_ = strings_.getUnmodifiableView();
+        }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<StringTable> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<StringTable>() {
+      public StringTable parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new StringTable(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<StringTable> getParserForType() {
+      return PARSER;
+    }
+
+    public static final int STRINGS_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.protobuf.LazyStringList strings_;
+    /**
+     * <code>repeated string strings = 1;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getStringsList() {
+      return strings_;
+    }
+    /**
+     * <code>repeated string strings = 1;</code>
+     */
+    public int getStringsCount() {
+      return strings_.size();
+    }
+    /**
+     * <code>repeated string strings = 1;</code>
+     */
+    public java.lang.String getStrings(int index) {
+      return strings_.get(index);
+    }
+    /**
+     * <code>repeated string strings = 1;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getStringsBytes(int index) {
+      return strings_.getByteString(index);
+    }
+
+    private void initFields() {
+      strings_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < strings_.size(); i++) {
+        output.writeBytes(1, strings_.getByteString(i));
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < strings_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(strings_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getStringsList().size();
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable)
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTableOrBuilder {
+      // Construct using org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        strings_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable build() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable buildPartial() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable result = new org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          strings_ = strings_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.strings_ = strings_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable other) {
+        if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable.getDefaultInstance()) return this;
+        if (!other.strings_.isEmpty()) {
+          if (strings_.isEmpty()) {
+            strings_ = other.strings_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureStringsIsMutable();
+            strings_.addAll(other.strings_);
+          }
+          
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.StringTable) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private org.jetbrains.kotlin.protobuf.LazyStringList strings_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureStringsIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          strings_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(strings_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string strings = 1;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
+          getStringsList() {
+        return strings_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string strings = 1;</code>
+       */
+      public int getStringsCount() {
+        return strings_.size();
+      }
+      /**
+       * <code>repeated string strings = 1;</code>
+       */
+      public java.lang.String getStrings(int index) {
+        return strings_.get(index);
+      }
+      /**
+       * <code>repeated string strings = 1;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getStringsBytes(int index) {
+        return strings_.getByteString(index);
+      }
+      /**
+       * <code>repeated string strings = 1;</code>
+       */
+      public Builder setStrings(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureStringsIsMutable();
+        strings_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string strings = 1;</code>
+       */
+      public Builder addStrings(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureStringsIsMutable();
+        strings_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string strings = 1;</code>
+       */
+      public Builder addAllStrings(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureStringsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, strings_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string strings = 1;</code>
+       */
+      public Builder clearStrings() {
+        strings_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string strings = 1;</code>
+       */
+      public Builder addStringsBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureStringsIsMutable();
+        strings_.add(value);
+        
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable)
+    }
+
+    static {
+      defaultInstance = new StringTable(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.StringTable)
   }
 
   public interface IrSymbolDataOrBuilder extends
@@ -5649,18 +8119,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.UniqId getTopLevelUniqId();
 
     /**
-     * <code>optional string fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
      */
     boolean hasFqname();
     /**
-     * <code>optional string fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
      */
-    java.lang.String getFqname();
-    /**
-     * <code>optional string fqname = 4;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getFqnameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getFqname();
 
     /**
      * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor_reference = 5;</code>
@@ -5760,9 +8225,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 34: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = fqname_.toBuilder();
+              }
+              fqname_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(fqname_);
+                fqname_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000008;
-              fqname_ = bs;
               break;
             }
             case 42: {
@@ -5858,45 +8330,18 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int FQNAME_FIELD_NUMBER = 4;
-    private java.lang.Object fqname_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String fqname_;
     /**
-     * <code>optional string fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
      */
     public boolean hasFqname() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional string fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
      */
-    public java.lang.String getFqname() {
-      java.lang.Object ref = fqname_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          fqname_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string fqname = 4;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getFqnameBytes() {
-      java.lang.Object ref = fqname_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        fqname_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getFqname() {
+      return fqname_;
     }
 
     public static final int DESCRIPTOR_REFERENCE_FIELD_NUMBER = 5;
@@ -5918,7 +8363,7 @@ public final class IrKlibProtoBuf {
       kind_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbolKind.FUNCTION_SYMBOL;
       uniqId_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.UniqId.getDefaultInstance();
       topLevelUniqId_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.UniqId.getDefaultInstance();
-      fqname_ = "";
+      fqname_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       descriptorReference_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -5947,6 +8392,12 @@ public final class IrKlibProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (hasFqname()) {
+        if (!getFqname().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       if (hasDescriptorReference()) {
         if (!getDescriptorReference().isInitialized()) {
           memoizedIsInitialized = 0;
@@ -5970,7 +8421,7 @@ public final class IrKlibProtoBuf {
         output.writeMessage(3, topLevelUniqId_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, getFqnameBytes());
+        output.writeMessage(4, fqname_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeMessage(5, descriptorReference_);
@@ -5998,7 +8449,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(4, getFqnameBytes());
+          .computeMessageSize(4, fqname_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -6104,7 +8555,7 @@ public final class IrKlibProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000002);
         topLevelUniqId_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.UniqId.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
-        fqname_ = "";
+        fqname_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000008);
         descriptorReference_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000010);
@@ -6167,9 +8618,7 @@ public final class IrKlibProtoBuf {
           mergeTopLevelUniqId(other.getTopLevelUniqId());
         }
         if (other.hasFqname()) {
-          bitField0_ |= 0x00000008;
-          fqname_ = other.fqname_;
-          
+          mergeFqname(other.getFqname());
         }
         if (other.hasDescriptorReference()) {
           mergeDescriptorReference(other.getDescriptorReference());
@@ -6199,6 +8648,12 @@ public final class IrKlibProtoBuf {
         if (!getTopLevelUniqId().isInitialized()) {
           
           return false;
+        }
+        if (hasFqname()) {
+          if (!getFqname().isInitialized()) {
+            
+            return false;
+          }
         }
         if (hasDescriptorReference()) {
           if (!getDescriptorReference().isInitialized()) {
@@ -6383,79 +8838,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object fqname_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String fqname_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>optional string fqname = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
        */
       public boolean hasFqname() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>optional string fqname = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
        */
-      public java.lang.String getFqname() {
-        java.lang.Object ref = fqname_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            fqname_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getFqname() {
+        return fqname_;
       }
       /**
-       * <code>optional string fqname = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getFqnameBytes() {
-        java.lang.Object ref = fqname_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          fqname_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setFqname(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        fqname_ = value;
+
+        bitField0_ |= 0x00000008;
+        return this;
       }
       /**
-       * <code>optional string fqname = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
        */
       public Builder setFqname(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        fqname_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        fqname_ = builderForValue.build();
+
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
-       * <code>optional string fqname = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
+       */
+      public Builder mergeFqname(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+            fqname_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          fqname_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(fqname_).mergeFrom(value).buildPartial();
+        } else {
+          fqname_ = value;
+        }
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String fqname = 4;</code>
        */
       public Builder clearFqname() {
+        fqname_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000008);
-        fqname_ = getDefaultInstance().getFqname();
-        
-        return this;
-      }
-      /**
-       * <code>optional string fqname = 4;</code>
-       */
-      public Builder setFqnameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        fqname_ = value;
-        
         return this;
       }
 
@@ -13027,18 +15466,13 @@ public final class IrKlibProtoBuf {
     int getLoopId();
 
     /**
-     * <code>optional string label = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
      */
     boolean hasLabel();
     /**
-     * <code>optional string label = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
      */
-    java.lang.String getLabel();
-    /**
-     * <code>optional string label = 2;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getLabelBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getLabel();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrBreak}
@@ -13096,9 +15530,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 18: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = label_.toBuilder();
+              }
+              label_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(label_);
+                label_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              label_ = bs;
               break;
             }
           }
@@ -13151,50 +15592,23 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int LABEL_FIELD_NUMBER = 2;
-    private java.lang.Object label_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String label_;
     /**
-     * <code>optional string label = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
      */
     public boolean hasLabel() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional string label = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
      */
-    public java.lang.String getLabel() {
-      java.lang.Object ref = label_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          label_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string label = 2;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getLabelBytes() {
-      java.lang.Object ref = label_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        label_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getLabel() {
+      return label_;
     }
 
     private void initFields() {
       loopId_ = 0;
-      label_ = "";
+      label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -13205,6 +15619,12 @@ public final class IrKlibProtoBuf {
       if (!hasLoopId()) {
         memoizedIsInitialized = 0;
         return false;
+      }
+      if (hasLabel()) {
+        if (!getLabel().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -13217,7 +15637,7 @@ public final class IrKlibProtoBuf {
         output.writeInt32(1, loopId_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getLabelBytes());
+        output.writeMessage(2, label_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -13234,7 +15654,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getLabelBytes());
+          .computeMessageSize(2, label_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -13332,7 +15752,7 @@ public final class IrKlibProtoBuf {
         super.clear();
         loopId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        label_ = "";
+        label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
@@ -13375,9 +15795,7 @@ public final class IrKlibProtoBuf {
           setLoopId(other.getLoopId());
         }
         if (other.hasLabel()) {
-          bitField0_ |= 0x00000002;
-          label_ = other.label_;
-          
+          mergeLabel(other.getLabel());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -13388,6 +15806,12 @@ public final class IrKlibProtoBuf {
         if (!hasLoopId()) {
           
           return false;
+        }
+        if (hasLabel()) {
+          if (!getLabel().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -13443,79 +15867,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object label_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
       public boolean hasLabel() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
-      public java.lang.String getLabel() {
-        java.lang.Object ref = label_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            label_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getLabel() {
+        return label_;
       }
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getLabelBytes() {
-        java.lang.Object ref = label_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          label_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setLabel(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        label_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
       public Builder setLabel(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        label_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        label_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
+       */
+      public Builder mergeLabel(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            label_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          label_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(label_).mergeFrom(value).buildPartial();
+        } else {
+          label_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
       public Builder clearLabel() {
+        label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        label_ = getDefaultInstance().getLabel();
-        
-        return this;
-      }
-      /**
-       * <code>optional string label = 2;</code>
-       */
-      public Builder setLabelBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        label_ = value;
-        
         return this;
       }
 
@@ -15834,18 +18242,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol getSymbol();
 
     /**
-     * <code>optional string origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>optional string origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
      */
-    java.lang.String getOrigin();
-    /**
-     * <code>optional string origin = 2;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getOriginBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin getOrigin();
 
     /**
      * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.MemberAccessCommon member_access = 3;</code>
@@ -15920,9 +18323,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 18: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = origin_.toBuilder();
+              }
+              origin_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(origin_);
+                origin_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              origin_ = bs;
               break;
             }
             case 26: {
@@ -15988,45 +18398,18 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int ORIGIN_FIELD_NUMBER = 2;
-    private java.lang.Object origin_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin origin_;
     /**
-     * <code>optional string origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional string origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
      */
-    public java.lang.String getOrigin() {
-      java.lang.Object ref = origin_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          origin_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string origin = 2;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getOriginBytes() {
-      java.lang.Object ref = origin_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        origin_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin getOrigin() {
+      return origin_;
     }
 
     public static final int MEMBER_ACCESS_FIELD_NUMBER = 3;
@@ -16046,7 +18429,7 @@ public final class IrKlibProtoBuf {
 
     private void initFields() {
       symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
-      origin_ = "";
+      origin_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance();
       memberAccess_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.MemberAccessCommon.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -16067,6 +18450,12 @@ public final class IrKlibProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       if (!getMemberAccess().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -16082,7 +18471,7 @@ public final class IrKlibProtoBuf {
         output.writeMessage(1, symbol_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getOriginBytes());
+        output.writeMessage(2, origin_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeMessage(3, memberAccess_);
@@ -16102,7 +18491,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getOriginBytes());
+          .computeMessageSize(2, origin_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -16204,7 +18593,7 @@ public final class IrKlibProtoBuf {
         super.clear();
         symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        origin_ = "";
+        origin_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
         memberAccess_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.MemberAccessCommon.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -16253,9 +18642,7 @@ public final class IrKlibProtoBuf {
           mergeSymbol(other.getSymbol());
         }
         if (other.hasOrigin()) {
-          bitField0_ |= 0x00000002;
-          origin_ = other.origin_;
-          
+          mergeOrigin(other.getOrigin());
         }
         if (other.hasMemberAccess()) {
           mergeMemberAccess(other.getMemberAccess());
@@ -16277,6 +18664,12 @@ public final class IrKlibProtoBuf {
         if (!getSymbol().isInitialized()) {
           
           return false;
+        }
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         if (!getMemberAccess().isInitialized()) {
           
@@ -16364,79 +18757,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object origin_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin origin_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>optional string origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional string origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
        */
-      public java.lang.String getOrigin() {
-        java.lang.Object ref = origin_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            origin_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin getOrigin() {
+        return origin_;
       }
       /**
-       * <code>optional string origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getOriginBytes() {
-        java.lang.Object ref = origin_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          origin_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setOrigin(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        origin_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>optional string origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        origin_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.Builder builderForValue) {
+        origin_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>optional string origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
+       */
+      public Builder mergeOrigin(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            origin_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance()) {
+          origin_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.newBuilder(origin_).mergeFrom(value).buildPartial();
+        } else {
+          origin_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 2;</code>
        */
       public Builder clearOrigin() {
+        origin_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        origin_ = getDefaultInstance().getOrigin();
-        
-        return this;
-      }
-      /**
-       * <code>optional string origin = 2;</code>
-       */
-      public Builder setOriginBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        origin_ = value;
-        
         return this;
       }
 
@@ -16543,18 +18920,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol getSetter();
 
     /**
-     * <code>optional string origin = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>optional string origin = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
      */
-    java.lang.String getOrigin();
-    /**
-     * <code>optional string origin = 4;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getOriginBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin getOrigin();
 
     /**
      * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.MemberAccessCommon member_access = 5;</code>
@@ -16564,6 +18936,23 @@ public final class IrKlibProtoBuf {
      * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.MemberAccessCommon member_access = 5;</code>
      */
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.MemberAccessCommon getMemberAccess();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+     *
+     * <pre>
+     * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+     * </pre>
+     */
+    boolean hasDescriptor();
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+     *
+     * <pre>
+     * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+     * </pre>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference getDescriptor();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrPropertyReference}
@@ -16655,9 +19044,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 34: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = origin_.toBuilder();
+              }
+              origin_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(origin_);
+                origin_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000008;
-              origin_ = bs;
               break;
             }
             case 42: {
@@ -16671,6 +19067,19 @@ public final class IrKlibProtoBuf {
                 memberAccess_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000010;
+              break;
+            }
+            case 50: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000020) == 0x00000020)) {
+                subBuilder = descriptor_.toBuilder();
+              }
+              descriptor_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(descriptor_);
+                descriptor_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000020;
               break;
             }
           }
@@ -16753,45 +19162,18 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int ORIGIN_FIELD_NUMBER = 4;
-    private java.lang.Object origin_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin origin_;
     /**
-     * <code>optional string origin = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional string origin = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
      */
-    public java.lang.String getOrigin() {
-      java.lang.Object ref = origin_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          origin_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string origin = 4;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getOriginBytes() {
-      java.lang.Object ref = origin_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        origin_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin getOrigin() {
+      return origin_;
     }
 
     public static final int MEMBER_ACCESS_FIELD_NUMBER = 5;
@@ -16809,12 +19191,36 @@ public final class IrKlibProtoBuf {
       return memberAccess_;
     }
 
+    public static final int DESCRIPTOR_FIELD_NUMBER = 6;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference descriptor_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+     *
+     * <pre>
+     * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+     * </pre>
+     */
+    public boolean hasDescriptor() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+     *
+     * <pre>
+     * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference getDescriptor() {
+      return descriptor_;
+    }
+
     private void initFields() {
       field_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
       getter_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
       setter_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
-      origin_ = "";
+      origin_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance();
       memberAccess_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.MemberAccessCommon.getDefaultInstance();
+      descriptor_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -16844,9 +19250,21 @@ public final class IrKlibProtoBuf {
           return false;
         }
       }
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       if (!getMemberAccess().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
+      }
+      if (hasDescriptor()) {
+        if (!getDescriptor().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -16865,10 +19283,13 @@ public final class IrKlibProtoBuf {
         output.writeMessage(3, setter_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, getOriginBytes());
+        output.writeMessage(4, origin_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeMessage(5, memberAccess_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeMessage(6, descriptor_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -16893,11 +19314,15 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(4, getOriginBytes());
+          .computeMessageSize(4, origin_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(5, memberAccess_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(6, descriptor_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -16999,10 +19424,12 @@ public final class IrKlibProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000002);
         setter_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
-        origin_ = "";
+        origin_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000008);
         memberAccess_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.MemberAccessCommon.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000010);
+        descriptor_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
 
@@ -17046,6 +19473,10 @@ public final class IrKlibProtoBuf {
           to_bitField0_ |= 0x00000010;
         }
         result.memberAccess_ = memberAccess_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.descriptor_ = descriptor_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -17062,12 +19493,13 @@ public final class IrKlibProtoBuf {
           mergeSetter(other.getSetter());
         }
         if (other.hasOrigin()) {
-          bitField0_ |= 0x00000008;
-          origin_ = other.origin_;
-          
+          mergeOrigin(other.getOrigin());
         }
         if (other.hasMemberAccess()) {
           mergeMemberAccess(other.getMemberAccess());
+        }
+        if (other.hasDescriptor()) {
+          mergeDescriptor(other.getDescriptor());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -17097,9 +19529,21 @@ public final class IrKlibProtoBuf {
             return false;
           }
         }
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
+        }
         if (!getMemberAccess().isInitialized()) {
           
           return false;
+        }
+        if (hasDescriptor()) {
+          if (!getDescriptor().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -17303,79 +19747,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object origin_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin origin_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>optional string origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>optional string origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
        */
-      public java.lang.String getOrigin() {
-        java.lang.Object ref = origin_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            origin_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin getOrigin() {
+        return origin_;
       }
       /**
-       * <code>optional string origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getOriginBytes() {
-        java.lang.Object ref = origin_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          origin_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setOrigin(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        origin_ = value;
+
+        bitField0_ |= 0x00000008;
+        return this;
       }
       /**
-       * <code>optional string origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
        */
       public Builder setOrigin(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        origin_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.Builder builderForValue) {
+        origin_ = builderForValue.build();
+
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
-       * <code>optional string origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
+       */
+      public Builder mergeOrigin(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin value) {
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+            origin_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance()) {
+          origin_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.newBuilder(origin_).mergeFrom(value).buildPartial();
+        } else {
+          origin_ = value;
+        }
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrStatementOrigin origin = 4;</code>
        */
       public Builder clearOrigin() {
+        origin_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatementOrigin.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000008);
-        origin_ = getDefaultInstance().getOrigin();
-        
-        return this;
-      }
-      /**
-       * <code>optional string origin = 4;</code>
-       */
-      public Builder setOriginBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        origin_ = value;
-        
         return this;
       }
 
@@ -17436,6 +19864,90 @@ public final class IrKlibProtoBuf {
         memberAccess_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.MemberAccessCommon.getDefaultInstance();
 
         bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference descriptor_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+       *
+       * <pre>
+       * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+       * </pre>
+       */
+      public boolean hasDescriptor() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+       *
+       * <pre>
+       * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference getDescriptor() {
+        return descriptor_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+       *
+       * <pre>
+       * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+       * </pre>
+       */
+      public Builder setDescriptor(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        descriptor_ = value;
+
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+       *
+       * <pre>
+       * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+       * </pre>
+       */
+      public Builder setDescriptor(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.Builder builderForValue) {
+        descriptor_ = builderForValue.build();
+
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+       *
+       * <pre>
+       * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+       * </pre>
+       */
+      public Builder mergeDescriptor(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference value) {
+        if (((bitField0_ & 0x00000020) == 0x00000020) &&
+            descriptor_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance()) {
+          descriptor_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.newBuilder(descriptor_).mergeFrom(value).buildPartial();
+        } else {
+          descriptor_ = value;
+        }
+
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference descriptor = 6;</code>
+       *
+       * <pre>
+       * IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+       * </pre>
+       */
+      public Builder clearDescriptor() {
+        descriptor_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
 
@@ -18563,18 +21075,13 @@ public final class IrKlibProtoBuf {
     double getDouble();
 
     /**
-     * <code>optional string string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
      */
     boolean hasString();
     /**
-     * <code>optional string string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
      */
-    java.lang.String getString();
-    /**
-     * <code>optional string string = 10;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getStringBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getString();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrConst}
@@ -18672,9 +21179,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 82: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (valueCase_ == 10) {
+                subBuilder = ((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) value_).toBuilder();
+              }
+              value_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) value_);
+                value_ = subBuilder.buildPartial();
+              }
               valueCase_ = 10;
-              value_ = bs;
               break;
             }
           }
@@ -18913,51 +21427,19 @@ public final class IrKlibProtoBuf {
 
     public static final int STRING_FIELD_NUMBER = 10;
     /**
-     * <code>optional string string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
      */
     public boolean hasString() {
       return valueCase_ == 10;
     }
     /**
-     * <code>optional string string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
      */
-    public java.lang.String getString() {
-      java.lang.Object ref = "";
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getString() {
       if (valueCase_ == 10) {
-        ref = value_;
+         return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) value_;
       }
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8() && (valueCase_ == 10)) {
-          value_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string string = 10;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getStringBytes() {
-      java.lang.Object ref = "";
-      if (valueCase_ == 10) {
-        ref = value_;
-      }
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        if (valueCase_ == 10) {
-          value_ = b;
-        }
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+      return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
     }
 
     private void initFields() {
@@ -18968,6 +21450,12 @@ public final class IrKlibProtoBuf {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
+      if (hasString()) {
+        if (!getString().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -19012,7 +21500,7 @@ public final class IrKlibProtoBuf {
             9, (double)((java.lang.Double) value_));
       }
       if (valueCase_ == 10) {
-        output.writeBytes(10, getStringBytes());
+        output.writeMessage(10, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) value_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -19070,7 +21558,7 @@ public final class IrKlibProtoBuf {
       }
       if (valueCase_ == 10) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(10, getStringBytes());
+          .computeMessageSize(10, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) value_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -19266,9 +21754,7 @@ public final class IrKlibProtoBuf {
             break;
           }
           case STRING: {
-            valueCase_ = 10;
-            value_ = other.value_;
-
+            mergeString(other.getString());
             break;
           }
           case VALUE_NOT_SET: {
@@ -19281,6 +21767,12 @@ public final class IrKlibProtoBuf {
       }
 
       public final boolean isInitialized() {
+        if (hasString()) {
+          if (!getString().isInitialized()) {
+            
+            return false;
+          }
+        }
         return true;
       }
 
@@ -19642,69 +22134,59 @@ public final class IrKlibProtoBuf {
       }
 
       /**
-       * <code>optional string string = 10;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
        */
       public boolean hasString() {
         return valueCase_ == 10;
       }
       /**
-       * <code>optional string string = 10;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
        */
-      public java.lang.String getString() {
-        java.lang.Object ref = "";
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getString() {
         if (valueCase_ == 10) {
-          ref = value_;
+          return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) value_;
         }
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (valueCase_ == 10) {
-            if (bs.isValidUtf8()) {
-              value_ = s;
-            }
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       }
       /**
-       * <code>optional string string = 10;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getStringBytes() {
-        java.lang.Object ref = "";
-        if (valueCase_ == 10) {
-          ref = value_;
-        }
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          if (valueCase_ == 10) {
-            value_ = b;
-          }
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string string = 10;</code>
-       */
-      public Builder setString(
-          java.lang.String value) {
+      public Builder setString(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
         if (value == null) {
-    throw new NullPointerException();
-  }
-  valueCase_ = 10;
+          throw new NullPointerException();
+        }
         value_ = value;
-        
+
+        valueCase_ = 10;
         return this;
       }
       /**
-       * <code>optional string string = 10;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
+       */
+      public Builder setString(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        value_ = builderForValue.build();
+
+        valueCase_ = 10;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
+       */
+      public Builder mergeString(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (valueCase_ == 10 &&
+            value_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          value_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String) value_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          value_ = value;
+        }
+
+        valueCase_ = 10;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String string = 10;</code>
        */
       public Builder clearString() {
         if (valueCase_ == 10) {
@@ -19712,19 +22194,6 @@ public final class IrKlibProtoBuf {
           value_ = null;
           
         }
-        return this;
-      }
-      /**
-       * <code>optional string string = 10;</code>
-       */
-      public Builder setStringBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  valueCase_ = 10;
-        value_ = value;
-        
         return this;
       }
 
@@ -19753,18 +22222,13 @@ public final class IrKlibProtoBuf {
     int getLoopId();
 
     /**
-     * <code>optional string label = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
      */
     boolean hasLabel();
     /**
-     * <code>optional string label = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
      */
-    java.lang.String getLabel();
-    /**
-     * <code>optional string label = 2;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getLabelBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getLabel();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrContinue}
@@ -19822,9 +22286,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 18: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = label_.toBuilder();
+              }
+              label_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(label_);
+                label_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              label_ = bs;
               break;
             }
           }
@@ -19877,50 +22348,23 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int LABEL_FIELD_NUMBER = 2;
-    private java.lang.Object label_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String label_;
     /**
-     * <code>optional string label = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
      */
     public boolean hasLabel() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional string label = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
      */
-    public java.lang.String getLabel() {
-      java.lang.Object ref = label_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          label_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string label = 2;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getLabelBytes() {
-      java.lang.Object ref = label_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        label_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getLabel() {
+      return label_;
     }
 
     private void initFields() {
       loopId_ = 0;
-      label_ = "";
+      label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -19931,6 +22375,12 @@ public final class IrKlibProtoBuf {
       if (!hasLoopId()) {
         memoizedIsInitialized = 0;
         return false;
+      }
+      if (hasLabel()) {
+        if (!getLabel().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -19943,7 +22393,7 @@ public final class IrKlibProtoBuf {
         output.writeInt32(1, loopId_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getLabelBytes());
+        output.writeMessage(2, label_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -19960,7 +22410,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getLabelBytes());
+          .computeMessageSize(2, label_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -20058,7 +22508,7 @@ public final class IrKlibProtoBuf {
         super.clear();
         loopId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        label_ = "";
+        label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
@@ -20101,9 +22551,7 @@ public final class IrKlibProtoBuf {
           setLoopId(other.getLoopId());
         }
         if (other.hasLabel()) {
-          bitField0_ |= 0x00000002;
-          label_ = other.label_;
-          
+          mergeLabel(other.getLabel());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -20114,6 +22562,12 @@ public final class IrKlibProtoBuf {
         if (!hasLoopId()) {
           
           return false;
+        }
+        if (hasLabel()) {
+          if (!getLabel().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -20169,79 +22623,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object label_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
       public boolean hasLabel() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
-      public java.lang.String getLabel() {
-        java.lang.Object ref = label_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            label_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getLabel() {
+        return label_;
       }
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getLabelBytes() {
-        java.lang.Object ref = label_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          label_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setLabel(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        label_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
       public Builder setLabel(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        label_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        label_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>optional string label = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
+       */
+      public Builder mergeLabel(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            label_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          label_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(label_).mergeFrom(value).buildPartial();
+        } else {
+          label_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 2;</code>
        */
       public Builder clearLabel() {
+        label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        label_ = getDefaultInstance().getLabel();
-        
-        return this;
-      }
-      /**
-       * <code>optional string label = 2;</code>
-       */
-      public Builder setLabelBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        label_ = value;
-        
         return this;
       }
 
@@ -24831,18 +27269,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getCondition();
 
     /**
-     * <code>optional string label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
      */
     boolean hasLabel();
     /**
-     * <code>optional string label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
      */
-    java.lang.String getLabel();
-    /**
-     * <code>optional string label = 3;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getLabelBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getLabel();
 
     /**
      * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression body = 4;</code>
@@ -24922,9 +27355,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 26: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = label_.toBuilder();
+              }
+              label_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(label_);
+                label_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000004;
-              label_ = bs;
               break;
             }
             case 34: {
@@ -25005,45 +27445,18 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int LABEL_FIELD_NUMBER = 3;
-    private java.lang.Object label_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String label_;
     /**
-     * <code>optional string label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
      */
     public boolean hasLabel() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional string label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
      */
-    public java.lang.String getLabel() {
-      java.lang.Object ref = label_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          label_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string label = 3;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getLabelBytes() {
-      java.lang.Object ref = label_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        label_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getLabel() {
+      return label_;
     }
 
     public static final int BODY_FIELD_NUMBER = 4;
@@ -25064,7 +27477,7 @@ public final class IrKlibProtoBuf {
     private void initFields() {
       loopId_ = 0;
       condition_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
-      label_ = "";
+      label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       body_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -25084,6 +27497,12 @@ public final class IrKlibProtoBuf {
       if (!getCondition().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
+      }
+      if (hasLabel()) {
+        if (!getLabel().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       if (hasBody()) {
         if (!getBody().isInitialized()) {
@@ -25105,7 +27524,7 @@ public final class IrKlibProtoBuf {
         output.writeMessage(2, condition_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, getLabelBytes());
+        output.writeMessage(3, label_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(4, body_);
@@ -25129,7 +27548,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(3, getLabelBytes());
+          .computeMessageSize(3, label_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -25233,7 +27652,7 @@ public final class IrKlibProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         condition_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
-        label_ = "";
+        label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
         body_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -25289,9 +27708,7 @@ public final class IrKlibProtoBuf {
           mergeCondition(other.getCondition());
         }
         if (other.hasLabel()) {
-          bitField0_ |= 0x00000004;
-          label_ = other.label_;
-          
+          mergeLabel(other.getLabel());
         }
         if (other.hasBody()) {
           mergeBody(other.getBody());
@@ -25313,6 +27730,12 @@ public final class IrKlibProtoBuf {
         if (!getCondition().isInitialized()) {
           
           return false;
+        }
+        if (hasLabel()) {
+          if (!getLabel().isInitialized()) {
+            
+            return false;
+          }
         }
         if (hasBody()) {
           if (!getBody().isInitialized()) {
@@ -25434,79 +27857,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object label_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>optional string label = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
        */
       public boolean hasLabel() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>optional string label = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
        */
-      public java.lang.String getLabel() {
-        java.lang.Object ref = label_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            label_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getLabel() {
+        return label_;
       }
       /**
-       * <code>optional string label = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getLabelBytes() {
-        java.lang.Object ref = label_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          label_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setLabel(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        label_ = value;
+
+        bitField0_ |= 0x00000004;
+        return this;
       }
       /**
-       * <code>optional string label = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
        */
       public Builder setLabel(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        label_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        label_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
         return this;
       }
       /**
-       * <code>optional string label = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
+       */
+      public Builder mergeLabel(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            label_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          label_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(label_).mergeFrom(value).buildPartial();
+        } else {
+          label_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String label = 3;</code>
        */
       public Builder clearLabel() {
+        label_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000004);
-        label_ = getDefaultInstance().getLabel();
-        
-        return this;
-      }
-      /**
-       * <code>optional string label = 3;</code>
-       */
-      public Builder setLabelBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        label_ = value;
-        
         return this;
       }
 
@@ -33410,6 +35817,12 @@ public final class IrKlibProtoBuf {
           return false;
         }
       }
+      if (hasConst()) {
+        if (!getConst().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       if (hasContinue()) {
         if (!getContinue().isInitialized()) {
           memoizedIsInitialized = 0;
@@ -34118,6 +36531,12 @@ public final class IrKlibProtoBuf {
         }
         if (hasComposite()) {
           if (!getComposite().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasConst()) {
+          if (!getConst().isInitialized()) {
             
             return false;
           }
@@ -38542,32 +40961,22 @@ public final class IrKlibProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 1;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
 
     /**
-     * <code>required string visibility = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
      */
     boolean hasVisibility();
     /**
-     * <code>required string visibility = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
      */
-    java.lang.String getVisibility();
-    /**
-     * <code>required string visibility = 2;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getVisibilityBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility();
 
     /**
      * <code>required bool is_inline = 3;</code>
@@ -38697,15 +41106,29 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 10: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000001;
-              name_ = bs;
               break;
             }
             case 18: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = visibility_.toBuilder();
+              }
+              visibility_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(visibility_);
+                visibility_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              visibility_ = bs;
               break;
             }
             case 24: {
@@ -38829,87 +41252,33 @@ public final class IrKlibProtoBuf {
 
     private int bitField0_;
     public static final int NAME_FIELD_NUMBER = 1;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 1;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     public static final int VISIBILITY_FIELD_NUMBER = 2;
-    private java.lang.Object visibility_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility visibility_;
     /**
-     * <code>required string visibility = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
      */
     public boolean hasVisibility() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string visibility = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
      */
-    public java.lang.String getVisibility() {
-      java.lang.Object ref = visibility_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          visibility_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string visibility = 2;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getVisibilityBytes() {
-      java.lang.Object ref = visibility_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        visibility_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility() {
+      return visibility_;
     }
 
     public static final int IS_INLINE_FIELD_NUMBER = 3;
@@ -39053,8 +41422,8 @@ public final class IrKlibProtoBuf {
     }
 
     private void initFields() {
-      name_ = "";
-      visibility_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
       isInline_ = false;
       isExternal_ = false;
       typeParameters_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrTypeParameterContainer.getDefaultInstance();
@@ -39091,6 +41460,14 @@ public final class IrKlibProtoBuf {
         return false;
       }
       if (!hasReturnType()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getVisibility().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -39134,10 +41511,10 @@ public final class IrKlibProtoBuf {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getNameBytes());
+        output.writeMessage(1, name_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getVisibilityBytes());
+        output.writeMessage(2, visibility_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBool(3, isInline_);
@@ -39174,11 +41551,11 @@ public final class IrKlibProtoBuf {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(1, getNameBytes());
+          .computeMessageSize(1, name_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getVisibilityBytes());
+          .computeMessageSize(2, visibility_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -39306,9 +41683,9 @@ public final class IrKlibProtoBuf {
 
       public Builder clear() {
         super.clear();
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        visibility_ = "";
+        visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
         isInline_ = false;
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -39397,14 +41774,10 @@ public final class IrKlibProtoBuf {
       public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrFunctionBase other) {
         if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrFunctionBase.getDefaultInstance()) return this;
         if (other.hasName()) {
-          bitField0_ |= 0x00000001;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         if (other.hasVisibility()) {
-          bitField0_ |= 0x00000002;
-          visibility_ = other.visibility_;
-          
+          mergeVisibility(other.getVisibility());
         }
         if (other.hasIsInline()) {
           setIsInline(other.getIsInline());
@@ -39467,6 +41840,14 @@ public final class IrKlibProtoBuf {
           
           return false;
         }
+        if (!getName().isInitialized()) {
+          
+          return false;
+        }
+        if (!getVisibility().isInitialized()) {
+          
+          return false;
+        }
         if (!getTypeParameters().isInitialized()) {
           
           return false;
@@ -39521,155 +41902,123 @@ public final class IrKlibProtoBuf {
       }
       private int bitField0_;
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
         return this;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
-        
         return this;
       }
 
-      private java.lang.Object visibility_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
       /**
-       * <code>required string visibility = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
        */
       public boolean hasVisibility() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string visibility = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
        */
-      public java.lang.String getVisibility() {
-        java.lang.Object ref = visibility_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            visibility_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility() {
+        return visibility_;
       }
       /**
-       * <code>required string visibility = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getVisibilityBytes() {
-        java.lang.Object ref = visibility_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          visibility_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setVisibility(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        visibility_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>required string visibility = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
        */
       public Builder setVisibility(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        visibility_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.Builder builderForValue) {
+        visibility_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>required string visibility = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
+       */
+      public Builder mergeVisibility(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            visibility_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance()) {
+          visibility_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.newBuilder(visibility_).mergeFrom(value).buildPartial();
+        } else {
+          visibility_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 2;</code>
        */
       public Builder clearVisibility() {
+        visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        visibility_ = getDefaultInstance().getVisibility();
-        
-        return this;
-      }
-      /**
-       * <code>required string visibility = 2;</code>
-       */
-      public Builder setVisibilityBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        visibility_ = value;
-        
         return this;
       }
 
@@ -40816,32 +43165,22 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getInitializer();
 
     /**
-     * <code>required string name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 3;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
 
     /**
-     * <code>required string visibility = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
      */
     boolean hasVisibility();
     /**
-     * <code>required string visibility = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
      */
-    java.lang.String getVisibility();
-    /**
-     * <code>required string visibility = 4;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getVisibilityBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility();
 
     /**
      * <code>required bool is_final = 5;</code>
@@ -40956,15 +43295,29 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 26: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000004;
-              name_ = bs;
               break;
             }
             case 34: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = visibility_.toBuilder();
+              }
+              visibility_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(visibility_);
+                visibility_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000008;
-              visibility_ = bs;
               break;
             }
             case 40: {
@@ -41060,87 +43413,33 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int NAME_FIELD_NUMBER = 3;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required string name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 3;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     public static final int VISIBILITY_FIELD_NUMBER = 4;
-    private java.lang.Object visibility_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility visibility_;
     /**
-     * <code>required string visibility = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
      */
     public boolean hasVisibility() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required string visibility = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
      */
-    public java.lang.String getVisibility() {
-      java.lang.Object ref = visibility_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          visibility_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string visibility = 4;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getVisibilityBytes() {
-      java.lang.Object ref = visibility_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        visibility_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility() {
+      return visibility_;
     }
 
     public static final int IS_FINAL_FIELD_NUMBER = 5;
@@ -41206,8 +43505,8 @@ public final class IrKlibProtoBuf {
     private void initFields() {
       symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
       initializer_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
-      name_ = "";
-      visibility_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
       isFinal_ = false;
       isExternal_ = false;
       isStatic_ = false;
@@ -41257,6 +43556,14 @@ public final class IrKlibProtoBuf {
           return false;
         }
       }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getVisibility().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (!getType().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -41275,10 +43582,10 @@ public final class IrKlibProtoBuf {
         output.writeMessage(2, initializer_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, getNameBytes());
+        output.writeMessage(3, name_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, getVisibilityBytes());
+        output.writeMessage(4, visibility_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeBool(5, isFinal_);
@@ -41311,11 +43618,11 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(3, getNameBytes());
+          .computeMessageSize(3, name_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(4, getVisibilityBytes());
+          .computeMessageSize(4, visibility_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -41431,9 +43738,9 @@ public final class IrKlibProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         initializer_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
-        visibility_ = "";
+        visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000008);
         isFinal_ = false;
         bitField0_ = (bitField0_ & ~0x00000010);
@@ -41511,14 +43818,10 @@ public final class IrKlibProtoBuf {
           mergeInitializer(other.getInitializer());
         }
         if (other.hasName()) {
-          bitField0_ |= 0x00000004;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         if (other.hasVisibility()) {
-          bitField0_ |= 0x00000008;
-          visibility_ = other.visibility_;
-          
+          mergeVisibility(other.getVisibility());
         }
         if (other.hasIsFinal()) {
           setIsFinal(other.getIsFinal());
@@ -41575,6 +43878,14 @@ public final class IrKlibProtoBuf {
             
             return false;
           }
+        }
+        if (!getName().isInitialized()) {
+          
+          return false;
+        }
+        if (!getVisibility().isInitialized()) {
+          
+          return false;
         }
         if (!getType().isInitialized()) {
           
@@ -41722,155 +44033,123 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000004;
+        return this;
       }
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
         return this;
       }
       /**
-       * <code>required string name = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 3;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000004);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 3;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        name_ = value;
-        
         return this;
       }
 
-      private java.lang.Object visibility_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
       public boolean hasVisibility() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
-      public java.lang.String getVisibility() {
-        java.lang.Object ref = visibility_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            visibility_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility() {
+        return visibility_;
       }
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getVisibilityBytes() {
-        java.lang.Object ref = visibility_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          visibility_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setVisibility(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        visibility_ = value;
+
+        bitField0_ |= 0x00000008;
+        return this;
       }
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
       public Builder setVisibility(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        visibility_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.Builder builderForValue) {
+        visibility_ = builderForValue.build();
+
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
+       */
+      public Builder mergeVisibility(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility value) {
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+            visibility_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance()) {
+          visibility_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.newBuilder(visibility_).mergeFrom(value).buildPartial();
+        } else {
+          visibility_ = value;
+        }
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
       public Builder clearVisibility() {
+        visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000008);
-        visibility_ = getDefaultInstance().getVisibility();
-        
-        return this;
-      }
-      /**
-       * <code>required string visibility = 4;</code>
-       */
-      public Builder setVisibilityBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        visibility_ = value;
-        
         return this;
       }
 
@@ -42063,32 +44342,22 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference getDescriptor();
 
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 2;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
 
     /**
-     * <code>required string visibility = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
      */
     boolean hasVisibility();
     /**
-     * <code>required string visibility = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
      */
-    java.lang.String getVisibility();
-    /**
-     * <code>required string visibility = 3;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getVisibilityBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility();
 
     /**
      * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.ModalityKind modality = 4;</code>
@@ -42235,15 +44504,29 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 18: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              name_ = bs;
               break;
             }
             case 26: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = visibility_.toBuilder();
+              }
+              visibility_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(visibility_);
+                visibility_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000004;
-              visibility_ = bs;
               break;
             }
             case 32: {
@@ -42380,87 +44663,33 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 2;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     public static final int VISIBILITY_FIELD_NUMBER = 3;
-    private java.lang.Object visibility_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility visibility_;
     /**
-     * <code>required string visibility = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
      */
     public boolean hasVisibility() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required string visibility = 3;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
      */
-    public java.lang.String getVisibility() {
-      java.lang.Object ref = visibility_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          visibility_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string visibility = 3;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getVisibilityBytes() {
-      java.lang.Object ref = visibility_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        visibility_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility() {
+      return visibility_;
     }
 
     public static final int MODALITY_FIELD_NUMBER = 4;
@@ -42600,8 +44829,8 @@ public final class IrKlibProtoBuf {
 
     private void initFields() {
       descriptor_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance();
-      name_ = "";
-      visibility_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
       modality_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.ModalityKind.FINAL_MODALITY;
       isVar_ = false;
       isConst_ = false;
@@ -42656,6 +44885,14 @@ public final class IrKlibProtoBuf {
           return false;
         }
       }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getVisibility().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (hasBackingField()) {
         if (!getBackingField().isInitialized()) {
           memoizedIsInitialized = 0;
@@ -42685,10 +44922,10 @@ public final class IrKlibProtoBuf {
         output.writeMessage(1, descriptor_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getNameBytes());
+        output.writeMessage(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, getVisibilityBytes());
+        output.writeMessage(3, visibility_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeEnum(4, modality_.getNumber());
@@ -42732,11 +44969,11 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getNameBytes());
+          .computeMessageSize(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(3, getVisibilityBytes());
+          .computeMessageSize(3, visibility_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -42870,9 +45107,9 @@ public final class IrKlibProtoBuf {
         super.clear();
         descriptor_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.DescriptorReference.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
-        visibility_ = "";
+        visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
         modality_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.ModalityKind.FINAL_MODALITY;
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -42973,14 +45210,10 @@ public final class IrKlibProtoBuf {
           mergeDescriptor(other.getDescriptor());
         }
         if (other.hasName()) {
-          bitField0_ |= 0x00000002;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         if (other.hasVisibility()) {
-          bitField0_ |= 0x00000004;
-          visibility_ = other.visibility_;
-          
+          mergeVisibility(other.getVisibility());
         }
         if (other.hasModality()) {
           setModality(other.getModality());
@@ -43052,6 +45285,14 @@ public final class IrKlibProtoBuf {
             
             return false;
           }
+        }
+        if (!getName().isInitialized()) {
+          
+          return false;
+        }
+        if (!getVisibility().isInitialized()) {
+          
+          return false;
         }
         if (hasBackingField()) {
           if (!getBackingField().isInitialized()) {
@@ -43177,155 +45418,123 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 2;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        name_ = value;
-        
         return this;
       }
 
-      private java.lang.Object visibility_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
       /**
-       * <code>required string visibility = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
        */
       public boolean hasVisibility() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required string visibility = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
        */
-      public java.lang.String getVisibility() {
-        java.lang.Object ref = visibility_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            visibility_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility() {
+        return visibility_;
       }
       /**
-       * <code>required string visibility = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getVisibilityBytes() {
-        java.lang.Object ref = visibility_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          visibility_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setVisibility(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        visibility_ = value;
+
+        bitField0_ |= 0x00000004;
+        return this;
       }
       /**
-       * <code>required string visibility = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
        */
       public Builder setVisibility(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        visibility_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.Builder builderForValue) {
+        visibility_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
         return this;
       }
       /**
-       * <code>required string visibility = 3;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
+       */
+      public Builder mergeVisibility(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            visibility_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance()) {
+          visibility_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.newBuilder(visibility_).mergeFrom(value).buildPartial();
+        } else {
+          visibility_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 3;</code>
        */
       public Builder clearVisibility() {
+        visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000004);
-        visibility_ = getDefaultInstance().getVisibility();
-        
-        return this;
-      }
-      /**
-       * <code>required string visibility = 3;</code>
-       */
-      public Builder setVisibilityBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        visibility_ = value;
-        
         return this;
       }
 
@@ -43720,18 +45929,13 @@ public final class IrKlibProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 1;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
 
     /**
      * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrSymbol symbol = 2;</code>
@@ -43838,9 +46042,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 10: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000001;
-              name_ = bs;
               break;
             }
             case 18: {
@@ -43932,45 +46143,18 @@ public final class IrKlibProtoBuf {
 
     private int bitField0_;
     public static final int NAME_FIELD_NUMBER = 1;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 1;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     public static final int SYMBOL_FIELD_NUMBER = 2;
@@ -44064,7 +46248,7 @@ public final class IrKlibProtoBuf {
     }
 
     private void initFields() {
-      name_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
       type_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrTypeIndex.getDefaultInstance();
       isVar_ = false;
@@ -44102,6 +46286,10 @@ public final class IrKlibProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (!getSymbol().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -44124,7 +46312,7 @@ public final class IrKlibProtoBuf {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getNameBytes());
+        output.writeMessage(1, name_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(2, symbol_);
@@ -44155,7 +46343,7 @@ public final class IrKlibProtoBuf {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(1, getNameBytes());
+          .computeMessageSize(1, name_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -44275,7 +46463,7 @@ public final class IrKlibProtoBuf {
 
       public Builder clear() {
         super.clear();
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
         symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -44347,9 +46535,7 @@ public final class IrKlibProtoBuf {
       public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrVariable other) {
         if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrVariable.getDefaultInstance()) return this;
         if (other.hasName()) {
-          bitField0_ |= 0x00000001;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         if (other.hasSymbol()) {
           mergeSymbol(other.getSymbol());
@@ -44399,6 +46585,10 @@ public final class IrKlibProtoBuf {
           
           return false;
         }
+        if (!getName().isInitialized()) {
+          
+          return false;
+        }
         if (!getSymbol().isInitialized()) {
           
           return false;
@@ -44435,79 +46625,63 @@ public final class IrKlibProtoBuf {
       }
       private int bitField0_;
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
         return this;
       }
       /**
-       * <code>required string name = 1;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 1;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
-        
         return this;
       }
 
@@ -44812,18 +46986,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol getSymbol();
 
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 2;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
 
     /**
      * <code>required int32 index = 3;</code>
@@ -44943,9 +47112,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 18: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              name_ = bs;
               break;
             }
             case 24: {
@@ -45052,45 +47228,18 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 2;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     public static final int INDEX_FIELD_NUMBER = 3;
@@ -45185,7 +47334,7 @@ public final class IrKlibProtoBuf {
 
     private void initFields() {
       symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
-      name_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       index_ = 0;
       type_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrTypeIndex.getDefaultInstance();
       varargElementType_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrTypeIndex.getDefaultInstance();
@@ -45227,6 +47376,10 @@ public final class IrKlibProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (!getType().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -45254,7 +47407,7 @@ public final class IrKlibProtoBuf {
         output.writeMessage(1, symbol_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getNameBytes());
+        output.writeMessage(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeInt32(3, index_);
@@ -45289,7 +47442,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getNameBytes());
+          .computeMessageSize(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -45411,7 +47564,7 @@ public final class IrKlibProtoBuf {
         super.clear();
         symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
         index_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -45490,9 +47643,7 @@ public final class IrKlibProtoBuf {
           mergeSymbol(other.getSymbol());
         }
         if (other.hasName()) {
-          bitField0_ |= 0x00000002;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         if (other.hasIndex()) {
           setIndex(other.getIndex());
@@ -45543,6 +47694,10 @@ public final class IrKlibProtoBuf {
           return false;
         }
         if (!getSymbol().isInitialized()) {
+          
+          return false;
+        }
+        if (!getName().isInitialized()) {
           
           return false;
         }
@@ -45644,79 +47799,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 2;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        name_ = value;
-        
         return this;
       }
 
@@ -46021,18 +48160,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol getSymbol();
 
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 2;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
 
     /**
      * <code>required int32 index = 3;</code>
@@ -46139,9 +48273,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 18: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              name_ = bs;
               break;
             }
             case 24: {
@@ -46227,45 +48368,18 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 2;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     public static final int INDEX_FIELD_NUMBER = 3;
@@ -46350,7 +48464,7 @@ public final class IrKlibProtoBuf {
 
     private void initFields() {
       symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
-      name_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       index_ = 0;
       variance_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrTypeVariance.IN;
       superType_ = java.util.Collections.emptyList();
@@ -46386,6 +48500,10 @@ public final class IrKlibProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       for (int i = 0; i < getSuperTypeCount(); i++) {
         if (!getSuperType(i).isInitialized()) {
           memoizedIsInitialized = 0;
@@ -46403,7 +48521,7 @@ public final class IrKlibProtoBuf {
         output.writeMessage(1, symbol_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getNameBytes());
+        output.writeMessage(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeInt32(3, index_);
@@ -46432,7 +48550,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getNameBytes());
+          .computeMessageSize(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -46546,7 +48664,7 @@ public final class IrKlibProtoBuf {
         super.clear();
         symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
         index_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -46614,9 +48732,7 @@ public final class IrKlibProtoBuf {
           mergeSymbol(other.getSymbol());
         }
         if (other.hasName()) {
-          bitField0_ |= 0x00000002;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         if (other.hasIndex()) {
           setIndex(other.getIndex());
@@ -46664,6 +48780,10 @@ public final class IrKlibProtoBuf {
           return false;
         }
         if (!getSymbol().isInitialized()) {
+          
+          return false;
+        }
+        if (!getName().isInitialized()) {
           
           return false;
         }
@@ -46755,79 +48875,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 2;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        name_ = value;
-        
         return this;
       }
 
@@ -47573,18 +49677,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol getSymbol();
 
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 2;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
 
     /**
      * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.ClassKind kind = 3;</code>
@@ -47596,18 +49695,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.ClassKind getKind();
 
     /**
-     * <code>required string visibility = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
      */
     boolean hasVisibility();
     /**
-     * <code>required string visibility = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
      */
-    java.lang.String getVisibility();
-    /**
-     * <code>required string visibility = 4;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getVisibilityBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility();
 
     /**
      * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.ModalityKind modality = 5;</code>
@@ -47776,9 +49870,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 18: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              name_ = bs;
               break;
             }
             case 24: {
@@ -47794,9 +49895,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 34: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = visibility_.toBuilder();
+              }
+              visibility_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(visibility_);
+                visibility_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000008;
-              visibility_ = bs;
               break;
             }
             case 40: {
@@ -47936,45 +50044,18 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 2;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     public static final int KIND_FIELD_NUMBER = 3;
@@ -47993,45 +50074,18 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int VISIBILITY_FIELD_NUMBER = 4;
-    private java.lang.Object visibility_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility visibility_;
     /**
-     * <code>required string visibility = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
      */
     public boolean hasVisibility() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required string visibility = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
      */
-    public java.lang.String getVisibility() {
-      java.lang.Object ref = visibility_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          visibility_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string visibility = 4;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getVisibilityBytes() {
-      java.lang.Object ref = visibility_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        visibility_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility() {
+      return visibility_;
     }
 
     public static final int MODALITY_FIELD_NUMBER = 5;
@@ -48214,9 +50268,9 @@ public final class IrKlibProtoBuf {
 
     private void initFields() {
       symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
-      name_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       kind_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.ClassKind.CLASS;
-      visibility_ = "";
+      visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
       modality_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.ModalityKind.FINAL_MODALITY;
       isCompanion_ = false;
       isInner_ = false;
@@ -48286,6 +50340,14 @@ public final class IrKlibProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getVisibility().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (hasThisReceiver()) {
         if (!getThisReceiver().isInitialized()) {
           memoizedIsInitialized = 0;
@@ -48317,13 +50379,13 @@ public final class IrKlibProtoBuf {
         output.writeMessage(1, symbol_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getNameBytes());
+        output.writeMessage(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeEnum(3, kind_.getNumber());
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, getVisibilityBytes());
+        output.writeMessage(4, visibility_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeEnum(5, modality_.getNumber());
@@ -48370,7 +50432,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getNameBytes());
+          .computeMessageSize(2, name_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -48378,7 +50440,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(4, getVisibilityBytes());
+          .computeMessageSize(4, visibility_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -48516,11 +50578,11 @@ public final class IrKlibProtoBuf {
         super.clear();
         symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
         kind_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.ClassKind.CLASS;
         bitField0_ = (bitField0_ & ~0x00000004);
-        visibility_ = "";
+        visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000008);
         modality_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.ModalityKind.FINAL_MODALITY;
         bitField0_ = (bitField0_ & ~0x00000010);
@@ -48632,17 +50694,13 @@ public final class IrKlibProtoBuf {
           mergeSymbol(other.getSymbol());
         }
         if (other.hasName()) {
-          bitField0_ |= 0x00000002;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         if (other.hasKind()) {
           setKind(other.getKind());
         }
         if (other.hasVisibility()) {
-          bitField0_ |= 0x00000008;
-          visibility_ = other.visibility_;
-          
+          mergeVisibility(other.getVisibility());
         }
         if (other.hasModality()) {
           setModality(other.getModality());
@@ -48736,6 +50794,14 @@ public final class IrKlibProtoBuf {
           return false;
         }
         if (!getSymbol().isInitialized()) {
+          
+          return false;
+        }
+        if (!getName().isInitialized()) {
+          
+          return false;
+        }
+        if (!getVisibility().isInitialized()) {
           
           return false;
         }
@@ -48841,79 +50907,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 2;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 2;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        name_ = value;
-        
         return this;
       }
 
@@ -48952,79 +51002,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object visibility_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
       public boolean hasVisibility() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
-      public java.lang.String getVisibility() {
-        java.lang.Object ref = visibility_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            visibility_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility getVisibility() {
+        return visibility_;
       }
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getVisibilityBytes() {
-        java.lang.Object ref = visibility_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          visibility_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setVisibility(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        visibility_ = value;
+
+        bitField0_ |= 0x00000008;
+        return this;
       }
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
       public Builder setVisibility(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        visibility_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.Builder builderForValue) {
+        visibility_ = builderForValue.build();
+
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
-       * <code>required string visibility = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
+       */
+      public Builder mergeVisibility(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility value) {
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+            visibility_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance()) {
+          visibility_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.newBuilder(visibility_).mergeFrom(value).buildPartial();
+        } else {
+          visibility_ = value;
+        }
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.Visibility visibility = 4;</code>
        */
       public Builder clearVisibility() {
+        visibility_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Visibility.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000008);
-        visibility_ = getDefaultInstance().getVisibility();
-        
-        return this;
-      }
-      /**
-       * <code>required string visibility = 4;</code>
-       */
-      public Builder setVisibilityBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        visibility_ = value;
-        
         return this;
       }
 
@@ -49587,18 +51621,13 @@ public final class IrKlibProtoBuf {
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclaration getCorrespondingClass();
 
     /**
-     * <code>required string name = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
      */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 4;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrEnumEntry}
@@ -49690,9 +51719,16 @@ public final class IrKlibProtoBuf {
               break;
             }
             case 34: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000008;
-              name_ = bs;
               break;
             }
           }
@@ -49775,52 +51811,25 @@ public final class IrKlibProtoBuf {
     }
 
     public static final int NAME_FIELD_NUMBER = 4;
-    private java.lang.Object name_;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_;
     /**
-     * <code>required string name = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required string name = 4;</code>
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 4;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+      return name_;
     }
 
     private void initFields() {
       symbol_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrSymbol.getDefaultInstance();
       initializer_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
       correspondingClass_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclaration.getDefaultInstance();
-      name_ = "";
+      name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -49852,6 +51861,10 @@ public final class IrKlibProtoBuf {
           return false;
         }
       }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -49869,7 +51882,7 @@ public final class IrKlibProtoBuf {
         output.writeMessage(3, correspondingClass_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, getNameBytes());
+        output.writeMessage(4, name_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -49894,7 +51907,7 @@ public final class IrKlibProtoBuf {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(4, getNameBytes());
+          .computeMessageSize(4, name_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -49996,7 +52009,7 @@ public final class IrKlibProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000002);
         correspondingClass_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclaration.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
-        name_ = "";
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
@@ -50053,9 +52066,7 @@ public final class IrKlibProtoBuf {
           mergeCorrespondingClass(other.getCorrespondingClass());
         }
         if (other.hasName()) {
-          bitField0_ |= 0x00000008;
-          name_ = other.name_;
-          
+          mergeName(other.getName());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -50086,6 +52097,10 @@ public final class IrKlibProtoBuf {
             
             return false;
           }
+        }
+        if (!getName().isInitialized()) {
+          
+          return false;
         }
         return true;
       }
@@ -50289,79 +52304,63 @@ public final class IrKlibProtoBuf {
         return this;
       }
 
-      private java.lang.Object name_ = "";
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       /**
-       * <code>required string name = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>required string name = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getName() {
+        return name_;
       }
       /**
-       * <code>required string name = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
        */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      public Builder setName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
         }
+        name_ = value;
+
+        bitField0_ |= 0x00000008;
+        return this;
       }
       /**
-       * <code>required string name = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
        */
       public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        name_ = value;
-        
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
-       * <code>required string name = 4;</code>
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+            name_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String name = 4;</code>
        */
       public Builder clearName() {
+        name_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000008);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 4;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        name_ = value;
-        
         return this;
       }
 
@@ -52672,445 +54671,6 @@ public final class IrKlibProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarator)
   }
 
-  public interface IrDeclarationOriginOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
-      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
-
-    /**
-     * <code>required string name = 1;</code>
-     */
-    boolean hasName();
-    /**
-     * <code>required string name = 1;</code>
-     */
-    java.lang.String getName();
-    /**
-     * <code>required string name = 1;</code>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes();
-  }
-  /**
-   * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin}
-   */
-  public static final class IrDeclarationOrigin extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
-      IrDeclarationOriginOrBuilder {
-    // Use IrDeclarationOrigin.newBuilder() to construct.
-    private IrDeclarationOrigin(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
-      super(builder);
-      this.unknownFields = builder.getUnknownFields();
-    }
-    private IrDeclarationOrigin(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
-
-    private static final IrDeclarationOrigin defaultInstance;
-    public static IrDeclarationOrigin getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public IrDeclarationOrigin getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-    private IrDeclarationOrigin(
-        org.jetbrains.kotlin.protobuf.CodedInputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      initFields();
-      int mutable_bitField0_ = 0;
-      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
-          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
-      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
-          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownField(input, unknownFieldsCodedOutput,
-                                     extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 10: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000001;
-              name_ = bs;
-              break;
-            }
-          }
-        }
-      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
-      } finally {
-        try {
-          unknownFieldsCodedOutput.flush();
-        } catch (java.io.IOException e) {
-        // Should not happen
-        } finally {
-          unknownFields = unknownFieldsOutput.toByteString();
-        }
-        makeExtensionsImmutable();
-      }
-    }
-    public static org.jetbrains.kotlin.protobuf.Parser<IrDeclarationOrigin> PARSER =
-        new org.jetbrains.kotlin.protobuf.AbstractParser<IrDeclarationOrigin>() {
-      public IrDeclarationOrigin parsePartialFrom(
-          org.jetbrains.kotlin.protobuf.CodedInputStream input,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return new IrDeclarationOrigin(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public org.jetbrains.kotlin.protobuf.Parser<IrDeclarationOrigin> getParserForType() {
-      return PARSER;
-    }
-
-    private int bitField0_;
-    public static final int NAME_FIELD_NUMBER = 1;
-    private java.lang.Object name_;
-    /**
-     * <code>required string name = 1;</code>
-     */
-    public boolean hasName() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>required string name = 1;</code>
-     */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string name = 1;</code>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
-    }
-
-    private void initFields() {
-      name_ = "";
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      if (!hasName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getNameBytes());
-      }
-      output.writeRawBytes(unknownFields);
-    }
-
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(1, getNameBytes());
-      }
-      size += unknownFields.size();
-      memoizedSerializedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
-    }
-
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
-        org.jetbrains.kotlin.protobuf.ByteString data)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
-        org.jetbrains.kotlin.protobuf.ByteString data,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(byte[] data)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
-        byte[] data,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
-        java.io.InputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
-    }
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseDelimitedFrom(
-        java.io.InputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
-        org.jetbrains.kotlin.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parseFrom(
-        org.jetbrains.kotlin.protobuf.CodedInputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-
-    /**
-     * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin}
-     */
-    public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin, Builder>
-        implements
-        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
-        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOriginOrBuilder {
-      // Construct using org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private void maybeForceBuilderInitialization() {
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-
-      public Builder clear() {
-        super.clear();
-        name_ = "";
-        bitField0_ = (bitField0_ & ~0x00000001);
-        return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-
-      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin.getDefaultInstance();
-      }
-
-      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin build() {
-        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin buildPartial() {
-        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin result = new org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
-        result.name_ = name_;
-        result.bitField0_ = to_bitField0_;
-        return result;
-      }
-
-      public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin other) {
-        if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin.getDefaultInstance()) return this;
-        if (other.hasName()) {
-          bitField0_ |= 0x00000001;
-          name_ = other.name_;
-          
-        }
-        setUnknownFields(
-            getUnknownFields().concat(other.unknownFields));
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        if (!hasName()) {
-          
-          return false;
-        }
-        return true;
-      }
-
-      public Builder mergeFrom(
-          org.jetbrains.kotlin.protobuf.CodedInputStream input,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin) e.getUnfinishedMessage();
-          throw e;
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-      private int bitField0_;
-
-      private java.lang.Object name_ = "";
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public boolean hasName() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public Builder clearName() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = getDefaultInstance().getName();
-        
-        return this;
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public Builder setNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        name_ = value;
-        
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
-    }
-
-    static {
-      defaultInstance = new IrDeclarationOrigin(true);
-      defaultInstance.initFields();
-    }
-
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarationOrigin)
-  }
-
   public interface IrDeclarationOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclaration)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
@@ -53150,32 +54710,6 @@ public final class IrKlibProtoBuf {
      * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclarator declarator = 4;</code>
      */
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarator getDeclarator();
-
-    /**
-     * <code>required string file_name = 5;</code>
-     *
-     * <pre>
-     *repeated IrDeclaration nested = 5;
-     * </pre>
-     */
-    boolean hasFileName();
-    /**
-     * <code>required string file_name = 5;</code>
-     *
-     * <pre>
-     *repeated IrDeclaration nested = 5;
-     * </pre>
-     */
-    java.lang.String getFileName();
-    /**
-     * <code>required string file_name = 5;</code>
-     *
-     * <pre>
-     *repeated IrDeclaration nested = 5;
-     * </pre>
-     */
-    org.jetbrains.kotlin.protobuf.ByteString
-        getFileNameBytes();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDeclaration}
@@ -53279,12 +54813,6 @@ public final class IrKlibProtoBuf {
               bitField0_ |= 0x00000008;
               break;
             }
-            case 42: {
-              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000010;
-              fileName_ = bs;
-              break;
-            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -53379,66 +54907,11 @@ public final class IrKlibProtoBuf {
       return declarator_;
     }
 
-    public static final int FILE_NAME_FIELD_NUMBER = 5;
-    private java.lang.Object fileName_;
-    /**
-     * <code>required string file_name = 5;</code>
-     *
-     * <pre>
-     *repeated IrDeclaration nested = 5;
-     * </pre>
-     */
-    public boolean hasFileName() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>required string file_name = 5;</code>
-     *
-     * <pre>
-     *repeated IrDeclaration nested = 5;
-     * </pre>
-     */
-    public java.lang.String getFileName() {
-      java.lang.Object ref = fileName_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        org.jetbrains.kotlin.protobuf.ByteString bs = 
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          fileName_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string file_name = 5;</code>
-     *
-     * <pre>
-     *repeated IrDeclaration nested = 5;
-     * </pre>
-     */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getFileNameBytes() {
-      java.lang.Object ref = fileName_;
-      if (ref instanceof java.lang.String) {
-        org.jetbrains.kotlin.protobuf.ByteString b = 
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        fileName_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
-    }
-
     private void initFields() {
       origin_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarationOrigin.getDefaultInstance();
       coordinates_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Coordinates.getDefaultInstance();
       annotations_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.Annotations.getDefaultInstance();
       declarator_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarator.getDefaultInstance();
-      fileName_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -53459,10 +54932,6 @@ public final class IrKlibProtoBuf {
         return false;
       }
       if (!hasDeclarator()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasFileName()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -53501,9 +54970,6 @@ public final class IrKlibProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(4, declarator_);
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        output.writeBytes(5, getFileNameBytes());
-      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -53528,10 +54994,6 @@ public final class IrKlibProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(4, declarator_);
-      }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(5, getFileNameBytes());
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -53635,8 +55097,6 @@ public final class IrKlibProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         declarator_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarator.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000008);
-        fileName_ = "";
-        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -53676,10 +55136,6 @@ public final class IrKlibProtoBuf {
           to_bitField0_ |= 0x00000008;
         }
         result.declarator_ = declarator_;
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-          to_bitField0_ |= 0x00000010;
-        }
-        result.fileName_ = fileName_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -53697,11 +55153,6 @@ public final class IrKlibProtoBuf {
         }
         if (other.hasDeclarator()) {
           mergeDeclarator(other.getDeclarator());
-        }
-        if (other.hasFileName()) {
-          bitField0_ |= 0x00000010;
-          fileName_ = other.fileName_;
-          
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -53722,10 +55173,6 @@ public final class IrKlibProtoBuf {
           return false;
         }
         if (!hasDeclarator()) {
-          
-          return false;
-        }
-        if (!hasFileName()) {
           
           return false;
         }
@@ -54004,106 +55451,6 @@ public final class IrKlibProtoBuf {
         declarator_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarator.getDefaultInstance();
 
         bitField0_ = (bitField0_ & ~0x00000008);
-        return this;
-      }
-
-      private java.lang.Object fileName_ = "";
-      /**
-       * <code>required string file_name = 5;</code>
-       *
-       * <pre>
-       *repeated IrDeclaration nested = 5;
-       * </pre>
-       */
-      public boolean hasFileName() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
-      }
-      /**
-       * <code>required string file_name = 5;</code>
-       *
-       * <pre>
-       *repeated IrDeclaration nested = 5;
-       * </pre>
-       */
-      public java.lang.String getFileName() {
-        java.lang.Object ref = fileName_;
-        if (!(ref instanceof java.lang.String)) {
-          org.jetbrains.kotlin.protobuf.ByteString bs =
-              (org.jetbrains.kotlin.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            fileName_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>required string file_name = 5;</code>
-       *
-       * <pre>
-       *repeated IrDeclaration nested = 5;
-       * </pre>
-       */
-      public org.jetbrains.kotlin.protobuf.ByteString
-          getFileNameBytes() {
-        java.lang.Object ref = fileName_;
-        if (ref instanceof String) {
-          org.jetbrains.kotlin.protobuf.ByteString b = 
-              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          fileName_ = b;
-          return b;
-        } else {
-          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>required string file_name = 5;</code>
-       *
-       * <pre>
-       *repeated IrDeclaration nested = 5;
-       * </pre>
-       */
-      public Builder setFileName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000010;
-        fileName_ = value;
-        
-        return this;
-      }
-      /**
-       * <code>required string file_name = 5;</code>
-       *
-       * <pre>
-       *repeated IrDeclaration nested = 5;
-       * </pre>
-       */
-      public Builder clearFileName() {
-        bitField0_ = (bitField0_ & ~0x00000010);
-        fileName_ = getDefaultInstance().getFileName();
-        
-        return this;
-      }
-      /**
-       * <code>required string file_name = 5;</code>
-       *
-       * <pre>
-       *repeated IrDeclaration nested = 5;
-       * </pre>
-       */
-      public Builder setFileNameBytes(
-          org.jetbrains.kotlin.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000010;
-        fileName_ = value;
-        
         return this;
       }
 

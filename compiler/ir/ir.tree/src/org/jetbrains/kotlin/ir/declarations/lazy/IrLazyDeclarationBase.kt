@@ -58,6 +58,7 @@ abstract class IrLazyDeclarationBase(
 
         val containingDeclaration =
             ((currentDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: currentDescriptor).containingDeclaration
+
         return when (containingDeclaration) {
             is PackageFragmentDescriptor -> stubGenerator.generateOrGetEmptyExternalPackageFragmentStub(containingDeclaration).also {
                 it.declarations.add(this)

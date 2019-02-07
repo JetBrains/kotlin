@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 
-class DescriptorReferenceSerializer(val declarationTable: DeclarationTable) {
+class DescriptorReferenceSerializer(val declarationTable: DeclarationTable, val serializeString: (String) -> IrKlibProtoBuf.String) {
 
     // Not all exported descriptors are deserialized, some a synthesized anew during metadata deserialization.
     // Those created descriptors can't carry the uniqIdIndex, since it is available only for deserialized descriptors.
@@ -72,9 +72,9 @@ class DescriptorReferenceSerializer(val declarationTable: DeclarationTable) {
         uniqId?.let { declarationTable.descriptors.put(discoverableDescriptorsDeclaration.descriptor, it) }
 
         val proto = IrKlibProtoBuf.DescriptorReference.newBuilder()
-            .setPackageFqName(packageFqName)
-            .setClassFqName(classFqName)
-            .setName(descriptor.name.toString())
+            .setPackageFqName(serializeString(packageFqName))
+            .setClassFqName(serializeString(classFqName))
+            .setName(serializeString(descriptor.name.toString()))
 
         if (uniqId != null) proto.setUniqId(protoUniqId(uniqId))
 

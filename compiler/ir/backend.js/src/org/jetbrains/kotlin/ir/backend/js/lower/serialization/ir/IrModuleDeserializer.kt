@@ -49,6 +49,7 @@ abstract class IrModuleDeserializer(
     abstract fun deserializeIrSymbol(proto: IrKlibProtoBuf.IrSymbol): IrSymbol
     abstract fun deserializeIrType(proto: IrKlibProtoBuf.IrTypeIndex): IrType
     abstract fun deserializeDescriptorReference(proto: IrKlibProtoBuf.DescriptorReference): DeclarationDescriptor
+    abstract fun deserializeString(proto: IrKlibProtoBuf.String): String
 
     private fun deserializeTypeArguments(proto: IrKlibProtoBuf.TypeArguments): List<IrType> {
         logger.log { "### deserializeTypeArguments" }
@@ -378,6 +379,8 @@ abstract class IrModuleDeserializer(
         return IrInstanceInitializerCallImpl(start, end, symbol, builtIns.unitType)
     }
 
+    private val getterToPropertyDescriptorMap = mutableMapOf<IrSimpleFunctionSymbol, WrappedPropertyDescriptor>()
+
     private fun deserializePropertyReference(
         proto: IrKlibProtoBuf.IrPropertyReference,
         start: Int, end: Int, type: IrType
@@ -386,7 +389,12 @@ abstract class IrModuleDeserializer(
         val field = if (proto.hasField()) deserializeIrSymbol(proto.field) as IrFieldSymbol else null
         val getter = if (proto.hasGetter()) deserializeIrSymbol(proto.getter) as IrSimpleFunctionSymbol else null
         val setter = if (proto.hasSetter()) deserializeIrSymbol(proto.setter) as IrSimpleFunctionSymbol else null
-        val descriptor = WrappedPropertyDescriptor()
+        val descriptor =
+        if (proto.hasDescriptor())
+            deserializeDescriptorReference(proto.descriptor) as PropertyDescriptor
+        else
+            field?.descriptor as? WrappedPropertyDescriptor // If field's descriptor coincides with property's.
+                ?: getterToPropertyDescriptorMap.getOrPut(getter!!) { WrappedPropertyDescriptor() }
 
         val callable = IrPropertyReferenceImpl(
             start, end, type,
@@ -531,7 +539,7 @@ abstract class IrModuleDeserializer(
         val loopId = proto.loopId
         loopIndex.getOrPut(loopId) { loop }
 
-        val label = if (proto.hasLabel()) proto.label else null
+        val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val body = if (proto.hasBody()) deserializeExpression(proto.body) else null
         val condition = deserializeExpression(proto.condition)
 
@@ -559,7 +567,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeBreak(proto: IrKlibProtoBuf.IrBreak, start: Int, end: Int, type: IrType): IrBreak {
-        val label = if (proto.hasLabel()) proto.label else null
+        val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val loopId = proto.loopId
         val loop = loopIndex[loopId]!!
         val irBreak = IrBreakImpl(start, end, type, loop)
@@ -569,7 +577,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeContinue(proto: IrKlibProtoBuf.IrContinue, start: Int, end: Int, type: IrType): IrContinue {
-        val label = if (proto.hasLabel()) proto.label else null
+        val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val loopId = proto.loopId
         val loop = loopIndex[loopId]!!
         val irContinue = IrContinueImpl(start, end, type, loop)
@@ -595,7 +603,7 @@ abstract class IrModuleDeserializer(
             LONG
             -> IrConstImpl.long(start, end, type, proto.long)
             STRING
-            -> IrConstImpl.string(start, end, type, proto.string)
+            -> IrConstImpl.string(start, end, type, deserializeString(proto.string))
             FLOAT
             -> IrConstImpl.float(start, end, type, proto.float)
             DOUBLE
@@ -684,7 +692,7 @@ abstract class IrModuleDeserializer(
         origin: IrDeclarationOrigin
     ): IrTypeParameter {
         val symbol = deserializeIrSymbol(proto.symbol) as IrTypeParameterSymbol
-        val name = Name.identifier(proto.name)
+        val name = Name.identifier(deserializeString(proto.name))
         val variance = deserializeIrTypeVariance(proto.variance)
 
         val parameter = symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
@@ -733,7 +741,7 @@ abstract class IrModuleDeserializer(
             IrValueParameterImpl(
                 start, end, origin,
                 paramSymbol,
-                proto.name.let { if (paramSymbol.descriptor is ReceiverParameterDescriptor) Name.special(it) else Name.identifier(it) },
+                deserializeString(proto.name).let { if (paramSymbol.descriptor is ReceiverParameterDescriptor) Name.special(it) else Name.identifier(it) },
                 proto.index,
                 deserializeIrType(proto.type),
                 varargElementType,
@@ -755,11 +763,11 @@ abstract class IrModuleDeserializer(
 
         val modality = deserializeModality(proto.modality)
         val clazz = symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-            symbol.descriptor, modality) { symbol ->
+            symbol.descriptor, modality) {
             IrClassImpl(
                         start, end, origin,
-                        symbol,
-                        proto.name.let { if (it.startsWith('<')) Name.special(it) else Name.identifier(it) },
+                        it,
+                        deserializeString(proto.name).let { if (it.startsWith('<')) Name.special(it) else Name.identifier(it) },
                         deserializeClassKind(proto.kind),
                         deserializeVisibility(proto.visibility),
                         modality,
@@ -814,7 +822,7 @@ abstract class IrModuleDeserializer(
 
     private fun deserializeIrFunction(
         proto: IrKlibProtoBuf.IrFunction,
-        start: Int, end: Int, origin: IrDeclarationOrigin, correspondingProperty: IrProperty? = null
+        start: Int, end: Int, origin: IrDeclarationOrigin, isAccessor: Boolean
     ): IrSimpleFunction {
 
         logger.log { "### deserializing IrFunction ${proto.base.name}" }
@@ -824,7 +832,7 @@ abstract class IrModuleDeserializer(
             symbol.descriptor, {
                 IrFunctionImpl(
                     start, end, origin, it,
-                    proto.base.name.let { if (correspondingProperty != null) Name.special(it) else Name.identifier(it) },
+                    deserializeString(proto.base.name).let { if (isAccessor) Name.special(it) else Name.identifier(it) },
                     deserializeVisibility(proto.base.visibility),
                     deserializeModality(proto.modality),
                     deserializeIrType(proto.base.returnType),
@@ -839,7 +847,7 @@ abstract class IrModuleDeserializer(
         val overridden = proto.overriddenList.map { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
         function.overriddenSymbols.addAll(overridden)
 
-        function.correspondingProperty = correspondingProperty
+//        function.correspondingProperty = correspondingProperty
 
         return function
     }
@@ -861,7 +869,7 @@ abstract class IrModuleDeserializer(
             end,
             origin,
             symbol,
-            Name.identifier(proto.name),
+            Name.identifier(deserializeString(proto.name)),
             type,
             proto.isVar,
             proto.isConst,
@@ -883,7 +891,7 @@ abstract class IrModuleDeserializer(
             irrelevantOrigin,
             symbol.descriptor
         ) {
-            IrEnumEntryImpl(start, end, origin, it, Name.identifier(proto.name))
+            IrEnumEntryImpl(start, end, origin, it, Name.identifier(deserializeString(proto.name)))
         }
 
         if (proto.hasCorrespondingClass()) {
@@ -908,8 +916,8 @@ abstract class IrModuleDeserializer(
         return initializer
     }
 
-    private fun deserializeVisibility(value: String): Visibility { // TODO: switch to enum
-        return when (value) {
+    private fun deserializeVisibility(value: IrKlibProtoBuf.Visibility): Visibility { // TODO: switch to enum
+        return when (deserializeString(value.name)) {
             "public" -> Visibilities.PUBLIC
             "private" -> Visibilities.PRIVATE
             "private_to_this" -> Visibilities.PRIVATE_TO_THIS
@@ -934,7 +942,7 @@ abstract class IrModuleDeserializer(
                 IrConstructorImpl(
                     start, end, origin,
                     it,
-                    Name.special(proto.base.name),
+                    Name.special(deserializeString(proto.base.name)),
                     deserializeVisibility(proto.base.visibility),
                     deserializeIrType(proto.base.returnType),
                     proto.base.isInline,
@@ -960,7 +968,7 @@ abstract class IrModuleDeserializer(
             { IrFieldImpl(
                     start, end, origin,
                     it,
-                    Name.identifier(proto.name),
+                    Name.identifier(deserializeString(proto.name)),
                     type,
                     deserializeVisibility(proto.visibility),
                     proto.isFinal,
@@ -990,18 +998,25 @@ abstract class IrModuleDeserializer(
         origin: IrDeclarationOrigin
     ): IrProperty {
 
-        val backingField = if (proto.hasBackingField()) {
-            deserializeIrField(proto.backingField, start, end, origin)
-        } else null
+        val backingField = if (proto.hasBackingField()) deserializeIrField(proto.backingField, start, end, origin) else null
+        val getter = if (proto.hasGetter()) deserializeIrFunction(proto.getter, start, end, origin, true) else null
+        val setter = if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin, true) else null
+
+        backingField?.let { (it.descriptor as? WrappedFieldDescriptor)?.bind(it) }
+        getter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
+        setter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
 
         val descriptor =
-            if (proto.hasDescriptor()) deserializeDescriptorReference(proto.descriptor) as PropertyDescriptor else null
-                ?: WrappedPropertyDescriptor()
+            if (proto.hasDescriptor())
+                deserializeDescriptorReference(proto.descriptor) as PropertyDescriptor
+            else
+                backingField?.descriptor as? WrappedPropertyDescriptor // If field's descriptor coincides with property's.
+                    ?: getterToPropertyDescriptorMap.getOrPut(getter!!.symbol) { WrappedPropertyDescriptor() }
 
         val property = IrPropertyImpl(
             start, end, origin,
             descriptor,
-            Name.identifier(proto.name),
+            Name.identifier(deserializeString(proto.name)),
             deserializeVisibility(proto.visibility),
             deserializeModality(proto.modality),
             proto.isVar,
@@ -1023,29 +1038,34 @@ abstract class IrModuleDeserializer(
         }
 */
         property.backingField = backingField
+        property.getter = getter
+        property.setter = setter
+
         backingField?.let { it.correspondingProperty = property }
+        getter?.let { it.correspondingProperty = property }
+        setter?.let { it.correspondingProperty = property }
 
-        property.getter =
-                if (proto.hasGetter()) deserializeIrFunction(proto.getter, start, end, origin, property) else null
-        property.setter =
-                if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin, property) else null
-
-//        property.getter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
-//        property.setter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
-
-        property.getter?.let {
-            val descriptor = it.descriptor
-            if (descriptor is WrappedSimpleFunctionDescriptor) descriptor.bind(it)
-            symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-                descriptor, { symbol -> it })
-
-        }
-        property.setter?.let {
-            val descriptor = it.descriptor
-            if (descriptor is WrappedSimpleFunctionDescriptor) descriptor.bind(it)
-            symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-                descriptor, { symbol -> it })
-        }
+//        property.getter =
+//                if (proto.hasGetter()) deserializeIrFunction(proto.getter, start, end, origin, property) else null
+//        property.setter =
+//                if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin, property) else null
+//
+////        property.getter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
+////        property.setter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
+//
+//        property.getter?.let {
+//            val descriptor = it.descriptor
+//            if (descriptor is WrappedSimpleFunctionDescriptor) descriptor.bind(it)
+//            symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
+//                descriptor, { symbol -> it })
+//
+//        }
+//        property.setter?.let {
+//            val descriptor = it.descriptor
+//            if (descriptor is WrappedSimpleFunctionDescriptor) descriptor.bind(it)
+//            symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
+//                descriptor, { symbol -> it })
+//        }
 
         return property
     }
@@ -1063,12 +1083,13 @@ abstract class IrModuleDeserializer(
         IrDeclarationOrigin::class.nestedClasses.toList() + DeclarationFactory.FIELD_FOR_OUTER_THIS::class
     val originIndex = allKnownOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
     val irrelevantOrigin = object : IrDeclarationOriginImpl("irrelevant") {}
+    fun deserializeIrDeclarationOrigin(proto: IrKlibProtoBuf.IrDeclarationOrigin) = originIndex[deserializeString(proto.custom)]!!
 
     protected fun deserializeDeclaration(proto: IrKlibProtoBuf.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
 
         val start = proto.coordinates.startOffset
         val end = proto.coordinates.endOffset
-        val origin = originIndex[proto.origin.name]!!
+        val origin = deserializeIrDeclarationOrigin(proto.origin)
 
         val declarator = proto.declarator
 
@@ -1082,7 +1103,7 @@ abstract class IrModuleDeserializer(
             IR_CLASS
             -> deserializeIrClass(declarator.irClass, start, end, origin)
             IR_FUNCTION
-            -> deserializeIrFunction(declarator.irFunction, start, end, origin)
+            -> deserializeIrFunction(declarator.irFunction, start, end, origin, false)
             IR_PROPERTY
             -> deserializeIrProperty(declarator.irProperty, start, end, origin)
             IR_TYPE_ALIAS
@@ -1103,8 +1124,6 @@ abstract class IrModuleDeserializer(
         declaration.annotations.addAll(annotations)
 
         parent?.let { declaration.parent = it }
-
-        val sourceFileName = proto.fileName
 
         val descriptor = declaration.descriptor
 

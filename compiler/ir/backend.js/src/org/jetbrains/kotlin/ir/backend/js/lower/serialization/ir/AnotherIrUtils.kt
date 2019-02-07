@@ -36,33 +36,30 @@ internal val IrField.isDelegate
 
 internal const val SYNTHETIC_OFFSET = -2
 
-class NaiveSourceBasedFileEntryImpl(override val name: String) : SourceManager.FileEntry {
-
-    private val lineStartOffsets: IntArray
-
-    //-------------------------------------------------------------------------//
-
-    init {
-        val file = File(name)
-        if (file.isFile) {
-            // TODO: could be incorrect, if file is not in system's line terminator format.
-            // Maybe use (0..document.lineCount - 1)
-            //                .map { document.getLineStartOffset(it) }
-            //                .toIntArray()
-            // as in PSI.
-            val separatorLength = System.lineSeparator().length
-            val buffer = mutableListOf<Int>()
-            var currentOffset = 0
-            file.forEachLine { line ->
-                buffer.add(currentOffset)
-                currentOffset += line.length + separatorLength
-            }
+val File.lineStartOffsets: IntArray
+    get() {
+        // TODO: could be incorrect, if file is not in system's line terminator format.
+        // Maybe use (0..document.lineCount - 1)
+        //                .map { document.getLineStartOffset(it) }
+        //                .toIntArray()
+        // as in PSI.
+        val separatorLength = System.lineSeparator().length
+        val buffer = mutableListOf<Int>()
+        var currentOffset = 0
+        this.forEachLine { line ->
             buffer.add(currentOffset)
-            lineStartOffsets = buffer.toIntArray()
-        } else {
-            lineStartOffsets = IntArray(0)
+            currentOffset += line.length + separatorLength
         }
+        buffer.add(currentOffset)
+        return buffer.toIntArray()
     }
+
+val SourceManager.FileEntry.lineStartOffsets
+    get() = File(name).let {
+        if (it.exists() && it.isFile) it.lineStartOffsets else IntArray(0)
+    }
+
+class NaiveSourceBasedFileEntryImpl(override val name: String, val lineStartOffsets: IntArray = IntArray(0)) : SourceManager.FileEntry {
 
     //-------------------------------------------------------------------------//
 

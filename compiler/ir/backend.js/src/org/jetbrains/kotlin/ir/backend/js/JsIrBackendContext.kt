@@ -154,7 +154,7 @@ class JsIrBackendContext(
     val coroutineSuspendOrReturn =
         symbolTable.referenceSimpleFunction(getInternalFunctions(COROUTINE_SUSPEND_OR_RETURN_JS_NAME).single())
 
-    val intrinsics = JsIntrinsics(irBuiltIns, this)
+    val intrinsics by lazy { JsIntrinsics(irBuiltIns, this) }
 
     private val operatorMap = referenceOperators()
 
