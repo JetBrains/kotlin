@@ -37,25 +37,25 @@
     </array>
     <key>Nodes</key>
     <array>
-        <string>src/main/kotlin/KotlinNativeFramework.kt:comments</string>
-        <string>src/main/kotlin/KotlinNativeFramework.kt:body</string>
+        <string>src/___PACKAGENAMEASIDENTIFIER___Main/kotlin/KotlinNativeFramework.kt:comments</string>
+        <string>src/___PACKAGENAMEASIDENTIFIER___Main/kotlin/KotlinNativeFramework.kt:body</string>
     </array>
     <key>Definitions</key>
     <dict>
-        <key>src/main/kotlin/KotlinNativeFramework.kt</key>
+        <key>src/___PACKAGENAMEASIDENTIFIER___Main/kotlin/KotlinNativeFramework.kt</key>
         <dict>
             <key>Group</key>
             <array>
                 <string>src</string>
-                <string>main</string>
+                <string>___PACKAGENAMEASIDENTIFIER___Main</string>
                 <string>kotlin</string>
             </array>
             <key>TargetIdentifiers</key>
             <array/>
         </dict>
-        <key>build.gradle:artifacts:content</key>
-        <string>framework('___PACKAGENAMEASIDENTIFIER___')</string>
-        <key>src/main/kotlin/KotlinNativeFramework.kt:body</key>
+        <key>build.gradle.kts:content</key>
+        <string>setupFramework("___PACKAGENAMEASIDENTIFIER___")</string>
+        <key>src/___PACKAGENAMEASIDENTIFIER___Main/kotlin/KotlinNativeFramework.kt:body</key>
         <string>class KotlinNativeFramework {
     fun helloFromKotlin() = "Hello from Kotlin!"
 }</string>

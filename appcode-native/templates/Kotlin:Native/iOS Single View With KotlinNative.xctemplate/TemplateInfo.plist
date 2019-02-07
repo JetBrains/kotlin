@@ -49,7 +49,7 @@ NSLog(@"%@", [[[KNFKotlinNativeFramework alloc] init] helloFromKotlin]);
               <key>AppDelegate.swift:implementation:methods:applicationdidFinishLaunchingWithOptions:body</key>
               <string>// KNFKotlinNativeFramework class is located in the framework that is generated during build.
 // If it is not resolved, try building for the device (not simulator) and reopening the project
-NSLog("%@", KNFKotlinNativeFramework().helloFromKotlin())
+NSLog("%@", KotlinNativeFramework().helloFromKotlin())
               </string>
             </dict>
           </dict>
@@ -83,8 +83,6 @@ NSLog("%@", KNFKotlinNativeFramework().helloFromKotlin())
         <dict>
           <key>FRAMEWORK_SEARCH_PATHS</key>
           <string>$BUILT_PRODUCTS_DIR</string>
-          <key>ENABLE_BITCODE</key>
-          <string>NO</string>
         </dict>
       </dict>
     </array>

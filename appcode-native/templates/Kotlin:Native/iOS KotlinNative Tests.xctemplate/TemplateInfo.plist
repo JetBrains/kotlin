@@ -16,7 +16,8 @@
     <key>SortOrder</key>
     <integer>1</integer>
     <key>Concrete</key>
-    <true/>
+    <false/>
+    <!-- temporarily disabled -->
     <key>Targets</key>
     <array>
       <dict>

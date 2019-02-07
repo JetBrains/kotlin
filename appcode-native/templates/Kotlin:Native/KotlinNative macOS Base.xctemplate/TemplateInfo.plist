@@ -6,20 +6,5 @@
     <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
     <key>Identifier</key>
     <string>com.jetbrains.konan.macosKotlinNativeBase</string>
-    <key>Targets</key>
-    <array>
-      <dict>
-        <key>SharedSettings</key>
-        <dict>
-          <key>KONAN_TASK</key>
-          <string>compileKonan$(TARGET_NAME:c99extidentifier)Macos_x64</string>
-        </dict>
-      </dict>
-    </array>
-    <key>Definitions</key>
-    <dict>
-      <key>build.gradle:targets:content</key>
-      <string>'macos_x64'</string>
-    </dict>
   </dict>
 </plist>
