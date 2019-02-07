@@ -4896,6 +4896,7 @@ public final class kotlin/text/StringsKt {
 	public static final fun associateWith (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateWithTo (Ljava/lang/CharSequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun capitalize (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun capitalize (Ljava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
 	public static final fun chunked (Ljava/lang/CharSequence;I)Ljava/util/List;
 	public static final fun chunked (Ljava/lang/CharSequence;ILkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static final fun chunkedSequence (Ljava/lang/CharSequence;I)Lkotlin/sequences/Sequence;
@@ -4916,6 +4917,7 @@ public final class kotlin/text/StringsKt {
 	public static synthetic fun contains$default (Ljava/lang/CharSequence;Ljava/lang/CharSequence;ZILjava/lang/Object;)Z
 	public static final fun count (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun decapitalize (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun decapitalize (Ljava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
 	public static final fun decodeToString ([B)Ljava/lang/String;
 	public static final fun decodeToString ([BIIZ)Ljava/lang/String;
 	public static synthetic fun decodeToString$default ([BIIZILjava/lang/Object;)Ljava/lang/String;
