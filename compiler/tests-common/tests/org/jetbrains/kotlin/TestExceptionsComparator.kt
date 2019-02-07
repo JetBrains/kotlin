@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin
 
-import org.junit.Assert
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Assert
 import java.io.File
-import java.lang.Error
+import java.io.PrintStream
+import java.io.PrintWriter
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -20,10 +21,21 @@ enum class TestsExceptionFilePostfix(val text: String) {
 }
 
 sealed class TestsError(val original: Throwable, val postfix: TestsExceptionFilePostfix) : Error() {
-    override fun toString() = original.toString()
-    override fun getStackTrace() = original.stackTrace
-    override fun initCause(cause: Throwable?) = original.initCause(cause)
-    override val cause = original.cause
+    override fun toString(): String = original.toString()
+    override fun getStackTrace(): Array<out StackTraceElement> = original.stackTrace
+    override fun initCause(cause: Throwable?): Throwable = original.initCause(cause)
+    override val cause: Throwable? get() = original.cause
+
+    // This function is called in the constructor of Throwable, where original is not yet initialized
+    override fun fillInStackTrace(): Throwable? = @Suppress("UNNECESSARY_SAFE_CALL") original?.fillInStackTrace()
+
+    override fun setStackTrace(stackTrace: Array<out StackTraceElement>?) {
+        original.stackTrace = stackTrace
+    }
+
+    override fun printStackTrace() = original.printStackTrace()
+    override fun printStackTrace(s: PrintStream?) = original.printStackTrace(s)
+    override fun printStackTrace(s: PrintWriter?) = original.printStackTrace(s)
 }
 
 class TestsCompilerError(original: Throwable) : TestsError(original, TestsExceptionFilePostfix.COMPILER_ERROR)
