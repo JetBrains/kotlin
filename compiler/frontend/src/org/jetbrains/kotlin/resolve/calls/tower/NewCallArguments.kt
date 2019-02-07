@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isFunctionalExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.TypeResolver
@@ -216,6 +217,8 @@ fun processFunctionalExpression(
             )
 
         is KtNamedFunction -> {
+            // if function is a not anonymous function, resolve it as simple expression
+            if (!postponedExpression.isFunctionalExpression()) return null
             val receiverType = resolveType(outerCallContext, postponedExpression.receiverTypeReference, typeResolver)
             val parametersTypes = resolveParametersTypes(outerCallContext, postponedExpression, typeResolver) ?: emptyArray()
             val returnType = resolveType(outerCallContext, postponedExpression.typeReference, typeResolver)
