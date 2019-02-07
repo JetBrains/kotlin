@@ -136,8 +136,9 @@ fun collectDefinedNamesInAllScopes(scope: JsNode): Set<JsName> {
 
         override fun visitFunction(x: JsFunction) {
             super.visitFunction(x)
-            x.name?.let { names += it }
+            // TODO This is a hack
             names += x.parameters.map { it.name }
+            x.name?.let { names += it }
         }
 
         override fun visitBreak(x: JsBreak) {
