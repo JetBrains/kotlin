@@ -22,6 +22,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRoot
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.KotlinResourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 
 private fun JpsModuleSourceRoot.getOrCreateProperties() =
     getProperties(rootType)?.also { (it as? JpsElementBase<*>)?.setParent(null) } ?: rootType.createDefaultProperties()
@@ -48,6 +49,7 @@ fun migrateNonJvmSourceFolders(modifiableRootModel: ModifiableRootModel) {
             contentEntry.addSourceFolder(url, newSourceRootType, properties)
         }
     }
+    KotlinSdkType.setUpIfNeeded()
 }
 
 fun getKotlinAwareDestinationSourceRoots(project: Project): List<VirtualFile> {
