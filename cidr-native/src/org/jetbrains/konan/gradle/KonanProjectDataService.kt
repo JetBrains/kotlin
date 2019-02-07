@@ -112,7 +112,7 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
         @JvmStatic
         fun forEachKonanProject(
             project: Project,
-            consumer: (konanModel: KonanModel, moduleData: ModuleData, rootProjectPath: String) -> Unit
+            consumer: (konanModel: KonanModel, moduleNode: DataNode<ModuleData>, rootProjectPath: String) -> Unit
         ) {
             for (projectInfo in ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID)) {
                 val projectStructure = projectInfo.externalProjectStructure ?: continue
@@ -123,8 +123,7 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
                     val projectNode = ExternalSystemApiUtil.find<KonanModel>(moduleNode, KonanProjectResolver.KONAN_MODEL_KEY)
                     if (projectNode != null) {
                         val konanProject = projectNode.data
-                        val moduleData = moduleNode.data
-                        consumer(konanProject, moduleData, rootProjectPath)
+                        consumer(konanProject, moduleNode, rootProjectPath)
                     }
                 }
             }

@@ -98,7 +98,8 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
     val buildTargets = mutableListOf<GradleKonanBuildTarget>()
     val buildModules = mutableListOf<GradleKonanBuildModule>()
 
-    forEachKonanProject(project) { konanModel, moduleData, rootProjectPath ->
+    forEachKonanProject(project) { konanModel, moduleNode, rootProjectPath ->
+        val moduleData = moduleNode.data
 
         buildModules += GradleKonanBuildModule(
             konanModel.toString(),

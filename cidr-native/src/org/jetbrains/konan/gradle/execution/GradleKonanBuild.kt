@@ -117,14 +117,14 @@ object GradleKonanBuild {
         taskNames: List<String>,
         projectPath: String,
         activateToolWindowBeforeRun: Boolean,
-        parameters: String? = null
+        env: Map<String, String>? = null
     ): Boolean {
         val settings = ExternalSystemTaskExecutionSettings().apply {
             this.executionName = executionName
             externalProjectPath = projectPath
             this.taskNames = taskNames
             externalSystemIdString = GradleConstants.SYSTEM_ID.id
-            scriptParameters = parameters
+            env?.let { this.env = it }
         }
 
         val userData = UserDataHolderBase()
