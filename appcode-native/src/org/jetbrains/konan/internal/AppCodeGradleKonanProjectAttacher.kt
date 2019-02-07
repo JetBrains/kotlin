@@ -11,6 +11,7 @@ import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -31,6 +32,8 @@ class AppCodeGradleKonanProjectAttacher(
     init {
         messageBusConnection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
             refreshOCRoots()
+            val name = XcodeMetaData.getInstance(project).projectOrWorkspaceFile?.nameWithoutExtension
+            name?.let { (project as ProjectEx).setProjectName(it) }
         })
     }
 
