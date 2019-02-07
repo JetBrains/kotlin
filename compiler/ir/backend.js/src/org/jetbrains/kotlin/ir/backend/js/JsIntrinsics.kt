@@ -126,7 +126,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         PrimitiveType.INT to getInternalFunction("isIntArray"),
         PrimitiveType.FLOAT to getInternalFunction("isFloatArray"),
         PrimitiveType.LONG to getInternalFunction("isLongArray"),
-        PrimitiveType.DOUBLE to getInternalFunction("isLongArray")
+        PrimitiveType.DOUBLE to getInternalFunction("isDoubleArray")
     )
 
 
