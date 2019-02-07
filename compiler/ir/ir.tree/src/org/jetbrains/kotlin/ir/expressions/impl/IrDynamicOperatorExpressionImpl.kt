@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.utils.SmartList
 
 class IrDynamicOperatorExpressionImpl(
     startOffset: Int,
@@ -23,7 +24,7 @@ class IrDynamicOperatorExpressionImpl(
 
     override lateinit var receiver: IrExpression
 
-    override val arguments: MutableList<IrExpression> = ArrayList()
+    override val arguments: MutableList<IrExpression> = SmartList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitDynamicOperatorExpression(this, data)

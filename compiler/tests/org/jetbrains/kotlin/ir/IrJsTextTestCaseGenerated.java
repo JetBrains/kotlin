@@ -56,6 +56,21 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberAccess.kt");
         }
 
+        @TestMetadata("dynamicMemberAssignment.kt")
+        public void testDynamicMemberAssignment() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberAssignment.kt");
+        }
+
+        @TestMetadata("dynamicMemberAugmentedAssignment.kt")
+        public void testDynamicMemberAugmentedAssignment() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberAugmentedAssignment.kt");
+        }
+
+        @TestMetadata("dynamicMemberIncrementDecrement.kt")
+        public void testDynamicMemberIncrementDecrement() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberIncrementDecrement.kt");
+        }
+
         @TestMetadata("dynamicWithImplicitCast.kt")
         public void testDynamicWithImplicitCast() throws Exception {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicWithImplicitCast.kt");

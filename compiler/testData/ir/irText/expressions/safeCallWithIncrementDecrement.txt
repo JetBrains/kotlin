@@ -61,22 +61,20 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
   FUN name:testProperty visibility:public modality:FINAL <> (nc:test.C?) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:nc index:0 type:test.C? flags:
     BLOCK_BODY
-      BLOCK type=kotlin.Unit origin=SAFE_CALL
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:test.C? flags:val
-          GET_VAR 'value-parameter nc: C?' type=test.C? origin=null
-        WHEN type=kotlin.Unit origin=null
-          BRANCH
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
-              arg1: CONST Null type=kotlin.Nothing? value=null
-            then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-              CONST Null type=kotlin.Nothing? value=null
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-              BLOCK type=kotlin.Int origin=POSTFIX_INCR
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+        BLOCK type=kotlin.Int? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:test.C? flags:val
+            GET_VAR 'value-parameter nc: C?' type=test.C? origin=null
+          WHEN type=kotlin.Int? origin=null
+            BRANCH
+              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: BLOCK type=kotlin.Int origin=POSTFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp1_receiver type:test.C? flags:val
                   GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR

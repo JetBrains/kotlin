@@ -24,7 +24,10 @@ var IrDynamicOperatorExpression.left: IrExpression
 var IrDynamicOperatorExpression.right: IrExpression
     get() = arguments[0]
     set(value) {
-        arguments[0] = value
+        if (arguments.isEmpty())
+            arguments.add(value)
+        else
+            arguments[0] = value
     }
 
 interface IrDynamicMemberExpression : IrDynamicExpression {
