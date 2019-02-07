@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.checkers
+package org.jetbrains.kotlin.checkers.diagnostics
 
 data class PositionalTextDiagnostic(val diagnostic: CheckerTestUtil.TextDiagnostic, val start: Int, val end: Int)
