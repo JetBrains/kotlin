@@ -14,60 +14,41 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.utils;
+package org.jetbrains.kotlin.utils
 
-import org.jetbrains.annotations.NotNull;
+import java.io.File
 
-import java.io.File;
-import java.util.List;
+interface KotlinPaths {
+    val homePath: File
 
-public interface KotlinPaths {
-    @NotNull
-    File getHomePath();
+    val libPath: File
 
-    @NotNull
-    File getLibPath();
+    val stdlibPath: File
 
-    @NotNull
-    File getStdlibPath();
+    val reflectPath: File
 
-    @NotNull
-    File getReflectPath();
+    val scriptRuntimePath: File
 
-    @NotNull
-    File getScriptRuntimePath();
+    val kotlinTestPath: File
 
-    @NotNull
-    File getKotlinTestPath();
+    val stdlibSourcesPath: File
 
-    @NotNull
-    File getStdlibSourcesPath();
+    val jsStdLibJarPath: File
 
-    @NotNull
-    File getJsStdLibJarPath();
+    val jsStdLibSrcJarPath: File
 
-    @NotNull
-    File getJsStdLibSrcJarPath();
+    val jsKotlinTestJarPath: File
 
-    @NotNull
-    File getJsKotlinTestJarPath();
+    val allOpenPluginJarPath: File
 
-    @NotNull
-    File getAllOpenPluginJarPath();
+    val noArgPluginJarPath: File
 
-    @NotNull
-    File getNoArgPluginJarPath();
+    val samWithReceiverJarPath: File
 
-    @NotNull
-    File getSamWithReceiverJarPath();
+    val trove4jJarPath: File
 
-    @NotNull
-    File getTrove4jJarPath();
+    val compilerClasspath: List<File>
 
-    @NotNull
-    List<File> getCompilerClasspath();
-
-    @NotNull
-    File getCompilerPath();
+    val compilerPath: File
 
 }

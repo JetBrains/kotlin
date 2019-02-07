@@ -14,120 +14,62 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.utils;
+package org.jetbrains.kotlin.utils
 
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.annotations.NotNull;
+import kotlin.collections.*
 
-import java.io.File;
-import java.util.List;
+import java.io.File
 
-public class KotlinPathsFromHomeDir implements KotlinPaths {
-    // kotlinc directory
-    private final File homePath;
+class KotlinPathsFromHomeDir(
+    override val homePath: File // kotlinc directory
+) : KotlinPaths {
 
-    public KotlinPathsFromHomeDir(@NotNull File homePath) {
-        this.homePath = homePath;
-    }
+    override val libPath: File
+        get() = File(homePath, "lib")
 
-    @Override
-    @NotNull
-    public File getHomePath() {
-        return homePath;
-    }
+    override val stdlibPath: File
+        get() = getLibraryFile(PathUtil.KOTLIN_JAVA_STDLIB_JAR)
 
-    @Override
-    @NotNull
-    public File getLibPath() {
-        return new File(homePath, "lib");
-    }
+    override val reflectPath: File
+        get() = getLibraryFile(PathUtil.KOTLIN_JAVA_REFLECT_JAR)
 
-    @NotNull
-    @Override
-    public File getStdlibPath() {
-        return getLibraryFile(PathUtil.KOTLIN_JAVA_STDLIB_JAR);
-    }
+    override val scriptRuntimePath: File
+        get() = getLibraryFile(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR)
 
-    @NotNull
-    @Override
-    public File getReflectPath() {
-        return getLibraryFile(PathUtil.KOTLIN_JAVA_REFLECT_JAR);
-    }
+    override val kotlinTestPath: File
+        get() = getLibraryFile(PathUtil.KOTLIN_TEST_JAR)
 
-    @Override
-    @NotNull
-    public File getScriptRuntimePath() {
-        return getLibraryFile(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR);
-    }
+    override val stdlibSourcesPath: File
+        get() = getLibraryFile(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR)
 
-    @NotNull
-    @Override
-    public File getKotlinTestPath() {
-        return getLibraryFile(PathUtil.KOTLIN_TEST_JAR);
-    }
+    override val jsStdLibJarPath: File
+        get() = getLibraryFile(PathUtil.JS_LIB_JAR_NAME)
 
-    @NotNull
-    @Override
-    public File getStdlibSourcesPath() {
-        return getLibraryFile(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR);
-    }
+    override val jsStdLibSrcJarPath: File
+        get() = getLibraryFile(PathUtil.JS_LIB_SRC_JAR_NAME)
 
-    @Override
-    @NotNull
-    public File getJsStdLibJarPath() {
-        return getLibraryFile(PathUtil.JS_LIB_JAR_NAME);
-    }
+    override val jsKotlinTestJarPath: File
+        get() = getLibraryFile(PathUtil.KOTLIN_TEST_JS_JAR)
 
-    @Override
-    @NotNull
-    public File getJsStdLibSrcJarPath() {
-        return getLibraryFile(PathUtil.JS_LIB_SRC_JAR_NAME);
-    }
+    override val allOpenPluginJarPath: File
+        get() = getLibraryFile(PathUtil.ALLOPEN_PLUGIN_JAR_NAME)
 
-    @NotNull
-    @Override
-    public File getJsKotlinTestJarPath() {
-        return getLibraryFile(PathUtil.KOTLIN_TEST_JS_JAR);
-    }
+    override val noArgPluginJarPath: File
+        get() = getLibraryFile(PathUtil.NOARG_PLUGIN_JAR_NAME)
 
-    @NotNull
-    @Override
-    public File getAllOpenPluginJarPath() {
-        return getLibraryFile(PathUtil.ALLOPEN_PLUGIN_JAR_NAME);
-    }
+    override val samWithReceiverJarPath: File
+        get() = getLibraryFile(PathUtil.SAM_WITH_RECEIVER_PLUGIN_JAR_NAME)
 
-    @NotNull
-    @Override
-    public File getNoArgPluginJarPath() {
-        return getLibraryFile(PathUtil.NOARG_PLUGIN_JAR_NAME);
-    }
+    override val trove4jJarPath: File
+        get() = getLibraryFile(PathUtil.TROVE4J_NAME)
 
-    @NotNull
-    @Override
-    public File getSamWithReceiverJarPath() {
-        return getLibraryFile(PathUtil.SAM_WITH_RECEIVER_PLUGIN_JAR_NAME);
-    }
+    override val compilerClasspath: List<File>
+        get() = listOf(stdlibPath, reflectPath, scriptRuntimePath, trove4jJarPath)
 
-    @NotNull
-    @Override
-    public File getTrove4jJarPath() {
-        return getLibraryFile(PathUtil.TROVE4J_NAME);
-    }
+    override val compilerPath: File
+        get() = getLibraryFile(PathUtil.KOTLIN_COMPILER_JAR)
 
-    @NotNull
-    @Override
-    public List<File> getCompilerClasspath() {
-        return CollectionsKt.listOf(getStdlibPath(), getReflectPath(), getScriptRuntimePath(), getTrove4jJarPath());
-    }
-
-    @NotNull
-    @Override
-    public File getCompilerPath() {
-        return getLibraryFile(PathUtil.KOTLIN_COMPILER_JAR);
-    }
-
-    @NotNull
-    private File getLibraryFile(@NotNull String fileName) {
-        return new File(getLibPath(), fileName);
+    private fun getLibraryFile(fileName: String): File {
+        return File(libPath, fileName)
     }
 }

@@ -96,13 +96,13 @@ fun CompilerConfiguration.configureStandardLibs(paths: KotlinPaths?, arguments: 
     }
 
     if (!arguments.noStdlib) {
-        addRoot("kotlin.stdlib", PathUtil.KOTLIN_JAVA_STDLIB_JAR, KotlinPaths::getStdlibPath, "'-no-stdlib'")
-        addRoot("kotlin.script.runtime", PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, KotlinPaths::getScriptRuntimePath, "'-no-stdlib'")
+        addRoot("kotlin.stdlib", PathUtil.KOTLIN_JAVA_STDLIB_JAR, KotlinPaths::stdlibPath, "'-no-stdlib'")
+        addRoot("kotlin.script.runtime", PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, KotlinPaths::scriptRuntimePath, "'-no-stdlib'")
     }
     // "-no-stdlib" implies "-no-reflect": otherwise we would be able to transitively read stdlib classes through kotlin-reflect,
     // which is likely not what user wants since s/he manually provided "-no-stdlib"
     if (!arguments.noReflect && !arguments.noStdlib) {
-        addRoot("kotlin.reflect", PathUtil.KOTLIN_JAVA_REFLECT_JAR, KotlinPaths::getReflectPath, "'-no-reflect' or '-no-stdlib'")
+        addRoot("kotlin.reflect", PathUtil.KOTLIN_JAVA_REFLECT_JAR, { it.reflectPath }, "'-no-reflect' or '-no-stdlib'")
     }
 }
 
