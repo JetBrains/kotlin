@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 class `(X)` {
     fun `(Y)`() {}
 }

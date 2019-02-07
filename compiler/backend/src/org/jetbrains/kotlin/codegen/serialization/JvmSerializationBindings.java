@@ -36,7 +36,7 @@ public final class JvmSerializationBindings {
     public static final SerializationMappingSlice<PropertyDescriptor, Method> SYNTHETIC_METHOD_FOR_PROPERTY =
             SerializationMappingSlice.create();
 
-    static final class SerializationMappingSlice<K, V> extends BasicWritableSlice<K, V> {
+    public static final class SerializationMappingSlice<K, V> extends BasicWritableSlice<K, V> {
         public SerializationMappingSlice() {
             super(Slices.ONLY_REWRITE_TO_EQUAL, false);
         }

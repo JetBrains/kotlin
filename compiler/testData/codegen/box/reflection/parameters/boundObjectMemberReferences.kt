@@ -1,5 +1,4 @@
 // TODO: investigate should it be ran for JS or not
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 
 // WITH_REFLECT

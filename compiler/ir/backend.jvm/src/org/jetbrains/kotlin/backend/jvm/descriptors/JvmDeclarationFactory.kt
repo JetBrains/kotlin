@@ -137,6 +137,8 @@ class JvmDeclarationFactory(
                     }
                 }
             }
+
+            constructor.metadata = oldConstructor.metadata
         }
     }
 

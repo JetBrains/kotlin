@@ -22,10 +22,14 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -33,11 +37,11 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isTopLevelDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.io.File
-import java.lang.RuntimeException
 
 open class ClassCodegen protected constructor(
     internal val irClass: IrClass,
@@ -76,6 +80,14 @@ open class ClassCodegen protected constructor(
 
     private var sourceMapper: DefaultSourceMapper? = null
 
+    private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state)
+    private val serializer: DescriptorSerializer? =
+        when (val metadata = irClass.metadata) {
+            is MetadataSource.Class -> DescriptorSerializer.create(metadata.descriptor, serializerExtension, parentClassCodegen?.serializer)
+            is MetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension)
+            else -> null
+        }
+
     fun generate() {
         val superClassInfo = SuperClassInfo.getSuperClassInfo(descriptor, typeMapper)
         val signature = ImplementationBodyCodegen.signature(descriptor, type, superClassInfo, typeMapper)
@@ -98,7 +110,34 @@ open class ClassCodegen protected constructor(
             generateDeclaration(it)
         }
 
+        generateKotlinMetadataAnnotation()
+
         done()
+    }
+
+    private fun generateKotlinMetadataAnnotation() {
+        when (val metadata = irClass.metadata) {
+            is MetadataSource.Class -> {
+                val classProto = serializer!!.classProto(metadata.descriptor).build()
+                writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.CLASS, 0) {
+                    AsmUtil.writeAnnotationData(it, serializer, classProto)
+                }
+            }
+            is MetadataSource.File -> {
+                val packageFqName = irClass.getPackageFragment()!!.fqName
+                val packageProto = serializer!!.packagePartProto(packageFqName, metadata.descriptors)
+
+                serializerExtension.serializeJvmPackage(packageProto, type)
+
+                writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.FILE_FACADE, 0) {
+                    AsmUtil.writeAnnotationData(it, serializer, packageProto.build())
+                    // TODO: JvmPackageName
+                }
+            }
+            else -> {
+                writeSyntheticClassMetadata(visitor, state)
+            }
+        }
     }
 
     private fun done() {
@@ -158,23 +197,34 @@ open class ClassCodegen protected constructor(
 
     private fun generateField(field: IrField) {
         if (field.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
+
         val fieldType = typeMapper.mapType(field.descriptor)
         val fieldSignature = typeMapper.mapFieldSignature(field.descriptor.type, field.descriptor)
+        val fieldName = field.descriptor.name.asString()
         val fv = visitor.newField(
-            field.OtherOrigin, field.descriptor.calculateCommonFlags(), field.descriptor.name.asString(), fieldType.descriptor,
+            field.OtherOrigin, field.descriptor.calculateCommonFlags(), fieldName, fieldType.descriptor,
             fieldSignature, null/*TODO support default values*/
         )
 
         if (field.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
             AnnotationCodegen.forField(fv, this, state).genAnnotations(field.descriptor, null)
-        } else {
+        }
 
+        val descriptor = field.metadata?.descriptor
+        if (descriptor != null) {
+            visitor.serializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, fieldType to fieldName)
         }
     }
 
     private fun generateMethod(method: IrFunction) {
         if (method.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
-        FunctionCodegen(method, this).generate()
+
+        val signature = FunctionCodegen(method, this).generate()
+
+        val descriptor = method.metadata?.descriptor
+        if (descriptor != null) {
+            visitor.serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, descriptor, signature.asmMethod)
+        }
     }
 
     private fun writeInnerClasses() {

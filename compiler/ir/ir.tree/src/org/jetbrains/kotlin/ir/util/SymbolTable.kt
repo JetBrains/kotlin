@@ -233,7 +233,9 @@ open class SymbolTable : ReferenceSymbolTable {
     fun declareClass(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
         modality: Modality = descriptor.modality,
-        classFactory: (IrClassSymbol) -> IrClass = { IrClassImpl(startOffset, endOffset, origin, it, modality) }
+        classFactory: (IrClassSymbol) -> IrClass = {
+            IrClassImpl(startOffset, endOffset, origin, it, modality).apply { metadata = MetadataSource.Class(it.descriptor) }
+        }
     ): IrClass {
         return classSymbolTable.declare(
             descriptor,
@@ -252,7 +254,11 @@ open class SymbolTable : ReferenceSymbolTable {
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ClassConstructorDescriptor,
-        constructorFactory: (IrConstructorSymbol) -> IrConstructor = { IrConstructorImpl(startOffset, endOffset, origin, it, IrUninitializedType) }
+        constructorFactory: (IrConstructorSymbol) -> IrConstructor = {
+            IrConstructorImpl(startOffset, endOffset, origin, it, IrUninitializedType).apply {
+                metadata = MetadataSource.Function(it.descriptor)
+            }
+        }
     ): IrConstructor =
         constructorSymbolTable.declare(
             descriptor,
@@ -286,7 +292,11 @@ open class SymbolTable : ReferenceSymbolTable {
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
         type: IrType,
-        fieldFactory: (IrFieldSymbol) -> IrField = { IrFieldImpl(startOffset, endOffset, origin, it, type) }
+        fieldFactory: (IrFieldSymbol) -> IrField = {
+            IrFieldImpl(startOffset, endOffset, origin, it, type).apply {
+                metadata = MetadataSource.Property(it.descriptor)
+            }
+        }
     ): IrField =
         fieldSymbolTable.declare(
             descriptor,
@@ -320,7 +330,11 @@ open class SymbolTable : ReferenceSymbolTable {
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: FunctionDescriptor,
-        functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction = { IrFunctionImpl(startOffset, endOffset, origin, it, IrUninitializedType) }
+        functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction = {
+            IrFunctionImpl(startOffset, endOffset, origin, it, IrUninitializedType).apply {
+                metadata = MetadataSource.Function(it.descriptor)
+            }
+        }
     ): IrSimpleFunction {
         return simpleFunctionSymbolTable.declare(
             descriptor,

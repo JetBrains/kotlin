@@ -200,7 +200,7 @@ class IrSourceCompilerForInline(
                 }
 
                 override fun getSerializationBindings(): JvmSerializationBindings {
-                    TODO("not implemented")
+                    return JvmSerializationBindings()
                 }
 
                 override fun newAnnotation(desc: String, visible: Boolean): AnnotationVisitor {

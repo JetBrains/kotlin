@@ -38,6 +38,8 @@ interface IrFunction :
     val valueParameters: MutableList<IrValueParameter>
 
     var body: IrBody?
+
+    override val metadata: MetadataSource.Function?
 }
 
 

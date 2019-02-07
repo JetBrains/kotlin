@@ -1,5 +1,4 @@
 // !SANITIZE_PARENTHESES
-// IGNORE_BACKEND: JVM_IR
 
 class `(X)` {
     fun `(Y)`(): String {

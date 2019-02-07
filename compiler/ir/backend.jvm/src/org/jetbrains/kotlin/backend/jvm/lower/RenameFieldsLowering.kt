@@ -98,6 +98,7 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
             descriptor.bind(it)
             it.parent = declaration.parent
             it.initializer = declaration.initializer?.transform(this, null)
+            it.metadata = declaration.metadata
 
             newSymbols[declaration] = symbol
         }

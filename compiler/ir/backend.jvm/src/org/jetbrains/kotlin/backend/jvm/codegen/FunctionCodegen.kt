@@ -32,15 +32,14 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
 
     val descriptor = irFunction.descriptor
 
-    fun generate() {
+    fun generate(): JvmMethodGenericSignature =
         try {
             doGenerate()
         } catch (e: Throwable) {
             throw RuntimeException("${e.message} while generating code for:\n${irFunction.dump()}", e)
         }
-    }
 
-    private fun doGenerate() {
+    private fun doGenerate(): JvmMethodGenericSignature {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(descriptor, OwnerKind.IMPLEMENTATION)
 
         val flags = calculateMethodFlags(irFunction.isStatic)
@@ -54,11 +53,12 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
         if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
             methodVisitor.visitEnd()
-            return
+        } else {
+            val frameMap = createFrameMapWithReceivers(classCodegen.state, irFunction, signature)
+            ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()
         }
 
-        val frameMap = createFrameMapWithReceivers(classCodegen.state, irFunction, signature)
-        ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()
+        return signature
     }
 
     private fun calculateMethodFlags(isStatic: Boolean): Int {

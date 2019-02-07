@@ -90,6 +90,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             createImplicitParameterDeclarationWithWrappedDescriptor()
             // TODO: figure out why reparenting leads to failing tests.
             // fileClassMembers.forEach { it.parent = this }
+            metadata = irFile.metadata
 
             val partClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
             val facadeClassType =

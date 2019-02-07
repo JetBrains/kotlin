@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrField : IrSymbolDeclaration<IrFieldSymbol>, IrOverridableDeclaration<IrFieldSymbol>,
-        IrDeclarationWithName, IrDeclarationWithVisibility, IrDeclarationParent {
+    IrDeclarationWithName, IrDeclarationWithVisibility, IrDeclarationParent {
     override val descriptor: PropertyDescriptor
 
     val type: IrType
@@ -21,4 +21,6 @@ interface IrField : IrSymbolDeclaration<IrFieldSymbol>, IrOverridableDeclaration
 
     var initializer: IrExpressionBody?
     var correspondingProperty: IrProperty?
+
+    override val metadata: MetadataSource.Property?
 }

@@ -139,6 +139,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 constructorDescriptor.valueParameters.forEach {
                     loweredEnumConstructorParameters[it] = valueParameters[2 + it.index]
                 }
+                metadata = enumConstructor.metadata
             }
         }
 
