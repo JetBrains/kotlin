@@ -27,13 +27,13 @@ class InlineAstVisitor(
     override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
         // Is it `defineInlineFunction('tag', ...)`?
         InlineMetadata.decompose(x)?.let {
-            jsInliner.process(InlineFunctionDefinition(it.function, it.tag.value), x, scope.fragment)
+            jsInliner.process(InlineFunctionDefinition(it.function, it.tag.value), x, scope.fragment, scope)
             return false
         }
 
         // Is it `wrapFunction(...)`?
         InlineMetadata.tryExtractFunction(x)?.let {
-            jsInliner.process(InlineFunctionDefinition(it, null), x, scope.fragment)
+            jsInliner.process(InlineFunctionDefinition(it, null), x, scope.fragment, scope)
             return false
         }
 
@@ -108,7 +108,7 @@ class InlineAstVisitor(
 
     private fun hasToBeInlined(call: JsInvocation): Boolean {
         val strategy = call.inlineStrategy
-        return if (strategy == null || !strategy.isInline) false else jsInliner.functionDefinitionLoader.hasFunctionDefinition(call, scope.fragment)
+        return if (strategy == null || !strategy.isInline) false else jsInliner.functionDefinitionLoader.hasFunctionDefinition(call, scope)
     }
 
     private fun patchReturnsFromSecondaryConstructor(function: JsFunction) {

@@ -33,23 +33,31 @@ class JsInliner(
         }
     }
 
-    fun process(inlineFn: InlineFunctionDefinition, call: JsInvocation?, definitionFragment: JsProgramFragment) {
+    fun process(
+        inlineFn: InlineFunctionDefinition,
+        call: JsInvocation?,
+        definitionFragment: JsProgramFragment,
+        callsiteScope: InliningScope
+    ) {
         // Old fragments are already processed
         if (definitionFragment !in translationResult.newFragments) return
 
         cycleReporter.processInlineFunction(inlineFn.fn, call) {
-            val wrapperBody = inlineFn.fn.wrapperBody
+            val (fn, wrapperBody) = inlineFn.fn
 
-            checkNotNull(wrapperBody) { "All unprocessed inline functions should be generated with wrappers" }
-
-            ImportIntoWrapperInliningScope.process(wrapperBody, definitionFragment) { scope ->
-                InlineAstVisitor(this, scope).accept(wrapperBody)
+            if (wrapperBody != null) {
+                ImportIntoWrapperInliningScope.process(wrapperBody, definitionFragment) { scope ->
+                    InlineAstVisitor(this, scope).accept(wrapperBody)
+                }
+            } else {
+                // e.g. lambda in a non-inline context
+                InlineAstVisitor(this, callsiteScope).accept(fn)
             }
         }
     }
 
     fun inline(scope: InliningScope, call: JsInvocation, currentStatement: JsStatement?): InlineableResult {
-        val definition = functionDefinitionLoader.getFunctionDefinition(call, scope.fragment)
+        val definition = functionDefinitionLoader.getFunctionDefinition(call, scope)
 
         val function = scope.importFunctionDefinition(definition)
 
