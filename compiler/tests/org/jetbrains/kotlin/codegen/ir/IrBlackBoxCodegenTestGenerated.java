@@ -14274,11 +14274,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/jvm8/javaDefaults/invokeDefaultViaSuper.kt");
             }
 
-            @TestMetadata("invokeDefaultViaSuper_16.kt")
-            public void testInvokeDefaultViaSuper_16() throws Exception {
-                runTest("compiler/testData/codegen/box/jvm8/javaDefaults/invokeDefaultViaSuper_16.kt");
-            }
-
             @TestMetadata("longChainOfKotlinExtendsFromJavaWithDefault.kt")
             public void testLongChainOfKotlinExtendsFromJavaWithDefault() throws Exception {
                 runTest("compiler/testData/codegen/box/jvm8/javaDefaults/longChainOfKotlinExtendsFromJavaWithDefault.kt");
