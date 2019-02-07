@@ -36,7 +36,17 @@ import java.util.function.Predicate
 
 abstract class CLITool<A : CommonToolArguments> {
     fun exec(errStream: PrintStream, vararg args: String): ExitCode {
-        return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_RELATIVE_PATHS, args)
+        val rendererType = System.getProperty(MessageRenderer.PROPERTY_KEY)
+
+        val messageRenderer = when (rendererType) {
+            MessageRenderer.XML.name -> MessageRenderer.XML
+            MessageRenderer.GRADLE_STYLE.name -> MessageRenderer.GRADLE_STYLE
+            MessageRenderer.WITHOUT_PATHS.name -> MessageRenderer.WITHOUT_PATHS
+            MessageRenderer.PLAIN_FULL_PATHS.name -> MessageRenderer.PLAIN_FULL_PATHS
+            else -> MessageRenderer.PLAIN_RELATIVE_PATHS
+        }
+
+        return exec(errStream, Services.EMPTY, messageRenderer, args)
     }
 
     protected fun exec(
