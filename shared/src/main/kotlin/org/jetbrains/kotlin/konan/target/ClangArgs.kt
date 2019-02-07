@@ -51,7 +51,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                             "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4",
                             "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4/mipsel-unknown-linux-gnu")
 
-                KonanTarget.MINGW_X64 ->
+                KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 ->
                     listOf("-target", targetArg!!, "--sysroot=$absoluteTargetSysRoot", "-Xclang", "-flto-visibility-public-std")
 
                 KonanTarget.MACOS_X64 ->
@@ -149,7 +149,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_NO_64BIT_ATOMIC=1",
                         "-DKONAN_NO_UNALIGNED_ACCESS=1")
 
-            KonanTarget.MINGW_X64 ->
+            KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 ->
                 listOf("-DUSE_GCC_UNWIND=1",
                         "-DUSE_PE_COFF_SYMBOLS=1",
                         "-DKONAN_WINDOWS=1",

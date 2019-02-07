@@ -395,7 +395,7 @@ fun linker(configurables: Configurables): LinkerFlags =
                 MacOSBasedLinker(configurables as AppleConfigurables)
             KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64 ->
                 AndroidLinker(configurables as AndroidConfigurables)
-            KonanTarget.MINGW_X64 ->
+            KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 ->
                 MingwLinker(configurables as MingwConfigurables)
             KonanTarget.WASM32 ->
                 WasmLinker(configurables as WasmConfigurables)
