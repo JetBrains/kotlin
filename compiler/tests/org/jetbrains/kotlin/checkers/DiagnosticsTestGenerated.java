@@ -3109,6 +3109,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/classObjects/resolveFunctionInsideClassObject.kt");
             }
 
+            @TestMetadata("typeParametersInAnnonymousObject.kt")
+            public void testTypeParametersInAnnonymousObject() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/typeParametersInAnnonymousObject.kt");
+            }
+
             @TestMetadata("typeParametersInObject.kt")
             public void testTypeParametersInObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/classObjects/typeParametersInObject.kt");
