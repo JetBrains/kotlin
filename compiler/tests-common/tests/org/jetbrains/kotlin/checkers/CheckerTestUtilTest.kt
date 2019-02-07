@@ -1,258 +1,238 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.checkers;
+package org.jetbrains.kotlin.checkers
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.checkers.CheckerTestUtil.ActualDiagnostic;
-import org.jetbrains.kotlin.checkers.CheckerTestUtil.DiagnosedRange;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
+import com.google.common.collect.Lists
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.checkers.diagnostics.ActualDiagnostic
+import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
+import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.tests.di.createContainerForTests
+import java.io.File
+import kotlin.test.assertEquals
 
-import java.io.File;
-import java.util.List;
+private data class DiagnosticData(
+    val index: Int,
+    val rangeIndex: Int,
+    val name: String,
+    val startOffset: Int,
+    val endOffset: Int
+)
 
-public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
-    @NotNull
-    private static String getTestDataPath() {
-        return KotlinTestUtils.getTestDataPathBase() + "/diagnostics/checkerTestUtil";
-    }
+private abstract class Test(private vararg val expectedMessages: String) {
+    fun test(psiFile: PsiFile, environment: KotlinCoreEnvironment) {
+        val bindingContext = JvmResolveUtil.analyze(psiFile as KtFile, environment).bindingContext
+        val expectedText = CheckerTestUtil.addDiagnosticMarkersToText(
+            psiFile,
+            CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
+                bindingContext, psiFile,
+                false,
+                mutableListOf(),
+                null,
+                false
+            )
+        ).toString()
+        val diagnosedRanges = Lists.newArrayList<DiagnosedRange>()
 
-    @Override
-    protected KotlinCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
-    }
+        CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges)
 
-    protected void doTest(TheTest theTest) throws Exception {
-        String text = KotlinTestUtils.doLoadFile(getTestDataPath(), "test.kt");
-        theTest.test(TestCheckerUtil.createCheckAndReturnPsiFile("test.kt", text, getProject()), getEnvironment());
-    }
+        val actualDiagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
+            bindingContext,
+            psiFile,
+            false,
+            mutableListOf(),
+            null,
+            false
+        )
 
-    public void testEquals() throws Exception {
-        doTest(new TheTest() {
-            @Override
-            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+        makeTestData(actualDiagnostics, diagnosedRanges)
+
+        val expectedMessages = listOf(*expectedMessages)
+        val actualMessages = mutableListOf<String>()
+
+        CheckerTestUtil.diagnosticsDiff(diagnosedRanges, actualDiagnostics, object : DiagnosticDiffCallbacks {
+            override fun missingDiagnostic(diagnostic: TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
+                actualMessages.add(CheckerTestUtilTest.missing(diagnostic.description, expectedStart, expectedEnd))
             }
-        });
-    }
 
-    public void testMissing() throws Exception {
-        DiagnosticData typeMismatch1 = diagnostics.get(1);
-        doTest(new TheTest(missing(typeMismatch1)) {
-            @Override
-            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
-                diagnostics.remove(typeMismatch1.index);
+            override fun wrongParametersDiagnostic(
+                expectedDiagnostic: TextDiagnostic,
+                actualDiagnostic: TextDiagnostic,
+                start: Int,
+                end: Int
+            ) {
+                actualMessages.add(
+                    CheckerTestUtilTest.wrongParameters(expectedDiagnostic.asString(), actualDiagnostic.asString(), start, end)
+                )
             }
-        });
-    }
 
-    public void testUnexpected() throws Exception {
-        DiagnosticData typeMismatch1 = diagnostics.get(1);
-        doTest(new TheTest(unexpected(typeMismatch1)) {
-            @Override
-            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(typeMismatch1.index);
+            override fun unexpectedDiagnostic(diagnostic: TextDiagnostic, actualStart: Int, actualEnd: Int) {
+                actualMessages.add(CheckerTestUtilTest.unexpected(diagnostic.description, actualStart, actualEnd))
             }
-        });
+        })
+
+        assertEquals(expectedMessages.joinToString("\n"), actualMessages.joinToString("\n"))
     }
 
-    public void testBoth() throws Exception {
-        DiagnosticData typeMismatch1 = diagnostics.get(1);
-        DiagnosticData unresolvedReference = diagnostics.get(6);
-        doTest(new TheTest(unexpected(typeMismatch1), missing(unresolvedReference)) {
-            @Override
-            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(typeMismatch1.rangeIndex);
-                diagnostics.remove(unresolvedReference.index);
+    abstract fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>)
+}
+
+class CheckerTestUtilTest : KotlinTestWithEnvironment() {
+    private val diagnostics = listOf(
+        DiagnosticData(0, 0, "UNUSED_PARAMETER", 8, 9),
+        DiagnosticData(1, 1, "CONSTANT_EXPECTED_TYPE_MISMATCH", 56, 57),
+        DiagnosticData(2, 2, "UNUSED_VARIABLE", 67, 68),
+        DiagnosticData(3, 3, "TYPE_MISMATCH", 98, 99),
+        DiagnosticData(4, 4, "NONE_APPLICABLE", 120, 121),
+        DiagnosticData(5, 5, "TYPE_MISMATCH", 159, 167),
+        DiagnosticData(6, 6, "UNRESOLVED_REFERENCE", 164, 166),
+        DiagnosticData(7, 6, "TOO_MANY_ARGUMENTS", 164, 166)
+    )
+
+    private fun getTestDataPath() = KotlinTestUtils.getTestDataPathBase() + "/diagnostics/checkerTestUtil"
+
+    override fun createEnvironment(): KotlinCoreEnvironment {
+        println(System.getProperty("user.home"))
+        System.setProperty("user.dir", "/Users/victor.petukhov/IdeaProjects/kotlin")
+        println(System.getProperty("user.dir"))
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL)
+    }
+
+    private fun doTest(test: Test) = test.test(
+        TestCheckerUtil.createCheckAndReturnPsiFile(
+            "test.kt",
+            KotlinTestUtils.doLoadFile(getTestDataPath(), "test.kt"),
+            project
+        ),
+        environment
+    )
+
+    fun testEquals() {
+        doTest(object : Test() {
+            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {}
+        })
+    }
+
+    fun testMissing() {
+        val typeMismatch1 = diagnostics[1]
+
+        doTest(object : Test(missing(typeMismatch1)) {
+            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                diagnostics.removeAt(typeMismatch1.index)
             }
-        });
+        })
     }
 
-    public void testMissingInTheMiddle() throws Exception {
-        DiagnosticData noneApplicable = diagnostics.get(4);
-        DiagnosticData typeMismatch3 = diagnostics.get(5);
-        doTest(new TheTest(unexpected(noneApplicable), missing(typeMismatch3)) {
-            @Override
-            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(noneApplicable.rangeIndex);
-                diagnostics.remove(typeMismatch3.index);
+    fun testUnexpected() {
+        val typeMismatch1 = diagnostics[1]
+
+        doTest(object : Test(unexpected(typeMismatch1)) {
+            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                diagnosedRanges.removeAt(typeMismatch1.index)
             }
-        });
+        })
     }
 
-    public void testWrongParameters() throws Exception {
-        DiagnosticData unused = diagnostics.get(2);
-        String unusedDiagnostic = asTextDiagnostic(unused, "i");
-        DiagnosedRange range = asDiagnosticRange(unused, unusedDiagnostic);
-        doTest(new TheTest(wrongParameters(unusedDiagnostic, "OI;UNUSED_VARIABLE(a)", unused.startOffset, unused.endOffset)) {
-            @Override
-            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.set(unused.rangeIndex, range);
+    fun testBoth() {
+        val typeMismatch1 = diagnostics[1]
+        val unresolvedReference = diagnostics[6]
+
+        doTest(object : Test(unexpected(typeMismatch1), missing(unresolvedReference)) {
+            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                diagnosedRanges.removeAt(typeMismatch1.rangeIndex)
+                diagnostics.removeAt(unresolvedReference.index)
             }
-        });
+        })
     }
 
-    public void testWrongParameterInMultiRange() throws Exception {
-        DiagnosticData unresolvedReference = diagnostics.get(6);
-        String unusedDiagnostic = asTextDiagnostic(unresolvedReference, "i");
-        String toManyArguments = asTextDiagnostic(diagnostics.get(7));
-        DiagnosedRange range = asDiagnosticRange(unresolvedReference, unusedDiagnostic, toManyArguments);
-        doTest(new TheTest(wrongParameters(unusedDiagnostic, "OI;UNRESOLVED_REFERENCE(xx)", unresolvedReference.startOffset, unresolvedReference.endOffset)) {
-            @Override
-            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.set(unresolvedReference.rangeIndex, range);
+    fun testMissingInTheMiddle() {
+        val noneApplicable = diagnostics[4]
+        val typeMismatch3 = diagnostics[5]
+
+        doTest(object : Test(unexpected(noneApplicable), missing(typeMismatch3)) {
+            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                diagnosedRanges.removeAt(noneApplicable.rangeIndex)
+                diagnostics.removeAt(typeMismatch3.index)
             }
-        });
+        })
     }
 
-    public void testAbstractJetDiagnosticsTest() throws Exception {
-        AbstractDiagnosticsTest test = new AbstractDiagnosticsTest() {
-            {setUp();}
-        };
-        test.doTest(getTestDataPath() + File.separatorChar + "test_with_diagnostic.kt");
+    fun testWrongParameters() {
+        val unused = diagnostics[2]
+        val unusedDiagnostic = asTextDiagnostic(unused, "i")
+        val range = asDiagnosticRange(unused, unusedDiagnostic)
+        val wrongParameter = wrongParameters(unusedDiagnostic, "OI;UNUSED_VARIABLE(a)", unused.startOffset, unused.endOffset)
+
+        doTest(object : Test(wrongParameter) {
+            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                diagnosedRanges[unused.rangeIndex] = range
+            }
+        })
     }
 
-    private static abstract class TheTest {
-        private final String[] expected;
+    fun testWrongParameterInMultiRange() {
+        val unresolvedReference = diagnostics[6]
+        val unusedDiagnostic = asTextDiagnostic(unresolvedReference, "i")
+        val toManyArguments = asTextDiagnostic(diagnostics[7])
+        val range = asDiagnosticRange(unresolvedReference, unusedDiagnostic, toManyArguments)
+        val wrongParameter = wrongParameters(
+            unusedDiagnostic,
+            "OI;UNRESOLVED_REFERENCE(xx)",
+            unresolvedReference.startOffset,
+            unresolvedReference.endOffset
+        )
 
-        protected TheTest(String... expectedMessages) {
-            this.expected = expectedMessages;
+        doTest(object : Test(wrongParameter) {
+            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                diagnosedRanges[unresolvedReference.rangeIndex] = range
+            }
+        })
+    }
+
+    fun testAbstractJetDiagnosticsTest() {
+        val test = object : AbstractDiagnosticsTest() {
+            init {
+                setUp()
+            }
         }
 
-        public void test(@NotNull PsiFile psiFile, @NotNull KotlinCoreEnvironment environment) {
-            BindingContext bindingContext =
-                    JvmResolveUtil.analyze((KtFile) psiFile, environment).getBindingContext();
-
-            String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(
-                    psiFile,
-                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null, null, false)
-            ).toString();
-
-            List<DiagnosedRange> diagnosedRanges = Lists.newArrayList();
-            CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
-
-            List<ActualDiagnostic> actualDiagnostics =
-                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null, null, false);
-            actualDiagnostics.sort(CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
-
-            makeTestData(actualDiagnostics, diagnosedRanges);
-
-            List<String> expectedMessages = Lists.newArrayList(expected);
-            List<String> actualMessages = Lists.newArrayList();
-
-            CheckerTestUtil.diagnosticsDiff(diagnosedRanges, actualDiagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
-                @Override
-                public void missingDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int expectedStart, int expectedEnd) {
-                    actualMessages.add(missing(diagnostic.getDescription(), expectedStart, expectedEnd));
-                }
-
-                @Override
-                public void wrongParametersDiagnostic(
-                        CheckerTestUtil.TextDiagnostic expectedDiagnostic,
-                        CheckerTestUtil.TextDiagnostic actualDiagnostic,
-                        int start,
-                        int end
-                ) {
-                    actualMessages.add(wrongParameters(expectedDiagnostic.asString(), actualDiagnostic.asString(), start, end));
-                }
-
-                @Override
-                public void unexpectedDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int actualStart, int actualEnd) {
-                    actualMessages.add(unexpected(diagnostic.getDescription(), actualStart, actualEnd));
-                }
-            });
-
-            assertEquals(listToString(expectedMessages), listToString(actualMessages));
-        }
-
-        private static String listToString(List<String> expectedMessages) {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (String expectedMessage : expectedMessages) {
-                stringBuilder.append(expectedMessage).append("\n");
-            }
-            return stringBuilder.toString();
-        }
-
-        protected abstract void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges);
+        test.doTest(getTestDataPath() + File.separatorChar + "test_with_diagnostic.kt")
     }
 
-    private static String wrongParameters(String expected, String actual, int start, int end) {
-        return "Wrong parameters " + expected + " != " + actual +" at " + start + " to " + end;
-    }
+    companion object {
+        fun wrongParameters(expected: String, actual: String, start: Int, end: Int) =
+            "Wrong parameters $expected != $actual at $start to $end"
 
-    private static String unexpected(String type, int actualStart, int actualEnd) {
-        return "Unexpected " + type + " at " + actualStart + " to " + actualEnd;
-    }
+        fun unexpected(type: String, actualStart: Int, actualEnd: Int) =
+            "Unexpected $type at $actualStart to $actualEnd"
 
-    private static String missing(String type, int expectedStart, int expectedEnd) {
-        return "Missing " + type + " at " + expectedStart + " to " + expectedEnd;
-    }
+        fun missing(type: String, expectedStart: Int, expectedEnd: Int) =
+            "Missing $type at $expectedStart to $expectedEnd"
 
-    private static String unexpected(DiagnosticData data) {
-        return unexpected(data.name, data.startOffset, data.endOffset);
-    }
+        private fun unexpected(data: DiagnosticData) = unexpected(data.name, data.startOffset, data.endOffset)
 
-    private static String missing(DiagnosticData data) {
-        return missing(data.name, data.startOffset, data.endOffset);
-    }
+        private fun missing(data: DiagnosticData) = missing(data.name, data.startOffset, data.endOffset)
 
-    private static String asTextDiagnostic(DiagnosticData diagnosticData, String... params) {
-        return diagnosticData.name + "(" + StringUtil.join(params, "; ") + ")";
-    }
+        private fun asTextDiagnostic(diagnosticData: DiagnosticData, vararg params: String) =
+            diagnosticData.name + "(" + StringUtil.join(params, "; ") + ")"
 
-    private static DiagnosedRange asDiagnosticRange(DiagnosticData diagnosticData, String... textDiagnostics) {
-        DiagnosedRange range = new DiagnosedRange(diagnosticData.startOffset);
-        range.setEnd(diagnosticData.endOffset);
-        for (String textDiagnostic : textDiagnostics)
-            range.addDiagnostic(textDiagnostic);
-        return range;
-    }
-
-    private static class DiagnosticData {
-        public int index;
-        public int rangeIndex;
-        public String name;
-        public int startOffset;
-        public int endOffset;
-
-        private DiagnosticData(int index, int rangeIndex, String name, int startOffset, int endOffset) {
-            this.index = index;
-            this.rangeIndex = rangeIndex;
-            this.name = name;
-            this.startOffset = startOffset;
-            this.endOffset = endOffset;
+        private fun asDiagnosticRange(diagnosticData: DiagnosticData, vararg textDiagnostics: String): DiagnosedRange {
+            val range = DiagnosedRange(diagnosticData.startOffset)
+            range.end = diagnosticData.endOffset
+            for (textDiagnostic in textDiagnostics)
+                range.addDiagnostic(textDiagnostic)
+            return range
         }
     }
-
-    private final List<DiagnosticData> diagnostics = Lists.newArrayList(
-            new DiagnosticData(0, 0, "UNUSED_PARAMETER", 8, 9),
-            new DiagnosticData(1, 1, "CONSTANT_EXPECTED_TYPE_MISMATCH", 56, 57),
-            new DiagnosticData(2, 2, "UNUSED_VARIABLE", 67, 68),
-            new DiagnosticData(3, 3, "TYPE_MISMATCH", 98, 99),
-            new DiagnosticData(4, 4, "NONE_APPLICABLE", 120, 121),
-            new DiagnosticData(5, 5, "TYPE_MISMATCH", 159, 167),
-            new DiagnosticData(6, 6, "UNRESOLVED_REFERENCE", 164, 166),
-            new DiagnosticData(7, 6, "TOO_MANY_ARGUMENTS", 164, 166)
-    );
 }

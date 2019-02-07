@@ -26,7 +26,12 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.getJvmSignatureDiagnostics
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestFile
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestModule
-import org.jetbrains.kotlin.checkers.CheckerTestUtil.ActualDiagnostic
+import org.jetbrains.kotlin.checkers.diagnostics.ActualDiagnostic
+import org.jetbrains.kotlin.checkers.diagnostics.PositionalTextDiagnostic
+import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
+import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
+import org.jetbrains.kotlin.checkers.diagnostics.factories.SyntaxErrorDiagnosticFactory
+import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -127,7 +132,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         textWithMarkers: String,
         val directives: Map<String, String>
     ) {
-        private val diagnosedRanges: List<CheckerTestUtil.DiagnosedRange> = ArrayList()
+        private val diagnosedRanges: MutableList<DiagnosedRange> = ArrayList()
         val actualDiagnostics: MutableList<ActualDiagnostic> = ArrayList()
         val expectedText: String
         val clearText: String
@@ -139,7 +144,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val declareFlexibleType: Boolean
         val checkLazyLog: Boolean
         private val markDynamicCalls: Boolean
-        val dynamicCallDescriptors: List<DeclarationDescriptor> = ArrayList()
+        val dynamicCallDescriptors: MutableList<DeclarationDescriptor> = ArrayList()
         val withNewInferenceDirective: Boolean
         val newInferenceEnabled: Boolean
         val renderDiagnosticMessages: Boolean
@@ -251,8 +256,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val invertedInferenceCompatibilityOfTest = asInferenceCompatibility(!withNewInference)
 
             val diagnosticToExpectedDiagnostic =
-                CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, object : CheckerTestUtil.DiagnosticDiffCallbacks {
-                    override fun missingDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
+                CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, object : DiagnosticDiffCallbacks {
+                    override fun missingDiagnostic(diagnostic: TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
                         if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
                             updateUncheckedDiagnostics(diagnostic, expectedStart, expectedEnd)
                             return
@@ -267,8 +272,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     }
 
                     override fun wrongParametersDiagnostic(
-                        expectedDiagnostic: CheckerTestUtil.TextDiagnostic,
-                        actualDiagnostic: CheckerTestUtil.TextDiagnostic,
+                        expectedDiagnostic: TextDiagnostic,
+                        actualDiagnostic: TextDiagnostic,
                         start: Int,
                         end: Int
                     ) {
@@ -279,7 +284,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         ok[0] = false
                     }
 
-                    override fun unexpectedDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, actualStart: Int, actualEnd: Int) {
+                    override fun unexpectedDiagnostic(diagnostic: TextDiagnostic, actualStart: Int, actualEnd: Int) {
                         if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
                             updateUncheckedDiagnostics(diagnostic, actualStart, actualEnd)
                             return
@@ -293,7 +298,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         ok[0] = false
                     }
 
-                    fun updateUncheckedDiagnostics(diagnostic: CheckerTestUtil.TextDiagnostic, start: Int, end: Int) {
+                    fun updateUncheckedDiagnostics(diagnostic: TextDiagnostic, start: Int, end: Int) {
                         diagnostic.enhanceInferenceCompatibility(invertedInferenceCompatibilityOfTest)
                         uncheckedDiagnostics.add(PositionalTextDiagnostic(diagnostic, start, end))
                     }
@@ -316,11 +321,11 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             return ok[0]
         }
 
-        private fun asInferenceCompatibility(isNewInference: Boolean): CheckerTestUtil.TextDiagnostic.InferenceCompatibility {
+        private fun asInferenceCompatibility(isNewInference: Boolean): TextDiagnostic.InferenceCompatibility {
             return if (isNewInference)
-                CheckerTestUtil.TextDiagnostic.InferenceCompatibility.NEW
+                TextDiagnostic.InferenceCompatibility.NEW
             else
-                CheckerTestUtil.TextDiagnostic.InferenceCompatibility.OLD
+                TextDiagnostic.InferenceCompatibility.OLD
         }
 
         private fun computeJvmSignatureDiagnostics(bindingContext: BindingContext): Set<ActualDiagnostic> {
@@ -346,10 +351,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val DIAGNOSTICS_TO_INCLUDE_ANYWAY: Set<DiagnosticFactory<*>> = setOf(
             Errors.UNRESOLVED_REFERENCE,
             Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-            CheckerTestUtil.SyntaxErrorDiagnosticFactory.INSTANCE,
-            CheckerTestUtil.DebugInfoDiagnosticFactory.ELEMENT_WITH_ERROR_TYPE,
-            CheckerTestUtil.DebugInfoDiagnosticFactory.MISSING_UNRESOLVED,
-            CheckerTestUtil.DebugInfoDiagnosticFactory.UNRESOLVED_WITH_TARGET
+            SyntaxErrorDiagnosticFactory.INSTANCE,
+            DebugInfoDiagnosticFactory0.ELEMENT_WITH_ERROR_TYPE,
+            DebugInfoDiagnosticFactory0.MISSING_UNRESOLVED,
+            DebugInfoDiagnosticFactory0.UNRESOLVED_WITH_TARGET
         )
 
         val DEFAULT_DIAGNOSTIC_TESTS_FEATURES = mapOf(

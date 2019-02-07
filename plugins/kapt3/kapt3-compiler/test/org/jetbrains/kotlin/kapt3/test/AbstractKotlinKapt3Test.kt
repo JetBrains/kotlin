@@ -27,7 +27,7 @@ import junit.framework.ComparisonFailure
 import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.checkers.CheckerTestUtil
+import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -102,7 +102,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val ktFiles = ArrayList<KtFile>(files.size)
         for (file in files.sorted()) {
             if (file.name.endsWith(".kt")) {
-                val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList<CheckerTestUtil.DiagnosedRange>(0))
+                val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList(0))
                 val tmpKtFile = File(tmpDir, file.name).apply { writeText(content) }
                 val virtualFile = StandardFileSystems.local().findFileByPath(tmpKtFile.path) ?: error("Can't find ${file.name}")
                 ktFiles.add(psiManager.findFile(virtualFile) as? KtFile ?: error("Can't load ${file.name}"))
