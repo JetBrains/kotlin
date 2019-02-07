@@ -204,7 +204,7 @@ class K2JSTranslator @JvmOverloads constructor(
         incrementalResults?.processHeader(KotlinJavascriptSerializationUtil.serializeHeader(moduleDescriptor, null, settings).toByteArray())
     }
 
-    fun serializeHeader(importedTags: Set<String>): ByteArray {
+    private fun serializeHeader(importedTags: Set<String>): ByteArray {
         val output = ByteArrayOutputStream()
         val headerBuilder = JsAstProtoBuf.Header.newBuilder()
         headerBuilder.addAllInlineFunctionTags(importedTags)
