@@ -49,6 +49,7 @@ internal val jvmPhases = namedIrFilePhase(
             constPhase then
             propertiesToFieldsPhase then
             propertiesPhase then
+            renameFieldsPhase then
             annotationPhase then
 
             jvmDefaultArgumentStubPhase then
