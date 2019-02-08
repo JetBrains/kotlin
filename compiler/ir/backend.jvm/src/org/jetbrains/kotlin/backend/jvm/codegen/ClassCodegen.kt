@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtElement
@@ -106,8 +107,22 @@ open class ClassCodegen protected constructor(
         val shortName = File(fileEntry.name).name
         visitor.visitSource(shortName, null)
 
-        irClass.declarations.forEach {
-            generateDeclaration(it)
+        val nestedClasses = irClass.declarations.mapNotNull { declaration ->
+            if (declaration is IrClass) {
+                ClassCodegen(declaration, context, this)
+            } else null
+        }
+
+        val companionObjectCodegen = nestedClasses.firstOrNull { it.irClass.isCompanion }
+
+        for (declaration in irClass.declarations) {
+            generateDeclaration(declaration, companionObjectCodegen)
+        }
+
+        // Generate nested classes at the end, to ensure that codegen for companion object will have the necessary JVM signatures in its
+        // trace for properties moved to the outer class
+        for (codegen in nestedClasses) {
+            codegen.generate()
         }
 
         generateKotlinMetadataAnnotation()
@@ -174,10 +189,10 @@ open class ClassCodegen protected constructor(
         }
     }
 
-    fun generateDeclaration(declaration: IrDeclaration) {
+    private fun generateDeclaration(declaration: IrDeclaration, companionObjectCodegen: ClassCodegen?) {
         when (declaration) {
             is IrField ->
-                generateField(declaration)
+                generateField(declaration, companionObjectCodegen)
             is IrFunction -> {
                 generateMethod(declaration)
             }
@@ -188,14 +203,17 @@ open class ClassCodegen protected constructor(
                 // skip
             }
             is IrClass -> {
-                ClassCodegen(declaration, context, this).generate()
+                // Nested classes are generated separately
             }
             else -> throw RuntimeException("Unsupported declaration $declaration")
         }
     }
 
+    fun generateLocalClass(klass: IrClass) {
+        ClassCodegen(klass, context, this).generate()
+    }
 
-    private fun generateField(field: IrField) {
+    private fun generateField(field: IrField, companionObjectCodegen: ClassCodegen?) {
         if (field.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
 
         val fieldType = typeMapper.mapType(field.descriptor)
@@ -212,7 +230,10 @@ open class ClassCodegen protected constructor(
 
         val descriptor = field.metadata?.descriptor
         if (descriptor != null) {
-            visitor.serializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, fieldType to fieldName)
+            val codegen = if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
+                companionObjectCodegen ?: error("Class with a property moved from the companion must have a companion:\n${irClass.dump()}")
+            } else this
+            codegen.visitor.serializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, fieldType to fieldName)
         }
     }
 

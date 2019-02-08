@@ -557,7 +557,7 @@ class ExpressionCodegen(
     }
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): StackValue {
-        classCodegen.generateDeclaration(declaration)
+        classCodegen.generateLocalClass(declaration)
         return none()
     }
 
