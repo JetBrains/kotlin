@@ -6,9 +6,9 @@ class A() {
 }
 
 
-fun box() : String {
+fun box(a: String, b: String) : String {
 
-    val s = "1" + "2" + 3 + 4L + 5.0 + 6F + '7' + A()
+    val s = a + "1" + "2" + 3 + 4L + b + 5.0 + 6F + '7' + A()
 
     return "OK"
 }

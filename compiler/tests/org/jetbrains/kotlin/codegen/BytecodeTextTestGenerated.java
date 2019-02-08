@@ -1118,6 +1118,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/constants/byte.kt");
         }
 
+        @TestMetadata("floatingPoints.kt")
+        public void testFloatingPoints() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constants/floatingPoints.kt");
+        }
+
         @TestMetadata("inlineUnsignedIntConstant.kt")
         public void testInlineUnsignedIntConstant() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constants/inlineUnsignedIntConstant.kt");
@@ -1472,6 +1477,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/boxing.kt");
         }
 
+        @TestMetadata("boxingNotOptimizable.kt")
+        public void testBoxingNotOptimizable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/boxingNotOptimizable.kt");
+        }
+
         @TestMetadata("emptyVariableRange.kt")
         public void testEmptyVariableRange() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/emptyVariableRange.kt");
@@ -1500,6 +1510,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("simpleConstructorNotRedundant.kt")
         public void testSimpleConstructorNotRedundant() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/simpleConstructorNotRedundant.kt");
+        }
+
+        @TestMetadata("simpleConstructorNotRedundantNotOptimizable.kt")
+        public void testSimpleConstructorNotRedundantNotOptimizable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/simpleConstructorNotRedundantNotOptimizable.kt");
         }
     }
 
@@ -3375,6 +3390,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("primitiveToString.kt")
         public void testPrimitiveToString() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/primitiveToString.kt");
+        }
+
+        @TestMetadata("primitiveToStringNotOptimizable.kt")
+        public void testPrimitiveToStringNotOptimizable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/primitiveToStringNotOptimizable.kt");
         }
 
         @TestMetadata("primitivesAsStringTemplates.kt")

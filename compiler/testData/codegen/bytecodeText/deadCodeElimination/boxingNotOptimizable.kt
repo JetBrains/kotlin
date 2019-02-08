@@ -1,18 +1,17 @@
-// IGNORE_BACKEND: JVM_IR
 class A
 
 fun foo(x: Any?) {}
 
-fun box() {
+fun box(u: Int) {
     val x: Int? = 1
     x!!
 
-    val z: Int? = if (1 == 1) x else null
+    val z: Int? = if (u == 1) x else null
     z!!
 
     foo(1 as java.lang.Integer)
-    
-    val y: Any? = if (1 == 1) x else A()
+
+    val y: Any? = if (u == 1) x else A()
     y!!
 }
 

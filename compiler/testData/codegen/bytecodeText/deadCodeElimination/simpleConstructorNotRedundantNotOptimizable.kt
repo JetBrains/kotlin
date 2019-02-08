@@ -1,15 +1,14 @@
-// IGNORE_BACKEND: JVM_IR
 class A
-fun box() {
+fun box(u: Int) {
     val x: A? = A()
     val y: A?
-    if (1 == 0) {
+    if (u == 0) {
         y = x
     }
     else {
         y = null
     }
-    
+
     y!!
 }
 
