@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test(x: String?) {
     if (x !is String) return
 

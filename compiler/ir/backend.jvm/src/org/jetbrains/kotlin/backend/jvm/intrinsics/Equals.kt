@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class Equals(val operator: IElementType) : IntrinsicMethod() {
+class Equals(val operator: IElementType) : IntrinsicMethod(), ComparisonIntrinsic {
 
-    override fun toCallable(
+    private fun argumentTypes(
         expression: IrMemberAccessExpression,
-        signature: JvmMethodSignature,
         context: JvmBackendContext
-    ): IrIntrinsicFunction {
+    ): Pair<Type, Type> {
         val receiverAndArgs = expression.receiverAndArgs().apply {
             assert(size == 2) { "Equals expects 2 arguments, but ${joinToString()}" }
         }
@@ -40,18 +39,34 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
             leftType = boxType(leftType)
             rightType = boxType(rightType)
         }
+        return Pair(leftType, rightType)
+    }
+
+    override fun genStackValue(
+        expression: IrMemberAccessExpression,
+        context: JvmBackendContext
+    ): StackValue {
+        val (leftType, rightType) = argumentTypes(expression, context)
+        val opToken = expression.origin
+        return if (opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ) {
+            // TODO: always casting to the type of the left operand in case of primitives looks wrong
+            val operandType = if (isPrimitive(leftType)) leftType else OBJECT_TYPE
+            StackValue.cmp(operator, operandType, StackValue.onStack(leftType), StackValue.onStack(rightType))
+        } else {
+            genEqualsForExpressionsOnStack(operator, StackValue.onStack(leftType), StackValue.onStack(rightType))
+        }
+    }
+
+    override fun toCallable(
+        expression: IrMemberAccessExpression,
+        signature: JvmMethodSignature,
+        context: JvmBackendContext
+    ): IrIntrinsicFunction {
+        var (leftType, rightType) = argumentTypes(expression, context)
 
         return object : IrIntrinsicFunction(expression, signature, context, listOf(leftType, rightType)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
-                val opToken = expression.origin
-
-                val value = if (opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ) {
-                    // TODO: always casting to the type of the left operand in case of primitives looks wrong
-                    val operandType = if (isPrimitive(leftType)) leftType else OBJECT_TYPE
-                    StackValue.cmp(operator, operandType, StackValue.onStack(leftType), StackValue.onStack(rightType))
-                } else {
-                    genEqualsForExpressionsOnStack(operator, StackValue.onStack(leftType), StackValue.onStack(rightType))
-                }
+                val value = genStackValue(expression, context)
                 value.put(Type.BOOLEAN_TYPE, v)
             }
         }

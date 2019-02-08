@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 val p: Int? = 1;
 val z: Int? = 2;
 

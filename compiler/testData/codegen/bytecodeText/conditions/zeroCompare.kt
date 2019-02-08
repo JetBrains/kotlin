@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 val a = 1
 
 fun main() {
