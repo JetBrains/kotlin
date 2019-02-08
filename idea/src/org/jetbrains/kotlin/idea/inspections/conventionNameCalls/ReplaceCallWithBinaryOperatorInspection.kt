@@ -187,12 +187,14 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     private fun KtDotQualifiedExpression.isFloatingPointNumberEquals(): Boolean {
         val resolvedCall = resolveToCall() ?: return false
         val context = analyze(BodyResolveMode.PARTIAL)
+        val declarationDescriptor = containingDeclarationForPseudocode?.resolveToDescriptorIfAny()
         val dataFlowValueFactory = getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
+        val defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, stableTypes -> stableTypes.firstOrNull() ?: givenType }
         val receiverType = resolvedCall.getReceiverExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
-            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
+            context, declarationDescriptor, languageVersionSettings, dataFlowValueFactory, defaultType
         ) ?: return false
         val argumentType = resolvedCall.getFirstArgumentExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
-            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
+            context, declarationDescriptor, languageVersionSettings, dataFlowValueFactory, defaultType
         ) ?: return false
         return receiverType.isFpType() && argumentType.isNumericType() ||
                 argumentType.isFpType() && receiverType.isNumericType()
