@@ -42,12 +42,14 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot;
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.script.ReflectionUtilKt;
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar;
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationExtensionKt;
 
 import java.io.File;
@@ -165,6 +167,9 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             CompilerConfiguration configuration = new CompilerConfiguration();
 
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
+
+            configuration.add(ComponentRegistrar.Companion.getPLUGIN_COMPONENT_REGISTRARS(),
+                              new ScriptingCompilerConfigurationComponentRegistrar());
 
             List<File> deps = new ArrayList<>();
 
