@@ -25,7 +25,7 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 abstract class ScriptDependenciesLoader(protected val project: Project) {
 
     fun updateDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition) {
-        if (cache[file] == null || fileModificationStamps[file.path] != file.modificationStamp) {
+        if (fileModificationStamps[file.path] != file.modificationStamp) {
             fileModificationStamps.put(file.path, file.modificationStamp)
 
             loadDependencies(file, scriptDef)
