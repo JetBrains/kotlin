@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -50,20 +51,16 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     data class CompilerResults(val resultCode: Int, val out: String)
 
-    val compilerClassPath = listOf(
-        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")
-    )
-    val scriptingCompilerClassPath = listOf(
-        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-scripting-compiler.jar"),
-        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-scripting-common.jar"),
-        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-scripting-jvm.jar")
-    )
+    val compilerClassPath = getKotlinPaths().classPath(KotlinPaths.ClassPaths.Compiler)
+
+    val compilerWithScriptingClassPath = getKotlinPaths().classPath(KotlinPaths.ClassPaths.CompilerWithScripting)
+
     val daemonClientClassPath = listOf( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client.jar"),
                                         File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"))
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
     val compilerWithScriptingId by lazy(LazyThreadSafetyMode.NONE) {
-        CompilerId.makeCompilerId(compilerClassPath + scriptingCompilerClassPath)
+        CompilerId.makeCompilerId(compilerWithScriptingClassPath)
     }
 
     private fun compileOnDaemon(clientAliveFile: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, vararg args: String): CompilerResults {
