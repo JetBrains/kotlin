@@ -66,6 +66,7 @@ configurations {
     coroutinesExperimentalMigrationTestCompile.extendsFrom(coroutinesExperimentalTestCompile)
     longRunningTestCompile.extendsFrom(testCompile)
     builtins
+    compileOnly.extendsFrom(builtins)
 }
 
 dependencies {
@@ -161,8 +162,6 @@ task dexMethodCount(type: DexMethodCount) {
 check.dependsOn(dexMethodCount)
 
 compileKotlin {
-    dependsOn(configurations.builtins)
-    classpath += configurations.builtins
     kotlinOptions {
         freeCompilerArgs = [
                 "-version",
