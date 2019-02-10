@@ -44,7 +44,7 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         val containingClass = element.containingClassOrObject as? KtClass ?: return false
         if (containingClass.isAnnotation() || containingClass.isData()
             || containingClass.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }) return false
-        return element.valueParameters.all { !it.hasValOrVar() || it.annotationEntries.isEmpty() }
+        return element.valueParameters.all { !it.hasValOrVar() || (it.name != null && it.annotationEntries.isEmpty()) }
     }
 
     private fun KtReferenceExpression.isIndependent(classDescriptor: ClassDescriptor, context: BindingContext): Boolean {

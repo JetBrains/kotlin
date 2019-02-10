@@ -6229,6 +6229,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/noArgName.kt");
         }
 
+        @TestMetadata("noArgNameVal.kt")
+        public void testNoArgNameVal() throws Exception {
+            runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/noArgNameVal.kt");
+        }
+
         @TestMetadata("noArgType.kt")
         public void testNoArgType() throws Exception {
             runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/noArgType.kt");
