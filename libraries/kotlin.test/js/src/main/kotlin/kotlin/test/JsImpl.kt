@@ -28,7 +28,6 @@ actual fun todo(block: () -> Unit) {
  */
 actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
     val exception = assertFails(message, block)
-    @Suppress("INVISIBLE_MEMBER")
     assertTrue(exceptionClass.isInstance(exception), messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was $exception")
 
     @Suppress("UNCHECKED_CAST")
