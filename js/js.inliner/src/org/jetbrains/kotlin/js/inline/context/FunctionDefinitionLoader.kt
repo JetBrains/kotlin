@@ -70,7 +70,7 @@ class FunctionDefinitionLoader(
      */
     private fun getFunctionDefinitionImpl(call: JsInvocation, scope: InliningScope): InlineFunctionDefinition? {
         // Ensure we have the local function information
-        loadFragment(scope.fragment)
+        assert(scope.fragment in fragmentInfo)
 
         return lookUpFunctionDirect(call, scope) ?: lookUpFunctionIndirect(call, scope) ?: lookUpFunctionExternal(call, scope.fragment)
     }
@@ -80,9 +80,22 @@ class FunctionDefinitionLoader(
     private data class FragmentInfo(
         val functions: Map<JsName, FunctionWithWrapper>,
         val accessors: Map<String, FunctionWithWrapper>,
-        val localAccessors: Map<CallableDescriptor, FunctionWithWrapper>)
+        val localAccessors: Map<CallableDescriptor, FunctionWithWrapper>
+    )
 
-    private val fragmentInfo = mutableMapOf<JsProgramFragment, FragmentInfo>()
+    private fun JsProgramFragment.loadInfo(): FragmentInfo {
+        return FragmentInfo(
+            collectNamedFunctionsAndWrappers(listOf(this)),
+            collectAccessors(listOf(this)),
+            collectLocalFunctions(listOf(this))
+        ).also { (functions, accessors) ->
+            (functions.values.asSequence() + accessors.values.asSequence()).forEach { f ->
+                functionsByFunctionNodes[f.function] = f
+            }
+        }
+    }
+
+    private val fragmentInfo = inliner.translationResult.newFragments.associateTo(mutableMapOf()) { it to it.loadInfo() }
 
     private fun lookUpStaticFunction(functionName: JsName?, fragment: JsProgramFragment): FunctionWithWrapper? =
         fragmentInfo[fragment]?.run { functions[functionName] }
@@ -134,23 +147,13 @@ class FunctionDefinitionLoader(
         }
     }
 
-    private fun loadFragment(fragment: JsProgramFragment) {
-        fragmentInfo.computeIfAbsent(fragment) {
-            FragmentInfo(
-                collectNamedFunctionsAndWrappers(listOf(fragment)),
-                collectAccessors(listOf(fragment)),
-                collectLocalFunctions(listOf(fragment))
-            ).also { (functions, accessors) ->
-                (functions.values.asSequence() + accessors.values.asSequence()).forEach { f ->
-                    functionsByFunctionNodes[f.function] = f
-                }
-            }
-        }
-    }
-
     private fun fragmentByTag(tag: String): JsProgramFragment? {
         return inliner.translationResult.inlineFunctionTagMap[tag]?.let { unit ->
-            inliner.translationResult.getTranslationResult(unit).fragment.also { loadFragment(it) }
+            inliner.translationResult.getTranslationResult(unit).fragment.also { fragment ->
+                fragmentInfo.computeIfAbsent(fragment) {
+                    fragment.loadInfo()
+                }
+            }
         }
     }
 
