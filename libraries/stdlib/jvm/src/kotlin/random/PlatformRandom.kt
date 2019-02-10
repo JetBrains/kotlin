@@ -75,7 +75,13 @@ private class KotlinRandom(val impl: Random) : java.util.Random() {
         impl.nextBytes(bytes)
     }
 
+    private var seedInitialized: Boolean = false
     override fun setSeed(seed: Long) {
-        throw UnsupportedOperationException("Setting seed is not supported.")
+        if (!seedInitialized) {
+            // ignore seed value from constructor
+            seedInitialized = true
+        } else {
+            throw UnsupportedOperationException("Setting seed is not supported.")
+        }
     }
 }
