@@ -62,7 +62,7 @@ tasks.withType<KotlinCompile> {
 
 val jar = runtimeJar {
     dependsOn(builtins)
-    from(provider { zipTree(builtins.asPath) }) { include("kotlin/**") }
+    from(provider { zipTree(builtins.singleFile) }) { include("kotlin/**") }
 }
 
 val distDir: String by rootProject.extra

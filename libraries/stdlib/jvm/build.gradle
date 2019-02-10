@@ -88,7 +88,7 @@ jar {
     dependsOn(configurations.builtins)
     manifestAttributes(manifest, project, 'Main' /*true*/)
     from {
-        zipTree(configurations.builtins.asPath)
+        zipTree(configurations.builtins.singleFile)
     }
     from sourceSets.experimental.output
     from sourceSets.coroutinesExperimental.output
