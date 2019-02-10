@@ -58,8 +58,22 @@ fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module:
         }
     }, FqName.ROOT)
 
+    fun collectExternalClasses(container: IrDeclarationContainer, includeCurrentLevel: Boolean): List<IrClass> {
+        val externalClasses =
+            container.declarations.filterIsInstance<IrClass>().filter { it.isEffectivelyExternal() }
+
+        val nestedExternalClasses =
+            externalClasses.flatMap { collectExternalClasses(it, true) }
+
+        return if (includeCurrentLevel)
+            externalClasses + nestedExternalClasses
+        else
+            nestedExternalClasses
+    }
 
     fun lowerFile(irFile: IrFile): IrFile? {
+        context.externalNestedClasses += collectExternalClasses(irFile, includeCurrentLevel = false)
+
         if (irFile.getJsModule() != null || irFile.getJsQualifier() != null) {
             context.packageLevelJsModules.add(irFile)
             return null

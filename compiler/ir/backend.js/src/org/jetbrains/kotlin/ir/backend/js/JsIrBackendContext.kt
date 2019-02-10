@@ -57,6 +57,7 @@ class JsIrBackendContext(
     val phaseConfig = PhaseConfig(jsPhases, configuration)
     override var inVerbosePhase: Boolean = false
 
+    val externalNestedClasses = mutableListOf<IrClass>()
     val packageLevelJsModules = mutableListOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclaration>()
 

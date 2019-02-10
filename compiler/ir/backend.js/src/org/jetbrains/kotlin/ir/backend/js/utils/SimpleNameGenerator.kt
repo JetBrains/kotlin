@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.isDynamic
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInlined
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
@@ -107,12 +108,19 @@ class SimpleNameGenerator : NameGenerator {
 
             if (declaration.isEffectivelyExternal()) {
                 // TODO: descriptors are still used here due to the corresponding declaration doesn't have enough information yet
-                val descriptorForName = when (descriptor) {
+                val descriptorName = when (descriptor) {
                     is ConstructorDescriptor -> descriptor.constructedClass
                     is PropertyAccessorDescriptor -> descriptor.correspondingProperty
                     else -> descriptor
+                }.name
+
+                if (declaration is IrConstructor) return@getOrPut getNameForDeclaration(declaration.parentAsClass, context)
+
+                if (declaration is IrClass && declaration.parent is IrClass) {
+                    val parentName = getNameForDeclaration(declaration.parentAsClass, context).ident
+                    return@getOrPut context.currentScope.declareFreshName(parentName + "$" + descriptorName.identifier)
                 }
-                return@getOrPut context.staticContext.rootScope.declareName(descriptorForName.name.asString())
+                return@getOrPut context.staticContext.rootScope.declareName(descriptorName.identifier)
             }
 
             when (declaration) {
@@ -224,11 +232,11 @@ class SimpleNameGenerator : NameGenerator {
 
             nameDeclarator(sanitizeName(nameBuilder.toString()))
         }
+}
 
-    private fun sanitizeName(name: String): String {
-        if (name.isEmpty()) return "_"
+fun sanitizeName(name: String): String {
+    if (name.isEmpty()) return "_"
 
-        val first = name.first().let { if (it.isES5IdentifierStart()) it else '_' }
-        return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
-    }
+    val first = name.first().let { if (it.isES5IdentifierStart()) it else '_' }
+    return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
 }

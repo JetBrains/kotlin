@@ -9,14 +9,12 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ModuleType
-import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.utils.DFS
@@ -106,7 +104,7 @@ class IrModuleToJsTransformer(private val backendContext: JsIrBackendContext) : 
             val qualifiedReference: JsNameRef
 
             if (jsModule != null) {
-                val internalName = rootFunction.scope.declareFreshName("moduleImport")
+                val internalName = rootFunction.scope.declareFreshName(sanitizeName("\$module\$$jsModule"))
                 packageLevelJsModules += JsImportedModule(jsModule, internalName, null)
 
                 qualifiedReference =
@@ -129,6 +127,19 @@ class IrModuleToJsTransformer(private val backendContext: JsIrBackendContext) : 
                     )
                 )
             }
+        }
+
+        for (externalClass in backendContext.externalNestedClasses) {
+            val declName = rootContext.getNameForDeclaration(externalClass)
+            val parentName = rootContext.getNameForDeclaration(externalClass.parentAsClass)
+            importStatements.add(
+                JsExpressionStatement(
+                    jsAssignment(
+                        declName.makeRef(),
+                        JsNameRef(externalClass.name.identifier, parentName.makeRef())
+                    )
+                )
+            )
         }
 
         val importedJsModules = declarationLevelJsModules + packageLevelJsModules
