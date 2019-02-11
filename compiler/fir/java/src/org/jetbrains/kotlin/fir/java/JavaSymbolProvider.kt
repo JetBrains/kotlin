@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -89,8 +90,9 @@ class JavaSymbolProvider(
     private fun JavaClassifierType.toFirResolvedTypeRef(): FirResolvedTypeRef {
         val coneType = when (val classifier = classifier) {
             is JavaClass -> {
-                val symbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(classifier.classId!!) as ConeClassSymbol
-                ConeClassTypeImpl(symbol, typeArguments = typeArguments.map { it.toConeProjection() }.toTypedArray())
+                val symbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(classifier.classId!!) as? ConeClassSymbol
+                if (symbol == null) ConeKotlinErrorType("Symbol not found, for `${classifier.classId}`")
+                else ConeClassTypeImpl(symbol, typeArguments = typeArguments.map { it.toConeProjection() }.toTypedArray())
             }
             is JavaTypeParameter -> {
                 // TODO: it's unclear how to identify type parameter by the symbol
