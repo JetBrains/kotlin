@@ -8,22 +8,19 @@
         </element>
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/build/build.txt" />
-      <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.30-dev-991/9dc4c83f65c61d889af5ed975ba8b3516a9de9f2/kotlin-stdlib-jdk7-1.3.30-dev-991.jar" output-file-name="kotlin-stdlib-jre7.jar" />
-      <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.30-dev-991/137093e5befda5c9d8a160def055fdf30df68182/kotlin-stdlib-jdk8-1.3.30-dev-991.jar" output-file-name="kotlin-stdlib-jre8.jar" />
-      <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-minimal-for-test/1.3.30-dev-991/8fbdd194af0f4e2aa27d73ed9bce42e82dbe030c/kotlin-stdlib-minimal-for-test-1.3.30-dev-991.jar" output-file-name="kotlin-stdlib-minimal-for-test.jar" />
-      <element id="directory" name="builtins">
-        <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.30-dev-991/c8630b665b3c96953b76821ff2e8ec4a5e2799ce/builtins-1.3.30-dev-991.jar" path-in-jar="/" />
-      </element>
+      <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.30-dev-1419/72c0c2470715b0aa18d5624c4fa9db0345b6c09f/kotlin-stdlib-jdk7-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-jre7.jar" />
+      <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.30-dev-1419/285fde038cb28087a51aee95919d428a2511b443/kotlin-stdlib-jdk8-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-jre8.jar" />
+      <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-minimal-for-test/1.3.30-dev-1419/3fc425e5a7e1979aad08d0f420f07c19c9c36d63/kotlin-stdlib-minimal-for-test-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-minimal-for-test.jar" />
       <element id="directory" name="common">
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.30-dev-991/7660e3248eabad8310c9017d990d57958606a61a/kotlin-stdlib-common-1.3.30-dev-991.jar" output-file-name="kotlin-stdlib-common.jar" />
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.30-dev-991/b8f1c97b2a749987e529de4b2ca2acd826929b36/kotlin-stdlib-common-1.3.30-dev-991-sources.jar" output-file-name="kotlin-stdlib-common-sources.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.30-dev-1419/1edc4fbedf02e815e3d277c47640c9c79b5df72e/kotlin-stdlib-common-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-common.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.30-dev-1419/f83bc827e5ac23a35f2700edd716971ae9e50100/kotlin-stdlib-common-1.3.30-dev-1419-sources.jar" output-file-name="kotlin-stdlib-common-sources.jar" />
       </element>
       <element id="directory" name="js">
-        <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.3.30-dev-991/c96e12be5542240f2b079544f57372d4ed9aa317/kotlin-stdlib-js-1.3.30-dev-991.jar" path-in-jar="/kotlin.js" />
-        <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.3.30-dev-991/c96e12be5542240f2b079544f57372d4ed9aa317/kotlin-stdlib-js-1.3.30-dev-991.jar" path-in-jar="/kotlin.js.map" />
+        <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.3.30-dev-1419/4dd9f2176adacefa49984a277b71d7a1645ceda2/kotlin-stdlib-js-1.3.30-dev-1419.jar" path-in-jar="/kotlin.js" />
+        <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.3.30-dev-1419/4dd9f2176adacefa49984a277b71d7a1645ceda2/kotlin-stdlib-js-1.3.30-dev-1419.jar" path-in-jar="/kotlin.js.map" />
       </element>
       <element id="directory" name="maven">
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.30-dev-991/75391b41ff26008400a1ae43b4f8ccc63243ab13/kotlin-stdlib-1.3.30-dev-991-sources.jar" output-file-name="kotlin-stdlib-sources.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.30-dev-1419/561605d51586e253a15097d3f1d386fb6758fdd4/kotlin-stdlib-1.3.30-dev-1419-sources.jar" output-file-name="kotlin-stdlib-sources.jar" />
       </element>
       <element id="directory" name="kotlinc">
         <element id="artifact" artifact-name="kotlinc" />

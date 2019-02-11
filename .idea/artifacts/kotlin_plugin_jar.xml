@@ -2,16 +2,15 @@
   <artifact type="jar" name="kotlin-plugin.jar">
     <output-path>$PROJECT_DIR$/out/artifacts/kotlin_plugin_jar</output-path>
     <root id="archive" name="kotlin-plugin.jar">
-      <element id="directory" name="kotlin">
-        <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.30-dev-991/c8630b665b3c96953b76821ff2e8ec4a5e2799ce/builtins-1.3.30-dev-991.jar" path-in-jar="/kotlin" />
-      </element>
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/prepare/idea-plugin/build/tmp/shadowJar/MANIFEST.MF" />
       </element>
-      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/protobuf-relocated/2.6.1/512c19ed7e6f9b5ae47f7ee8d5b0e68a983e357b/protobuf-relocated-2.6.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.30-dev-1419/d204f62db9ed29f42e939e0e62c4ee933863e05b/builtins-1.3.30-dev-1419.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/protobuf-relocated/2.6.1/9a9536949348fae596f4878243dffd0ed351993d/protobuf-relocated-2.6.1.jar" path-in-jar="/" />
       <element id="module-output" name="org.jetbrains.kotlin.annotation-based-compiler-plugins-ide-support.main" />
       <element id="module-output" name="org.jetbrains.kotlin.backend-common.main" />
       <element id="module-output" name="org.jetbrains.kotlin.backend.main" />
+      <element id="module-output" name="org.jetbrains.kotlin.backend.jvm.main" />
       <element id="module-output" name="org.jetbrains.kotlin.cli-common.main" />
       <element id="module-output" name="org.jetbrains.kotlin.container.main" />
       <element id="module-output" name="org.jetbrains.kotlin.daemon-common.main" />

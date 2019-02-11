@@ -2,16 +2,13 @@
   <artifact type="jar" name="kotlin-compiler.jar">
     <output-path>$PROJECT_DIR$/out/artifacts/kotlin_compiler_jar</output-path>
     <root id="archive" name="kotlin-compiler.jar">
-      <element id="directory" name="kotlin">
-        <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.30-dev-991/c8630b665b3c96953b76821ff2e8ec4a5e2799ce/builtins-1.3.30-dev-991.jar" path-in-jar="/" />
-      </element>
       <element id="directory" name="META-INF">
         <element id="directory" name="extensions">
           <element id="file-copy" path="$PROJECT_DIR$/idea/resources/META-INF/extensions/compiler.xml" />
         </element>
         <element id="file-copy" path="$PROJECT_DIR$/prepare/compiler/build/tmp/packCompiler/MANIFEST.MF" />
       </element>
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/annotations.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.30-dev-1419/d204f62db9ed29f42e939e0e62c4ee933863e05b/builtins-1.3.30-dev-1419.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/asm-all-7.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/guava-25.1-jre.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij-core/intellij-core.jar" path-in-jar="/" />
@@ -31,9 +28,8 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/lz4-1.3.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/oro-2.0.8.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/picocontainer-1.2.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/protobuf-relocated/2.6.1/512c19ed7e6f9b5ae47f7ee8d5b0e68a983e357b/protobuf-relocated-2.6.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/protobuf-relocated/2.6.1/9a9536949348fae596f4878243dffd0ed351993d/protobuf-relocated-2.6.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/streamex-0.6.7.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/trove4j.jar" path-in-jar="/" />
       <element id="module-output" name="org.jetbrains.kotlin.backend-common.main" />
       <element id="module-output" name="org.jetbrains.kotlin.backend.js.main" />
       <element id="module-output" name="org.jetbrains.kotlin.backend.jvm.main" />
