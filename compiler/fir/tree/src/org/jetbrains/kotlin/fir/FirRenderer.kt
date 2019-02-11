@@ -583,7 +583,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitTypeWithNullability(typeWithNullability: FirTypeWithNullability) {
-        if (typeWithNullability.isNullable) {
+        if (typeWithNullability.isMarkedNullable) {
             print("?")
         }
     }

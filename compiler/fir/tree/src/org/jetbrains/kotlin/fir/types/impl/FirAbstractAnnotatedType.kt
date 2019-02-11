@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 abstract class FirAbstractAnnotatedType(
     final override val session: FirSession,
     final override val psi: PsiElement?,
-    final override val isNullable: Boolean
+    final override val isMarkedNullable: Boolean
 ) : FirTypeWithNullability {
     override val annotations = mutableListOf<FirAnnotationCall>()
 

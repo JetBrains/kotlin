@@ -142,7 +142,7 @@ fun FirType.withReplacedConeType(newType: ConeKotlinType?): FirResolvedType {
 
     return FirResolvedTypeImpl(
         session, psi, newType,
-        isNullable,
+        isMarkedNullable,
         annotations
     )
 

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 class FirResolvedFunctionTypeImpl(
     override val psi: PsiElement?,
     override val session: FirSession,
-    override val isNullable: Boolean,
+    override val isMarkedNullable: Boolean,
     override val annotations: MutableList<FirAnnotationCall>,
     override var receiverType: FirType?,
     override val valueParameters: MutableList<FirValueParameter>,

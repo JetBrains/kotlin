@@ -15,6 +15,6 @@ class FirResolvedTypeImpl(
     override val session: FirSession,
     override val psi: PsiElement?,
     override val type: ConeKotlinType,
-    override val isNullable: Boolean,
+    override val isMarkedNullable: Boolean,
     override val annotations: List<FirAnnotationCall>
 ) : FirResolvedType

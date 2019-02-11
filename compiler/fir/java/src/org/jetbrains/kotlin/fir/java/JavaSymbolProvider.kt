@@ -53,7 +53,7 @@ class JavaSymbolProvider(
                 session = session,
                 psi = null,
                 type = ConeClassTypeImpl(FirClassSymbol(classId!!), emptyArray()),
-                isNullable = true,
+                isMarkedNullable = true,
                 annotations = emptyList()
             )
         ).apply {
@@ -102,7 +102,7 @@ class JavaSymbolProvider(
         }
         return FirResolvedTypeImpl(
             session, psi = null, type = coneType,
-            isNullable = false, annotations = annotations.map { it.toFirAnnotationCall() }
+            isMarkedNullable = false, annotations = annotations.map { it.toFirAnnotationCall() }
         )
     }
 
@@ -110,7 +110,7 @@ class JavaSymbolProvider(
         if (this is JavaClassifierType) return toFirResolvedType()
         return FirResolvedTypeImpl(
             session, psi = null, type = ConeClassErrorType("Unexpected JavaType: $this"),
-            isNullable = false, annotations = emptyList()
+            isMarkedNullable = false, annotations = emptyList()
         )
     }
 

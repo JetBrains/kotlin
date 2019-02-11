@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirTypeWithNullability : FirType {
-    val isNullable: Boolean
+    val isMarkedNullable: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitTypeWithNullability(this, data)
