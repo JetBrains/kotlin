@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.LibraryTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.Variance
+import java.lang.RuntimeException
 import java.util.*
 
 class FirTypeDeserializer(
@@ -30,8 +33,12 @@ class FirTypeDeserializer(
 ) {
 
     private fun computeClassifier(fqNameIndex: Int): ConeSymbol? {
-        val id = nameResolver.getClassId(fqNameIndex)
-        return symbolProvider.getClassLikeSymbolByFqName(id)
+        try {
+            val id = nameResolver.getClassId(fqNameIndex)
+            return symbolProvider.getClassLikeSymbolByFqName(id)
+        } catch (e: Throwable) {
+            throw RuntimeException("Looking up for ${nameResolver.getClassId(fqNameIndex)}", e)
+        }
     }
 
     fun type(proto: ProtoBuf.Type): ConeKotlinType {
@@ -64,6 +71,14 @@ class FirTypeDeserializer(
         get() = typeParameterDescriptors.values.toList()
 
 
+    fun ConeClassLikeSymbol.typeParameters(): List<ConeTypeParameterSymbol> = when (this) {
+        is FirTypeAliasSymbol -> fir.typeParameters
+        is FirClassSymbol -> fir.typeParameters
+        else -> error("?!id:2")
+    }.map {
+        it.symbol
+    }
+
     fun classLikeType(proto: ProtoBuf.Type): ConeClassLikeType? {
 
         val constructor = typeSymbol(proto) as? ConeClassLikeSymbol ?: return null
@@ -75,7 +90,7 @@ class FirTypeDeserializer(
             argumentList + outerType(typeTable)?.collectAllArguments().orEmpty()
 
         val arguments = proto.collectAllArguments().mapIndexed { index, proto ->
-            typeArgument(constructor.typeParameters.getOrNull(index), proto)
+            typeArgument(constructor.typeParameters().getOrNull(index), proto)
         }.toTypedArray()
 
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {

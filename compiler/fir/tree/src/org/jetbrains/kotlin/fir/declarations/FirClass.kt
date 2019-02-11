@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirClass : FirDeclarationContainer, FirStatement, FirAnnotationContainer {
@@ -29,3 +31,5 @@ interface FirClass : FirDeclarationContainer, FirStatement, FirAnnotationContain
         }
     }
 }
+
+val FirClass.superConeTypes get() = superTypes.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
