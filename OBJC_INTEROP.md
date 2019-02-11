@@ -239,9 +239,6 @@ val nsNumber = 42 as NSNumber
 
 Kotlin classes and interfaces can be subclassed by Swift/Objective-C classes
 and protocols.
-Currently a class that adopts the Kotlin protocol should inherit `NSObject`
-(either directly or indirectly). Note that all Kotlin classes do inherit `NSObject`,
-so a Swift/Objective-C subclass of Kotlin class can adopt the Kotlin protocol.
 
 ### Subclassing Swift/Objective-C classes and protocols from Kotlin
 

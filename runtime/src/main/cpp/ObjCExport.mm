@@ -135,6 +135,8 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
 @interface KotlinBase : NSObject <ConvertibleToKotlin, NSCopying>
 @end;
 
+static void initializeObjCExport();
+
 @implementation KotlinBase {
   KRefSharedHolder refHolder;
 }
@@ -144,6 +146,9 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
 }
 
 +(void)initialize {
+  if (self == [KotlinBase class]) {
+    initializeObjCExport();
+  }
   initializeClass(self);
 }
 
@@ -376,15 +381,21 @@ static ALWAYS_INLINE OBJ_GETTER(convertUnmappedObjCObject, id obj) {
 static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd);
 static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd);
 
+static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd);
+static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd);
+
 static void checkLoadedOnce();
 
 static void initializeObjCExport() {
-  checkLoadedOnce();
-
   SEL toKotlinSelector = @selector(toKotlin:);
   Method toKotlinMethod = class_getClassMethod([NSObject class], toKotlinSelector);
   RuntimeAssert(toKotlinMethod != nullptr, "");
   const char* toKotlinTypeEncoding = method_getTypeEncoding(toKotlinMethod);
+
+  SEL releaseAsAssociatedObjectSelector = @selector(releaseAsAssociatedObject);
+  Method releaseAsAssociatedObjectMethod = class_getClassMethod([NSObject class], releaseAsAssociatedObjectSelector);
+  RuntimeAssert(releaseAsAssociatedObjectMethod != nullptr, "");
+  const char* releaseAsAssociatedObjectTypeEncoding = method_getTypeEncoding(releaseAsAssociatedObjectMethod);
 
   Class nsBlockClass = objc_getClass("NSBlock");
   RuntimeAssert(nsBlockClass != nullptr, "NSBlock class not found");
@@ -399,6 +410,20 @@ static void initializeObjCExport() {
 
   added = class_addMethod(booleanClass, toKotlinSelector, (IMP)boxedBooleanToKotlinImp, toKotlinTypeEncoding);
   RuntimeAssert(added, "Unable to add 'toKotlin:' method to __NSCFBoolean class");
+
+  for (const char* swiftRootClassName : { "SwiftObject", "_TtCs12_SwiftObject" }) {
+    Class swiftRootClass = objc_getClass(swiftRootClassName);
+    if (swiftRootClass != nullptr) {
+      added = class_addMethod(swiftRootClass, toKotlinSelector, (IMP)SwiftObject_toKotlinImp, toKotlinTypeEncoding);
+      RuntimeAssert(added, "Unable to add 'toKotlin:' method to SwiftObject class");
+
+      added = class_addMethod(
+        swiftRootClass, releaseAsAssociatedObjectSelector,
+        (IMP)SwiftObject_releaseAsAssociatedObjectImp, releaseAsAssociatedObjectTypeEncoding
+      );
+      RuntimeAssert(added, "Unable to add 'releaseAsAssociatedObject' method to SwiftObject class");
+    }
+  }
 }
 
 @interface NSObject (NSObjectToKotlin) <ConvertibleToKotlin>
@@ -416,10 +441,18 @@ static void initializeObjCExport() {
 +(void)load {
   static dispatch_once_t onceToken = 0;
   dispatch_once(&onceToken, ^{
-    initializeObjCExport();
+    checkLoadedOnce();
   });
 }
 @end;
+
+static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd) {
+  RETURN_RESULT_OF(convertUnmappedObjCObject, self);
+}
+
+static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd) {
+  objc_release(self);
+}
 
 @interface NSString (NSStringToKotlin) <ConvertibleToKotlin>
 @end;

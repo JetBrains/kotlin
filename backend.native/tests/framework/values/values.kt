@@ -145,6 +145,8 @@ interface I {
     fun iFun(): String = "I::iFun"
 }
 
+fun I.iFunExt() = iFun()
+
 private interface PI {
     fun piFun(): Any
     fun iFun(): String = "PI::iFun"
@@ -262,3 +264,5 @@ class Bridge : BridgeBase() {
     override fun foo3() = throw MyException()
     override fun foo4() = throw MyException()
 }
+
+fun Any.same() = this

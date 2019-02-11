@@ -470,6 +470,26 @@ func testShared() throws {
     try assertNotFrozen(FinalClassExtOpen())
 }
 
+class PureSwiftClass {
+}
+
+struct PureSwiftStruct {
+    var x: Int
+}
+class PureSwiftKotlinInterfaceImpl : I {
+    func iFun() -> String {
+        return "pure"
+    }
+}
+
+func testPureSwiftClasses() throws {
+    let pureSwiftClass = PureSwiftClass()
+    try assertTrue(ValuesKt.same(pureSwiftClass) as? AnyObject === pureSwiftClass)
+
+    try assertEquals(actual: 123, expected: (ValuesKt.same(PureSwiftStruct(x: 123)) as? PureSwiftStruct)?.x)
+    try assertEquals(actual: "pure", expected: ValuesKt.iFunExt(PureSwiftKotlinInterfaceImpl()))
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : TestProvider {
@@ -505,6 +525,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestCompanionObj", method: withAutorelease(testCompanionObj)),
             TestCase(name: "TestInlineClasses", method: withAutorelease(testInlineClasses)),
             TestCase(name: "TestShared", method: withAutorelease(testShared)),
+            TestCase(name: "TestPureSwiftClasses", method: withAutorelease(testPureSwiftClasses)),
         ]
     }
 }
