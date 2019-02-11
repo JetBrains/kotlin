@@ -42,6 +42,7 @@ import javax.swing.JComponent
 
 class KotlinAwareMoveFilesOrDirectoriesDialog(
         private val project: Project,
+        private val initialDirectory: PsiDirectory?,
         private val callback: (KotlinAwareMoveFilesOrDirectoriesDialog?) -> Unit
 ) : DialogWrapper(project, true) {
     companion object {
@@ -163,7 +164,12 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
         project.executeCommand(RefactoringBundle.message("move.title"), null) {
             runWriteAction {
-                val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/')
+                val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/').let {
+                    when {
+                        it.startsWith(".") -> (initialDirectory?.virtualFile?.path ?: "") + "/" + it
+                        else -> it
+                    }
+                }
                 try {
                     targetDirectory = DirectoryUtil.mkdirs(PsiManager.getInstance(project), directoryName)
                 }

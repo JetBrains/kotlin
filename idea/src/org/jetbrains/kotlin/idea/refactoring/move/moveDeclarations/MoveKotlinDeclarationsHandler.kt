@@ -113,7 +113,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                 else -> null
             }
             val initialTargetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, initialTargetElement)
-            val dialog = KotlinAwareMoveFilesOrDirectoriesDialog(project) {
+            val dialog = KotlinAwareMoveFilesOrDirectoriesDialog(project, initialTargetDirectory) {
                 invokeMoveFilesOrDirectoriesRefactoring(it, project, elements, initialTargetDirectory, callback)
             }
             dialog.setData(elements, initialTargetDirectory, "refactoring.moveFile")
