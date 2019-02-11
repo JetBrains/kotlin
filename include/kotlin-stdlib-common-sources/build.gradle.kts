@@ -9,5 +9,7 @@ dependencies {
 }
 
 artifacts {
-    add("runtime", provider { sources.singleFile })
+    add("runtime", provider { sources.singleFile }) {
+        classifier = "sources"
+    }
 }
