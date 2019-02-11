@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.fir.FirLabeledElement
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirAnonymousFunction : @VisitedSupertype FirFunction, FirExpression, FirTypedDeclaration, FirLabeledElement {
-    val receiverType: FirType?
+    val receiverTypeRef: FirTypeRef?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnonymousFunction(this, data)
@@ -20,7 +20,7 @@ interface FirAnonymousFunction : @VisitedSupertype FirFunction, FirExpression, F
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         super<FirTypedDeclaration>.acceptChildren(visitor, data)
         super<FirLabeledElement>.acceptChildren(visitor, data)
-        receiverType?.accept(visitor, data)
+        receiverTypeRef?.accept(visitor, data)
         for (parameter in valueParameters) {
             parameter.accept(visitor, data)
         }

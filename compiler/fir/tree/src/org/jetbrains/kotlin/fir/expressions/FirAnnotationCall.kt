@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.BaseTransformedType
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
 interface FirAnnotationCall : FirCall {
-    val annotationType: FirType
+    val annotationTypeRef: FirTypeRef
 
     // May be should be not-null (with correct default target)
     val useSiteTarget: AnnotationUseSiteTarget?
@@ -21,7 +21,7 @@ interface FirAnnotationCall : FirCall {
         visitor.visitAnnotationCall(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotationType.accept(visitor, data)
+        annotationTypeRef.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }
 }

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirErrorType : FirType {
-    val reason: String
+interface FirTypeRefWithNullability : FirTypeRef {
+    val isMarkedNullable: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitErrorType(this, data)
+        visitor.visitTypeRefWithNullability(this, data)
 }

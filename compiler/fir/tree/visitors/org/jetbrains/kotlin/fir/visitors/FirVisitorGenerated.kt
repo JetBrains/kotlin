@@ -300,46 +300,6 @@ abstract class FirVisitor<out R, in D> {
         return visitTargetElement(labeledElement, data)
     }
 
-    open fun visitType(type: FirType, data: D): R {
-        return visitElement(type, data)
-    }
-
-    open fun visitDelegatedType(delegatedType: FirDelegatedType, data: D): R {
-        return visitType(delegatedType, data)
-    }
-
-    open fun visitErrorType(errorType: FirErrorType, data: D): R {
-        return visitType(errorType, data)
-    }
-
-    open fun visitImplicitType(implicitType: FirImplicitType, data: D): R {
-        return visitType(implicitType, data)
-    }
-
-    open fun visitTypeWithNullability(typeWithNullability: FirTypeWithNullability, data: D): R {
-        return visitType(typeWithNullability, data)
-    }
-
-    open fun visitDynamicType(dynamicType: FirDynamicType, data: D): R {
-        return visitTypeWithNullability(dynamicType, data)
-    }
-
-    open fun visitFunctionType(functionType: FirFunctionType, data: D): R {
-        return visitTypeWithNullability(functionType, data)
-    }
-
-    open fun visitResolvedType(resolvedType: FirResolvedType, data: D): R {
-        return visitTypeWithNullability(resolvedType, data)
-    }
-
-    open fun visitResolvedFunctionType(resolvedFunctionType: FirResolvedFunctionType, data: D): R {
-        return visitResolvedType(resolvedFunctionType, data)
-    }
-
-    open fun visitUserType(userType: FirUserType, data: D): R {
-        return visitTypeWithNullability(userType, data)
-    }
-
     open fun visitTypeProjection(typeProjection: FirTypeProjection, data: D): R {
         return visitElement(typeProjection, data)
     }
@@ -350,6 +310,46 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): R {
         return visitTypeProjection(typeProjectionWithVariance, data)
+    }
+
+    open fun visitTypeRef(typeRef: FirTypeRef, data: D): R {
+        return visitElement(typeRef, data)
+    }
+
+    open fun visitDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef, data: D): R {
+        return visitTypeRef(delegatedTypeRef, data)
+    }
+
+    open fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: D): R {
+        return visitTypeRef(errorTypeRef, data)
+    }
+
+    open fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): R {
+        return visitTypeRef(implicitTypeRef, data)
+    }
+
+    open fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): R {
+        return visitTypeRef(typeRefWithNullability, data)
+    }
+
+    open fun visitDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef, data: D): R {
+        return visitTypeRefWithNullability(dynamicTypeRef, data)
+    }
+
+    open fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: D): R {
+        return visitTypeRefWithNullability(functionTypeRef, data)
+    }
+
+    open fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): R {
+        return visitTypeRefWithNullability(resolvedTypeRef, data)
+    }
+
+    open fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: D): R {
+        return visitResolvedTypeRef(resolvedFunctionTypeRef, data)
+    }
+
+    open fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): R {
+        return visitTypeRefWithNullability(userTypeRef, data)
     }
 
     open fun visitWhenBranch(whenBranch: FirWhenBranch, data: D): R {

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirDynamicType : FirTypeWithNullability {
+interface FirErrorTypeRef : FirTypeRef {
+    val reason: String
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitDynamicType(this, data)
+        visitor.visitErrorTypeRef(this, data)
 }

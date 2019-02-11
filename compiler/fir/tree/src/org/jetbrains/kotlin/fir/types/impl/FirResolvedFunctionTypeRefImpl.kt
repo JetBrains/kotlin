@@ -13,24 +13,24 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedFunctionType
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-class FirResolvedFunctionTypeImpl(
+class FirResolvedFunctionTypeRefImpl(
     override val psi: PsiElement?,
     override val session: FirSession,
     override val isMarkedNullable: Boolean,
     override val annotations: MutableList<FirAnnotationCall>,
-    override var receiverType: FirType?,
+    override var receiverTypeRef: FirTypeRef?,
     override val valueParameters: MutableList<FirValueParameter>,
-    override var returnType: FirType,
+    override var returnTypeRef: FirTypeRef,
     override val type: ConeKotlinType
-) : FirResolvedFunctionType {
+) : FirResolvedFunctionTypeRef {
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        receiverType = receiverType?.transformSingle(transformer, data)
-        returnType = returnType.transformSingle(transformer, data)
+        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         valueParameters.transformInplace(transformer, data)
 
         return this

@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
-import org.jetbrains.kotlin.fir.types.FirResolvedType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.*
@@ -49,7 +49,7 @@ class JavaSymbolProvider(
     private fun JavaAnnotation.toFirAnnotationCall(): FirAnnotationCall {
         return FirAnnotationCallImpl(
             session, psi = null, useSiteTarget = null,
-            annotationType = FirResolvedTypeImpl(
+            annotationTypeRef = FirResolvedTypeRefImpl(
                 session = session,
                 psi = null,
                 type = ConeClassTypeImpl(FirClassSymbol(classId!!), emptyArray()),
@@ -86,7 +86,7 @@ class JavaSymbolProvider(
         }
     }
 
-    private fun JavaClassifierType.toFirResolvedType(): FirResolvedType {
+    private fun JavaClassifierType.toFirResolvedTypeRef(): FirResolvedTypeRef {
         val coneType = when (val classifier = classifier) {
             is JavaClass -> {
                 val symbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(classifier.classId!!) as ConeClassSymbol
@@ -100,15 +100,15 @@ class JavaSymbolProvider(
             }
             else -> ConeClassErrorType(reason = "Unexpected classifier: $classifier")
         }
-        return FirResolvedTypeImpl(
+        return FirResolvedTypeRefImpl(
             session, psi = null, type = coneType,
             isMarkedNullable = false, annotations = annotations.map { it.toFirAnnotationCall() }
         )
     }
 
-    private fun JavaType.toFirResolvedType(): FirResolvedType {
-        if (this is JavaClassifierType) return toFirResolvedType()
-        return FirResolvedTypeImpl(
+    private fun JavaType.toFirResolvedTypeRef(): FirResolvedTypeRef {
+        if (this is JavaClassifierType) return toFirResolvedTypeRef()
+        return FirResolvedTypeRefImpl(
             session, psi = null, type = ConeClassErrorType("Unexpected JavaType: $this"),
             isMarkedNullable = false, annotations = emptyList()
         )
@@ -116,7 +116,7 @@ class JavaSymbolProvider(
 
     private fun JavaType.toConeProjection(): ConeKotlinTypeProjection {
         if (this is JavaClassifierType) {
-            return toFirResolvedType().type
+            return toFirResolvedTypeRef().type
         }
         return ConeClassErrorType("Unexpected type argument: $this")
     }
@@ -154,7 +154,7 @@ class JavaSymbolProvider(
                             isExpect = false, isActual = false, isOverride = false,
                             isOperator = true, isInfix = false, isInline = false,
                             isTailRec = false, isExternal = false, isSuspend = false,
-                            receiverType = null, returnType = javaMethod.returnType.toFirResolvedType()
+                            receiverTypeRef = null, returnTypeRef = javaMethod.returnType.toFirResolvedTypeRef()
                         ).apply {
                             for (typeParameter in javaMethod.typeParameters) {
                                 typeParameters += createTypeParameterSymbol(typeParameter.name).fir
@@ -163,7 +163,7 @@ class JavaSymbolProvider(
                             for (valueParameter in javaMethod.valueParameters) {
                                 valueParameters += FirValueParameterImpl(
                                     session, null, valueParameter.name ?: Name.special("<anonymous Java parameter>"),
-                                    returnType = valueParameter.type.toFirResolvedType(),
+                                    returnTypeRef = valueParameter.type.toFirResolvedTypeRef(),
                                     defaultValue = null, isCrossinline = false, isNoinline = false,
                                     isVararg = valueParameter.isVararg
                                 )
@@ -209,7 +209,7 @@ class JavaSymbolProvider(
                     }
                     addAnnotationsFrom(javaClass)
                     for (supertype in javaClass.supertypes) {
-                        superTypes += supertype.toFirResolvedType()
+                        superTypeRefs += supertype.toFirResolvedTypeRef()
                     }
                 }
             }

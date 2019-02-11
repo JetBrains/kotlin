@@ -8,17 +8,17 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirResolvedType : FirTypeWithNullability {
+interface FirResolvedTypeRef : FirTypeRefWithNullability {
     val type: ConeKotlinType
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitResolvedType(this, data)
+        visitor.visitResolvedTypeRef(this, data)
 }
 
-interface FirResolvedFunctionType : @VisitedSupertype FirResolvedType, FirFunctionType {
+interface FirResolvedFunctionTypeRef : @VisitedSupertype FirResolvedTypeRef, FirFunctionTypeRef {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitResolvedFunctionType(this, data)
+        visitor.visitResolvedFunctionTypeRef(this, data)
 }
 
-inline fun <reified T : ConeKotlinType> FirType.coneTypeUnsafe() = (this as FirResolvedType).type as T
-inline fun <reified T : ConeKotlinType> FirType.coneTypeSafe() = (this as? FirResolvedType)?.type as? T
+inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeUnsafe() = (this as FirResolvedTypeRef).type as T
+inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe() = (this as? FirResolvedTypeRef)?.type as? T

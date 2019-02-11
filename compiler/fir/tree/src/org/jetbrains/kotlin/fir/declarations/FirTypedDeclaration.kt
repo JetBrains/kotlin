@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirTypedDeclaration : FirDeclaration, FirAnnotationContainer {
-    val returnType: FirType
+    val returnTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitTypedDeclaration(this, data)
@@ -18,6 +18,6 @@ interface FirTypedDeclaration : FirDeclaration, FirAnnotationContainer {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         acceptAnnotations(visitor, data)
         super.acceptChildren(visitor, data)
-        returnType.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
     }
 }

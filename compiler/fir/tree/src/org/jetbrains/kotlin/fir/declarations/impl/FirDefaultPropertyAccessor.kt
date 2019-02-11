@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirDefaultPropertyAccessor(
@@ -40,15 +40,15 @@ abstract class FirDefaultPropertyAccessor(
 class FirDefaultPropertyGetter(
     session: FirSession,
     psi: PsiElement?,
-    propertyType: FirType,
+    propertyTypeRef: FirTypeRef,
     visibility: Visibility
 ) : FirDefaultPropertyAccessor(session, psi, isGetter = true, visibility = visibility) {
     override val valueParameters: List<FirValueParameter> = emptyList()
 
-    override var returnType: FirType = propertyType
+    override var returnTypeRef: FirTypeRef = propertyTypeRef
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        returnType = returnType.transformSingle(transformer, data)
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         status = status.transformSingle(transformer, data)
 
         return this
@@ -58,16 +58,16 @@ class FirDefaultPropertyGetter(
 class FirDefaultPropertySetter(
     session: FirSession,
     psi: PsiElement?,
-    propertyType: FirType,
+    propertyTypeRef: FirTypeRef,
     visibility: Visibility
 ) : FirDefaultPropertyAccessor(session, psi, isGetter = false, visibility = visibility) {
-    override val valueParameters = mutableListOf(FirDefaultSetterValueParameter(session, psi, propertyType))
+    override val valueParameters = mutableListOf(FirDefaultSetterValueParameter(session, psi, propertyTypeRef))
 
-    override var returnType: FirType = FirImplicitUnitType(session, psi)
+    override var returnTypeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         valueParameters.transformInplace(transformer, data)
-        returnType = returnType.transformSingle(transformer, data)
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         status = status.transformSingle(transformer, data)
 
         return this

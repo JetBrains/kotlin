@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.types.Variance
 interface FirTypeProjectionWithVariance : FirTypeProjection {
     val variance: Variance
 
-    val type: FirType
+    val typeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitTypeProjectionWithVariance(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        type.accept(visitor, data)
+        typeRef.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }
 }

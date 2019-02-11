@@ -9,32 +9,32 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.types.FirImplicitType
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
-sealed class FirImplicitBuiltinType(
+sealed class FirImplicitBuiltinTypeRef(
     override val session: FirSession,
     override val psi: PsiElement?,
     val name: Name
-) : FirImplicitType {
+) : FirImplicitTypeRef {
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
 
     constructor(session: FirSession, psi: PsiElement?, name: FqNameUnsafe) : this(session, psi, name.shortName())
 }
 
-class FirImplicitUnitType(
+class FirImplicitUnitTypeRef(
     session: FirSession,
     psi: PsiElement?
-) : FirImplicitBuiltinType(session, psi, KotlinBuiltIns.FQ_NAMES.unit)
+) : FirImplicitBuiltinTypeRef(session, psi, KotlinBuiltIns.FQ_NAMES.unit)
 
-class FirImplicitAnyType(
+class FirImplicitAnyTypeRef(
     session: FirSession,
     psi: PsiElement?
-) : FirImplicitBuiltinType(session, psi, KotlinBuiltIns.FQ_NAMES.any)
+) : FirImplicitBuiltinTypeRef(session, psi, KotlinBuiltIns.FQ_NAMES.any)
 
-class FirImplicitEnumType(
+class FirImplicitEnumTypeRef(
     session: FirSession,
     psi: PsiElement?
-) : FirImplicitBuiltinType(session, psi, KotlinBuiltIns.FQ_NAMES._enum)
+) : FirImplicitBuiltinTypeRef(session, psi, KotlinBuiltIns.FQ_NAMES._enum)

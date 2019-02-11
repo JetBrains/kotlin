@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirClass : FirDeclarationContainer, FirStatement, FirAnnotationContainer {
     // including delegated types
-    val superTypes: List<FirType>
+    val superTypeRefs: List<FirTypeRef>
 
     val classKind: ClassKind
 
@@ -23,7 +23,7 @@ interface FirClass : FirDeclarationContainer, FirStatement, FirAnnotationContain
         visitor.visitClass(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        for (superType in superTypes) {
+        for (superType in superTypeRefs) {
             superType.accept(visitor, data)
         }
         for (declaration in declarations) {
@@ -32,4 +32,4 @@ interface FirClass : FirDeclarationContainer, FirStatement, FirAnnotationContain
     }
 }
 
-val FirClass.superConeTypes get() = superTypes.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
+val FirClass.superConeTypes get() = superTypeRefs.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }

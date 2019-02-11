@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.types.FirType
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeImpl
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -263,7 +263,7 @@ internal fun generateDestructuringBlock(
     multiDeclaration: KtDestructuringDeclaration,
     container: FirNamedDeclaration,
     extractAnnotationsTo: KtAnnotated.(FirAbstractAnnotatedElement) -> Unit,
-    toFirOrImplicitType: KtTypeReference?.() -> FirType
+    toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef
 ): FirExpression {
     return FirBlockImpl(session, multiDeclaration).apply {
         if (container is FirVariable) {
@@ -273,7 +273,7 @@ internal fun generateDestructuringBlock(
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
             statements += FirVariableImpl(
                 session, entry, entry.nameAsSafeName,
-                entry.typeReference.toFirOrImplicitType(), isVar,
+                entry.typeReference.toFirOrImplicitTypeRef(), isVar,
                 FirComponentCallImpl(session, entry, index + 1).apply {
                     arguments += generateAccessExpression(session, entry, container.name)
                 }
@@ -286,7 +286,7 @@ internal fun generateDestructuringBlock(
 
 internal fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, name: Name, initializer: FirExpression
-): FirVariable = FirVariableImpl(session, psi, name, FirImplicitTypeImpl(session, psi), false, initializer)
+): FirVariable = FirVariableImpl(session, psi, name, FirImplicitTypeRefImpl(session, psi), false, initializer)
 
 internal fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, specialName: String, initializer: FirExpression

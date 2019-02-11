@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 interface FirModifiableClass : FirClass {
-    override val superTypes: MutableList<FirType>
+    override val superTypeRefs: MutableList<FirTypeRef>
 
     override val declarations: MutableList<FirDeclaration>
 }

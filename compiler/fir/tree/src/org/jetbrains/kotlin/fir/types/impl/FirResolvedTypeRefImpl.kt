@@ -9,12 +9,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
-class FirResolvedTypeImpl(
+class FirResolvedTypeRefImpl(
     override val session: FirSession,
     override val psi: PsiElement?,
     override val type: ConeKotlinType,
     override val isMarkedNullable: Boolean,
     override val annotations: List<FirAnnotationCall>
-) : FirResolvedType
+) : FirResolvedTypeRef

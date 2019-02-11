@@ -8,20 +8,20 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirFunctionType : FirTypeWithNullability {
-    val receiverType: FirType?
+interface FirFunctionTypeRef : FirTypeRefWithNullability {
+    val receiverTypeRef: FirTypeRef?
 
     // May be it should inherit FirFunction?
     val valueParameters: List<FirValueParameter>
 
-    val returnType: FirType
+    val returnTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitFunctionType(this, data)
+        visitor.visitFunctionTypeRef(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        receiverType?.accept(visitor, data)
-        returnType.accept(visitor, data)
+        receiverTypeRef?.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         super.acceptChildren(visitor, data)
         for (parameter in valueParameters) {
             parameter.accept(visitor, data)

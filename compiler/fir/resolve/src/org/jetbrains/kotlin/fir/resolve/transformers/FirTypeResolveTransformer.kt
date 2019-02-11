@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedFunctionTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedFunctionTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -109,39 +109,39 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
-        val typeResolver = FirTypeResolver.getInstance(type.session)
-        type.transformChildren(this, null)
-        return transformType(type, typeResolver.resolveType(type, towerScope, position = FirPosition.OTHER))
+    override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+        val typeResolver = FirTypeResolver.getInstance(typeRef.session)
+        typeRef.transformChildren(this, null)
+        return transformType(typeRef, typeResolver.resolveType(typeRef, towerScope, position = FirPosition.OTHER))
     }
 
-    override fun transformFunctionType(functionType: FirFunctionType, data: Nothing?): CompositeTransformResult<FirType> {
-        val typeResolver = FirTypeResolver.getInstance(functionType.session)
-        functionType.transformChildren(this, data)
-        return FirResolvedFunctionTypeImpl(
-            functionType.psi,
-            functionType.session,
-            functionType.isMarkedNullable,
-            functionType.annotations as MutableList<FirAnnotationCall>,
-            functionType.receiverType,
-            functionType.valueParameters as MutableList<FirValueParameter>,
-            functionType.returnType,
-            typeResolver.resolveType(functionType, towerScope, FirPosition.OTHER)
+    override fun transformFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+        val typeResolver = FirTypeResolver.getInstance(functionTypeRef.session)
+        functionTypeRef.transformChildren(this, data)
+        return FirResolvedFunctionTypeRefImpl(
+            functionTypeRef.psi,
+            functionTypeRef.session,
+            functionTypeRef.isMarkedNullable,
+            functionTypeRef.annotations as MutableList<FirAnnotationCall>,
+            functionTypeRef.receiverTypeRef,
+            functionTypeRef.valueParameters as MutableList<FirValueParameter>,
+            functionTypeRef.returnTypeRef,
+            typeResolver.resolveType(functionTypeRef, towerScope, FirPosition.OTHER)
         ).compose()
     }
 
-    private fun transformType(type: FirType, resolvedType: ConeKotlinType): CompositeTransformResult<FirType> {
-        return FirResolvedTypeImpl(
-            type.session,
-            type.psi,
+    private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType): CompositeTransformResult<FirTypeRef> {
+        return FirResolvedTypeRefImpl(
+            typeRef.session,
+            typeRef.psi,
             resolvedType,
             false,
-            type.annotations
+            typeRef.annotations
         ).compose()
     }
 
-    override fun transformResolvedType(resolvedType: FirResolvedType, data: Nothing?): CompositeTransformResult<FirType> {
-        return resolvedType.compose()
+    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+        return resolvedTypeRef.compose()
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirDeclaration> {
@@ -180,10 +180,10 @@ open class FirTypeResolveTransformer(
 
                     if (symbol is ConeTypeAliasSymbol) {
                         val fir = symbol.fir as FirTypeAlias
-                        if (fir.expandedType is FirResolvedType) return
+                        if (fir.expandedTypeRef is FirResolvedTypeRef) return
                     } else if (symbol is ConeClassSymbol) {
                         val fir = symbol.fir as FirClass
-                        if (fir.superTypes.all { it is FirResolvedType }) return
+                        if (fir.superTypeRefs.all { it is FirResolvedTypeRef }) return
                     }
                     val firProvider = FirProvider.getInstance(symbol.fir.session)
                     val classes = generateSequence(classId) { it.outerClassId }.toList().asReversed()
@@ -209,24 +209,24 @@ open class FirTypeResolveTransformer(
             }
         }
 
-        override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
-            val typeResolver = FirTypeResolver.getInstance(type.session)
-            val symbol = typeResolver.resolveToSymbol(type, towerScope, position = FirPosition.SUPER_TYPE_OR_EXPANSION)
+        override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+            val typeResolver = FirTypeResolver.getInstance(typeRef.session)
+            val symbol = typeResolver.resolveToSymbol(typeRef, towerScope, position = FirPosition.SUPER_TYPE_OR_EXPANSION)
             val myTransformer = this@FirTypeResolveTransformer
 
             if (symbol != null) {
                 if (symbol is AbstractFirBasedSymbol<*> && symbol.fir in traversedClassifiers) {
-                    return FirErrorTypeImpl(type.session, type.psi, "Recursion detected: ${type.render()}").compose()
+                    return FirErrorTypeRefImpl(typeRef.session, typeRef.psi, "Recursion detected: ${typeRef.render()}").compose()
                 } else {
                     walkSymbols(symbol)
                 }
             }
 
-            if (type !is FirUserType) return type.transform(myTransformer, data)
+            if (typeRef !is FirUserTypeRef) return typeRef.transform(myTransformer, data)
 
 
-            type.transformChildren(myTransformer, null)
-            return myTransformer.transformType(type, typeResolver.resolveUserType(type, symbol, towerScope))
+            typeRef.transformChildren(myTransformer, null)
+            return myTransformer.transformType(typeRef, typeResolver.resolveUserType(typeRef, symbol, towerScope))
         }
     }
 }

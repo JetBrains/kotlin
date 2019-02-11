@@ -5,25 +5,20 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.name.Name
 
-interface FirQualifierPart : FirTypeProjectionContainer {
-    val name: Name
-}
+interface FirDelegatedTypeRef : FirTypeRef {
+    val delegate: FirExpression?
 
-interface FirUserType : FirTypeWithNullability {
-    val qualifier: List<FirQualifierPart>
+    val typeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitUserType(this, data)
+        visitor.visitDelegatedTypeRef(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         super.acceptChildren(visitor, data)
-        for (qualifier in qualifier.reversed()) {
-            for (argument in qualifier.typeArguments) {
-                argument.accept(visitor, data)
-            }
-        }
+        delegate?.accept(visitor, data)
+        typeRef.accept(visitor, data)
     }
 }

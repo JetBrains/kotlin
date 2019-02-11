@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
@@ -25,7 +25,7 @@ class FirTypeAliasImpl(
     visibility: Visibility,
     isExpect: Boolean,
     isActual: Boolean,
-    override var expandedType: FirType
+    override var expandedTypeRef: FirTypeRef
 ) : FirAbstractMemberDeclaration(session, psi, name, visibility, Modality.FINAL, isExpect, isActual), FirTypeAlias {
 
     init {
@@ -33,7 +33,7 @@ class FirTypeAliasImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        expandedType = expandedType.transformSingle(transformer, data)
+        expandedTypeRef = expandedTypeRef.transformSingle(transformer, data)
 
         return super<FirAbstractMemberDeclaration>.transformChildren(transformer, data)
     }

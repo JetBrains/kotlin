@@ -11,17 +11,17 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirAnnotationCallImpl(
     session: FirSession,
     psi: PsiElement?,
     override val useSiteTarget: AnnotationUseSiteTarget?,
-    override var annotationType: FirType
+    override var annotationTypeRef: FirTypeRef
 ) : FirAbstractCall(session, psi), FirAnnotationCall {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        annotationType = annotationType.transformSingle(transformer, data)
+        annotationTypeRef = annotationTypeRef.transformSingle(transformer, data)
 
         return super<FirAbstractCall>.transformChildren(transformer, data)
     }

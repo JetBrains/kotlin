@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirPropertyAccessorImpl(
@@ -21,14 +20,14 @@ class FirPropertyAccessorImpl(
     psi: PsiElement?,
     override val isGetter: Boolean,
     visibility: Visibility,
-    override var returnType: FirType
+    override var returnTypeRef: FirTypeRef
 ) : FirAbstractFunction(session, psi), FirPropertyAccessor {
     override var status = FirDeclarationStatusImpl(
         session, visibility, Modality.FINAL
     )
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        returnType = returnType.transformSingle(transformer, data)
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         status = status.transformSingle(transformer, data)
 
         return super<FirAbstractFunction>.transformChildren(transformer, data)

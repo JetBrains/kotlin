@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.Variance
 
@@ -19,7 +19,7 @@ interface FirTypeParameter : FirNamedDeclaration, FirAnnotationContainer, FirSym
 
     val isReified: Boolean
 
-    val bounds: List<FirType>
+    val bounds: List<FirTypeRef>
 
     override val symbol: FirTypeParameterSymbol
 

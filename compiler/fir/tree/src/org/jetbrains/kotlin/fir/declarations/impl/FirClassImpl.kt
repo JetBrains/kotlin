@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
@@ -42,13 +42,13 @@ open class FirClassImpl(
         status.isInline = isInline
     }
 
-    override val superTypes = mutableListOf<FirType>()
+    override val superTypeRefs = mutableListOf<FirTypeRef>()
 
     override val declarations = mutableListOf<FirDeclaration>()
 
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClass {
-        superTypes.transformInplace(transformer, data)
+        superTypeRefs.transformInplace(transformer, data)
         val result = super<FirAbstractMemberDeclaration>.transformChildren(transformer, data) as FirRegularClass
 
         // Transform declarations in last turn

@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.types.FirErrorType
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-class FirErrorTypeImpl(
+class FirErrorTypeRefImpl(
     session: FirSession,
     psi: PsiElement?,
     override val reason: String
-) : FirAbstractAnnotatedType(session, psi, false), FirErrorType {
+) : FirAbstractAnnotatedTypeRef(session, psi, false), FirErrorTypeRef {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
-        return super<FirErrorType>.accept(visitor, data)
+        return super<FirErrorTypeRef>.accept(visitor, data)
     }
 }

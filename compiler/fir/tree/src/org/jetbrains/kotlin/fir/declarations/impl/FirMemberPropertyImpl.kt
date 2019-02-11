@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
@@ -31,15 +31,15 @@ class FirMemberPropertyImpl(
     isOverride: Boolean,
     isConst: Boolean,
     isLateInit: Boolean,
-    receiverType: FirType?,
-    returnType: FirType,
+    receiverTypeRef: FirTypeRef?,
+    returnTypeRef: FirTypeRef,
     override val isVar: Boolean,
     override var initializer: FirExpression?,
     override var getter: FirPropertyAccessor,
     override var setter: FirPropertyAccessor,
     override var delegate: FirExpression?
 ) : FirAbstractCallableMember(
-    session, psi, symbol, name, visibility, modality, isExpect, isActual, isOverride, receiverType, returnType
+    session, psi, symbol, name, visibility, modality, isExpect, isActual, isOverride, receiverTypeRef, returnTypeRef
 ), FirProperty {
     init {
         status.isConst = isConst

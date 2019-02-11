@@ -26,7 +26,7 @@ class FirTypeResolverImpl : FirTypeResolver {
             when (it) {
                 is FirStarProjection -> StarProjection
                 is FirTypeProjectionWithVariance -> {
-                    val type = (it.type as FirResolvedType).type
+                    val type = (it.typeRef as FirResolvedTypeRef).type
                     when (it.variance) {
                         Variance.INVARIANT -> type
                         Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(type)
@@ -63,28 +63,28 @@ class FirTypeResolverImpl : FirTypeResolver {
     private val implicitBuiltinTypeSymbols = mutableMapOf<NameInSession, ConeSymbol>()
 
     override fun resolveToSymbol(
-        type: FirType,
+        typeRef: FirTypeRef,
         scope: FirScope,
         position: FirPosition
     ): ConeSymbol? {
-        return when (type) {
-            is FirResolvedType -> type.coneTypeSafe<ConeSymbolBasedType>()?.symbol
-            is FirUserType -> {
+        return when (typeRef) {
+            is FirResolvedTypeRef -> typeRef.coneTypeSafe<ConeSymbolBasedType>()?.symbol
+            is FirUserTypeRef -> {
 
-                val qualifierResolver = FirQualifierResolver.getInstance(type.session)
+                val qualifierResolver = FirQualifierResolver.getInstance(typeRef.session)
 
                 var resolvedSymbol: ConeSymbol? = null
-                scope.processClassifiersByName(type.qualifier.first().name, position) { symbol ->
+                scope.processClassifiersByName(typeRef.qualifier.first().name, position) { symbol ->
                     resolvedSymbol = when (symbol) {
                         is ConeClassLikeSymbol -> {
-                            if (type.qualifier.size == 1) {
+                            if (typeRef.qualifier.size == 1) {
                                 symbol
                             } else {
-                                qualifierResolver.resolveSymbolWithPrefix(type.qualifier, symbol.classId)
+                                qualifierResolver.resolveSymbolWithPrefix(typeRef.qualifier, symbol.classId)
                             }
                         }
                         is ConeTypeParameterSymbol -> {
-                            assert(type.qualifier.size == 1)
+                            assert(typeRef.qualifier.size == 1)
                             symbol
                         }
                         else -> error("!")
@@ -93,13 +93,13 @@ class FirTypeResolverImpl : FirTypeResolver {
                 }
 
                 // TODO: Imports
-                resolvedSymbol ?: qualifierResolver.resolveSymbol(type.qualifier)
+                resolvedSymbol ?: qualifierResolver.resolveSymbol(typeRef.qualifier)
             }
-            is FirImplicitBuiltinType -> {
-                val nameInSession = NameInSession(type.session, type.name)
+            is FirImplicitBuiltinTypeRef -> {
+                val nameInSession = NameInSession(typeRef.session, typeRef.name)
                 implicitBuiltinTypeSymbols[nameInSession] ?: run {
                     var resolvedSymbol: ConeSymbol? = null
-                    scope.processClassifiersByName(type.name, position) {
+                    scope.processClassifiersByName(typeRef.name, position) {
                         resolvedSymbol = (it as ConeClassLikeSymbol)
                         resolvedSymbol == null
                     }
@@ -111,36 +111,36 @@ class FirTypeResolverImpl : FirTypeResolver {
         }
     }
 
-    override fun resolveUserType(type: FirUserType, symbol: ConeSymbol?, scope: FirScope): ConeKotlinType {
+    override fun resolveUserType(typeRef: FirUserTypeRef, symbol: ConeSymbol?, scope: FirScope): ConeKotlinType {
         symbol ?: return ConeKotlinErrorType("Symbol not found")
-        return symbol.toConeKotlinType(type.qualifier) ?: ConeKotlinErrorType("Failed to resolve qualified type")
+        return symbol.toConeKotlinType(typeRef.qualifier) ?: ConeKotlinErrorType("Failed to resolve qualified type")
     }
 
     override fun resolveType(
-        type: FirType,
+        typeRef: FirTypeRef,
         scope: FirScope,
         position: FirPosition
     ): ConeKotlinType {
-        return when (type) {
-            is FirResolvedType -> type.type
-            is FirUserType -> {
-                resolveUserType(type, resolveToSymbol(type, scope, position), scope)
+        return when (typeRef) {
+            is FirResolvedTypeRef -> typeRef.type
+            is FirUserTypeRef -> {
+                resolveUserType(typeRef, resolveToSymbol(typeRef, scope, position), scope)
             }
-            is FirErrorType -> {
-                ConeKotlinErrorType(type.reason)
+            is FirErrorTypeRef -> {
+                ConeKotlinErrorType(typeRef.reason)
             }
-            is FirFunctionType -> {
+            is FirFunctionTypeRef -> {
                 ConeFunctionTypeImpl(
-                    (type.receiverType as FirResolvedType?)?.type,
-                    type.valueParameters.map { it.returnType.coneTypeUnsafe<ConeKotlinType>() },
-                    type.returnType.coneTypeUnsafe()
+                    (typeRef.receiverTypeRef as FirResolvedTypeRef?)?.type,
+                    typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>() },
+                    typeRef.returnTypeRef.coneTypeUnsafe()
                 )
             }
-            is FirImplicitBuiltinType -> {
-                resolveToSymbol(type, scope, position)!!.toConeKotlinType(emptyList())!!
+            is FirImplicitBuiltinTypeRef -> {
+                resolveToSymbol(typeRef, scope, position)!!.toConeKotlinType(emptyList())!!
             }
-            is FirDynamicType, is FirImplicitType, is FirDelegatedType -> {
-                ConeKotlinErrorType("Not supported: ${type::class.simpleName}")
+            is FirDynamicTypeRef, is FirImplicitTypeRef, is FirDelegatedTypeRef -> {
+                ConeKotlinErrorType("Not supported: ${typeRef::class.simpleName}")
             }
             else -> error("!")
         }

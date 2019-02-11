@@ -11,17 +11,17 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirTypeOperatorCallImpl(
     session: FirSession,
     psi: PsiElement?,
     override val operation: FirOperation,
-    override var type: FirType
+    override var typeRef: FirTypeRef
 ) : FirAbstractCall(session, psi), FirTypeOperatorCall {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        type = type.transformSingle(transformer, data)
+        typeRef = typeRef.transformSingle(transformer, data)
         return super<FirAbstractCall>.transformChildren(transformer, data)
     }
 }

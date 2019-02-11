@@ -13,28 +13,28 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMember
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCallableMember {
 
     final override val symbol: FirBasedSymbol<FirCallableMember>
-    final override var receiverType: FirType?
-    final override var returnType: FirType
+    final override var receiverTypeRef: FirTypeRef?
+    final override var returnTypeRef: FirTypeRef
 
     constructor(
         session: FirSession,
         psi: PsiElement?,
         symbol: FirBasedSymbol<FirCallableMember>,
         name: Name,
-        receiverType: FirType?,
-        returnType: FirType
+        receiverTypeRef: FirTypeRef?,
+        returnTypeRef: FirTypeRef
     ) : super(session, psi, name) {
         this.symbol = symbol
         symbol.bind(this)
-        this.receiverType = receiverType
-        this.returnType = returnType
+        this.receiverTypeRef = receiverTypeRef
+        this.returnTypeRef = returnTypeRef
     }
 
     constructor(
@@ -47,20 +47,20 @@ abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCall
         isExpect: Boolean,
         isActual: Boolean,
         isOverride: Boolean,
-        receiverType: FirType?,
-        returnType: FirType
+        receiverTypeRef: FirTypeRef?,
+        returnTypeRef: FirTypeRef
     ) : super(session, psi, name, visibility, modality, isExpect, isActual) {
         this.symbol = symbol
         symbol.bind(this)
-        this.receiverType = receiverType
-        this.returnType = returnType
+        this.receiverTypeRef = receiverTypeRef
+        this.returnTypeRef = returnTypeRef
         status.isOverride = isOverride
     }
 
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        receiverType = receiverType?.transformSingle(transformer, data)
-        returnType = returnType.transformSingle(transformer, data)
+        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
 
         return super<FirAbstractMemberDeclaration>.transformChildren(transformer, data)
     }

@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirSuperReference : FirReference {
-    val superType: FirType
+    val superTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitSuperReference(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        superType.accept(visitor, data)
+        superTypeRef.accept(visitor, data)
     }
 }

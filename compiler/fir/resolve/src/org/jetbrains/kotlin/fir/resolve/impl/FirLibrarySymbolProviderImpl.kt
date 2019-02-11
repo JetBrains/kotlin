@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FictitiousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -112,9 +112,9 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
                         typeDeserializer.classLikeType(supertypeProto)
                     }// TODO: + c.components.additionalClassPartsProvider.getSupertypes(this@DeserializedClassDescriptor)
 
-                    superTypesDeserialized.mapNotNullTo(superTypes) {
+                    superTypesDeserialized.mapNotNullTo(superTypeRefs) {
                         if (it == null) return@mapNotNullTo null
-                        FirResolvedTypeImpl(session, null, it, false, emptyList())
+                        FirResolvedTypeRefImpl(session, null, it, false, emptyList())
                     }
                     // TODO: declarations (probably should be done later)
                 }

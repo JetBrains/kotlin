@@ -5,20 +5,18 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.BaseTransformedType
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirDelegatedType : FirType {
-    val delegate: FirExpression?
-
-    val type: FirType
-
+@BaseTransformedType
+interface FirTypeRef : FirElement, FirAnnotationContainer {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitDelegatedType(this, data)
+        visitor.visitTypeRef(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        acceptAnnotations(visitor, data)
         super.acceptChildren(visitor, data)
-        delegate?.accept(visitor, data)
-        type.accept(visitor, data)
     }
 }

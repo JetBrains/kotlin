@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.types.FirType
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionContainer
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirDelegatedConstructorCall : FirCall {
     // Do we need 'constructedType: FirType' here?
-    val constructedType: FirType
+    val constructedTypeRef: FirTypeRef
 
     val isThis: Boolean
 
@@ -22,7 +21,7 @@ interface FirDelegatedConstructorCall : FirCall {
         visitor.visitDelegatedConstructorCall(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        constructedType.accept(visitor, data)
+        constructedTypeRef.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }
 }

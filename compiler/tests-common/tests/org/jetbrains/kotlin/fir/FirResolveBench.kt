@@ -8,8 +8,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.FirResolvedType
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
@@ -65,18 +65,18 @@ fun doFirResolveTestBench(firFiles: List<FirFile>, transformers: List<FirTransfo
                     element.acceptChildren(this)
                 }
 
-                override fun visitType(type: FirType) {
+                override fun visitTypeRef(typeRef: FirTypeRef) {
                     unresolvedTypes++
                 }
 
-                override fun visitResolvedType(resolvedType: FirResolvedType) {
+                override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
                     resolvedTypes++
-                    val type = resolvedType.type
+                    val type = resolvedTypeRef.type
                     if (type is ConeKotlinErrorType || type is ConeClassErrorType) {
-                        if (resolvedType.psi == null) {
+                        if (resolvedTypeRef.psi == null) {
                             implicitTypes++
                         } else {
-                            val psi = resolvedType.psi!!
+                            val psi = resolvedTypeRef.psi!!
                             val problem = "$type with psi `${psi.text}`"
                             val document = try {
                                 fileDocumentManager.getDocument(psi.containingFile.virtualFile)

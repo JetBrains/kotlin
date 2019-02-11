@@ -7,16 +7,16 @@ package org.jetbrains.kotlin.fir.references
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirExplicitSuperReference(
     session: FirSession,
     psi: PsiElement?,
-    override var superType: FirType
+    override var superTypeRef: FirTypeRef
 ) : FirAbstractElement(session, psi), FirSuperReference {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        superType = superType.transformSingle(transformer, data)
+        superTypeRef = superTypeRef.transformSingle(transformer, data)
         return this
     }
 }

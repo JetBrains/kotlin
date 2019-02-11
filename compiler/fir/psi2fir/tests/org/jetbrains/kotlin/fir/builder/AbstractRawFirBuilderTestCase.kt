@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -126,7 +126,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         override fun visitElement(element: FirElement) {
             // NB: types are reused sometimes (e.g. in accessors)
             if (!result.add(element)) {
-                if (element !is FirType) {
+                if (element !is FirTypeRef) {
                     val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
                     throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
                 }
@@ -141,7 +141,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
         override fun <E : FirElement> transformElement(element: E, data: Unit): CompositeTransformResult<E> {
             if (!result.add(element)) {
-                if (element !is FirType) {
+                if (element !is FirTypeRef) {
                     val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
                     throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
                 }

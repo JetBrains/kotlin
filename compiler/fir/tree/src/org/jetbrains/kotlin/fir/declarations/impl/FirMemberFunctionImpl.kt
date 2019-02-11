@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
@@ -27,9 +27,9 @@ class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, FirMo
         psi: PsiElement?,
         symbol: FirFunctionSymbol,
         name: Name,
-        receiverType: FirType?,
-        returnType: FirType
-    ) : super(session, psi, symbol, name, receiverType, returnType)
+        receiverTypeRef: FirTypeRef?,
+        returnTypeRef: FirTypeRef
+    ) : super(session, psi, symbol, name, receiverTypeRef, returnTypeRef)
 
     constructor(
         session: FirSession,
@@ -47,11 +47,11 @@ class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, FirMo
         isTailRec: Boolean,
         isExternal: Boolean,
         isSuspend: Boolean,
-        receiverType: FirType?,
-        returnType: FirType
+        receiverTypeRef: FirTypeRef?,
+        returnTypeRef: FirTypeRef
     ) : super(
         session, psi, symbol, name, visibility, modality,
-        isExpect, isActual, isOverride, receiverType, returnType
+        isExpect, isActual, isOverride, receiverTypeRef, returnTypeRef
     ) {
         status.isOperator = isOperator
         status.isInfix = isInfix

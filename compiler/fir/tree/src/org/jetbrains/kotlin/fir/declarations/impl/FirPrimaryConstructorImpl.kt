@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 class FirPrimaryConstructorImpl(
     session: FirSession,
@@ -19,6 +19,6 @@ class FirPrimaryConstructorImpl(
     visibility: Visibility,
     isExpect: Boolean,
     isActual: Boolean,
-    delegatedSelfType: FirType,
+    delegatedSelfTypeRef: FirTypeRef,
     delegatedConstructor: FirDelegatedConstructorCall?
-) : FirConstructorImpl(session, psi, symbol, visibility, isExpect, isActual, delegatedSelfType, delegatedConstructor)
+) : FirConstructorImpl(session, psi, symbol, visibility, isExpect, isActual, delegatedSelfTypeRef, delegatedConstructor)
