@@ -134,14 +134,21 @@ abstract class BasicBoxTest(
                 val friends = module.friends.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
+                val isMainModule = mainModuleName == module.name
                 generateJavaScriptFile(
                     file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
                     outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction,
-                    runtimeType, isMainModule = (mainModuleName == module.name)
+                    runtimeType, isMainModule
                 )
 
-                if (!module.name.endsWith(OLD_MODULE_SUFFIX)) Pair(outputFileName, module) else null
+                when {
+                    module.name.endsWith(OLD_MODULE_SUFFIX) -> null
+                    // JS_IR generates single js file for all modules (apart from runtime).
+                    // TODO: Split and refactor test runner for JS_IR
+                    targetBackend == TargetBackend.JS_IR && !isMainModule -> null
+                    else -> Pair(outputFileName, module)
+                }
             }
 
             val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(COMMON_FILES_DIR_PATH, JavaScript.EXTENSION)
