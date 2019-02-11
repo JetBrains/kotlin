@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -269,8 +270,6 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             }
         }
 
-        val sourceFileName = context.originalModuleIndex.declarationToFile[callee.descriptor.original] ?: ""
-
         copyIrElement.addCurrentSubstituteMap(globalSubstituteMap)
 
         val transformer = ParameterSubstitutor()
@@ -284,7 +283,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             symbol         = irReturnableBlockSymbol,
             origin         = null,
             statements     = statements,
-            sourceFileName = sourceFileName
+            sourceFileSymbol = callee.file.symbol
         ).apply {
             transformChildrenVoid(object: IrElementTransformerVoid() {
                 override fun visitReturn(expression: IrReturn): IrExpression {

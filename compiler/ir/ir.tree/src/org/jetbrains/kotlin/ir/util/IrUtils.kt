@@ -569,3 +569,12 @@ private fun IrCall.copyTypeAndValueArgumentsFrom(
         putValueArgument(toValueArgumentIndex++, call.getValueArgument(fromValueArgumentIndex++))
     }
 }
+
+val IrDeclaration.file: IrFile get() = parent.let {
+    when (it) {
+        is IrFile -> it
+        is IrPackageFragment -> TODO("Unknown file")
+        is IrDeclaration -> it.file
+        else -> TODO("Unexpected declaration parent")
+    }
+}

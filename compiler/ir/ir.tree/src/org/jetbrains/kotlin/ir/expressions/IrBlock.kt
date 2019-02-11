@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 
 interface IrContainerExpression : IrExpression, IrStatementContainer {
@@ -37,5 +38,6 @@ interface IrComposite : IrContainerExpression {
 
 interface IrReturnableBlock : IrBlock, IrSymbolOwner, IrReturnTarget {
     override val symbol: IrReturnableBlockSymbol
+    val sourceFileSymbol: IrFileSymbol?
     val sourceFileName: String
 }
