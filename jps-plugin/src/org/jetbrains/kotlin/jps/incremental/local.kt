@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.jps.incremental
 
 import java.io.File
 
-private val NORMAL_VERSION = 10
+private val NORMAL_VERSION = 11
 private val NORMAL_VERSION_FILE_NAME = "format-version.txt"
 
 fun localCacheVersionManager(dataRoot: File, isCachesEnabled: Boolean) =
