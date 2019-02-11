@@ -36,7 +36,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class DeprecationResolver(
     storageManager: StorageManager,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val coroutineCompatibilitySupport: CoroutineCompatibilitySupport
+    private val coroutineCompatibilitySupport: CoroutineCompatibilitySupport,
+    private val deprecationSettings: DeprecationSettings
 ) {
     private val deprecations = storageManager.createMemoizedFunction { descriptor: DeclarationDescriptor ->
         val deprecations = descriptor.getOwnDeprecations()
@@ -126,6 +127,28 @@ class DeprecationResolver(
 
         if (hasUndeprecatedOverridden || deprecations.isEmpty()) return null
 
+        // We might've filtered out not-propagating deprecations already in the initializer of `deprecationsByAnnotation` in the code above.
+        // But it would lead to treating Java overridden as not-deprecated at all that works controversially in case of mixed J/K override:
+        // interface J {
+        //      @Deprecated
+        //      void foo();
+        // }
+        //
+        // interface K {
+        //      @Deprecated("")
+        //      fun foo();
+        // }
+        //
+        // class K1 : K, J {
+        //      // We'd probably better treating it as deprecated
+        //      // Basically, it's just a corner case and we may change the behavior if it's too annoying
+        //      override fun foo() {}
+        // }
+        //
+        // Also, we don't ignore non-propagating deprecations in case of fake overrides
+        // Because we don't want to depend on the choice of the base descriptor
+        if (root.kind.isReal && deprecations.none(Deprecation::propagatesToOverrides)) return null
+
         return DeprecatedByOverridden(deprecations)
     }
 
@@ -166,7 +189,11 @@ class DeprecationResolver(
         val annotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated)
             ?: annotations.findAnnotation(JAVA_DEPRECATED)
         if (annotation != null) {
-            val deprecatedByAnnotation = DeprecatedByAnnotation(annotation, this)
+            val deprecatedByAnnotation =
+                DeprecatedByAnnotation(
+                    annotation, this,
+                    deprecationSettings.propagatedToOverrides(annotation)
+                )
             val deprecation = when {
                 this is TypeAliasConstructorDescriptor ->
                     DeprecatedTypealiasByAnnotation(typeAliasDescriptor, deprecatedByAnnotation)

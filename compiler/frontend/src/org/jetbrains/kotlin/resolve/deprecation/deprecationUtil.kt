@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.deprecation
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
@@ -68,5 +69,14 @@ class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) {
         val ENABLED = CoroutineCompatibilitySupport(true)
 
         val DISABLED = CoroutineCompatibilitySupport(false)
+    }
+}
+
+@DefaultImplementation(DeprecationSettings.Default::class)
+interface DeprecationSettings {
+    fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor): Boolean
+
+    object Default : DeprecationSettings {
+        override fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor) = true
     }
 }

@@ -11978,6 +11978,34 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/deprecations")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Deprecations extends AbstractDiagnosticsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInDeprecations() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/deprecations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("forFakeOverrides.kt")
+                public void testForFakeOverrides() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forFakeOverrides.kt");
+                }
+
+                @TestMetadata("forMixedOverride.kt")
+                public void testForMixedOverride() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forMixedOverride.kt");
+                }
+
+                @TestMetadata("forOverrides.kt")
+                public void testForOverrides() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forOverrides.kt");
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
