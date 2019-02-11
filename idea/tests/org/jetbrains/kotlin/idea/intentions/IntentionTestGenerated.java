@@ -4187,6 +4187,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/complexPlus.kt");
             }
 
+            @TestMetadata("dec.kt")
+            public void testDec() throws Exception {
+                runTest("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/dec.kt");
+            }
+
             @TestMetadata("extensionFunction.kt")
             public void testExtensionFunction() throws Exception {
                 runTest("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/extensionFunction.kt");
@@ -4195,6 +4200,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("functionLiteralArgument.kt")
             public void testFunctionLiteralArgument() throws Exception {
                 runTest("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/functionLiteralArgument.kt");
+            }
+
+            @TestMetadata("inc.kt")
+            public void testInc() throws Exception {
+                runTest("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/inc.kt");
             }
 
             @TestMetadata("minusSanityTest.kt")
@@ -13138,6 +13148,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/operatorToFunction/notApplicableNewClassObject.kt");
         }
 
+        @TestMetadata("notApplicablePostfixPlusPlusInIfExpression.kt")
+        public void testNotApplicablePostfixPlusPlusInIfExpression() throws Exception {
+            runTest("idea/testData/intentions/operatorToFunction/notApplicablePostfixPlusPlusInIfExpression.kt");
+        }
+
+        @TestMetadata("notApplicablePostfixPlusPlusInNestedIfExpression.kt")
+        public void testNotApplicablePostfixPlusPlusInNestedIfExpression() throws Exception {
+            runTest("idea/testData/intentions/operatorToFunction/notApplicablePostfixPlusPlusInNestedIfExpression.kt");
+        }
+
+        @TestMetadata("notApplicablePostfixPlusPlusInProperty.kt")
+        public void testNotApplicablePostfixPlusPlusInProperty() throws Exception {
+            runTest("idea/testData/intentions/operatorToFunction/notApplicablePostfixPlusPlusInProperty.kt");
+        }
+
+        @TestMetadata("notApplicablePostfixPlusPlusInWhenExpression.kt")
+        public void testNotApplicablePostfixPlusPlusInWhenExpression() throws Exception {
+            runTest("idea/testData/intentions/operatorToFunction/notApplicablePostfixPlusPlusInWhenExpression.kt");
+        }
+
         @TestMetadata("pluPlus.kt")
         public void testPluPlus() throws Exception {
             runTest("idea/testData/intentions/operatorToFunction/pluPlus.kt");
@@ -13146,6 +13176,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("postfixMinusMinus.kt")
         public void testPostfixMinusMinus() throws Exception {
             runTest("idea/testData/intentions/operatorToFunction/postfixMinusMinus.kt");
+        }
+
+        @TestMetadata("postfixPlusPlusInIfExpression.kt")
+        public void testPostfixPlusPlusInIfExpression() throws Exception {
+            runTest("idea/testData/intentions/operatorToFunction/postfixPlusPlusInIfExpression.kt");
+        }
+
+        @TestMetadata("postfixPlusPlusInLoop.kt")
+        public void testPostfixPlusPlusInLoop() throws Exception {
+            runTest("idea/testData/intentions/operatorToFunction/postfixPlusPlusInLoop.kt");
+        }
+
+        @TestMetadata("postfixPlusPlusInWhenExpression.kt")
+        public void testPostfixPlusPlusInWhenExpression() throws Exception {
+            runTest("idea/testData/intentions/operatorToFunction/postfixPlusPlusInWhenExpression.kt");
         }
 
         @TestMetadata("prefixPlus.kt")
