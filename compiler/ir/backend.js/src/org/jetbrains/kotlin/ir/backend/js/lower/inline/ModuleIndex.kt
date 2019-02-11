@@ -30,7 +30,6 @@ class ModuleIndex(val module: IrModuleFragment) {
      * Contains all functions declared in [module]
      */
     val functions = mutableMapOf<FunctionDescriptor, IrFunction>()
-    val declarationToFile = mutableMapOf<DeclarationDescriptor, String>()
 
     init {
         addModule(module)
@@ -62,11 +61,6 @@ class ModuleIndex(val module: IrModuleFragment) {
             override fun visitFunction(declaration: IrFunction) {
                 super.visitFunction(declaration)
                 functions[declaration.descriptor] = declaration
-            }
-
-            override fun visitDeclaration(declaration: IrDeclaration) {
-                super.visitDeclaration(declaration)
-                declarationToFile[declaration.descriptor] = currentFile!!.path
             }
         })
     }

@@ -873,13 +873,13 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
         override fun visitBlock(expression: IrBlock): IrBlock {
             return if (expression is IrReturnableBlock) {
                 IrReturnableBlockImpl(
-                    startOffset    = expression.startOffset,
-                    endOffset      = expression.endOffset,
-                    type           = expression.type,
-                    descriptor     = expression.descriptor,
-                    origin         = mapStatementOrigin(expression.origin),
-                    statements     = expression.statements.map { it.transform(this, null) },
-                    sourceFileName = expression.sourceFileName
+                    startOffset      = expression.startOffset,
+                    endOffset        = expression.endOffset,
+                    type             = expression.type,
+                    descriptor       = expression.descriptor,
+                    origin           = mapStatementOrigin(expression.origin),
+                    statements       = expression.statements.map { it.transform(this, null) },
+                    sourceFileSymbol = expression.sourceFileSymbol
                 )
             } else {
                 IrBlockImpl(
