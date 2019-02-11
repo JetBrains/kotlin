@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.KotlinType
@@ -353,10 +354,19 @@ class StatementGenerator(
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression, data: Nothing?): IrStatement {
         val indexedGetCall = getOrFail(BindingContext.INDEXED_LVALUE_GET, expression)
 
-        return CallGenerator(this).generateCall(
-            expression.startOffsetSkippingComments, expression.endOffset,
-            pregenerateCall(indexedGetCall), IrStatementOrigin.GET_ARRAY_ELEMENT
-        )
+        return if (indexedGetCall.resultingDescriptor.isDynamic())
+            OperatorExpressionGenerator(this).generateDynamicOperatorExpression(
+                IrDynamicOperator.ARRAY_ACCESS,
+                indexedGetCall.resultingDescriptor.returnType!!.toIrType(),
+                expression,
+                expression.arrayExpression ?: throw AssertionError("Array expression not found"),
+                expression.indexExpressions
+            )
+        else
+            CallGenerator(this).generateCall(
+                expression.startOffsetSkippingComments, expression.endOffset,
+                pregenerateCall(indexedGetCall), IrStatementOrigin.GET_ARRAY_ELEMENT
+            )
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression, data: Nothing?): IrStatement =

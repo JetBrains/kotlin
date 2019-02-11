@@ -1,0 +1,54 @@
+FILE fqName:<root> fileName:/dynamicArrayAugmentedAssignment.kt
+  FUN name:testArrayAugmentedAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit origin=PLUSEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:dynamic flags:val
+          GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.String flags:val
+          CONST String type=kotlin.String value="KEY"
+        DYN_OP operator=PLUSEQ type=kotlin.Unit
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'tmp0_array: dynamic' type=dynamic origin=null
+            0: GET_VAR 'tmp1_index0: String' type=kotlin.String origin=null
+          0: CONST String type=kotlin.String value="+="
+      BLOCK type=kotlin.Unit origin=MINUSEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp2_array type:dynamic flags:val
+          GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp3_index0 type:kotlin.String flags:val
+          CONST String type=kotlin.String value="KEY"
+        DYN_OP operator=MINUSEQ type=kotlin.Unit
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'tmp2_array: dynamic' type=dynamic origin=null
+            0: GET_VAR 'tmp3_index0: String' type=kotlin.String origin=null
+          0: CONST String type=kotlin.String value="-="
+      BLOCK type=kotlin.Unit origin=MULTEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp4_array type:dynamic flags:val
+          GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp5_index0 type:kotlin.String flags:val
+          CONST String type=kotlin.String value="KEY"
+        DYN_OP operator=MULEQ type=kotlin.Unit
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'tmp4_array: dynamic' type=dynamic origin=null
+            0: GET_VAR 'tmp5_index0: String' type=kotlin.String origin=null
+          0: CONST String type=kotlin.String value="*="
+      BLOCK type=kotlin.Unit origin=DIVEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp6_array type:dynamic flags:val
+          GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp7_index0 type:kotlin.String flags:val
+          CONST String type=kotlin.String value="KEY"
+        DYN_OP operator=DIVEQ type=kotlin.Unit
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'tmp6_array: dynamic' type=dynamic origin=null
+            0: GET_VAR 'tmp7_index0: String' type=kotlin.String origin=null
+          0: CONST String type=kotlin.String value="/="
+      BLOCK type=kotlin.Unit origin=PERCEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp8_array type:dynamic flags:val
+          GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp9_index0 type:kotlin.String flags:val
+          CONST String type=kotlin.String value="KEY"
+        DYN_OP operator=MODEQ type=kotlin.Unit
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'tmp8_array: dynamic' type=dynamic origin=null
+            0: GET_VAR 'tmp9_index0: String' type=kotlin.String origin=null
+          0: CONST String type=kotlin.String value="%="

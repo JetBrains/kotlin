@@ -46,6 +46,26 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicAndMembersOfAny.kt");
         }
 
+        @TestMetadata("dynamicArrayAccess.kt")
+        public void testDynamicArrayAccess() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicArrayAccess.kt");
+        }
+
+        @TestMetadata("dynamicArrayAssignment.kt")
+        public void testDynamicArrayAssignment() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicArrayAssignment.kt");
+        }
+
+        @TestMetadata("dynamicArrayAugmentedAssignment.kt")
+        public void testDynamicArrayAugmentedAssignment() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicArrayAugmentedAssignment.kt");
+        }
+
+        @TestMetadata("dynamicArrayIncrementDecrement.kt")
+        public void testDynamicArrayIncrementDecrement() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicArrayIncrementDecrement.kt");
+        }
+
         @TestMetadata("dynamicCall.kt")
         public void testDynamicCall() throws Exception {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicCall.kt");

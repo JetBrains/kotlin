@@ -1,0 +1,44 @@
+FILE fqName:<root> fileName:/dynamicArrayIncrementDecrement.kt
+  FUN name:testArrayIncrementDecrement visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      VAR name:t1 type:dynamic flags:val
+        BLOCK type=dynamic origin=PREFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:dynamic flags:val
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.String flags:val
+            CONST String type=kotlin.String value="prefixIncr"
+          DYN_OP operator=PREFIX_INCREMENT type=dynamic
+            receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+              receiver: GET_VAR 'tmp0_array: dynamic' type=dynamic origin=null
+              0: GET_VAR 'tmp1_index0: String' type=kotlin.String origin=null
+      VAR name:t2 type:dynamic flags:val
+        BLOCK type=dynamic origin=PREFIX_DECR
+          VAR IR_TEMPORARY_VARIABLE name:tmp2_array type:dynamic flags:val
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp3_index0 type:kotlin.String flags:val
+            CONST String type=kotlin.String value="prefixDecr"
+          DYN_OP operator=PREFIX_DECREMENT type=dynamic
+            receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+              receiver: GET_VAR 'tmp2_array: dynamic' type=dynamic origin=null
+              0: GET_VAR 'tmp3_index0: String' type=kotlin.String origin=null
+      VAR name:t3 type:dynamic flags:val
+        BLOCK type=dynamic origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE name:tmp4_array type:dynamic flags:val
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp5_index0 type:kotlin.String flags:val
+            CONST String type=kotlin.String value="postfixIncr"
+          DYN_OP operator=POSTFIX_INCREMENT type=dynamic
+            receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+              receiver: GET_VAR 'tmp4_array: dynamic' type=dynamic origin=null
+              0: GET_VAR 'tmp5_index0: String' type=kotlin.String origin=null
+      VAR name:t4 type:dynamic flags:val
+        BLOCK type=dynamic origin=POSTFIX_DECR
+          VAR IR_TEMPORARY_VARIABLE name:tmp6_array type:dynamic flags:val
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp7_index0 type:kotlin.String flags:val
+            CONST String type=kotlin.String value="postfixDecr"
+          DYN_OP operator=POSTFIX_DECREMENT type=dynamic
+            receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+              receiver: GET_VAR 'tmp6_array: dynamic' type=dynamic origin=null
+              0: GET_VAR 'tmp7_index0: String' type=kotlin.String origin=null

@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.referenceClassifier
@@ -45,7 +47,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import java.lang.AssertionError
 
 
 class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -433,4 +434,21 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return generateCall(resolvedCall, expression, origin)
     }
+
+    fun generateDynamicOperatorExpression(
+        irOperator: IrDynamicOperator,
+        irType: IrType,
+        ktOperatorExpression: KtExpression,
+        ktReceiverExpression: KtExpression,
+        ktArgumentExpressions: List<KtExpression>
+    ): IrExpression =
+        IrDynamicOperatorExpressionImpl(
+            ktOperatorExpression.startOffsetSkippingComments,
+            ktOperatorExpression.endOffset,
+            irType,
+            irOperator
+        ).apply {
+            receiver = statementGenerator.generateExpression(ktReceiverExpression)
+            ktArgumentExpressions.mapTo(arguments) { statementGenerator.generateExpression(it) }
+        }
 }
