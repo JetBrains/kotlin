@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileMultiplatformMo
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileSharedMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder
+import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Test
 
