@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.idea.statistics
 
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
-import com.intellij.ide.plugins.PluginManager
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.internal.statistic.service.fus.collectors.FUSUsageContext
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
 
 
 open class KotlinStatisticsTrigger {
     companion object {
-        private val VERSION = PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"))?.version ?: "undefined"
+        private val VERSION = KotlinPluginUtil.getPluginVersion()
 
         public fun trigger(trigger: KotlinEventTrigger, event: String) {
             val context = FeatureUsageData().addFeatureContext(FUSUsageContext.create(VERSION));
