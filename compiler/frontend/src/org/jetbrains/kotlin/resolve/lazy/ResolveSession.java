@@ -294,7 +294,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     }
 
     @NotNull
-    public ScriptDescriptor getScriptDescriptor(@NotNull KtScript script) {
+    public ClassDescriptorWithResolutionScopes getScriptDescriptor(@NotNull KtScript script) {
         return lazyDeclarationResolver.getScriptDescriptor(script, NoLookupLocation.FOR_SCRIPT);
     }
 

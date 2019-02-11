@@ -758,7 +758,7 @@ class ResolveElementCache(
 
         override fun getDeclaringScope(declaration: KtDeclaration): LexicalScope? = declaringScopes(declaration)
 
-        override fun getScripts(): MutableMap<KtScript, LazyScriptDescriptor> = hashMapOf()
+        override fun getScripts(): MutableMap<KtScript, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
         override fun getOuterDataFlowInfo(): DataFlowInfo = DataFlowInfo.EMPTY
 
