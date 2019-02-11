@@ -330,7 +330,7 @@ class StatementGenerator(
         val resolvedCall = getResolvedCall(expression) ?: return ErrorExpressionGenerator(this).generateErrorCall(expression)
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
-            val functionCall = pregenerateCall(resolvedCall.functionCall, isVariableAsFunctionCall = true)
+            val functionCall = pregenerateCall(resolvedCall.functionCall)
             return CallGenerator(this).generateCall(expression, functionCall, IrStatementOrigin.INVOKE)
         }
 
