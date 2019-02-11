@@ -63,14 +63,16 @@ class FirClassSubstitutionScope(
             return when (this) {
                 is ConeKotlinErrorType -> error("Trying to substitute arguments for error type")
                 is ConeTypeParameterType -> error("Trying to substitute arguments for type parameter")
-                is ConeClassTypeImpl -> ConeClassTypeImpl(symbol, newArguments as Array<ConeKotlinTypeProjection>)
+                is ConeClassTypeImpl -> ConeClassTypeImpl(symbol, newArguments as Array<ConeKotlinTypeProjection>, nullability.isNullable)
                 is ConeAbbreviatedTypeImpl -> ConeAbbreviatedTypeImpl(
                     abbreviationSymbol,
                     newArguments as Array<ConeKotlinTypeProjection>,
-                    directExpansion.substitute() as? ConeClassLikeType ?: directExpansion
+                    directExpansion.substitute() as? ConeClassLikeType ?: directExpansion,
+                    nullability.isNullable
                 )
                 is ConeFunctionType -> TODO("Substitute function type properly")
                 is ConeClassLikeType -> error("Unknown class-like type to substitute: $this, ${this::class}")
+                is ConeFlexibleType -> error("Trying to substitute arguments for flexible type")
             }
         }
         return null

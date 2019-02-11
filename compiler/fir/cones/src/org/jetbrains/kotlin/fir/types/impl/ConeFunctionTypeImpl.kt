@@ -9,13 +9,17 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeFunctionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
+import org.jetbrains.kotlin.fir.types.ConeNullability
 
 class ConeFunctionTypeImpl(
     override val receiverType: ConeKotlinType?,
     override val parameterTypes: List<ConeKotlinType>,
     override val returnType: ConeKotlinType,
-    override val symbol: ConeClassLikeSymbol
+    override val symbol: ConeClassLikeSymbol,
+    isNullable: Boolean
 ) : ConeFunctionType() {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = EMPTY_ARRAY
+
+    override val nullability: ConeNullability = ConeNullability.create(isNullable)
 }

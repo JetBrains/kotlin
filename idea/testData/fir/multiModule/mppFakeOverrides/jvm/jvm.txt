@@ -14,8 +14,8 @@ FILE: jvm.kt
         public constructor(): super<R|C|>()
 
         public final function test(): R|kotlin/Unit| {
-            R|FakeOverride</A.foo>|(String())
-            R|FakeOverride</A.bar>|(String())
+            R|FakeOverride</A.foo: R|kotlin/Unit|>|(String())
+            R|FakeOverride</A.bar: R|T|>|(String())
         }
 
     }

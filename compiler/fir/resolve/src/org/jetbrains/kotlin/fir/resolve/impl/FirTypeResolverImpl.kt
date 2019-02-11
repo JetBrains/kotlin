@@ -42,20 +42,21 @@ class FirTypeResolverImpl : FirTypeResolver {
         }
     }.toTypedArray()
 
-    private fun ConeSymbol.toConeKotlinType(parts: List<FirQualifierPart>): ConeKotlinType? {
+    private fun ConeSymbol.toConeKotlinType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType? {
 
         return when (this) {
             is ConeTypeParameterSymbol -> {
-                ConeTypeParameterTypeImpl(this)
+                ConeTypeParameterTypeImpl(this, isNullable)
             }
             is ConeClassSymbol -> {
-                ConeClassTypeImpl(this, parts.toTypeProjections())
+                ConeClassTypeImpl(this, parts.toTypeProjections(), isNullable)
             }
             is FirTypeAliasSymbol -> {
                 ConeAbbreviatedTypeImpl(
                     abbreviationSymbol = this as ConeClassLikeSymbol,
                     typeArguments = parts.toTypeProjections(),
-                    directExpansion = fir.expandedConeType ?: ConeClassErrorType("Unresolved expansion")
+                    directExpansion = fir.expandedConeType ?: ConeClassErrorType("Unresolved expansion"),
+                    isNullable = isNullable
                 )
             }
             else -> error("!")
@@ -118,7 +119,8 @@ class FirTypeResolverImpl : FirTypeResolver {
 
     override fun resolveUserType(typeRef: FirUserTypeRef, symbol: ConeSymbol?, scope: FirScope): ConeKotlinType {
         symbol ?: return ConeKotlinErrorType("Symbol not found, for `${typeRef.render()}`")
-        return symbol.toConeKotlinType(typeRef.qualifier) ?: ConeKotlinErrorType("Failed to resolve qualified type")
+        return symbol.toConeKotlinType(typeRef.qualifier, typeRef.isMarkedNullable)
+            ?: ConeKotlinErrorType("Failed to resolve qualified type")
     }
 
     override fun resolveType(
@@ -139,11 +141,12 @@ class FirTypeResolverImpl : FirTypeResolver {
                     (typeRef.receiverTypeRef as FirResolvedTypeRef?)?.type,
                     typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe() },
                     typeRef.returnTypeRef.coneTypeUnsafe(),
-                    resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), typeRef.session)
+                    resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), typeRef.session),
+                    typeRef.isMarkedNullable
                 )
             }
             is FirImplicitBuiltinTypeRef -> {
-                resolveToSymbol(typeRef, scope, position)!!.toConeKotlinType(emptyList())!!
+                resolveToSymbol(typeRef, scope, position)!!.toConeKotlinType(emptyList(), isNullable = false)!!
             }
             is FirDynamicTypeRef, is FirImplicitTypeRef, is FirDelegatedTypeRef -> {
                 ConeKotlinErrorType("Not supported: ${typeRef::class.simpleName}")

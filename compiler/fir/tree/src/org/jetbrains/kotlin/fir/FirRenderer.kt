@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
@@ -652,6 +653,15 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
                     append(returnType.asString())
                 }
             }
+            is ConeFlexibleType -> {
+                buildString {
+                    append("ft<")
+                    append(lowerBound.asString())
+                    append(", ")
+                    append(upperBound.asString())
+                    append(">")
+                }
+            }
         }
     }
 
@@ -661,7 +671,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         val coneType = resolvedTypeRef.type
         print(coneType.asString())
         print("|")
-        visitTypeRefWithNullability(resolvedTypeRef)
+        if (coneType !is ConeKotlinErrorType && coneType !is ConeClassErrorType) {
+            print(coneType.nullability.suffix)
+        }
     }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
@@ -704,8 +716,19 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         if (isFakeOverride) {
             print("FakeOverride<")
         }
-        print(resolvedCallableReference.callableSymbol.callableId)
+        val symbol = resolvedCallableReference.callableSymbol
+        print(symbol.callableId)
         if (isFakeOverride) {
+            when (symbol) {
+                is FirFunctionSymbol -> {
+                    print(": ")
+                    symbol.fir.returnTypeRef.accept(this)
+                }
+                is FirPropertySymbol -> {
+                    print(": ")
+                    symbol.fir.returnTypeRef.accept(this)
+                }
+            }
             print(">")
         }
         print("|")

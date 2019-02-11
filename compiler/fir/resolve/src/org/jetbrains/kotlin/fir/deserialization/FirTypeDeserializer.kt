@@ -46,7 +46,8 @@ class FirTypeDeserializer(
             val id = nameResolver.getString(proto.flexibleTypeCapabilitiesId)
             val lowerBound = classLikeType(proto)
             val upperBound = classLikeType(proto.flexibleUpperBound(typeTable)!!)
-            return ConeKotlinErrorType("Not supported: Flexible types")//c.components.flexibleTypeDeserializer.create(proto, id, lowerBound, upperBound)
+            return ConeFlexibleType(lowerBound!!, upperBound!!)
+            //c.components.flexibleTypeDeserializer.create(proto, id, lowerBound, upperBound)
         }
 
         return classLikeType(proto) ?: ConeKotlinErrorType("?!id:0")
@@ -97,12 +98,12 @@ class FirTypeDeserializer(
             //createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
             ConeClassErrorType("createSuspendFunctionType not supported")
         } else {
-            ConeClassTypeImpl(constructor, arguments)
+            ConeClassTypeImpl(constructor, arguments, isNullable = false)
         }
 
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
 
-        return ConeAbbreviatedTypeImpl(typeSymbol(abbreviatedTypeProto) as ConeClassLikeSymbol, arguments, simpleType)
+        return ConeAbbreviatedTypeImpl(typeSymbol(abbreviatedTypeProto) as ConeClassLikeSymbol, arguments, simpleType, isNullable = false)
 
     }
 

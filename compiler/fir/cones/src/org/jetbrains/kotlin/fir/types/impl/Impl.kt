@@ -11,19 +11,30 @@ import org.jetbrains.kotlin.fir.types.*
 
 open class ConeClassTypeImpl(
     override val symbol: ConeClassLikeSymbol,
-    override val typeArguments: Array<ConeKotlinTypeProjection>
-) : ConeClassLikeType()
+    override val typeArguments: Array<ConeKotlinTypeProjection>,
+    isNullable: Boolean
+) : ConeClassLikeType() {
+    override val nullability: ConeNullability = ConeNullability.create(isNullable)
+}
 
 class ConeAbbreviatedTypeImpl(
     override val abbreviationSymbol: ConeClassLikeSymbol,
     override val typeArguments: Array<ConeKotlinTypeProjection>,
-    override val directExpansion: ConeClassLikeType
+    override val directExpansion: ConeClassLikeType,
+    isNullable: Boolean
 ) : ConeAbbreviatedType() {
     override val symbol: ConeClassLikeSymbol
         get() = abbreviationSymbol
+
+    override val nullability: ConeNullability = ConeNullability.create(isNullable)
 }
 
-class ConeTypeParameterTypeImpl(override val symbol: ConeTypeParameterSymbol) : ConeTypeParameterType() {
+class ConeTypeParameterTypeImpl(
+    override val symbol: ConeTypeParameterSymbol,
+    isNullable: Boolean
+) : ConeTypeParameterType() {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = EMPTY_ARRAY
+
+    override val nullability: ConeNullability = ConeNullability.create(isNullable)
 }
