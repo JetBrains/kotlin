@@ -22,7 +22,7 @@ class RemoteIncrementalDataProvider(val facade: CompilerCallbackServicesFacade, 
         get() = rpcProfiler.withMeasure(this) {
             val result = mutableMapOf<File, TranslationResultValue>()
             facade.incrementalDataProvider_getCompiledPackageParts().forEach {
-                val prev = result.put(File(it.filePath), TranslationResultValue(it.metadata, it.binaryAst, it.header))
+                val prev = result.put(File(it.filePath), TranslationResultValue(it.metadata, it.binaryAst, it.inlineData))
                 check(prev == null) { "compiledPackageParts: duplicated entry for file `${it.filePath}`" }
             }
             result

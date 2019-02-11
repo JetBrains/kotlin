@@ -194,21 +194,21 @@ class K2JSTranslator @JvmOverloads constructor(
                 metadataVersion ?: JsMetadataVersion.INSTANCE
             )
 
-            val header = serializeHeader(fileTranslationResult.inlineFunctionTags)
+            val inlineData = serializeInlineData(fileTranslationResult.inlineFunctionTags)
 
             val ioFile = VfsUtilCore.virtualToIoFile(file.virtualFile)
-            incrementalResults?.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst, header)
+            incrementalResults?.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst, inlineData)
         }
 
         val settings = config.configuration.languageVersionSettings
         incrementalResults?.processHeader(KotlinJavascriptSerializationUtil.serializeHeader(moduleDescriptor, null, settings).toByteArray())
     }
 
-    private fun serializeHeader(importedTags: Set<String>): ByteArray {
+    private fun serializeInlineData(importedTags: Set<String>): ByteArray {
         val output = ByteArrayOutputStream()
-        val headerBuilder = JsAstProtoBuf.Header.newBuilder()
-        headerBuilder.addAllInlineFunctionTags(importedTags)
-        headerBuilder.build().writeTo(output)
+        val inlineDataBuilder = JsAstProtoBuf.InlineData.newBuilder()
+        inlineDataBuilder.addAllInlineFunctionTags(importedTags)
+        inlineDataBuilder.build().writeTo(output)
         return output.toByteArray()
     }
 

@@ -347,8 +347,8 @@ public final class Translation {
                 translatedSourceFiles.put(sourceFileUnit, new SourceFileTranslationResult(fragment, staticContext.getInlineFunctionTags(), fileMemberScope));
             }
             else if (unit instanceof TranslationUnit.BinaryAst) {
-                byte[] headerData = ((TranslationUnit.BinaryAst) unit).getHeader();
-                JsAstProtoBuf.Header h = JsAstProtoBuf.Header.parseFrom(CodedInputStream.newInstance(headerData));
+                byte[] inlineDataArray = ((TranslationUnit.BinaryAst) unit).getInlineData();
+                JsAstProtoBuf.InlineData h = JsAstProtoBuf.InlineData.parseFrom(CodedInputStream.newInstance(inlineDataArray));
                 for (String tag : h.getInlineFunctionTagsList()) {
                     assert !inlineFunctionTagMap.containsKey(tag) : "Duplicate inline function tag found: '" + tag + "'";
                     inlineFunctionTagMap.put(tag, unit);

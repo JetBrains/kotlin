@@ -38776,8 +38776,8 @@ public final class JsAstProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Chunk)
   }
 
-  public interface HeaderOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.Header)
+  public interface InlineDataOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.InlineData)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
@@ -38800,30 +38800,30 @@ public final class JsAstProtoBuf {
         getInlineFunctionTagsBytes(int index);
   }
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Header}
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.InlineData}
    */
-  public static final class Header extends
+  public static final class InlineData extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.Header)
-      HeaderOrBuilder {
-    // Use Header.newBuilder() to construct.
-    private Header(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.InlineData)
+      InlineDataOrBuilder {
+    // Use InlineData.newBuilder() to construct.
+    private InlineData(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private Header(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+    private InlineData(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
-    private static final Header defaultInstance;
-    public static Header getDefaultInstance() {
+    private static final InlineData defaultInstance;
+    public static InlineData getDefaultInstance() {
       return defaultInstance;
     }
 
-    public Header getDefaultInstanceForType() {
+    public InlineData getDefaultInstanceForType() {
       return defaultInstance;
     }
 
     private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-    private Header(
+    private InlineData(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -38879,18 +38879,18 @@ public final class JsAstProtoBuf {
         makeExtensionsImmutable();
       }
     }
-    public static org.jetbrains.kotlin.protobuf.Parser<Header> PARSER =
-        new org.jetbrains.kotlin.protobuf.AbstractParser<Header>() {
-      public Header parsePartialFrom(
+    public static org.jetbrains.kotlin.protobuf.Parser<InlineData> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<InlineData>() {
+      public InlineData parsePartialFrom(
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return new Header(input, extensionRegistry);
+        return new InlineData(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public org.jetbrains.kotlin.protobuf.Parser<Header> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<InlineData> getParserForType() {
       return PARSER;
     }
 
@@ -38972,53 +38972,53 @@ public final class JsAstProtoBuf {
       return super.writeReplace();
     }
 
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseFrom(byte[] data)
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseFrom(byte[] data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseFrom(
         byte[] data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseDelimitedFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseDelimitedFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseDelimitedFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parseFrom(
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -39027,21 +39027,21 @@ public final class JsAstProtoBuf {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header prototype) {
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
 
     /**
-     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Header}
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.InlineData}
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header, Builder>
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData, Builder>
         implements
-        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.Header)
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.HeaderOrBuilder {
-      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header.newBuilder()
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.InlineData)
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineDataOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -39063,20 +39063,20 @@ public final class JsAstProtoBuf {
         return create().mergeFrom(buildPartial());
       }
 
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header.getDefaultInstance();
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData.getDefaultInstance();
       }
 
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header build() {
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header result = buildPartial();
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData build() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header buildPartial() {
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header(this);
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData buildPartial() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData(this);
         int from_bitField0_ = bitField0_;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           inlineFunctionTags_ = inlineFunctionTags_.getUnmodifiableView();
@@ -39086,8 +39086,8 @@ public final class JsAstProtoBuf {
         return result;
       }
 
-      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header other) {
-        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData other) {
+        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData.getDefaultInstance()) return this;
         if (!other.inlineFunctionTags_.isEmpty()) {
           if (inlineFunctionTags_.isEmpty()) {
             inlineFunctionTags_ = other.inlineFunctionTags_;
@@ -39111,11 +39111,11 @@ public final class JsAstProtoBuf {
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header parsedMessage = null;
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Header) e.getUnfinishedMessage();
+          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineData) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -39219,15 +39219,15 @@ public final class JsAstProtoBuf {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.Header)
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.InlineData)
     }
 
     static {
-      defaultInstance = new Header(true);
+      defaultInstance = new InlineData(true);
       defaultInstance.initFields();
     }
 
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Header)
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.InlineData)
   }
 
 

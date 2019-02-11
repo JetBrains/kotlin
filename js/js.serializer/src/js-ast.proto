@@ -476,9 +476,9 @@ message Chunk {
     required Fragment fragment = 3;
 }
 
-// Header
+// InlineData
 //
 
-message Header {
+message InlineData {
     repeated string inline_function_tags = 1;
 }

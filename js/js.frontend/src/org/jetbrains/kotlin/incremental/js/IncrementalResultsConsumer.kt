@@ -25,7 +25,7 @@ interface IncrementalResultsConsumer {
     fun processHeader(headerMetadata: ByteArray)
 
     /** processes new package part metadata and binary tree for compiled source file */
-    fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, header: ByteArray)
+    fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray)
 
     /**
      * [inlineFunction] is expected to be a body of inline function (an instance of [JsNode]),
@@ -84,8 +84,8 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         this.headerMetadata = headerMetadata
     }
 
-    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, header: ByteArray) {
-        _packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst, header))
+    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray) {
+        _packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst, inlineData))
     }
 
     override fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>) {

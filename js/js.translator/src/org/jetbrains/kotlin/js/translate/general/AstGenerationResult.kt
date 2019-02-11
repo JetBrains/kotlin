@@ -50,12 +50,11 @@ class AstGenerationResult(
             is TranslationUnit.SourceFile -> translatedSourceFiles[unit]!!
             is TranslationUnit.BinaryAst -> cache.getOrPut(unit) {
                 // TODO Don't deserialize header twice
-                val headerData = unit.header
-                val header = JsAstProtoBuf.Header.parseFrom(CodedInputStream.newInstance(headerData))
+                val inlineData = JsAstProtoBuf.InlineData.parseFrom(CodedInputStream.newInstance(unit.inlineData))
 
                 DeserializedFileTranslationResult(
                     deserializer.deserialize(ByteArrayInputStream(unit.data)),
-                    HashSet(header.inlineFunctionTagsList)
+                    HashSet(inlineData.inlineFunctionTagsList)
                 )
             }
         }
