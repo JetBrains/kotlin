@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import kotlin.reflect.KClass
 import kotlin.system.measureNanoTime
 
-fun doFirResolveTestBench(firFiles: List<FirFile>, transformers: List<FirTransformer<Nothing?>>) {
+fun doFirResolveTestBench(firFiles: List<FirFile>, transformers: List<FirTransformer<Nothing?>>, gc: Boolean = true) {
 
-    System.gc()
+    if (gc) {
+        System.gc()
+    }
 
     val timePerTransformer = mutableMapOf<KClass<*>, Long>()
     val counterPerTransformer = mutableMapOf<KClass<*>, Long>()

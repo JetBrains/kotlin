@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
+import org.jetbrains.kotlin.fir.AbstractFirDiagnosticsSmokeTest
 import org.jetbrains.kotlin.fir.AbstractFirResolveTestCase
 import org.jetbrains.kotlin.fir.AbstractFirResolveTestCaseWithStdlib
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
@@ -411,4 +412,11 @@ fun main(args: Array<String>) {
         }
     }
 
+
+    testGroup("compiler/fir/resolve/tests", "compiler/testData") {
+
+        testClass<AbstractFirDiagnosticsSmokeTest> {
+            model("diagnostics/tests")
+        }
+    }
 }
