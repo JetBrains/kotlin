@@ -560,10 +560,14 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                             "File '%s' already exists. Do you want to move selected declarations to this file?",
                             targetFile.getVirtualFile().getPath()
                     );
-                    int ret =
+                    int ret=
                             Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"),
                                                      Messages.getQuestionIcon());
                     if (ret != Messages.YES) return null;
+                }
+
+                if (targetFile instanceof KtFile) {
+                    return new KotlinMoveTargetForExistingElement((KtFile) targetFile);
                 }
             }
 
