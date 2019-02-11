@@ -337,6 +337,7 @@ public final class Translation {
 
                 JsProgramFragment fragment = staticContext.getFragment();
                 for (String tag : staticContext.getInlineFunctionTags()) {
+                    assert !inlineFunctionTagMap.containsKey(tag) : "Duplicate inline function tag found: '" + tag + "'";
                     inlineFunctionTagMap.put(tag, unit);
                 }
                 NormalizeImportTagsKt.normalizeImportTags(fragment);
@@ -349,6 +350,7 @@ public final class Translation {
                 byte[] headerData = ((TranslationUnit.BinaryAst) unit).getHeader();
                 JsAstProtoBuf.Header h = JsAstProtoBuf.Header.parseFrom(CodedInputStream.newInstance(headerData));
                 for (String tag : h.getInlineFunctionTagsList()) {
+                    assert !inlineFunctionTagMap.containsKey(tag) : "Duplicate inline function tag found: '" + tag + "'";
                     inlineFunctionTagMap.put(tag, unit);
                 }
             }

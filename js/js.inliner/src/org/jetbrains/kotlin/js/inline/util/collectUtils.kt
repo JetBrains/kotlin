@@ -106,9 +106,9 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
             super.visitExpressionStatement(x)
         }
 
-        override fun visitBreak(x: JsBreak) {
-            x.label?.name?.let { names += it }
-            super.visitBreak(x)
+        override fun visitLabel(x: JsLabel) {
+            x.name?.let { names += it }
+            super.visitLabel(x)
         }
 
         override fun visitCatch(x: JsCatch) {
@@ -141,9 +141,9 @@ fun collectDefinedNamesInAllScopes(scope: JsNode): Set<JsName> {
             x.name?.let { names += it }
         }
 
-        override fun visitBreak(x: JsBreak) {
-            x.label?.name?.let { names += it }
-            super.visitBreak(x)
+        override fun visitLabel(x: JsLabel) {
+            x.name?.let { names += it }
+            super.visitLabel(x)
         }
 
         override fun visitCatch(x: JsCatch) {
