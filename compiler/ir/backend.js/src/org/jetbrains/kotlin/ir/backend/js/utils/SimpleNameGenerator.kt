@@ -117,8 +117,12 @@ class SimpleNameGenerator : NameGenerator {
                 if (declaration is IrConstructor) return@getOrPut getNameForDeclaration(declaration.parentAsClass, context)
 
                 if (declaration is IrClass && declaration.parent is IrClass) {
-                    val parentName = getNameForDeclaration(declaration.parentAsClass, context).ident
-                    return@getOrPut context.currentScope.declareFreshName(parentName + "$" + descriptorName.identifier)
+                    val parentName = getNameForDeclaration(declaration.parentAsClass, context)
+                    if (declaration.isCompanion) {
+                        // External companions are class references
+                        return@getOrPut parentName
+                    }
+                    return@getOrPut context.currentScope.declareFreshName(parentName.ident + "$" + descriptorName.identifier)
                 }
                 return@getOrPut context.staticContext.rootScope.declareName(descriptorName.identifier)
             }

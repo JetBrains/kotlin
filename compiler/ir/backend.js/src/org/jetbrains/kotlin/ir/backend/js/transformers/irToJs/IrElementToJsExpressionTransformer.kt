@@ -140,7 +140,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         if (function is IrSimpleFunction) {
             val property = function.correspondingProperty
             if (property != null && property.isEffectivelyExternal()) {
-                val nameRef = JsNameRef(property.name.identifier, jsDispatchReceiver)
+                val nameRef = JsNameRef(context.getNameForDeclaration(property), jsDispatchReceiver)
                 return when (function) {
                     property.getter -> nameRef
                     property.setter -> jsAssignment(nameRef, arguments.single())

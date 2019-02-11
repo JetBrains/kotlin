@@ -57,7 +57,7 @@ class DynamicCallsTransformer(private val context: JsIrBackendContext) : CallsTr
         val symbol = call.symbol
         val function = call.symbol.owner
 
-        if (function.isDynamic() || function.isEffectivelyExternal()) {
+        if (function.isDynamic()) {
             when (call.origin) {
                 GET_PROPERTY -> {
                     val fieldSymbol = context.symbolTable.lazyWrapper.referenceField(
