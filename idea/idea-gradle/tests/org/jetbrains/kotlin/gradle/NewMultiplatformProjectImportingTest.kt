@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinResourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestCase
-import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.runners.Parameterized
 
 class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
     private fun kotlinVersion() = if (gradleKotlinPluginVersion == MINIMAL_SUPPORTED_VERSION) "1.3.0-rc-146" else gradleKotlinPluginVersion
@@ -334,16 +332,20 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 sourceFolder("shared/src/androidTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("shared/src/androidTest/resources", JavaResourceRootType.TEST_RESOURCE)
             }
+            var nativeVersion = when (gradleKotlinPluginVersion) {
+                MINIMAL_SUPPORTED_VERSION -> "1.0.2"
+                else -> "1.1.1"
+            }
             module("shared_iOSMain") {
-                libraryDependency("Kotlin/Native 0.9.3 - stdlib", DependencyScope.PROVIDED)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                libraryDependency("Gradle: Kotlin/Native:stdlib:$nativeVersion", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
                 moduleDependency("shared_commonMain", DependencyScope.COMPILE)
                 sourceFolder("shared/src/iOSMain/kotlin", KotlinSourceRootType.Source)
                 sourceFolder("shared/src/iOSMain/resources", KotlinResourceRootType.Resource)
             }
             module("shared_iOSTest") {
-                libraryDependency("Kotlin/Native 0.9.3 - stdlib", DependencyScope.PROVIDED)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                libraryDependency("Gradle: Kotlin/Native:stdlib:$nativeVersion", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
                 moduleDependency("shared_iOSMain", DependencyScope.TEST)
                 moduleDependency("shared_commonMain", DependencyScope.TEST)
                 moduleDependency("shared_commonTest", DependencyScope.TEST)
@@ -479,6 +481,46 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
+    /**
+     * This test is inherited form testPlatformToCommonExpectedByInComposite and actually tests
+     * dependencies in multiplatform project included in composite build
+     */
+    @Test
+    fun testPlatformToCommonExpByInComposite() {
+        configureByFiles()
+        importProject(true)
+
+        checkProjectStructure(exhaustiveSourceSourceRootList = false) {
+            module("project")
+            module("project.commonMain")
+            module("project.commonTest") {
+                moduleDependency("project.commonMain", DependencyScope.TEST)
+            }
+            module("toInclude")
+            module("toInclude.commonMain")
+            module("toInclude.commonTest") {
+                moduleDependency("toInclude.commonMain", DependencyScope.TEST)
+            }
+            module("toInclude.jsMain") {
+                moduleDependency("toInclude.commonMain", DependencyScope.COMPILE)
+            }
+
+            module("toInclude.jsTest") {
+                moduleDependency("toInclude.commonMain", DependencyScope.TEST)
+                moduleDependency("toInclude.commonTest", DependencyScope.TEST)
+                moduleDependency("toInclude.jsMain", DependencyScope.TEST)
+            }
+            module("toInclude.jvmMain") {
+                moduleDependency("toInclude.commonMain", DependencyScope.COMPILE)
+            }
+            module("toInclude.jvmTest") {
+                moduleDependency("toInclude.commonMain", DependencyScope.TEST)
+                moduleDependency("toInclude.commonTest", DependencyScope.TEST)
+                moduleDependency("toInclude.jvmMain", DependencyScope.TEST)
+            }
+        }
+    }
+
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,
@@ -492,6 +534,16 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             exhaustiveSourceSourceRootList,
             exhaustiveDependencyList,
             body)
+    }
+
+    fun importProject(useQualifiedNames: Boolean) {
+        val isUseQualifiedModuleNames = currentExternalProjectSettings.isUseQualifiedModuleNames
+        currentExternalProjectSettings.isUseQualifiedModuleNames = useQualifiedNames
+        try {
+            importProject()
+        } finally {
+            currentExternalProjectSettings.isUseQualifiedModuleNames = isUseQualifiedModuleNames
+        }
     }
 
     override fun importProject() {

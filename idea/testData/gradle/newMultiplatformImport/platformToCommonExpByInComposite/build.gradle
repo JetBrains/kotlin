@@ -11,4 +11,10 @@ buildscript {
     }
 }
 
-apply plugin: 'kotlin'
+apply plugin: 'kotlin-multiplatform'
+
+
+repositories {
+    mavenCentral()
+    maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+}

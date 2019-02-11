@@ -91,22 +91,6 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    fun testPlatformToCommonExpByInComposite() { // renamed from testPlatformToCommonExpectedByDependencyInComposite due to lack support of long names under Windows
-        configureByFiles()
-        importProject()
-
-        TestCase.assertEquals(listOf("common_main"), facetSettings("jvm_main").implementedModuleNames)
-        TestCase.assertEquals(listOf("common_test"), facetSettings("jvm_test").implementedModuleNames)
-        TestCase.assertEquals(listOf("common_main"), facetSettings("js_main").implementedModuleNames)
-        TestCase.assertEquals(listOf("common_test"), facetSettings("js_test").implementedModuleNames)
-
-        assertModuleModuleDepScope("jvm_main", "common_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm_test", "common_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_main", "common_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_test", "common_test", DependencyScope.COMPILE)
-    }
-
-    @Test
     fun testPlatformToCommonDependencyRoot() {
         configureByFiles()
         importProject()
