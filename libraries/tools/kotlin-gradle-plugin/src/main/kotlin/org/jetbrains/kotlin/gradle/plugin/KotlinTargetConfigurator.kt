@@ -397,7 +397,7 @@ open class KotlinNativeTargetConfigurator(
     private fun AbstractKotlinNativeCompile.addCompilerPlugins() {
         SubpluginEnvironment
             .loadSubplugins(project, kotlinPluginVersion)
-            .addSubpluginOptions<CommonCompilerArguments>(project, this, compilerPluginOptions)
+            .addSubpluginOptions(project, this, compilerPluginOptions)
         compilerPluginClasspath = project.configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME)
     }
 
