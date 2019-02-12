@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.parsing;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
-import org.jetbrains.kotlin.scripting.legacy.CliScriptDefinitionProvider;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
@@ -2475,13 +2473,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Script extends AbstractParsingTest {
-
-            @Override
-            protected void setUp() throws Exception {
-                super.setUp();
-                getProject().registerService(ScriptDefinitionProvider.class, CliScriptDefinitionProvider.class);
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doParsingTest, TargetBackend.ANY, testDataFilePath);
             }
