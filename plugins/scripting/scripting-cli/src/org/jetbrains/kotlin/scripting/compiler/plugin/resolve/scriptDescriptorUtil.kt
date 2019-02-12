@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.resolve.lazy.descriptors.script
+package org.jetbrains.kotlin.scripting.compiler.plugin.resolve
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
