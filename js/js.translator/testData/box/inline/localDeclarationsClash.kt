@@ -29,7 +29,7 @@ inline fun run(): String {
 fun ok() = o.run() + k.run()
 
 // FILE: main.kt
-
+// RECOMPILE
 interface I {
     fun run(): String
 }
