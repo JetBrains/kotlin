@@ -51,7 +51,7 @@ class LazyPackageMemberScope(
         getScopeForMemberDeclarationResolution(declaration)
 
     override fun getNonDeclaredClasses(name: Name, result: MutableSet<ClassDescriptor>) {
-        // No extra classes
+        c.syntheticResolveExtension.generateSyntheticClasses(thisDescriptor, name, c, declarationProvider, result)
     }
 
     override fun getNonDeclaredFunctions(name: Name, result: MutableSet<SimpleFunctionDescriptor>) {
