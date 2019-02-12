@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptReportSink
@@ -105,6 +106,7 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             ScriptDependenciesProvider::class.java,
             CliScriptDependenciesProvider(project)
         )
+        SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         if (messageCollector != null) {

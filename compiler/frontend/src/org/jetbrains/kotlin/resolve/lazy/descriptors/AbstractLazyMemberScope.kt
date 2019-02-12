@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.AbstractPsiBasedDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
@@ -55,9 +54,8 @@ protected constructor(
 
     private fun doGetClasses(name: Name): List<ClassDescriptor> {
         val result = linkedSetOf<ClassDescriptor>()
-        declarationProvider.getClassOrObjectDeclarations(name).mapTo(result) {
-            if (it is KtScriptInfo)
-                LazyScriptDescriptor(c as ResolveSession, thisDescriptor, name, it)
+        declarationProvider.getClassOrObjectDeclarations(name).mapNotNullTo(result) {
+            if (it is KtScriptInfo) null
             else {
                 val isExternal = it.modifierList?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: false
                 LazyClassDescriptor(c, thisDescriptor, name, it, isExternal)
