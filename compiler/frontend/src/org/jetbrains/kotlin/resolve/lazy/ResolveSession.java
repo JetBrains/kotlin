@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
-import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo;
-import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotations;
@@ -263,20 +261,12 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
         result.addAll(ContainerUtil.mapNotNull(
                 provider.getClassOrObjectDeclarations(fqName.shortName()),
-                classLikeInfo -> {
-                    if (classLikeInfo instanceof KtClassOrObjectInfo) {
-                        //noinspection RedundantCast
-                        return getClassDescriptor(((KtClassOrObjectInfo) classLikeInfo).getCorrespondingClassOrObject(), location);
-                    }
-                    else if (classLikeInfo instanceof KtScriptInfo) {
-                        return getScriptDescriptor(((KtScriptInfo) classLikeInfo).getScript());
-                    }
-                    else {
-                        throw new IllegalStateException(
-                                "Unexpected " + classLikeInfo + " of type " + classLikeInfo.getClass().getName()
-                        );
-                    }
-                }
+                classOrObjectInfo -> getClassDescriptor(classOrObjectInfo.getCorrespondingClassOrObject(), location)
+        ));
+
+        result.addAll(ContainerUtil.mapNotNull(
+                provider.getScriptDeclarations(fqName.shortName()),
+                scriptInfo -> getScriptDescriptor(scriptInfo.getScript())
         ));
 
         result.addAll(ContainerUtil.map(

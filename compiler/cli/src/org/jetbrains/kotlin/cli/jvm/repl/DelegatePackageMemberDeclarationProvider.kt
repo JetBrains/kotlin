@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.repl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
@@ -44,6 +45,8 @@ open class DelegatePackageMemberDeclarationProvider(var delegate: PackageMemberD
         delegate.getDestructuringDeclarationsEntries(name)
 
     override fun getClassOrObjectDeclarations(name: Name) = delegate.getClassOrObjectDeclarations(name)
+
+    override fun getScriptDeclarations(name: Name): Collection<KtScriptInfo> = delegate.getScriptDeclarations(name)
 
     override fun getTypeAliasDeclarations(name: Name) = delegate.getTypeAliasDeclarations(name)
 

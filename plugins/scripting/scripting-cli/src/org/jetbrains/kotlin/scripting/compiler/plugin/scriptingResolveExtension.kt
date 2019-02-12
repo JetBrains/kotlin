@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 
@@ -23,10 +22,8 @@ class ScriptingResolveExtension : SyntheticResolveExtension {
         declarationProvider: PackageMemberDeclarationProvider,
         result: MutableSet<ClassDescriptor>
     ) {
-        declarationProvider.getClassOrObjectDeclarations(name).mapNotNullTo(result) {
-            if (it is KtScriptInfo) {
-                LazyScriptDescriptor(ctx as ResolveSession, thisDescriptor, name, it)
-            } else null
+        declarationProvider.getScriptDeclarations(name).mapTo(result) {
+            LazyScriptDescriptor(ctx as ResolveSession, thisDescriptor, name, it)
         }
 
         super.generateSyntheticClasses(thisDescriptor, name, ctx, declarationProvider, result)
