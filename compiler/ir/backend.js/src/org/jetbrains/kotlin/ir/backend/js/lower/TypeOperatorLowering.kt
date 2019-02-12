@@ -218,7 +218,13 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                     toType.isArray() -> generateGenericArrayCheck(argument)
                     toType.isPrimitiveArray() -> generatePrimitiveArrayTypeCheck(argument, toType)
                     toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
-                    toType.isInterface() -> generateInterfaceCheck(argument, toType)
+                    toType.isInterface() -> {
+                        if ((toType.classifierOrFail.owner as IrClass).isEffectivelyExternal()) {
+                            generateIsObjectCheck(argument)
+                        } else {
+                            generateInterfaceCheck(argument, toType)
+                        }
+                    }
                     else -> generateNativeInstanceOf(argument, toType)
                 }
             }
