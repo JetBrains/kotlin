@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
@@ -131,26 +132,29 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
     }
 
     private fun TranslationContext.referenceMethod(clazz: ClassDescriptor, name: String) =
-        clazz.getFuncDesc(name).single().let { getNameForDescriptor(it) }
+        getNameForDescriptor(clazz.getFuncDesc(name).single())
 
     override fun generateSave(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
         val encoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.ENCODER_CLASS)
         val kOutputClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.STRUCTURE_ENCODER_CLASS)
         val wBeginFunc = ctx.getNameForDescriptor(
-                encoderClass.getFuncDesc(CallingConventions.begin).single { it.valueParameters.size == 2 })
+            encoderClass.getFuncDesc(CallingConventions.begin).single { it.valueParameters.size == 2 })
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())
-        val initializersMap: Map<PropertyDescriptor, KtExpression?> = context.buildInitializersRemapping(
-            (serializableDescriptor.findPsi() as? KtPureClassOrObject)
-                ?: throw AssertionError("Serializable descriptor $serializableDescriptor must have source file to build initializers map")
-        )
+
+        val serializableSource = ((serializableDescriptor.findPsi() as? KtPureClassOrObject)
+            ?: throw AssertionError("Serializable descriptor $serializableDescriptor must have source file to build initializers map"))
+        val initializersMap: Map<PropertyDescriptor, KtExpression?> =
+            context.buildInitializersRemapping(serializableSource, serializableDescriptor.getSuperClassNotAny())
 
         // output.writeBegin(desc, [])
         val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
             JsNameRef(context.scope().declareName("$typeArgPrefix$idx"), JsThisRef())
         }
-        val call = JsInvocation(JsNameRef(wBeginFunc, JsNameRef(jsFun.parameters[0].name)),
-                                serialClassDescRef,
-                                JsArrayLiteral(typeParams))
+        val call = JsInvocation(
+            JsNameRef(wBeginFunc, JsNameRef(jsFun.parameters[0].name)),
+            serialClassDescRef,
+            JsArrayLiteral(typeParams)
+        )
         val objRef = JsNameRef(jsFun.parameters[1].name)
         // output = output.writeBegin...
         val localOutputName = jsFun.scope.declareFreshName("output")

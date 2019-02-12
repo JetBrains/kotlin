@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
@@ -44,7 +45,7 @@ class SerializableJsTranslator(
     val context: TranslationContext
 ) : SerializableCodegen(descriptor, context.bindingContext()) {
 
-    private val initMap: Map<PropertyDescriptor, KtExpression?> = context.buildInitializersRemapping(declaration)
+    private val initMap: Map<PropertyDescriptor, KtExpression?> = context.buildInitializersRemapping(declaration, descriptor.getSuperClassNotAny())
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) {
 
