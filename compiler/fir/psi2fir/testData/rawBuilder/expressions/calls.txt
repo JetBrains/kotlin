@@ -9,17 +9,17 @@ FILE: calls.kt
         return@@@testRegular distance#(Int(3), Int(4))
     }
     public? final? class My {
-        public? constructor(x: Int): super<kotlin.Any>()
+        public? constructor(x: Int): super<kotlin/Any>()
 
         public? final? property x(var): Int
             public? get(): Int
-            public? set(value: Int): kotlin.Unit
+            public? set(value: Int): kotlin/Unit
 
         public? final? operator function invoke(): <implicit> {
             return@@@invoke x#
         }
 
-        public? final? function foo(): kotlin.Unit {
+        public? final? function foo(): kotlin/Unit {
         }
 
         public? final? function copy(): <implicit> {
@@ -30,7 +30,7 @@ FILE: calls.kt
     public? final? function testInvoke(): Int {
         return@@@testInvoke invoke#(My#(Int(13)))
     }
-    public? final? function testQualified(first: My, second: My?): kotlin.Unit {
+    public? final? function testQualified(first: My, second: My?): kotlin/Unit {
         println#(first#.x#)
         println#(second#?.x#)
         first#.foo#()

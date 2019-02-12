@@ -28,3 +28,10 @@ interface FirFunctionTypeRef : FirTypeRefWithNullability {
         }
     }
 }
+
+
+val FirFunctionTypeRef.parametersCount: Int
+    get() = if (receiverTypeRef != null)
+        valueParameters.size + 1
+    else
+        valueParameters.size

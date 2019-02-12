@@ -10,18 +10,19 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
 sealed class FirImplicitBuiltinTypeRef(
     override val session: FirSession,
     override val psi: PsiElement?,
-    val name: Name
+    val id: ClassId
 ) : FirImplicitTypeRef {
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
 
-    constructor(session: FirSession, psi: PsiElement?, name: FqNameUnsafe) : this(session, psi, name.shortName())
+    constructor(session: FirSession, psi: PsiElement?, name: FqNameUnsafe) : this(session, psi, ClassId.topLevel(name.toSafe()))
 }
 
 class FirImplicitUnitTypeRef(

@@ -1,6 +1,6 @@
 FILE: these.kt
     public? final? class Some {
-        public? constructor(): super<kotlin.Any>()
+        public? constructor(): super<kotlin/Any>()
 
         public? final? function foo(): Int {
             return@@@foo Int(1)

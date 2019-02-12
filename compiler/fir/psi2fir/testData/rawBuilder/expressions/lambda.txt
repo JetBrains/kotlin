@@ -1,6 +1,6 @@
 FILE: lambda.kt
     public? final? data class Tuple {
-        public? constructor(x: Int, y: Int): super<kotlin.Any>()
+        public? constructor(x: Int, y: Int): super<kotlin/Any>()
 
         public? final? property x(val): Int
             public? get(): Int
@@ -64,7 +64,7 @@ FILE: lambda.kt
         }
         )
     }
-    public? final? function test(list: List<Int>): kotlin.Unit {
+    public? final? function test(list: List<Int>): kotlin/Unit {
         val map: <implicit> = mutableMapOf#<Int, String>()
         list#.forEach#(forEach@function  <implicit>.<anonymous>(): <implicit> {
             return  {

@@ -1,5 +1,5 @@
 FILE: unary.kt
-    public? final? function test(): kotlin.Unit {
+    public? final? function test(): kotlin/Unit {
         var x: <implicit> = Int(0)
         val x1: <implicit> =  {
             val <unary>: <implicit> = x#
@@ -35,13 +35,13 @@ FILE: unary.kt
 
     }
     public? final? class X {
-        public? constructor(i: Int): super<kotlin.Any>()
+        public? constructor(i: Int): super<kotlin/Any>()
 
         public? final? property i(val): Int
             public? get(): Int
 
     }
-    public? final? function test2(x: X): kotlin.Unit {
+    public? final? function test2(x: X): kotlin/Unit {
         val x1: <implicit> =  {
             val <unary>: <implicit> = x#.i#
             x#.i# = inc#(<unary>#)
@@ -56,7 +56,7 @@ FILE: unary.kt
         }
 
     }
-    public? final? function test3(arr: Array<Int>): kotlin.Unit {
+    public? final? function test3(arr: Array<Int>): kotlin/Unit {
         val x1: <implicit> =  {
             val <unary>: <implicit> = arr#[Int(0)]
             arr#[Int(0)] = inc#(<unary>#)
@@ -72,13 +72,13 @@ FILE: unary.kt
 
     }
     public? final? class Y {
-        public? constructor(arr: Array<Int>): super<kotlin.Any>()
+        public? constructor(arr: Array<Int>): super<kotlin/Any>()
 
         public? final? property arr(val): Array<Int>
             public? get(): Array<Int>
 
     }
-    public? final? function test4(y: Y): kotlin.Unit {
+    public? final? function test4(y: Y): kotlin/Unit {
         val x1: <implicit> =  {
             val <unary>: <implicit> = y#.arr#[Int(0)]
             val <array-set>: <implicit> = y#.arr#

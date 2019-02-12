@@ -3,7 +3,7 @@ FILE: noPrimaryConstructor.kt
         public? final? property x(val): String
             public? get(): String
 
-        public? constructor(x: String): super<kotlin.Any>() {
+        public? constructor(x: String): super<kotlin/Any>() {
             this#.x# = x#
         }
 

@@ -5,7 +5,7 @@ FILE: arrayAccess.kt
         return@@@foo Int(1)
     }
     public? final? class Wrapper {
-        public? constructor(v: IntArray): super<kotlin.Any>()
+        public? constructor(v: IntArray): super<kotlin/Any>()
 
         public? final? property v(val): IntArray
             public? get(): IntArray

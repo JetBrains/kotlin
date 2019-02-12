@@ -1,5 +1,5 @@
 FILE: while.kt
-    public? final? function foo(limit: Int): kotlin.Unit {
+    public? final? function foo(limit: Int): kotlin/Unit {
         var k: <implicit> = Int(0)
         some@while(<(k#, limit#)) {
             val <unary>: <implicit> = k#
@@ -31,7 +31,7 @@ FILE: while.kt
         }
 
     }
-    public? final? function bar(limit: Int): kotlin.Unit {
+    public? final? function bar(limit: Int): kotlin/Unit {
         var k: <implicit> = limit#
         do {
             val <unary>: <implicit> = k#

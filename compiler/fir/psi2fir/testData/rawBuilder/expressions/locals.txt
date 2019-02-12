@@ -1,7 +1,7 @@
 FILE: locals.kt
     public? final? function withLocals(p: Int): Int {
         public? final? class Local {
-            public? constructor(pp: Int): super<kotlin.Any>()
+            public? constructor(pp: Int): super<kotlin/Any>()
 
             public? final? property pp(val): Int
                 public? get(): Int

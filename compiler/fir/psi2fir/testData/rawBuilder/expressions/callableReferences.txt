@@ -1,17 +1,17 @@
 FILE: callableReferences.kt
     public? final? class A {
-        public? constructor(): super<kotlin.Any>()
+        public? constructor(): super<kotlin/Any>()
 
-        public? final? function foo(): kotlin.Unit {
+        public? final? function foo(): kotlin/Unit {
         }
 
         public? final? property bar(val): <implicit> = Int(0)
             public? get(): <implicit>
 
     }
-    public? final? function qux A.(): kotlin.Unit {
+    public? final? function qux A.(): kotlin/Unit {
     }
-    public? final? function baz(): kotlin.Unit {
+    public? final? function baz(): kotlin/Unit {
     }
     public? final? property test1(val): <implicit> = A#()::foo#
         public? get(): <implicit>

@@ -4,6 +4,6 @@ FILE: where.kt
     public? final? interface B {
     }
     <T : A, B> public? final? class C {
-        public? constructor(): super<kotlin.Any>()
+        public? constructor(): super<kotlin/Any>()
 
     }

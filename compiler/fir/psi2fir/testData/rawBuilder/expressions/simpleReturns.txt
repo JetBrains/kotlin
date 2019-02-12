@@ -1,5 +1,5 @@
 FILE: simpleReturns.kt
-    public? final? function foo(): kotlin.Unit {
+    public? final? function foo(): kotlin/Unit {
         return@@@foo Unit
     }
     public? final? function bar(): String {

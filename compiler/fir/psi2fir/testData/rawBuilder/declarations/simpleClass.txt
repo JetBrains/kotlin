@@ -7,7 +7,7 @@ FILE: simpleClass.kt
 
     }
     public? final? class SomeClass : SomeInterface {
-        public? constructor(): super<kotlin.Any>()
+        public? constructor(): super<kotlin/Any>()
 
         private final? property baz(val): <implicit> = Int(42)
             private get(): <implicit>
@@ -20,15 +20,15 @@ FILE: simpleClass.kt
             public? get(): Boolean {
                 return Boolean(true)
             }
-            public? set(value: Boolean): kotlin.Unit {
+            public? set(value: Boolean): kotlin/Unit {
             }
 
         public? final? lateinit property fau(var): Double
             public? get(): Double
-            public? set(value: Double): kotlin.Unit
+            public? set(value: Double): kotlin/Unit
 
     }
     public? final? inline class InlineClass {
-        public? constructor(): super<kotlin.Any>()
+        public? constructor(): super<kotlin/Any>()
 
     }

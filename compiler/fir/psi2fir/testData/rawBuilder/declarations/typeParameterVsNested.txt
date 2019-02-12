@@ -2,17 +2,17 @@ FILE: typeParameterVsNested.kt
     public? final? interface Some {
     }
     <T : Some> public? abstract class My {
-        public? constructor(): super<kotlin.Any>()
+        public? constructor(): super<kotlin/Any>()
 
         public? final? inner class T {
-            public? constructor(): super<kotlin.Any>()
+            public? constructor(): super<kotlin/Any>()
 
         }
 
         public? abstract property x(val): T
             public? get(): T
 
-        public? abstract function foo(arg: T): kotlin.Unit
+        public? abstract function foo(arg: T): kotlin/Unit
 
         public? abstract property y(val): My.T
             public? get(): My.T

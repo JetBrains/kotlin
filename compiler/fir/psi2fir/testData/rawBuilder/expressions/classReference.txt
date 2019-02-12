@@ -1,9 +1,9 @@
 FILE: classReference.kt
     public? final? class A {
-        public? constructor(): super<kotlin.Any>()
+        public? constructor(): super<kotlin/Any>()
 
     }
-    public? final? function test(): kotlin.Unit {
+    public? final? function test(): kotlin/Unit {
         <getClass>(A#)
         <getClass>(test#.A#)
         <getClass>(A#())

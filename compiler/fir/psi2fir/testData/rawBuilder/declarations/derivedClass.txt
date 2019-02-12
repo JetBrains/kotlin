@@ -1,6 +1,6 @@
 FILE: derivedClass.kt
     <T> public? open class Base {
-        public? constructor(x: T): super<kotlin.Any>()
+        public? constructor(x: T): super<kotlin/Any>()
 
         public? final? property x(val): T
             public? get(): T

@@ -5,17 +5,21 @@
 
 package org.jetbrains.kotlin.fir.resolve.impl
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
 class FirTypeResolverImpl : FirTypeResolver {
@@ -58,9 +62,17 @@ class FirTypeResolverImpl : FirTypeResolver {
         }
     }
 
-    private data class NameInSession(val session: FirSession, val name: Name)
+    private data class ClassIdInSession(val session: FirSession, val id: ClassId)
 
-    private val implicitBuiltinTypeSymbols = mutableMapOf<NameInSession, ConeSymbol>()
+    private val implicitBuiltinTypeSymbols = mutableMapOf<ClassIdInSession, ConeClassLikeSymbol>()
+
+
+    private fun resolveBuiltInQualified(id: ClassId, session: FirSession): ConeClassLikeSymbol {
+        val nameInSession = ClassIdInSession(session, id)
+        return implicitBuiltinTypeSymbols.getOrPut(nameInSession) {
+            session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(id)!!
+        }
+    }
 
     override fun resolveToSymbol(
         typeRef: FirTypeRef,
@@ -96,23 +108,16 @@ class FirTypeResolverImpl : FirTypeResolver {
                 resolvedSymbol ?: qualifierResolver.resolveSymbol(typeRef.qualifier)
             }
             is FirImplicitBuiltinTypeRef -> {
-                val nameInSession = NameInSession(typeRef.session, typeRef.name)
-                implicitBuiltinTypeSymbols[nameInSession] ?: run {
-                    var resolvedSymbol: ConeSymbol? = null
-                    scope.processClassifiersByName(typeRef.name, position) {
-                        resolvedSymbol = (it as ConeClassLikeSymbol)
-                        resolvedSymbol == null
-                    }
-                    implicitBuiltinTypeSymbols[nameInSession] = resolvedSymbol!!
-                    resolvedSymbol
-                }
+                resolveBuiltInQualified(typeRef.id, typeRef.session)
             }
             else -> null
         }
+
+
     }
 
     override fun resolveUserType(typeRef: FirUserTypeRef, symbol: ConeSymbol?, scope: FirScope): ConeKotlinType {
-        symbol ?: return ConeKotlinErrorType("Symbol not found")
+        symbol ?: return ConeKotlinErrorType("Symbol not found, for `${typeRef.render()}`")
         return symbol.toConeKotlinType(typeRef.qualifier) ?: ConeKotlinErrorType("Failed to resolve qualified type")
     }
 
@@ -132,8 +137,9 @@ class FirTypeResolverImpl : FirTypeResolver {
             is FirFunctionTypeRef -> {
                 ConeFunctionTypeImpl(
                     (typeRef.receiverTypeRef as FirResolvedTypeRef?)?.type,
-                    typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>() },
-                    typeRef.returnTypeRef.coneTypeUnsafe()
+                    typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe() },
+                    typeRef.returnTypeRef.coneTypeUnsafe(),
+                    resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), typeRef.session)
                 )
             }
             is FirImplicitBuiltinTypeRef -> {
