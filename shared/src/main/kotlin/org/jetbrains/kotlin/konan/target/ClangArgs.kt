@@ -135,12 +135,16 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             KonanTarget.LINUX_MIPS32 ->
                 listOf("-DUSE_GCC_UNWIND=1",
                         "-DUSE_ELF_SYMBOLS=1",
-                        "-DELFSIZE=32")
+                        "-DELFSIZE=32",
+                        // TODO: reconsider, once target MIPS can do proper 64-bit load/store/CAS.
+                        "-DKONAN_NO_64BIT_ATOMIC=1")
 
             KonanTarget.LINUX_MIPSEL32 ->
                 listOf("-DUSE_GCC_UNWIND=1",
                         "-DUSE_ELF_SYMBOLS=1",
-                        "-DELFSIZE=32")
+                        "-DELFSIZE=32",
+                        // TODO: reconsider, once target MIPS can do proper 64-bit load/store/CAS.
+                        "-DKONAN_NO_64BIT_ATOMIC=1")
 
             KonanTarget.MINGW_X64 ->
                 listOf("-DUSE_GCC_UNWIND=1",
@@ -155,11 +159,22 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
-            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 ->
+            KonanTarget.IOS_ARM32 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
                         "-DKONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG=1",
-                        "-DMACHSIZE=${target.architecture.bitness}")
+                        "-DMACHSIZE=32",
+                        // While not 100% correct here, using atomic ops on iOS armv7 requires 8 byte alignment,
+                        // and general ABI requires 4-byte alignment on 64-bit long fields as mentioned in
+                        // https://developer.apple.com/library/archive/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARMv6FunctionCallingConventions.html#//apple_ref/doc/uid/TP40009021-SW1
+                        // See https://github.com/ktorio/ktor/issues/941 for the context.
+                        "-DKONAN_NO_64BIT_ATOMIC=1")
+
+            KonanTarget.IOS_ARM64 ->
+                listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
+                        "-DKONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG=1",
+                        "-DMACHSIZE=64")
 
             KonanTarget.IOS_X64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",

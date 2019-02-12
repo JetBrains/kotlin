@@ -95,14 +95,13 @@ KLong Kotlin_AtomicLong_addAndGet(KRef thiz, KLong delta) {
     return addAndGetImpl(thiz, delta);
 }
 
-#ifdef __mips
+#if KONAN_NO_64BIT_ATOMIC
 static int lock64 = 0;
 #endif
 
 KLong Kotlin_AtomicLong_compareAndSwap(KRef thiz, KLong expectedValue, KLong newValue) {
-#ifdef __mips
+#if KONAN_NO_64BIT_ATOMIC
     // Potentially huge performance penalty, but correct.
-    // TODO: reconsider, once target MIPS can do proper 64-bit CAS.
     while (compareAndSwap(&lock64, 0, 1) != 0);
     volatile KLong* address = getValueLocation<KLong>(thiz);
     KLong old = *address;
@@ -117,9 +116,8 @@ KLong Kotlin_AtomicLong_compareAndSwap(KRef thiz, KLong expectedValue, KLong new
 }
 
 KBoolean Kotlin_AtomicLong_compareAndSet(KRef thiz, KLong expectedValue, KLong newValue) {
-#ifdef __mips
+#if KONAN_NO_64BIT_ATOMIC
     // Potentially huge performance penalty, but correct.
-    // TODO: reconsider, once target MIPS can do proper 64-bit CAS.
     KBoolean result = false;
     while (compareAndSwap(&lock64, 0, 1) != 0);
     volatile KLong* address = getValueLocation<KLong>(thiz);
@@ -136,9 +134,8 @@ KBoolean Kotlin_AtomicLong_compareAndSet(KRef thiz, KLong expectedValue, KLong n
 }
 
 void Kotlin_AtomicLong_set(KRef thiz, KLong newValue) {
-#ifdef __mips
+#if KONAN_NO_64BIT_ATOMIC
     // Potentially huge performance penalty, but correct.
-    // TODO: reconsider, once target MIPS can do proper 64-bit atomic store.
     while (compareAndSwap(&lock64, 0, 1) != 0);
     volatile KLong* address = getValueLocation<KLong>(thiz);
     *address = newValue;
@@ -149,9 +146,8 @@ void Kotlin_AtomicLong_set(KRef thiz, KLong newValue) {
 }
 
 KLong Kotlin_AtomicLong_get(KRef thiz) {
-#ifdef __mips
+#if KONAN_NO_64BIT_ATOMIC
     // Potentially huge performance penalty, but correct.
-    // TODO: reconsider, once target MIPS can do proper 64-bit atomic store.
     while (compareAndSwap(&lock64, 0, 1) != 0);
     volatile KLong* address = getValueLocation<KLong>(thiz);
     KLong value = *address;
