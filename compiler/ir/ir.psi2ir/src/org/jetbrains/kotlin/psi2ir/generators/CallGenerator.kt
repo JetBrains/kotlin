@@ -274,12 +274,12 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                                 ?: throw AssertionError("No index argument in dynamic array set: ${call.original.call.callElement.text}")
                             val arg1 = args[1]
                                 ?: throw AssertionError("No value argument in dynamic array set: ${call.original.call.callElement.text}")
-                            receiver =
+                            left =
                                 makeDynamicOperatorExpression(IrDynamicOperator.ARRAY_ACCESS).apply {
-                                    receiver = dynamicReceiver
-                                    arguments.add(arg0)
+                                    left = dynamicReceiver
+                                    right = arg0
                                 }
-                            arguments.add(arg1)
+                            right = arg1
                         }
                     else ->
                         makeDynamicOperatorExpressionWithArguments(
