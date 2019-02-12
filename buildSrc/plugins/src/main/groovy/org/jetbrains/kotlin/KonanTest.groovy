@@ -23,6 +23,7 @@ import org.gradle.process.ExecResult
 
 import javax.inject.Inject
 import java.nio.file.Paths
+import java.util.function.Function
 import java.util.regex.Pattern
 
 abstract class KonanTest extends JavaExec {
@@ -39,6 +40,7 @@ abstract class KonanTest extends JavaExec {
     def enableKonanAssertions = true
     String outputDirectory = null
     String goldValue = null
+    Function<String, Boolean> outputChecker = null
     String testData = null
     int expectedExitStatus = 0
     List<String> arguments = null
@@ -306,7 +308,9 @@ abstract class KonanTest extends JavaExec {
             }
         }
 
-        def goldValueMismatch = goldValue != null && goldValue != result.replace(System.lineSeparator(), "\n")
+        result = result.replace(System.lineSeparator(), "\n")
+        def goldValueMismatch = (outputChecker != null && !outputChecker.apply(result)) ||
+                (goldValue != null && goldValue != result)
         if (goldValueMismatch) {
             def message = "Expected output: $goldValue, actual output: $result"
             if (this.expectedFail) {
