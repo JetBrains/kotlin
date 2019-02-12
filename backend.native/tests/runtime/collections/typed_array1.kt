@@ -6,74 +6,68 @@
 package runtime.collections.typed_array1
 
 import kotlin.test.*
+import kotlin.native.concurrent.*
 
 @Test fun runTest() {
     val array = ByteArray(17)
     val results = mutableSetOf<Any>()
     var counter = 0
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         results += array.getShortAt(16)
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         results += array.getCharAt(22)
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         results += array.getIntAt(15)
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         results += array.getLongAt(14)
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         results += array.getFloatAt(14)
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         results += array.getDoubleAt(13)
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         array.setShortAt(16, 2.toShort())
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException>  {
         array.setCharAt(22, 'a')
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException>  {
         array.setIntAt(15, 1234)
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         array.setLongAt(14, 1.toLong())
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         array.setFloatAt(14, 1.0f)
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-    try {
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
         array.setDoubleAt(13, 3.0)
-    } catch (e: ArrayIndexOutOfBoundsException) {
-        counter++
     }
-
-    expect(12) { counter }
     expect(0) { results.size }
+
+    array.freeze()
+    assertFailsWith<InvalidMutabilityException> {
+        array.setShortAt(0, 2.toShort())
+    }
+    assertFailsWith<InvalidMutabilityException> {
+        array.setCharAt(0, 'a')
+    }
+    assertFailsWith<InvalidMutabilityException> {
+        array.setIntAt(0, 2)
+    }
+    assertFailsWith<InvalidMutabilityException> {
+        array.setLongAt(0, 2)
+    }
+    assertFailsWith<InvalidMutabilityException> {
+        array.setFloatAt(0, 1.0f)
+    }
+    assertFailsWith<InvalidMutabilityException> {
+        array.setDoubleAt(0, 1.0)
+    }
     println("OK")
 }

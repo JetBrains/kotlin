@@ -166,12 +166,17 @@ KChar Kotlin_ByteArray_getCharAt(KConstRef thiz, KInt index) {
   if (static_cast<uint32_t>(index + 1) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
+#if KONAN_NO_UNALIGNED_ACCESS
+  const uint8_t* address = reinterpret_cast<const uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  return (static_cast<KChar>(address[0]) << 0) | (static_cast<KChar>(address[1]) << 8);
+#else
   auto result = *reinterpret_cast<const KChar*>(ByteArrayAddressOfElementAt(array, index));
 #if __BIG_ENDIAN__
   return __builtin_bswap16(result);
 #else
   return result;
-#endif
+#endif  // __BIG_ENDIAN__
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 KShort Kotlin_ByteArray_getShortAt(KConstRef thiz, KInt index) {
@@ -179,12 +184,17 @@ KShort Kotlin_ByteArray_getShortAt(KConstRef thiz, KInt index) {
   if (static_cast<uint32_t>(index + 1) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
+#if KONAN_NO_UNALIGNED_ACCESS
+  const uint8_t* address = reinterpret_cast<const uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  return (static_cast<KShort>(address[0]) << 0) | (static_cast<KShort>(address[1]) << 8);
+#else
   auto result = *reinterpret_cast<const KShort*>(ByteArrayAddressOfElementAt(array, index));
 #if __BIG_ENDIAN__
   return __builtin_bswap16(result);
 #else
   return result;
-#endif
+#endif  // __BIG_ENDIAN__
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 KInt Kotlin_ByteArray_getIntAt(KConstRef thiz, KInt index) {
@@ -192,12 +202,18 @@ KInt Kotlin_ByteArray_getIntAt(KConstRef thiz, KInt index) {
   if (static_cast<uint32_t>(index + 3) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
+#if KONAN_NO_UNALIGNED_ACCESS
+  const uint8_t* address = reinterpret_cast<const uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  return (static_cast<KInt>(address[0]) << 0) | (static_cast<KInt>(address[1]) << 8) |
+    (static_cast<KInt>(address[2]) << 16) | (static_cast<KInt>(address[3]) << 24);
+#else
   auto result = *reinterpret_cast<const KInt*>(ByteArrayAddressOfElementAt(array, index));
 #if __BIG_ENDIAN__
   return __builtin_bswap32(result);
 #else
   return result;
-#endif
+#endif  //  __BIG_ENDIAN__
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 KLong Kotlin_ByteArray_getLongAt(KConstRef thiz, KInt index) {
@@ -205,13 +221,20 @@ KLong Kotlin_ByteArray_getLongAt(KConstRef thiz, KInt index) {
   if (static_cast<uint32_t>(index + 7) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
-
+#if KONAN_NO_UNALIGNED_ACCESS
+  const uint8_t* address = reinterpret_cast<const uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  return (static_cast<KLong>(address[0]) << 0) | (static_cast<KLong>(address[1]) << 8) |
+    (static_cast<KLong>(address[2]) << 16) | (static_cast<KLong>(address[3]) << 24) |
+    (static_cast<KLong>(address[4]) << 32) | (static_cast<KLong>(address[5]) << 40) |
+    (static_cast<KLong>(address[6]) << 48) | (static_cast<KLong>(address[7]) << 56);
+#else
   auto result = *reinterpret_cast<const KLong*>(ByteArrayAddressOfElementAt(array, index));
 #if __BIG_ENDIAN__
   return __builtin_bswap64(result);
 #else
   return result;
-#endif
+#endif  // __BIG_ENDIAN__
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 KFloat Kotlin_ByteArray_getFloatAt(KConstRef thiz, KInt index) {
@@ -219,8 +242,21 @@ KFloat Kotlin_ByteArray_getFloatAt(KConstRef thiz, KInt index) {
   if (static_cast<uint32_t>(index + 3) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
+#if KONAN_NO_UNALIGNED_ACCESS
+  const uint8_t* address = reinterpret_cast<const uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  union {
+    KFloat f;
+    uint8_t b[4];
+  } u;
+  u.b[0] = address[0];
+  u.b[1] = address[1];
+  u.b[2] = address[2];
+  u.b[3] = address[3];
+  return u.f;
+#else
   auto result = *reinterpret_cast<const KFloat*>(ByteArrayAddressOfElementAt(array, index));
   return result;
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 KDouble Kotlin_ByteArray_getDoubleAt(KConstRef thiz, KInt index) {
@@ -228,7 +264,24 @@ KDouble Kotlin_ByteArray_getDoubleAt(KConstRef thiz, KInt index) {
   if (static_cast<uint32_t>(index + 7) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
+#if KONAN_NO_UNALIGNED_ACCESS
+  const uint8_t* address = reinterpret_cast<const uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  union {
+      KDouble d;
+      uint8_t b[8];
+  } u;
+  u.b[0] = address[0];
+  u.b[1] = address[1];
+  u.b[2] = address[2];
+  u.b[3] = address[3];
+  u.b[4] = address[4];
+  u.b[5] = address[5];
+  u.b[6] = address[6];
+  u.b[7] = address[7];
+  return u.d;
+#else
   return *reinterpret_cast<const KDouble*>(ByteArrayAddressOfElementAt(array, index));
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 void Kotlin_ByteArray_setCharAt(KRef thiz, KInt index, KChar value) {
@@ -237,10 +290,16 @@ void Kotlin_ByteArray_setCharAt(KRef thiz, KInt index, KChar value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   mutabilityCheck(thiz);
+#if KONAN_NO_UNALIGNED_ACCESS
+  uint8_t* address = reinterpret_cast<uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  address[0] = (value >> 0) & 0xff;
+  address[1] = (value >> 8) & 0xff;
+#else
 #if __BIG_ENDIAN__
    value = __builtin_bswap16(value);
-#endif
+#endif  // __BIG_ENDIAN__
   *reinterpret_cast<KChar*>(ByteArrayAddressOfElementAt(array, index)) = value;
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 void Kotlin_ByteArray_setShortAt(KRef thiz, KInt index, KShort value) {
@@ -249,10 +308,16 @@ void Kotlin_ByteArray_setShortAt(KRef thiz, KInt index, KShort value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   mutabilityCheck(thiz);
+#if KONAN_NO_UNALIGNED_ACCESS
+  uint8_t* address = reinterpret_cast<uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  address[0] = (value >> 0) & 0xff;
+  address[1] = (value >> 8) & 0xff;
+#else
 #if __BIG_ENDIAN__
   value = __builtin_bswap16(value);
 #endif
   *reinterpret_cast<KShort*>(ByteArrayAddressOfElementAt(array, index)) = value;
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 void Kotlin_ByteArray_setIntAt(KRef thiz, KInt index, KInt value) {
@@ -261,10 +326,18 @@ void Kotlin_ByteArray_setIntAt(KRef thiz, KInt index, KInt value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   mutabilityCheck(thiz);
+#if KONAN_NO_UNALIGNED_ACCESS
+  uint8_t* address = reinterpret_cast<uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  address[0] = (value >>  0) & 0xff;
+  address[1] = (value >>  8) & 0xff;
+  address[2] = (value >> 16) & 0xff;
+  address[3] = (value >> 24) & 0xff;
+#else
 #if __BIG_ENDIAN__
   value = __builtin_bswap32(value);
-#endif
+#endif  // __BIG_ENDIAN__
   *reinterpret_cast<KInt*>(ByteArrayAddressOfElementAt(array, index)) = value;
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 void Kotlin_ByteArray_setLongAt(KRef thiz, KInt index, KLong value) {
@@ -273,10 +346,22 @@ void Kotlin_ByteArray_setLongAt(KRef thiz, KInt index, KLong value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   mutabilityCheck(thiz);
+#if KONAN_NO_UNALIGNED_ACCESS
+  uint8_t* address = reinterpret_cast<uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  address[0] = (value >>  0) & 0xff;
+  address[1] = (value >>  8) & 0xff;
+  address[2] = (value >> 16) & 0xff;
+  address[3] = (value >> 24) & 0xff;
+  address[4] = (value >> 32) & 0xff;
+  address[5] = (value >> 40) & 0xff;
+  address[6] = (value >> 48) & 0xff;
+  address[7] = (value >> 56) & 0xff;
+#else
 #if __BIG_ENDIAN__
   value = __builtin_bswap64(value);
-#endif
+#endif // __BIG_ENDIAN__
   *reinterpret_cast<KLong*>(ByteArrayAddressOfElementAt(array, index)) = value;
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 void Kotlin_ByteArray_setFloatAt(KRef thiz, KInt index, KFloat value) {
@@ -285,7 +370,20 @@ void Kotlin_ByteArray_setFloatAt(KRef thiz, KInt index, KFloat value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   mutabilityCheck(thiz);
+#if KONAN_NO_UNALIGNED_ACCESS
+  uint8_t* address = reinterpret_cast<uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  union {
+     KFloat f;
+     uint8_t b[4];
+  } u;
+  u.f = value;
+  address[0] = u.b[0];
+  address[1] = u.b[1];
+  address[2] = u.b[2];
+  address[3] = u.b[3];
+#else
   *reinterpret_cast<KFloat*>(ByteArrayAddressOfElementAt(array, index)) = value;
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 void Kotlin_ByteArray_setDoubleAt(KRef thiz, KInt index, KDouble value) {
@@ -294,7 +392,24 @@ void Kotlin_ByteArray_setDoubleAt(KRef thiz, KInt index, KDouble value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   mutabilityCheck(thiz);
+#if KONAN_NO_UNALIGNED_ACCESS
+  uint8_t* address = reinterpret_cast<uint8_t*>(ByteArrayAddressOfElementAt(array, index));
+  union {
+     KDouble d;
+     uint8_t b[8];
+  } u;
+  u.d = value;
+  address[0] = u.b[0];
+  address[1] = u.b[1];
+  address[2] = u.b[2];
+  address[3] = u.b[3];
+  address[4] = u.b[4];
+  address[5] = u.b[5];
+  address[6] = u.b[6];
+  address[7] = u.b[7];
+#else
   *reinterpret_cast<KDouble*>(ByteArrayAddressOfElementAt(array, index)) = value;
+#endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
 KChar Kotlin_CharArray_get(KConstRef thiz, KInt index) {

@@ -168,7 +168,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         // and general ABI requires 4-byte alignment on 64-bit long fields as mentioned in
                         // https://developer.apple.com/library/archive/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARMv6FunctionCallingConventions.html#//apple_ref/doc/uid/TP40009021-SW1
                         // See https://github.com/ktorio/ktor/issues/941 for the context.
-                        "-DKONAN_NO_64BIT_ATOMIC=1")
+                        "-DKONAN_NO_64BIT_ATOMIC=1",
+                        "-DKONAN_NO_UNALIGNED_ACCESS=1")
 
             KonanTarget.IOS_ARM64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
