@@ -91,6 +91,16 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicCall.kt");
         }
 
+        @TestMetadata("dynamicElvisOperator.kt")
+        public void testDynamicElvisOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicElvisOperator.kt");
+        }
+
+        @TestMetadata("dynamicExclExclOperator.kt")
+        public void testDynamicExclExclOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicExclExclOperator.kt");
+        }
+
         @TestMetadata("dynamicMemberAccess.kt")
         public void testDynamicMemberAccess() throws Exception {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberAccess.kt");
