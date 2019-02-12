@@ -157,7 +157,9 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
             KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
-                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
+                        "-DKONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG=1",
+                        "-DMACHSIZE=${target.architecture.bitness}")
 
             KonanTarget.IOS_X64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",

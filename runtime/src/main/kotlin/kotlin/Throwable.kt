@@ -5,6 +5,7 @@
 
 package kotlin
 
+import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.NativePtrArray
 
@@ -23,6 +24,7 @@ public open class Throwable(open val message: String?, open val cause: Throwable
 
     constructor() : this(null, null)
 
+    @get:ExportForCppRuntime("Kotlin_Throwable_getStackTrace")
     private val stackTrace = getCurrentStackTrace()
 
     private val stackTraceStrings: Array<String> by lazy {
