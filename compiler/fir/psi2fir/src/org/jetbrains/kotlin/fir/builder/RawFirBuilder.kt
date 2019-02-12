@@ -175,7 +175,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 } else {
                     FirSingleExpressionBlock(
                         session,
-                        FirExpressionStub(session, this).toReturn()
+                        FirExpressionStub(session, null).toReturn()
                     )
                 }
                 else -> {

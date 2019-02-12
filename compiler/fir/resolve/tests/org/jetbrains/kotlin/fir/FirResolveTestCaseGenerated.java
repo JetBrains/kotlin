@@ -84,6 +84,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/NestedOfAliasedType.kt");
     }
 
+    @TestMetadata("nestedReturnType.kt")
+    public void testNestedReturnType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/nestedReturnType.kt");
+    }
+
     @TestMetadata("NestedSuperType.kt")
     public void testNestedSuperType() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/NestedSuperType.kt");
