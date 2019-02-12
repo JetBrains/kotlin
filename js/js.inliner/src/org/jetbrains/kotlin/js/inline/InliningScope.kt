@@ -172,6 +172,10 @@ class ImportInfoFragmentInliningScope private constructor(
         fragment.declarationBlock.statements.addAll(0, additionalDeclarations)
 
         // post-processing
+
+        // If run separately `private inline suspend fun`'s local declarations get inlined twice.
+        InlineSuspendFunctionSplitter(this).accept(allCode)
+
         simplifyWrappedFunctions(allCode)
         removeUnusedFunctionDefinitions(allCode, collectNamedFunctions(allCode))
         removeUnusedImports(fragment, allCode)

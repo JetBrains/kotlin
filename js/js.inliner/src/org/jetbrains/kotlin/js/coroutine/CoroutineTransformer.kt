@@ -73,7 +73,6 @@ fun transformCoroutines(fragments: Iterable<JsProgramFragment>) {
     val coroutineTransformer = CoroutineTransformer()
     for (fragment in fragments) {
         ImportInfoFragmentInliningScope.process(fragment) { scope ->
-            InlineSuspendFunctionSplitter(scope).accept(scope.allCode)
             coroutineTransformer.accept(scope.allCode)
         }
     }
