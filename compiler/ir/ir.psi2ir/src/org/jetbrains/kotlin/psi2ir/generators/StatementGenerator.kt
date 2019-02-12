@@ -355,13 +355,7 @@ class StatementGenerator(
         val indexedGetCall = getOrFail(BindingContext.INDEXED_LVALUE_GET, expression)
 
         return if (indexedGetCall.resultingDescriptor.isDynamic())
-            OperatorExpressionGenerator(this).generateDynamicOperatorExpression(
-                IrDynamicOperator.ARRAY_ACCESS,
-                indexedGetCall.resultingDescriptor.returnType!!.toIrType(),
-                expression,
-                expression.arrayExpression ?: throw AssertionError("Array expression not found"),
-                expression.indexExpressions
-            )
+            OperatorExpressionGenerator(this).generateDynamicArrayAccess(expression)
         else
             CallGenerator(this).generateCall(
                 expression.startOffsetSkippingComments, expression.endOffset,

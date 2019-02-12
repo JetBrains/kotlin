@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.referenceClassifier
@@ -504,20 +503,21 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         return generateCall(resolvedCall, expression, origin)
     }
 
-    fun generateDynamicOperatorExpression(
-        irOperator: IrDynamicOperator,
-        irType: IrType,
-        ktOperatorExpression: KtExpression,
-        ktReceiverExpression: KtExpression,
-        ktArgumentExpressions: List<KtExpression>
-    ): IrExpression =
-        IrDynamicOperatorExpressionImpl(
-            ktOperatorExpression.startOffsetSkippingComments,
-            ktOperatorExpression.endOffset,
-            irType,
-            irOperator
+    fun generateDynamicArrayAccess(ktArrayAccessExpression: KtArrayAccessExpression): IrExpression {
+        val startOffset = ktArrayAccessExpression.startOffsetSkippingComments
+        val endOffset = ktArrayAccessExpression.endOffset
+
+        val kotlinType = context.bindingContext.getType(ktArrayAccessExpression)
+            ?: throw AssertionError("No type for ${ktArrayAccessExpression.text}")
+
+        return IrDynamicOperatorExpressionImpl(
+            startOffset,
+            endOffset,
+            kotlinType.toIrType(),
+            IrDynamicOperator.ARRAY_ACCESS
         ).apply {
-            receiver = statementGenerator.generateExpression(ktReceiverExpression)
-            ktArgumentExpressions.mapTo(arguments) { statementGenerator.generateExpression(it) }
+            receiver = ktArrayAccessExpression.arrayExpression!!.genExpr()
+            ktArrayAccessExpression.indexExpressions.mapTo(arguments) { it.genExpr() }
         }
+    }
 }
