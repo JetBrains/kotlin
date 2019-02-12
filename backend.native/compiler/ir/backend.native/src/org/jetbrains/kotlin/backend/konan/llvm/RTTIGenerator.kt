@@ -209,7 +209,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         } else {
             methodTableRecords(irClass)
         }
-
         val methodsPtr = staticData.placeGlobalConstArray("kmethods:$className",
                 runtime.methodTableRecordType, methods)
 
@@ -243,7 +242,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     fun vtable(irClass: IrClass): ConstArray {
-        // TODO: compile-time resolution limits binary compatibility
+        // TODO: compile-time resolution limits binary compatibility.
         val vtableEntries = context.getVtableBuilder(irClass).vtableEntries.map {
             val implementation = it.implementation
             if (implementation == null || implementation.isExternalObjCClassMethod()) {
@@ -264,7 +263,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             if (previous != null)
                 throw AssertionError("Duplicate method table entry: functionName = '$functionName', hash = '${nameSignature.value}', entry1 = $previous, entry2 = $it")
 
-            // TODO: compile-time resolution limits binary compatibility
+            // TODO: compile-time resolution limits binary compatibility.
             val implementation = it.implementation
             val methodEntryPoint = implementation?.entryPointAddress
             MethodTableRecord(nameSignature, methodEntryPoint)

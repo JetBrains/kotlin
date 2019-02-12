@@ -295,6 +295,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return LLVMAddFunction(llvmModule, "llvm.memset.p0i8.i32", functionType)!!
     }
 
+    private fun importMemcpy(): LLVMValueRef {
+        val parameterTypes = cValuesOf(int8TypePtr, int8TypePtr, int32Type, int1Type)
+        val functionType = LLVMFunctionType(LLVMVoidType(), parameterTypes, 4, 0)
+        return LLVMAddFunction(llvmModule, "llvm.memcpy.p0i8.p0i8.i32", functionType)!!
+    }
+
     internal fun externalFunction(name: String, type: LLVMTypeRef, origin: CompiledKonanModuleOrigin): LLVMValueRef {
         this.imports.add(origin)
 
@@ -463,6 +469,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     )
 
     val memsetFunction = importMemset()
+    val memcpyFunction = importMemcpy()
 
     val usedFunctions = mutableListOf<LLVMValueRef>()
     val usedGlobals = mutableListOf<LLVMValueRef>()

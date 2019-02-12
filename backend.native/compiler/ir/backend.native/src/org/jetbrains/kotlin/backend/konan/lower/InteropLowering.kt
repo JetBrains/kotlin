@@ -961,6 +961,9 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                         )
                     }
                 }
+                IntrinsicType.INTEROP_MEMORY_COPY -> {
+                    TODO("So far unsupported")
+                }
                 IntrinsicType.OBJC_INIT_BY -> {
                     val intrinsic = interop.objCObjectInitBy.name
 

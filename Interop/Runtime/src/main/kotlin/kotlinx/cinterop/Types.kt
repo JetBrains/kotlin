@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,13 @@ package kotlinx.cinterop
  *
  * TODO: the behavior of [equals], [hashCode] and [toString] differs on Native and JVM backends.
  */
-open class NativePointed internal constructor(rawPtr: NonNullNativePtr) {
+public open class NativePointed internal constructor(rawPtr: NonNullNativePtr) {
     var rawPtr = rawPtr.toNativePtr()
         internal set
 }
 
 // `null` value of `NativePointed?` is mapped to `nativeNullPtr`.
-val NativePointed?.rawPtr: NativePtr
+public val NativePointed?.rawPtr: NativePtr
     get() = if (this != null) this.rawPtr else nativeNullPtr
 
 /**
@@ -38,22 +38,22 @@ val NativePointed?.rawPtr: NativePtr
  *
  * @param T must not be abstract
  */
-inline fun <reified T : NativePointed> interpretPointed(ptr: NativePtr): T = interpretNullablePointed<T>(ptr)!!
+public inline fun <reified T : NativePointed> interpretPointed(ptr: NativePtr): T = interpretNullablePointed<T>(ptr)!!
 
 private class OpaqueNativePointed(rawPtr: NativePtr) : NativePointed(rawPtr.toNonNull())
 
-fun interpretOpaquePointed(ptr: NativePtr): NativePointed = interpretPointed<OpaqueNativePointed>(ptr)
-fun interpretNullableOpaquePointed(ptr: NativePtr): NativePointed? = interpretNullablePointed<OpaqueNativePointed>(ptr)
+public fun interpretOpaquePointed(ptr: NativePtr): NativePointed = interpretPointed<OpaqueNativePointed>(ptr)
+public fun interpretNullableOpaquePointed(ptr: NativePtr): NativePointed? = interpretNullablePointed<OpaqueNativePointed>(ptr)
 
 /**
  * Changes the interpretation of the pointed data or code.
  */
-inline fun <reified T : NativePointed> NativePointed.reinterpret(): T = interpretPointed(this.rawPtr)
+public inline fun <reified T : NativePointed> NativePointed.reinterpret(): T = interpretPointed(this.rawPtr)
 
 /**
  * C data or code.
  */
-abstract class CPointed(rawPtr: NativePtr) : NativePointed(rawPtr.toNonNull())
+public abstract class CPointed(rawPtr: NativePtr) : NativePointed(rawPtr.toNonNull())
 
 /**
  * Represents a reference to (possibly empty) sequence of C values.
@@ -67,26 +67,28 @@ abstract class CPointed(rawPtr: NativePtr) : NativePointed(rawPtr.toNonNull())
  * There are also other implementations of [CValuesRef] that provide temporary pointer,
  * e.g. Kotlin Native specific [refTo] functions to pass primitive arrays directly to native.
  */
-abstract class CValuesRef<T : CPointed> {
+public abstract class CValuesRef<T : CPointed> {
     /**
-     * If this reference is [CPointer], returns this pointer.
-     * Otherwise copies the referenced values to [placement] and returns the pointer to the copy.
+     * If this reference is [CPointer], returns this pointer, otherwise
+     * allocate storage value in the scope and return it.
      */
-    abstract fun getPointer(scope: AutofreeScope): CPointer<T>
+    public abstract fun getPointer(scope: AutofreeScope): CPointer<T>
 }
 
 /**
  * The (possibly empty) sequence of immutable C values.
  * It is self-contained and doesn't depend on native memory.
  */
-abstract class CValues<T : CVariable> : CValuesRef<T>() {
+public abstract class CValues<T : CVariable> : CValuesRef<T>() {
     /**
      * Copies the values to [placement] and returns the pointer to the copy.
      */
-    abstract override fun getPointer(scope: AutofreeScope): CPointer<T>
+    public override fun getPointer(scope: AutofreeScope): CPointer<T> {
+        return place(interpretCPointer(scope.alloc(size, align).rawPtr)!!)
+    }
 
     // TODO: optimize
-    override fun equals(other: Any?): Boolean {
+    public override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is CValues<*>) return false
 
@@ -106,7 +108,7 @@ abstract class CValues<T : CVariable> : CValuesRef<T>() {
         return true
     }
 
-    override fun hashCode(): Int {
+    public override fun hashCode(): Int {
         var result = 0
         for (byte in this.getBytes()) {
             result = result * 31 + byte
@@ -114,10 +116,17 @@ abstract class CValues<T : CVariable> : CValuesRef<T>() {
         return result
     }
 
-    abstract val size: Int
+    public abstract val size: Int
+
+    public abstract val align: Int
+
+    /**
+     * Copy the referenced values to [placement] and return placement pointer.
+     */
+    public abstract fun place(placement: CPointer<T>): CPointer<T>
 }
 
-fun <T : CVariable> CValues<T>.placeTo(scope: AutofreeScope) = this.getPointer(scope)
+public fun <T : CVariable> CValues<T>.placeTo(scope: AutofreeScope) = this.getPointer(scope)
 
 /**
  * The single immutable C value.
@@ -125,18 +134,18 @@ fun <T : CVariable> CValues<T>.placeTo(scope: AutofreeScope) = this.getPointer(s
  *
  * TODO: consider providing an adapter instead of subtyping [CValues].
  */
-abstract class CValue<T : CVariable> : CValues<T>()
+public abstract class CValue<T : CVariable> : CValues<T>()
 
 /**
  * C pointer.
  */
-class CPointer<T : CPointed> internal constructor(@PublishedApi internal val value: NonNullNativePtr) : CValuesRef<T>() {
+public class CPointer<T : CPointed> internal constructor(@PublishedApi internal val value: NonNullNativePtr) : CValuesRef<T>() {
 
     // TODO: replace by [value].
     @Suppress("NOTHING_TO_INLINE")
-    inline val rawValue: NativePtr get() = value.toNativePtr()
+    public inline val rawValue: NativePtr get() = value.toNativePtr()
 
-    override fun equals(other: Any?): Boolean {
+    public override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true // fast path
         }
@@ -144,19 +153,19 @@ class CPointer<T : CPointed> internal constructor(@PublishedApi internal val val
         return (other is CPointer<*>) && (rawValue == other.rawValue)
     }
 
-    override fun hashCode(): Int {
+    public override fun hashCode(): Int {
         return rawValue.hashCode()
     }
 
-    override fun toString() = this.cPointerToString()
+    public override fun toString() = this.cPointerToString()
 
-    override fun getPointer(scope: AutofreeScope) = this
+    public override fun getPointer(scope: AutofreeScope) = this
 }
 
 /**
  * Returns the pointer to this data or code.
  */
-val <T : CPointed> T.ptr: CPointer<T>
+public val <T : CPointed> T.ptr: CPointer<T>
     get() = interpretCPointer(this.rawPtr)!!
 
 /**
@@ -164,33 +173,33 @@ val <T : CPointed> T.ptr: CPointer<T>
  *
  * @param T must not be abstract
  */
-inline val <reified T : CPointed> CPointer<T>.pointed: T
+public inline val <reified T : CPointed> CPointer<T>.pointed: T
     get() = interpretPointed<T>(this.rawValue)
 
 // `null` value of `CPointer?` is mapped to `nativeNullPtr`
-val CPointer<*>?.rawValue: NativePtr
+public val CPointer<*>?.rawValue: NativePtr
     get() = if (this != null) this.rawValue else nativeNullPtr
 
-fun <T : CPointed> CPointer<*>.reinterpret(): CPointer<T> = interpretCPointer(this.rawValue)!!
+public fun <T : CPointed> CPointer<*>.reinterpret(): CPointer<T> = interpretCPointer(this.rawValue)!!
 
-fun <T : CPointed> CPointer<T>?.toLong() = this.rawValue.toLong()
+public fun <T : CPointed> CPointer<T>?.toLong() = this.rawValue.toLong()
 
-fun <T : CPointed> Long.toCPointer(): CPointer<T>? = interpretCPointer(nativeNullPtr + this)
+public fun <T : CPointed> Long.toCPointer(): CPointer<T>? = interpretCPointer(nativeNullPtr + this)
 
 /**
  * The [CPointed] without any specified interpretation.
  */
-abstract class COpaque(rawPtr: NativePtr) : CPointed(rawPtr) // TODO: should it correspond to COpaquePointer?
+public abstract class COpaque(rawPtr: NativePtr) : CPointed(rawPtr) // TODO: should it correspond to COpaquePointer?
 
 /**
  * The pointer with an opaque type.
  */
-typealias COpaquePointer = CPointer<out CPointed> // FIXME
+public typealias COpaquePointer = CPointer<out CPointed> // FIXME
 
 /**
  * The variable containing a [COpaquePointer].
  */
-typealias COpaquePointerVar = CPointerVarOf<COpaquePointer>
+public typealias COpaquePointerVar = CPointerVarOf<COpaquePointer>
 
 /**
  * The C data variable located in memory.
@@ -198,7 +207,7 @@ typealias COpaquePointerVar = CPointerVarOf<COpaquePointer>
  * The non-abstract subclasses should represent the (complete) C data type and thus specify size and alignment.
  * Each such subclass must have a companion object which is a [Type].
  */
-abstract class CVariable(rawPtr: NativePtr) : CPointed(rawPtr) {
+public abstract class CVariable(rawPtr: NativePtr) : CPointed(rawPtr) {
 
     /**
      * The (complete) C data type.
@@ -207,7 +216,7 @@ abstract class CVariable(rawPtr: NativePtr) : CPointed(rawPtr) {
      * @param align the alignments in bytes that is enough for this data type.
      * It may be greater than actually required for simplicity.
      */
-    open class Type(val size: Long, val align: Int) {
+    public open class Type(val size: Long, val align: Int) {
 
         init {
             require(size % align == 0L)
@@ -216,24 +225,24 @@ abstract class CVariable(rawPtr: NativePtr) : CPointed(rawPtr) {
     }
 }
 
-inline fun <reified T : CVariable> sizeOf() = typeOf<T>().size
-inline fun <reified T : CVariable> alignOf() = typeOf<T>().align
+public inline fun <reified T : CVariable> sizeOf() = typeOf<T>().size
+public inline fun <reified T : CVariable> alignOf() = typeOf<T>().align
 
 /**
  * Returns the member of this [CStructVar] which is located by given offset in bytes.
  */
-inline fun <reified T : CPointed> CStructVar.memberAt(offset: Long): T {
+public inline fun <reified T : CPointed> CStructVar.memberAt(offset: Long): T {
     return interpretPointed<T>(this.rawPtr + offset)
 }
 
-inline fun <reified T : CVariable> CStructVar.arrayMemberAt(offset: Long): CArrayPointer<T> {
+public inline fun <reified T : CVariable> CStructVar.arrayMemberAt(offset: Long): CArrayPointer<T> {
     return interpretCPointer<T>(this.rawPtr + offset)!!
 }
 
 /**
  * The C struct-typed variable located in memory.
  */
-abstract class CStructVar(rawPtr: NativePtr) : CVariable(rawPtr) {
+public abstract class CStructVar(rawPtr: NativePtr) : CVariable(rawPtr) {
     open class Type(size: Long, align: Int) : CVariable.Type(size, align)
 }
 
@@ -245,83 +254,84 @@ sealed class CPrimitiveVar(rawPtr: NativePtr) : CVariable(rawPtr) {
     open class Type(size: Int) : CVariable.Type(size.toLong(), align = size)
 }
 
-interface CEnum {
-    val value: Any
+public interface CEnum {
+    public val value: Any
 }
-abstract class CEnumVar(rawPtr: NativePtr) : CPrimitiveVar(rawPtr)
+
+public abstract class CEnumVar(rawPtr: NativePtr) : CPrimitiveVar(rawPtr)
 
 // generics below are used for typedef support
 // these classes are not supposed to be used directly, instead the typealiases are provided.
 
 @Suppress("FINAL_UPPER_BOUND")
-class BooleanVarOf<T : Boolean>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class BooleanVarOf<T : Boolean>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(1)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class ByteVarOf<T : Byte>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class ByteVarOf<T : Byte>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(1)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class ShortVarOf<T : Short>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class ShortVarOf<T : Short>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(2)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class IntVarOf<T : Int>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class IntVarOf<T : Int>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(4)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class LongVarOf<T : Long>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class LongVarOf<T : Long>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(8)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class UByteVarOf<T : UByte>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class UByteVarOf<T : UByte>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(1)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class UShortVarOf<T : UShort>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class UShortVarOf<T : UShort>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(2)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class UIntVarOf<T : UInt>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class UIntVarOf<T : UInt>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(4)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class ULongVarOf<T : ULong>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class ULongVarOf<T : ULong>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(8)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class FloatVarOf<T : Float>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class FloatVarOf<T : Float>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(4)
 }
 
 @Suppress("FINAL_UPPER_BOUND")
-class DoubleVarOf<T : Double>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
+public class DoubleVarOf<T : Double>(rawPtr: NativePtr) : CPrimitiveVar(rawPtr) {
     companion object : Type(8)
 }
 
-typealias BooleanVar = BooleanVarOf<Boolean>
-typealias ByteVar = ByteVarOf<Byte>
-typealias ShortVar = ShortVarOf<Short>
-typealias IntVar = IntVarOf<Int>
-typealias LongVar = LongVarOf<Long>
-typealias UByteVar = UByteVarOf<UByte>
-typealias UShortVar = UShortVarOf<UShort>
-typealias UIntVar = UIntVarOf<UInt>
-typealias ULongVar = ULongVarOf<ULong>
-typealias FloatVar = FloatVarOf<Float>
-typealias DoubleVar = DoubleVarOf<Double>
+public typealias BooleanVar = BooleanVarOf<Boolean>
+public typealias ByteVar = ByteVarOf<Byte>
+public typealias ShortVar = ShortVarOf<Short>
+public typealias IntVar = IntVarOf<Int>
+public typealias LongVar = LongVarOf<Long>
+public typealias UByteVar = UByteVarOf<UByte>
+public typealias UShortVar = UShortVarOf<UShort>
+public typealias UIntVar = UIntVarOf<UInt>
+public typealias ULongVar = ULongVarOf<ULong>
+public typealias FloatVar = FloatVarOf<Float>
+public typealias DoubleVar = DoubleVarOf<Double>
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : Boolean> BooleanVarOf<T>.value: T
+public var <T : Boolean> BooleanVarOf<T>.value: T
     get() {
         val byte = nativeMemUtils.getByte(this)
         return byte.toBoolean() as T
@@ -329,78 +339,78 @@ var <T : Boolean> BooleanVarOf<T>.value: T
     set(value) = nativeMemUtils.putByte(this, value.toByte())
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun Boolean.toByte(): Byte = if (this) 1 else 0
+public inline fun Boolean.toByte(): Byte = if (this) 1 else 0
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun Byte.toBoolean() = (this - 0 != 0)
+public inline fun Byte.toBoolean() = (this.toInt() != 0)
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : Byte> ByteVarOf<T>.value: T
+public var <T : Byte> ByteVarOf<T>.value: T
     get() = nativeMemUtils.getByte(this) as T
     set(value) = nativeMemUtils.putByte(this, value)
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : Short> ShortVarOf<T>.value: T
+public var <T : Short> ShortVarOf<T>.value: T
     get() = nativeMemUtils.getShort(this) as T
     set(value) = nativeMemUtils.putShort(this, value)
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : Int> IntVarOf<T>.value: T
+public var <T : Int> IntVarOf<T>.value: T
     get() = nativeMemUtils.getInt(this) as T
     set(value) = nativeMemUtils.putInt(this, value)
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : Long> LongVarOf<T>.value: T
+public var <T : Long> LongVarOf<T>.value: T
     get() = nativeMemUtils.getLong(this) as T
     set(value) = nativeMemUtils.putLong(this, value)
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : UByte> UByteVarOf<T>.value: T
+public var <T : UByte> UByteVarOf<T>.value: T
     get() = nativeMemUtils.getByte(this).toUByte() as T
     set(value) = nativeMemUtils.putByte(this, value.toByte())
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : UShort> UShortVarOf<T>.value: T
+public var <T : UShort> UShortVarOf<T>.value: T
     get() = nativeMemUtils.getShort(this).toUShort() as T
     set(value) = nativeMemUtils.putShort(this, value.toShort())
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : UInt> UIntVarOf<T>.value: T
+public var <T : UInt> UIntVarOf<T>.value: T
     get() = nativeMemUtils.getInt(this).toUInt() as T
     set(value) = nativeMemUtils.putInt(this, value.toInt())
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : ULong> ULongVarOf<T>.value: T
+public var <T : ULong> ULongVarOf<T>.value: T
     get() = nativeMemUtils.getLong(this).toULong() as T
     set(value) = nativeMemUtils.putLong(this, value.toLong())
 
 // TODO: ensure native floats have the appropriate binary representation
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : Float> FloatVarOf<T>.value: T
+public var <T : Float> FloatVarOf<T>.value: T
     get() = nativeMemUtils.getFloat(this) as T
     set(value) = nativeMemUtils.putFloat(this, value)
 
 @Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-var <T : Double> DoubleVarOf<T>.value: T
+public var <T : Double> DoubleVarOf<T>.value: T
     get() = nativeMemUtils.getDouble(this) as T
     set(value) = nativeMemUtils.putDouble(this, value)
 
 
-class CPointerVarOf<T : CPointer<*>>(rawPtr: NativePtr) : CVariable(rawPtr) {
+public class CPointerVarOf<T : CPointer<*>>(rawPtr: NativePtr) : CVariable(rawPtr) {
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
 /**
  * The C data variable containing the pointer to `T`.
  */
-typealias CPointerVar<T> = CPointerVarOf<CPointer<T>>
+public typealias CPointerVar<T> = CPointerVarOf<CPointer<T>>
 
 /**
  * The value of this variable.
  */
 @Suppress("UNCHECKED_CAST")
-inline var <P : CPointer<*>> CPointerVarOf<P>.value: P?
+public inline var <P : CPointer<*>> CPointerVarOf<P>.value: P?
     get() = interpretCPointer<CPointed>(nativeMemUtils.getNativePtr(this)) as P?
     set(value) = nativeMemUtils.putNativePtr(this, value.rawValue)
 
@@ -409,13 +419,13 @@ inline var <P : CPointer<*>> CPointerVarOf<P>.value: P?
  * 
  * @param T must not be abstract
  */
-inline var <reified T : CPointed, reified P : CPointer<T>> CPointerVarOf<P>.pointed: T?
+public inline var <reified T : CPointed, reified P : CPointer<T>> CPointerVarOf<P>.pointed: T?
     get() = this.value?.pointed
     set(value) {
         this.value = value?.ptr as P?
     }
 
-inline operator fun <reified T : CVariable> CPointer<T>.get(index: Long): T {
+public inline operator fun <reified T : CVariable> CPointer<T>.get(index: Long): T {
     val offset = if (index == 0L) {
         0L // optimization for JVM impl which uses reflection for now.
     } else {
@@ -424,40 +434,40 @@ inline operator fun <reified T : CVariable> CPointer<T>.get(index: Long): T {
     return interpretPointed(this.rawValue + offset)
 }
 
-inline operator fun <reified T : CVariable> CPointer<T>.get(index: Int): T = this.get(index.toLong())
+public inline operator fun <reified T : CVariable> CPointer<T>.get(index: Int): T = this.get(index.toLong())
 
 @Suppress("NOTHING_TO_INLINE")
 @JvmName("plus\$CPointer")
-inline operator fun <T : CPointerVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+public inline operator fun <T : CPointerVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
         interpretCPointer(this.rawValue + index * pointerSize)
 
 @Suppress("NOTHING_TO_INLINE")
 @JvmName("plus\$CPointer")
-inline operator fun <T : CPointerVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+public inline operator fun <T : CPointerVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
         this + index.toLong()
 
 @Suppress("NOTHING_TO_INLINE")
-inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.get(index: Int): T? =
+public inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.get(index: Int): T? =
         (this + index)!!.pointed.value
 
 @Suppress("NOTHING_TO_INLINE")
-inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.set(index: Int, value: T?) {
+public inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.set(index: Int, value: T?) {
     (this + index)!!.pointed.value = value
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.get(index: Long): T? =
+public inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.get(index: Long): T? =
         (this + index)!!.pointed.value
 
 @Suppress("NOTHING_TO_INLINE")
-inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.set(index: Long, value: T?) {
+public inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.set(index: Long, value: T?) {
     (this + index)!!.pointed.value = value
 }
 
-typealias CArrayPointer<T> = CPointer<T>
-typealias CArrayPointerVar<T> = CPointerVar<T>
+public typealias CArrayPointer<T> = CPointer<T>
+public typealias CArrayPointerVar<T> = CPointerVar<T>
 
 /**
  * The C function.
  */
-class CFunction<T : Function<*>>(rawPtr: NativePtr) : CPointed(rawPtr)
+public class CFunction<T : Function<*>>(rawPtr: NativePtr) : CPointed(rawPtr)

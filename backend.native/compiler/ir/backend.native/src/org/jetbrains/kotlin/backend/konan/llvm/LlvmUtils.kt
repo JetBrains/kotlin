@@ -27,9 +27,8 @@ internal interface ConstPointer : ConstValue {
 }
 
 internal fun constPointer(value: LLVMValueRef) = object : ConstPointer {
-
     init {
-        assert (LLVMIsConstant(value) == 1)
+        assert(LLVMIsConstant(value) == 1)
     }
 
     override val llvm = value

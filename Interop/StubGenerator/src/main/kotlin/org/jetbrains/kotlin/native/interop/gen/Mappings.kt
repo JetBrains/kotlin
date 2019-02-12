@@ -315,7 +315,7 @@ sealed class TypeInfo {
                     val objCBlock = "((__bridge $blockType)${nativeValues.last()})"
                     "$objCBlock(${nativeValues.dropLast(1).joinToString()})"
                 }.let {
-                    codeBuilder.out("return $it")
+                    codeBuilder.returnResult(it)
                 }
 
                 codeBuilder.build().joinTo(this, separator = "\n")
@@ -341,7 +341,7 @@ sealed class TypeInfo {
                 error(pointed)
         override fun cToBridged(expr: String) = error(pointed)
 
-        // TODO: this method must not exist
+        // TODO: this method must not exist.
         override fun constructPointedType(valueType: KotlinType): KotlinClassifierType = error(pointed)
     }
 }

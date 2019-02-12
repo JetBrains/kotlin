@@ -103,6 +103,17 @@ internal object nativeMemUtils {
         }
     }
 
+    // TODO: optimize
+    fun copyMemory(dest: NativePointed, length: Int, src: NativePointed): Unit {
+        val destArray = dest.reinterpret<ByteVar>().ptr
+        val srcArray = src.reinterpret<ByteVar>().ptr
+        var index = 0
+        while (index < length) {
+            destArray[index] = srcArray[index]
+            ++index
+        }
+    }
+
     fun alloc(size: Long, align: Int): NativePointed {
         val ptr = malloc(size, align)
         if (ptr == nativeNullPtr) {

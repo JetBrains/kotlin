@@ -613,7 +613,6 @@ class StubGenerator(
         private val cCallSymbolName: String?
 
         init {
-            // TODO: support dumpShims
             val kotlinParameters = mutableListOf<Pair<String, KotlinType>>()
             val bodyGenerator = KotlinCodeBuilder(scope = kotlinFile)
             val bridgeArguments = mutableListOf<TypedKotlinValue>()
@@ -648,13 +647,12 @@ class StubGenerator(
                 } else if (representAsValuesRef != null) {
                     kotlinParameters.add(parameterName to representAsValuesRef)
                     bodyGenerator.pushMemScoped()
-                    "$parameterName?.getPointer(memScope)"
+                    bodyGenerator.getNativePointer(parameterName)
                 } else {
                     val mirror = mirror(parameter.type)
                     kotlinParameters.add(parameterName to mirror.argType)
                     parameterName
                 }
-
                 bridgeArguments.add(TypedKotlinValue(parameter.type, bridgeArgument))
             }
 
@@ -667,7 +665,7 @@ class StubGenerator(
                 ) { nativeValues ->
                     "${func.name}(${nativeValues.joinToString()})"
                 }
-                bodyGenerator.out("return $result")
+                bodyGenerator.returnResult(result)
                 isCCall = false
                 cCallSymbolName = null
             } else {

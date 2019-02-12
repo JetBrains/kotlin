@@ -68,33 +68,30 @@ internal object nativeMemUtils {
     }
 
     fun getByteArray(source: NativePointed, dest: ByteArray, length: Int) {
-        val clazz = ByteArray::class.java
-        val baseOffset = unsafe.arrayBaseOffset(clazz).toLong();
-        unsafe.copyMemory(null, source.address, dest, baseOffset, length.toLong())
+        unsafe.copyMemory(null, source.address, dest, byteArrayBaseOffset, length.toLong())
     }
 
     fun putByteArray(source: ByteArray, dest: NativePointed, length: Int) {
-        val clazz = ByteArray::class.java
-        val baseOffset = unsafe.arrayBaseOffset(clazz).toLong();
-        unsafe.copyMemory(source, baseOffset, null, dest.address, length.toLong())
+        unsafe.copyMemory(source, byteArrayBaseOffset, null, dest.address, length.toLong())
     }
 
     fun getCharArray(source: NativePointed, dest: CharArray, length: Int) {
-        val clazz = CharArray::class.java
-        val baseOffset = unsafe.arrayBaseOffset(clazz).toLong();
-        unsafe.copyMemory(null, source.address, dest, baseOffset, length.toLong() * 2)
+        unsafe.copyMemory(null, source.address, dest, charArrayBaseOffset, length.toLong() * 2)
     }
 
     fun putCharArray(source: CharArray, dest: NativePointed, length: Int) {
-        val clazz = CharArray::class.java
-        val baseOffset = unsafe.arrayBaseOffset(clazz).toLong();
-        unsafe.copyMemory(source, baseOffset, null, dest.address, length.toLong() * 2)
+        unsafe.copyMemory(source, charArrayBaseOffset, null, dest.address, length.toLong() * 2)
     }
 
-    fun zeroMemory(dest: NativePointed, length: Int): Unit = unsafe.setMemory(dest.address, length.toLong(), 0)
+    fun zeroMemory(dest: NativePointed, length: Int): Unit =
+            unsafe.setMemory(dest.address, length.toLong(), 0)
+
+    fun copyMemory(dest: NativePointed, length: Int, src: NativePointed) =
+            unsafe.copyMemory(src.address, dest.address, length.toLong())
+
 
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-    inline fun<reified T> allocateInstance(): T {
+    inline fun <reified T> allocateInstance(): T {
         return unsafe.allocateInstance(T::class.java) as T
     }
 
@@ -115,4 +112,7 @@ internal object nativeMemUtils {
         isAccessible = true
         return@with this.get(null) as Unsafe
     }
+
+    private val byteArrayBaseOffset = unsafe.arrayBaseOffset(ByteArray::class.java).toLong()
+    private val charArrayBaseOffset = unsafe.arrayBaseOffset(CharArray::class.java).toLong()
 }

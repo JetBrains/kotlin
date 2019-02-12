@@ -57,8 +57,9 @@ class MappingBridgeGeneratorImpl(
             is RecordType -> {
                 val mirror = mirror(declarationMapper, returnType)
                 val tmpVarName = kniRetVal
+                // We clear in the finally block.
                 builder.out("val $tmpVarName = nativeHeap.alloc<${mirror.pointedType.render(builder.scope)}>()")
-                builder.pushBlock("try {", free = "finally { nativeHeap.free($tmpVarName) }")
+                builder.pushBlock(start = "try {", end = "} finally { nativeHeap.free($tmpVarName) }")
                 bridgeArguments.add(BridgeTypedKotlinValue(BridgedType.NATIVE_PTR, "$tmpVarName.rawPtr"))
                 BridgedType.VOID
             }
