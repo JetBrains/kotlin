@@ -66,6 +66,26 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicArrayIncrementDecrement.kt");
         }
 
+        @TestMetadata("dynamicBinaryEqualityOperator.kt")
+        public void testDynamicBinaryEqualityOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicBinaryEqualityOperator.kt");
+        }
+
+        @TestMetadata("dynamicBinaryLogicalOperator.kt")
+        public void testDynamicBinaryLogicalOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicBinaryLogicalOperator.kt");
+        }
+
+        @TestMetadata("dynamicBinaryOperator.kt")
+        public void testDynamicBinaryOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicBinaryOperator.kt");
+        }
+
+        @TestMetadata("dynamicBinaryRelationalOperator.kt")
+        public void testDynamicBinaryRelationalOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicBinaryRelationalOperator.kt");
+        }
+
         @TestMetadata("dynamicCall.kt")
         public void testDynamicCall() throws Exception {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicCall.kt");
@@ -89,6 +109,11 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
         @TestMetadata("dynamicMemberIncrementDecrement.kt")
         public void testDynamicMemberIncrementDecrement() throws Exception {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberIncrementDecrement.kt");
+        }
+
+        @TestMetadata("dynamicUnaryOperator.kt")
+        public void testDynamicUnaryOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicUnaryOperator.kt");
         }
 
         @TestMetadata("dynamicWithImplicitCast.kt")

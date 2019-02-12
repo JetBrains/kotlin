@@ -1,0 +1,29 @@
+FILE fqName:<root> fileName:/dynamicBinaryEqualityOperator.kt
+  FUN name:testEqeq visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testEqeq(dynamic): Boolean'
+        DYN_OP operator=EQEQ type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=3
+  FUN name:testExclEq visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testExclEq(dynamic): Boolean'
+        DYN_OP operator=EXCLEQ type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=3
+  FUN name:testEqeqeq visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testEqeqeq(dynamic): Boolean'
+        DYN_OP operator=EQEQEQ type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=3
+  FUN name:testExclEqeq visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testExclEqeq(dynamic): Boolean'
+        DYN_OP operator=EXCLEQEQ type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=3

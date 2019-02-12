@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
-import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
@@ -41,7 +38,6 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 class CallGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -237,19 +233,6 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return dispatchReceiver
     }
 
-    private fun ResolvedCall<*>.isImplicitInvoke(): Boolean {
-        if (resultingDescriptor.name != OperatorNameConventions.INVOKE) return false
-        val callExpression = call.callElement as? KtCallExpression ?: return true
-        val calleeExpression = callExpression.calleeExpression as? KtSimpleNameExpression ?: return true
-        return calleeExpression.getReferencedName() != OperatorNameConventions.INVOKE.asString()
-    }
-
-    private fun ResolvedCall<*>.isImplicitGet(): Boolean =
-        resultingDescriptor.name == OperatorNameConventions.GET && call.callElement is KtArrayAccessExpression
-
-    private fun ResolvedCall<*>.isImplicitSet(): Boolean =
-        resultingDescriptor.name == OperatorNameConventions.SET && call.callElement is KtArrayAccessExpression
-
     private fun generateFunctionCall(
         functionDescriptor: FunctionDescriptor,
         startOffset: Int,
@@ -269,12 +252,8 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         operator
                     )
 
-                fun makeDynamicOperatorExpression(operator: IrDynamicOperator, dynamicReceiver: IrExpression) =
-                    IrDynamicOperatorExpressionImpl(
-                        startOffset, endOffset,
-                        irType,
-                        operator
-                    ).apply {
+                fun makeDynamicOperatorExpressionWithArguments(operator: IrDynamicOperator, dynamicReceiver: IrExpression) =
+                    makeDynamicOperatorExpression(operator).apply {
                         receiver = dynamicReceiver
                         arguments.addAll(call.getValueArgumentsInParameterOrder().mapIndexed { index: Int, arg: IrExpression? ->
                             arg ?: throw AssertionError("No argument in dynamic call $functionDescriptor at position $index")
@@ -285,9 +264,9 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
 
                 when {
                     call.original.isImplicitInvoke() ->
-                        makeDynamicOperatorExpression(IrDynamicOperator.INVOKE, dynamicReceiver)
+                        makeDynamicOperatorExpressionWithArguments(IrDynamicOperator.INVOKE, dynamicReceiver)
                     call.original.isImplicitGet() ->
-                        makeDynamicOperatorExpression(IrDynamicOperator.ARRAY_ACCESS, dynamicReceiver)
+                        makeDynamicOperatorExpressionWithArguments(IrDynamicOperator.ARRAY_ACCESS, dynamicReceiver)
                     call.original.isImplicitSet() ->
                         makeDynamicOperatorExpression(IrDynamicOperator.EQ).apply {
                             val args = call.getValueArgumentsInParameterOrder()
@@ -303,7 +282,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                             arguments.add(arg1)
                         }
                     else ->
-                        makeDynamicOperatorExpression(
+                        makeDynamicOperatorExpressionWithArguments(
                             IrDynamicOperator.INVOKE,
                             IrDynamicMemberExpressionImpl(
                                 startOffset, endOffset, // TODO obtain more exact start/end offsets for explicit receiver expression

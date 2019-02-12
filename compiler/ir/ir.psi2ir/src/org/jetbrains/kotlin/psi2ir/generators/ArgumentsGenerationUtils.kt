@@ -267,8 +267,13 @@ fun StatementGenerator.generateValueArgumentUsing(
     when (valueArgument) {
         is DefaultValueArgument ->
             null
-        is ExpressionValueArgument ->
-            generateArgumentExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
+        is ExpressionValueArgument -> {
+            val valueArgument1 = valueArgument.valueArgument
+                ?: throw AssertionError("No value argument: $valueArgument")
+            val argumentExpression = valueArgument1.getArgumentExpression()
+                ?: throw AssertionError("No argument expression: $valueArgument1")
+            generateArgumentExpression(argumentExpression)
+        }
         is VarargValueArgument ->
             generateVarargExpressionUsing(valueArgument, valueParameter, generateArgumentExpression)
         else ->
