@@ -49,7 +49,7 @@ class AnalyzerTests {
         val numbers = listOf(10.1, 10.2, 10.3)
         val value = computeMeanVariance(numbers)
         val expectedMean = 10.2
-        val expectedVariance = 0.12539360253
+        val expectedVariance = 0.07872455
         assertTrue(abs(value.mean - expectedMean) < eps)
         assertTrue(abs(value.variance - expectedVariance) < eps)
     }
@@ -59,7 +59,7 @@ class AnalyzerTests {
         val inputs = createMeanVarianceBenchmarks()
 
         val percent = inputs.first.calcPercentageDiff(inputs.second)
-        val expectedMean = -10.0
+        val expectedMean = -9.99809998
         val expectedVariance = 0.0021
         assertTrue(abs(percent.mean - expectedMean) < eps)
         assertTrue(abs(percent.variance - expectedVariance) < eps)

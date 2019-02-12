@@ -145,9 +145,8 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
             geometricMean(percentsList, benchmarksNumber)
         } else {
             // Geometric mean can be counted on positive numbers.
-            val precision = abs(getMaximumChange(bucket)) + 1
-            percentsList = percentsList.map { it + precision }
-            geometricMean(percentsList, benchmarksNumber) - precision
+            percentsList = percentsList.map { abs(it) }
+            -geometricMean(percentsList, benchmarksNumber)
         }
     }
 

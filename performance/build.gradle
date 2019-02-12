@@ -88,6 +88,7 @@ MPPTools.createRunTask(project, 'konanRun', kotlin.targets.native) {
     workingDir = project.provider {
         kotlin.targets.native.compilations.main.getBinary('EXECUTABLE', buildType).parentFile
     }
+    depends("build")
     args("$nativeWarmup", "$attempts", "${buildDir.absolutePath}/${nativeBenchResults}")
 }
 

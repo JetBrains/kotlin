@@ -40,7 +40,18 @@ data class MeanVarianceBenchmark(val meanBenchmark: BenchmarkResult, val varianc
                 other.varianceBenchmark.score >= 0 &&
                 other.meanBenchmark.score - other.varianceBenchmark.score != 0.0,
                 { "Mean and variance should be positive and not equal!" })
-        val mean = (meanBenchmark.score - other.meanBenchmark.score) / other.meanBenchmark.score
+        val exactMean = (meanBenchmark.score - other.meanBenchmark.score) / other.meanBenchmark.score
+        // Analyze intervals. Calculate difference between border points.
+        val (bigValue, smallValue) = if (meanBenchmark.score > other.meanBenchmark.score) Pair(this, other) else Pair(other, this)
+        val bigValueIntervalStart = bigValue.meanBenchmark.score - bigValue.varianceBenchmark.score
+        val smallValueIntervalEnd = smallValue.meanBenchmark.score + smallValue.varianceBenchmark.score
+        if (smallValueIntervalEnd > bigValueIntervalStart) {
+            // Interval intersect.
+            return MeanVariance(0.0, 0.0)
+        }
+        val mean = ((smallValueIntervalEnd - bigValueIntervalStart) / bigValueIntervalStart) *
+                (if (meanBenchmark.score > other.meanBenchmark.score) -1 else 1)
+
         val maxValueChange = abs(meanBenchmark.score + varianceBenchmark.score -
                         other.meanBenchmark.score + other.varianceBenchmark.score) /
                         abs(other.meanBenchmark.score + other.varianceBenchmark.score)
@@ -49,7 +60,7 @@ data class MeanVarianceBenchmark(val meanBenchmark: BenchmarkResult, val varianc
                         other.meanBenchmark.score - other.varianceBenchmark.score) /
                         abs(other.meanBenchmark.score - other.varianceBenchmark.score)
 
-        val variance = abs(abs(mean) - max(minValueChange, maxValueChange))
+        val variance = abs(abs(exactMean) - max(minValueChange, maxValueChange))
         return MeanVariance(mean * 100, variance * 100)
     }
 
