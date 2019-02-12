@@ -12,14 +12,13 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 
 class ScriptProvidedPropertyDescriptor(
     name: Name,
     typeDescriptor: ClassDescriptor,
     receiver: ReceiverParameterDescriptor?,
     isVar: Boolean,
-    script: LazyScriptDescriptor
+    script: ScriptDescriptor
 ) : PropertyDescriptorImpl(
     script,
     null,

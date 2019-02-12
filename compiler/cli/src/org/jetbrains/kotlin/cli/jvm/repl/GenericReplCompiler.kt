@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import java.io.File
@@ -88,7 +88,7 @@ open class GenericReplCompiler(
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }
 
-            val type = (scriptDescriptor as LazyScriptDescriptor).resultValue?.returnType
+            val type = (scriptDescriptor as ScriptDescriptor).resultValue?.returnType
 
             val generationState = GenerationState.Builder(
                 psiFile.project,

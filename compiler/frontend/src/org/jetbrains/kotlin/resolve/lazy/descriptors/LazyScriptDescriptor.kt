@@ -73,9 +73,7 @@ class LazyScriptDescriptor(
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)
     }
 
-    val resultValue: ReplResultPropertyDescriptor? by lazy { provideResultValue() }
-
-    private fun provideResultValue(): ReplResultPropertyDescriptor? {
+    override fun getResultValue(): ReplResultPropertyDescriptor? {
         val expression = scriptInfo.script
             .getChildOfType<KtBlockExpression>()
             ?.getChildrenOfType<KtScriptInitializer>()?.lastOrNull()

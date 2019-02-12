@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
 class ReplResultPropertyDescriptor(
     name: Name,
     kotlinType: KotlinType,
     receiver: ReceiverParameterDescriptor?,
-    script: LazyScriptDescriptor,
+    script: ScriptDescriptor,
     source: SourceElement
 ) : PropertyDescriptorImpl(
     script,
