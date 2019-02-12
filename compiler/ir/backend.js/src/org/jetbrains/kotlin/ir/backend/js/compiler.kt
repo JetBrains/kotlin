@@ -82,16 +82,8 @@ fun compile(
         moduleType
     )
 
-    // CoroutineIntrinsicLowering currently have to be applied to dependencies
-    // before running inline pass for current module.
-    // Therefore we run it here before producing ir for current module.
-    // TODO: Find a better way to implement coroutine intrinsics
-    val coroutineIntrinsicLowering = CoroutineIntrinsicLowering(context)
-    moduleFragment.files.forEach { file -> coroutineIntrinsicLowering.lower(file) }
-
     // TODO: Split compilation into two steps: kt -> ir, ir -> js
     val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
-    var moduleFragmentCopy: IrModuleFragment? = null
     when (moduleType) {
         ModuleType.MAIN -> {
             val moduleDependencies: List<CompiledModule> =
@@ -108,7 +100,6 @@ fun compile(
         }
 
         ModuleType.TEST_RUNTIME -> {
-            moduleFragmentCopy = moduleFragment.deepCopyWithSymbols()
         }
     }
 
@@ -116,5 +107,5 @@ fun compile(
 
     val jsProgram = moduleFragment.accept(IrModuleToJsTransformer(context), null)
 
-    return CompiledModule(moduleName, jsProgram.toString(), moduleFragmentCopy, moduleType, dependencies)
+    return CompiledModule(moduleName, jsProgram.toString(), context.moduleFragmentCopy, moduleType, dependencies)
 }

@@ -181,6 +181,8 @@ class JsIrBackendContext(
 
     val originalModuleIndex = ModuleIndex(irModuleFragment)
 
+    lateinit var moduleFragmentCopy: IrModuleFragment
+
     fun getOperatorByName(name: Name, type: KotlinType) = operatorMap[name]?.get(type)
 
     override val ir = object : Ir<CommonBackendContext>(this, irModuleFragment) {
