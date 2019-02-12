@@ -3404,7 +3404,16 @@
                      level="WEAK WARNING"
                      language="kotlin"
     />
-    
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.fir.TypeFromNestedClassInspection"
+                     displayName="I don't like when type from nested class is used as member return type"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+    />
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
