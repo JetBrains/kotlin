@@ -7015,31 +7015,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/reflection/external.kt");
         }
 
-        @TestMetadata("jsClass.kt")
-        public void testJsClass() throws Exception {
-            runTest("js/js.translator/testData/box/reflection/jsClass.kt");
-        }
-
-        @TestMetadata("jsClassName.kt")
-        public void testJsClassName() throws Exception {
-            runTest("js/js.translator/testData/box/reflection/jsClassName.kt");
-        }
-
-        @TestMetadata("jsClassOnReifiedType.kt")
-        public void testJsClassOnReifiedType() throws Exception {
-            runTest("js/js.translator/testData/box/reflection/jsClassOnReifiedType.kt");
-        }
-
-        @TestMetadata("jsClassOnReifiedTypeInLambda.kt")
-        public void testJsClassOnReifiedTypeInLambda() throws Exception {
-            runTest("js/js.translator/testData/box/reflection/jsClassOnReifiedTypeInLambda.kt");
-        }
-
-        @TestMetadata("jsClassSimpleName.kt")
-        public void testJsClassSimpleName() throws Exception {
-            runTest("js/js.translator/testData/box/reflection/jsClassSimpleName.kt");
-        }
-
         @TestMetadata("kClass.kt")
         public void testKClass() throws Exception {
             runTest("js/js.translator/testData/box/reflection/kClass.kt");
