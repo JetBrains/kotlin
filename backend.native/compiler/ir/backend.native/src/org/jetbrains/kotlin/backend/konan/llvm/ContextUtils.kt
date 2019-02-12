@@ -469,7 +469,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     )
 
     val memsetFunction = importMemset()
-    val memcpyFunction = importMemcpy()
+    //val memcpyFunction = importMemcpy()
 
     val usedFunctions = mutableListOf<LLVMValueRef>()
     val usedGlobals = mutableListOf<LLVMValueRef>()
