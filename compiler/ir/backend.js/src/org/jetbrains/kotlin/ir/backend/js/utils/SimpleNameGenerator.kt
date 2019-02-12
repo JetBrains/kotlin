@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -104,6 +105,10 @@ class SimpleNameGenerator : NameGenerator {
             val jsName = declaration.getJsName()
             if (jsName != null) {
                 return@getOrPut context.currentScope.declareName(jsName)
+            }
+
+            if (declaration is IrSimpleFunction && declaration.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION) {
+                return@getOrPut context.staticContext.rootScope.declareName(declaration.name.identifier)
             }
 
             if (declaration.isEffectivelyExternal()) {
