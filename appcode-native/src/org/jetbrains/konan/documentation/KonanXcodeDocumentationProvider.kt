@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
 // TODO: doc for modules, correct mapping of some parent class names from api notes (e.x. Swift specific bool getters)
-class KonanXcodeDocumentationProvider(settings: OCExternalDocSettings) : AppCodeDocumentationProvider(settings) {
+class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
   private companion object {
     const val META_SUFFIX = "Meta"
     const val PROTOCOL_SUFFIX = "Protocol"
