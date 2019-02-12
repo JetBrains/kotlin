@@ -260,17 +260,27 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             if (previousElement instanceof LeafPsiElement
                 && ((LeafPsiElement) previousElement).getElementType() == KtTokens.LONG_TEMPLATE_ENTRY_START
             ) {
-                if (previousDollarInStringOffset != null && previousDollarInStringOffset.intValue() == offset - 1) {
+                PsiElement currentElement = file.findElementAt(offset);
+                boolean isNextTokenIsIdentifier = currentElement instanceof LeafPsiElement &&
+                                                  ((LeafPsiElement) currentElement).getElementType() == KtTokens.IDENTIFIER;
+
+                if (!isNextTokenIsIdentifier) {
                     editor.getDocument().insertString(offset, "}");
                     return Result.STOP;
                 }
 
-                PsiElement currentElement = file.findElementAt(offset);
-                boolean isNextTokenIsIdentifier = currentElement instanceof LeafPsiElement &&
-                                                  ((LeafPsiElement) currentElement).getElementType() != KtTokens.IDENTIFIER;
-                if (isNextTokenIsIdentifier) {
-                    editor.getDocument().insertString(offset, "}");
-                    return Result.STOP;
+                PsiElement lastInLongTemplateEntry = previousElement.getParent().getLastChild();
+                boolean isSimpleLongTemplateEntry =
+                        lastInLongTemplateEntry instanceof LeafPsiElement &&
+                        ((LeafPsiElement) lastInLongTemplateEntry).getElementType() == KtTokens.LONG_TEMPLATE_ENTRY_END &&
+                        lastInLongTemplateEntry.getParent().getTextLength() == currentElement.getTextLength() + "${}".length();
+
+                if (!isSimpleLongTemplateEntry) {
+                    boolean isAfterTypedDollar = previousDollarInStringOffset != null && previousDollarInStringOffset.intValue() == offset - 1;
+                    if (isAfterTypedDollar) {
+                        editor.getDocument().insertString(offset, "}");
+                        return Result.STOP;
+                    }
                 }
             }
         }

@@ -63,6 +63,24 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         """fun foo() { "$dollar{<caret>}something" }"""
     )
 
+    fun testTypeStringTemplateWithUnmatchedBrace() = doTypeTest(
+        "$dollar{",
+        """val a = "<caret>bar}foo"""",
+        """val a = "$dollar{<caret>bar}foo""""
+    )
+
+    fun testTypeStringTemplateWithUnmatchedBraceComplex() = doTypeTest(
+        "$dollar{",
+        """val a = "<caret>bar + more}foo"""",
+        """val a = "$dollar{<caret>}bar + more}foo""""
+    )
+
+    fun testTypeStringTemplateStartInStringWithBraceLiterals() = doTypeTest(
+        "$dollar{",
+        """val test = "{ code <caret>other }"""",
+        """val test = "{ code $dollar{<caret>}other }""""
+    )
+
     fun testTypeStringTemplateStartInEmptyString() = doTypeTest(
         '{',
         """fun foo() { "$<caret>" }""",
