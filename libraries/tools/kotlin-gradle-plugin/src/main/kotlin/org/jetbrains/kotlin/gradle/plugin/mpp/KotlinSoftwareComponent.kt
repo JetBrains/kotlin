@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
@@ -85,8 +86,28 @@ class DefaultKotlinUsageContext(
         // TODO Gradle Java plugin does that in a different way; check whether we can improve this
         configuration.artifacts
 
-    override fun getAttributes(): AttributeContainer =
-        HierarchyAttributeContainer(configuration.outgoing.attributes) { it != ProjectLocalConfigurations.ATTRIBUTE }
+    override fun getAttributes(): AttributeContainer {
+        val configurationAttributes = configuration.attributes
+
+        /** TODO Using attributes of a detached configuration is a small and 'conservative' fix for KT-29758, [HierarchyAttributeContainer]
+         * being rejected by Gradle 5.2+; we may need to either not filter the attributes, which will lead to
+         * [ProjectLocalConfigurations.ATTRIBUTE] being published in the Gradle module metadata, which will potentially complicate our
+         * attributes schema migration, or create proper, non-detached configurations for publishing that are separated from the
+         * configurations used for project-to-project dependencies
+         */
+        val result = project.configurations.detachedConfiguration().attributes
+
+        // Capture type parameter T:
+        fun <T> copyAttribute(attribute: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
+            to.attribute<T>(attribute, from.getAttribute(attribute)!!)
+        }
+
+        configurationAttributes.keySet()
+            .filter { it != ProjectLocalConfigurations.ATTRIBUTE }
+            .forEach { copyAttribute(it, configurationAttributes, result) }
+
+        return result
+    }
 
     override fun getCapabilities(): Set<Capability> = emptySet()
 
