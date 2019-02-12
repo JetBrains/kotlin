@@ -33,8 +33,6 @@ sealed class InliningScope {
 
     protected open fun preprocess(statement: JsStatement) {}
 
-    abstract fun update()
-
     private val publicFunctionCache = mutableMapOf<String, JsFunction>()
 
     private val localFunctionCache = mutableMapOf<JsFunction, JsFunction>()
@@ -167,21 +165,6 @@ class ImportInfoFragmentInliningScope private constructor(
 
     private val additionalDeclarations = mutableListOf<JsStatement>()
 
-    override fun update() {
-        // TODO fix the order?
-        fragment.declarationBlock.statements.addAll(0, additionalDeclarations)
-
-        // post-processing
-
-        // If run separately `private inline suspend fun`'s local declarations get inlined twice.
-        InlineSuspendFunctionSplitter(this).accept(allCode)
-
-        simplifyWrappedFunctions(allCode)
-        removeUnusedFunctionDefinitions(allCode, collectNamedFunctions(allCode))
-        removeUnusedImports(fragment, allCode)
-        renameLabels(allCode)
-    }
-
     override fun hasImport(name: JsName, tag: String): JsName? {
         return name.localAlias?.let { (name, tag) ->
             if (tag != null) {
@@ -251,7 +234,21 @@ class ImportInfoFragmentInliningScope private constructor(
         fun process(fragment: JsProgramFragment, fn: (ImportInfoFragmentInliningScope) -> Unit) {
             val scope = ImportInfoFragmentInliningScope(fragment)
             fn(scope)
-            scope.update()
+
+            scope.apply {
+                // TODO fix the order?
+                fragment.declarationBlock.statements.addAll(0, additionalDeclarations)
+
+                // post-processing
+
+                // If run separately `private inline suspend fun`'s local declarations get inlined twice.
+                InlineSuspendFunctionSplitter(this).accept(allCode)
+
+                simplifyWrappedFunctions(allCode)
+                removeUnusedFunctionDefinitions(allCode, collectNamedFunctions(allCode))
+                removeUnusedImports(fragment, allCode)
+                renameLabels(allCode)
+            }
         }
     }
 }
@@ -260,13 +257,24 @@ class ImportIntoWrapperInliningScope private constructor(
     private val wrapperBody: JsBlock,
     override val fragment: JsProgramFragment
 ) : InliningScope() {
-    private val existingImports = mutableMapOf<String, JsName>().also { map ->
+    private val importList = mutableListOf<JsVars>()
+
+    private val otherLocalStatements = mutableListOf<JsStatement>()
+
+    private val existingImports = mutableMapOf<String, JsName>()
+
+    init {
         for (s in wrapperBody.statements) {
-            if (s !is JsVars) continue
+            if (s is JsVars) {
+                val tag = getImportTag(s)
+                if (tag != null) {
+                    importList.add(s)
+                    existingImports[tag] = s.vars[0].name
+                    continue
+                }
+            }
 
-            val tag = getImportTag(s) ?: continue
-
-            map[tag] = s.vars[0].name
+            otherLocalStatements.add(s)
         }
     }
 
@@ -280,18 +288,19 @@ class ImportIntoWrapperInliningScope private constructor(
 
     override fun addImport(tag: String, vars: JsVars) {
         existingImports[tag] = vars.vars[0].name
-        additionalStatements.add(vars)
-    }
-
-    override fun update() {
-        wrapperBody.statements.addAll(0, additionalStatements)
+        importList.add(vars)
     }
 
     companion object {
         fun process(wrapperBody: JsBlock, fragment: JsProgramFragment, fn: (ImportIntoWrapperInliningScope) -> Unit) {
             val scope = ImportIntoWrapperInliningScope(wrapperBody, fragment)
             fn(scope)
-            scope.update()
+            wrapperBody.statements.apply {
+                clear()
+                addAll(scope.importList)
+                addAll(scope.additionalStatements)
+                addAll(scope.otherLocalStatements)
+            }
         }
     }
 }

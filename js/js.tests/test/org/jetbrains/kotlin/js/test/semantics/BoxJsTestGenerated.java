@@ -4005,6 +4005,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inline/inlineSimpleAssignment.kt");
         }
 
+        @TestMetadata("inlinedObjectLiteralIsCheck.kt")
+        public void testInlinedObjectLiteralIsCheck() throws Exception {
+            runTest("js/js.translator/testData/box/inline/inlinedObjectLiteralIsCheck.kt");
+        }
+
         @TestMetadata("innerOuterThis.kt")
         public void testInnerOuterThis() throws Exception {
             runTest("js/js.translator/testData/box/inline/innerOuterThis.kt");
