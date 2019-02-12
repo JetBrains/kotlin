@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import kotlin.math.exp
 
 abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     protected fun <T : IrElement> T.transformChildren() = apply { transformChildrenVoid() }
