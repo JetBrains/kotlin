@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
@@ -62,7 +63,7 @@ class KotlinFunctionParameterInfoHandler :
 
     override fun getActualParameters(arguments: KtValueArgumentList) = arguments.arguments.toTypedArray()
 
-    override fun getActualParametersRBraceType() = KtTokens.RPAR
+    override fun getActualParametersRBraceType(): KtSingleValueToken = KtTokens.RPAR
 
     override fun getArgumentListAllowedParentClasses() = setOf(KtCallElement::class.java)
 }
@@ -72,7 +73,7 @@ class KotlinLambdaParameterInfoHandler :
 
     override fun getActualParameters(lambdaArgument: KtLambdaArgument) = arrayOf(lambdaArgument)
 
-    override fun getActualParametersRBraceType() = KtTokens.RBRACE
+    override fun getActualParametersRBraceType(): KtSingleValueToken = KtTokens.RBRACE
 
     override fun getArgumentListAllowedParentClasses() = setOf(KtLambdaArgument::class.java)
 
@@ -90,7 +91,7 @@ class KotlinArrayAccessParameterInfoHandler :
     override fun getActualParameters(containerNode: KtContainerNode): Array<out KtExpression> =
         containerNode.allChildren.filterIsInstance<KtExpression>().toList().toTypedArray()
 
-    override fun getActualParametersRBraceType() = KtTokens.RBRACKET
+    override fun getActualParametersRBraceType(): KtSingleValueToken = KtTokens.RBRACKET
 }
 
 abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement, TArgument : KtElement>(
@@ -101,13 +102,18 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
     companion object {
         @JvmField
         val GREEN_BACKGROUND: Color = JBColor(Color(231, 254, 234), Gray._100)
+
+        private val RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions {
+            enhancedTypes = true
+            renderUnabbreviatedType = false
+        }
     }
 
     private fun findCall(argumentList: TArgumentList, bindingContext: BindingContext): Call? {
         return (argumentList.parent as? KtElement)?.getCall(bindingContext)
     }
 
-    override fun getActualParameterDelimiterType() = KtTokens.COMMA
+    override fun getActualParameterDelimiterType(): KtSingleValueToken = KtTokens.COMMA
 
     override fun getArgListStopSearchClasses() = setOf(KtNamedFunction::class.java, KtVariableDeclaration::class.java)
 
@@ -125,7 +131,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             val arguments = getActualParameters(argumentList)
             val index = arguments.indexOf(element)
             context.setCurrentParameter(index)
-            context.setHighlightedParameter(element)
+            context.highlightedParameter = element
         }
         return argumentList
     }
@@ -263,20 +269,10 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         return true
     }
 
-    override fun getParameterCloseChars() = ParameterInfoUtils.DEFAULT_PARAMETER_CLOSE_CHARS
-
-    override fun tracksParameterIndex() = true
-
     //TODO
     override fun couldShowInLookup() = false
 
     override fun getParametersForLookup(item: LookupElement, context: ParameterInfoContext) = emptyArray<Any>()
-    override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>()
-
-    private val RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions {
-        enhancedTypes = true
-        renderUnabbreviatedType = false
-    }
 
     private fun renderParameter(parameter: ValueParameterDescriptor, includeName: Boolean, named: Boolean, project: Project): String {
         return buildString {
@@ -396,7 +392,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
                 override fun getValueArguments() = argumentsWithCurrent
                 override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
-                override fun getValueArgumentList() = null
+                override fun getValueArgumentList(): KtValueArgumentList? = null
             }
         }
 
