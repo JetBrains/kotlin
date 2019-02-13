@@ -177,14 +177,17 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         val kotlinType = context.bindingContext.getType(ktExpression) ?: throw AssertionError("No type for ${ktExpression.text}")
 
+        val startOffset = ktExpression.startOffsetSkippingComments
+        val endOffset = ktExpression.endOffset
+        val irType = kotlinType.toIrType()
+
+        if (ktExpression.operationToken == KtTokens.IDENTIFIER) {
+            return generateCall(getResolvedCall(ktExpression)!!, ktExpression, null)
+        }
+
         val operator = ktExpression.getDynamicOperator()
 
-        return IrDynamicOperatorExpressionImpl(
-            ktExpression.startOffsetSkippingComments,
-            ktExpression.endOffset,
-            kotlinType.toIrType(),
-            operator
-        ).apply {
+        return IrDynamicOperatorExpressionImpl(startOffset, endOffset, irType, operator).apply {
             left = ktLeft.genExpr()
             right = ktRight.genExpr()
         }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun ResolvedCall<*>.isImplicitInvoke(): Boolean {
     if (resultingDescriptor.name != OperatorNameConventions.INVOKE) return false
-    val callExpression = call.callElement as? KtCallExpression ?: return true
+    val callExpression = call.callElement as? KtCallExpression ?: return false
     val calleeExpression = callExpression.calleeExpression as? KtSimpleNameExpression ?: return true
     return calleeExpression.getReferencedName() != OperatorNameConventions.INVOKE.asString()
 }
