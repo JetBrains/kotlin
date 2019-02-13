@@ -41,6 +41,11 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("divisionByZeroInJava.kt")
+        public void testDivisionByZeroInJava() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/annotations/divisionByZeroInJava.kt");
+        }
+
         @TestMetadata("javaAnnotationArrayValueDefault.kt")
         public void testJavaAnnotationArrayValueDefault() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/annotations/javaAnnotationArrayValueDefault.kt");

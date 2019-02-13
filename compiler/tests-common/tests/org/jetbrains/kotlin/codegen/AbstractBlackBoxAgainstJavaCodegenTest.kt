@@ -33,7 +33,11 @@ abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenT
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.addJvmClasspathRoot(javaClassesOutputDirectory)
-        configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, true)
+
+        if (configuration.get(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING) == null) {
+            // By default (unless disabled in the test with a directive), use the fast class reading mode
+            configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, true)
+        }
     }
 
     override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {

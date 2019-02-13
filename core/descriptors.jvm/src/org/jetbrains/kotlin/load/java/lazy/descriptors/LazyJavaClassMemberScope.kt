@@ -675,7 +675,7 @@ class LazyJavaClassMemberScope(
                 method.name,
                 // Parameters of annotation constructors in Java are never nullable
                 TypeUtils.makeNotNullable(returnType),
-                method.annotationParameterDefaultValue != null,
+                method.hasAnnotationParameterDefaultValue,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
                 // Nulls are not allowed in annotation arguments in Java

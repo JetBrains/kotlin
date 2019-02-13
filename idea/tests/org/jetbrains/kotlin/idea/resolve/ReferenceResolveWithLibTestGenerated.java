@@ -44,6 +44,11 @@ public class ReferenceResolveWithLibTestGenerated extends AbstractReferenceResol
         runTest("idea/testData/resolve/referenceWithLib/fakeOverride2.kt");
     }
 
+    @TestMetadata("infinityAndNanInJavaAnnotation.kt")
+    public void testInfinityAndNanInJavaAnnotation() throws Exception {
+        runTest("idea/testData/resolve/referenceWithLib/infinityAndNanInJavaAnnotation.kt");
+    }
+
     @TestMetadata("innerClassFromLib.kt")
     public void testInnerClassFromLib() throws Exception {
         runTest("idea/testData/resolve/referenceWithLib/innerClassFromLib.kt");
