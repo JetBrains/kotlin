@@ -109,11 +109,6 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         runTest("compiler/testData/integration/ant/jvm/stdlibForJavacWithNoKotlin/");
     }
 
-    @TestMetadata("stdlibJre78AndStdlibJdk78")
-    public void testStdlibJre78AndStdlibJdk78() throws Exception {
-        runTest("compiler/testData/integration/ant/jvm/stdlibJre78AndStdlibJdk78/");
-    }
-
     @TestMetadata("suppressWarnings")
     public void testSuppressWarnings() throws Exception {
         runTest("compiler/testData/integration/ant/jvm/suppressWarnings/");
