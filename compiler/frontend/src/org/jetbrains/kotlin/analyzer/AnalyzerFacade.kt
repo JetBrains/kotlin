@@ -91,7 +91,7 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
 class ResolverForProjectImpl<M : ModuleInfo>(
     private val debugName: String,
     private val projectContext: ProjectContext,
-    modules: Collection<M>,
+    private val modulesFromThisResolver: Collection<M>,
     private val modulesContent: (M) -> ModuleContent<M>,
     private val modulePlatforms: (M) -> MultiTargetPlatform?,
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
@@ -123,12 +123,13 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
 
-    private val moduleInfoToResolvableInfo: Map<M, M> =
-        modules.flatMap { module -> module.flatten().map { modulePart -> modulePart to module } }.toMap() as Map<M, M>
+    /** Replace with identity (any module info is resolvable moduleInfo without CombinedModuleInfo) */
+//    private val moduleInfoToResolvableInfo: Map<M, M> =
+//        modules.flatMap { module -> listOf(module to module) }.toMap() as Map<M, M>
 
-    init {
-        assert(moduleInfoToResolvableInfo.values.toSet() == modules.toSet())
-    }
+//    init {
+//        assert(moduleInfoToResolvableInfo.values.toSet() == modules.toSet())
+//    }
 
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -160,7 +161,9 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val resolverByModuleDescriptor = mutableMapOf<ModuleDescriptor, ResolverForModule>()
 
     override val allModules: Collection<M> by lazy {
-        this.moduleInfoToResolvableInfo.keys + delegateResolver.allModules
+/** moduleInfoToResolvableInfo.keys were exactly 'modules' anyway */
+//        this.moduleInfoToResolvableInfo.keys + delegateResolver.allModules
+        modulesFromThisResolver + delegateResolver.allModules
     }
 
     override val name: String
@@ -224,9 +227,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     }
 
     private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
-        val moduleFromThisResolver = moduleInfoToResolvableInfo[module]
+        val moduleFromThisResolver = module.takeIf { it in allModules }
                 ?: return delegateResolver.descriptorForModule(module) as ModuleDescriptorImpl
-
         return projectContext.storageManager.compute {
             var moduleData = descriptorByModule.getOrPut(moduleFromThisResolver) {
                 createModuleDescriptor(moduleFromThisResolver)
@@ -278,14 +280,16 @@ interface PlatformAnalysisParameters {
     object Empty : PlatformAnalysisParameters
 }
 
-interface CombinedModuleInfo : ModuleInfo {
-    val containedModules: List<ModuleInfo>
-}
+/** Just delete it! */
+//interface CombinedModuleInfo : ModuleInfo {
+//    val containedModules: List<ModuleInfo>
+//}
 
-fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
-    is CombinedModuleInfo -> listOf(this) + containedModules
-    else -> listOf(this)
-}
+/** Replace with identity (no need to flatten anything when combined module info doesn't exist*/
+//fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
+//    is CombinedModuleInfo -> listOf(this) + containedModules
+//    else -> listOf(this)
+//}
 
 interface TrackableModuleInfo : ModuleInfo {
     fun createModificationTracker(): ModificationTracker
