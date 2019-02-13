@@ -63,6 +63,10 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <xi:include href="plugin-kotlin-extensions.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <syntheticResolveExtension implementation="org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingResolveExtension"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij.jvm">
     <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
   </extensions>
