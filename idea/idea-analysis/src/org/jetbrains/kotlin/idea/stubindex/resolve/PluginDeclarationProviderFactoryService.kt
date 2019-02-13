@@ -21,6 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -36,7 +37,7 @@ class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryServic
         filesScope: GlobalSearchScope,
         moduleInfo: ModuleInfo
     ): DeclarationProviderFactory {
-        if (syntheticFiles.isEmpty() && (moduleInfo as IdeaModuleInfo).moduleOrigin != ModuleOrigin.MODULE) {
+        if (syntheticFiles.isEmpty() && moduleInfo !is ModuleSourceInfo) {
             // No actual source declarations for libraries
             // Even in case of libraries sources they should be obtained through the classpath with subsequent decompiling
             // Anyway, we'll filter them out with `KotlinSourceFilterScope.sources` call below

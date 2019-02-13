@@ -436,10 +436,6 @@ interface SourceForBinaryModuleInfo : IdeaModuleInfo {
 //    override fun createModificationTracker() = platformModule.createModificationTracker()
 //}
 
-
-fun IdeaModuleInfo.projectSourceModules(): List<ModuleSourceInfo>? =
-    (this as? ModuleSourceInfo)?.let(::listOf) ?: (this as? PlatformModuleInfo)?.containedModules
-
 enum class SourceType {
     PRODUCTION,
     TEST
