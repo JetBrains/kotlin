@@ -27,6 +27,7 @@ import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
+import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
@@ -138,23 +139,10 @@ class KotlinCoreEnvironment private constructor(
                         ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager
                     )
 
-                    val traceHolder = CliTraceHolder()
-                    val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder)
-                    val kotlinAsJavaSupport = CliKotlinAsJavaSupport(this, traceHolder)
-                    registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                    registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                    registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)
-                    registerService(CodeAnalyzerInitializer::class.java, traceHolder)
+                    registerKotlinLightClassSupport(project)
 
                     registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
                     registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
-
-                    val area = Extensions.getArea(this)
-
-                    area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, kotlinAsJavaSupport))
-                    area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
-                        PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java))
-                    )
                 }
 
                 super.registerJavaPsiFacade()
@@ -177,17 +165,7 @@ class KotlinCoreEnvironment private constructor(
 
         val project = projectEnvironment.project
 
-        ExpressionCodegenExtension.registerExtensionPoint(project)
-        SyntheticResolveExtension.registerExtensionPoint(project)
-        ClassBuilderInterceptorExtension.registerExtensionPoint(project)
-        AnalysisHandlerExtension.registerExtensionPoint(project)
-        PackageFragmentProviderExtension.registerExtensionPoint(project)
-        StorageComponentContainerContributor.registerExtensionPoint(project)
-        DeclarationAttributeAltererExtension.registerExtensionPoint(project)
-        PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
-        JsSyntheticTranslateExtension.registerExtensionPoint(project)
-        CompilerConfigurationExtension.registerExtensionPoint(project)
-        IrGenerationExtension.registerExtensionPoint(project)
+        registerPluginExtensionPoints(project)
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -213,7 +191,7 @@ class KotlinCoreEnvironment private constructor(
 
         registerProjectServicesForCLI(projectEnvironment)
 
-        registerProjectServices(projectEnvironment, messageCollector)
+        registerProjectServices(projectEnvironment.project)
 
         for (extension in CompilerConfigurationExtension.getInstances(project)) {
             extension.updateConfiguration(configuration)
@@ -641,6 +619,22 @@ class KotlinCoreEnvironment private constructor(
             })
         }
 
+        @JvmStatic
+        @Suppress("MemberVisibilityCanPrivate") // made public for CLI Android Lint
+        fun registerPluginExtensionPoints(project: MockProject) {
+            ExpressionCodegenExtension.registerExtensionPoint(project)
+            SyntheticResolveExtension.registerExtensionPoint(project)
+            ClassBuilderInterceptorExtension.registerExtensionPoint(project)
+            AnalysisHandlerExtension.registerExtensionPoint(project)
+            PackageFragmentProviderExtension.registerExtensionPoint(project)
+            StorageComponentContainerContributor.registerExtensionPoint(project)
+            DeclarationAttributeAltererExtension.registerExtensionPoint(project)
+            PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
+            JsSyntheticTranslateExtension.registerExtensionPoint(project)
+            CompilerConfigurationExtension.registerExtensionPoint(project)
+            IrGenerationExtension.registerExtensionPoint(project)
+        }
+
         private fun registerApplicationServicesForCLI(applicationEnvironment: JavaCoreApplicationEnvironment) {
             // ability to get text from annotations xml files
             applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml")
@@ -661,7 +655,8 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        private fun registerProjectExtensionPoints(area: ExtensionsArea) {
+        @JvmStatic
+        fun registerProjectExtensionPoints(area: ExtensionsArea) {
             CoreApplicationEnvironment.registerExtensionPoint(
                 area, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor::class.java
             )
@@ -672,8 +667,15 @@ class KotlinCoreEnvironment private constructor(
 
         // made public for Upsource
         @JvmStatic
+        @Deprecated("Use registerProjectServices(project) instead.", ReplaceWith("registerProjectServices(projectEnvironment.project)"))
         fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment, messageCollector: MessageCollector?) {
-            with(projectEnvironment.project) {
+            registerProjectServices(projectEnvironment.project)
+        }
+
+        // made public for Android Lint
+        @JvmStatic
+        fun registerProjectServices(project: MockProject) {
+            with(project) {
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
                 registerService(ModuleAnnotationsResolver::class.java, CliModuleAnnotationsResolver())
@@ -685,6 +687,27 @@ class KotlinCoreEnvironment private constructor(
              * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
              * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.
              */
+        }
+
+        // made public for Android Lint
+        @JvmStatic
+        fun registerKotlinLightClassSupport(project: MockProject) {
+            with(project) {
+                val traceHolder = CliTraceHolder()
+                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder)
+                val kotlinAsJavaSupport = CliKotlinAsJavaSupport(this, traceHolder)
+                registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)
+                registerService(CodeAnalyzerInitializer::class.java, traceHolder)
+
+                val area = Extensions.getArea(this)
+
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, kotlinAsJavaSupport))
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
+                    PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java))
+                )
+            }
         }
 
         private fun CompilerConfiguration.setupJdkClasspathRoots(configFiles: EnvironmentConfigFiles) {
