@@ -183,7 +183,7 @@ class JKTypeElementImpl(override var type: JKType) : JKTypeElement, JKElementBas
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeElement(this, data)
 }
 
-class JKClassTypeImpl(
+data class JKClassTypeImpl(
     override val classReference: JKClassSymbol,
     override val parameters: List<JKType> = emptyList(),
     override val nullability: Nullability = Nullability.Default
@@ -444,12 +444,12 @@ class JKTypeParameterImpl(name: JKNameIdentifier, upperBounds: List<JKTypeElemen
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeParameter(this, data)
 }
 
-class JKVarianceTypeParameterTypeImpl(
+data class JKVarianceTypeParameterTypeImpl(
     override val variance: JKVarianceTypeParameterType.Variance,
     override val boundType: JKType
 ) : JKVarianceTypeParameterType
 
-class JKTypeParameterTypeImpl(
+data class JKTypeParameterTypeImpl(
     override val name: String,
     override val nullability: Nullability = Nullability.Default
 ) : JKTypeParameterType
