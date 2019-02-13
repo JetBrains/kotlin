@@ -35,7 +35,7 @@ private class IdeaModelInfosCache(
 
     fun forPlatform(platform: TargetPlatform): List<IdeaModuleInfo> {
         return resultByPlatform.getOrPut(platform) {
-            mergePlatformModules(moduleSourceInfos, platform) + libraryInfos + sdkInfos
+            moduleSourceInfos.filter { it.platform == platform } + libraryInfos + sdkInfos
         }
     }
 }
@@ -64,25 +64,6 @@ private fun collectModuleInfosFromIdeaModel(
         libraryInfos = ideaLibraries.flatMap { createLibraryInfo(project, it) },
         sdkInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) }
     )
-}
-
-private fun mergePlatformModules(
-    allModules: List<ModuleSourceInfo>,
-    platform: TargetPlatform
-): List<IdeaModuleInfo> {
-    if (platform.isCommon()) return allModules
-
-    val platformModules =
-        allModules.flatMap { module ->
-            if (module.platform == platform && module.expectedBy.isNotEmpty())
-                listOf(module to module.expectedBy)
-            else emptyList()
-        }.map { (module, expectedBys) ->
-            PlatformModuleInfo(module, expectedBys)
-        }
-
-    val rest = allModules - platformModules.flatMap { it.containedModules }
-    return rest + platformModules
 }
 
 internal fun getAllProjectSdks(): Collection<Sdk> {
