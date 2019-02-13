@@ -168,12 +168,14 @@ class JsIrBackendContext(
         return numbers + listOf(Name.identifier("String"))
     }
 
-    val primitiveCompanionObjects = primitivesWithImplicitCompanionObject()
-        .associate {
-            it to symbolTable.lazyWrapper.referenceClass(
-                getClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
-            )
-        }
+    val primitiveCompanionObjects by lazy {
+        primitivesWithImplicitCompanionObject()
+            .associate {
+                it to symbolTable.lazyWrapper.referenceClass(
+                    getClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
+                )
+            }
+    }
 
     val suspendFunctions = (0..22).map { symbolTable.referenceClass(builtIns.getSuspendFunction(it)) }
 
@@ -237,29 +239,35 @@ class JsIrBackendContext(
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 
-    val throwISEymbol = getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).singleOrNull()?.let {
-        symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwIseSymbol
+    val throwISEymbol by lazy { getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).singleOrNull()?.let {
+        symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwIseSymbol }
 
     val coroutineImplLabelProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("state")!! }
     val coroutineImplResultSymbol by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("result")!! }
     val coroutineImplExceptionProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("exception")!! }
     val coroutineImplExceptionStateProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("exceptionState")!! }
 
-    val primitiveClassesObject = symbolTable.referenceClass(
-        getClass(FqName.fromSegments(listOf("kotlin", "reflect", "js", "internal", "PrimitiveClasses")))
-    ).owner
+    val primitiveClassesObject by lazy {
+        symbolTable.referenceClass(
+            getClass(FqName.fromSegments(listOf("kotlin", "reflect", "js", "internal", "PrimitiveClasses")))
+        ).owner
+    }
 
-    val primitiveClassProperties = primitiveClassesObject.declarations.filterIsInstance<IrProperty>()
-    val primitiveClassFunctionClass = primitiveClassesObject.declarations
-        .filterIsInstance<IrSimpleFunction>()
-        .find { it.name == Name.identifier("functionClass") }!!
+    val primitiveClassProperties by lazy { primitiveClassesObject.declarations.filterIsInstance<IrProperty>() }
+    val primitiveClassFunctionClass by lazy {
+        primitiveClassesObject.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .find { it.name == Name.identifier("functionClass") }!!
+    }
 
-    val throwableClass = symbolTable.referenceClass(
-        getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
-    ).owner
-    val throwableConstructors = throwableClass.declarations.filterIsInstance<IrConstructor>()
+    val throwableClass by lazy {
+        symbolTable.referenceClass(
+            getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
+        ).owner
+    }
+    val throwableConstructors by lazy { throwableClass.declarations.filterIsInstance<IrConstructor>() }
 
-    val defaultThrowableCtor = throwableConstructors.single { it.valueParameters.size == 0 }
+    val defaultThrowableCtor by lazy { throwableConstructors.single { it.valueParameters.size == 0 } }
 
     private fun referenceOperators() = OperatorNames.ALL.map { name ->
         // TODO to replace KotlinType with IrType we need right equals on IrType

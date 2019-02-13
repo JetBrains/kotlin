@@ -132,5 +132,5 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
             )
         }
 
-    private val throwErrorFunction = context.ir.symbols.ThrowUninitializedPropertyAccessException.owner
+    private val throwErrorFunction by lazy { context.ir.symbols.ThrowUninitializedPropertyAccessException.owner }
 }
