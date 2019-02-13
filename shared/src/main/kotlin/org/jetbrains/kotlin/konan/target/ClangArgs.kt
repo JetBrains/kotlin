@@ -130,21 +130,24 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             KonanTarget.LINUX_ARM32_HFP ->
                 listOf("-DUSE_GCC_UNWIND=1",
                         "-DUSE_ELF_SYMBOLS=1",
-                        "-DELFSIZE=32")
+                        "-DELFSIZE=32",
+                        "-DKONAN_NO_UNALIGNED_ACCESS=1")
 
             KonanTarget.LINUX_MIPS32 ->
                 listOf("-DUSE_GCC_UNWIND=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=32",
                         // TODO: reconsider, once target MIPS can do proper 64-bit load/store/CAS.
-                        "-DKONAN_NO_64BIT_ATOMIC=1")
+                        "-DKONAN_NO_64BIT_ATOMIC=1",
+                        "-DKONAN_NO_UNALIGNED_ACCESS=1")
 
             KonanTarget.LINUX_MIPSEL32 ->
                 listOf("-DUSE_GCC_UNWIND=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=32",
                         // TODO: reconsider, once target MIPS can do proper 64-bit load/store/CAS.
-                        "-DKONAN_NO_64BIT_ATOMIC=1")
+                        "-DKONAN_NO_64BIT_ATOMIC=1",
+                        "-DKONAN_NO_UNALIGNED_ACCESS=1")
 
             KonanTarget.MINGW_X64 ->
                 listOf("-DUSE_GCC_UNWIND=1",
@@ -187,7 +190,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DUSE_GCC_UNWIND=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=32",
-                        "-DKONAN_ANDROID")
+                        "-DKONAN_ANDROID",
+                        "-DKONAN_NO_UNALIGNED_ACCESS=1")
 
             KonanTarget.ANDROID_ARM64 ->
                 listOf("-D__ANDROID__",
@@ -217,7 +221,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_INTERNAL_SNPRINTF=1",
                         "-DKONAN_INTERNAL_NOW=1",
                         "-DKONAN_NO_MEMMEM=1",
-                        "-DKONAN_NO_CTORS_SECTION=1")
+                        "-DKONAN_NO_CTORS_SECTION=1",
+                        "-DKONAN_NO_UNALIGNED_ACCESS=1")
         }
 
     private val host = HostManager.host
