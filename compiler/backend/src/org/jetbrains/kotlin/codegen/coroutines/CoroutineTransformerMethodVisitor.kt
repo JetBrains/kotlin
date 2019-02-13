@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -948,7 +947,7 @@ private fun allSuspensionPointsAreTailCalls(
         safelyReachableReturns[endIndex + 1]?.all { returnIndex ->
             sourceFrames[returnIndex].top().sure {
                 "There must be some value on stack to return"
-            }.insns.all { sourceInsn ->
+            }.insns.any { sourceInsn ->
                 sourceInsn?.let(instructions::indexOf) in beginIndex..endIndex
             }
         } ?: false

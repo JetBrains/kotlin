@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public final class TailCallIfReturnUnitKt {
+    public final static method check(): boolean
+    public final static @org.jetbrains.annotations.Nullable method f(p0: int, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    private synthetic final static method f_2(p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+}

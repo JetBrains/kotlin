@@ -498,6 +498,16 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/tailcall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("tailCallIfReturnUnit.kt")
+        public void testTailCallIfReturnUnit_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/tailcall/tailCallIfReturnUnit.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("tailCallIfReturnUnit.kt")
+        public void testTailCallIfReturnUnit_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/tailcall/tailCallIfReturnUnit.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("tailCallIntrinsics.kt")
         public void testTailCallIntrinsics_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/tailcall/tailCallIntrinsics.kt", "kotlin.coroutines.experimental");
