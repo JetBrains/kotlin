@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.sure
@@ -52,7 +51,7 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
                 .get(packageFqName.asString(), project, scope).platformSourcesFirst()
         }
         val groupedByFqNameAndModuleInfo = facadeFilesInPackage.groupBy {
-            Pair(it.javaFileFacadeFqName, it.getModuleInfoPreferringJvmPlatform())
+            Pair(it.javaFileFacadeFqName, it.getModuleInfo())
         }
 
         return groupedByFqNameAndModuleInfo.flatMap {
@@ -157,7 +156,7 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
     }
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val filesByModule = findFilesForFacade(facadeFqName, scope).groupBy(PsiElement::getModuleInfoPreferringJvmPlatform)
+        val filesByModule = findFilesForFacade(facadeFqName, scope).groupBy(PsiElement::getModuleInfo)
 
         return filesByModule.flatMap {
             createLightClassForFileFacade(facadeFqName, it.value, it.key)
@@ -220,7 +219,7 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
         facadeFqName: FqName
     ): List<PsiClass> {
         if (sourceFiles.isEmpty()) return listOf()
-        if (moduleInfo !is ModuleSourceInfo && moduleInfo !is PlatformModuleInfo) return listOf()
+        if (moduleInfo !is ModuleSourceInfo) return listOf()
 
         val lightClassForFacade = KtLightClassForFacade.createForFacade(
             psiManager, facadeFqName, moduleInfo.contentScope(), sourceFiles
@@ -324,8 +323,4 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
         javaFileStub.psi = fakeFile
         return fakeFile.classes.single() as ClsClassImpl
     }
-}
-
-internal fun PsiElement.getModuleInfoPreferringJvmPlatform(): IdeaModuleInfo {
-    return getPlatformModuleInfo(DefaultBuiltInPlatforms.jvmPlatform) ?: getModuleInfo()
 }

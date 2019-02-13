@@ -11,7 +11,6 @@ import com.intellij.openapi.externalSystem.service.project.IdeModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.rootManager
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.isCommon
 
 val Module.isNewMPPModule: Boolean
@@ -89,9 +87,6 @@ private fun Module.findOldFashionedImplementedModuleNames(): List<String> {
 val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
     get() {
         val moduleInfo = getCapability(ModuleInfo.Capability)
-        if (moduleInfo is PlatformModuleInfo) {
-            return listOf(this)
-        }
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return emptyList()
         val implementingModuleInfos = moduleSourceInfo.module.implementingModules.mapNotNull { it.toInfo(moduleSourceInfo.sourceType) }
         return implementingModuleInfos.mapNotNull { it.toDescriptor() }
@@ -109,7 +104,6 @@ private fun Module.toInfo(type: SourceType): ModuleSourceInfo? = when (type) {
 val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
     get() {
         val moduleInfo = getCapability(ModuleInfo.Capability)
-        if (moduleInfo is PlatformModuleInfo) return listOf(this)
 
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return emptyList()
 
@@ -118,21 +112,3 @@ val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
 
 private fun ModuleSourceInfo.toDescriptor() = KotlinCacheService.getInstance(module.project)
     .getResolutionFacadeByModuleInfo(this, platform)?.moduleDescriptor
-
-fun PsiElement.getPlatformModuleInfo(desiredPlatform: TargetPlatform): PlatformModuleInfo? {
-    assert(!desiredPlatform.isCommon()) { "Platform module cannot have Common platform" }
-    val moduleInfo = getNullableModuleInfo() as? ModuleSourceInfo ?: return null
-    val platform = moduleInfo.platform
-    return when {
-        platform.isCommon() -> {
-            val correspondingImplementingModule = moduleInfo.module.implementingModules.map { it.toInfo(moduleInfo.sourceType) }
-                .firstOrNull { it?.platform == desiredPlatform } ?: return null
-            PlatformModuleInfo(correspondingImplementingModule, correspondingImplementingModule.expectedBy)
-        }
-        platform == desiredPlatform -> {
-            val expectedBy = moduleInfo.expectedBy.takeIf { it.isNotEmpty() } ?: return null
-            PlatformModuleInfo(moduleInfo, expectedBy)
-        }
-        else -> null
-    }
-}

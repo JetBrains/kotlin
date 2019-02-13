@@ -124,7 +124,7 @@ internal class ProjectResolutionFacade(
             packagePartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) },
             moduleByJavaClass = { javaClass: JavaClass ->
                 val psiClass = (javaClass as JavaClassImpl).psi
-                psiClass.getPlatformModuleInfo(DefaultBuiltInPlatforms.jvmPlatform)?.platformModule ?: psiClass.getNullableModuleInfo()
+                psiClass.getNullableModuleInfo()
             }
         )
 
