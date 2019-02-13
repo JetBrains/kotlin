@@ -23,11 +23,20 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
 class KtLightParameter(
-        override val clsDelegate: PsiParameter,
-        private val index: Int,
-        method: KtLightMethod
-) : LightParameter(clsDelegate.name ?: "p$index", clsDelegate.type, method, KotlinLanguage.INSTANCE),
+    private val dummyDelegate: PsiParameter,
+    private val clsDelegateProvider: () -> PsiParameter?,
+    private val index: Int,
+    method: KtLightMethod
+) : LightParameter(dummyDelegate.name ?: "p$index", dummyDelegate.type, method, KotlinLanguage.INSTANCE),
         KtLightDeclaration<KtParameter, PsiParameter> {
+
+    private val lazyDelegate by lazyPub { clsDelegateProvider() ?: dummyDelegate }
+
+    override val clsDelegate: PsiParameter get() = lazyDelegate
+
+    override fun getType(): PsiType = lazyDelegate.type
+
+    override fun getName(): String = dummyDelegate.name ?: lazyDelegate.name ?: super.getName()
 
     private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
 

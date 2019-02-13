@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.search;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -97,6 +94,9 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
         }
         if (member instanceof PsiField) {
             return "field:" + ((PsiField) member).getName();
+        }
+        if (member instanceof PsiParameter) {
+            return "param:" + ((PsiParameter) member).getName();
         }
         throw new IllegalStateException("Do not know how to render member of type: " + member.getClass().getName());
     }

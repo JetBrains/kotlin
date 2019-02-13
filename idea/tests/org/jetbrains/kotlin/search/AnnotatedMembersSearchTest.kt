@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.search
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
-import com.intellij.psi.search.searches.AnnotatedMembersSearch
+import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
@@ -40,7 +41,14 @@ abstract class AbstractAnnotatedMembersSearchTest : AbstractSearcherTest() {
             PsiBasedClassResolver.trueHits.set(0)
             PsiBasedClassResolver.falseHits.set(0)
 
-            AbstractSearcherTest.checkResult(path, AnnotatedMembersSearch.search(psiClass, projectScope))
+            AbstractSearcherTest.checkResult(
+                path,
+                AnnotatedElementsSearch.searchElements(
+                    psiClass,
+                    projectScope,
+                    PsiModifierListOwner::class.java
+                )
+            )
 
             val optimizedTrue = InTextDirectivesUtils.getPrefixedInt(fileText, "// OPTIMIZED_TRUE:")
             if (optimizedTrue != null) {

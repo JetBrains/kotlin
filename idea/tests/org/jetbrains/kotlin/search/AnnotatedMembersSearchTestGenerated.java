@@ -54,6 +54,11 @@ public class AnnotatedMembersSearchTestGenerated extends AbstractAnnotatedMember
         runTest("idea/testData/search/annotations/testAnnotationsOnFunction.kt");
     }
 
+    @TestMetadata("testAnnotationsOnPropertiesAndParameters.kt")
+    public void testTestAnnotationsOnPropertiesAndParameters() throws Exception {
+        runTest("idea/testData/search/annotations/testAnnotationsOnPropertiesAndParameters.kt");
+    }
+
     @TestMetadata("testAnnotationsWithParameters.kt")
     public void testTestAnnotationsWithParameters() throws Exception {
         runTest("idea/testData/search/annotations/testAnnotationsWithParameters.kt");
