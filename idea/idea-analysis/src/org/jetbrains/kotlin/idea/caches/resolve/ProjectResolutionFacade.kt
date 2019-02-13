@@ -124,9 +124,21 @@ internal class ProjectResolutionFacade(
 
         val jvmPlatformParameters = JvmPlatformParameters(
             packagePartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) },
+
+            /** This callback in the following chain:
+             *     JavaClass -> ModuleInfo -> ResolverForModule -> Container -> JavaDescriptorResolver
+             *  (in particular, it is used to implement transition "JavaClass -> ModuleInfo")
+             *
+             *  In CMI world, we'll return platform module for JavaClass from CommonModule (don't even ask me
+             *  where the fuck we've found JavaClass in common module), which emulates compiler' behaviour
+             *
+             *  I don't know what should we do in new world, because use-case is completely not clear and needs
+             *  investigation (note that it was actually introduced later than CMI, see 3a8499b10e9687d0372c2e6242ed4091576642ae)
+             */
             moduleByJavaClass = { javaClass: JavaClass ->
                 val psiClass = (javaClass as JavaClassImpl).psi
-                psiClass.getPlatformModuleInfo(JvmPlatform)?.platformModule ?: psiClass.getNullableModuleInfo()
+//                psiClass.getPlatformModuleInfo(JvmPlatform)?.platformModule ?: psiClass.getNullableModuleInfo()
+                psiClass.getNullableModuleInfo()
             }
         )
 

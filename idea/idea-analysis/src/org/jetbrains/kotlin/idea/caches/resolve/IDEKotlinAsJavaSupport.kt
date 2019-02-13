@@ -51,7 +51,7 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
                 .get(packageFqName.asString(), project, scope).platformSourcesFirst()
         }
         val groupedByFqNameAndModuleInfo = facadeFilesInPackage.groupBy {
-            Pair(it.javaFileFacadeFqName, it.getModuleInfoPreferringJvmPlatform())
+            Pair(it.javaFileFacadeFqName, it.getModuleInfo())
         }
 
         return groupedByFqNameAndModuleInfo.flatMap {
@@ -156,7 +156,7 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
     }
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val filesByModule = findFilesForFacade(facadeFqName, scope).groupBy(PsiElement::getModuleInfoPreferringJvmPlatform)
+        val filesByModule = findFilesForFacade(facadeFqName, scope).groupBy(PsiElement::getModuleInfo)
 
         return filesByModule.flatMap {
             createLightClassForFileFacade(facadeFqName, it.value, it.key)
@@ -219,7 +219,7 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
         facadeFqName: FqName
     ): List<PsiClass> {
         if (sourceFiles.isEmpty()) return listOf()
-        if (moduleInfo !is ModuleSourceInfo && moduleInfo !is PlatformModuleInfo) return listOf()
+        if (moduleInfo !is ModuleSourceInfo) return listOf()
 
         val lightClassForFacade = KtLightClassForFacade.createForFacade(
             psiManager, facadeFqName, moduleInfo.contentScope(), sourceFiles
@@ -325,6 +325,9 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
     }
 }
 
-internal fun PsiElement.getModuleInfoPreferringJvmPlatform(): IdeaModuleInfo {
-    return getPlatformModuleInfo(JvmPlatform) ?: getModuleInfo()
-}
+/** Some hack to allow light-classes work in MPP, see ced3cf090464c83c2c1579aa2c40c653da8c5356
+ * New behaviour is unknown, investigation needed
+ */
+//internal fun PsiElement.getModuleInfoPreferringJvmPlatform(): IdeaModuleInfo {
+//    return getPlatformModuleInfo(JvmPlatform) ?: getModuleInfo()
+//}
