@@ -169,6 +169,13 @@ object NewJ2KPostProcessingRegistrar {
                         ?: return@registerDiagnosticBasedProcessing
                 action.invoke(element.project, null, element.containingKtFile)
             },
+            registerDiagnosticBasedProcessing(Errors.RETURN_TYPE_MISMATCH_ON_OVERRIDE) { element: KtNamedDeclaration, diagnostic ->
+                val action =
+                    ChangeCallableReturnTypeFix.ReturnTypeMismatchOnOverrideFactory
+                        .createActionsForAllProblems(listOf(diagnostic)).singleOrNull()
+                        ?: return@registerDiagnosticBasedProcessing
+                action.invoke(element.project, null, element.containingKtFile)
+            },
 
             RemoveRedundantTypeQualifierProcessing(),
             RemoveRedundantExpressionQualifierProcessing(),
