@@ -22,7 +22,6 @@ import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.analyzer.CombinedModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
@@ -409,33 +408,34 @@ interface SourceForBinaryModuleInfo : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 }
+/** Remove because CombinedModuleInfo is removed */
+//data class PlatformModuleInfo(
+//    val platformModule: ModuleSourceInfo,
+//    private val commonModules: List<ModuleSourceInfo> // NOTE: usually contains a single element for current implementation
+//) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
+//    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+//        get() = platformModule.capabilities
+//
+//    override fun contentScope() = GlobalSearchScope.union(containedModules.map { it.contentScope() }.toTypedArray())
+//
+//    override val containedModules: List<ModuleSourceInfo> = listOf(platformModule) + commonModules
+//
+//    override val platform: TargetPlatform?
+//        get() = platformModule.platform
+//
+//    override val moduleOrigin: ModuleOrigin
+//        get() = platformModule.moduleOrigin
+//
+//    override fun dependencies() = platformModule.dependencies()
+//
+//    override fun modulesWhoseInternalsAreVisible() = containedModules.flatMap { it.modulesWhoseInternalsAreVisible() }
+//
+//    override val name: Name
+//        get() = Name.special("<Platform module ${platformModule.displayedName} including ${commonModules.map { it.displayedName }}>")
+//
+//    override fun createModificationTracker() = platformModule.createModificationTracker()
+//}
 
-data class PlatformModuleInfo(
-    val platformModule: ModuleSourceInfo,
-    private val commonModules: List<ModuleSourceInfo> // NOTE: usually contains a single element for current implementation
-) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
-    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
-        get() = platformModule.capabilities
-
-    override fun contentScope() = GlobalSearchScope.union(containedModules.map { it.contentScope() }.toTypedArray())
-
-    override val containedModules: List<ModuleSourceInfo> = listOf(platformModule) + commonModules
-
-    override val platform: TargetPlatform?
-        get() = platformModule.platform
-
-    override val moduleOrigin: ModuleOrigin
-        get() = platformModule.moduleOrigin
-
-    override fun dependencies() = platformModule.dependencies()
-
-    override fun modulesWhoseInternalsAreVisible() = containedModules.flatMap { it.modulesWhoseInternalsAreVisible() }
-
-    override val name: Name
-        get() = Name.special("<Platform module ${platformModule.displayedName} including ${commonModules.map { it.displayedName }}>")
-
-    override fun createModificationTracker() = platformModule.createModificationTracker()
-}
 
 fun IdeaModuleInfo.projectSourceModules(): List<ModuleSourceInfo>? =
     (this as? ModuleSourceInfo)?.let(::listOf) ?: (this as? PlatformModuleInfo)?.containedModules
