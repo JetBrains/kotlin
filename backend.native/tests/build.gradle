@@ -211,7 +211,7 @@ static boolean isExcluded(String dir) {
 
     boolean result = false
     excluded.forEach {
-        if (dir.endsWith(it)) {
+        if (dir.endsWith(it.replace("/", File.separator))) {
             result = true
         }
     }

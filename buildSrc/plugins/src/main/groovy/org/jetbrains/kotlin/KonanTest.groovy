@@ -897,7 +897,7 @@ fun runTest() {
     boolean isEnabledForNativeBackend(String fileName) {
         def text = project.file(fileName).text
 
-        if (excludeList.contains(fileName)) return false
+        if (excludeList.contains(fileName.replace(File.separator, "/"))) return false
 
         if (findLinesWithPrefixesRemoved(text, "// WITH_REFLECT").size() != 0) return false
 
