@@ -162,6 +162,13 @@ class PlatformInfo {
         return HostManager.hostIsLinux
     }
 
+    boolean isAppleTarget(Project project) {
+        def platformManager = project.rootProject.platformManager
+        def targetName = project.project.testTarget ?: 'host'
+        def target = platformManager.targetManager(targetName).target
+        return target.family == Family.IOS || target.family == Family.OSX
+    }
+
     Throwable unsupportedPlatformException() {
         return new TargetSupportException()
     }

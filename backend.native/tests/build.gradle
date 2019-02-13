@@ -2904,7 +2904,7 @@ kotlinNativeInterop {
         defFile 'interop/basics/ccallbacksAndVarargs.def'
     }
 
-    if (isMac()) {
+    if (isAppleTarget(project)) {
         objcSmoke {
             defFile 'interop/objc/objcSmoke.def'
             headers "$projectDir/interop/objc/smoke.h"
@@ -3012,34 +3012,29 @@ task interop_callbacksAndVarargs(type: RunInteropKonanTest) {
 
 task interop_echo_server(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-    if (!isMac()) {
-        // Not supported or not tested.
-        disabled = true
-    }
     run = false
     source = "interop/basics/echo_server.kt"
     interop = 'sockets'
 }
 
-if (isMac()) {
-    task interop_opengl_teapot(type: RunStandaloneKonanTest) {
-        dependsOnPlatformLibs(it as Task)
-        disabled = (project.testTarget == 'wasm32') ||    // No interop for wasm yet.
-                (project.testTarget == 'ios_x64')         // No GLUT in iOS
-        run = false
-        source = "interop/basics/opengl_teapot.kt"
-    }
+task interop_opengl_teapot(type: RunStandaloneKonanTest) {
+    disabled = !isAppleTarget(project) || (project.testTarget == 'ios_x64')  // No GLUT in iOS
+    dependsOnPlatformLibs(it as Task)
+    run = false
+    source = "interop/basics/opengl_teapot.kt"
+}
 
-    task interop_objc_smoke(type: RunInteropKonanTest) {
-        disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-        goldValue = "84\nFoo\nHello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
-                "true\ntrue\n" +
-                "Global string\nAnother global string\nnull\nglobal object\n" +
-                "5\n" +
-                "String macro\n" +
-                "CFString macro\n" +
-                "Deallocated\nDeallocated\n"
+task interop_objc_smoke(type: RunInteropKonanTest) {
+    disabled = !isAppleTarget(project)
+    goldValue = "84\nFoo\nHello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
+            "true\ntrue\n" +
+            "Global string\nAnother global string\nnull\nglobal object\n" +
+            "5\n" +
+            "String macro\n" +
+            "CFString macro\n" +
+            "Deallocated\nDeallocated\n"
 
+    if (isAppleTarget(project)) {
         source = "interop/objc/smoke.kt"
         interop = 'objcSmoke'
 
@@ -3138,7 +3133,7 @@ task library_mismatch(type: RunStandaloneKonanTest) {
     goldValue = isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
 }
 
-if (isMac() && project.testTarget != 'wasm32') {
+if (isAppleTarget(project)) {
     def target = ext.platformManager.targetByName(project.testTarget ?: 'host').name
 
     task testValuesFramework(type: FrameworkTest) {
