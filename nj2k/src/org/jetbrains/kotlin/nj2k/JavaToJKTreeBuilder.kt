@@ -446,8 +446,11 @@ class JavaToJKTreeBuilder(
                 }
             )
 
-        fun PsiClassInitializer.toJK() =
-            JKKtInitDeclarationImpl(body.toJK())
+        fun PsiClassInitializer.toJK(): JKDeclaration =
+            if (hasModifier(JvmModifier.STATIC))
+                JKJavaStaticInitDeclarationImpl(body.toJK())
+            else JKKtInitDeclarationImpl(body.toJK())
+
 
         fun PsiEnumConstant.toJK(): JKEnumConstant =
             JKEnumConstantImpl(

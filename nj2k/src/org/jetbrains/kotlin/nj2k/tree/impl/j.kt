@@ -414,3 +414,7 @@ class JKKtAnnotationArrayInitializerExpressionImpl(initializers: List<JKAnnotati
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAnnotationArrayInitializerExpression(this, data)
 }
+class JKJavaStaticInitDeclarationImpl(block: JKBlock) : JKJavaStaticInitDeclaration, JKBranchElementBase() {
+    override var block: JKBlock by child(block)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaStaticInitDeclaration(this, data)
+}

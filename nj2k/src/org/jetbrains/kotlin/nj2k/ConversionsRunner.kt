@@ -48,6 +48,7 @@ object ConversionsRunner {
             +SynchronizedStatementConversion(context)
             +DefaultArgumentsConversion(context)
             +ConstructorConversion(context)
+            +StaticInitDeclarationConversion()
             +ImplicitInitializerConversion(context)
             +ParameterModificationInMethodCallsConversion(context)
             +PrintlnConversion(context)

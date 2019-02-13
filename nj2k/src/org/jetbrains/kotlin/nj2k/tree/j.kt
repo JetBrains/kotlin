@@ -137,3 +137,7 @@ interface JKJavaSynchronizedStatement : JKStatement, JKBranchElement {
 interface JKJavaAnnotationMethod : JKMethod, JKBranchElement {
     val defaultValue: JKAnnotationMemberValue
 }
+
+interface JKJavaStaticInitDeclaration : JKDeclaration, JKBranchElement {
+    var block: JKBlock
+}
