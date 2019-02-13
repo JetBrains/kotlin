@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKTypeElementImpl
 
@@ -23,28 +23,28 @@ class JetbrainsNullableAnnotationsConverter(private val context: ConversionConte
         val notNullAnnotation =
             element.annotationList.annotations.firstOrNull { it.classSymbol == notNullAnnotationSymbol }
         when (element) {
-            is JKField -> {
+            is JKVariable -> {
                 if (nullableAnnotation != null) {
                     element.annotationList.annotations -= nullableAnnotation
                     element.type =
-                            JKTypeElementImpl(element.type.type.updateNullability(Nullability.Nullable))
+                        JKTypeElementImpl(element.type.type.updateNullability(Nullability.Nullable))
                 }
                 if (notNullAnnotation != null) {
                     element.annotationList.annotations -= notNullAnnotation
                     element.type =
-                            JKTypeElementImpl(element.type.type.updateNullability(Nullability.NotNull))
+                        JKTypeElementImpl(element.type.type.updateNullability(Nullability.NotNull))
                 }
             }
             is JKMethod -> {
                 if (nullableAnnotation != null) {
                     element.annotationList.annotations -= nullableAnnotation
                     element.returnType =
-                            JKTypeElementImpl(element.returnType.type.updateNullability(Nullability.Nullable))
+                        JKTypeElementImpl(element.returnType.type.updateNullability(Nullability.Nullable))
                 }
                 if (notNullAnnotation != null) {
                     element.annotationList.annotations -= notNullAnnotation
                     element.returnType =
-                            JKTypeElementImpl(element.returnType.type.updateNullability(Nullability.NotNull))
+                        JKTypeElementImpl(element.returnType.type.updateNullability(Nullability.NotNull))
                 }
             }
         }

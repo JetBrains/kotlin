@@ -17,11 +17,15 @@
 package org.jetbrains.kotlin.nj2k
 
 import com.intellij.lang.jvm.JvmAnnotatedElement
+import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
 import com.intellij.psi.impl.source.tree.ChildRole
-import com.intellij.psi.impl.source.tree.java.*
+import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl
+import com.intellij.psi.impl.source.tree.java.PsiLabeledStatementImpl
+import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
+import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.InheritanceUtil
@@ -29,18 +33,19 @@ import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.j2k.content
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.lexer.KtToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
@@ -416,7 +421,7 @@ class JavaToJKTreeBuilder(
                 classKind,
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
                 createClassBody(),
-                annotationList(),
+                annotationList(this),
                 modifiers(),
                 visibility(),
                 modality()
@@ -538,7 +543,7 @@ class JavaToJKTreeBuilder(
                 JKTypeElementImpl(type.toJK(symbolProvider)),
                 JKNameIdentifierImpl(name),
                 with(expressionTreeMapper) { initializer.toJK() },
-                annotationList(),
+                annotationList(this),
                 modifiers(),
                 visibility(),
                 modality(),
@@ -549,9 +554,9 @@ class JavaToJKTreeBuilder(
             }
         }
 
-        fun <T> T.annotationList(): JKAnnotationList where T : JvmAnnotatedElement, T : PsiDocCommentOwner {
-            val plainAnnotations = annotations.map { it.toJK() }
-            val deprecatedAnnotation = docComment?.deprecatedAnnotation() ?: return JKAnnotationListImpl(plainAnnotations)
+        fun <T : JvmAnnotatedElement> T.annotationList(docCommentOwner: PsiDocCommentOwner?): JKAnnotationList {
+            val plainAnnotations = annotations.map { it.cast<PsiAnnotation>().toJK() }
+            val deprecatedAnnotation = docCommentOwner?.docComment?.deprecatedAnnotation() ?: return JKAnnotationListImpl(plainAnnotations)
             return JKAnnotationListImpl(
                 plainAnnotations.mapNotNull { annotation ->
                     if (annotation.classSymbol.fqName == "java.lang.Deprecated") null else annotation
@@ -618,7 +623,7 @@ class JavaToJKTreeBuilder(
                 parameterList.parameters.map { it.toJK() },
                 body?.toJK() ?: JKBodyStub,
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
-                annotationList(),
+                annotationList(this),
                 throwsList.referencedTypes.map { JKTypeElementImpl(it.toJK(symbolProvider)) },
                 modifiers(),
                 visibility(),
@@ -653,7 +658,8 @@ class JavaToJKTreeBuilder(
                 JKTypeElementImpl(type.toJK(symbolProvider)),
                 JKNameIdentifierImpl(this.name ?: TODO()),
                 with(expressionTreeMapper) { initializer.toJK() },
-                if (hasModifierProperty(PsiModifier.FINAL)) Mutability.IMMUTABLE else Mutability.UNKNOWN
+                if (hasModifierProperty(PsiModifier.FINAL)) Mutability.IMMUTABLE else Mutability.UNKNOWN,
+                annotationList(null)
             ).also { i ->
                 symbolProvider.provideUniverseSymbol(this, i)
                 i.psi = this

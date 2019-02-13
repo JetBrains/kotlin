@@ -16,17 +16,16 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import org.jetbrains.kotlin.nj2k.NewCodeBuilder.ParenthesisKind.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.nj2k.NewCodeBuilder.ParenthesisKind.*
 import org.jetbrains.kotlin.nj2k.conversions.parentOfType
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorVoid
-import org.jetbrains.kotlin.lexer.KtKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class NewCodeBuilder {
 
@@ -300,6 +299,8 @@ class NewCodeBuilder {
 
         override fun visitParameter(parameter: JKParameter) {
             renderModifiersList(parameter)
+            printer.printWithNoIndent(" ")
+            parameter.annotationList.accept(this)
             printer.printWithNoIndent(" ")
             if (parameter.isVarArgs) {
                 printer.printWithNoIndent("vararg ")
@@ -576,6 +577,9 @@ class NewCodeBuilder {
         }
 
         override fun visitLocalVariable(localVariable: JKLocalVariable) {
+            printer.printWithNoIndent(" ")
+            localVariable.annotationList.accept(this)
+            printer.printWithNoIndent(" ")
             renderModifiersList(localVariable)
             printer.printWithNoIndent(" ")
             localVariable.name.accept(this)

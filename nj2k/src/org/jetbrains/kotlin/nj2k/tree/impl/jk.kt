@@ -70,11 +70,13 @@ class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKEle
 class JKForLoopVariableImpl(
     type: JKTypeElement,
     name: JKNameIdentifier,
-    initializer: JKExpression
+    initializer: JKExpression,
+    annotationList: JKAnnotationList = JKAnnotationListImpl()
 ) : JKForLoopVariable, JKBranchElementBase() {
     override var initializer by child(initializer)
     override var name by child(name)
     override var type by child(type)
+    override var annotationList by child(annotationList)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitForLoopVariable(this, data)
 }
@@ -84,7 +86,8 @@ class JKParameterImpl(
     type: JKTypeElement,
     name: JKNameIdentifier,
     override var isVarArgs: Boolean = false,
-    initializer: JKExpression = JKStubExpressionImpl()
+    initializer: JKExpression = JKStubExpressionImpl(),
+    annotationList: JKAnnotationList = JKAnnotationListImpl()
 ) : JKParameter, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitParameter(this, data)
 
@@ -248,11 +251,13 @@ class JKLocalVariableImpl(
     type: JKTypeElement,
     name: JKNameIdentifier,
     initializer: JKExpression,
-    override var mutability: Mutability
+    override var mutability: Mutability,
+    annotationList: JKAnnotationList = JKAnnotationListImpl()
 ) : JKLocalVariable, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var initializer by child(initializer)
     override var name by child(name)
     override var type by child(type)
+    override var annotationList by child(annotationList)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLocalVariable(this, data)
 }
@@ -453,13 +458,15 @@ class JKEnumConstantImpl(
     name: JKNameIdentifier,
     arguments: JKArgumentList,
     body: JKClassBody,
-    type: JKTypeElement
+    type: JKTypeElement,
+    annotationList: JKAnnotationList = JKAnnotationListImpl()
 ) : JKEnumConstant, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var name: JKNameIdentifier by child(name)
     override val arguments: JKArgumentList by child(arguments)
     override val body: JKClassBody by child(body)
     override var type: JKTypeElement by child(type)
     override var initializer: JKExpression by child(JKStubExpressionImpl())
+    override var annotationList by child(annotationList)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitEnumConstant(this, data)
 }

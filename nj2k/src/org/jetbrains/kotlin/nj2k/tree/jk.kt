@@ -108,7 +108,7 @@ interface JKMethod : JKDeclaration, JKVisibilityOwner, JKModalityOwner, JKExtraM
     var block: JKBlock
 }
 
-interface JKVariable : JKDeclaration {
+interface JKVariable : JKDeclaration, JKAnnotationListOwner {
     var type: JKTypeElement
     var name: JKNameIdentifier
     var initializer: JKExpression
