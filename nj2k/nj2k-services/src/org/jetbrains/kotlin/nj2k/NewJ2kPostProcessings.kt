@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
 import org.jetbrains.kotlin.idea.quickfix.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -36,11 +38,8 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.nj2k.postProcessing.ConvertDataClass
-import org.jetbrains.kotlin.nj2k.postProcessing.ConvertGettersAndSetters
-import org.jetbrains.kotlin.nj2k.postProcessing.resolve
-import org.jetbrains.kotlin.nj2k.postProcessing.topLevelContainingClassOrObject
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.nj2k.postProcessing.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
 
@@ -90,6 +90,7 @@ object NewJ2KPostProcessingRegistrar {
     val mainProcessings = OneTimeProcessingGroup(
         SingleOneTimeProcessing(VarToVal()),
         SingleOneTimeProcessing(ConvertGettersAndSetters()),
+        SingleOneTimeProcessing(MoveGetterAndSetterAnnotationsToProperty()),
         SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection())),
         SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection())),
         SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantGetterInspection())),

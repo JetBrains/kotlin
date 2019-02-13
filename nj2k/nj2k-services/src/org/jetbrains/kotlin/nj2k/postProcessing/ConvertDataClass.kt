@@ -72,7 +72,22 @@ class ConvertDataClass : NewJ2kPostProcessing {
                 constructorParameter.addAfter(factory.createWhiteSpace(), constructorParameter.valOrVarKeyword!!)
                 constructorParameter.rename(property.name!!)
                 if (property.modifierList != null) {
+                    val annotationEntries = constructorParameter.annotationEntries.map { it.copied() }
                     constructorParameter.setModifierList(property.modifierList!!)
+                    constructorParameter.annotationEntries.forEach { it.delete() }
+                    for (annotationEntry in annotationEntries) {
+                        constructorParameter.addAnnotationEntry(annotationEntry).also { entry ->
+                            entry.addUseSiteTarget(AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER, element.project)
+                        }
+                    }
+                }
+
+                for (annotationEntry in property.annotationEntries) {
+                    constructorParameter.addAnnotationEntry(annotationEntry).also { entry ->
+                        if (entry.useSiteTarget == null) {
+                            entry.addUseSiteTarget(AnnotationUseSiteTarget.FIELD, element.project)
+                        }
+                    }
                 }
                 property.delete()
                 statement.delete()
