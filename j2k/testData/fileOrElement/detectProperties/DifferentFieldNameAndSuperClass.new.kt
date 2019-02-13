@@ -1,10 +1,2 @@
-open class Base internal constructor(x: Int) {
-    var x = 42
-        protected set
-
-    init {
-        this.x = x
-    }
-}
-
+open class Base internal constructor(val x: Int)
 internal class Derived(b: Base) : Base(b.x)

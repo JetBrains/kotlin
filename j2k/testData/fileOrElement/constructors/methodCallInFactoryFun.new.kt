@@ -5,7 +5,7 @@ internal class C(private val arg1: Int, private val arg2: Int, private val arg3:
     }
 
     constructor(arg1: Int, arg2: Int, other: C) : this(arg1, arg2, 0) {
-        println(foo(1) + foo(2) + other.foo(3) + staticFoo(4) + C.staticFoo(5))
+        println(foo(1) + foo(2) + other.foo(3) + staticFoo(4) + staticFoo(5))
     }
 
     companion object {

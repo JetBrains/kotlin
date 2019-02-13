@@ -1,7 +1,7 @@
 internal class C() {
 
     constructor(p: Int) : this() {
-        println(staticField1 + C.staticField2)
+        println(staticField1 + staticField2)
     }
 
     companion object {
