@@ -167,3 +167,5 @@ fun isComparable(value: dynamic): Boolean {
            isInterface(value, Comparable::class.js)
 }
 
+fun isCharSequence(value: dynamic): Boolean =
+    jsTypeOf(value) == "string" || isInterface(value, CharSequence::class.js)
