@@ -10,16 +10,17 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.nj2k.conversions.RecursiveApplicableConversionBase
-import org.jetbrains.kotlin.nj2k.conversions.multiResolveFqName
-import org.jetbrains.kotlin.nj2k.conversions.resolveFqName
-import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.nj2k.conversions.RecursiveApplicableConversionBase
+import org.jetbrains.kotlin.nj2k.conversions.multiResolveFqName
+import org.jetbrains.kotlin.nj2k.tree.*
+import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.math.BigInteger
 
 fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Nullable): JKClassType =
@@ -289,7 +290,7 @@ fun useExpression(
     val methodCall =
         JKJavaMethodCallExpressionImpl(
             useSymbol,
-            JKExpressionListImpl(listOf(lambda))
+            listOf(lambda).toArgumentList()
         )
     return JKQualifiedExpressionImpl(receiver, JKKtQualifierImpl.DOT, methodCall)
 }
@@ -300,7 +301,7 @@ fun kotlinAssert(assertion: JKExpression, message: JKExpression?, symbolProvider
             "assert",
             kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.unit.asString(), symbolProvider)
         ),
-        JKExpressionListImpl(listOfNotNull(assertion, message))
+        (listOfNotNull(assertion, message)).toArgumentList()
     )
 
 fun jvmAnnotation(name: String, symbolProvider: JKSymbolProvider) =
@@ -502,7 +503,7 @@ fun runExpression(body: JKStatement, symbolProvider: JKSymbolProvider): JKExpres
     )
     return JKKtCallExpressionImpl(
         symbolProvider.provideByFqNameMulti("kotlin.run"),
-        JKExpressionListImpl(listOf(lambda))
+        (listOf(lambda)).toArgumentList()
     )
 }
 
@@ -525,7 +526,17 @@ fun JKAnnotationMemberValue.toExpression(symbolProvider: JKSymbolProvider): JKEx
             this is JKAnnotation ->
                 JKJavaNewExpressionImpl(
                     classSymbol,
-                    JKExpressionListImpl(arguments.map { it.value.detached(this).toExpression(symbolProvider) }),
+                    JKArgumentListImpl(
+                        arguments.map { argument ->
+                            val value = argument.value.copyTreeAndDetach().toExpression(symbolProvider)
+                            when (argument) {
+                                is JKAnnotationNameParameter ->
+                                    JKNamedArgumentImpl(value, JKNameIdentifierImpl(argument.name.value))
+                                else -> JKArgumentImpl(value)
+                            }
+
+                        }
+                    ),
                     JKTypeArgumentListImpl()
                 )
             this is JKKtAnnotationArrayInitializerExpression ->
@@ -538,6 +549,9 @@ fun JKAnnotationMemberValue.toExpression(symbolProvider: JKSymbolProvider): JKEx
 
 inline fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? =
     classBody.declarations.firstIsInstanceOrNull()
+
+fun List<JKExpression>.toArgumentList(): JKArgumentList =
+    JKArgumentListImpl(map { JKArgumentImpl(it) })
 
 fun JKAnnotation.isVarargsArgument(index: Int): Boolean {
     val target = classSymbol.target

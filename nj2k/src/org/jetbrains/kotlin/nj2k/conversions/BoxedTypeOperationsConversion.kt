@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKExpressionListImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKArgumentListImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtCallExpressionImpl
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class BoxedTypeOperationsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -26,8 +25,8 @@ class BoxedTypeOperationsConversion(private val context: ConversionContext) : Re
 
     private fun convertCreationOfBoxedType(newExpression: JKJavaNewExpression): JKExpression? {
         if (newExpression.classSymbol.fqName !in boxedTypeFqNames) return null
-        val singleArgument = newExpression.arguments.expressions.singleOrNull() ?: return null
-        return singleArgument.detached(newExpression.arguments)
+        val singleArgument = newExpression.arguments.arguments.singleOrNull() ?: return null
+        return singleArgument::value.detached()
     }
 
     private fun convertBoxedTypeUnwrapping(methodCallExpression: JKMethodCallExpression): JKExpression? {
@@ -43,7 +42,7 @@ class BoxedTypeOperationsConversion(private val context: ConversionContext) : Re
             context.symbolProvider.provideByFqName(
                 "kotlin.${primitiveTypeName.capitalize()}.to${operationType.capitalize()}"
             ),
-            JKExpressionListImpl()
+            JKArgumentListImpl()
         )
     }
 

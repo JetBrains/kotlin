@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.nj2k.tree
 
-import org.jetbrains.kotlin.idea.search.usagesSearch.constructor
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKClassSymbol
 
 interface JKField : JKVariable, JKVisibilityOwner, JKMutabilityOwner, JKModalityOwner, JKExtraModifiersOwner, JKAnnotationListOwner
 
@@ -37,7 +36,7 @@ interface JKEmptyClassBody : JKClassBody
 
 interface JKJavaNewExpression : JKExpression, JKTypeArgumentListOwner, PsiOwner {
     val classSymbol: JKClassSymbol
-    var arguments: JKExpressionList
+    var arguments: JKArgumentList
     var classBody: JKClassBody
 }
 

@@ -5,27 +5,24 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.nj2k.ConversionContext
-import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.equalsExpression
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.nj2k.tree.impl.JKParenthesizedExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.deepestFqName
 
 class EqualsOperatorConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKQualifiedExpression) return recurse(element)
         if (element.receiver is JKSuperExpression) return recurse(element)
         val selector = element.selector as? JKMethodCallExpression ?: return (element)
-        val argument = selector.arguments.expressions.singleOrNull() ?: return recurse(element)
+        val argument = selector.arguments.arguments.singleOrNull() ?: return recurse(element)
         if (selector.identifier.deepestFqName() == "java.lang.Object.equals") {
             return recurse(
                 JKParenthesizedExpressionImpl(
                     equalsExpression(
                         element::receiver.detached(),
-                        argument.detached(selector.arguments),
+                        argument::value.detached(),
                         context.symbolProvider
                     )
                 )

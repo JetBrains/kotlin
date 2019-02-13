@@ -9,11 +9,11 @@ import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.hasWriteAccesses
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.ClassId
 
 
 class ForConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -242,7 +242,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             JKQualifiedExpressionImpl(
                 indices,
                 JKKtQualifierImpl.DOT,
-                JKJavaMethodCallExpressionImpl(reversedSymbol, JKExpressionListImpl())
+                JKJavaMethodCallExpressionImpl(reversedSymbol, JKArgumentListImpl())
             )
         } else indices
     }
@@ -251,7 +251,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
     private fun indicesByCollectionSize(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         val methodCall = javaSizeCall.selector as? JKMethodCallExpression ?: return null
         return if (methodCall.identifier.deepestFqName() == "java.util.Collection.size"
-            && methodCall.arguments.expressions.isEmpty()
+            && methodCall.arguments.arguments.isEmpty()
         ) toIndicesCall(javaSizeCall) else null
     }
 

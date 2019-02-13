@@ -39,7 +39,7 @@ class InsertDefaultPrimaryConstructorConversion(private val context: ConversionC
                     element
                 )
             )
-            constructor.delegationCall = JKDelegationConstructorCallImpl(superConstructor, JKSuperExpressionImpl(), JKExpressionListImpl())
+            constructor.delegationCall = JKDelegationConstructorCallImpl(superConstructor, JKSuperExpressionImpl(), JKArgumentListImpl())
         }
 
         return recurse(element)

@@ -259,7 +259,7 @@ interface JKTypeArgumentListOwner : JKTreeElement {
 
 interface JKMethodCallExpression : JKExpression, JKTypeArgumentListOwner, JKBranchElement {
     val identifier: JKMethodSymbol
-    var arguments: JKExpressionList
+    var arguments: JKArgumentList
 }
 
 interface JKFieldAccessExpression : JKAssignableExpression {
@@ -287,6 +287,19 @@ interface JKTypeCastExpression : JKExpression {
 interface JKExpressionList : JKTreeElement, JKBranchElement {
     var expressions: List<JKExpression>
 }
+
+interface JKArgument : JKTreeElement, JKBranchElement {
+    var value: JKExpression
+}
+
+interface JKNamedArgument : JKArgument {
+    val name: JKNameIdentifier
+}
+
+interface JKArgumentList : JKTreeElement, JKBranchElement {
+    var arguments: List<JKArgument>
+}
+
 
 interface JKLiteralExpression : JKExpression {
     val literal: String
@@ -367,7 +380,7 @@ interface JKLambdaExpression : JKExpression {
 interface JKDelegationConstructorCall : JKMethodCallExpression {
     override val identifier: JKMethodSymbol
     val expression: JKExpression
-    override var arguments: JKExpressionList
+    override var arguments: JKArgumentList
 }
 
 interface JKLabel : JKTreeElement
@@ -403,7 +416,7 @@ interface JKTypeParameterListOwner : JKTreeElement {
 }
 
 interface JKEnumConstant : JKVariable {
-    val arguments: JKExpressionList
+    val arguments: JKArgumentList
     val body: JKClassBody
 }
 

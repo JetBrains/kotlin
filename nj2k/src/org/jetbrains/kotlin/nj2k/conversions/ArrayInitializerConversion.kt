@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.toArgumentList
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
@@ -26,7 +27,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
                     CollectionLiteralResolver.ARRAY_OF_FUNCTION.asString()
             newElement = JKJavaMethodCallExpressionImpl(
                 context.symbolProvider.provideByFqName("kotlin.$arrayConstructorName"),
-                JKExpressionListImpl(element.initializer.also { element.initializer = emptyList() })
+                element.initializer.also { element.initializer = emptyList() }.toArgumentList()
             )
         } else if (element is JKJavaNewEmptyArray) {
             newElement = buildArrayInitializer(
@@ -42,13 +43,13 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
             return if (type !is JKJavaPrimitiveType) {
                 JKJavaMethodCallExpressionImpl(
                     context.symbolProvider.provideByFqName("kotlin/arrayOfNulls"),
-                    JKExpressionListImpl(dimensions[0]),
+                    JKArgumentListImpl(dimensions[0]),
                     JKTypeArgumentListImpl(listOf(JKTypeElementImpl(type.updateNullability(Nullability.NotNull))))
                 )
             } else {
                 JKJavaNewExpressionImpl(
                     context.symbolProvider.provideByFqName(type.arrayFqName()),
-                    JKExpressionListImpl(dimensions[0]),
+                    JKArgumentListImpl(dimensions[0]),
                     JKTypeArgumentListImpl(emptyList())
                 )
             }
@@ -56,7 +57,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
         if (dimensions[1] !is JKStubExpression) {
             return JKJavaMethodCallExpressionImpl(
                 context.symbolProvider.provideByFqName("kotlin.Array"),
-                JKExpressionListImpl(
+                JKArgumentListImpl(
                     dimensions[0],
                     JKLambdaExpressionImpl(
                         JKExpressionStatementImpl(buildArrayInitializer(dimensions.subList(1, dimensions.size), type)),
@@ -79,7 +80,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
         }
         return JKJavaMethodCallExpressionImpl(
             context.symbolProvider.provideByFqName("kotlin/arrayOfNulls"),
-            JKExpressionListImpl(dimensions[0]),
+            JKArgumentListImpl(dimensions[0]),
             JKTypeArgumentListImpl(listOf(JKTypeElementImpl(resultType)))
         )
     }

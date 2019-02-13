@@ -236,13 +236,13 @@ class JavaToJKTreeBuilder(
                                 val receiver = arguments.expressions.firstOrNull()?.toJK()?.parenthesizeIfBinaryExpression()
                                 JKJavaMethodCallExpressionImpl(
                                     symbolProvider.provideDirectSymbol(origin) as JKMethodSymbol,
-                                    arguments.expressions.drop(1).map { it.toJK() }.toExpressionList(),
+                                    arguments.expressions.drop(1).map { it.toJK() }.toArgumentList(),
                                     typeArguments
                                 ).qualified(receiver)
                             } else {
                                 JKJavaMethodCallExpressionImpl(
                                     symbolProvider.provideDirectSymbol(origin) as JKMethodSymbol,
-                                    arguments.expressions.map { it.toJK() }.toExpressionList(),
+                                    arguments.toJK(),
                                     typeArguments
                                 ).qualified(qualifier)
                             }
@@ -359,7 +359,7 @@ class JavaToJKTreeBuilder(
                                 } ?: JKTypeArgumentListImpl()
                     JKJavaNewExpressionImpl(
                         classSymbol,
-                        argumentList.toJK(),
+                        argumentList?.toJK() ?: JKArgumentListImpl(),
                         typeArgumentList,
                         with(declarationMapper) { anonymousClass?.createClassBody() } ?: JKEmptyClassBodyImpl()
                     )
@@ -447,7 +447,7 @@ class JavaToJKTreeBuilder(
         fun PsiEnumConstant.toJK(): JKEnumConstant =
             JKEnumConstantImpl(
                 JKNameIdentifierImpl(name),
-                with(expressionTreeMapper) { argumentList.toJK() },
+                with(expressionTreeMapper) { argumentList?.toJK() ?: JKArgumentListImpl() },
                 initializingClass?.createClassBody() ?: JKEmptyClassBodyImpl(),
                 JKTypeElementImpl(JKClassTypeImpl(symbolProvider.provideDirectSymbol(containingClass!!) as JKClassSymbol, emptyList()))
             ).also {

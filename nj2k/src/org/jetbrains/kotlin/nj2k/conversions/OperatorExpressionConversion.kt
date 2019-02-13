@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.psi.JavaTokenType
-import org.jetbrains.kotlin.nj2k.*
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.kotlinBinaryExpression
+import org.jetbrains.kotlin.nj2k.kotlinPostfixExpression
+import org.jetbrains.kotlin.nj2k.kotlinPrefixExpression
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.lexer.KtTokens
 
 
 class OperatorExpressionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -47,7 +50,7 @@ class OperatorExpressionConversion(private val context: ConversionContext) : Rec
             val invCall =
                 JKKtCallExpressionImpl(
                     context.symbolProvider.provideByFqName("kotlin.Int.inv"),//TODO check if Long
-                    JKExpressionListImpl()
+                    JKArgumentListImpl()
                 )
             JKQualifiedExpressionImpl(
                 JKParenthesizedExpressionImpl(operand),
@@ -70,7 +73,7 @@ class OperatorExpressionConversion(private val context: ConversionContext) : Rec
             val toStringCall =
                 JKKtCallExpressionImpl(
                     context.symbolProvider.provideByFqName("kotlin.Any.toString"),
-                    JKExpressionListImpl()
+                    JKArgumentListImpl()
                 )
             val qualifiedCall = JKQualifiedExpressionImpl(left, JKKtQualifierImpl.DOT, toStringCall)
             kotlinBinaryExpression(qualifiedCall, right, KtTokens.PLUS, context.symbolProvider)

@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.tree.JKBlock
 import org.jetbrains.kotlin.nj2k.tree.JKBlockStatement
 import org.jetbrains.kotlin.nj2k.tree.JKDeclaration
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.name.ClassId
 
 class BlockToRunConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -29,7 +27,7 @@ class BlockToRunConversion(private val context: ConversionContext) : RecursiveAp
             JKBlockStatementImpl(element.block),
             emptyList()
         )
-        val call = JKKtCallExpressionImpl(context.symbolProvider.provideByFqName("kotlin.run", true), JKExpressionListImpl(listOf(lambda)))
+        val call = JKKtCallExpressionImpl(context.symbolProvider.provideByFqName("kotlin.run", true), JKArgumentListImpl(lambda))
         return recurse(JKExpressionStatementImpl(call))
     }
 

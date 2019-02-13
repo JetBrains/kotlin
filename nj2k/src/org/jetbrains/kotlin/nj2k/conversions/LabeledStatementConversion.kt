@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.blockStatement
-import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.asStatement
+import org.jetbrains.kotlin.nj2k.tree.JKLabeledStatement
+import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
+import org.jetbrains.kotlin.nj2k.tree.detached
+import org.jetbrains.kotlin.nj2k.tree.impl.JKBlockImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKBlockStatementWithoutBracketsImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKKtConvertedFromForLoopSyntheticWhileStatementImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKLabeledStatementImpl
 
 
 class LabeledStatementConversion : RecursiveApplicableConversionBase() {
@@ -19,7 +24,7 @@ class LabeledStatementConversion : RecursiveApplicableConversionBase() {
             JKBlockStatementWithoutBracketsImpl(
                 JKBlockImpl(
                     statement::variableDeclaration.detached(),
-                    JKLabeledStatementImpl(statement::whileStatement.detached(), element::labels.detached())
+                    JKLabeledStatementImpl(statement::whileStatement.detached(), element::labels.detached()).asStatement()
                 )
             )
         )

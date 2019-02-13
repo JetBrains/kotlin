@@ -273,7 +273,7 @@ class NewCodeBuilder {
 
         override fun visitEnumConstant(enumConstant: JKEnumConstant) {
             enumConstant.name.accept(this)
-            if (enumConstant.arguments.expressions.isNotEmpty()) {
+            if (enumConstant.arguments.arguments.isNotEmpty()) {
                 printer.par {
                     enumConstant.arguments.accept(this)
                 }
@@ -511,6 +511,21 @@ class NewCodeBuilder {
 
         override fun visitExpressionList(expressionList: JKExpressionList) {
             renderList(expressionList.expressions) { it.accept(this) }
+        }
+
+
+        override fun visitArgumentList(argumentList: JKArgumentList) {
+            renderList(argumentList.arguments) { it.accept(this) }
+        }
+
+        override fun visitArgument(argument: JKArgument) {
+            argument.value.accept(this)
+        }
+
+        override fun visitNamedArgument(namedArgument: JKNamedArgument) {
+            namedArgument.name.accept(this)
+            printer.printWithNoIndent(" = ")
+            namedArgument.value.accept(this)
         }
 
         override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {

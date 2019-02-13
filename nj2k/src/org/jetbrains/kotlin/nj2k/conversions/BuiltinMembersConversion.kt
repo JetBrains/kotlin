@@ -33,13 +33,15 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
                 } else newSelector
             }
             ReplaceType.FULL_REPLACE -> newSelector
+        }.let { expression ->
+            conversion.actionAfter?.invoke(expression.copyTreeAndDetach()) ?: expression
         }
     }
 
     private fun JKExpression.getConversion(): Conversion? = when (this) {
         is JKMethodCallExpression ->
-            conversions[identifier.deepestFqName()]?.firstOrNull() { conversion ->
-                conversion.from is Method && conversion.byArgumentsFilter?.invoke(arguments.expressions) ?: true
+            conversions[identifier.deepestFqName()]?.firstOrNull { conversion ->
+                conversion.from is Method && conversion.byArgumentsFilter?.invoke(arguments.arguments.map { it.value }) ?: true
             }
         is JKFieldAccessExpression ->
             conversions[identifier.deepestFqName()]?.firstOrNull { conversion -> conversion.from is Field }
@@ -53,7 +55,7 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
 
     private inner class MethodBuilder(
         private val fqName: String,
-        private val argumentsProvider: (JKExpressionList) -> JKExpressionList
+        private val argumentsProvider: (JKArgumentList) -> JKArgumentList
     ) : ResultBuilder {
         override fun build(from: JKExpression): JKExpression =
             when (from) {
@@ -66,7 +68,7 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
                 is JKFieldAccessExpression ->
                     JKKtCallExpressionImpl(
                         context.symbolProvider.provideByFqNameMulti(fqName),
-                        JKExpressionListImpl(),
+                        JKArgumentListImpl(),
                         JKTypeArgumentListImpl()
                     )
                 else -> error("Bad conversion")
@@ -96,13 +98,13 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
         override fun build(from: JKExpression): JKExpression =
             when (from) {
                 is JKMethodCallExpression -> {
-                    val arguments = from.arguments::expressions.detached()
+                    val arguments = from.arguments::arguments.detached()
                     JKQualifiedExpressionImpl(
-                        arguments.first().parenthesizeIfBinaryExpression(),
+                        arguments.first()::value.detached().parenthesizeIfBinaryExpression(),
                         JKKtQualifierImpl.DOT,
                         JKKtCallExpressionImpl(
                             context.symbolProvider.provideByFqNameMulti(fqName),
-                            JKExpressionListImpl(arguments.drop(1)),
+                            JKArgumentListImpl(arguments.drop(1)),
                             from::typeArgumentList.detached()
                         )
                     )

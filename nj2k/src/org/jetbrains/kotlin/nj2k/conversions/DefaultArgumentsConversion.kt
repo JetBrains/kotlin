@@ -52,7 +52,7 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
             for (i in method.parameters.indices) {
                 val parameter = method.parameters[i]
                 val targetParameter = calledMethod.parameters[i]
-                val argument = call.arguments.expressions[i]
+                val argument = call.arguments.arguments[i].value
                 if (parameter.name.value != targetParameter.name.value) continue@checkMethod
 //                if (parameter.type.type != targetParameter.type.type) continue@checkMethod
 //                if (argument !is JKFieldAccessExpression || argument.identifier.target != parameter) continue@checkMethod
@@ -60,7 +60,8 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
 
 
             call.arguments.invalidate()
-            val defaults = call.arguments.expressions
+            val defaults = call.arguments.arguments
+                .map { it::value.detached() }
                 .zip(calledMethod.parameters)
                 .drop(method.parameters.size)
 

@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ImplicitCastsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -108,18 +109,17 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
         if (expression.identifier.isUnresolved()) return
         val parameterTypes = expression.identifier.parameterTypesWithUnfoldedVarargs() ?: return
         val newArguments =
-            (expression.arguments.expressions.asSequence() zip parameterTypes)
+            (expression.arguments.arguments.asSequence() zip parameterTypes)
                 .map { (expression, toType) ->
-                    expression.castTo(toType)
+                    expression.value.castTo(toType)
                 }.toList()
         val needUpdate = newArguments.any { it != null }
         if (needUpdate) {
-            expression.arguments = JKExpressionListImpl(
-                (newArguments zip expression.arguments.expressions)
-                    .map { (newArgument, oldArgument) ->
-                        (newArgument ?: oldArgument).copyTreeAndDetach()
-                    }
-            )
+            for ((newArgument, oldArgument) in newArguments zip expression.arguments.arguments) {
+                if (newArgument != null) {
+                    oldArgument.value = newArgument.copyTreeAndDetach()
+                }
+            }
         }
     }
 
@@ -171,7 +171,7 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
             JKKtQualifierImpl.DOT,
             JKJavaMethodCallExpressionImpl(
                 context.symbolProvider.provideByFqName("kotlin.$initialTypeName.$conversionFunctionName"),
-                JKExpressionListImpl()
+                JKArgumentListImpl()
             )
         )
     }

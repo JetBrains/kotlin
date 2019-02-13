@@ -20,10 +20,10 @@ import com.intellij.psi.JavaTokenType
 import com.intellij.psi.impl.source.tree.ElementType.OPERATION_BIT_SET
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class JKJavaFieldImpl(
@@ -197,12 +197,12 @@ sealed class JKJavaQualifierImpl : JKQualifier {
 
 class JKJavaMethodCallExpressionImpl(
     override var identifier: JKMethodSymbol,
-    arguments: JKExpressionList,
+    arguments: JKArgumentList,
     typeArgumentList: JKTypeArgumentList = JKTypeArgumentListImpl()
 ) : JKJavaMethodCallExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
 
-    override var arguments: JKExpressionList by child(arguments)
+    override var arguments: JKArgumentList by child(arguments)
     override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
 }
 
@@ -219,11 +219,11 @@ class JKEmptyClassBodyImpl : JKEmptyClassBody, JKBranchElementBase() {
 
 class JKJavaNewExpressionImpl(
     override var classSymbol: JKClassSymbol,
-    arguments: JKExpressionList,
+    arguments: JKArgumentList,
     typeArgumentList: JKTypeArgumentList,
     classBody: JKClassBody = JKEmptyClassBodyImpl()
 ) : JKJavaNewExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
-    override var arguments: JKExpressionList by child(arguments)
+    override var arguments: JKArgumentList by child(arguments)
     override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
     override var classBody: JKClassBody by child(classBody)
 

@@ -19,17 +19,15 @@ package org.jetbrains.kotlin.nj2k.tree.impl
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.nj2k.conversions.resolveFqName
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.BOOLEAN
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtNamedFunction
 
 
 class JKFileImpl(
@@ -380,11 +378,11 @@ class JKInheritanceInfoImpl(
 class JKDelegationConstructorCallImpl(
     override val identifier: JKMethodSymbol,
     expression: JKExpression,
-    arguments: JKExpressionList
+    arguments: JKArgumentList
 ) : JKBranchElementBase(), JKDelegationConstructorCall, PsiOwner by PsiOwnerImpl() {
     override var typeArgumentList: JKTypeArgumentList by child(JKTypeArgumentListImpl())
     override val expression: JKExpression by child(expression)
-    override var arguments: JKExpressionList by child(arguments)
+    override var arguments: JKArgumentList by child(arguments)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitDelegationConstructorCall(this, data)
 }
@@ -453,12 +451,12 @@ class JKTypeParameterTypeImpl(
 
 class JKEnumConstantImpl(
     name: JKNameIdentifier,
-    arguments: JKExpressionList,
+    arguments: JKArgumentList,
     body: JKClassBody,
     type: JKTypeElement
 ) : JKEnumConstant, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var name: JKNameIdentifier by child(name)
-    override val arguments: JKExpressionList by child(arguments)
+    override val arguments: JKArgumentList by child(arguments)
     override val body: JKClassBody by child(body)
     override var type: JKTypeElement by child(type)
     override var initializer: JKExpression by child(JKStubExpressionImpl())
@@ -539,4 +537,28 @@ class JKAnnotationNameParameterImpl(
     override val name: JKNameIdentifier by child(name)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotationNameParameter(this, data)
+}
+
+class JKNamedArgumentImpl(
+    value: JKExpression,
+    name: JKNameIdentifier
+) : JKNamedArgument, JKBranchElementBase() {
+    override var value by child(value)
+    override val name by child(name)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitNamedArgument(this, data)
+}
+
+class JKArgumentImpl(value: JKExpression) : JKArgument, JKBranchElementBase() {
+    override var value by child(value)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitArgument(this, data)
+}
+
+class JKArgumentListImpl(arguments: List<JKArgument> = emptyList()) : JKArgumentList, JKBranchElementBase() {
+    constructor(vararg arguments: JKArgument) : this(arguments.toList())
+    constructor(vararg values: JKExpression) : this(values.map { JKArgumentImpl(it) })
+
+    override var arguments by children(arguments)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitArgumentList(this, data)
 }

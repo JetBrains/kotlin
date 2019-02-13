@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.nj2k.tree.impl
 
-import com.intellij.psi.JavaTokenType
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -75,12 +73,12 @@ sealed class JKKtQualifierImpl : JKQualifier, JKElementBase() {
 
 class JKKtCallExpressionImpl(
     override val identifier: JKMethodSymbol,
-    arguments: JKExpressionList,
+    arguments: JKArgumentList,
     typeArgumentList: JKTypeArgumentList = JKTypeArgumentListImpl()
 ) : JKKtMethodCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtMethodCallExpression(this, data)
 
-    override var arguments: JKExpressionList by child(arguments)
+    override var arguments: JKArgumentList by child(arguments)
     override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
 }
 
@@ -122,15 +120,13 @@ class JKKtAlsoCallExpressionImpl(
 ) : JKKtAlsoCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAlsoCallExpression(this, data)
     override var statement
-        get() = arguments.expressions.first().cast<JKLambdaExpressionImpl>().statement
+        get() = arguments.arguments.first().value.cast<JKLambdaExpressionImpl>().statement
         set(it) {
-            arguments.expressions.first().cast<JKLambdaExpressionImpl>().statement = it
+            arguments.arguments.first().value.cast<JKLambdaExpressionImpl>().statement = it
         }
-    override var arguments: JKExpressionList by child(
-        JKExpressionListImpl(
-            listOf(
-                JKLambdaExpressionImpl(statement, emptyList())
-            )
+    override var arguments: JKArgumentList by child(
+        JKArgumentListImpl(
+            JKLambdaExpressionImpl(statement, emptyList())
         )
     )
     override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
