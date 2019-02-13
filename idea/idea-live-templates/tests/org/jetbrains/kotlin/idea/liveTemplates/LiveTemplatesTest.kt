@@ -80,7 +80,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         start()
 
         assertStringItems("DEFAULT_BUFFER_SIZE", "args", "x", "y")
-        typeAndNextTab("y")
+        typeAndNextTab("y.plus(\"test\")")
 
         checkAfter()
     }
