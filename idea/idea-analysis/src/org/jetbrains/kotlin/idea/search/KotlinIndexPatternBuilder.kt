@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 
-class KotlinIndexPatternBuilder: IndexPatternBuilder {
+class KotlinIndexPatternBuilder: IndexPatternBuilderAdapter() {
     private val TODO_COMMENT_TOKENS = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
 
     override fun getCommentTokenSet(file: PsiFile): TokenSet? {
@@ -42,22 +42,5 @@ class KotlinIndexPatternBuilder: IndexPatternBuilder {
     override fun getCommentEndDelta(tokenType: IElementType?): Int = when(tokenType) {
         KtTokens.BLOCK_COMMENT -> "*/".length
         else -> 0
-    }
-
-    override fun getCommentStartDelta(tokenType: IElementType, tokenText: CharSequence): Int {
-        return when (tokenType) {
-            KtTokens.EOL_COMMENT -> 2
-            KtTokens.BLOCK_COMMENT -> 2
-            KtTokens.DOC_COMMENT -> 3
-            else -> 0
-        }
-    }
-
-    override fun getCharsAllowedInContinuationPrefix(tokenType: IElementType): String {
-        return when (tokenType) {
-            KtTokens.BLOCK_COMMENT -> "*"
-            KtTokens.DOC_COMMENT -> "*"
-            else -> ""
-        }
     }
 }
