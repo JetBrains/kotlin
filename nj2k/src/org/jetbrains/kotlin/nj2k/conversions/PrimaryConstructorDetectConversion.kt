@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.replace
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtInitDeclarationImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtPrimaryConstructorImpl
@@ -18,13 +19,6 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
             processClass(element)
         }
         return recurse(element)
-    }
-
-    private fun <T> List<T>.replace(element: T, replacer: T): List<T> {
-        val mutableList = toMutableList()
-        val index = indexOf(element)
-        mutableList[index] = replacer
-        return mutableList
     }
 
     private fun processClass(element: JKClass) {
