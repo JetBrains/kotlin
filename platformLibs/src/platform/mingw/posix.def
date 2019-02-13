@@ -43,6 +43,7 @@ static short posix_htons(short x) {
 #define LPWORD      WORD*
 #define LPLONG      __LONG32*
 #define LPDWORD     DWORD*
+#define LPTSTR      WCHAR*
 #define VOID        void
 #define PVOID       void*
 #define LPVOID      void*
@@ -56,6 +57,7 @@ static short posix_htons(short x) {
 #define FARPROC     void*
 #define WINAPI      __stdcall
 #define CALLBACK    __stdcall
+#define PASCAL      __pascal
 
 #define _INC_WINDOWS
 #define RPC_NO_WINDOWS_H
