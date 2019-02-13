@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.storage.StorageManager
@@ -40,42 +37,17 @@ import org.jetbrains.kotlin.storage.getValue
  */
 
 class AnnotationSplitter(
-    val storageManager: StorageManager,
+    private val storageManager: StorageManager,
     allAnnotations: Annotations,
-    applicableTargetsLazy: () -> Set<AnnotationUseSiteTarget>
+    applicableTargets: Set<AnnotationUseSiteTarget>
 ) {
     companion object {
         private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, PROPERTY, FIELD)
-
-        @JvmStatic
-        fun create(storageManager: StorageManager, annotations: Annotations, targets: Set<AnnotationUseSiteTarget>): AnnotationSplitter =
-            AnnotationSplitter(storageManager, annotations) { targets }
-
-        @JvmStatic
-        fun getTargetSet(parameter: Boolean, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> =
-            hashSetOf(PROPERTY, PROPERTY_GETTER).apply {
-                if (parameter) {
-                    add(CONSTRUCTOR_PARAMETER)
-                    add(PROPERTY_GETTER)
-                    add(PROPERTY_SETTER)
-                }
-                add(FIELD)
-                if (wrapper.descriptor!!.isVar) {
-                    add(PROPERTY_SETTER)
-                    add(SETTER_PARAMETER)
-                }
-                if (wrapper.declaration is KtProperty && wrapper.declaration.hasDelegate()) {
-                    add(PROPERTY_DELEGATE_FIELD)
-                }
-            }
     }
-
-    class PropertyWrapper @JvmOverloads constructor(val declaration: KtDeclaration, var descriptor: PropertyDescriptor? = null)
 
     private val splitAnnotations = storageManager.createLazyValue {
         val map = hashMapOf<AnnotationUseSiteTarget, MutableList<AnnotationDescriptor>>()
         val other = arrayListOf<AnnotationDescriptor>()
-        val applicableTargets = applicableTargetsLazy()
         val applicableTargetsWithoutUseSiteTarget = applicableTargets.intersect(TARGET_PRIORITIES)
 
         outer@ for (annotation in allAnnotations) {
