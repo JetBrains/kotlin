@@ -5,29 +5,23 @@
 
 package org.jetbrains.kotlin.nj2k.tree.impl
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReference
-import com.intellij.psi.PsiVariable
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
-import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsKotlinAware
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsNoWrapping
-import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.conversions.parentOfType
-import org.jetbrains.kotlin.nj2k.conversions.resolveFqName
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
 interface JKSymbol {
     val target: Any
     val declaredIn: JKSymbol?
-    val fqName: String?
+    val fqName: String
 }
 
 interface JKUnresolvedSymbol : JKSymbol
@@ -39,8 +33,23 @@ interface JKNamedSymbol : JKSymbol {
     val name: String
 }
 
-interface JKUniverseSymbol<T : JKTreeElement> : JKSymbol {
-    override var target: T
+abstract class JKUniverseSymbol<T : JKTreeElement> : JKNamedSymbol {
+    abstract override var target: T
+    protected abstract val symbolProvider: JKSymbolProvider
+
+    override val declaredIn: JKSymbol?
+        get() = target.parentOfType<JKDeclaration>()?.let { symbolProvider.symbolsByJK[it] }
+    override val fqName: String
+        get() {
+            val qualifier =
+                declaredIn?.fqName
+                    ?: target
+                        .parentOfType<JKFile>()
+                        ?.packageDeclaration
+                        ?.packageName
+                        ?.value
+            return qualifier?.takeIf { it.isNotBlank() }?.let { "$it." }.orEmpty() + name
+        }
 }
 
 interface JKClassSymbol : JKNamedSymbol
@@ -66,35 +75,36 @@ interface JKFieldSymbol : JKNamedSymbol {
     val fieldType: JKType?
 }
 
-class JKUniverseClassSymbol : JKClassSymbol, JKUniverseSymbol<JKClass> {
+class JKUniverseClassSymbol(override val symbolProvider: JKSymbolProvider) : JKClassSymbol, JKUniverseSymbol<JKClass>() {
     override lateinit var target: JKClass
-    override val declaredIn: JKSymbol
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val fqName: String
-        get() = target.name.value // TODO("Fix this")
     override val name: String
         get() = target.name.value
 }
 
-class JKMultiverseClassSymbol(override val target: PsiClass) : JKClassSymbol {
+class JKMultiverseClassSymbol(
+    override val target: PsiClass,
+    private val symbolProvider: JKSymbolProvider
+) : JKClassSymbol {
+    override val declaredIn: JKSymbol?
+        get() = target.parentOfType<PsiMember>()?.let { symbolProvider.provideDirectSymbol(it) }
 
-    override val declaredIn: JKSymbol
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val fqName: String?
-        get() = target.getKotlinFqName()?.asString() ?: target.qualifiedName
+    override val fqName: String
+        get() = target.getKotlinFqName()?.asString() ?: target.qualifiedName ?: name
 
     override val name: String
         get() = target.name!!
 }
 
-class JKMultiverseKtClassSymbol(override val target: KtClassOrObject) : JKClassSymbol {
+class JKMultiverseKtClassSymbol(
+    override val target: KtClassOrObject,
+    private val symbolProvider: JKSymbolProvider
+) : JKClassSymbol {
     override val name: String
         get() = target.name!!
-    override val declaredIn: JKSymbol
-        get() = TODO("not implemented")
-    override val fqName: String?
-        get() = target.fqName?.asString()
-
+    override val declaredIn: JKSymbol?
+        get() = target.parentOfType<KtDeclaration>()?.let { symbolProvider.provideDirectSymbol(it) }
+    override val fqName: String
+        get() = target.fqName?.asString() ?: name
 }
 
 fun JKClassSymbol.displayName() =
@@ -113,7 +123,8 @@ fun PsiClass.nameWithOuterClasses() =
         .reversed()
         .joinToString(separator = ".") { it.name!! }
 
-class JKUniverseMethodSymbol(private val symbolProvider: JKSymbolProvider) : JKMethodSymbol, JKUniverseSymbol<JKMethod> {
+
+class JKUniverseMethodSymbol(override val symbolProvider: JKSymbolProvider) : JKMethodSymbol, JKUniverseSymbol<JKMethod>() {
     override val receiverType: JKType?
         get() = (target.parent as? JKClass)?.let {
             JKClassTypeImpl(symbolProvider.provideUniverseSymbol(it), emptyList()/*TODO*/)
@@ -124,11 +135,8 @@ class JKUniverseMethodSymbol(private val symbolProvider: JKSymbolProvider) : JKM
         get() = target.returnType.type
     override val name: String
         get() = target.name.value
+
     override lateinit var target: JKMethod
-    override val declaredIn: JKSymbol?
-        get() = target.parentOfType<JKClass>()?.let { symbolProvider.provideUniverseSymbol(it) }
-    override val fqName: String
-        get() = target.name.value // TODO("Fix this")
 }
 
 class JKMultiverseMethodSymbol(override val target: PsiMethod, private val symbolProvider: JKSymbolProvider) : JKMethodSymbol {
@@ -174,16 +182,12 @@ class JKMultiverseFunctionSymbol(override val target: KtNamedFunction, private v
         get() = target.fqName!!.asString()
 }
 
-class JKUniverseFieldSymbol : JKFieldSymbol, JKUniverseSymbol<JKVariable> {
+class JKUniverseFieldSymbol(override val symbolProvider: JKSymbolProvider) : JKFieldSymbol, JKUniverseSymbol<JKVariable>() {
     override val fieldType: JKType
         get() = target.type.type
     override val name: String
         get() = target.name.value
     override lateinit var target: JKVariable
-    override val declaredIn: JKSymbol
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val fqName: String
-        get() = target.name.value // TODO("Fix this")
 }
 
 class JKMultiverseFieldSymbol(override val target: PsiVariable, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
@@ -200,6 +204,21 @@ class JKMultiverseFieldSymbol(override val target: PsiVariable, private val symb
 class JKMultiversePropertySymbol(override val target: KtCallableDeclaration, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
     override val fieldType: JKType?
         get() = target.typeReference?.toJK(symbolProvider)
+    override val name: String
+        get() = target.name!!
+    override val declaredIn: JKSymbol
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val fqName: String
+        get() = target.fqName!!.asString()
+}
+
+class JKMultiverseKtEnumEntrySymbol(override val target: KtEnumEntry, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
+    override val fieldType: JKType?
+        get() = JKClassTypeImpl(
+            symbolProvider.provideDirectSymbol(target.containingClass()!!) as JKClassSymbol,
+            emptyList(),
+            Nullability.NotNull
+        )
     override val name: String
         get() = target.name!!
     override val declaredIn: JKSymbol
@@ -238,25 +257,10 @@ class JKUnresolvedMethod(
         get() = target
 }
 
-class JKExclExclMethod(
-    operandType: JKType
-) : JKMethodSymbol {
-    override val target: String = "!!"
-    override val returnType: JKType = operandType.updateNullability(Nullability.NotNull)
-    override val declaredIn: JKSymbol
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val fqName: String = "!!"
-    override val receiverType: JKType?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val parameterTypes: List<JKType>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val name: String = "!!"
-}
-
 class JKUnresolvedClassSymbol(override val target: String) : JKClassSymbol, JKUnresolvedSymbol {
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val fqName: String?
+    override val fqName: String
         get() = target
 
     override val name: String
