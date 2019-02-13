@@ -20,7 +20,6 @@ import groovy.lang.Closure
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -30,9 +29,8 @@ import java.io.File
 abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
                                                        type: Class<T>,
                                                        project: ProjectInternal,
-                                                       instantiator: Instantiator,
                                                        targets: Iterable<String>)
-    : KonanBuildingConfig<T>(name, type, project, instantiator, targets), KonanCompileSpec {
+    : KonanBuildingConfig<T>(name, type, project, targets), KonanCompileSpec {
 
     protected abstract val typeForDescription: String
 
@@ -76,12 +74,10 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
 
 open class KonanProgram(name: String,
                         project: ProjectInternal,
-                        instantiator: Instantiator,
                         targets: Iterable<String> = project.konanExtension.targets
 ) : KonanCompileConfig<KonanCompileProgramTask>(name,
         KonanCompileProgramTask::class.java,
         project,
-        instantiator,
         targets
 ) {
     override val typeForDescription: String
@@ -93,12 +89,10 @@ open class KonanProgram(name: String,
 
 open class KonanDynamic(name: String,
                         project: ProjectInternal,
-                        instantiator: Instantiator,
                         targets: Iterable<String> = project.konanExtension.targets)
     : KonanCompileConfig<KonanCompileDynamicTask>(name,
         KonanCompileDynamicTask::class.java,
         project,
-        instantiator,
         targets
 ) {
     override val typeForDescription: String
@@ -112,12 +106,10 @@ open class KonanDynamic(name: String,
 
 open class KonanFramework(name: String,
                           project: ProjectInternal,
-                          instantiator: Instantiator,
                           targets: Iterable<String> = project.konanExtension.targets)
     : KonanCompileConfig<KonanCompileFrameworkTask>(name,
         KonanCompileFrameworkTask::class.java,
         project,
-        instantiator,
         targets
 ) {
     override val typeForDescription: String
@@ -132,12 +124,10 @@ open class KonanFramework(name: String,
 
 open class KonanLibrary(name: String,
                         project: ProjectInternal,
-                        instantiator: Instantiator,
                         targets: Iterable<String> = project.konanExtension.targets)
     : KonanCompileConfig<KonanCompileLibraryTask>(name,
         KonanCompileLibraryTask::class.java,
         project,
-        instantiator,
         targets
 ) {
     override val typeForDescription: String
@@ -149,12 +139,10 @@ open class KonanLibrary(name: String,
 
 open class KonanBitcode(name: String,
                         project: ProjectInternal,
-                        instantiator: Instantiator,
                         targets: Iterable<String> = project.konanExtension.targets)
     : KonanCompileConfig<KonanCompileBitcodeTask>(name,
         KonanCompileBitcodeTask::class.java,
         project,
-        instantiator,
         targets
 ) {
     override val typeForDescription: String

@@ -21,7 +21,6 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -30,6 +29,7 @@ import org.gradle.language.ComponentDependencies
 import org.gradle.language.ComponentWithDependencies
 import org.gradle.language.ComponentWithOutputs
 import org.gradle.language.cpp.CppBinary
+import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.language.internal.DefaultComponentDependencies
 import org.gradle.language.nativeplatform.internal.ComponentWithNames
 import org.gradle.language.nativeplatform.internal.Names
@@ -60,8 +60,7 @@ abstract class AbstractKotlinNativeBinary(
         private val name: String,
         private val baseName: Provider<String>,
         override val component: AbstractKotlinNativeComponent,
-        val identity: KotlinNativeVariantIdentity,
-        val projectLayout: ProjectLayout,
+        val variant: KotlinNativeVariant,
         override val kind: CompilerOutputKind,
         objects: ObjectFactory,
         componentDependencies: KotlinNativeDependenciesImpl,
@@ -80,14 +79,16 @@ abstract class AbstractKotlinNativeBinary(
     override fun getName(): String = name
 
     override val konanTarget: KonanTarget
-        get() = identity.konanTarget
+        get() = variant.konanTarget
 
-    override fun getTargetPlatform(): KotlinNativePlatform = identity.targetPlatform
+    val identity: NativeVariantIdentity = variant.identity
+
+    override fun getTargetPlatform(): KotlinNativePlatform = variant.targetPlatform
 
     val sourceSet: KotlinNativeSourceSet
         get() = component.sources
 
-    val buildType: KotlinNativeBuildType get() = identity.buildType
+    val buildType: KotlinNativeBuildType get() = variant.buildType
     open val debuggable: Boolean  get() = identity.isDebuggable
     open val optimized: Boolean   get() = identity.isOptimized
 

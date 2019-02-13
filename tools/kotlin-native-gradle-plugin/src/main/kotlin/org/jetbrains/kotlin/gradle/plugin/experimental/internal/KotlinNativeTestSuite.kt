@@ -51,15 +51,15 @@ open class KotlinNativeTestSuite @Inject constructor(
 
     override fun getTestBinary() = testBinaryProperty
 
-    fun addTestExecutable(identity: NativeVariantIdentity): KotlinNativeTestExecutable =
+    fun addTestExecutable(variant: KotlinNativeVariant): KotlinNativeTestExecutable =
             objectFactory.newInstance(
                     KotlinNativeTestExecutableImpl::class.java,
-                    "$name${identity.name.capitalize()}",
+                    "$name${variant.identity.name.capitalize()}",
                     getBaseName(),
                     dependencies,
                     this,
                     testedComponent.sources,
-                    identity
+                    variant
             ).apply {
                 binaries.add(this)
             }

@@ -7,7 +7,7 @@ buildscript {
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
     dependencies {
-        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.8"
     }
 }
 

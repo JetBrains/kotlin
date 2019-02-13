@@ -30,10 +30,9 @@ import org.gradle.api.internal.tasks.DefaultTaskDependency
 import org.gradle.api.tasks.*
 import org.gradle.language.cpp.CppBinary
 import org.gradle.language.cpp.internal.DefaultUsageContext
-import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.nativeplatform.Linkage
-import org.gradle.nativeplatform.OperatingSystemFamily
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.compatibleVariantIdentity
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -128,16 +127,20 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
                 override fun getAttributes(): AttributeContainer = platformConfiguration.attributes
                 override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
             }, platformConfiguration.allArtifacts, platformConfiguration)
-            konanSoftwareComponent.addVariant(NativeVariantIdentity(
+            konanSoftwareComponent.addVariant(
+                compatibleVariantIdentity(
+                    project,
                     variantName,
                     project.provider{ artifactName },
                     project.provider{ project.group.toString() },
                     project.provider{ project.version.toString() },
                     false,
                     false,
-                    target.asOperatingSystemFamily(),
+                    target,
                     context,
-                    null))
+                    null
+                )
+            )
         }
     }
 
@@ -154,9 +157,6 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
     fun destinationDir(dir: Any) {
         destinationDir = project.file(dir)
     }
-
-    private fun KonanTarget.asOperatingSystemFamily(): OperatingSystemFamily = project.objects.named(OperatingSystemFamily::class.java, family.name)
-
 }
 
 /** Task building an artifact with libraries */

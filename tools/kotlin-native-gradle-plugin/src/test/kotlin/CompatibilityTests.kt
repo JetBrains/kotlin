@@ -20,7 +20,8 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.net.URI
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 open class CompatibilityTests {
     val tmpFolder = TemporaryFolder()

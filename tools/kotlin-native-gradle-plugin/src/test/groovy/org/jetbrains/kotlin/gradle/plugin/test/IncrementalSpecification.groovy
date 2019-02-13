@@ -20,10 +20,6 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Unroll
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-
 class IncrementalSpecification extends BaseKonanSpecification {
 
     Tuple buildTwice(KonanProject project, String task = 'build', Closure change) {

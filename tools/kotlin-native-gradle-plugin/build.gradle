@@ -37,7 +37,7 @@ buildscript {
 
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
     }
 }
@@ -119,7 +119,7 @@ dependencies {
 shadowJar {
     from sourceSets.main.output
     configurations = [project.configurations.bundleDependencies]
-    classifier = null
+    archiveClassifier.set(null)
     relocate('org.jetbrains.kotlinx', 'shadow.org.jetbrains.kotlinx')
     relocate('org.jetbrains.kotlin.compilerRunner', 'shadow.org.jetbrains.kotlin.compilerRunner')
     relocate('org.jetbrains.kotlin.konan', 'shadow.org.jetbrains.kotlin.konan')

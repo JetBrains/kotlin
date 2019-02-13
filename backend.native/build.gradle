@@ -9,7 +9,7 @@ buildscript {
     apply plugin: 'project-report'
 
     dependencies {
-        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.8"
     }
 }
 

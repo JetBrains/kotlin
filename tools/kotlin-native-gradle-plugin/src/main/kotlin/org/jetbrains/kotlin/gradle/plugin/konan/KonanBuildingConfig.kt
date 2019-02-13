@@ -17,27 +17,23 @@
 package org.jetbrains.kotlin.gradle.plugin.konan
 
 import groovy.lang.Closure
-import org.gradle.api.Action
-import org.gradle.api.InvalidUserDataException
-import org.gradle.api.Named
-import org.gradle.api.Task
-import org.gradle.api.internal.DefaultNamedDomainObjectSet
+import org.gradle.api.*
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.publish.maven.MavenPom
-import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
+import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 /** Base class for all Kotlin/Native artifacts. */
 abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: String,
-                                                         type: Class<T>,
+                                                         val type: Class<T>,
                                                          val project: ProjectInternal,
-                                                         instantiator: Instantiator,
                                                          val targets: Iterable<String>)
-    : KonanBuildingSpec, Named, DefaultNamedDomainObjectSet<T>(type, instantiator, { it.konanTarget.visibleName }) {
+    : KonanBuildingSpec, Named, DomainObjectSet<T> by WrapUtil.toDomainObjectSet(type) {
 
     internal val mainVariant = KonanSoftwareComponent(project)
     override fun getName() = name_
@@ -63,7 +59,13 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
                 project.logger.info("The target ${targetName} is not supported by the artifact $name")
                 continue
             }
-            if (this[konanTarget] == null) super.add(createTask(konanTarget))
+            if (this[konanTarget] == null) {
+                val task = createTask(konanTarget)
+                add(task)
+                targetToTask[konanTarget] = task
+                // Allow accessing targets just by their names in Groovy DSL.
+                (this as? ExtensionAware)?.extensions?.add(konanTarget.visibleName, task)
+            }
 
             if (targetName != konanTarget.visibleName) {
                 createTargetAliasTaskIfDeclared(targetName)
@@ -88,13 +90,6 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     protected abstract val defaultBaseDir: File
 
     protected open fun targetIsSupported(target: KonanTarget): Boolean = true
-
-    override fun didAdd(toAdd: T) {
-        super.didAdd(toAdd)
-
-        assert(toAdd.konanTarget !in targetToTask)
-        targetToTask[toAdd.konanTarget] = toAdd
-    }
 
     data class OutputPlacement(val destinationDir: File, val artifactName: String)
 

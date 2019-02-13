@@ -22,9 +22,9 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.file.FileOperations
-import org.gradle.api.internal.provider.LockableSetProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.language.internal.DefaultBinaryCollection
 import org.gradle.language.nativeplatform.internal.ComponentWithNames
@@ -62,8 +62,8 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
     private val baseName: Property<String> = objectFactory.property(String::class.java).apply { set(name) }
     fun getBaseName(): Property<String> = baseName
 
-    override val konanTargets: LockableSetProperty<KonanTarget> =
-            LockableSetProperty(objectFactory.setProperty(KonanTarget::class.java)).apply {
+    override val konanTargets: SetProperty<KonanTarget> =
+            objectFactory.setProperty(KonanTarget::class.java).apply {
                 set(mutableSetOf(HostManager.host))
             }
 

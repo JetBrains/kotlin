@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
@@ -37,8 +36,7 @@ open class KotlinNativeFrameworkImpl @Inject constructor(
     baseName: Provider<String>,
     componentDependencies: KotlinNativeDependenciesImpl,
     component: KotlinNativeMainComponent,
-    identity: KotlinNativeVariantIdentity,
-    projectLayout: ProjectLayout,
+    variant: KotlinNativeVariant,
     objects: ObjectFactory,
     configurations: ConfigurationContainer,
     fileOperations: FileOperations
@@ -46,8 +44,7 @@ open class KotlinNativeFrameworkImpl @Inject constructor(
     name,
     baseName,
     component,
-    identity,
-    projectLayout,
+    variant,
     CompilerOutputKind.FRAMEWORK,
     objects,
     componentDependencies,
@@ -72,6 +69,7 @@ open class KotlinNativeFrameworkImpl @Inject constructor(
         getImplementationDependencies().extendsFrom(this)
     }
 
+    // TODO: Fix embedding
     override var embedBitcode: BitcodeEmbeddingMode = if (konanTarget.family == Family.IOS) {
         buildType.iosEmbedBitcode
     } else {

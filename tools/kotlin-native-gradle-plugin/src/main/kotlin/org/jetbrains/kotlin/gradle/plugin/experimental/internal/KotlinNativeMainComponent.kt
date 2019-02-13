@@ -23,15 +23,14 @@ import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.file.FileOperations
-import org.gradle.api.internal.provider.LockableSetProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.internal.Describables
 import org.gradle.internal.DisplayName
 import org.gradle.language.ProductionComponent
-import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.language.nativeplatform.internal.PublicationAwareComponent
-import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
+import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSetImpl
@@ -50,7 +49,7 @@ open class KotlinNativeMainComponent @Inject constructor(
 
     override fun getDisplayName(): DisplayName = Describables.withTypeAndName("Kotlin/Native component", name)
 
-    val outputKinds = LockableSetProperty(objectFactory.setProperty(OutputKind::class.java)).apply {
+    val outputKinds: SetProperty<OutputKind> = objectFactory.setProperty(OutputKind::class.java).apply {
         set(mutableSetOf(OutputKind.KLIBRARY))
     }
 
@@ -61,42 +60,37 @@ open class KotlinNativeMainComponent @Inject constructor(
         extendsFrom(getImplementationDependencies())
     }
 
-    private val mainPublication = KotlinNativeVariant()
+    private val mainPublication = KotlinNativePublicationVariants()
 
-    override fun getMainPublication(): KotlinNativeVariant = mainPublication
+    override fun getMainPublication(): KotlinNativePublicationVariants = mainPublication
 
     private val developmentBinaryProperty: Property<KotlinNativeBinary> =
             objectFactory.property(KotlinNativeBinary::class.java)
 
     override fun getDevelopmentBinary() = developmentBinaryProperty
 
-    private fun <T : KotlinNativeBinary> addBinary(type: Class<T>, identity: NativeVariantIdentity): T =
-            objectFactory.newInstance(
-                    type,
-                    "$name${identity.name.capitalize()}",
-                    baseName,
-                    dependencies,
-                    this,
-                    identity
-            ).apply {
-                binaries.add(this)
-            }
+    private fun <T : KotlinNativeBinary> addBinary(type: Class<T>, variant: KotlinNativeVariant): T {
+        val name = "$name${variant.identity.name.capitalize()}"
+        return objectFactory.newInstance(type, name, baseName, dependencies, this, variant).apply {
+            binaries.add(this)
+        }
+    }
 
-    private inline fun <reified T : KotlinNativeBinary> addBinary(identity: NativeVariantIdentity): T =
-            addBinary(T::class.java, identity)
+    private inline fun <reified T : KotlinNativeBinary> addBinary(variant: KotlinNativeVariant): T =
+            addBinary(T::class.java, variant)
 
-    fun addExecutable(identity: NativeVariantIdentity) = addBinary<KotlinNativeExecutableImpl>(identity)
-    fun addLibrary(identity: NativeVariantIdentity) = addBinary<KotlinNativeLibraryImpl>(identity)
-    fun addFramework(identity: NativeVariantIdentity) = addBinary<KotlinNativeFrameworkImpl>(identity)
+    fun addExecutable(variant: KotlinNativeVariant) = addBinary<KotlinNativeExecutableImpl>(variant)
+    fun addLibrary(variant: KotlinNativeVariant) = addBinary<KotlinNativeLibraryImpl>(variant)
+    fun addFramework(variant: KotlinNativeVariant) = addBinary<KotlinNativeFrameworkImpl>(variant)
 
-    fun addBinary(kind: OutputKind, identity: NativeVariantIdentity) = addBinary(kind.binaryClass, identity)
+    fun addBinary(kind: OutputKind, variant: KotlinNativeVariant) = addBinary(kind.binaryClass, variant)
 
-    // region Kotlin/Native variant
+    // region Kotlin/Native component passed to Gradle to determine publication variants
     // TODO: SoftwareComponentInternal will be replaced with ComponentWithVariants by Gradle
-    inner class KotlinNativeVariant: ComponentWithVariants, SoftwareComponentInternal {
+    inner class KotlinNativePublicationVariants: ComponentWithVariants, SoftwareComponentInternal {
 
-        private val variants = mutableSetOf<SoftwareComponent>()
-        override fun getVariants() = variants
+        private val variants = WrapUtil.toDomainObjectSet(SoftwareComponent::class.java)
+        override fun getVariants(): MutableSet<SoftwareComponent> = variants
 
         override fun getName(): String = this@KotlinNativeMainComponent.name
 

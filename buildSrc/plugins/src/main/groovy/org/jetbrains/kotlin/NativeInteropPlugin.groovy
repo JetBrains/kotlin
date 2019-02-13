@@ -127,7 +127,7 @@ class NamedNativeInteropConfig implements Named {
         dependsOn(task)
 
         final Project prj;
-        final String taskName;
+        String taskName;
         int index = task.lastIndexOf(':')
         if (index != -1) {
             prj = project.project(task.substring(0, index))

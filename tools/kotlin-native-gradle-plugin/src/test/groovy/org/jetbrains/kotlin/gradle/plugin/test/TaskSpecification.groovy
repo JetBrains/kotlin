@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import spock.lang.Requires
 import spock.lang.Unroll
 
@@ -50,8 +50,8 @@ class TaskSpecification extends BaseKonanSpecification {
         def result = project.createRunner().withArguments('build').build()
 
         then:
-        result.output.findAll(~/FRONTEND:\s+\d+\s+msec/).size() == 1
-        result.output.findAll(~/BACKEND:\s+\d+\s+msec/).size() == 1
+        result.output.findAll(~/Frontend builds AST:\s+\d+\s+msec/).size() == 1
+        result.output.findAll(~/IR Lowering:\s+\d+\s+msec/).size() == 1
     }
 
     @Unroll('Plugin should support #option option for cinterop')

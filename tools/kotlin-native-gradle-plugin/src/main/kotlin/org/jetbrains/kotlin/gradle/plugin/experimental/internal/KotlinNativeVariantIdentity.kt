@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
+import org.gradle.api.Project
 import org.gradle.api.internal.component.UsageContext
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-open class KotlinNativeVariantIdentity(
+class KotlinNativeVariant(
     name: String,
     baseName: Provider<String>,
     group: Provider<String>,
@@ -31,17 +31,21 @@ open class KotlinNativeVariantIdentity(
     val buildType: KotlinNativeBuildType,
     linkUsage: UsageContext?,
     runtimeUsage: UsageContext?,
-    objects: ObjectFactory
-) : NativeVariantIdentity(
-    name,
-    baseName,
-    group,
-    version,
-    buildType.debuggable,
-    buildType.optimized,
-    konanTarget.getGradleOSFamily(objects),
-    linkUsage,
-    runtimeUsage
+    project: Project
 ) {
+
+    val identity: NativeVariantIdentity = compatibleVariantIdentity(
+        project,
+        name,
+        baseName,
+        group,
+        version,
+        buildType.debuggable,
+        buildType.optimized,
+        konanTarget,
+        linkUsage,
+        runtimeUsage
+    )
+
     val targetPlatform = DefaultKotlinNativePlatform(konanTarget)
 }

@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.gradle.plugin.test
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class TaskTests {
     val tmpFolder = TemporaryFolder()

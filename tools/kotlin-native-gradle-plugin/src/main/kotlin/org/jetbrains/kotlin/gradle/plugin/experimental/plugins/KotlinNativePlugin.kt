@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.internal.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.OutputKind.Companion.getDevelopmentKind
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSetImpl
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
@@ -77,14 +78,18 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
     }
 
     private fun AbstractKotlinNativeComponent.getAndLockTargets(): Set<KonanTarget> {
-        konanTargets.lockNow()
+        if (isGradleVersionAtLeast(5, 0)) {
+            konanTargets.finalizeValue()
+        }
         return konanTargets.get().also {
             require(it.isNotEmpty()) { "A Kotlin/Native target needs to be specified for the component." }
         }
     }
 
     private fun KotlinNativeMainComponent.getAndLockOutputKinds(): Set<OutputKind> {
-        outputKinds.lockNow()
+        if (isGradleVersionAtLeast(5, 0)) {
+            konanTargets.finalizeValue()
+        }
         return outputKinds.get().also {
             require(it.isNotEmpty()) { "An output kind needs to be specified for the component." }
         }
@@ -124,18 +129,18 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
                         }
 
                         // TODO: Do we need something like klibUsageContext?
-                        val variantIdentity = KotlinNativeVariantIdentity(
+                        val variant = KotlinNativeVariant(
                                 variantName,
                                 component.baseName,
                                 group, version, target,
                                 buildType,
                                 linkUsageContext,
                                 runtimeUsageContext,
-                                objects
+                                project
                         )
 
                         if (hostManager.isEnabled(target)) {
-                            val binary = component.addBinary(kind, variantIdentity)
+                            val binary = component.addBinary(kind, variant)
 
                             if (kind == developmentKind &&
                                 buildType == KotlinNativeBuildType.DEBUG &&
@@ -151,7 +156,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
                             if (kind.publishable) {
                                 // Known but not buildable.
                                 // It allows us to publish different parts of a multitarget library from differnt hosts.
-                                component.mainPublication.variants.add(variantIdentity)
+                                component.mainPublication.variants.add(variant.identity)
                             }
                         }
                     }
@@ -171,18 +176,18 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
                 val targetSuffix = createDimensionSuffix(target.name, targets)
                 val variantName = "${buildTypeSuffix}${targetSuffix}"
 
-                val variantIdentity = KotlinNativeVariantIdentity(
+                val variant = KotlinNativeVariant(
                         variantName,
                         component.getBaseName(),
                         group, version, target,
                         buildType,
                         null,
                         null,
-                        objects
+                        project
                 )
 
                 if (hostManager.isEnabled(target)) {
-                    val binary = component.addTestExecutable(variantIdentity)
+                    val binary = component.addTestExecutable(variant)
                     if (target == HostManager.host) {
                         component.testBinary.set(binary)
                     }

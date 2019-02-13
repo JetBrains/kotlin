@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
@@ -31,8 +29,7 @@ open class KotlinNativeDynamicImpl @Inject constructor(
     baseName: Provider<String>,
     componentDependencies: KotlinNativeDependenciesImpl,
     component: KotlinNativeMainComponent,
-    identity: KotlinNativeVariantIdentity,
-    projectLayout: ProjectLayout,
+    variant: KotlinNativeVariant,
     objects: ObjectFactory,
     configurations: ConfigurationContainer,
     fileOperations: FileOperations
@@ -40,8 +37,7 @@ open class KotlinNativeDynamicImpl @Inject constructor(
     name,
     baseName,
     component,
-    identity,
-    projectLayout,
+    variant,
     CompilerOutputKind.DYNAMIC,
     objects,
     componentDependencies,

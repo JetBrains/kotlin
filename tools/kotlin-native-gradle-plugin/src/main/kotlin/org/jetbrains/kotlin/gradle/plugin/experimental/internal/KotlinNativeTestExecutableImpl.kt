@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -37,16 +35,14 @@ open class KotlinNativeTestExecutableImpl @Inject constructor(
         componentDependencies: KotlinNativeDependenciesImpl,
         val testComponent: KotlinNativeTestSuite,
         val mainSources: KotlinNativeSourceSet,
-        identity: KotlinNativeVariantIdentity,
+        variant: KotlinNativeVariant,
         objects: ObjectFactory,
-        projectLayout: ProjectLayout,
         configurations: ConfigurationContainer,
         fileOperations: FileOperations
 ) : AbstractKotlinNativeBinary(name,
         baseName,
         testComponent,
-        identity,
-        projectLayout,
+        variant,
         CompilerOutputKind.PROGRAM,
         objects,
         componentDependencies,

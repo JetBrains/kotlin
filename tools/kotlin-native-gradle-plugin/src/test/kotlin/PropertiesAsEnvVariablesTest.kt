@@ -24,7 +24,7 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.tools4j.spockito.Spockito
 import java.io.File
-import kotlin.test.*
+import kotlin.test.Test
 
 @RunWith(Spockito::class)
 open class PropertiesAsEnvVariablesTest {

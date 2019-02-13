@@ -21,7 +21,6 @@ import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropSpec.IncludeDirectoriesSpec
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
@@ -29,9 +28,8 @@ import java.io.File
 
 open class KonanInteropLibrary(name: String,
                                project: ProjectInternal,
-                               instantiator: Instantiator,
                                targets: Iterable<String> = project.konanExtension.targets
-) : KonanBuildingConfig<KonanInteropTask>(name, KonanInteropTask::class.java, project, instantiator, targets),
+) : KonanBuildingConfig<KonanInteropTask>(name, KonanInteropTask::class.java, project, targets),
     KonanInteropSpec
 {
 
