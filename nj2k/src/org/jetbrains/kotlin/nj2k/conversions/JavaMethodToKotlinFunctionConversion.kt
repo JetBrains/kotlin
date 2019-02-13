@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.throwAnnotation
-import org.jetbrains.kotlin.nj2k.tree.*
+import org.jetbrains.kotlin.nj2k.tree.JKClassBody
+import org.jetbrains.kotlin.nj2k.tree.JKJavaMethod
+import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtFunctionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKTypeElementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
+import org.jetbrains.kotlin.nj2k.tree.updateNullabilityRecursively
 
 class JavaMethodToKotlinFunctionConversion(private val context: ConversionContext) : TransformerBasedConversion() {
     override fun visitTreeElement(element: JKTreeElement) {
@@ -37,11 +39,7 @@ class JavaMethodToKotlinFunctionConversion(private val context: ConversionContex
                 declaration.invalidate()
 
                 JKKtFunctionImpl(
-                    if (declaration.returnType.type.nullability != Nullability.NotNull)
-                        JKTypeElementImpl(
-                            declaration.returnType.type
-                                .updateNullability(declaration.returnTypeNullability(context))
-                        ) else declaration.returnType,
+                    declaration.returnType,
                     declaration.name,
                     declaration.parameters,
                     declaration.block,
@@ -49,10 +47,10 @@ class JavaMethodToKotlinFunctionConversion(private val context: ConversionContex
                     declaration.annotationList.also {
                         if (declaration.throwsList.isNotEmpty()) {
                             it.annotations +=
-                                    throwAnnotation(
-                                        declaration.throwsList.map { it.type.updateNullabilityRecursively(Nullability.NotNull) },
-                                        context.symbolProvider
-                                    )
+                                throwAnnotation(
+                                    declaration.throwsList.map { it.type.updateNullabilityRecursively(Nullability.NotNull) },
+                                    context.symbolProvider
+                                )
                         }
                     },
                     declaration.extraModifiers,
