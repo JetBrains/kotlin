@@ -9,4 +9,8 @@ package org.jetbrains.kotlin.idea.util
 
 import com.intellij.util.PlatformUtils
 
-val isRunningInCidrIde by lazy { PlatformUtils.isCidr() }
+// Currently CIDR IDEs (CLion and AppCode) have no Java support.
+// Use this property to bypass Java-specific logic in CIDR.
+val isRunningInCidrIde: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    PlatformUtils.isCidr()
+}

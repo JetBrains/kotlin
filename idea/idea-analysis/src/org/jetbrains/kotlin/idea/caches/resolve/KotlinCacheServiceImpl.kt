@@ -50,12 +50,12 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
@@ -97,7 +97,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         syntheticFiles: Collection<KtFile> = listOf()
     ): ProjectResolutionFacade {
         val sdk = dependenciesModuleInfo.sdk
-        val platform = JvmPlatform // TODO: Js scripts?
+        val platform = /* Fallback to Common platform in CIDR (Java is not supported there) */
+            DefaultIdeTargetPlatformKindProvider.defaultCompilerPlatform // TODO: Js scripts?
         val settings = PlatformAnalysisSettings(
             platform, sdk, true,
             LanguageFeature.ReleaseCoroutines.defaultState == LanguageFeature.State.ENABLED
