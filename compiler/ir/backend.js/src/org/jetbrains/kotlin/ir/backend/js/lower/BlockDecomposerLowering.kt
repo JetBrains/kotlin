@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -541,6 +539,40 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
             newStatements += expression
 
             return expression.run { IrCompositeImpl(startOffset, endOffset, type, origin, newStatements) }
+        }
+
+        override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
+
+            val composite = expression.receiver as? IrComposite ?: return expression
+
+            return materializeLastExpression(composite) {
+                expression.apply { receiver = it }
+            }
+        }
+
+        override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
+
+            val oldArguments = listOf(expression.receiver) + expression.arguments
+            val compositeCount = oldArguments.count { it is IrComposite }
+
+            if (compositeCount == 0) return expression
+
+            val newStatements = mutableListOf<IrStatement>()
+            val newArguments = mapArguments(oldArguments, compositeCount, newStatements)
+
+            expression.receiver = newArguments[0]
+                ?: error("No new receiver in destructured composite for:\n${expression.dump()}")
+
+            for (i in expression.arguments.indices) {
+                expression.arguments[i] = newArguments[i + 1]
+                    ?: error("No argument #$i in destructured composite for:\n${expression.dump()}")
+            }
+
+            newStatements.add(expression)
+
+            return expression.run { IrCompositeImpl(startOffset, endOffset, type, null, newStatements) }
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
