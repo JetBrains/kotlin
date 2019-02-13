@@ -40,7 +40,8 @@ abstract class KonanTest extends JavaExec {
     def enableKonanAssertions = true
     String outputDirectory = null
     String goldValue = null
-    Function<String, Boolean> outputChecker = null
+    // Checks test's output against gold value and returns true if the output matches the expectation
+    Function<String, Boolean> outputChecker = { str -> (goldValue == null || goldValue == str) }
     String testData = null
     int expectedExitStatus = 0
     List<String> arguments = null
@@ -309,10 +310,14 @@ abstract class KonanTest extends JavaExec {
         }
 
         result = result.replace(System.lineSeparator(), "\n")
-        def goldValueMismatch = (outputChecker != null && !outputChecker.apply(result)) ||
-                (goldValue != null && goldValue != result)
+        def goldValueMismatch = !outputChecker.apply(result)
         if (goldValueMismatch) {
-            def message = "Expected output: $goldValue, actual output: $result"
+            def message
+            if (goldValue != null) {
+                message = "Expected output: $goldValue, actual output: $result"
+            } else {
+                message = "Actual output doesn't match output checker: $result"
+            }
             if (this.expectedFail) {
                 println("Expected failure. $message")
             } else {
