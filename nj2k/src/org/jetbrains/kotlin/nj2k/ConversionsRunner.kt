@@ -41,6 +41,8 @@ object ConversionsRunner {
             +ThrowStatementConversion()
             +ArrayInitializerConversion(context)
             +TryStatementConversion(context)
+            +EnumFieldAccessConversion(context)
+            +StaticMemberAccessConversion(context)
             +SynchronizedStatementConversion(context)
             +DefaultArgumentsConversion(context)
             +ConstructorConversion(context)
