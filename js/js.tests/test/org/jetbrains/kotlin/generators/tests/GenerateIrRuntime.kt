@@ -12,15 +12,19 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.backend.js.ModuleType
 import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.JsIrTestRuntime
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 fun buildConfiguration(environment: KotlinCoreEnvironment): CompilerConfiguration {
     val runtimeConfiguration = environment.configuration.copy()
     runtimeConfiguration.put(CommonConfigurationKeys.MODULE_NAME, "JS_IR_RUNTIME")
+    runtimeConfiguration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
     runtimeConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(
         LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
@@ -58,13 +62,14 @@ fun main() {
         environment.project,
         (JsIrTestRuntime.FULL.sources).map(::createPsiFile),
         buildConfiguration(environment),
-        null,
+        emptyList(),
         true,
         emptyList(),
-        emptyList()
+        null,
+        ModuleType.TEST_RUNTIME
     )
 
-    File(resultJs).writeText(result.generatedCode)
+    File(resultJs).writeText(result.generatedCode!!)
 
 //    TODO("Write library into $stdKlibFile")
 }

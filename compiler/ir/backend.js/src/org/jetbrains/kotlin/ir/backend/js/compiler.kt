@@ -7,28 +7,27 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.replaceUnboundSymbols
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.*
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.CoroutineIntrinsicLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataModuleDescriptor
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataSerializationUtil
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataVersion
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.createJsKlibMetadataPackageFragmentProvider
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -37,10 +36,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import java.io.File
 import org.jetbrains.kotlin.utils.DFS
+import java.io.File
 
-data class Result(val moduleDescriptor: ModuleDescriptor, val generatedCode: String, val moduleFragment: IrModuleFragment?)
 enum class ModuleType {
     TEST_RUNTIME,
     SECONDARY,
@@ -83,24 +81,15 @@ fun compile(
 
     TopDownAnalyzerFacadeForJS.checkForErrors(files, analysisResult.bindingContext)
 
+    val irDependencies = dependencies.mapNotNull { it.moduleFragment }
+
     val symbolTable = SymbolTable()
-    if (!isKlibCompilation) irDependencyModules.forEach { symbolTable.loadModule(it) }
+    if (!isKlibCompilation) irDependencies.forEach { symbolTable.loadModule(it) }
 
     val psi2IrTranslator = Psi2IrTranslator(configuration.languageVersionSettings)
     val psi2IrContext = psi2IrTranslator.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
 
     val moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files)
-
-    val context = JsIrBackendContext(
-        analysisResult.moduleDescriptor,
-        psi2IrContext.irBuiltIns,
-        psi2IrContext.symbolTable,
-        moduleFragment,
-        configuration,
-        dependencies,
-        moduleType
-    )
-
 
     if (isKlibCompilation) {
         val logggg = object : LoggingContext {
@@ -120,7 +109,7 @@ fun compile(
         val metadataVersion = configuration.get(CommonConfigurationKeys.METADATA_VERSION)  as? JsKlibMetadataVersion
             ?: JsKlibMetadataVersion.INSTANCE
         val moduleDescription =
-            JsKlibMetadataModuleDescriptor(moduleName, dependencies.map { it.name.asString() }, moduleFragment.descriptor)
+            JsKlibMetadataModuleDescriptor(moduleName, irDependencies.map { it.name.asString() }, moduleFragment.descriptor)
         val serializedData = serializer.serializeMetadata(
             psi2IrContext.bindingContext,
             moduleDescription,
@@ -196,13 +185,15 @@ fun compile(
         )
         val deserializedModuleFragment = deserializer.deserializeIrModule(md, moduleFile.readBytes(), true)
 
-        val context = JsIrBackendContext(md, irBuiltIns, st, deserializedModuleFragment, configuration, irDependencyModules)
+        val context = JsIrBackendContext(md, irBuiltIns, st, deserializedModuleFragment, configuration, dependencies, moduleType)
 
         deserializedModuleFragment.replaceUnboundSymbols(context)
 
         jsPhases.invokeToplevel(context.phaseConfig, context, deserializedModuleFragment)
 
-        return Result(md, context.jsProgram.toString(), null)
+        val jsProgram = deserializedModuleFragment.accept(IrModuleToJsTransformer(context), null)
+
+        return CompiledModule(moduleName, jsProgram.toString(), null, moduleType, emptyList())
     } else {
 
         // TODO: Split compilation into two steps: kt -> ir, ir -> js
@@ -225,7 +216,6 @@ fun compile(
             ModuleType.TEST_RUNTIME -> {
             }
         }
-    }
 
         val context = JsIrBackendContext(
             analysisResult.moduleDescriptor,
@@ -233,8 +223,11 @@ fun compile(
             psi2IrContext.symbolTable,
             moduleFragment,
             configuration,
-            irDependencyModules
+            dependencies,
+            moduleType
         )
+
+        jsPhases.invokeToplevel(context.phaseConfig, context, moduleFragment)
 
         val jsProgram = moduleFragment.accept(IrModuleToJsTransformer(context), null)
 

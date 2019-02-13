@@ -1027,16 +1027,7 @@ abstract class IrModuleDeserializer(
         )
 
         symbolTable.referenceProperty(descriptor, { property })
-/*
-        backingField?.descriptor?.let {
-            symbolTable.declareField(UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                irrelevantOrigin,
-                it,
-                builtIns.unitType,
-                { symbol -> backingField })
-        }
-*/
+
         property.backingField = backingField
         property.getter = getter
         property.setter = setter
@@ -1044,28 +1035,6 @@ abstract class IrModuleDeserializer(
         backingField?.let { it.correspondingProperty = property }
         getter?.let { it.correspondingProperty = property }
         setter?.let { it.correspondingProperty = property }
-
-//        property.getter =
-//                if (proto.hasGetter()) deserializeIrFunction(proto.getter, start, end, origin, property) else null
-//        property.setter =
-//                if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin, property) else null
-//
-////        property.getter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
-////        property.setter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
-//
-//        property.getter?.let {
-//            val descriptor = it.descriptor
-//            if (descriptor is WrappedSimpleFunctionDescriptor) descriptor.bind(it)
-//            symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-//                descriptor, { symbol -> it })
-//
-//        }
-//        property.setter?.let {
-//            val descriptor = it.descriptor
-//            if (descriptor is WrappedSimpleFunctionDescriptor) descriptor.bind(it)
-//            symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-//                descriptor, { symbol -> it })
-//        }
 
         return property
     }
