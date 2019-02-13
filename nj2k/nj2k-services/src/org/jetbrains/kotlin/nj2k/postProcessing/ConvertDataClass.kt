@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing
 
-import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.core.setDefaultValue
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.core.copied
+import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.nj2k.NewJ2kPostProcessing
 import org.jetbrains.kotlin.psi.*
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.psi.addRemoveModifier.setModifierList
 import org.jetbrains.kotlin.psi.psiUtil.asAssignment
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class ConvertDataClass : NewJ2kPostProcessing {
     override val writeActionNeeded: Boolean = true
@@ -58,7 +57,8 @@ class ConvertDataClass : NewJ2kPostProcessing {
                         } ?: return@mapNotNull null
                 val constructorParameterType = constructorParameter.type() ?: return@mapNotNull null
                 val propertyType = property.type() ?: return@mapNotNull null
-                if (!constructorParameterType.isSubtypeOf(propertyType)) return@mapNotNull null
+
+                if (constructorParameterType.makeNotNullable() != propertyType.makeNotNullable()) return@mapNotNull null
 
                 DataClassInfo(constructorParameter, property, statement)
             }.toList()
