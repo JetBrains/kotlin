@@ -198,6 +198,79 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         }
     }
 
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: JsGenerationContext): JsExpression =
+        JsNameRef(expression.memberName, expression.receiver.accept(this, data))
+
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: JsGenerationContext): JsExpression =
+        when (expression.operator) {
+            IrDynamicOperator.UNARY_PLUS -> prefixOperation(JsUnaryOperator.POS, expression, data)
+            IrDynamicOperator.UNARY_MINUS -> prefixOperation(JsUnaryOperator.NEG, expression, data)
+
+            IrDynamicOperator.EXCL -> prefixOperation(JsUnaryOperator.NOT, expression, data)
+
+            IrDynamicOperator.PREFIX_INCREMENT -> prefixOperation(JsUnaryOperator.INC, expression, data)
+            IrDynamicOperator.PREFIX_DECREMENT -> prefixOperation(JsUnaryOperator.DEC, expression, data)
+
+            IrDynamicOperator.POSTFIX_INCREMENT -> postfixOperation(JsUnaryOperator.INC, expression, data)
+            IrDynamicOperator.POSTFIX_DECREMENT -> postfixOperation(JsUnaryOperator.DEC, expression, data)
+
+            IrDynamicOperator.BINARY_PLUS -> binaryOperation(JsBinaryOperator.ADD, expression, data)
+            IrDynamicOperator.BINARY_MINUS -> binaryOperation(JsBinaryOperator.SUB, expression, data)
+            IrDynamicOperator.MUL -> binaryOperation(JsBinaryOperator.MUL, expression, data)
+            IrDynamicOperator.DIV -> binaryOperation(JsBinaryOperator.DIV, expression, data)
+            IrDynamicOperator.MOD -> binaryOperation(JsBinaryOperator.MOD, expression, data)
+
+            IrDynamicOperator.GT -> binaryOperation(JsBinaryOperator.GT, expression, data)
+            IrDynamicOperator.LT -> binaryOperation(JsBinaryOperator.LT, expression, data)
+            IrDynamicOperator.GE -> binaryOperation(JsBinaryOperator.GTE, expression, data)
+            IrDynamicOperator.LE -> binaryOperation(JsBinaryOperator.LTE, expression, data)
+
+            IrDynamicOperator.EQEQ -> binaryOperation(JsBinaryOperator.EQ, expression, data)
+            IrDynamicOperator.EXCLEQ -> binaryOperation(JsBinaryOperator.NEQ, expression, data)
+
+            IrDynamicOperator.EQEQEQ -> binaryOperation(JsBinaryOperator.REF_EQ, expression, data)
+            IrDynamicOperator.EXCLEQEQ -> binaryOperation(JsBinaryOperator.REF_NEQ, expression, data)
+
+            IrDynamicOperator.ANDAND -> binaryOperation(JsBinaryOperator.AND, expression, data)
+            IrDynamicOperator.OROR -> binaryOperation(JsBinaryOperator.OR, expression, data)
+
+            IrDynamicOperator.EQ -> binaryOperation(JsBinaryOperator.ASG, expression, data)
+            IrDynamicOperator.PLUSEQ -> binaryOperation(JsBinaryOperator.ASG_ADD, expression, data)
+            IrDynamicOperator.MINUSEQ -> binaryOperation(JsBinaryOperator.ASG_SUB, expression, data)
+            IrDynamicOperator.MULEQ -> binaryOperation(JsBinaryOperator.ASG_MUL, expression, data)
+            IrDynamicOperator.DIVEQ -> binaryOperation(JsBinaryOperator.ASG_DIV, expression, data)
+            IrDynamicOperator.MODEQ -> binaryOperation(JsBinaryOperator.ASG_MOD, expression, data)
+
+            IrDynamicOperator.ARRAY_ACCESS -> JsArrayAccess(expression.left.accept(this, data), expression.right.accept(this, data))
+
+            IrDynamicOperator.INVOKE ->
+                JsInvocation(
+                    expression.receiver.accept(this, data),
+                    expression.arguments.map { it.accept(this, data) }
+                )
+
+            else -> error("Unexpected operator ${expression.operator}: ${expression.render()}")
+        }
+
+    private fun prefixOperation(operator: JsUnaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =
+        JsPrefixOperation(
+            operator,
+            expression.receiver.accept(this, data)
+        )
+
+    private fun postfixOperation(operator: JsUnaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =
+        JsPostfixOperation(
+            operator,
+            expression.receiver.accept(this, data)
+        )
+
+    private fun binaryOperation(operator: JsBinaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =
+        JsBinaryOperation(
+            operator,
+            expression.left.accept(this, data),
+            expression.right.accept(this, data)
+        )
+
     private fun isNativeInvoke(call: IrCall): Boolean {
         val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
         val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
