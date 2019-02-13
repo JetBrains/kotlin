@@ -58,6 +58,7 @@ class JavaMethodToKotlinFunctionConversion(private val context: ConversionContex
                     declaration.modality
                 ).also {
                     it.psi = declaration.psi
+                    context.symbolProvider.transferSymbol(it, declaration)
                 }
             } else {
                 declaration
