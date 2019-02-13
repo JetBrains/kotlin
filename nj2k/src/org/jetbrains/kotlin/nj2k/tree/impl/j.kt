@@ -269,7 +269,7 @@ object JKJavaVoidType : JKType {
         set(it) {}
 }
 
-class JKJavaArrayTypeImpl(override val type: JKType, override var nullability: Nullability = Nullability.Default) : JKJavaArrayType {
+data class JKJavaArrayTypeImpl(override val type: JKType, override var nullability: Nullability = Nullability.Default) : JKJavaArrayType {
 }
 
 class JKJavaDisjunctionTypeImpl(
@@ -277,10 +277,14 @@ class JKJavaDisjunctionTypeImpl(
     override val nullability: Nullability = Nullability.Default
 ) : JKJavaDisjunctionType
 
-class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), JKReturnStatement, PsiOwner by PsiOwnerImpl() {
+class JKReturnStatementImpl(
+    expression: JKExpression,
+    label: JKLabel = JKLabelEmptyImpl()
+) : JKBranchElementBase(), JKReturnStatement, PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitReturnStatement(this, data)
 
     override val expression by child(expression)
+    override var label by child(label)
 }
 
 class JKJavaAssertStatementImpl(condition: JKExpression, description: JKExpression) : JKJavaAssertStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {

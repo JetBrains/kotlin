@@ -695,7 +695,9 @@ class NewCodeBuilder {
         }
 
         override fun visitReturnStatement(returnStatement: JKReturnStatement) {
-            printer.print("return ")
+            printer.print("return")
+            returnStatement.label.accept(this)
+            printer.print(" ")
             returnStatement.expression.accept(this)
         }
 

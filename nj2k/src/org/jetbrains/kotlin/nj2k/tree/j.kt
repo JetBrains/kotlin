@@ -63,6 +63,7 @@ interface JKJavaLiteralExpression : JKLiteralExpression
 
 interface JKReturnStatement : JKStatement {
     val expression: JKExpression
+    var label: JKLabel
 }
 
 interface JKJavaAssertStatement : JKStatement {

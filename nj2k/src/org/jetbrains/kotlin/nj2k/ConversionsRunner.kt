@@ -29,6 +29,8 @@ object ConversionsRunner {
             +AnnotationClassConversion(context)
             +AnnotationConversion(context)
             +ModalityConversion(context)
+            +FunctionAsAnonymousObjectToLambdaConversion()
+            +ReturnStatementInLambdaExpressionConversion()
             +BoxedTypeOperationsConversion(context)
             +AssignmentAsExpressionToAlsoConversion(context)
             +AssignmentStatementValCreationConversion(context)
