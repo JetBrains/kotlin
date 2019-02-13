@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 
 open class KotlinStatisticsTrigger {
     companion object {
-        private val VERSION = KotlinPluginUtil.getPluginVersion()
-        private val context = FeatureUsageData().addData("plugin_version", VERSION)
+        private val context = FeatureUsageData().addData("plugin_version", KotlinPluginUtil.getPluginVersion())
 
         fun trigger(trigger: KotlinEventTrigger, event: String) {
             FUCounterUsageLogger.getInstance().logEvent(trigger.GROUP_ID, event, context)
