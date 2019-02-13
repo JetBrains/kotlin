@@ -46,8 +46,7 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
             } else this
         }
 
-        fun JKBinaryExpression.convertComparationExpression(): JKBinaryExpression {
-            if (!operator.isComparationOperator()) return this
+        fun JKBinaryExpression.convertBinaryOperationWithChar(): JKBinaryExpression {
             val leftType = left.type(context.symbolProvider)?.asPrimitiveType() ?: return this
             val rightType = right.type(context.symbolProvider)?.asPrimitiveType() ?: return this
 
@@ -67,7 +66,6 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
 
                 )
             }
-            println()
 
             return when {
                 leftType.jvmPrimitiveType == rightType.jvmPrimitiveType -> this
@@ -80,7 +78,7 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
             }
         }
 
-        return binaryExpression.convertComparationExpression().addBangBang()
+        return binaryExpression.convertBinaryOperationWithChar().addBangBang()
     }
 
     private fun convertVariable(variable: JKVariable) {
@@ -136,6 +134,22 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
         return null
     }
 
+    private fun JKExpression.castStringToRegex(toType: JKType): JKExpression? {
+        if (toType.safeAs<JKClassType>()?.classReference?.fqName != "java.util.regex.Pattern") return null
+        val expressionType = type(context.symbolProvider) ?: return null
+        if (!expressionType.isStringType()) return null
+        return JKQualifiedExpressionImpl(
+            copyTreeAndDetach().parenthesizeIfBinaryExpression(),
+            JKKtQualifierImpl.DOT,
+            JKKtCallExpressionImpl(
+                context.symbolProvider.provideByFqName("kotlin.text.toRegex", multiResolve = true),
+                JKArgumentListImpl(),
+                JKTypeArgumentListImpl()
+            )
+        )
+
+    }
+
     private fun JKExpression.castToAsPrimitiveTypes(toType: JKType, strict: Boolean): JKExpression? {
         if (this is JKPrefixExpression
             && (operator.token.text == "+" || operator.token.text == "-")
@@ -181,6 +195,7 @@ class ImplicitCastsConversion(private val context: ConversionContext) : Recursiv
         val expressionType = type(context.symbolProvider)
         if (expressionType == toType) return null
         castToAsPrimitiveTypes(toType, strict)?.also { return it }
+        castStringToRegex(toType)?.also { return it }
         return addBangBang(toType)
     }
 }
