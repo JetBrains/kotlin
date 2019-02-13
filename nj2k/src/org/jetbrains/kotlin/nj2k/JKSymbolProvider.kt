@@ -75,14 +75,15 @@ class JKSymbolProvider {
         symbolsByJK[jk] = it
     }
 
-    fun provideUniverseSymbol(psi: PsiElement): JKSymbol = symbolsByPsi.getOrPut(psi) {
-        when (psi) {
-            is PsiField, is PsiParameter, is PsiLocalVariable -> JKUniverseFieldSymbol()
-            is PsiMethod -> JKUniverseMethodSymbol(this)
-            is PsiClass -> JKUniverseClassSymbol()
-            else -> TODO()
+    fun provideUniverseSymbol(psi: PsiElement): JKSymbol =
+        symbolsByPsi.getOrPut(psi) {
+            when (psi) {
+                is PsiVariable -> JKUniverseFieldSymbol(this)
+                is PsiMethod -> JKUniverseMethodSymbol(this)
+                is PsiClass -> JKUniverseClassSymbol(this)
+                else -> TODO()
+            }
         }
-    }
 
     fun transferSymbol(to: JKDeclaration, from: JKDeclaration) = symbolsByJK[from]!!.let {
         it as JKUniverseSymbol<*>
@@ -91,11 +92,11 @@ class JKSymbolProvider {
     }
 
     fun provideUniverseSymbol(jk: JKClass): JKClassSymbol = symbolsByJK.getOrPut(jk) {
-        JKUniverseClassSymbol().also { it.target = jk }
+        JKUniverseClassSymbol(this).also { it.target = jk }
     } as JKClassSymbol
 
     fun provideUniverseSymbol(jk: JKVariable): JKFieldSymbol = symbolsByJK.getOrPut(jk) {
-        JKUniverseFieldSymbol().also { it.target = jk }
+        JKUniverseFieldSymbol(this).also { it.target = jk }
     } as JKFieldSymbol
 
     fun provideUniverseSymbol(jk: JKMethod): JKMethodSymbol = symbolsByJK.getOrPut(jk) {
@@ -149,6 +150,10 @@ class JKSymbolProvider {
 
 
     private inner class ElementVisitor : JavaElementVisitor() {
+        override fun visitElement(element: PsiElement) {
+            element.acceptChildren(this)
+        }
+
         override fun visitClass(aClass: PsiClass) {
             provideUniverseSymbol(aClass)
             aClass.acceptChildren(this)
@@ -158,12 +163,18 @@ class JKSymbolProvider {
             provideUniverseSymbol(field)
         }
 
+        override fun visitParameter(parameter: PsiParameter) {
+            provideUniverseSymbol(parameter)
+        }
+
         override fun visitMethod(method: PsiMethod) {
             provideUniverseSymbol(method)
+            method.acceptChildren(this)
         }
 
         override fun visitEnumConstant(enumConstant: PsiEnumConstant) {
             provideUniverseSymbol(enumConstant)
+            enumConstant.acceptChildren(this)
         }
 
         override fun visitFile(file: PsiFile) {
