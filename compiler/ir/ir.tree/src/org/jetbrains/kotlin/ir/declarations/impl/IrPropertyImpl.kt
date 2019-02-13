@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -105,6 +102,8 @@ class IrPropertyImpl(
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
     }
+
+    override var metadata: MetadataSource? = null
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         backingField = backingField?.transform(transformer, data) as? IrField

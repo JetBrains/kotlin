@@ -30,6 +30,8 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object TO_ARRAY : IrDeclarationOriginImpl("TO_ARRAY")
     object JVM_STATIC_WRAPPER : IrDeclarationOriginImpl("JVM_STATIC_WRAPPER")
     object JVM_OVERLOADS_WRAPPER : IrDeclarationOriginImpl("JVM_OVERLOADS_WRAPPER")
+    object SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS :
+        IrDeclarationOriginImpl("SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS", isSynthetic = true)
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {

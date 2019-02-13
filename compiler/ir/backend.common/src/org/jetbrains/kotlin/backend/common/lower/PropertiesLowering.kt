@@ -7,26 +7,35 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-val propertiesPhase = makeIrFilePhase(
-    ::PropertiesLowering,
+fun makePropertiesPhase(originOfSyntheticMethodForAnnotations: IrDeclarationOrigin?) = makeIrFilePhase(
+    { context -> PropertiesLowering(context, originOfSyntheticMethodForAnnotations) },
     name = "Properties",
     description = "Move fields and accessors for properties to their classes"
 )
 
-class PropertiesLowering() : IrElementTransformerVoid(), FileLoweringPass {
-    constructor(@Suppress("UNUSED_PARAMETER") context: BackendContext) : this()
-
+class PropertiesLowering(
+    private val context: BackendContext,
+    private val originOfSyntheticMethodForAnnotations: IrDeclarationOrigin?
+) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }
@@ -45,16 +54,43 @@ class PropertiesLowering() : IrElementTransformerVoid(), FileLoweringPass {
 
     private fun lowerProperty(declaration: IrDeclaration, kind: ClassKind): List<IrDeclaration>? =
         if (declaration is IrProperty)
-            ArrayList<IrDeclaration>(3).apply {
+            ArrayList<IrDeclaration>(4).apply {
                 // JvmFields in a companion object refer to companion's owners and should not be generated within companion.
                 if (kind != ClassKind.ANNOTATION_CLASS && declaration.backingField?.parent == declaration.parent) {
                     addIfNotNull(declaration.backingField)
                 }
                 addIfNotNull(declaration.getter)
                 addIfNotNull(declaration.setter)
+
+                if (declaration.annotations.isNotEmpty() && originOfSyntheticMethodForAnnotations != null) {
+                    add(createSyntheticMethodForAnnotations(declaration, originOfSyntheticMethodForAnnotations))
+                }
             }
         else
             null
+
+    private fun createSyntheticMethodForAnnotations(declaration: IrProperty, origin: IrDeclarationOrigin): IrFunctionImpl {
+        val descriptor = WrappedSimpleFunctionDescriptor(declaration.descriptor.annotations)
+        val symbol = IrSimpleFunctionSymbolImpl(descriptor)
+        // TODO: ACC_DEPRECATED
+        return IrFunctionImpl(
+            -1, -1, origin,
+            symbol, Name.identifier(JvmAbi.getSyntheticMethodNameForAnnotatedProperty(declaration.name)),
+            Visibilities.PUBLIC, Modality.OPEN, context.irBuiltIns.unitType,
+            isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+        ).apply {
+            descriptor.bind(this)
+
+            extensionReceiverParameter = declaration.getter?.extensionReceiverParameter
+
+            body = IrBlockBodyImpl(-1, -1)
+
+            // TODO: uncomment this and derive annotations from owner in wrapped descriptors
+            // annotations.addAll(declaration.annotations)
+
+            metadata = declaration.metadata
+        }
+    }
 }
 
 class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {

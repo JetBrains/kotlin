@@ -1835,6 +1835,14 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
+    public Method mapSyntheticMethodForPropertyAnnotations(@NotNull PropertyDescriptor descriptor) {
+        ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
+        String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
+        String desc = receiver == null ? "()V" : "(" + mapType(receiver.getType()) + ")V";
+        return new Method(name, desc);
+    }
+
+    @NotNull
     public JvmMethodSignature mapScriptSignature(
             @NotNull ScriptDescriptor script,
             @NotNull List<ScriptDescriptor> importedScripts

@@ -39,7 +39,7 @@ interface IrFunction :
 
     var body: IrBody?
 
-    override val metadata: MetadataSource.Function?
+    override val metadata: MetadataSource?
 }
 
 

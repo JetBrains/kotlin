@@ -55,7 +55,7 @@ abstract class IrFunctionBase(
 
     final override var body: IrBody? = null
 
-    override var metadata: MetadataSource.Function? = null
+    override var metadata: MetadataSource? = null
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }

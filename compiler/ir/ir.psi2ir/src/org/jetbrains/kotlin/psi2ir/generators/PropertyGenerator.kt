@@ -128,6 +128,8 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
             irProperty.getter = generateGetterIfRequired(ktProperty, propertyDescriptor)
             irProperty.setter = generateSetterIfRequired(ktProperty, propertyDescriptor)
+
+            irProperty.metadata = MetadataSource.Property(propertyDescriptor)
         }
 
     fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtPureElement): IrProperty? {

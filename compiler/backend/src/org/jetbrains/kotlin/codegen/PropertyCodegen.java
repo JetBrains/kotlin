@@ -350,7 +350,7 @@ public class PropertyCodegen {
         Annotations annotations = descriptor.getAnnotations();
         if (annotations.isEmpty()) return;
 
-        Method signature = getSyntheticMethodSignature(descriptor);
+        Method signature = typeMapper.mapSyntheticMethodForPropertyAnnotations(descriptor);
         if (kind != OwnerKind.DEFAULT_IMPLS && CodegenContextUtil.isImplementationOwner(context, descriptor)) {
             v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, signature);
         }
@@ -361,14 +361,6 @@ public class PropertyCodegen {
                 memberCodegen.generateSyntheticAnnotationsMethod(descriptor, signature, annotations);
             }
         }
-    }
-
-    @NotNull
-    private Method getSyntheticMethodSignature(@NotNull PropertyDescriptor descriptor) {
-        ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
-        String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
-        String desc = receiver == null ? "()V" : "(" + typeMapper.mapType(receiver.getType()) + ")V";
-        return new Method(name, desc);
     }
 
     private void generateBackingField(

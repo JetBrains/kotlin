@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -240,11 +241,32 @@ open class ClassCodegen protected constructor(
     private fun generateMethod(method: IrFunction) {
         if (method.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
 
-        val signature = FunctionCodegen(method, this).generate()
+        val signature = FunctionCodegen(method, this).generate().asmMethod
 
-        val descriptor = method.metadata?.descriptor
-        if (descriptor != null) {
-            visitor.serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, descriptor, signature.asmMethod)
+        val metadata = method.metadata
+        when (metadata) {
+            is MetadataSource.Property -> {
+                // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
+                // moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
+                // TODO: fix origin somehow, because otherwise $annotations methods in interfaces also don't have ACC_SYNTHETIC
+                assert(method.name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)) { method.dump() }
+
+                val codegen = if (DescriptorUtils.isInterface(metadata.descriptor.containingDeclaration)) {
+                    assert(irClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) { irClass.dump() }
+                    parentClassCodegen!!
+                } else {
+                    this
+                }
+                codegen.visitor.serializationBindings.put(
+                    JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY, metadata.descriptor, signature
+                )
+            }
+            is MetadataSource.Function -> {
+                visitor.serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, metadata.descriptor, signature)
+            }
+            null -> {
+            }
+            else -> error("Incorrect metadata source $metadata for:\n${method.dump()}")
         }
     }
 
