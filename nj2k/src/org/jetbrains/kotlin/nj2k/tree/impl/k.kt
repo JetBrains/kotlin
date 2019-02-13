@@ -98,6 +98,17 @@ class JKKtSingleValueOperatorToken(val psiToken: KtSingleValueToken) : JKKtOpera
     override val text: String = psiToken.value
 }
 
+object JKKtSpreadOperatorToken : JKKtOperatorToken {
+    override val text: String = "*"
+    override val operatorName: String = "*"
+}
+
+object JKKtSpreadOperator : JKOperator {
+    override val token: JKOperatorToken = JKKtSpreadOperatorToken
+    override val precedence: Int
+        get() = TODO()
+}
+
 class JKKtWordOperatorToken(override val text: String) : JKKtOperatorToken {
     override val operatorName: String = text
 }

@@ -11,28 +11,32 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
-import org.jetbrains.kotlin.nj2k.ConversionContext
-import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.nj2k.conversions.resolveFqName
-import org.jetbrains.kotlin.nj2k.kotlinTypeByName
-import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.JKSymbolProvider
+import org.jetbrains.kotlin.nj2k.kotlinTypeByName
+import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
     when (this) {
         is JKLiteralExpression -> type.toJkType(symbolProvider)
         is JKOperatorExpression -> {
-            (operator as? JKKtOperatorImpl)?.returnType
-                ?: error("Cannot get type of ${operator::class}, it should be first converted to KtOperator")
-
+            val operator = operator
+            when (operator) {
+                is JKKtOperatorImpl -> operator.returnType
+                is JKKtSpreadOperator -> (this as JKPrefixExpression).expression.type(symbolProvider)//TODO ger real type
+                else -> error("Cannot get type of ${operator::class}, it should be first converted to KtOperator")
+            }
         }
         is JKMethodCallExpression -> identifier.returnType
         is JKFieldAccessExpressionImpl -> identifier.fieldType
