@@ -43,4 +43,21 @@ class KotlinIndexPatternBuilder: IndexPatternBuilder {
         KtTokens.BLOCK_COMMENT -> "*/".length
         else -> 0
     }
+
+    override fun getCommentStartDelta(tokenType: IElementType, tokenText: CharSequence): Int {
+        return when (tokenType) {
+            KtTokens.EOL_COMMENT -> 2
+            KtTokens.BLOCK_COMMENT -> 2
+            KtTokens.DOC_COMMENT -> 3
+            else -> 0
+        }
+    }
+
+    override fun getCharsAllowedInContinuationPrefix(tokenType: IElementType): String {
+        return when (tokenType) {
+            KtTokens.BLOCK_COMMENT -> "*"
+            KtTokens.DOC_COMMENT -> "*"
+            else -> ""
+        }
+    }
 }
