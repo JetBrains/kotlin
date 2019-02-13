@@ -144,7 +144,7 @@ sealed class InliningScope {
     }
 }
 
-class ImportInfoFragmentInliningScope private constructor(
+class ImportIntoFragmentInliningScope private constructor(
     override val fragment: JsProgramFragment
 ) : InliningScope() {
 
@@ -231,8 +231,8 @@ class ImportInfoFragmentInliningScope private constructor(
     }
 
     companion object {
-        fun process(fragment: JsProgramFragment, fn: (ImportInfoFragmentInliningScope) -> Unit) {
-            val scope = ImportInfoFragmentInliningScope(fragment)
+        fun process(fragment: JsProgramFragment, fn: (ImportIntoFragmentInliningScope) -> Unit) {
+            val scope = ImportIntoFragmentInliningScope(fragment)
             fn(scope)
 
             scope.apply {

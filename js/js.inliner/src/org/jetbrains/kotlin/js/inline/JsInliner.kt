@@ -27,7 +27,7 @@ class JsInliner(
 
     fun process() {
         for (fragment in translationResult.newFragments) {
-            ImportInfoFragmentInliningScope.process(fragment) { fragmentScope ->
+            ImportIntoFragmentInliningScope.process(fragment) { fragmentScope ->
                 InlineAstVisitor(this, fragmentScope).accept(fragmentScope.allCode)
             }
         }

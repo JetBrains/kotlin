@@ -136,7 +136,8 @@ fun collectDefinedNamesInAllScopes(scope: JsNode): Set<JsName> {
 
         override fun visitFunction(x: JsFunction) {
             super.visitFunction(x)
-            // TODO This is a hack
+            // The order is important. `function foo` and `var foo = wrapfunction(..)` should yield JsName's in the same order.
+            // TODO make more robust
             names += x.parameters.map { it.name }
             x.name?.let { names += it }
         }

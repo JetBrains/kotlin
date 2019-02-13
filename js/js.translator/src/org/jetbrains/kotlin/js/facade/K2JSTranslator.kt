@@ -169,6 +169,7 @@ class K2JSTranslator @JvmOverloads constructor(
         bindingTrace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ) {
+        // TODO Maybe switch validation on for recompile
         if (incrementalResults == null && !shouldValidateJsAst) return
 
         val serializer = JsAstSerializer(if (shouldValidateJsAst) ::validateJsAst else null) { file ->
