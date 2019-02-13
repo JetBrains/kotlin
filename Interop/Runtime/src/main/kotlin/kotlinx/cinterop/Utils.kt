@@ -327,6 +327,9 @@ public inline fun <reified T : CVariable> createValues(count: Int, initializer: 
 }
 
 // TODO: optimize other [cValuesOf] methods:
+/**
+ * Returns sequence of immutable values [CValues] to pass them to C code.
+ */
 fun cValuesOf(vararg elements: Byte): CValues<ByteVar> = object : CValues<ByteVar>() {
     // Optimization to avoid unneeded virtual calls in base class implementation.
     override fun getPointer(scope: AutofreeScope): CPointer<ByteVar> {

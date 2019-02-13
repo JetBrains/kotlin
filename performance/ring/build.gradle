@@ -1,0 +1,7 @@
+project.ext {
+    applicationName = 'Ring'
+    commonSrcDirs = ['../../tools/benchmarks/shared/src', 'src/main/kotlin', '../shared/src/main/kotlin', '../../tools/kliopt']
+    jvmSrcDirs = ['src/main/kotlin-jvm', '../shared/src/main/kotlin-jvm']
+    nativeSrcDirs = ['src/main/kotlin-native', '../shared/src/main/kotlin-native']
+}
+apply from: rootProject.file('gradle/benchmark.gradle')

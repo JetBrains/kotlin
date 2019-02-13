@@ -221,7 +221,7 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
                 // Calculate metrics for showing difference.
                 val percent = current.calcPercentageDiff(previous)
                 val ratio = current.calcRatio(previous)
-                if (abs(percent.mean) >= meaningfulChangesValue) {
+                if (abs(percent.mean) - percent.variance >= meaningfulChangesValue) {
                     return Pair(name, Pair(percent, ratio))
                 }
             }

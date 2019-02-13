@@ -257,7 +257,7 @@ All the supported C types have corresponding representations in Kotlin:
 *   Pointers and arrays are mapped to `CPointer<T>?`.
 *   Enums can be mapped to either Kotlin enum or integral values, depending on
     heuristics and the [definition file hints](#definition-file-hints).
-*   Structs are mapped to types having fields available via the dot notation,
+*   Structs / unions are mapped to types having fields available via the dot notation,
     i.e. `someStructInstance.field1`.
 *   `typedef` are represented as `typealias`.
 
@@ -527,7 +527,7 @@ it belongs to. Once the control flow leaves the `memScoped` scope the C pointers
 
 ### Passing and receiving structs by value ###
 
-When a C function takes or returns a struct `T` by value, the corresponding
+When a C function takes or returns a struct / union `T` by value, the corresponding
 argument type or return type is represented as `CValue<T>`.
 
 `CValue<T>` is an opaque type, so the structure fields cannot be accessed with

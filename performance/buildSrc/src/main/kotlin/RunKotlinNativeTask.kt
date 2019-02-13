@@ -7,6 +7,8 @@ import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
+import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import javax.inject.Inject
 import java.io.File
@@ -18,6 +20,10 @@ open class RunKotlinNativeTask @Inject constructor(
     var buildType = "RELEASE"
     var workingDir: Any = project.projectDir
     var outputFileName: String? = null
+    @Input
+    @Option(option = "filter", description = "filter")
+    var filter: String = ""
+
     private var curArgs: List<String> = emptyList()
     private val curEnvironment: MutableMap<String, Any> = mutableMapOf()
 
@@ -40,9 +46,11 @@ open class RunKotlinNativeTask @Inject constructor(
     }
 
     private fun executeTask(output: java.io.OutputStream? = null) {
+        val filterArgs = filter.split("\\s*,\\s*".toRegex())
+                .map{ if (it.isNotEmpty()) listOf("-f", it) else listOf(null) }.flatten().filterNotNull()
         project.exec {
             it.executable = curTarget.compilations.main.getBinary("EXECUTABLE", buildType).toString()
-            it.args = curArgs
+            it.args = curArgs + filterArgs
             it.environment = curEnvironment
             it.workingDir(workingDir)
             if (output != null)

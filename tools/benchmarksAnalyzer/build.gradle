@@ -40,6 +40,7 @@ kotlin {
             }
             kotlin.srcDir '../benchmarks/shared/src'
             kotlin.srcDir 'src/main/kotlin'
+            kotlin.srcDir '../kliopt'
 
         }
         commonTest {

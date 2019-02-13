@@ -110,6 +110,16 @@ fun createJsonReport(projectProperties: Map<String, Any>): String {
     return report.toJson()
 }
 
+fun mergeReports(reports: List<File>): String {
+    val reportsToMerge = reports.map {
+        val json = it.inputStream().bufferedReader().use { it.readText() }
+        val reportElement = JsonTreeParser.parse(json)
+        BenchmarksReport.create(reportElement)
+
+    }
+    return reportsToMerge.reduce { result, it -> result + it }.toJson()
+}
+
 // Find file with set name in directory.
 fun findFile(fileName: String, directory: String): String? =
     File(directory).walkBottomUp().find { it.name == fileName }?.getAbsolutePath()
