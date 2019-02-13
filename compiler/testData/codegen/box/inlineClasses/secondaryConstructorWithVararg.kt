@@ -1,6 +1,6 @@
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM_IR, JS_IR
 
 inline class Z(val x: Int) {
     constructor(vararg ys: Long) : this(ys.size)

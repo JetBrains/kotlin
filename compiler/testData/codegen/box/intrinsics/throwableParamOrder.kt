@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 var res = ""
 
 fun getM(): String {

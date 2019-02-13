@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val transform = transform(Array(1) { BooleanArray(1) })
     if (!transform[0][0]) return "OK"
