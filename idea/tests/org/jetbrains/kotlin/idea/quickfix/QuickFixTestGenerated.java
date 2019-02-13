@@ -1075,9 +1075,64 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/addStarProjections/cast/changeToStarProjectionNullable.kt");
             }
 
+            @TestMetadata("extensionReceiver.kt")
+            public void testExtensionReceiver() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/extensionReceiver.kt");
+            }
+
+            @TestMetadata("extensionReceiver2.kt")
+            public void testExtensionReceiver2() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/extensionReceiver2.kt");
+            }
+
+            @TestMetadata("extensionReceiver3.kt")
+            public void testExtensionReceiver3() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/extensionReceiver3.kt");
+            }
+
+            @TestMetadata("extensionReceiver4.kt")
+            public void testExtensionReceiver4() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/extensionReceiver4.kt");
+            }
+
+            @TestMetadata("extensionReceiver5.kt")
+            public void testExtensionReceiver5() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/extensionReceiver5.kt");
+            }
+
             @TestMetadata("uncheckedCastOnTypeParameter.kt")
             public void testUncheckedCastOnTypeParameter() throws Exception {
                 runTest("idea/testData/quickfix/addStarProjections/cast/uncheckedCastOnTypeParameter.kt");
+            }
+
+            @TestMetadata("valueArgument.kt")
+            public void testValueArgument() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/valueArgument.kt");
+            }
+
+            @TestMetadata("valueArgument2.kt")
+            public void testValueArgument2() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/valueArgument2.kt");
+            }
+
+            @TestMetadata("valueArgument3.kt")
+            public void testValueArgument3() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/valueArgument3.kt");
+            }
+
+            @TestMetadata("valueArgument4.kt")
+            public void testValueArgument4() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/valueArgument4.kt");
+            }
+
+            @TestMetadata("valueArgument5.kt")
+            public void testValueArgument5() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/valueArgument5.kt");
+            }
+
+            @TestMetadata("valueArgument6.kt")
+            public void testValueArgument6() throws Exception {
+                runTest("idea/testData/quickfix/addStarProjections/cast/valueArgument6.kt");
             }
         }
 
