@@ -6,15 +6,17 @@
 package org.jetbrains.kotlin.nj2k
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
-import org.jetbrains.kotlin.nj2k.conversions.multiResolveFqName
-import org.jetbrains.kotlin.nj2k.conversions.resolveFqName
-import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.nj2k.conversions.multiResolveFqName
+import org.jetbrains.kotlin.nj2k.conversions.resolveFqName
+import org.jetbrains.kotlin.nj2k.tree.JKClass
+import org.jetbrains.kotlin.nj2k.tree.JKDeclaration
+import org.jetbrains.kotlin.nj2k.tree.JKMethod
+import org.jetbrains.kotlin.nj2k.tree.JKVariable
+import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -30,28 +32,38 @@ class JKSymbolProvider {
         files.forEach { it.accept(elementVisitor) }
     }
 
+    private fun symbolForNonKotlinElement(psi: PsiElement) =
+        when (psi) {
+            is KtEnumEntry -> JKMultiverseKtEnumEntrySymbol(psi, this)
+            is PsiClass -> JKMultiverseClassSymbol(psi, this)
+            is KtClassOrObject -> JKMultiverseKtClassSymbol(psi, this)
+            is PsiMethod -> JKMultiverseMethodSymbol(psi, this)
+            is PsiField -> JKMultiverseFieldSymbol(psi, this)
+            is KtNamedFunction -> JKMultiverseFunctionSymbol(psi, this)
+            is KtProperty -> JKMultiversePropertySymbol(psi, this)
+            is KtParameter -> JKMultiversePropertySymbol(psi, this)
+            is PsiParameter -> JKMultiverseFieldSymbol(psi, this)
+            is PsiLocalVariable -> JKMultiverseFieldSymbol(psi, this)
+            else -> TODO(psi::class.toString())
+        }
+
     fun provideDirectSymbol(psi: PsiElement): JKSymbol {
         return symbolsByPsi.getOrPut(psi) {
-            when (psi) {
-                is KtLightDeclaration<*, *> -> provideDirectSymbol(psi.kotlinOrigin!!)
-                is PsiClass -> JKMultiverseClassSymbol(psi)
-                is KtClassOrObject -> JKMultiverseKtClassSymbol(psi)
-                is PsiMethod -> JKMultiverseMethodSymbol(psi, this)
-                is PsiField -> JKMultiverseFieldSymbol(psi, this)
-                is KtNamedFunction -> JKMultiverseFunctionSymbol(psi, this)
-                is KtProperty -> JKMultiversePropertySymbol(psi, this)
-                is KtParameter -> JKMultiversePropertySymbol(psi, this)
-                is PsiParameter -> JKMultiverseFieldSymbol(psi, this)
-                is PsiLocalVariable -> JKMultiverseFieldSymbol(psi, this)
-                else -> TODO(psi::class.toString())
-            }
+            if (psi is KtLightDeclaration<*, *>)
+                psi.kotlinOrigin
+                    ?.let { provideDirectSymbol(it) }
+                    ?: symbolForNonKotlinElement(psi)
+            else symbolForNonKotlinElement(psi)
         }
     }
 
     internal inline fun <reified T : JKSymbol> provideSymbol(reference: PsiReference): T {
         val target = reference.resolve()
         if (target != null) return provideDirectSymbol(target) as T
-        return (if (isAssignable<T, JKUnresolvedField>()) JKUnresolvedField(reference.canonicalText, this) else JKUnresolvedMethod(reference)) as T
+        return (if (isAssignable<T, JKUnresolvedField>()) JKUnresolvedField(
+            reference.canonicalText,
+            this
+        ) else JKUnresolvedMethod(reference)) as T
     }
 
     fun provideUniverseSymbol(psi: PsiElement, jk: JKDeclaration): JKSymbol = provideUniverseSymbol(psi).also {

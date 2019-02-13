@@ -301,7 +301,9 @@ class JavaToJKTreeBuilder(
 
         fun PsiReferenceExpression.toJK(): JKExpression {
             val target = resolve()
-            if (target is KtLightClassForFacade) return JKStubExpressionImpl()
+            if (target is KtLightClassForFacade
+                || target is KtLightClassForDecompiledDeclaration
+            ) return JKStubExpressionImpl()
             if (target is KtLightField
                 && target.name == "INSTANCE"
                 && target.containingClass.kotlinOrigin is KtObjectDeclaration
@@ -388,8 +390,22 @@ class JavaToJKTreeBuilder(
             return JKParenthesizedExpressionImpl(expression?.toJK() ?: TODO())
         }
 
-        fun PsiExpressionList?.toJK(): JKExpressionList {
-            return JKExpressionListImpl(this?.expressions?.map { it.toJK() } ?: emptyList())
+        fun PsiExpressionList.toJK(): JKArgumentList {
+            val jkExpressions = expressions.map { it.toJK() }
+            return ((parent as? PsiCall)?.resolveMethod()
+                ?.let { method ->
+                    if (jkExpressions.size == method.parameterList.parameters.size
+                        && method.parameterList.parameters.getOrNull(jkExpressions.lastIndex)?.isVarArgs == true
+                        && expressions.lastOrNull()?.type is PsiArrayType
+                    ) {
+                        val staredExpression =
+                            JKPrefixExpressionImpl(
+                                jkExpressions.last(),
+                                JKKtSpreadOperator
+                            )
+                        jkExpressions.dropLast(1) + staredExpression
+                    } else jkExpressions
+                } ?: jkExpressions).let { it.toArgumentList() }
         }
 
     }
