@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.isVarargsArgument
-import org.jetbrains.kotlin.nj2k.primaryConstructor
 import org.jetbrains.kotlin.nj2k.toExpression
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationNameParameterImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationParameterImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKUniverseClassSymbol
+import org.jetbrains.kotlin.nj2k.tree.impl.JKKtAnnotationArrayInitializerExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKNameIdentifierImpl
 
 class AnnotationConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -36,6 +36,17 @@ class AnnotationConversion(private val context: ConversionContext) : RecursiveAp
                             (annotationParameter.value as JKKtAnnotationArrayInitializerExpression)::initializers
                                 .detached()
                                 .map { JKAnnotationParameterImpl(it) }
+                        annotationParameter is JKAnnotationNameParameter
+                                && annotation.isVarargsArgument(index)
+                                && annotation.classSymbol.target is JKClass
+                                && annotationParameter.value !is JKKtAnnotationArrayInitializerExpression -> {
+                            listOf(
+                                JKAnnotationNameParameterImpl(
+                                    JKKtAnnotationArrayInitializerExpressionImpl(annotationParameter::value.detached()),
+                                    JKNameIdentifierImpl(annotationParameter.name.value)
+                                )
+                            )
+                        }
                         annotationParameter is JKAnnotationNameParameterImpl ->
                             listOf(
                                 JKAnnotationNameParameterImpl(

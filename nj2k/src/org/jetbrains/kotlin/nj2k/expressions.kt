@@ -557,7 +557,14 @@ fun JKAnnotation.isVarargsArgument(index: Int): Boolean {
     val target = classSymbol.target
     return when (target) {
         is JKClass -> target.primaryConstructor()?.parameters?.getOrNull(index)?.isVarArgs
-        is PsiClass -> target.methods.getOrNull(index)?.isVarArgs
+        is PsiClass -> target.methods.getOrNull(index)?.let {
+            it.isVarArgs || it.name == "value"
+        }
         else -> false
     } ?: false
 }
+
+
+fun JKExpression.asStatement(): JKExpressionStatement =
+    JKExpressionStatementImpl(this)
+
