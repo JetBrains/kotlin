@@ -144,8 +144,6 @@ val testDistProjects = listOf(
     ":kotlin-compiler",
     ":kotlin-script-runtime",
     ":kotlin-stdlib",
-    ":kotlin-stdlib-jre7",
-    ":kotlin-stdlib-jre8",
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-stdlib-js",

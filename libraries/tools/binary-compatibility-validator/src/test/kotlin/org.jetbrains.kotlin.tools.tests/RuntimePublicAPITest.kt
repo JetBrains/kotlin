@@ -33,14 +33,6 @@ class RuntimePublicAPITest {
         snapshotAPIAndCompare("../../stdlib/jdk8/build/libs", "kotlin-stdlib-jdk8")
     }
 
-    @Test fun kotlinStdlibJre7() {
-        snapshotAPIAndCompare("../../stdlib/jre7/build/libs", "kotlin-stdlib-jre7")
-    }
-
-    @Test fun kotlinStdlibJre8() {
-        snapshotAPIAndCompare("../../stdlib/jre8/build/libs", "kotlin-stdlib-jre8")
-    }
-
     @Test fun kotlinReflect() {
         snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
     }

@@ -443,8 +443,6 @@ tasks {
 
     create("coreLibsTest") {
         (coreLibProjects + listOf(
-                ":kotlin-stdlib-jre7",
-                ":kotlin-stdlib-jre8",
                 ":kotlin-stdlib:samples",
                 ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
                 ":kotlinx-metadata-jvm",
