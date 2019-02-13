@@ -23,9 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
-import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.project.projectSourceModules
 import org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService
@@ -64,9 +62,8 @@ class PluginDeclarationProviderFactory(
 
     private fun stubBasedPackageExists(name: FqName): Boolean {
         // We're only looking for source-based declarations
-        return (moduleInfo as? IdeaModuleInfo)?.projectSourceModules()
-            ?.any { PerModulePackageCacheService.getInstance(project).packageExists(name, it) }
-            ?: false
+        if (moduleInfo !is ModuleSourceInfo) return false
+        return PerModulePackageCacheService.getInstance(project).packageExists(name, moduleInfo)
     }
 
     private fun getStubBasedPackageMemberDeclarationProvider(name: FqName): PackageMemberDeclarationProvider? {
