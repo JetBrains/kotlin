@@ -7,15 +7,15 @@
       </element>
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/protobuf-lite/2.6.1/9af39e6d6cbd4404d06ae2ae63505b6247e6760b/protobuf-lite-2.6.1.jar" path-in-jar="/" />
-      <element id="module-output" name="org.jetbrains.kotlin.descriptors.jvm.main" />
-      <element id="module-output" name="org.jetbrains.kotlin.descriptors.runtime.main" />
-      <element id="module-output" name="org.jetbrains.kotlin.descriptors.main" />
-      <element id="module-output" name="org.jetbrains.kotlin.deserialization.main" />
-      <element id="module-output" name="org.jetbrains.kotlin.kotlin-reflect-api.main" />
-      <element id="module-output" name="org.jetbrains.kotlin.kotlin-reflect.main" />
-      <element id="module-output" name="org.jetbrains.kotlin.metadata.jvm.main" />
-      <element id="module-output" name="org.jetbrains.kotlin.metadata.main" />
-      <element id="module-output" name="org.jetbrains.kotlin.util.runtime.main" />
+      <element id="module-output" name="kotlin.core.descriptors.jvm.main" />
+      <element id="module-output" name="kotlin.core.descriptors.runtime.main" />
+      <element id="module-output" name="kotlin.core.descriptors.main" />
+      <element id="module-output" name="kotlin.core.deserialization.main" />
+      <element id="module-output" name="kotlin.kotlin-reflect-api.main" />
+      <element id="module-output" name="kotlin.kotlin-reflect.main" />
+      <element id="module-output" name="kotlin.core.metadata.jvm.main" />
+      <element id="module-output" name="kotlin.core.metadata.main" />
+      <element id="module-output" name="kotlin.core.util.runtime.main" />
     </root>
   </artifact>
 </component>

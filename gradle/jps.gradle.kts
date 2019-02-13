@@ -63,7 +63,7 @@ if (isJpsBuildEnabled && System.getProperty("idea.active") != null) {
 
                     runConfigurations {
                         application("[JPS] IDEA") {
-                            moduleName = "org.jetbrains.kotlin.idea-runner.main"
+                            moduleName = "kotlin.idea-runner.main"
                             workingDirectory = File(intellijRootDir(), "bin").toString()
                             mainClass = "com.intellij.idea.Main"
                             jvmArgs = listOf(
@@ -83,7 +83,7 @@ if (isJpsBuildEnabled && System.getProperty("idea.active") != null) {
                         }
 
                         application("[JPS] Generate All Tests") {
-                            moduleName = "org.jetbrains.kotlin.generate-all-tests.test"
+                            moduleName = "kotlin.pill.generate-all-tests.test"
                             workingDirectory = rootDir.toString()
                             mainClass = "org.jetbrains.kotlin.pill.generateAllTests.Main"
                         }
@@ -94,31 +94,31 @@ if (isJpsBuildEnabled && System.getProperty("idea.active") != null) {
 
                         // todo: replace `pattern` with `package`, when `com.intellij.execution.junit.JUnitRunConfigurationImporter#process` will be fixed
                         junit("[JPS] All IDEA Plugin Tests") {
-                            moduleName = "org.jetbrains.kotlin.idea.test"
+                            moduleName = "kotlin.idea.test"
                             pattern = "org.jetbrains.kotlin.*"
                             configureForKotlin()
                         }
 
                         junit("[JPS] Compiler Tests") {
-                            moduleName = "org.jetbrains.kotlin.compiler.test"
+                            moduleName = "kotlin.compiler.test"
                             pattern = "org.jetbrains.kotlin.*"
                             configureForKotlin()
                         }
 
                         junit("[JPS] JVM Backend Tests") {
-                            moduleName = "org.jetbrains.kotlin.idea.test"
+                            moduleName = "kotlin.idea.test"
                             pattern = "org.jetbrains.kotlin.codegen.*"
                             configureForKotlin()
                         }
 
                         junit("[JPS] JS Backend Tests") {
-                            moduleName = "org.jetbrains.kotlin.js.tests.test"
+                            moduleName = "kotlin.js.js.tests.test"
                             pattern = "org.jetbrains.kotlin.js.test.*"
                             configureForKotlin()
                         }
 
                         junit("[JPS] Java 8 Tests") {
-                            moduleName = "org.jetbrains.kotlin.tests-java8.test"
+                            moduleName = "kotlin.compiler.tests-java8.test"
                             pattern = "org.jetbrains.kotlin.*"
                             configureForKotlin()
                         }

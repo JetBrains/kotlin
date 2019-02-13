@@ -9,46 +9,46 @@
         <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar" />
         <element id="file-copy" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/trove4j.jar" />
         <element id="archive" name="allopen-compiler-plugin.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-allopen-compiler-plugin.main" />
+          <element id="module-output" name="kotlin.kotlin-allopen-compiler-plugin.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/allopen/allopen-cli/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="android-extensions-runtime.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-android-extensions-runtime.main" />
+          <element id="module-output" name="kotlin.kotlin-android-extensions-runtime.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/android-extensions/android-extensions-runtime/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-annotation-processing.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-annotation-processing.main" />
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-annotation-processing-runtime.main" />
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-annotation-processing-cli.main" />
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-annotation-processing-base.main" />
+          <element id="module-output" name="kotlin.kotlin-annotation-processing.main" />
+          <element id="module-output" name="kotlin.kotlin-annotation-processing-runtime.main" />
+          <element id="module-output" name="kotlin.kotlin-annotation-processing-cli.main" />
+          <element id="module-output" name="kotlin.kotlin-annotation-processing-base.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/kapt3/kapt3-compiler/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-annotation-processing-cli.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-annotation-processing-cli.main" />
+          <element id="module-output" name="kotlin.kotlin-annotation-processing-cli.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/kapt3/kapt3-cli/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-annotation-processing-runtime.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-annotation-processing-runtime.main" />
+          <element id="module-output" name="kotlin.kotlin-annotation-processing-runtime.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/kapt3/kapt3-runtime/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-annotations-android.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-annotations-android.main" />
+          <element id="module-output" name="kotlin.kotlin-annotations-android.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/tools/kotlin-annotations-android/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-annotations-jvm.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-annotations-jvm.main" />
+          <element id="module-output" name="kotlin.kotlin-annotations-jvm.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/tools/kotlin-annotations-jvm/build/tmp/jar/MANIFEST.MF" />
           </element>
@@ -68,19 +68,19 @@
           </element>
         </element>
         <element id="archive" name="kotlin-ant.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-ant.main" />
+          <element id="module-output" name="kotlin.kotlin-ant.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/ant/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="noarg-compiler-plugin.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-noarg-compiler-plugin.main" />
+          <element id="module-output" name="kotlin.kotlin-noarg-compiler-plugin.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/noarg/noarg-cli/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-preloader.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-preloader.main" />
+          <element id="module-output" name="kotlin.kotlin-preloader.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/compiler/preloader/build/tmp/jar/MANIFEST.MF" />
           </element>
@@ -97,19 +97,19 @@
           </element>
         </element>
         <element id="archive" name="kotlin-runner.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-runner.main" />
+          <element id="module-output" name="kotlin.kotlin-runner.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/compiler/cli/cli-runner/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="sam-with-receiver-compiler-plugin.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-sam-with-receiver-compiler-plugin.main" />
+          <element id="module-output" name="kotlin.kotlin-sam-with-receiver-compiler-plugin.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-cli/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-script-runtime.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-script-runtime.main" />
+          <element id="module-output" name="kotlin.kotlin-script-runtime.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/tools/script-runtime/build/tmp/jar/MANIFEST.MF" />
           </element>
@@ -121,32 +121,31 @@
           </element>
         </element>
         <element id="archive" name="kotlin-scripting-common.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-scripting-common.main" />
+          <element id="module-output" name="kotlin.kotlin-scripting-common.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/scripting/common/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-scripting-compiler.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-scripting-compiler.main" />
+          <element id="module-output" name="kotlin.kotlin-scripting-compiler.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/scripting/scripting-cli/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-scripting-jvm.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-scripting-jvm.main" />
+          <element id="module-output" name="kotlin.kotlin-scripting-jvm.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/scripting/jvm/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-source-sections-compiler-plugin.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-source-sections-compiler-plugin.main" />
+          <element id="module-output" name="kotlin.kotlin-source-sections-compiler-plugin.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/source-sections/source-sections-compiler/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-test-js.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-test-js.main" />
-          <element id="dir-copy" path="$PROJECT_DIR$/libraries/kotlin.test/js/build/classes/main" />
+          <element id="module-output" name="kotlin.kotlin-test.kotlin-test-js.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/kotlin.test/js/build/tmp/jar/MANIFEST.MF" />
           </element>
@@ -158,7 +157,7 @@
           </element>
         </element>
         <element id="archive" name="kotlin-test-junit.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-test-junit.main" />
+          <element id="module-output" name="kotlin.kotlin-test.kotlin-test-junit.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/kotlin.test/junit/build/tmp/jar/MANIFEST.MF" />
           </element>
@@ -170,7 +169,7 @@
           </element>
         </element>
         <element id="archive" name="kotlin-test-junit5.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-test-junit5.main" />
+          <element id="module-output" name="kotlin.kotlin-test.kotlin-test-junit5.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/kotlin.test/junit5/build/tmp/jar/MANIFEST.MF" />
           </element>
@@ -182,7 +181,7 @@
           </element>
         </element>
         <element id="archive" name="kotlin-test.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-test-jvm.main" />
+          <element id="module-output" name="kotlin.kotlin-test.kotlin-test-jvm.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/kotlin.test/jvm/build/tmp/jar/MANIFEST.MF" />
           </element>
@@ -194,7 +193,7 @@
           </element>
         </element>
         <element id="archive" name="kotlin-test-testng.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-test-testng.main" />
+          <element id="module-output" name="kotlin.kotlin-test.kotlin-test-testng.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/kotlin.test/testng/build/tmp/jar/MANIFEST.MF" />
           </element>
@@ -206,20 +205,20 @@
           </element>
         </element>
         <element id="archive" name="kotlinx-serialization-compiler-plugin.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.kotlinx-serialization-compiler-plugin.main" />
+          <element id="module-output" name="kotlin.kotlinx-serialization-compiler-plugin.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/kotlin-serialization/kotlin-serialization-compiler/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="mutability-annotations-compat.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.mutability-annotations-compat.main" />
+          <element id="module-output" name="kotlin.libraries.tools.mutability-annotations-compat.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/libraries/tools/mutability-annotations-compat/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="android-extensions-compiler.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.android-extensions-compiler.main" />
-          <element id="module-output" name="org.jetbrains.kotlin.kotlin-android-extensions-runtime.main" />
+          <element id="module-output" name="kotlin.plugins.android-extensions-compiler.main" />
+          <element id="module-output" name="kotlin.kotlin-android-extensions-runtime.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/build/tmp/jar/MANIFEST.MF" />
           </element>
@@ -238,7 +237,7 @@
         <element id="artifact" artifact-name="kotlin-main-kts.jar" />
         <element id="artifact" artifact-name="kotlin-imports-dumper-compiler-plugin.jar" />
         <element id="archive" name="jvm-abi-gen.jar">
-          <element id="module-output" name="org.jetbrains.kotlin.jvm-abi-gen.main" />
+          <element id="module-output" name="kotlin.plugins.jvm-abi-gen.main" />
           <element id="directory" name="META-INF">
             <element id="file-copy" path="$PROJECT_DIR$/plugins/jvm-abi-gen/build/tmp/jar/MANIFEST.MF" />
           </element>

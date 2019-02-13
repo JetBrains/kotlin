@@ -17,8 +17,8 @@
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-osx-i386/0.14/fd86b7eedbf5a0df003cf946f0b0c80c06c103ee/native-platform-osx-i386-0.14.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-windows-amd64/0.14/bdf519fab10700fadc9953526a07e8104fad1d07/native-platform-windows-amd64-0.14.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-windows-i386/0.14/65b00e123554f42ecd0da054a747033be5da608d/native-platform-windows-i386-0.14.jar" path-in-jar="/" />
-      <element id="module-output" name="org.jetbrains.kotlin.daemon-common.main" />
-      <element id="module-output" name="org.jetbrains.kotlin.kotlin-daemon-client.main" />
+      <element id="module-output" name="kotlin.compiler.daemon-common.main" />
+      <element id="module-output" name="kotlin.kotlin-daemon-client.main" />
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/compiler/daemon/daemon-client/build/tmp/shadowJar/MANIFEST.MF" />
       </element>
