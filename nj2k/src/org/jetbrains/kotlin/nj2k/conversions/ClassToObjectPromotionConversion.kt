@@ -6,22 +6,28 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.getCompanion
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationListImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKClassImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
 class ClassToObjectPromotionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKClass && element.classKind == JKClass.ClassKind.CLASS) {
-            val companion =
-                element.declarationList.firstIsInstanceOrNull<JKClass>()
-                    ?.takeIf { it.classKind == JKClass.ClassKind.COMPANION }
-                    ?: return recurse(element)
+            val companion = element.getCompanion() ?: return recurse(element)
 
             val allDeclarationsMatches = element.declarationList.all {
                 when (it) {
                     is JKKtPrimaryConstructor -> it.parameters.isEmpty() && it.block.statements.isEmpty()
-                    is JKClass -> it.classKind == JKClass.ClassKind.COMPANION
+                    is JKKtInitDeclaration ->
+                        it.block.statements.all { statement ->
+                            when (statement) {
+                                is JKDeclarationStatement -> statement.declaredStatements.isEmpty()
+                                else -> false
+                            }
+                        }
+                    is JKClass -> true
                     else -> false
                 }
             }
@@ -35,8 +41,12 @@ class ClassToObjectPromotionConversion(private val context: ConversionContext) :
                         element.inheritance,
                         JKClass.ClassKind.OBJECT,
                         element.typeParameterList,
-                        companion.classBody.also {
-                            it.handleDeclarationsModifiers()
+                        companion.classBody.also { body ->
+                            body.handleDeclarationsModifiers()
+                            body.declarations += element.classBody.declarations.filter {
+                                //TODO preseve order
+                                it is JKClass && it.classKind != JKClass.ClassKind.COMPANION
+                            }.map { it.detached(element.classBody) }
                         },
                         JKAnnotationListImpl(),
                         element.extraModifiers,

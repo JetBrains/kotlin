@@ -482,8 +482,24 @@ fun equalsExpression(left: JKExpression, right: JKExpression, symbolProvider: JK
         symbolProvider
     )
 
+fun createCompanion(declarations: List<JKDeclaration>): JKClass =
+    JKClassImpl(
+        JKNameIdentifierImpl(""),
+        JKInheritanceInfoImpl(emptyList(), emptyList()),
+        JKClass.ClassKind.COMPANION,
+        JKTypeParameterListImpl(),
+        JKClassBodyImpl(declarations),
+        JKAnnotationListImpl(),
+        emptyList(),
+        Visibility.PUBLIC,
+        Modality.FINAL
+    )
+
+fun JKClass.getCompanion(): JKClass? =
+    declarationList.firstOrNull { it is JKClass && it.classKind == JKClass.ClassKind.COMPANION } as? JKClass
+
 fun JKClass.getOrCreateCompainonObject(): JKClass =
-    (declarationList.firstOrNull { it is JKClass && it.classKind == JKClass.ClassKind.COMPANION } as? JKClass)
+    getCompanion()
         ?: JKClassImpl(
             JKNameIdentifierImpl(""),
             JKInheritanceInfoImpl(emptyList(), emptyList()),
