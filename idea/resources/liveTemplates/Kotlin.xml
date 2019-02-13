@@ -43,7 +43,7 @@
               value="println(&quot;$EXPR_COPY$ = $DOLLAR${$EXPR$}&quot;)">
         <variable alwaysStopAt="false" defaultValue="&quot;$&quot;" expression="" name="DOLLAR" />
         <variable alwaysStopAt="true" defaultValue="&quot;expr&quot;" expression="kotlinVariable()" name="EXPR" />
-        <variable alwaysStopAt="false" defaultValue="" expression="EXPR" name="EXPR_COPY" />
+        <variable alwaysStopAt="false" defaultValue="" expression="escapeString(EXPR)" name="EXPR_COPY" />
         <context>
             <option name="KOTLIN_STATEMENT" value="true" />
         </context>
