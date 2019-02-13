@@ -33,9 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
-import org.jetbrains.kotlin.script.ScriptPriorities
+import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -43,6 +41,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
+
 
 class LazyScriptDescriptor(
     val resolveSession: ResolveSession,
@@ -103,8 +102,7 @@ class LazyScriptDescriptor(
     override fun getPriority() = priority
 
     val scriptDefinition: () -> KotlinScriptDefinition = resolveSession.storageManager.createLazyValue {
-        val file = scriptInfo.script.containingKtFile
-        scriptInfo.script.kotlinScriptDefinition ?: throw RuntimeException("file ${file.name} is not a script")
+        scriptDefinitionByFileName(resolveSession.project, scriptInfo.script.containingKtFile.name)
     }
 
     override fun substitute(substitutor: TypeSubstitutor) = this

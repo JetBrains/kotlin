@@ -39,39 +39,37 @@ interface ScriptDefinitionProvider {
     }
 }
 
-fun findScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? {
-    val virtualFile = psiFile.virtualFile ?: psiFile.originalFile.virtualFile ?: return null
-    return findScriptDefinition(virtualFile, psiFile.project)
+fun PsiFile.scriptDefinition(): KotlinScriptDefinition? {
+    if (this !is KtFile || this.script == null) return null
+    val file = virtualFile ?: originalFile.virtualFile ?: return null
+    if (file.isNonScript()) return null
+
+    return scriptDefinitionByFileName(project, file.name)
 }
 
 fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? {
-    if (file.isDirectory ||
-        file.extension == KotlinFileType.EXTENSION ||
-        file.extension == JavaClassFileType.INSTANCE.defaultExtension ||
-        !isKotlinFileType(file)
-    ) {
-        return null
-    }
+    if (file.isNonScript()) return null
+    if ((PsiManager.getInstance(project).findFile(file) as? KtFile)?.script == null) return null
 
-    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) ?: return null
-    val psiFile = PsiManager.getInstance(project).findFile(file)
-    if (psiFile != null) {
-        if (psiFile !is KtFile) return null
-
-        // Do not use psiFile.script here because this method can be called during indexes access
-        // and accessing stubs may cause deadlock
-        // If script definition cannot be find, default script definition is used
-        // because all KtFile-s with KotlinFileType and non-kts extensions are parsed as scripts
-        val definition = scriptDefinitionProvider.findScriptDefinition(file.name)
-        return definition ?: scriptDefinitionProvider.getDefaultScriptDefinition()
-    }
-
-    return scriptDefinitionProvider.findScriptDefinition(file.name)
+    return scriptDefinitionByFileName(project, file.name)
 }
 
-private fun isKotlinFileType(file: VirtualFile): Boolean {
+fun scriptDefinitionByFileName(project: Project, fileName: String): KotlinScriptDefinition {
+    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) ?: return null
+        ?: throw IllegalStateException("Unable to get script definition: ScriptDefinitionProvider is not configured.")
+
+    return scriptDefinitionProvider.findScriptDefinition(fileName) ?: scriptDefinitionProvider.getDefaultScriptDefinition()
+}
+
+private fun VirtualFile.isNonScript(): Boolean =
+    isDirectory ||
+            extension == KotlinFileType.EXTENSION ||
+            extension == JavaClassFileType.INSTANCE.defaultExtension ||
+            !this.isKotlinFileType()
+
+private fun VirtualFile.isKotlinFileType(): Boolean {
     val typeRegistry = FileTypeRegistry.getInstance()
-    return typeRegistry.getFileTypeByFile(file) == KotlinFileType.INSTANCE ||
-            typeRegistry.getFileTypeByFileName(file.name) == KotlinFileType.INSTANCE
+    return typeRegistry.getFileTypeByFile(this) == KotlinFileType.INSTANCE ||
+            typeRegistry.getFileTypeByFileName(name) == KotlinFileType.INSTANCE
 }
 

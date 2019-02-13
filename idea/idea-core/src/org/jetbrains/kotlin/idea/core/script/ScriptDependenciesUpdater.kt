@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.LegacyResolverWrapper
 import org.jetbrains.kotlin.script.findScriptDefinition
+import org.jetbrains.kotlin.script.scriptDefinition
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
@@ -95,7 +96,7 @@ class ScriptDependenciesUpdater(
 
                 if (ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true) return
 
-                val scriptDef = ktFile.script?.kotlinScriptDefinition ?: return
+                val scriptDef = ktFile.scriptDefinition() ?: return
 
                 if (!ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) return
 
@@ -122,7 +123,7 @@ class ScriptDependenciesUpdater(
                 }
 
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
-                val scriptDef = ktFile.script?.kotlinScriptDefinition ?: return
+                val scriptDef = ktFile.scriptDefinition() ?: return
 
                 if (!ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) return
 

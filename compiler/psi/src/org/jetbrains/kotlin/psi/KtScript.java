@@ -20,23 +20,14 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.NameUtils;
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
-import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
 
 import java.util.List;
 
 public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implements KtDeclarationContainer {
-    public KotlinScriptDefinition getKotlinScriptDefinition() {
-        ScriptDefinitionProvider definitionsProvider = ScriptDefinitionProvider.Companion.getInstance(getProject());
-        if (definitionsProvider == null) {
-            throw new IllegalStateException("Unable to use KtScript: ScriptDefinitionProvider is not configured.");
-        }
-        KotlinScriptDefinition definition = definitionsProvider.findScriptDefinition(getContainingKtFile().getName());
-        return definition != null ? definition : definitionsProvider.getDefaultScriptDefinition();
-    }
-
     public KtScript(@NotNull ASTNode node) {
         super(node);
     }
@@ -53,7 +44,8 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
             return stub.getFqName();
         }
         KtFile containingKtFile = getContainingKtFile();
-        return containingKtFile.getPackageFqName().child(getKotlinScriptDefinition().getScriptName(this));
+        Name fileBasedName = NameUtils.getScriptNameForFile(containingKtFile.getName());
+        return containingKtFile.getPackageFqName().child(fileBasedName);
     }
 
     @Override

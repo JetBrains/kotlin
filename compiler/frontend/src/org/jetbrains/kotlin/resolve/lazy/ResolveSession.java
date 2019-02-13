@@ -84,6 +84,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     private final SyntheticResolveExtension syntheticResolveExtension;
 
+    private Project project;
+
     @Inject
     public void setAnnotationResolve(AnnotationResolver annotationResolver) {
         this.annotationResolver = annotationResolver;
@@ -190,6 +192,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         danglingAnnotations = storageManager.createMemoizedFunction(file -> createAnnotations(file, file.getDanglingAnnotations()));
 
         syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
+
+        this.project = project;
     }
 
     private LazyAnnotations createAnnotations(KtFile file, List<KtAnnotationEntry> annotationEntries) {
@@ -449,6 +453,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @NotNull
     public PlatformDiagnosticSuppressor getPlatformDiagnosticSuppressor() {
         return platformDiagnosticSuppressor;
+    }
+
+    @NotNull
+    public Project getProject() {
+        return project;
     }
 
     @Override
