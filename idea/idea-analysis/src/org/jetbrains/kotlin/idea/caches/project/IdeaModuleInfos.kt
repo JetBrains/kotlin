@@ -127,6 +127,7 @@ private fun ideaModelDependencies(
 interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     val module: Module
 
+    // Non-transitive!
     override val expectedBy: List<ModuleSourceInfo>
 
     override val displayedName get() = module.name
