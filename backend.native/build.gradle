@@ -207,11 +207,11 @@ task teamcityPublishStdLibSources {
 
 // These files are built before the 'dist' is complete,
 // so we provide custom values for
-// org.jetbrains.kotlin.native.home, --runtime, -Djava.library.path etc
+// konan.home, --runtime, -Djava.library.path etc
 
 targetList.each { target ->
     def konanJvmArgs =  [*HostManager.regularJvmArgs,
-            "-Dorg.jetbrains.kotlin.native.home=${rootProject.projectDir}",
+            "-Dkonan.home=${rootProject.projectDir}",
             "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
     ]
 

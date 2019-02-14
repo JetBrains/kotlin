@@ -103,7 +103,7 @@ abstract class KonanTest extends JavaExec {
             classpath = project.fileTree("$dist.canonicalPath/konan/lib/") {
                 include '*.jar'
             }
-            jvmArgs "-Dorg.jetbrains.kotlin.native.home=${dist.canonicalPath}", "-Xmx4G",
+            jvmArgs "-Dkonan.home=${dist.canonicalPath}", "-Xmx4G",
                     "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
             enableAssertions = true
             def sources = File.createTempFile(name,".lst")

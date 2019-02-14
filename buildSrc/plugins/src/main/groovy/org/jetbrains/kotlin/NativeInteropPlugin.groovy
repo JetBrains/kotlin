@@ -203,7 +203,7 @@ class NamedNativeInteropConfig implements Named {
                     new File(project.findProject(":Interop:Indexer").buildDir, "nativelibs"),
                     new File(project.findProject(":Interop:Runtime").buildDir, "nativelibs")
             ).asPath
-            systemProperties "org.jetbrains.kotlin.native.home": project.rootProject.projectDir
+            systemProperties "konan.home": project.rootProject.projectDir
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
 
             outputs.dir generatedSrcDir

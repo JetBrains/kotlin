@@ -50,7 +50,7 @@ dependencies {
 
 test {
     dependsOn 'cleanTest'
-    systemProperty('org.jetbrains.kotlin.native.home', getProperty("org.jetbrains.kotlin.native.home"))
+    systemProperty('konan.home', getProperty("org.jetbrains.kotlin.native.home"))
     dependsOn konanArtifacts.collect { it.getByTarget('host') }
     if (useCustomDist) {
         // Use the klib utility from the distribution
