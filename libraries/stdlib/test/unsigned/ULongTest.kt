@@ -119,6 +119,7 @@ class ULongTest {
             val float = Long.MAX_VALUE.toFloat() + long.toFloat()    // We lose accuracy here, hence `eps` is used.
             val ulong = Long.MAX_VALUE.toULong() + long.toULong()
 
+            // TODO: replace with ulp comparison when available on Float
             val eps = 1e+13
             assertTrue(abs(float - ulong.toFloat()) < eps)
         }
@@ -141,11 +142,12 @@ class ULongTest {
 
         repeat(100) {
             val long = Random.nextLong(from = 0, until = Long.MAX_VALUE)
-            val double = Long.MAX_VALUE.toDouble() + long.toDouble()    // We lose accuracy here, hence `eps` is used.
-            val ulong = Long.MAX_VALUE.toULong() + long.toULong()
+            val value = Long.MAX_VALUE.toULong() + long.toULong()
+            val expected = Long.MAX_VALUE.toDouble() + long.toDouble()    // Should be accurate to one ulp
+            val actual = value.toDouble()
+            val diff = abs(expected - value.toDouble())
 
-            val eps = 1e+4
-            assertTrue(abs(double - ulong.toDouble()) < eps)
+            assertTrue(diff <= actual.ulp, "$actual should be within one ulp (${actual.ulp}) from the expected $expected")
         }
 
         fun testRounding(from: ULong, count: UInt) {
@@ -208,14 +210,11 @@ class ULongTest {
         }
 
         repeat(100) {
-            val diff = Random.nextDouble() * Long.MAX_VALUE
-            val d = Long.MAX_VALUE.toDouble() + diff
-            val ul = Long.MAX_VALUE.toULong() + diff.toLong().toULong()
-            val eps = 1e-6
+            val d = 2.0.pow(63) * (1 + Random.nextDouble())
+            val expected = specialDoubleToULong(d)
+            val actual = d.toULong()
 
-            assertTrue(d.toULong() / ul <= 1u)
-            assertTrue(d / ul.toDouble() < 1 + eps)
-            assertTrue(d / ul.toDouble() > 1 - eps)
+            assertEquals(expected, actual, "Expected bit pattern: ${expected.toString(2)}, actual bit pattern: ${actual.toString(2)}")
         }
 
         fun testTrailingBits(v: Double, count: Int) {
@@ -240,5 +239,13 @@ class ULongTest {
             val v = 2.0.pow(msb) * (1.0 + Random.nextDouble())
             testTrailingBits(v, msb - 52)
         }
+    }
+
+    /** Creates an ULong value directly from mantissa bits of Double that is in range [2^63, 2^64). */
+    private fun specialDoubleToULong(v: Double): ULong {
+        require(v >= 2.0.pow(63))
+        require(v < 2.0.pow(64))
+        val bits = v.toBits().toULong()
+        return (1uL shl 63) + ((bits and (1uL shl 52) - 1u) shl 11)
     }
 }
