@@ -1147,7 +1147,7 @@ class ExperimentalPluginTests {
         val transitiveProject = KonanProject.createEmpty(transitiveDir).apply {
             buildFile.writeText("""
                 plugins { id 'kotlin-native' }
-                components.main.targets = [ 'ios_x64' ]
+                components.main.targets = [ 'ios_arm64' ]
             """)
             generateSrcFile("transitive.kt", "fun transitive() = 42")
         }
@@ -1156,7 +1156,7 @@ class ExperimentalPluginTests {
         val libraryProject = KonanProject.createEmpty(libraryDir).apply {
             buildFile.writeText("""
                 plugins { id 'kotlin-native' }
-                components.main.targets = [ 'ios_x64' ]
+                components.main.targets = [ 'ios_arm64' ]
 
                 dependencies {
                     implementation project(':transitive')
@@ -1179,7 +1179,7 @@ class ExperimentalPluginTests {
                 }
 
                 sourceSets.main.component {
-                    targets = [ 'ios_x64' ]
+                    targets = [ 'ios_arm64' ]
                     outputKinds = [ FRAMEWORK ]
                 }
             """.trimIndent())

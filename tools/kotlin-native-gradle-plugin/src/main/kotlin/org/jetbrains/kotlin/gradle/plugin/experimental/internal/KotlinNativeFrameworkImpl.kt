@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeFramework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
 open class KotlinNativeFrameworkImpl @Inject constructor(
@@ -69,10 +69,10 @@ open class KotlinNativeFrameworkImpl @Inject constructor(
         getImplementationDependencies().extendsFrom(this)
     }
 
-    // TODO: Fix embedding
-    override var embedBitcode: BitcodeEmbeddingMode = if (konanTarget.family == Family.IOS) {
-        buildType.iosEmbedBitcode
-    } else {
-        BitcodeEmbeddingMode.DISABLE
-    }
+    override var embedBitcode: BitcodeEmbeddingMode =
+        if (konanTarget == KonanTarget.IOS_ARM64 || konanTarget == KonanTarget.IOS_ARM32) {
+            buildType.iosEmbedBitcode
+        } else {
+            BitcodeEmbeddingMode.DISABLE
+        }
 }

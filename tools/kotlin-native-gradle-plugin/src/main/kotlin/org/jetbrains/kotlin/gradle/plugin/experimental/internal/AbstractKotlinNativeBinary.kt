@@ -78,7 +78,7 @@ abstract class AbstractKotlinNativeBinary(
 
     override fun getName(): String = name
 
-    override val konanTarget: KonanTarget
+    final override val konanTarget: KonanTarget
         get() = variant.konanTarget
 
     val identity: NativeVariantIdentity = variant.identity
