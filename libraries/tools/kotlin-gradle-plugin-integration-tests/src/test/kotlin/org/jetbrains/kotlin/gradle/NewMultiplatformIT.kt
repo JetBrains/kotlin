@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 import java.lang.StringBuilder
 import java.util.jar.JarFile
 import java.util.zip.ZipFile
@@ -1274,8 +1275,6 @@ class NewMultiplatformIT : BaseGradleIT() {
                     "<version>42</version>"
                 )
                 if (withMetadata) {
-                    // Check that the external dependency that was resolved with metadata is written to the POM as the artifactId it
-                    // resolved to:
                     assertFileContains(
                         "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
                         "<groupId>com.external.dependency</groupId>",
@@ -1289,7 +1288,39 @@ class NewMultiplatformIT : BaseGradleIT() {
                     assertTrue { "\"group\":\"com.example\",\"module\":\"sample-lib-multiplatform\"" in moduleMetadata }
                     assertTrue { "\"group\":\"com.external.dependency\",\"module\":\"external\"" in moduleMetadata }
                 }
-                assertFileExists("repo/foo/bar/42/bar-42.jar")
+            }
+
+            // Check that a user can disable rewriting of MPP dependencies in the POMs:
+            build("publish", "-Pkotlin.mpp.keepMppDependenciesIntactInPoms=true") {
+                assertSuccessful()
+                assertFileContains(
+                    "repo/com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom",
+                    "<groupId>com.example</groupId>",
+                    if (withMetadata)
+                        "<artifactId>sample-lib-multiplatform</artifactId>"
+                    else
+                        "<artifactId>sample-lib</artifactId>"
+                    ,
+                    "<version>1.0</version>"
+                )
+                assertFileContains(
+                    "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
+                    "<groupId>com.example</groupId>",
+                    if (withMetadata)
+                        "<artifactId>sample-lib-multiplatform</artifactId>"
+                    else
+                        "<artifactId>sample-lib</artifactId>"
+                    ,
+                    "<version>1.0</version>"
+                )
+                if (withMetadata) {
+                    assertFileContains(
+                        "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
+                        "<groupId>com.external.dependency</groupId>",
+                        "<artifactId>external</artifactId>",
+                        "<version>1.2.3</version>"
+                    )
+                }
             }
         }
     }

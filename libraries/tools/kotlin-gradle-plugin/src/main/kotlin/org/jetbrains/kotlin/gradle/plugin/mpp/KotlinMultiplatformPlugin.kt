@@ -199,7 +199,10 @@ class KotlinMultiplatformPlugin(
                     (this as MavenPublicationInternal).publishWithOriginalFileName()
                     artifactId = variant.defaultArtifactId
 
-                    pom.withXml { xml -> project.rewritePomMppDependenciesToActualTargetModules(xml, variant) }
+                    pom.withXml { xml ->
+                        if (PropertiesProvider(project).keepMppDependenciesIntactInPoms != true)
+                            project.rewritePomMppDependenciesToActualTargetModules(xml, variant)
+                    }
                 }
 
                 (variant as? KotlinTargetComponentWithPublication)?.publicationDelegate = variantPublication
