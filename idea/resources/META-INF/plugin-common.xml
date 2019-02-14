@@ -2932,6 +2932,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MoveVariableDeclarationIntoWhenInspection"
+                     displayName="Variable declaration could be moved inside `when`"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MainFunctionReturnUnitInspection"
                      displayName="Entry point function should return Unit"
                      groupPath="Kotlin"

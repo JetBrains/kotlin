@@ -1,0 +1,10 @@
+fun foo() {
+
+    // comment
+    when (val a = 1) {
+        1 -> {
+        }
+        else -> {
+        }
+    }
+}

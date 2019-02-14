@@ -4277,6 +4277,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MoveVariableDeclarationIntoWhen extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMoveVariableDeclarationIntoWhen() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("notApplicableOtherName.kt")
+        public void testNotApplicableOtherName() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableOtherName.kt");
+        }
+
+        @TestMetadata("notApplicableSideEffect.kt")
+        public void testNotApplicableSideEffect() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableSideEffect.kt");
+        }
+
+        @TestMetadata("notApplicableUsedInOtherScope.kt")
+        public void testNotApplicableUsedInOtherScope() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableUsedInOtherScope.kt");
+        }
+
+        @TestMetadata("notApplicableVar.kt")
+        public void testNotApplicableVar() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableVar.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/simple.kt");
+        }
+
+        @TestMetadata("withComment.kt")
+        public void testWithComment() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/withComment.kt");
+        }
+
+        @TestMetadata("withNewLine.kt")
+        public void testWithNewLine() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/withNewLine.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
