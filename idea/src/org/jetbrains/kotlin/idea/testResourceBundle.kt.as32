@@ -14,6 +14,8 @@ import java.lang.IllegalStateException
 
 private const val CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME = "com.jetbrains.cidr.lang.OCFeatureStatisticsBundleProvider"
 
+// Remove the function, when there's no dependency to cidr during running Kotlin tests.
+// BUNCH: as33
 fun registerAdditionalResourceBundleInTests() {
     if (!ApplicationManager.getApplication().isUnitTestMode) {
         return
