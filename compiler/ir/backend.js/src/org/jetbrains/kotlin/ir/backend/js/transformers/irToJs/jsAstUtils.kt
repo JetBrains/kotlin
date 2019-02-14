@@ -88,6 +88,19 @@ fun defineProperty(receiver: JsExpression, name: String, value: () -> JsExpressi
     return JsInvocation(objectDefineProperty, receiver, JsStringLiteral(name), value())
 }
 
+
+fun defineProperty(receiver: JsExpression, name: String, getter: JsExpression?, setter: JsExpression? = null) =
+    defineProperty(receiver, name) {
+        val literal = JsObjectLiteral(true)
+        literal.apply {
+            if (getter != null)
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getter)
+            if (setter != null)
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), setter)
+        }
+    }
+
+
 // Partially copied from org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 object JsAstUtils {
     private fun deBlockIfPossible(statement: JsStatement): JsStatement {

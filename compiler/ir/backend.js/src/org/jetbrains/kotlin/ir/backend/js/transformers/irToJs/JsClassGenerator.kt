@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.ir.isStatic
 import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
 
@@ -38,6 +41,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         maybeGeneratePrimaryConstructor()
         val transformer = IrDeclarationToJsTransformer()
 
+        // Properties might be lowered out of classes
+        // We'll use IrSimpleFunction::correspondingProperty to collect them into set
+        val properties = mutableSetOf<IrProperty>()
+
         for (declaration in irClass.declarations) {
             when (declaration) {
                 is IrConstructor -> {
@@ -45,6 +52,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     classModel.preDeclarationBlock.statements += generateInheritanceCode()
                 }
                 is IrSimpleFunction -> {
+                    properties.addIfNotNull(declaration.correspondingProperty)
                     generateMemberFunction(declaration)?.let { classBlock.statements += it }
                 }
                 is IrClass -> {
@@ -62,6 +70,30 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         irClass.onlyIf({ kind == ClassKind.OBJECT }) { classBlock.statements += maybeGenerateObjectInstance() }
         if (irClass.superTypes.any { it.isThrowable() }) {
             classBlock.statements += generateThrowableProperties()
+        } else if (!irClass.defaultType.isThrowable()) {
+            // TODO: Test export properties of throwable subtype
+            if (!irClass.isInterface && !irClass.isEnumClass && !irClass.isEnumEntry) {
+                for (property in properties) {
+
+                    if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
+                        continue
+
+                    if (property.visibility != Visibilities.PUBLIC)
+                        continue
+
+                    if (property.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
+                        continue
+
+                    classBlock.statements += JsExpressionStatement(
+                        defineProperty(
+                            classPrototypeRef,
+                            context.getNameForDeclaration(property).ident,
+                            getter = property.getter?.let { context.getNameForDeclaration(it) }?.let { JsNameRef(it, classPrototypeRef) },
+                            setter = property.setter?.let { context.getNameForDeclaration(it) }?.let { JsNameRef(it, classPrototypeRef) }
+                        )
+                    )
+                }
+            }
         }
         context.staticContext.classModels[className] = classModel
         return classBlock
@@ -73,21 +105,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val messageGetter = functions.single { it.name == Name.special("<get-message>") }
         val causeGetter = functions.single { it.name == Name.special("<get-cause>") }
 
-        val msgProperty = defineProperty(classPrototypeRef, "message") {
-            val literal = JsObjectLiteral(true)
-            val function = buildGetterFunction(messageGetter)
-            literal.apply {
-                propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), function)
-            }
-        }
+        val msgProperty = defineProperty(classPrototypeRef, "message", getter = buildGetterFunction(messageGetter))
 
-        val causeProperty = defineProperty(classPrototypeRef, "cause") {
-            val literal = JsObjectLiteral(true)
-            val function = buildGetterFunction(causeGetter)
-            literal.apply {
-                propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), function)
-            }
-        }
+        val causeProperty = defineProperty(classPrototypeRef, "cause", getter = buildGetterFunction(causeGetter))
 
         return listOf(msgProperty.makeStmt(), causeProperty.makeStmt())
     }
