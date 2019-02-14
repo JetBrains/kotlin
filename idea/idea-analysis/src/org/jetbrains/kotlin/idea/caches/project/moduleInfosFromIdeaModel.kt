@@ -15,35 +15,16 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isCommon
-import java.util.concurrent.ConcurrentHashMap
 
-fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform): List<IdeaModuleInfo> {
-    val modelInfosCache = project.cached(CachedValueProvider {
+fun getModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
+    return project.cached(CachedValueProvider {
         CachedValueProvider.Result(collectModuleInfosFromIdeaModel(project), ProjectRootModificationTracker.getInstance(project))
     })
-    return modelInfosCache.forPlatform(platform)
 }
-
-private class IdeaModelInfosCache(
-    val moduleSourceInfos: List<ModuleSourceInfo>,
-    val libraryInfos: List<LibraryInfo>,
-    val sdkInfos: List<SdkInfo>
-) {
-    private val resultByPlatform = ConcurrentHashMap<TargetPlatform, List<IdeaModuleInfo>>()
-
-    fun forPlatform(platform: TargetPlatform): List<IdeaModuleInfo> {
-        return resultByPlatform.getOrPut(platform) {
-            moduleSourceInfos.filter { it.platform == platform } + libraryInfos + sdkInfos
-        }
-    }
-}
-
 
 private fun collectModuleInfosFromIdeaModel(
     project: Project
-): IdeaModelInfosCache {
+): List<IdeaModuleInfo> {
     val ideaModules = ModuleManager.getInstance(project).modules.toList()
 
     //TODO: (module refactoring) include libraries that are not among dependencies of any module
@@ -59,11 +40,9 @@ private fun collectModuleInfosFromIdeaModel(
         }
     }
 
-    return IdeaModelInfosCache(
-        moduleSourceInfos = ideaModules.flatMap(Module::correspondingModuleInfos),
-        libraryInfos = ideaLibraries.flatMap { createLibraryInfo(project, it) },
-        sdkInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) }
-    )
+    return ideaModules.flatMap(Module::correspondingModuleInfos) +
+            ideaLibraries.flatMap { createLibraryInfo(project, it) } +
+            (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) }
 }
 
 internal fun getAllProjectSdks(): Collection<Sdk> {
