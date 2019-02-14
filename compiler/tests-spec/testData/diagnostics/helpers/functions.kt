@@ -17,3 +17,12 @@ fun <K> expandInWithRemoveNullable(vararg x: In<K?>): K = x[0] as K
 fun <K> expandOutWithRemoveNullable(vararg x: Out<K?>): K = x[0] as K
 
 fun <K> removeNullable(vararg x: K?): K = x as K
+
+fun <T> T.funT() = 10
+fun <T> T?.funNullableT = 10
+
+fun Any.funAny() = 10
+fun Any?.funNullableAny = 10
+
+
+fun funNothingQuest() = null
