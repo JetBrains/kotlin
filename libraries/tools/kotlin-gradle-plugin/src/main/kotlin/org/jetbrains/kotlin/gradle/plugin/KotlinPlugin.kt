@@ -7,6 +7,7 @@ import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.MutableVersionConstraint
+import org.gradle.api.artifacts.maven.MavenResolver
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
@@ -15,9 +16,12 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.CompileClasspathNormalizer
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
@@ -27,7 +31,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
@@ -348,8 +351,39 @@ internal abstract class AbstractKotlinPlugin(
             { compilation -> buildSourceSetProcessor(project, compilation, kotlinPluginVersion) }
         )
 
+        rewriteMppDependenciesInPom(target)
+
         configureProjectGlobalSettings(project, kotlinPluginVersion)
         registry.register(KotlinModelBuilder(kotlinPluginVersion, null))
+    }
+
+    private fun rewriteMppDependenciesInPom(target: KotlinTarget) {
+        val project = target.project
+
+        fun shouldRewritePoms(): Boolean =
+            PropertiesProvider(project).keepMppDependenciesIntactInPoms != true
+
+        project.pluginManager.withPlugin("maven-publish") {
+            project.extensions.configure(PublishingExtension::class.java) { publishing ->
+                publishing.publications.withType(MavenPublication::class.java).all { publication ->
+                    publication.pom.withXml { xml ->
+                        if (shouldRewritePoms())
+                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.components.single())
+                    }
+                }
+            }
+        }
+
+        project.pluginManager.withPlugin("maven") {
+            project.tasks.withType(Upload::class.java).all { uploadTask ->
+                uploadTask.repositories.withType(MavenResolver::class.java).all { mavenResolver ->
+                    mavenResolver.pom.withXml { xml ->
+                        if (shouldRewritePoms())
+                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.components.single())
+                    }
+                }
+            }
+        }
     }
 
     companion object {
@@ -527,6 +561,7 @@ internal open class KotlinPlugin(
         (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
+
         super.apply(project)
     }
 }
