@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.compat.psiSearchHelperInstance
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
@@ -368,9 +369,7 @@ class ExpressionsOfTypeProcessor(
                     }
                 }
 
-                // BUNCH: 181
-                @Suppress("DEPRECATION")
-                PsiSearchHelper.SERVICE.getInstance(project).processRequests(searchRequestCollector) { reference ->
+                psiSearchHelperInstance(project).processRequests(searchRequestCollector) { reference ->
                     if (reference.element.parents.any { it is KtImportDirective }) {
                         // Found declaration in import - process all file with an ordinal reference search
                         val containingFile = reference.element.containingFile

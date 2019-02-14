@@ -15,7 +15,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
+import org.jetbrains.kotlin.idea.util.compat.psiSearchHelperInstance
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -83,7 +83,7 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
 
             val useScope = parameter.useScope
             val restrictedScope = if (useScope is GlobalSearchScope) {
-                val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(parameter.project)
+                val psiSearchHelper = psiSearchHelperInstance(parameter.project)
                 for (accessorName in parameter.getAccessorNames()) {
                     when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(accessorName, useScope, null, null)) {
                         ZERO_OCCURRENCES -> {

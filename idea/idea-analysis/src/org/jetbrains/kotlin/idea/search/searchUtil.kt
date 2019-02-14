@@ -28,6 +28,7 @@ import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.util.compat.psiSearchHelperInstance
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -93,8 +94,7 @@ fun SearchScope.excludeFileTypes(vararg fileTypes: FileType): SearchScope {
 fun ReferencesSearch.SearchParameters.effectiveSearchScope(element: PsiElement): SearchScope {
     if (element == elementToSearch) return effectiveSearchScope
     if (isIgnoreAccessScope) return scopeDeterminedByUser
-    // BUNCH: 181
-    @Suppress("DEPRECATION") val accessScope = PsiSearchHelper.SERVICE.getInstance(element.project).getUseScope(element)
+    val accessScope = psiSearchHelperInstance(element.project).getUseScope(element)
     return scopeDeterminedByUser.intersectWith(accessScope)
 }
 

@@ -24,7 +24,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.*
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.DefinitionsScopedSearch
@@ -61,6 +60,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.compat.psiSearchHelperInstance
 import org.jetbrains.kotlin.idea.util.hasActualsFor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -221,7 +221,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     private fun hasNonTrivialUsages(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor? = null): Boolean {
         val project = declaration.project
-        val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(project)
+        val psiSearchHelper = psiSearchHelperInstance(project)
 
         val useScope = declaration.useScope
         val restrictedScope = if (useScope is GlobalSearchScope) {
