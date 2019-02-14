@@ -11,10 +11,8 @@ import com.intellij.openapi.externalSystem.service.project.IdeModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.SourceType.PRODUCTION
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
-import org.jetbrains.kotlin.resolve.TargetPlatform
 
 val Module.isNewMPPModule: Boolean
     get() = facetSettings?.kind?.isNewMPP ?: false
@@ -91,9 +88,10 @@ private fun Module.findOldFashionedImplementedModuleNames(): List<String> {
 val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
     get() {
         val moduleInfo = getCapability(ModuleInfo.Capability)
-        if (moduleInfo is PlatformModuleInfo) {
-            return listOf(this)
-        }
+        /** Same */
+//        if (moduleInfo is PlatformModuleInfo) {
+//            return listOf(this)
+//        }
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return emptyList()
         val implementingModuleInfos = moduleSourceInfo.module.implementingModules.mapNotNull { it.toInfo(moduleSourceInfo.sourceType) }
         return implementingModuleInfos.mapNotNull { it.toDescriptor() }
@@ -105,10 +103,14 @@ private fun Module.toInfo(type: SourceType): ModuleSourceInfo? = when (type) {
 }
 
 
+/**
+ * This function returns immediate parents in dependsOn graph
+ */
 val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
     get() {
         val moduleInfo = getCapability(ModuleInfo.Capability)
-        if (moduleInfo is PlatformModuleInfo) return listOf(this)
+        /** This is weird, but strangely makes sense: combined module implements itself */
+//        if (moduleInfo is PlatformModuleInfo) return listOf(this)
 
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return emptyList()
 
