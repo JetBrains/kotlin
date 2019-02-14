@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // TARGET_BACKEND: JS
 package foo
 
