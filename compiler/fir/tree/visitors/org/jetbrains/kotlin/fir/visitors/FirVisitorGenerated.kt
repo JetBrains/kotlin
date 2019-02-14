@@ -220,6 +220,10 @@ abstract class FirVisitor<out R, in D> {
         return visitOperatorCall(typeOperatorCall, data)
     }
 
+    open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): R {
+        return visitExpression(classReferenceExpression, data)
+    }
+
     open fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: D): R {
         return visitExpression(constExpression, data)
     }

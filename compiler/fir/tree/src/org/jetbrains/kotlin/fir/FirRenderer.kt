@@ -841,6 +841,14 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitCall(getClassCall)
     }
 
+    override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression) {
+        classReferenceExpression.annotations.renderAnnotations()
+        print("<getClass>")
+        print("(")
+        classReferenceExpression.typeRef.accept(this)
+        print(")")
+    }
+
     override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall) {
         arrayOfCall.annotations.renderAnnotations()
         print("<implicitArrayOf>")

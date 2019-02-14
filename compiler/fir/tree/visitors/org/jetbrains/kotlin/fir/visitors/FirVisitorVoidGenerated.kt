@@ -220,6 +220,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitOperatorCall(typeOperatorCall, null)
     }
 
+    open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression) {
+        visitExpression(classReferenceExpression, null)
+    }
+
     open fun <T> visitConstExpression(constExpression: FirConstExpression<T>) {
         visitExpression(constExpression, null)
     }
@@ -414,6 +418,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitClass(klass: FirClass, data: Nothing?) {
         visitClass(klass)
+    }
+
+    final override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: Nothing?) {
+        visitClassReferenceExpression(classReferenceExpression)
     }
 
     final override fun visitComponentCall(componentCall: FirComponentCall, data: Nothing?) {
