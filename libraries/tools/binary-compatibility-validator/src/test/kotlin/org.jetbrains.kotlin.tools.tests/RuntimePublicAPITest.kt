@@ -17,10 +17,6 @@ class RuntimePublicAPITest {
     @[Rule JvmField]
     val testName = TestName()
 
-    @Test fun kotlinRuntime() {
-        snapshotAPIAndCompare("../../stdlib/runtime/build/libs", "kotlin-runtime", listOf("kotlin.jvm.internal"))
-    }
-
     @Test fun kotlinStdlibRuntimeMerged() {
         snapshotAPIAndCompare("../../stdlib/jvm/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))
     }

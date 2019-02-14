@@ -236,7 +236,6 @@ if (isJpsBuild) {
             ":tools:binary-compatibility-validator",
             ":tools:kotlin-stdlib-js-merger",
             ":tools:kotlin-stdlib-gen",
-            ":kotlin-runtime",
 
             ":include:kotlin-stdlib-common-sources"
 
@@ -251,8 +250,6 @@ if (isJpsBuild) {
     project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
     project(':tools:kotlin-stdlib-js-merger').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-js-merger" as File
     project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
-
-    project(':kotlin-runtime').projectDir = "$rootDir/libraries/stdlib/runtime" as File
 }
 
 rootProject.name = "kotlin"

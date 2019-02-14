@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-runtime
+@file:Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-stdlib-minimal-for-test
 
 package kotlin.text
 

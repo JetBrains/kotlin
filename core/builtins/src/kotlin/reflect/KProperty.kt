@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("IMPLEMENTING_FUNCTION_INTERFACE", /* for building kotlin-runtime */ "ACTUAL_WITHOUT_EXPECT")
+@file:Suppress("IMPLEMENTING_FUNCTION_INTERFACE")
 package kotlin.reflect
 
 /**

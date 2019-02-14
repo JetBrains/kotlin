@@ -3,8 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-runtime
-
 package kotlin.jvm
 
 import kotlin.reflect.KClass
