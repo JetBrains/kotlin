@@ -119,7 +119,7 @@ private fun createKotlinNativeBuiltIns(settings: PlatformAnalysisSettings, proje
 }
 
 // TODO: It depends on a random module's stdlib, propagate the actual module here.
-private fun findNativeStdlib(project: Project): NativeLibraryInfo? = getModuleInfosFromIdeaModel(project, DefaultBuiltInPlatforms.konanPlatform)
+private fun findNativeStdlib(project: Project): NativeLibraryInfo? = getModuleInfosFromIdeaModel(project)
     .firstNotNullResult { it.asNativeStdlib() }
 
 private fun IdeaModuleInfo.asNativeStdlib(): NativeLibraryInfo? = if ((this as? NativeLibraryInfo)?.isStdlib == true) this else null
