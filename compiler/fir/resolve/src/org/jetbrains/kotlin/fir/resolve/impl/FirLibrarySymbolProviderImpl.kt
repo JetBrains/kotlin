@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FictitiousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -152,7 +151,23 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
             val prefix = kind.classNamePrefix
             val arity = className.substring(prefix.length).toIntOrNull() ?: return null
             fictitiousFunctionSymbols.getOrPut(arity) {
-                FictitiousFunctionSymbol(relativeClassName.shortName(), arity)
+                FirClassSymbol(this).apply {
+                    FirClassImpl(
+                        session,
+                        null,
+                        this,
+                        relativeClassName.shortName(),
+                        Visibilities.PUBLIC,
+                        Modality.OPEN,
+                        false,
+                        false,
+                        ClassKind.CLASS,
+                        isInner = false,
+                        isCompanion = false,
+                        isData = false,
+                        isInline = false
+                    )
+                }
             }
         }
     }
