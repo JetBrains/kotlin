@@ -349,6 +349,7 @@ private class ExportedElement(val kind: ElementKind,
             |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
             |static $objectClassC ${cname}_instance_impl(void) {
             |  KObjHolder result_holder;
+            |  Kotlin_initRuntimeIfNeeded();
             |  KObjHeader* result = ${cname}_instance(result_holder.slot());
             |  return $objectClassC { .pinned = CreateStablePointer(result)};
             |}
@@ -366,6 +367,7 @@ private class ExportedElement(val kind: ElementKind,
               |extern "C" KObjHeader* $cname(KObjHeader**);
               |static $enumClassC ${cname}_impl(void) {
               |  KObjHolder result_holder;
+              |  Kotlin_initRuntimeIfNeeded();
               |  KObjHeader* result = $cname(result_holder.slot());
               |  return $enumClassC { .pinned = CreateStablePointer(result)};
               |}

@@ -6,6 +6,7 @@
 #define CAST(T, v) testlib_kref_ ## T { .pinned = v }
 
 int main(void) {
+    T_(Singleton) singleton = __ kotlin.root.Singleton._instance();
     T_(Base) base = __ kotlin.root.Base.Base();
     T_(Child) child = __ kotlin.root.Child.Child();
     T_(Impl1) impl1 = __ kotlin.root.Impl1.Impl1();
@@ -15,7 +16,6 @@ int main(void) {
     T_(I) casted_impl2 = { .pinned = impl2.pinned };
     T_(Enum) enum1 = __ kotlin.root.Enum.HUNDRED.get();
     T_(Codeable) object1 = __ kotlin.root.get_an_object();
-    T_(Singleton) singleton = __ kotlin.root.Singleton._instance();
 
     const char* string1 = __ kotlin.root.getString();
     const char* string2 = __ kotlin.root.Singleton.toString(singleton);
