@@ -1,5 +1,23 @@
 <problems>
     <problem>
+        <file>StatementAndReturn.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="StatementAndReturn.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
+        <description>Convert to lambda</description>
+    </problem>
+
+    <problem>
+        <file>SingleReturn.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="SingleReturn.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
+        <description>Convert to lambda</description>
+    </problem>
+
+    <problem>
         <file>Simple.kt</file>
         <line>6</line>
         <module>light_idea_test_case</module>

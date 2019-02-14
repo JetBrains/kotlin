@@ -51,7 +51,9 @@ import org.jetbrains.kotlin.types.KotlinType
 class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteralExpression>(ObjectLiteralToLambdaIntention::class) {
     override fun problemHighlightType(element: KtObjectLiteralExpression): ProblemHighlightType {
         val (_, baseType, singleFunction) = extractData(element) ?: return super.problemHighlightType(element)
-        if (singleFunction.bodyExpression?.anyDescendantOfType<KtReturnExpression> { true } == true) return ProblemHighlightType.INFORMATION
+        val bodyBlock = singleFunction.bodyBlockExpression
+        val lastStatement = bodyBlock?.statements?.lastOrNull()
+        if (bodyBlock?.anyDescendantOfType<KtReturnExpression> { it != lastStatement } == true) return ProblemHighlightType.INFORMATION
 
         val valueArgument = element.parent as? KtValueArgument
         val call = valueArgument?.getStrictParentOfType<KtCallExpression>()
