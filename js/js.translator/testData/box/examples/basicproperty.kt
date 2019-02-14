@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1300
 open class M() {
     open var b: Int = 0
@@ -18,7 +17,9 @@ class N() : M() {
 
 fun box(): String {
     val n = N()
-    println("a: " + n.a + " b: " + n.b + " superb: " + n.superb)
+    n.a
+    n.b
+    n.superb
     if (n.b == 3 && n.a == 4 && n.superb == 3) return "OK";
     return "fail";
 }

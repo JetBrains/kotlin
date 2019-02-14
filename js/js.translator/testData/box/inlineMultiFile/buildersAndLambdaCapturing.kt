@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
 // EXPECTED_REACHABLE_NODES: 1681
 /*
  * Copy of JVM-backend test
@@ -171,7 +171,7 @@ inline fun testBodyHtmlNoInline(crossinline f: () -> String) : String {
 
 fun box(): String {
     var expected = testAllInline({"x"});
-    print(expected + " " + testHtmlNoInline({"x"}))
+    expected + " " + testHtmlNoInline({"x"})
 
     if (expected != testHtmlNoInline({"x"})) return "fail 1: ${testHtmlNoInline({"x"})}\nbut expected\n${expected} "
     if (expected != testBodyNoInline({"x"})) return "fail 2: ${testBodyNoInline({"x"})}\nbut expected\n${expected} "
