@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class PropertyDelegationOperatorReferenceSearcher(
-        targetFunction: PsiElement,
-        searchScope: SearchScope,
-        consumer: ExecutorProcessor<PsiReference>,
-        optimizer: SearchRequestCollector,
-        options: KotlinReferencesSearchOptions
+    targetFunction: PsiElement,
+    searchScope: SearchScope,
+    consumer: ExecutorProcessor<PsiReference>,
+    optimizer: SearchRequestCollector,
+    options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtPropertyDelegate>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("by")) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {

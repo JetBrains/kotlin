@@ -39,18 +39,18 @@ interface SearchRequestWithElement<T : PsiElement> : DeclarationSearchRequest<T>
     override val project: Project get() = originalElement.project
 }
 
-abstract class DeclarationsSearch<T: PsiElement, R: DeclarationSearchRequest<T>>: QueryFactory<T, R>() {
+abstract class DeclarationsSearch<T : PsiElement, R : DeclarationSearchRequest<T>> : QueryFactory<T, R>() {
     init {
         registerExecutor(
-                object : QueryExecutorBase<T, R>(true) {
-                    override fun processQuery(queryParameters: R, consumer: ExecutorProcessor<T>) {
-                        doSearch(queryParameters, consumer)
-                    }
+            object : QueryExecutorBase<T, R>(true) {
+                override fun processQuery(queryParameters: R, consumer: ExecutorProcessor<T>) {
+                    doSearch(queryParameters, consumer)
                 }
+            }
         )
     }
 
-    override final fun registerExecutor(executor: QueryExecutor<T, R>) {
+    final override fun registerExecutor(executor: QueryExecutor<T, R>) {
         super.registerExecutor(executor)
     }
 
@@ -60,13 +60,13 @@ abstract class DeclarationsSearch<T: PsiElement, R: DeclarationSearchRequest<T>>
     fun search(request: R): Query<T> = if (isApplicable(request)) createUniqueResultsQuery(request) else EmptyQuery.getEmptyQuery<T>()
 }
 
-class HierarchySearchRequest<T: PsiElement> (
-        override val originalElement: T,
-        override val searchScope: SearchScope,
-        val searchDeeply: Boolean = true
+class HierarchySearchRequest<T : PsiElement>(
+    override val originalElement: T,
+    override val searchScope: SearchScope,
+    val searchDeeply: Boolean = true
 ) : SearchRequestWithElement<T> {
-    fun <U: PsiElement> copy(newOriginalElement: U): HierarchySearchRequest<U> =
-            HierarchySearchRequest(newOriginalElement, searchScope, searchDeeply)
+    fun <U : PsiElement> copy(newOriginalElement: U): HierarchySearchRequest<U> =
+        HierarchySearchRequest(newOriginalElement, searchScope, searchDeeply)
 }
 
 interface HierarchyTraverser<T> {
@@ -97,7 +97,7 @@ interface HierarchyTraverser<T> {
     }
 }
 
-fun <T: PsiElement> ExecutorProcessor<T>.consumeHierarchy(request: SearchRequestWithElement<T>, traverser: HierarchyTraverser<T>) {
+fun <T : PsiElement> ExecutorProcessor<T>.consumeHierarchy(request: SearchRequestWithElement<T>, traverser: HierarchyTraverser<T>) {
     traverser.forEach(request.originalElement) { element ->
         if (element in request.searchScope) {
             process(element)
@@ -105,9 +105,9 @@ fun <T: PsiElement> ExecutorProcessor<T>.consumeHierarchy(request: SearchRequest
     }
 }
 
-abstract class HierarchySearch<T: PsiElement>(
-        protected val traverser: HierarchyTraverser<T>
-): DeclarationsSearch<T, HierarchySearchRequest<T>>() {
+abstract class HierarchySearch<T : PsiElement>(
+    private val traverser: HierarchyTraverser<T>
+) : DeclarationsSearch<T, HierarchySearchRequest<T>>() {
     protected open fun doSearchAll(request: HierarchySearchRequest<T>, consumer: ExecutorProcessor<T>) {
         consumer.consumeHierarchy(request, traverser)
     }
@@ -117,8 +117,7 @@ abstract class HierarchySearch<T: PsiElement>(
     override fun doSearch(request: HierarchySearchRequest<T>, consumer: ExecutorProcessor<T>) {
         if (request.searchDeeply) {
             doSearchAll(request, consumer)
-        }
-        else {
+        } else {
             doSearchDirect(request, consumer)
         }
     }

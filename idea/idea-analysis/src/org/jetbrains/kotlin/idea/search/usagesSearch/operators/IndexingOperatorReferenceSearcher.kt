@@ -30,13 +30,20 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class IndexingOperatorReferenceSearcher(
-        targetFunction: PsiElement,
-        searchScope: SearchScope,
-        consumer: ExecutorProcessor<PsiReference>,
-        optimizer: SearchRequestCollector,
-        options: KotlinReferencesSearchOptions,
-        private val isSet: Boolean
-) : OperatorReferenceSearcher<KtArrayAccessExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("[")) {
+    targetFunction: PsiElement,
+    searchScope: SearchScope,
+    consumer: ExecutorProcessor<PsiReference>,
+    optimizer: SearchRequestCollector,
+    options: KotlinReferencesSearchOptions,
+    private val isSet: Boolean
+) : OperatorReferenceSearcher<KtArrayAccessExpression>(
+    targetFunction,
+    searchScope,
+    consumer,
+    optimizer,
+    options,
+    wordsToSearch = listOf("[")
+) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
         val accessExpression = expression.parent as? KtArrayAccessExpression ?: return
@@ -45,7 +52,8 @@ class IndexingOperatorReferenceSearcher(
         processReferenceElement(accessExpression)
     }
 
-    override fun isReferenceToCheck(ref: PsiReference) = ref is KtArrayAccessReference && checkAccessExpression(ref.element as KtArrayAccessExpression)
+    override fun isReferenceToCheck(ref: PsiReference) =
+        ref is KtArrayAccessReference && checkAccessExpression(ref.element)
 
     override fun extractReference(element: KtElement): PsiReference? {
         val accessExpression = element as? KtArrayAccessExpression ?: return null

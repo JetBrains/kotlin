@@ -28,14 +28,22 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class ContainsOperatorReferenceSearcher(
-        targetFunction: PsiElement,
-        searchScope: SearchScope,
-        consumer: ExecutorProcessor<PsiReference>,
-        optimizer: SearchRequestCollector,
-        options: KotlinReferencesSearchOptions
-) : OperatorReferenceSearcher<KtOperationReferenceExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("in")) {
-
-    private val OPERATION_TOKENS = setOf(KtTokens.IN_KEYWORD, KtTokens.NOT_IN)
+    targetFunction: PsiElement,
+    searchScope: SearchScope,
+    consumer: ExecutorProcessor<PsiReference>,
+    optimizer: SearchRequestCollector,
+    options: KotlinReferencesSearchOptions
+) : OperatorReferenceSearcher<KtOperationReferenceExpression>(
+    targetFunction,
+    searchScope,
+    consumer,
+    optimizer,
+    options,
+    wordsToSearch = listOf("in")
+) {
+    private companion object {
+        private val OPERATION_TOKENS = setOf(KtTokens.IN_KEYWORD, KtTokens.NOT_IN)
+    }
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
         val parent = expression.parent

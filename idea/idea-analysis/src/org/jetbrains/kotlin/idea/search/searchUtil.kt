@@ -56,7 +56,7 @@ fun PsiFile.fileScope(): GlobalSearchScope = GlobalSearchScope.fileScope(this)
 
 fun GlobalSearchScope.restrictByFileType(fileType: FileType) = GlobalSearchScope.getScopeRestrictedByFileTypes(this, fileType)
 
-fun SearchScope.restrictByFileType(fileType: FileType) = when (this) {
+fun SearchScope.restrictByFileType(fileType: FileType): SearchScope = when (this) {
     is GlobalSearchScope -> restrictByFileType(fileType)
     is LocalSearchScope -> {
         val elements = scope.filter { it.containingFile.fileType == fileType }
@@ -79,8 +79,7 @@ fun SearchScope.excludeFileTypes(vararg fileTypes: FileType): SearchScope {
     return if (this is GlobalSearchScope) {
         val includedFileTypes = FileTypeRegistry.getInstance().registeredFileTypes.filter { it !in fileTypes }.toTypedArray()
         GlobalSearchScope.getScopeRestrictedByFileTypes(this, *includedFileTypes)
-    }
-    else {
+    } else {
         this as LocalSearchScope
         val filteredElements = scope.filter { it.containingFile.fileType !in fileTypes }
         if (filteredElements.isNotEmpty())
@@ -94,7 +93,8 @@ fun SearchScope.excludeFileTypes(vararg fileTypes: FileType): SearchScope {
 fun ReferencesSearch.SearchParameters.effectiveSearchScope(element: PsiElement): SearchScope {
     if (element == elementToSearch) return effectiveSearchScope
     if (isIgnoreAccessScope) return scopeDeterminedByUser
-    val accessScope = PsiSearchHelper.SERVICE.getInstance(element.project).getUseScope(element)
+    // BUNCH: 181
+    @Suppress("DEPRECATION") val accessScope = PsiSearchHelper.SERVICE.getInstance(element.project).getUseScope(element)
     return scopeDeterminedByUser.intersectWith(accessScope)
 }
 
