@@ -96,8 +96,8 @@ class IrBuiltIns(
         builtIns.nothing to IrTypeMapper({ nothingType }, { nothingNType }),
         builtIns.unit to IrTypeMapper({ unitType }, { buildNullableType(unitType) }),
         builtIns.string to IrTypeMapper({ stringType }, { buildNullableType(stringType) }),
-        builtIns.throwable to IrTypeMapper({ throwableType }, { buildNullableType(throwableType) }),
-        builtIns.array to IrTypeMapper({ arrayType }, { buildNullableType(arrayType) })
+        builtIns.throwable to IrTypeMapper({ throwableType }, { buildNullableType(throwableType) })//,
+//        builtIns.array to IrTypeMapper({ arrayType }, { buildNullableType(arrayType) })
     )
 
     fun getPrimitiveTypeOrNullByDescriptor(descriptor: ClassifierDescriptor, isNullable: Boolean) =

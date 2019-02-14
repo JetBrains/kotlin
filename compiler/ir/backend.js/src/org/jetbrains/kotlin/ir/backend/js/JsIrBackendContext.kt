@@ -263,11 +263,11 @@ class JsIrBackendContext(
     val throwableClass by lazy {
         symbolTable.referenceClass(
             getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
-        ).owner
+        )
     }
-    val throwableConstructors by lazy { throwableClass.declarations.filterIsInstance<IrConstructor>() }
+    val throwableConstructors by lazy { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
 
-    val defaultThrowableCtor by lazy { throwableConstructors.single { it.valueParameters.size == 0 } }
+    val defaultThrowableCtor by lazy { throwableConstructors.single { it.owner.valueParameters.size == 0 } }
 
     private fun referenceOperators() = OperatorNames.ALL.map { name ->
         // TODO to replace KotlinType with IrType we need right equals on IrType

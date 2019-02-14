@@ -28,7 +28,7 @@ class CoroutineIntrinsicLowering(val context: JsIrBackendContext): FileLoweringP
                         irCall(expression, context.coroutineSuspendOrReturn)
                     expression.descriptor.isBuiltInIntercepted(languageVersion) ->
                         error("Intercepted should not be used with release coroutines")
-                    expression.symbol.owner == context.intrinsics.jsCoroutineContext.owner ->
+                    expression.symbol == context.intrinsics.jsCoroutineContext ->
                         irCall(expression, context.coroutineGetContextJs)
                     else -> call
                 }

@@ -118,7 +118,7 @@ abstract class BasicIrBoxTest(
             filesToCompile,
             config.configuration,
             listOf(FqName((testPackage?.let { "$it." } ?: "") + testFunction)),
-            CompilationMode.TEST_AGAINST_CACHE,
+            CompilationMode.TEST_AGAINST_CACHE,//CompilationMode.TEST_AGAINST_KLIB,
             dependencies,
             runtimeResult,
             moduleType = if (isMainModule) ModuleType.MAIN else ModuleType.SECONDARY

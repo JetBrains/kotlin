@@ -61,7 +61,7 @@ class ExternalDependenciesGenerator(
 
             deserializer?.declareForwardDeclarations()
 
-            assert(symbolTable.unboundClasses.isEmpty())
+//            assert(symbolTable.unboundClasses.isEmpty())
             assert(symbolTable.unboundConstructors.isEmpty())
             assert(symbolTable.unboundEnumEntries.isEmpty())
             assert(symbolTable.unboundFields.isEmpty())
