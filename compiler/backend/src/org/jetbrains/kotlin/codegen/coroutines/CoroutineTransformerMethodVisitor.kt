@@ -828,23 +828,20 @@ internal fun InstructionAdapter.generateContinuationConstructorCall(
 
 private fun InstructionAdapter.generateResumeWithExceptionCheck(isReleaseCoroutines: Boolean, dataIndex: Int, exceptionIndex: Int) {
     // Check if resumeWithException has been called
-    load(if (isReleaseCoroutines) dataIndex else exceptionIndex, AsmTypes.OBJECT_TYPE)
-    dup()
-    val noExceptionLabel = Label()
 
     if (isReleaseCoroutines) {
-        instanceOf(AsmTypes.RESULT_FAILURE)
-        ifeq(noExceptionLabel)
-        // TODO: do we need this checkcast?
-        checkcast(AsmTypes.RESULT_FAILURE)
-        getfield(AsmTypes.RESULT_FAILURE.internalName, "exception", AsmTypes.JAVA_THROWABLE_TYPE.descriptor)
+        load(dataIndex, AsmTypes.OBJECT_TYPE)
+        invokestatic("kotlin/ResultKt", "throwOnFailure", "(Ljava/lang/Object;)V", false)
     } else {
+        load(exceptionIndex, AsmTypes.OBJECT_TYPE)
+        dup()
+        val noExceptionLabel = Label()
         ifnull(noExceptionLabel)
-    }
-    athrow()
+        athrow()
 
-    mark(noExceptionLabel)
-    pop()
+        mark(noExceptionLabel)
+        pop()
+    }
 }
 
 private fun Type.fieldNameForVar(index: Int) = descriptor.first() + "$" + index

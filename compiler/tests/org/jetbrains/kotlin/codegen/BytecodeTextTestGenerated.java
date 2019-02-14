@@ -1125,6 +1125,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/returnUnitInLambda.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("throwOnFailure.kt")
+        public void testThrowOnFailure() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/throwOnFailure.kt");
+        }
+
         @TestMetadata("varValueConflictsWithTable.kt")
         public void testVarValueConflictsWithTable() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable.kt");
