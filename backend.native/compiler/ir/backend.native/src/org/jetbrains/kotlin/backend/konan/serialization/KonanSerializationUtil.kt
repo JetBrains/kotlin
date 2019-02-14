@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.backend.konan.library.SerializedIr
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -65,9 +64,7 @@ internal class KonanSerializationUtil(val context: Context, val metadataVersion:
         with(serializerContext) {
             val previousSerializer = classSerializer
 
-        // TODO: this is to filter out object{}. Change me.
-        // if (classDescriptor.isExported())
-            // classSerializer = KonanDescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer)
+            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer)
 
             val classProto = classSerializer.classProto(classDescriptor).build()
                     ?: error("Class not serialized: $classDescriptor")
