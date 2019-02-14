@@ -1,0 +1,62 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+group = "com.example"
+version = "1.0"
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+}
+
+if (project.findProperty("mppProjectDependency") == "true") {
+
+    dependencies {
+        api project(":mpp-lib")
+    }
+
+} else {
+
+    repositories {
+        maven { setUrl "${rootProject.buildDir}/repo" }
+    }
+
+    dependencies {
+        api "com.example:mpp-lib:1.0"
+    }
+
+}
+
+
+if (project.findProperty("legacyPublishing") == "true") {
+
+    apply plugin: 'maven'
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "file://${rootProject.buildDir}/repo")
+            }
+        }
+    }
+
+    tasks.create("publish") {
+        dependsOn uploadArchives
+    }
+
+} else {
+
+    apply plugin: 'maven-publish'
+
+    publishing {
+        publications {
+            main(MavenPublication) {
+                from components.java
+            }
+        }
+        repositories {
+            maven { setUrl("${rootProject.buildDir}/repo") }
+        }
+    }
+
+}
