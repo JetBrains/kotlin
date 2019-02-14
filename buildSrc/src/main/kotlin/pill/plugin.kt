@@ -146,13 +146,13 @@ class JpsCompatiblePlugin : Plugin<Project> {
         val jpsProject = parse(rootProject, projectLibraries, parserContext)
             .mapLibraries(this::attachPlatformSources, this::attachAsmSources)
 
-        generateKotlinPluginArtifactFile(rootProject).write()
-
         val files = render(jpsProject)
 
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
         removeAllArtifactConfigurations()
+
+        generateKotlinPluginArtifactFile(rootProject).write()
 
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(rootProject)
