@@ -7,12 +7,12 @@ package org.jetbrains.kotlinx.serialization.idea
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.core.unwrapModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 fun <T> getIfEnabledOn(clazz: ClassDescriptor, body: () -> T): T? {
-    val module = clazz.module.getCapability(ModuleInfo.Capability)?.unwrapModuleSourceInfo()?.module ?: return null
+    val module = (clazz.module.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module ?: return null
     val facet = KotlinFacet.get(module) ?: return null
     val pluginClasspath = facet.configuration.settings.compilerArguments?.pluginClasspaths ?: return null
     if (pluginClasspath.none { it == KotlinSerializationImportHandler.PLUGIN_JPS_JAR }) return null
