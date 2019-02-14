@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.backend.js.CompilationMode
 import org.jetbrains.kotlin.ir.backend.js.ModuleType
 import org.jetbrains.kotlin.ir.backend.js.CompiledModule
 import org.jetbrains.kotlin.ir.backend.js.compile
@@ -117,7 +118,7 @@ abstract class BasicIrBoxTest(
             filesToCompile,
             config.configuration,
             listOf(FqName((testPackage?.let { "$it." } ?: "") + testFunction)),
-            false,
+            CompilationMode.TEST_AGAINST_CACHE,
             dependencies,
             runtimeResult,
             moduleType = if (isMainModule) ModuleType.MAIN else ModuleType.SECONDARY

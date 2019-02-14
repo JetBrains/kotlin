@@ -12,6 +12,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.backend.js.CompilationMode
 import org.jetbrains.kotlin.ir.backend.js.ModuleType
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -63,7 +64,7 @@ fun main() {
         (JsIrTestRuntime.FULL.sources).map(::createPsiFile),
         buildConfiguration(environment),
         emptyList(),
-        true,
+        CompilationMode.KLIB_WITH_JS,
         emptyList(),
         null,
         ModuleType.TEST_RUNTIME
