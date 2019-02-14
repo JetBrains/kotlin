@@ -39,7 +39,8 @@ fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module:
         "Short",
         "Int",
         "Float",
-        "Double"
+        "Double",
+        "Function"
     ).map { Name.identifier(it) }.toSet()
 
     fun isBuiltInClass(declaration: IrDeclaration): Boolean =
