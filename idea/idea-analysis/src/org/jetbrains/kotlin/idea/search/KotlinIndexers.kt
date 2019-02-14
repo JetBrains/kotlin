@@ -50,16 +50,16 @@ private val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
 
 class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer) : BaseFilterLexer(KotlinLexer(), occurrenceConsumer) {
     private companion object {
-        private val codeTokens = TokenSet.orSet(
+        private val CODE_TOKENS = TokenSet.orSet(
             TokenSet.create(*ALL_SEARCHABLE_OPERATIONS.toTypedArray()),
             TokenSet.create(KtTokens.IDENTIFIER)
         )
 
-        private val commentTokens = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
-
+        private val COMMENT_TOKENS = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
         private const val MAX_PREV_TOKENS = 2
-        private val prevTokens = ArrayDeque<IElementType>(MAX_PREV_TOKENS)
     }
+
+    private val prevTokens = ArrayDeque<IElementType>(MAX_PREV_TOKENS)
 
     private var prevTokenStart = -1
     private var prevTokenEnd = -1
@@ -107,17 +107,17 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer) : Ba
                 }
             }
 
-            in codeTokens -> addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
+            in CODE_TOKENS -> addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
 
             in KtTokens.STRINGS -> scanWordsInToken(UsageSearchContext.IN_STRINGS + UsageSearchContext.IN_FOREIGN_LANGUAGES, false, true)
 
-            in commentTokens -> {
+            in COMMENT_TOKENS -> {
                 scanWordsInToken(UsageSearchContext.IN_COMMENTS.toInt(), false, false)
                 advanceTodoItemCountsInToken()
             }
         }
 
-        if (tokenType != TokenType.WHITE_SPACE && tokenType !in commentTokens) {
+        if (tokenType != TokenType.WHITE_SPACE && tokenType !in COMMENT_TOKENS) {
             if (prevTokens.size == MAX_PREV_TOKENS) {
                 prevTokens.removeLast()
             }
