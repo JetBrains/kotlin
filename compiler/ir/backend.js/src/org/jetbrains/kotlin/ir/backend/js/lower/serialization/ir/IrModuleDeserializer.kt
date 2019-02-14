@@ -566,6 +566,59 @@ abstract class IrModuleDeserializer(
         return loop
     }
 
+    private fun deserializeDynamicMemberExpression(proto: IrKlibProtoBuf.IrDynamicMemberExpression, start: Int, end: Int, type: IrType) =
+        IrDynamicMemberExpressionImpl(start, end, type, deserializeString(proto.memberName), deserializeExpression(proto.receiver))
+
+    private fun deserializeDynamicOperatorExpression(proto: IrKlibProtoBuf.IrDynamicOperatorExpression, start: Int, end: Int, type: IrType) =
+        IrDynamicOperatorExpressionImpl(start, end, type, deserializeDynamicOperator(proto.operator)).apply {
+            receiver = deserializeExpression(proto.receiver)
+            proto.argumentList.mapTo(arguments) { deserializeExpression(it) }
+        }
+
+    private fun deserializeDynamicOperator(operator: IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator) = when (operator) {
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS -> IrDynamicOperator.UNARY_PLUS
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_MINUS -> IrDynamicOperator.UNARY_MINUS
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EXCL -> IrDynamicOperator.EXCL
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.PREFIX_INCREMENT -> IrDynamicOperator.PREFIX_INCREMENT
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.PREFIX_DECREMENT -> IrDynamicOperator.PREFIX_DECREMENT
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.POSTFIX_INCREMENT -> IrDynamicOperator.POSTFIX_INCREMENT
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.POSTFIX_DECREMENT -> IrDynamicOperator.POSTFIX_DECREMENT
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.BINARY_PLUS -> IrDynamicOperator.BINARY_PLUS
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.BINARY_MINUS -> IrDynamicOperator.BINARY_MINUS
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MUL -> IrDynamicOperator.MUL
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.DIV -> IrDynamicOperator.DIV
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MOD -> IrDynamicOperator.MOD
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.GT -> IrDynamicOperator.GT
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.LT -> IrDynamicOperator.LT
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.GE -> IrDynamicOperator.GE
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.LE -> IrDynamicOperator.LE
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EQEQ -> IrDynamicOperator.EQEQ
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EXCLEQ -> IrDynamicOperator.EXCLEQ
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EQEQEQ -> IrDynamicOperator.EQEQEQ
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EXCLEQEQ -> IrDynamicOperator.EXCLEQEQ
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.ANDAND -> IrDynamicOperator.ANDAND
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.OROR -> IrDynamicOperator.OROR
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EQ -> IrDynamicOperator.EQ
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.PLUSEQ -> IrDynamicOperator.PLUSEQ
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MINUSEQ -> IrDynamicOperator.MINUSEQ
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MULEQ -> IrDynamicOperator.MULEQ
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.DIVEQ -> IrDynamicOperator.DIVEQ
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MODEQ -> IrDynamicOperator.MODEQ
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.ARRAY_ACCESS -> IrDynamicOperator.ARRAY_ACCESS
+
+        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.INVOKE -> IrDynamicOperator.INVOKE
+    }
+
     private fun deserializeBreak(proto: IrKlibProtoBuf.IrBreak, start: Int, end: Int, type: IrType): IrBreak {
         val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val loopId = proto.loopId
@@ -670,6 +723,10 @@ abstract class IrModuleDeserializer(
             -> deserializeWhen(proto.`when`, start, end, type)
             WHILE
             -> deserializeWhile(proto.`while`, start, end, type)
+            DYNAMIC_MEMBER
+            -> deserializeDynamicMemberExpression(proto.dynamicMember, start, end, type)
+            DYNAMIC_OPERATOR
+            -> deserializeDynamicOperatorExpression(proto.dynamicOperator, start, end, type)
             OPERATION_NOT_SET
             -> error("Expression deserialization not implemented: ${proto.operationCase}")
         }

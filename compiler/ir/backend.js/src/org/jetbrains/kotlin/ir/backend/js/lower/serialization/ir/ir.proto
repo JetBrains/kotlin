@@ -394,6 +394,54 @@ message IrWhile {
   required Loop loop = 1;
 }
 
+/* ------ Dynamic expression --------------------------------------------- */
+
+message IrDynamicMemberExpression {
+  required String memberName = 1;
+  required IrExpression receiver = 2;
+}
+
+message IrDynamicOperatorExpression {
+  enum IrDynamicOperator {
+    UNARY_PLUS = 1;
+    UNARY_MINUS = 2;
+    EXCL = 3;
+    PREFIX_INCREMENT = 4;
+    POSTFIX_INCREMENT = 5;
+    PREFIX_DECREMENT = 6;
+    POSTFIX_DECREMENT = 7;
+
+    BINARY_PLUS = 8;
+    BINARY_MINUS = 9;
+    MUL = 10;
+    DIV = 11;
+    MOD = 12;
+    GT = 13;
+    LT = 14;
+    GE = 15;
+    LE = 16;
+    EQEQ = 17;
+    EXCLEQ = 18;
+    EQEQEQ = 19;
+    EXCLEQEQ = 20;
+    ANDAND = 21;
+    OROR = 22;
+
+    EQ = 23;
+    PLUSEQ = 24;
+    MINUSEQ = 25;
+    MULEQ = 26;
+    DIVEQ = 27;
+    MODEQ = 28;
+
+    ARRAY_ACCESS = 29;
+    INVOKE = 30;
+  }
+  required IrDynamicOperator operator = 1;
+  required IrExpression receiver = 2;
+  repeated IrExpression argument = 3;
+}
+
 // TODO: we need an extension mechanism to accomodate new
 // IR operators in upcoming releases.
 message IrOperation {
@@ -426,6 +474,8 @@ message IrOperation {
     IrVararg vararg = 26;
     IrWhen when = 27;
     IrWhile while = 28;
+    IrDynamicMemberExpression dynamic_member = 29;
+    IrDynamicOperatorExpression dynamic_operator = 30;
   }
 }
 

@@ -34511,6 +34511,1570 @@ public final class IrKlibProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrWhile)
   }
 
+  public interface IrDynamicMemberExpressionOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+     */
+    boolean hasMemberName();
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getMemberName();
+
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+     */
+    boolean hasReceiver();
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getReceiver();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression}
+   */
+  public static final class IrDynamicMemberExpression extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression)
+      IrDynamicMemberExpressionOrBuilder {
+    // Use IrDynamicMemberExpression.newBuilder() to construct.
+    private IrDynamicMemberExpression(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private IrDynamicMemberExpression(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final IrDynamicMemberExpression defaultInstance;
+    public static IrDynamicMemberExpression getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public IrDynamicMemberExpression getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private IrDynamicMemberExpression(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = memberName_.toBuilder();
+              }
+              memberName_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(memberName_);
+                memberName_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+            case 18: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = receiver_.toBuilder();
+              }
+              receiver_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(receiver_);
+                receiver_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<IrDynamicMemberExpression> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<IrDynamicMemberExpression>() {
+      public IrDynamicMemberExpression parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new IrDynamicMemberExpression(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<IrDynamicMemberExpression> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int MEMBERNAME_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String memberName_;
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+     */
+    public boolean hasMemberName() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getMemberName() {
+      return memberName_;
+    }
+
+    public static final int RECEIVER_FIELD_NUMBER = 2;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression receiver_;
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+     */
+    public boolean hasReceiver() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getReceiver() {
+      return receiver_;
+    }
+
+    private void initFields() {
+      memberName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      receiver_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasMemberName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasReceiver()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getMemberName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getReceiver().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, memberName_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, receiver_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(1, memberName_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, receiver_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression)
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpressionOrBuilder {
+      // Construct using org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        memberName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        receiver_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression build() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression buildPartial() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression result = new org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.memberName_ = memberName_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.receiver_ = receiver_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression other) {
+        if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.getDefaultInstance()) return this;
+        if (other.hasMemberName()) {
+          mergeMemberName(other.getMemberName());
+        }
+        if (other.hasReceiver()) {
+          mergeReceiver(other.getReceiver());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasMemberName()) {
+          
+          return false;
+        }
+        if (!hasReceiver()) {
+          
+          return false;
+        }
+        if (!getMemberName().isInitialized()) {
+          
+          return false;
+        }
+        if (!getReceiver().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String memberName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+       */
+      public boolean hasMemberName() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String getMemberName() {
+        return memberName_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+       */
+      public Builder setMemberName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        memberName_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+       */
+      public Builder setMemberName(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.Builder builderForValue) {
+        memberName_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+       */
+      public Builder mergeMemberName(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            memberName_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance()) {
+          memberName_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.newBuilder(memberName_).mergeFrom(value).buildPartial();
+        } else {
+          memberName_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.String memberName = 1;</code>
+       */
+      public Builder clearMemberName() {
+        memberName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression receiver_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public boolean hasReceiver() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getReceiver() {
+        return receiver_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public Builder setReceiver(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        receiver_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public Builder setReceiver(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.Builder builderForValue) {
+        receiver_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public Builder mergeReceiver(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            receiver_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance()) {
+          receiver_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.newBuilder(receiver_).mergeFrom(value).buildPartial();
+        } else {
+          receiver_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public Builder clearReceiver() {
+        receiver_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression)
+    }
+
+    static {
+      defaultInstance = new IrDynamicMemberExpression(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression)
+  }
+
+  public interface IrDynamicOperatorExpressionOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator operator = 1;</code>
+     */
+    boolean hasOperator();
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator operator = 1;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator getOperator();
+
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+     */
+    boolean hasReceiver();
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getReceiver();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression> 
+        getArgumentList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getArgument(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+     */
+    int getArgumentCount();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression}
+   */
+  public static final class IrDynamicOperatorExpression extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression)
+      IrDynamicOperatorExpressionOrBuilder {
+    // Use IrDynamicOperatorExpression.newBuilder() to construct.
+    private IrDynamicOperatorExpression(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private IrDynamicOperatorExpression(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final IrDynamicOperatorExpression defaultInstance;
+    public static IrDynamicOperatorExpression getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public IrDynamicOperatorExpression getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private IrDynamicOperatorExpression(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator value = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.valueOf(rawValue);
+              if (value == null) {
+                unknownFieldsCodedOutput.writeRawVarint32(tag);
+                unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+              } else {
+                bitField0_ |= 0x00000001;
+                operator_ = value;
+              }
+              break;
+            }
+            case 18: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = receiver_.toBuilder();
+              }
+              receiver_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(receiver_);
+                receiver_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                argument_ = new java.util.ArrayList<org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              argument_.add(input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          argument_ = java.util.Collections.unmodifiableList(argument_);
+        }
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<IrDynamicOperatorExpression> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<IrDynamicOperatorExpression>() {
+      public IrDynamicOperatorExpression parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new IrDynamicOperatorExpression(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<IrDynamicOperatorExpression> getParserForType() {
+      return PARSER;
+    }
+
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator}
+     */
+    public enum IrDynamicOperator
+        implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+      /**
+       * <code>UNARY_PLUS = 1;</code>
+       */
+      UNARY_PLUS(0, 1),
+      /**
+       * <code>UNARY_MINUS = 2;</code>
+       */
+      UNARY_MINUS(1, 2),
+      /**
+       * <code>EXCL = 3;</code>
+       */
+      EXCL(2, 3),
+      /**
+       * <code>PREFIX_INCREMENT = 4;</code>
+       */
+      PREFIX_INCREMENT(3, 4),
+      /**
+       * <code>POSTFIX_INCREMENT = 5;</code>
+       */
+      POSTFIX_INCREMENT(4, 5),
+      /**
+       * <code>PREFIX_DECREMENT = 6;</code>
+       */
+      PREFIX_DECREMENT(5, 6),
+      /**
+       * <code>POSTFIX_DECREMENT = 7;</code>
+       */
+      POSTFIX_DECREMENT(6, 7),
+      /**
+       * <code>BINARY_PLUS = 8;</code>
+       */
+      BINARY_PLUS(7, 8),
+      /**
+       * <code>BINARY_MINUS = 9;</code>
+       */
+      BINARY_MINUS(8, 9),
+      /**
+       * <code>MUL = 10;</code>
+       */
+      MUL(9, 10),
+      /**
+       * <code>DIV = 11;</code>
+       */
+      DIV(10, 11),
+      /**
+       * <code>MOD = 12;</code>
+       */
+      MOD(11, 12),
+      /**
+       * <code>GT = 13;</code>
+       */
+      GT(12, 13),
+      /**
+       * <code>LT = 14;</code>
+       */
+      LT(13, 14),
+      /**
+       * <code>GE = 15;</code>
+       */
+      GE(14, 15),
+      /**
+       * <code>LE = 16;</code>
+       */
+      LE(15, 16),
+      /**
+       * <code>EQEQ = 17;</code>
+       */
+      EQEQ(16, 17),
+      /**
+       * <code>EXCLEQ = 18;</code>
+       */
+      EXCLEQ(17, 18),
+      /**
+       * <code>EQEQEQ = 19;</code>
+       */
+      EQEQEQ(18, 19),
+      /**
+       * <code>EXCLEQEQ = 20;</code>
+       */
+      EXCLEQEQ(19, 20),
+      /**
+       * <code>ANDAND = 21;</code>
+       */
+      ANDAND(20, 21),
+      /**
+       * <code>OROR = 22;</code>
+       */
+      OROR(21, 22),
+      /**
+       * <code>EQ = 23;</code>
+       */
+      EQ(22, 23),
+      /**
+       * <code>PLUSEQ = 24;</code>
+       */
+      PLUSEQ(23, 24),
+      /**
+       * <code>MINUSEQ = 25;</code>
+       */
+      MINUSEQ(24, 25),
+      /**
+       * <code>MULEQ = 26;</code>
+       */
+      MULEQ(25, 26),
+      /**
+       * <code>DIVEQ = 27;</code>
+       */
+      DIVEQ(26, 27),
+      /**
+       * <code>MODEQ = 28;</code>
+       */
+      MODEQ(27, 28),
+      /**
+       * <code>ARRAY_ACCESS = 29;</code>
+       */
+      ARRAY_ACCESS(28, 29),
+      /**
+       * <code>INVOKE = 30;</code>
+       */
+      INVOKE(29, 30),
+      ;
+
+      /**
+       * <code>UNARY_PLUS = 1;</code>
+       */
+      public static final int UNARY_PLUS_VALUE = 1;
+      /**
+       * <code>UNARY_MINUS = 2;</code>
+       */
+      public static final int UNARY_MINUS_VALUE = 2;
+      /**
+       * <code>EXCL = 3;</code>
+       */
+      public static final int EXCL_VALUE = 3;
+      /**
+       * <code>PREFIX_INCREMENT = 4;</code>
+       */
+      public static final int PREFIX_INCREMENT_VALUE = 4;
+      /**
+       * <code>POSTFIX_INCREMENT = 5;</code>
+       */
+      public static final int POSTFIX_INCREMENT_VALUE = 5;
+      /**
+       * <code>PREFIX_DECREMENT = 6;</code>
+       */
+      public static final int PREFIX_DECREMENT_VALUE = 6;
+      /**
+       * <code>POSTFIX_DECREMENT = 7;</code>
+       */
+      public static final int POSTFIX_DECREMENT_VALUE = 7;
+      /**
+       * <code>BINARY_PLUS = 8;</code>
+       */
+      public static final int BINARY_PLUS_VALUE = 8;
+      /**
+       * <code>BINARY_MINUS = 9;</code>
+       */
+      public static final int BINARY_MINUS_VALUE = 9;
+      /**
+       * <code>MUL = 10;</code>
+       */
+      public static final int MUL_VALUE = 10;
+      /**
+       * <code>DIV = 11;</code>
+       */
+      public static final int DIV_VALUE = 11;
+      /**
+       * <code>MOD = 12;</code>
+       */
+      public static final int MOD_VALUE = 12;
+      /**
+       * <code>GT = 13;</code>
+       */
+      public static final int GT_VALUE = 13;
+      /**
+       * <code>LT = 14;</code>
+       */
+      public static final int LT_VALUE = 14;
+      /**
+       * <code>GE = 15;</code>
+       */
+      public static final int GE_VALUE = 15;
+      /**
+       * <code>LE = 16;</code>
+       */
+      public static final int LE_VALUE = 16;
+      /**
+       * <code>EQEQ = 17;</code>
+       */
+      public static final int EQEQ_VALUE = 17;
+      /**
+       * <code>EXCLEQ = 18;</code>
+       */
+      public static final int EXCLEQ_VALUE = 18;
+      /**
+       * <code>EQEQEQ = 19;</code>
+       */
+      public static final int EQEQEQ_VALUE = 19;
+      /**
+       * <code>EXCLEQEQ = 20;</code>
+       */
+      public static final int EXCLEQEQ_VALUE = 20;
+      /**
+       * <code>ANDAND = 21;</code>
+       */
+      public static final int ANDAND_VALUE = 21;
+      /**
+       * <code>OROR = 22;</code>
+       */
+      public static final int OROR_VALUE = 22;
+      /**
+       * <code>EQ = 23;</code>
+       */
+      public static final int EQ_VALUE = 23;
+      /**
+       * <code>PLUSEQ = 24;</code>
+       */
+      public static final int PLUSEQ_VALUE = 24;
+      /**
+       * <code>MINUSEQ = 25;</code>
+       */
+      public static final int MINUSEQ_VALUE = 25;
+      /**
+       * <code>MULEQ = 26;</code>
+       */
+      public static final int MULEQ_VALUE = 26;
+      /**
+       * <code>DIVEQ = 27;</code>
+       */
+      public static final int DIVEQ_VALUE = 27;
+      /**
+       * <code>MODEQ = 28;</code>
+       */
+      public static final int MODEQ_VALUE = 28;
+      /**
+       * <code>ARRAY_ACCESS = 29;</code>
+       */
+      public static final int ARRAY_ACCESS_VALUE = 29;
+      /**
+       * <code>INVOKE = 30;</code>
+       */
+      public static final int INVOKE_VALUE = 30;
+
+
+      public final int getNumber() { return value; }
+
+      public static IrDynamicOperator valueOf(int value) {
+        switch (value) {
+          case 1: return UNARY_PLUS;
+          case 2: return UNARY_MINUS;
+          case 3: return EXCL;
+          case 4: return PREFIX_INCREMENT;
+          case 5: return POSTFIX_INCREMENT;
+          case 6: return PREFIX_DECREMENT;
+          case 7: return POSTFIX_DECREMENT;
+          case 8: return BINARY_PLUS;
+          case 9: return BINARY_MINUS;
+          case 10: return MUL;
+          case 11: return DIV;
+          case 12: return MOD;
+          case 13: return GT;
+          case 14: return LT;
+          case 15: return GE;
+          case 16: return LE;
+          case 17: return EQEQ;
+          case 18: return EXCLEQ;
+          case 19: return EQEQEQ;
+          case 20: return EXCLEQEQ;
+          case 21: return ANDAND;
+          case 22: return OROR;
+          case 23: return EQ;
+          case 24: return PLUSEQ;
+          case 25: return MINUSEQ;
+          case 26: return MULEQ;
+          case 27: return DIVEQ;
+          case 28: return MODEQ;
+          case 29: return ARRAY_ACCESS;
+          case 30: return INVOKE;
+          default: return null;
+        }
+      }
+
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<IrDynamicOperator>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<IrDynamicOperator>
+          internalValueMap =
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<IrDynamicOperator>() {
+              public IrDynamicOperator findValueByNumber(int number) {
+                return IrDynamicOperator.valueOf(number);
+              }
+            };
+
+      private final int value;
+
+      private IrDynamicOperator(int index, int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator)
+    }
+
+    private int bitField0_;
+    public static final int OPERATOR_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator operator_;
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator operator = 1;</code>
+     */
+    public boolean hasOperator() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator operator = 1;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator getOperator() {
+      return operator_;
+    }
+
+    public static final int RECEIVER_FIELD_NUMBER = 2;
+    private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression receiver_;
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+     */
+    public boolean hasReceiver() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getReceiver() {
+      return receiver_;
+    }
+
+    public static final int ARGUMENT_FIELD_NUMBER = 3;
+    private java.util.List<org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression> argument_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression> getArgumentList() {
+      return argument_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpressionOrBuilder> 
+        getArgumentOrBuilderList() {
+      return argument_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+     */
+    public int getArgumentCount() {
+      return argument_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getArgument(int index) {
+      return argument_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpressionOrBuilder getArgumentOrBuilder(
+        int index) {
+      return argument_.get(index);
+    }
+
+    private void initFields() {
+      operator_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS;
+      receiver_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
+      argument_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasOperator()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasReceiver()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getReceiver().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      for (int i = 0; i < getArgumentCount(); i++) {
+        if (!getArgument(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeEnum(1, operator_.getNumber());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, receiver_);
+      }
+      for (int i = 0; i < argument_.size(); i++) {
+        output.writeMessage(3, argument_.get(i));
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(1, operator_.getNumber());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, receiver_);
+      }
+      for (int i = 0; i < argument_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(3, argument_.get(i));
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression)
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpressionOrBuilder {
+      // Construct using org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        operator_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        receiver_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        argument_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression build() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression buildPartial() {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression result = new org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.operator_ = operator_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.receiver_ = receiver_;
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          argument_ = java.util.Collections.unmodifiableList(argument_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.argument_ = argument_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression other) {
+        if (other == org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.getDefaultInstance()) return this;
+        if (other.hasOperator()) {
+          setOperator(other.getOperator());
+        }
+        if (other.hasReceiver()) {
+          mergeReceiver(other.getReceiver());
+        }
+        if (!other.argument_.isEmpty()) {
+          if (argument_.isEmpty()) {
+            argument_ = other.argument_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureArgumentIsMutable();
+            argument_.addAll(other.argument_);
+          }
+          
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasOperator()) {
+          
+          return false;
+        }
+        if (!hasReceiver()) {
+          
+          return false;
+        }
+        if (!getReceiver().isInitialized()) {
+          
+          return false;
+        }
+        for (int i = 0; i < getArgumentCount(); i++) {
+          if (!getArgument(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator operator_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS;
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator operator = 1;</code>
+       */
+      public boolean hasOperator() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator operator = 1;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator getOperator() {
+        return operator_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator operator = 1;</code>
+       */
+      public Builder setOperator(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000001;
+        operator_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression.IrDynamicOperator operator = 1;</code>
+       */
+      public Builder clearOperator() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        operator_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS;
+        
+        return this;
+      }
+
+      private org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression receiver_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public boolean hasReceiver() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getReceiver() {
+        return receiver_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public Builder setReceiver(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        receiver_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public Builder setReceiver(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.Builder builderForValue) {
+        receiver_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public Builder mergeReceiver(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            receiver_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance()) {
+          receiver_ =
+            org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.newBuilder(receiver_).mergeFrom(value).buildPartial();
+        } else {
+          receiver_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression receiver = 2;</code>
+       */
+      public Builder clearReceiver() {
+        receiver_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression> argument_ =
+        java.util.Collections.emptyList();
+      private void ensureArgumentIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          argument_ = new java.util.ArrayList<org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression>(argument_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression> getArgumentList() {
+        return java.util.Collections.unmodifiableList(argument_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public int getArgumentCount() {
+        return argument_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression getArgument(int index) {
+        return argument_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public Builder setArgument(
+          int index, org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureArgumentIsMutable();
+        argument_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public Builder setArgument(
+          int index, org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.Builder builderForValue) {
+        ensureArgumentIsMutable();
+        argument_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public Builder addArgument(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureArgumentIsMutable();
+        argument_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public Builder addArgument(
+          int index, org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureArgumentIsMutable();
+        argument_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public Builder addArgument(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.Builder builderForValue) {
+        ensureArgumentIsMutable();
+        argument_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public Builder addArgument(
+          int index, org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression.Builder builderForValue) {
+        ensureArgumentIsMutable();
+        argument_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public Builder addAllArgument(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrExpression> values) {
+        ensureArgumentIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, argument_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public Builder clearArgument() {
+        argument_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrExpression argument = 3;</code>
+       */
+      public Builder removeArgument(int index) {
+        ensureArgumentIsMutable();
+        argument_.remove(index);
+
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression)
+    }
+
+    static {
+      defaultInstance = new IrDynamicOperatorExpression(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression)
+  }
+
   public interface IrOperationOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrOperation)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
@@ -34766,6 +36330,24 @@ public final class IrKlibProtoBuf {
      * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrWhile while = 28;</code>
      */
     org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrWhile getWhile();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+     */
+    boolean hasDynamicMember();
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression getDynamicMember();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+     */
+    boolean hasDynamicOperator();
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+     */
+    org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression getDynamicOperator();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrOperation}
@@ -35186,6 +36768,32 @@ public final class IrKlibProtoBuf {
               operationCase_ = 28;
               break;
             }
+            case 234: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.Builder subBuilder = null;
+              if (operationCase_ == 29) {
+                subBuilder = ((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression) operation_).toBuilder();
+              }
+              operation_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression) operation_);
+                operation_ = subBuilder.buildPartial();
+              }
+              operationCase_ = 29;
+              break;
+            }
+            case 242: {
+              org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.Builder subBuilder = null;
+              if (operationCase_ == 30) {
+                subBuilder = ((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression) operation_).toBuilder();
+              }
+              operation_ = input.readMessage(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression) operation_);
+                operation_ = subBuilder.buildPartial();
+              }
+              operationCase_ = 30;
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -35252,6 +36860,8 @@ public final class IrKlibProtoBuf {
       VARARG(26),
       WHEN(27),
       WHILE(28),
+      DYNAMIC_MEMBER(29),
+      DYNAMIC_OPERATOR(30),
       OPERATION_NOT_SET(0);
       private int value = 0;
       private OperationCase(int value) {
@@ -35287,6 +36897,8 @@ public final class IrKlibProtoBuf {
           case 26: return VARARG;
           case 27: return WHEN;
           case 28: return WHILE;
+          case 29: return DYNAMIC_MEMBER;
+          case 30: return DYNAMIC_OPERATOR;
           case 0: return OPERATION_NOT_SET;
           default: throw new java.lang.IllegalArgumentException(
             "Value is undefined for this oneof enum.");
@@ -35779,6 +37391,40 @@ public final class IrKlibProtoBuf {
       return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrWhile.getDefaultInstance();
     }
 
+    public static final int DYNAMIC_MEMBER_FIELD_NUMBER = 29;
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+     */
+    public boolean hasDynamicMember() {
+      return operationCase_ == 29;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression getDynamicMember() {
+      if (operationCase_ == 29) {
+         return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression) operation_;
+      }
+      return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.getDefaultInstance();
+    }
+
+    public static final int DYNAMIC_OPERATOR_FIELD_NUMBER = 30;
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+     */
+    public boolean hasDynamicOperator() {
+      return operationCase_ == 30;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+     */
+    public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression getDynamicOperator() {
+      if (operationCase_ == 30) {
+         return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression) operation_;
+      }
+      return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.getDefaultInstance();
+    }
+
     private void initFields() {
     }
     private byte memoizedIsInitialized = -1;
@@ -35955,6 +37601,18 @@ public final class IrKlibProtoBuf {
           return false;
         }
       }
+      if (hasDynamicMember()) {
+        if (!getDynamicMember().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasDynamicOperator()) {
+        if (!getDynamicOperator().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -36045,6 +37703,12 @@ public final class IrKlibProtoBuf {
       }
       if (operationCase_ == 28) {
         output.writeMessage(28, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrWhile) operation_);
+      }
+      if (operationCase_ == 29) {
+        output.writeMessage(29, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression) operation_);
+      }
+      if (operationCase_ == 30) {
+        output.writeMessage(30, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression) operation_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -36166,6 +37830,14 @@ public final class IrKlibProtoBuf {
       if (operationCase_ == 28) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(28, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrWhile) operation_);
+      }
+      if (operationCase_ == 29) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(29, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression) operation_);
+      }
+      if (operationCase_ == 30) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(30, (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression) operation_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -36375,6 +38047,12 @@ public final class IrKlibProtoBuf {
         if (operationCase_ == 28) {
           result.operation_ = operation_;
         }
+        if (operationCase_ == 29) {
+          result.operation_ = operation_;
+        }
+        if (operationCase_ == 30) {
+          result.operation_ = operation_;
+        }
         result.bitField0_ = to_bitField0_;
         result.operationCase_ = operationCase_;
         return result;
@@ -36493,6 +38171,14 @@ public final class IrKlibProtoBuf {
           }
           case WHILE: {
             mergeWhile(other.getWhile());
+            break;
+          }
+          case DYNAMIC_MEMBER: {
+            mergeDynamicMember(other.getDynamicMember());
+            break;
+          }
+          case DYNAMIC_OPERATOR: {
+            mergeDynamicOperator(other.getDynamicOperator());
             break;
           }
           case OPERATION_NOT_SET: {
@@ -36669,6 +38355,18 @@ public final class IrKlibProtoBuf {
         }
         if (hasWhile()) {
           if (!getWhile().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasDynamicMember()) {
+          if (!getDynamicMember().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasDynamicOperator()) {
+          if (!getDynamicOperator().isInitialized()) {
             
             return false;
           }
@@ -38494,6 +40192,134 @@ public final class IrKlibProtoBuf {
        */
       public Builder clearWhile() {
         if (operationCase_ == 28) {
+          operationCase_ = 0;
+          operation_ = null;
+          
+        }
+        return this;
+      }
+
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+       */
+      public boolean hasDynamicMember() {
+        return operationCase_ == 29;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression getDynamicMember() {
+        if (operationCase_ == 29) {
+          return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression) operation_;
+        }
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.getDefaultInstance();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+       */
+      public Builder setDynamicMember(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        operation_ = value;
+
+        operationCase_ = 29;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+       */
+      public Builder setDynamicMember(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.Builder builderForValue) {
+        operation_ = builderForValue.build();
+
+        operationCase_ = 29;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+       */
+      public Builder mergeDynamicMember(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression value) {
+        if (operationCase_ == 29 &&
+            operation_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.getDefaultInstance()) {
+          operation_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression.newBuilder((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicMemberExpression) operation_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          operation_ = value;
+        }
+
+        operationCase_ = 29;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicMemberExpression dynamic_member = 29;</code>
+       */
+      public Builder clearDynamicMember() {
+        if (operationCase_ == 29) {
+          operationCase_ = 0;
+          operation_ = null;
+          
+        }
+        return this;
+      }
+
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+       */
+      public boolean hasDynamicOperator() {
+        return operationCase_ == 30;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+       */
+      public org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression getDynamicOperator() {
+        if (operationCase_ == 30) {
+          return (org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression) operation_;
+        }
+        return org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.getDefaultInstance();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+       */
+      public Builder setDynamicOperator(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        operation_ = value;
+
+        operationCase_ = 30;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+       */
+      public Builder setDynamicOperator(
+          org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.Builder builderForValue) {
+        operation_ = builderForValue.build();
+
+        operationCase_ = 30;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+       */
+      public Builder mergeDynamicOperator(org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression value) {
+        if (operationCase_ == 30 &&
+            operation_ != org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.getDefaultInstance()) {
+          operation_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression.newBuilder((org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDynamicOperatorExpression) operation_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          operation_ = value;
+        }
+
+        operationCase_ = 30;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+       */
+      public Builder clearDynamicOperator() {
+        if (operationCase_ == 30) {
           operationCase_ = 0;
           operation_ = null;
           
