@@ -122,7 +122,10 @@ class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnota
         // However, in compiler context platform & common modules are joined into one module,
         // so there is yet no "common module" in this situation.
         // So yet we are using own module in compiler context and common module in IDE context.
-        val commonOrOwnModules = descriptor.module.expectedByModules.ifEmpty { listOf(descriptor.module) }
+        //
+        // Also note that we have to include container-module (not only it's parents), because it is possible to declare
+        // 'expect' in platform module and actualize it right here.
+        val commonOrOwnModules = (descriptor.module.expectedByModules + listOf(descriptor.module)).ifEmpty { listOf(descriptor.module) }
         val compatibility = commonOrOwnModules
             .mapNotNull { ExpectedActualResolver.findExpectedForActual(descriptor, it) }
             .ifEmpty { return }
