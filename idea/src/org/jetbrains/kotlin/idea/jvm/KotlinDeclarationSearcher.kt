@@ -9,9 +9,14 @@ import com.intellij.lang.jvm.JvmElement
 import com.intellij.lang.jvm.source.JvmDeclarationSearcher
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.asJava.toPsiParameters
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class KotlinDeclarationSearcher : JvmDeclarationSearcher {
     override fun findDeclarations(declaringElement: PsiElement): Collection<JvmElement> =
@@ -24,6 +29,13 @@ class KotlinDeclarationSearcher : JvmDeclarationSearcher {
                 declaringElement.toLightElements()
             else
                 declaringElement.toLightElements() + primaryConstructor.toLightElements()
+        }
+        is KtParameter -> {
+            SmartList<PsiNamedElement>().apply {
+                addAll(declaringElement.toPsiParameters())
+                addIfNotNull(LightClassUtil.getLightClassBackingField(declaringElement))
+                addAll(LightClassUtil.getLightClassPropertyMethods(declaringElement))
+            }
         }
         is KtElement -> declaringElement.toLightElements()
         else -> emptyList()
