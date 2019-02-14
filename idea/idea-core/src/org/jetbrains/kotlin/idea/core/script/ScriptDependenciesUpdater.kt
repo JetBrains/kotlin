@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.LegacyResolverWrapper
-import org.jetbrains.kotlin.script.findScriptDefinition
-import org.jetbrains.kotlin.script.scriptDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptDefinition
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
@@ -63,7 +63,7 @@ class ScriptDependenciesUpdater(
     fun getCurrentDependencies(file: VirtualFile): ScriptDependencies {
         cache[file]?.let { return it }
 
-        val scriptDef = findScriptDefinition(file, project) ?: return ScriptDependencies.Empty
+        val scriptDef = file.findScriptDefinition(project) ?: return ScriptDependencies.Empty
 
         fileAttributeLoader.updateDependencies(file, scriptDef)
 

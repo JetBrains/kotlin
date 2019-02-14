@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.script.scriptDefinitionByFileName
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptDefinitionByFileName
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.utils.yieldIfNotNull

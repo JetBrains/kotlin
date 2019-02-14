@@ -20,7 +20,11 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.script.ScriptContentLoader
+import org.jetbrains.kotlin.script.ScriptDependenciesProvider
+import org.jetbrains.kotlin.script.ScriptReportSink
+import org.jetbrains.kotlin.script.adjustByDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -41,7 +45,7 @@ class CliScriptDependenciesProvider(private val project: Project) : ScriptDepend
         val cached = cache[path]
         return if (cached != null) cached
         else {
-            val scriptDef = findScriptDefinition(file, project)
+            val scriptDef = file.findScriptDefinition(project)
             if (scriptDef != null) {
                 val result = scriptContentLoader.loadContentsAndResolveDependencies(scriptDef, file)
 

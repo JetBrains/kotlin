@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProviderKt;
-
-import static org.jetbrains.kotlin.script.KotlinScriptDefinitionProviderKt.findScriptDefinition;
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.DefinitionsKt;
 
 public class TargetPlatformDetector {
     public static final TargetPlatformDetector INSTANCE = new TargetPlatformDetector();
@@ -62,7 +60,7 @@ public class TargetPlatformDetector {
         }
 
         if (file.isScript()) {
-            KotlinScriptDefinition scriptDefinition = KotlinScriptDefinitionProviderKt.scriptDefinition(file);
+            KotlinScriptDefinition scriptDefinition = DefinitionsKt.scriptDefinition(file);
             if (scriptDefinition != null) {
                 String platformNameFromScriptDefinition = scriptDefinition.getPlatform();
                 for (IdePlatform platform : IdePlatformKind.Companion.getAll_PLATFORMS()) {

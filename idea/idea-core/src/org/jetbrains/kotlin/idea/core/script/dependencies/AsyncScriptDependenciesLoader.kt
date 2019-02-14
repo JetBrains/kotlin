@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.LegacyResolverWrapper
 import org.jetbrains.kotlin.script.asResolveFailure
-import org.jetbrains.kotlin.script.findScriptDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
@@ -43,7 +43,7 @@ class AsyncScriptDependenciesLoader internal constructor(project: Project) : Scr
     override fun shouldShowNotification(): Boolean = !KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
 
     private fun runDependenciesUpdate(file: VirtualFile) {
-        val scriptDef = runReadAction { findScriptDefinition(file, project) } ?: return
+        val scriptDef = runReadAction { file.findScriptDefinition(project) } ?: return
         // runBlocking is using there to avoid loading dependencies asynchronously
         // because it leads to starting more than one gradle daemon in case of resolving dependencies in build.gradle.kts
         // It is more efficient to use one hot daemon consistently than multiple daemon in parallel
