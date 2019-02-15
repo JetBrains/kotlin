@@ -26,11 +26,14 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.DEBUG_LOG_ENABLE_PerModulePackageCache
 import java.io.File
 
 abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
+
+        project.DEBUG_LOG_ENABLE_PerModulePackageCache = true
 
         val testName = getTestName(false)
         if (testName.contains("Java8") || testName.contains("java8")) {
@@ -47,6 +50,8 @@ abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCa
 
     override fun tearDown() {
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+
+        project.DEBUG_LOG_ENABLE_PerModulePackageCache = false
         super.tearDown()
     }
     
