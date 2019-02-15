@@ -474,7 +474,7 @@ class RunKonanTest extends ExtKonanTest {
 
 class RunStdlibTest extends RunKonanTest {
     public def inDevelopersRun = false
-    public def statistics = new RunExternalTestGroup.Statistics()
+    public def statistics = new Statistics()
 
     RunStdlibTest() {
         super('buildKonanStdlibTests')
@@ -649,57 +649,6 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
     Statistics statistics = new Statistics()
 
     RunExternalTestGroup() {
-    }
-
-    static enum TestStatus {
-        PASSED,
-        FAILED,
-        ERROR,
-        SKIPPED
-    }
-    static class TestResult {
-        TestStatus status = null
-        String comment = null
-
-        TestResult(TestStatus status, String comment = ""){
-            this.status = status;
-            this.comment = comment;
-        }
-    }
-    static class Statistics {
-        int total = 0
-        int passed = 0
-        int failed = 0
-        int error = 0
-        int skipped = 0
-
-        void pass(int count = 1) {
-            passed += count
-            total += count
-        }
-
-        void skip(int count = 1) {
-            skipped += count
-            total += count
-        }
-
-        void fail(int count = 1) {
-            failed += count
-            total += count
-        }
-
-        void error(int count = 1) {
-            error += count
-            total += count
-        }
-
-        void add(Statistics other) {
-            total   += other.total
-            passed  += other.passed
-            failed  += other.failed
-            error   += other.error
-            skipped += other.skipped
-        }
     }
 
     @Override
@@ -1058,130 +1007,5 @@ fun runTest() {
         if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null)
             return new TeamcityKonanTestSuite(name, statistics)
         return new KonanTestSuite(name, statistics)
-    }
-
-    class KonanTestSuite {
-        protected name;
-        protected statistics;
-
-        KonanTestSuite(String name, Statistics statistics) {
-            this.name       = name
-            this.statistics = statistics
-        }
-
-        protected class KonanTestCase {
-            protected name
-
-            KonanTestCase(String name) {
-                this.name = name
-            }
-
-            void start(){}
-
-            TestResult pass() {
-                statistics.pass()
-                return new TestResult(TestStatus.PASSED)
-            }
-
-            TestResult fail(TestFailedException e) {
-                statistics.fail()
-                println(e.getMessage())
-                return new TestResult(TestStatus.FAILED, "Exception: ${e.getMessage()}. Cause: ${e.getCause()?.getMessage()}")
-            }
-
-            TestResult error(Exception e) {
-                statistics.error()
-                return new TestResult(TestStatus.ERROR, "Exception: ${e.getMessage()}. Cause: ${e.getCause()?.getMessage()}")
-            }
-
-            TestResult skip() {
-                statistics.skip()
-                return new TestResult(TestStatus.SKIPPED)
-            }
-        }
-
-        KonanTestCase createTestCase(String name) {
-            return new KonanTestCase(name)
-        }
-
-        void start() {}
-        void finish() {}
-    }
-
-    class TeamcityKonanTestSuite extends KonanTestSuite {
-        TeamcityKonanTestSuite(String suiteName, Statistics statistics) {
-            super(suiteName, statistics)
-        }
-
-        class TeamcityKonanTestCase extends KonanTestSuite.KonanTestCase {
-
-            TeamcityKonanTestCase(String name) {
-                super(name)
-            }
-
-            private teamcityFinish() {
-                teamcityReport("testFinished name='$name'")
-            }
-
-            void start() {
-                teamcityReport("testStarted name='$name'")
-            }
-
-            TestResult pass() {
-                teamcityFinish()
-                return super.pass()
-            }
-
-            TestResult fail(TestFailedException e) {
-                teamcityReport("testFailed type='comparisonFailure' name='$name' message='${toTeamCityFormat(e.getMessage())}'")
-                teamcityFinish()
-                return super.fail(e)
-            }
-
-            TestResult error(Exception e) {
-                def writer = new StringWriter()
-                e.printStackTrace(new PrintWriter(writer))
-                def rawString  = writer.toString()
-
-                teamcityReport("testFailed name='$name' message='${toTeamCityFormat(e.getMessage())}' details='${toTeamCityFormat(rawString)}'")
-                teamcityFinish()
-                return super.error(e)
-            }
-
-            TestResult skip() {
-                teamcityReport("testIgnored name='$name'")
-                teamcityFinish()
-                return super.skip()
-            }
-        }
-
-        TeamcityKonanTestCase createTestCase(String name) {
-            return new TeamcityKonanTestCase(name)
-        }
-
-        private teamcityReport(String msg) {
-            println("##teamcity[$msg]")
-        }
-
-        /**
-         * Teamcity require escaping some symbols in pipe manner.
-         * https://github.com/GitTools/GitVersion/issues/94
-         */
-        String toTeamCityFormat(String inStr) {
-            return inStr.replaceAll("\\|", "||")
-                        .replaceAll("\r",  "|r")
-                        .replaceAll("\n",  "|n")
-                        .replaceAll("'",   "|'")
-                        .replaceAll("\\[", "|[")
-                        .replaceAll("]",   "|]")
-        }
-
-        void start() {
-            teamcityReport("testSuiteStarted name='$name'")
-        }
-
-        void finish() {
-            teamcityReport("testSuiteFinished name='$name'")
-        }
     }
 }

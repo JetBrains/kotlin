@@ -46,3 +46,8 @@ dependencies {
 rootProject.dependencies {
     runtime project(path)
 }
+
+compileGroovy {
+    // Add Kotlin classes to a classpath for the Groovy compiler
+    classpath += project.files(compileKotlin.destinationDir)
+}
