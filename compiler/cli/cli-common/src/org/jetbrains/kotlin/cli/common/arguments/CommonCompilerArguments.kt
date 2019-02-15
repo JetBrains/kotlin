@@ -239,16 +239,16 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var profilePhases: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xcheck-conditions",
+        value = "-Xcheck-phase-conditions",
         description = "Check pre- and postconditions on phases"
     )
     var checkPhaseConditions: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xcheck-sticky-conditions",
+        value = "-Xcheck-sticky-phase-conditions",
         description = "Run sticky condition checks on subsequent phases as well. Implies -Xcheck-conditions"
     )
-    var checkStickyConditions: Boolean by FreezableVar(false)
+    var checkStickyPhaseConditions: Boolean by FreezableVar(false)
 
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
