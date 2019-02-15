@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isInheritable
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
+import org.jetbrains.kotlin.idea.search.findScriptsWithUsages
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
@@ -121,6 +123,13 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         private fun isCheapEnoughToSearchUsages(declaration: KtNamedDeclaration): SearchCostResult {
             val project = declaration.project
             val psiSearchHelper = psiSearchHelperInstance(project)
+
+            val usedScripts = findScriptsWithUsages(declaration)
+            if (usedScripts.isNotEmpty()) {
+                if (ScriptDependenciesUpdater.getInstance(declaration.project).updateDependenciesIfNeeded(usedScripts)) {
+                    return TOO_MANY_OCCURRENCES
+                }
+            }
 
             val useScope = psiSearchHelper.getUseScope(declaration)
             if (useScope is GlobalSearchScope) {
