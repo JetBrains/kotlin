@@ -32,7 +32,8 @@ abstract class KonanTest extends JavaExec {
     public String source
     def platformManager = project.rootProject.platformManager
     def target = platformManager.targetManager(project.testTarget).target
-    def dist = project.rootProject.file(project.findProperty("org.jetbrains.kotlin.native.home") ?: "dist")
+    def dist = project.rootProject.file(project.findProperty("org.jetbrains.kotlin.native.home") ?:
+            project.findProperty("konan.home") ?: "dist")
     def dependenciesDir = project.rootProject.dependenciesDir
     def konancDriver = project.isWindows() ? "konanc.bat" : "konanc"
     def konanc = new File("${dist.canonicalPath}/bin/$konancDriver").absolutePath
