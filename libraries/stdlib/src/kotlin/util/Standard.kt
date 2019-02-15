@@ -139,3 +139,16 @@ public inline fun repeat(times: Int, action: (Int) -> Unit) {
         action(index)
     }
 }
+
+/**
+ * Executes the given function [action] ininitely.
+ */
+@kotlin.internal.InlineOnly
+public inline fun repeat(action: (Int) -> Unit) {
+    contract { callsInPlace(action) }
+
+    var i = 0
+    while (true) {
+        action(index++)
+    }
+}
