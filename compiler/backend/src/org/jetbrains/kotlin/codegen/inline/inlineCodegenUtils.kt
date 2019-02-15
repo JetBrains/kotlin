@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -33,12 +36,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.ENUM_TYPE
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_CLASS_TYPE
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -530,60 +530,6 @@ fun isFakeLocalVariableForInline(name: String): Boolean {
 }
 
 internal fun isThis0(name: String): Boolean = AsmUtil.CAPTURED_THIS_FIELD == name
-
-internal fun isSpecialEnumMethod(functionDescriptor: FunctionDescriptor): Boolean {
-    val containingDeclaration = functionDescriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
-    if (containingDeclaration.fqName != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
-        return false
-    }
-    if (functionDescriptor.typeParameters.size != 1) {
-        return false
-    }
-    val name = functionDescriptor.name.asString()
-    val parameters = functionDescriptor.valueParameters
-    return "enumValues" == name && parameters.size == 0 ||
-            ("enumValueOf" == name && parameters.size == 1 &&
-                    KotlinBuiltIns.isString(parameters[0].type))
-}
-
-internal fun createSpecialEnumMethodBody(
-    name: String,
-    type: KotlinType,
-    typeMapper: KotlinTypeMapper
-): MethodNode {
-    val isValueOf = "enumValueOf" == name
-    val invokeType = typeMapper.mapType(type)
-    val desc = getSpecialEnumFunDescriptor(invokeType, isValueOf)
-    val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", desc, null, null)
-    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(
-        type,
-        ReifiedTypeInliner.OperationKind.ENUM_REIFIED,
-        InstructionAdapter(node)
-    )
-    if (isValueOf) {
-        node.visitInsn(Opcodes.ACONST_NULL)
-        node.visitVarInsn(Opcodes.ALOAD, 0)
-
-        node.visitMethodInsn(
-            Opcodes.INVOKESTATIC, ENUM_TYPE.internalName, "valueOf",
-            Type.getMethodDescriptor(ENUM_TYPE, JAVA_CLASS_TYPE, AsmTypes.JAVA_STRING_TYPE), false
-        )
-    } else {
-        node.visitInsn(Opcodes.ICONST_0)
-        node.visitTypeInsn(Opcodes.ANEWARRAY, ENUM_TYPE.internalName)
-    }
-    node.visitInsn(Opcodes.ARETURN)
-    node.visitMaxs(if (isValueOf) 3 else 2, if (isValueOf) 1 else 0)
-    return node
-}
-
-internal fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String {
-    return if (isValueOf) Type.getMethodDescriptor(
-        type,
-        AsmTypes.JAVA_STRING_TYPE
-    ) else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
-}
-
 
 val FunctionDescriptor.sourceFilePath: String
     get() {

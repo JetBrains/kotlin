@@ -7,16 +7,11 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.ClosureContext
-import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineContext
-import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForIntercepted
-import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineUninterceptedOrReturn
-import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -32,7 +27,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
-import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
@@ -467,40 +461,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             state: GenerationState,
             sourceCompilerForInline: SourceCompilerForInline
         ): SMAPAndMethodNode {
-            val languageVersionSettings = state.languageVersionSettings
-            when {
-                isSpecialEnumMethod(functionDescriptor) -> {
-                    val node = createSpecialEnumMethodBody(
-                        functionDescriptor.name.asString(),
-                        typeArguments!!.keys.single().defaultType,
-                        state.typeMapper
-                    )
-                    return SMAPAndMethodNode(node, createDefaultFakeSMAP())
-                }
-                functionDescriptor.isBuiltInIntercepted(languageVersionSettings) ->
-                    return SMAPAndMethodNode(
-                        createMethodNodeForIntercepted(functionDescriptor, state.typeMapper, languageVersionSettings),
-                        createDefaultFakeSMAP()
-                    )
-                functionDescriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
-                    return SMAPAndMethodNode(
-                        createMethodNodeForCoroutineContext(functionDescriptor, languageVersionSettings),
-                        createDefaultFakeSMAP()
-                    )
-                functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings) ->
-                    return SMAPAndMethodNode(
-                        createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
-                            functionDescriptor,
-                            state.typeMapper,
-                            languageVersionSettings
-                        ),
-                        createDefaultFakeSMAP()
-                    )
-                functionDescriptor.isBuiltinAlwaysEnabledAssert() ->
-                    return SMAPAndMethodNode(
-                        createMethodNodeForAlwaysEnabledAssert(functionDescriptor, state.typeMapper),
-                        createDefaultFakeSMAP()
-                    )
+            val intrinsic = generateInlineIntrinsic(state, functionDescriptor, typeArguments)
+            if (intrinsic != null) {
+                return SMAPAndMethodNode(intrinsic, createDefaultFakeSMAP())
             }
 
             val asmMethod = if (callDefault)
