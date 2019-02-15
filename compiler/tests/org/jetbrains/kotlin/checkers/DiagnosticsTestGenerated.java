@@ -11987,7 +11987,7 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
 
                 public void testAllFilesPresentInDeprecations() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/deprecations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/deprecations"), Pattern.compile("^(.*)\\.kts?$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("forFakeOverrides.kt")
