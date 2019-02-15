@@ -32,7 +32,7 @@ class IdeScriptReportSink(val project: Project) : ScriptReportSink {
         scriptFile.putUserData(Reports, reports)
 
         ApplicationManager.getApplication().invokeLater {
-            if (scriptFile.isValid) {
+            if (scriptFile.isValid && !project.isDisposed) {
                 PsiManager.getInstance(project).findFile(scriptFile)?.let { psiFile ->
                     DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
                     EditorNotifications.getInstance(project).updateNotifications(scriptFile)
