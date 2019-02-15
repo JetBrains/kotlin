@@ -10,19 +10,15 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.scripting.legacy.CliScriptDependenciesProvider
-import org.jetbrains.kotlin.scripting.legacy.CliScriptReportSink
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
-import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptDefinitionsFromClasspathDiscoverySource
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.loadScriptTemplatesFromClasspath
 import org.jetbrains.kotlin.scripting.legacy.CliScriptDefinitionProvider
 import java.io.File
 
@@ -95,28 +91,6 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
 
     }
 }
-
-class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project))
-
-        val scriptDefinitionProvider = CliScriptDefinitionProvider()
-        project.registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
-        project.registerService(
-            ScriptDependenciesProvider::class.java,
-            CliScriptDependenciesProvider(project)
-        )
-        SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
-
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        if (messageCollector != null) {
-            project.registerService(ScriptReportSink::class.java,
-                                    CliScriptReportSink(messageCollector)
-            )
-        }
-    }
-}
-
 
 fun configureScriptDefinitions(
     scriptTemplates: List<String>,

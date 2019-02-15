@@ -129,7 +129,7 @@
         <element id="archive" name="kotlin-scripting-compiler.jar">
           <element id="module-output" name="kotlin.kotlin-scripting-compiler.main" />
           <element id="directory" name="META-INF">
-            <element id="file-copy" path="$PROJECT_DIR$/plugins/scripting/scripting-cli/build/tmp/jar/MANIFEST.MF" />
+            <element id="file-copy" path="$PROJECT_DIR$/plugins/scripting/scripting-compiler/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
         <element id="archive" name="kotlin-scripting-jvm.jar">

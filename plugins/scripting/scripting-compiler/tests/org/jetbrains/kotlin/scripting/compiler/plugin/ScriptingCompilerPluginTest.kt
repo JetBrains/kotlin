@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.SCRIPT_DEFINITION_MARKERS_PATH
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.discoverScriptTemplatesInClasspath
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.loadScriptTemplatesFromClasspath
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -130,7 +133,12 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
         }
 
         val lazyDefsSeq =
-            discoverScriptTemplatesInClasspath(listOf(defsOut), this::class.java.classLoader, emptyMap(), messageCollector)
+            discoverScriptTemplatesInClasspath(
+                listOf(defsOut),
+                this::class.java.classLoader,
+                emptyMap(),
+                messageCollector
+            )
 
         assertTrue(messageCollector.messages.isEmpty()) {
             "Unexpected messages from discovery sequence (should be empty):\n$messageCollector"
@@ -196,7 +204,12 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
 
         messageCollector.clear()
 
-        discoverScriptTemplatesInClasspath(listOf(defsOut), this::class.java.classLoader, emptyMap(), messageCollector).toList()
+        discoverScriptTemplatesInClasspath(
+            listOf(defsOut),
+            this::class.java.classLoader,
+            emptyMap(),
+            messageCollector
+        ).toList()
 
         assertTrue(
             messageCollector.messages.isNotEmpty()

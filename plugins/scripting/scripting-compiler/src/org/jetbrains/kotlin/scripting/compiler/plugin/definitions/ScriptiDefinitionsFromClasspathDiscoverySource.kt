@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.plugin
+package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -136,7 +136,12 @@ internal fun loadScriptTemplatesFromClasspath(
     else buildSequence {
         // trying the direct classloading from baseClassloader first, since this is the most performant variant
         val (initialLoadedDefinitions, initialNotFoundTemplates) = scriptTemplates.partitionMapNotNull {
-            loadScriptDefinition(baseClassLoader, it, scriptResolverEnv, messageCollector)
+            loadScriptDefinition(
+                baseClassLoader,
+                it,
+                scriptResolverEnv,
+                messageCollector
+            )
         }
         initialLoadedDefinitions.forEach {
             yield(it)
@@ -144,7 +149,8 @@ internal fun loadScriptTemplatesFromClasspath(
         // then searching the remaining templates in the supplied classpath
 
         var remainingTemplates = initialNotFoundTemplates
-        val classpathAndLoader = LazyClasspathWithClassLoader(baseClassLoader) { classpath + dependenciesClasspath }
+        val classpathAndLoader =
+            LazyClasspathWithClassLoader(baseClassLoader) { classpath + dependenciesClasspath }
         for (dep in classpath) {
             if (remainingTemplates.isEmpty()) break
 
@@ -161,7 +167,10 @@ internal fun loadScriptTemplatesFromClasspath(
                     else -> {
                         // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
                         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
-                        DefinitionsLoadPartitionResult(listOf(), remainingTemplates)
+                        DefinitionsLoadPartitionResult(
+                            listOf(),
+                            remainingTemplates
+                        )
                     }
                 }
                 if (loadedDefinitions.isNotEmpty()) {
@@ -202,7 +211,13 @@ private inline fun List<String>.partitionLoadDefinitions(
     for (definitionName in this) {
         val classBytes = getBytes(definitionName)
         val definition = classBytes?.let {
-            loadScriptDefinition(it, definitionName, classpathAndLoader, scriptResolverEnv, messageCollector)
+            loadScriptDefinition(
+                it,
+                definitionName,
+                classpathAndLoader,
+                scriptResolverEnv,
+                messageCollector
+            )
         }
         when {
             definition != null -> loaded.add(definition)
@@ -242,7 +257,12 @@ private fun loadScriptDefinition(
     for (ann in anns) {
         var def: KotlinScriptDefinition? = null
         if (ann.name == KotlinScript::class.simpleName) {
-            def = LazyScriptDefinitionFromDiscoveredClass(anns, templateClassName, classpathAndLoader.classpath, messageCollector)
+            def = LazyScriptDefinitionFromDiscoveredClass(
+                anns,
+                templateClassName,
+                classpathAndLoader.classpath,
+                messageCollector
+            )
         } else if (ann.name == ScriptTemplateDefinition::class.simpleName) {
             val templateClass = classpathAndLoader.classLoader.loadClass(templateClassName).kotlin
             def = KotlinScriptDefinitionFromAnnotatedTemplate(templateClass, scriptResolverEnv, classpathAndLoader.classpath)

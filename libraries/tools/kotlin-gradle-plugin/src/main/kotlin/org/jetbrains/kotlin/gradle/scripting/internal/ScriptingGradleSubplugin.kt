@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.useLazyTaskConfiguration
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.io.File
 
 private const val MISCONFIGURATION_MESSAGE_SUFFIX = "the plugin is probably applied by a mistake"
