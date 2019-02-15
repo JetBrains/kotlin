@@ -1,6 +1,6 @@
 @0:0..4:1 FILE fqName:<root> fileName:/synthesizedDataClassMembers.kt
-  @0:5..4:1 CLASS CLASS name:C modality:FINAL visibility:public flags:data superTypes:[kotlin.Any]
-    @0:5..4:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+  @0:0..4:1 CLASS CLASS name:C modality:FINAL visibility:public flags:data superTypes:[kotlin.Any]
+    @0:0..4:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
     @0:5..4:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:C flags:primary
       @1:8..18 VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       @2:8..21 VALUE_PARAMETER name:y index:1 type:kotlin.String flags:

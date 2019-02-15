@@ -1,6 +1,6 @@
 @0:0..26:1 FILE fqName:<root> fileName:/kt17108.kt
-  @4:7..26:1 CLASS INTERFACE name:Boolean modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
-    @4:7..26:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Boolean flags:
+  @4:0..26:1 CLASS INTERFACE name:Boolean modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+    @4:0..26:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Boolean flags:
     @8:20..38 FUN name:not visibility:public modality:ABSTRACT <> ($this:Boolean) returnType:Boolean flags:
       @8:4..38 VALUE_PARAMETER name:<this> type:Boolean flags:
     @13:10..42 FUN name:and visibility:public modality:ABSTRACT <> ($this:Boolean, other:Boolean) returnType:Boolean flags:

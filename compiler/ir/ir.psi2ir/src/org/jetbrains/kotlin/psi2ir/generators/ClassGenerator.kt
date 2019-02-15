@@ -54,7 +54,7 @@ class ClassGenerator(
 
     fun generateClass(ktClassOrObject: KtPureClassOrObject): IrClass {
         val classDescriptor = ktClassOrObject.findClassDescriptor(this.context.bindingContext)
-        val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationKeywordOrNull() ?: ktClassOrObject.pureStartOffset
+        val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
         val endOffset = ktClassOrObject.pureEndOffset
 
         return context.symbolTable.declareClass(

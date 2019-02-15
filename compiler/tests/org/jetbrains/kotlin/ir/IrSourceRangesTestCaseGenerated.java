@@ -76,6 +76,11 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
             runTest("compiler/testData/ir/sourceRanges/declarations/fakeOverrides.kt");
         }
 
+        @TestMetadata("kt29862.kt")
+        public void testKt29862() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/kt29862.kt");
+        }
+
         @TestMetadata("primaryConstructors.kt")
         public void testPrimaryConstructors() throws Exception {
             runTest("compiler/testData/ir/sourceRanges/declarations/primaryConstructors.kt");

@@ -5,8 +5,8 @@
       @1:0..33:1 BLOCK_BODY
         @1:0..33:1 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         @1:0..33:1 INSTANCE_INITIALIZER_CALL classDescriptor='Foo'
-    @8:10..10:36 CLASS CLASS name:Inner modality:FINAL visibility:public flags:inner superTypes:[kotlin.Any]
-      @8:10..10:36 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Foo.Inner flags:
+    @8:4..10:36 CLASS CLASS name:Inner modality:FINAL visibility:public flags:inner superTypes:[kotlin.Any]
+      @8:4..10:36 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Foo.Inner flags:
       @8:60..10:36 CONSTRUCTOR visibility:private <> ($this:Foo, x:kotlin.Int) returnType:Foo.Inner flags:primary
         @8:52..79 VALUE_PARAMETER name:<this> type:Foo flags:
         @8:72..78 VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
