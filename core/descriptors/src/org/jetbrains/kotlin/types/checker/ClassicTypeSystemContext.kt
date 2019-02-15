@@ -121,13 +121,7 @@ interface ClassicTypeSystemContext : TypeSystemContext {
         return this.projectionKind.convertVariance()
     }
 
-    private fun Variance.convertVariance(): TypeVariance {
-        return when (this) {
-            Variance.INVARIANT -> TypeVariance.INV
-            Variance.IN_VARIANCE -> TypeVariance.IN
-            Variance.OUT_VARIANCE -> TypeVariance.OUT
-        }
-    }
+
 
     override fun TypeArgumentMarker.getType(): KotlinTypeMarker {
         require(this is TypeProjection, this::errorMessage)
@@ -189,23 +183,6 @@ interface ClassicTypeSystemContext : TypeSystemContext {
                 classDescriptor.kind != ClassKind.ANNOTATION_CLASS
     }
 
-
-    override fun TypeArgumentListMarker.get(index: Int): TypeArgumentMarker {
-        return when (this) {
-            is SimpleTypeMarker -> getArgument(index)
-            is ArgumentList -> get(index)
-            else -> error("unknown type argument list type: $this, ${this::class}")
-        }
-    }
-
-    override fun TypeArgumentListMarker.size(): Int {
-        return when (this) {
-            is SimpleTypeMarker -> argumentsCount()
-            is ArgumentList -> size
-            else -> error("unknown type argument list type: $this, ${this::class}")
-        }
-    }
-
     override fun SimpleTypeMarker.asArgumentList(): TypeArgumentListMarker {
         require(this is SimpleType, this::errorMessage)
         return this
@@ -257,4 +234,12 @@ interface ClassicTypeSystemContext : TypeSystemContext {
 @Suppress("NOTHING_TO_INLINE")
 private inline fun Any.errorMessage(): String {
     return "ClassicTypeSystemContext couldn't handle: $this, ${this::class}"
-} 
+}
+
+fun Variance.convertVariance(): TypeVariance {
+    return when (this) {
+        Variance.INVARIANT -> TypeVariance.INV
+        Variance.IN_VARIANCE -> TypeVariance.IN
+        Variance.OUT_VARIANCE -> TypeVariance.OUT
+    }
+}

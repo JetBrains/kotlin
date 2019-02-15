@@ -114,8 +114,21 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun SimpleTypeMarker.asArgumentList(): TypeArgumentListMarker
 
-    fun TypeArgumentListMarker.size(): Int
-    operator fun TypeArgumentListMarker.get(index: Int): TypeArgumentMarker
+    operator fun TypeArgumentListMarker.get(index: Int): TypeArgumentMarker {
+        return when (this) {
+            is SimpleTypeMarker -> getArgument(index)
+            is ArgumentList -> get(index)
+            else -> error("unknown type argument list type: $this, ${this::class}")
+        }
+    }
+
+    fun TypeArgumentListMarker.size(): Int {
+        return when (this) {
+            is SimpleTypeMarker -> argumentsCount()
+            is ArgumentList -> size
+            else -> error("unknown type argument list type: $this, ${this::class}")
+        }
+    }
 
     fun TypeConstructorMarker.isAnyConstructor(): Boolean
     fun TypeConstructorMarker.isNothingConstructor(): Boolean
