@@ -1384,6 +1384,530 @@ public inline fun UShortArray.singleOrNull(predicate: (UShort) -> Boolean): USho
 }
 
 /**
+ * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.drop(n: Int): List<UInt> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
+
+/**
+ * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.drop(n: Int): List<ULong> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
+
+/**
+ * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.drop(n: Int): List<UByte> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
+
+/**
+ * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.drop(n: Int): List<UShort> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
+
+/**
+ * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.dropLast(n: Int): List<UInt> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
+
+/**
+ * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.dropLast(n: Int): List<ULong> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
+
+/**
+ * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.dropLast(n: Int): List<UByte> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
+
+/**
+ * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.dropLast(n: Int): List<UShort> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.dropLastWhile(predicate: (UInt) -> Boolean): List<UInt> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.dropLastWhile(predicate: (ULong) -> Boolean): List<ULong> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.dropLastWhile(predicate: (UByte) -> Boolean): List<UByte> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.dropLastWhile(predicate: (UShort) -> Boolean): List<UShort> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.dropWhile(predicate: (UInt) -> Boolean): List<UInt> {
+    var yielding = false
+    val list = ArrayList<UInt>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
+
+/**
+ * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.dropWhile(predicate: (ULong) -> Boolean): List<ULong> {
+    var yielding = false
+    val list = ArrayList<ULong>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
+
+/**
+ * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.dropWhile(predicate: (UByte) -> Boolean): List<UByte> {
+    var yielding = false
+    val list = ArrayList<UByte>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
+
+/**
+ * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.dropWhile(predicate: (UShort) -> Boolean): List<UShort> {
+    var yielding = false
+    val list = ArrayList<UShort>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.filter(predicate: (UInt) -> Boolean): List<UInt> {
+    return filterTo(ArrayList<UInt>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.filter(predicate: (ULong) -> Boolean): List<ULong> {
+    return filterTo(ArrayList<ULong>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.filter(predicate: (UByte) -> Boolean): List<UByte> {
+    return filterTo(ArrayList<UByte>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.filter(predicate: (UShort) -> Boolean): List<UShort> {
+    return filterTo(ArrayList<UShort>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.filterIndexed(predicate: (index: Int, UInt) -> Boolean): List<UInt> {
+    return filterIndexedTo(ArrayList<UInt>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.filterIndexed(predicate: (index: Int, ULong) -> Boolean): List<ULong> {
+    return filterIndexedTo(ArrayList<ULong>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.filterIndexed(predicate: (index: Int, UByte) -> Boolean): List<UByte> {
+    return filterIndexedTo(ArrayList<UByte>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.filterIndexed(predicate: (index: Int, UShort) -> Boolean): List<UShort> {
+    return filterIndexedTo(ArrayList<UShort>(), predicate)
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in UInt>> UIntArray.filterIndexedTo(destination: C, predicate: (index: Int, UInt) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in ULong>> ULongArray.filterIndexedTo(destination: C, predicate: (index: Int, ULong) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in UByte>> UByteArray.filterIndexedTo(destination: C, predicate: (index: Int, UByte) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in UShort>> UShortArray.filterIndexedTo(destination: C, predicate: (index: Int, UShort) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Returns a list containing all elements not matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.filterNot(predicate: (UInt) -> Boolean): List<UInt> {
+    return filterNotTo(ArrayList<UInt>(), predicate)
+}
+
+/**
+ * Returns a list containing all elements not matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.filterNot(predicate: (ULong) -> Boolean): List<ULong> {
+    return filterNotTo(ArrayList<ULong>(), predicate)
+}
+
+/**
+ * Returns a list containing all elements not matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.filterNot(predicate: (UByte) -> Boolean): List<UByte> {
+    return filterNotTo(ArrayList<UByte>(), predicate)
+}
+
+/**
+ * Returns a list containing all elements not matching the given [predicate].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.filterNot(predicate: (UShort) -> Boolean): List<UShort> {
+    return filterNotTo(ArrayList<UShort>(), predicate)
+}
+
+/**
+ * Appends all elements not matching the given [predicate] to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in UInt>> UIntArray.filterNotTo(destination: C, predicate: (UInt) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements not matching the given [predicate] to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in ULong>> ULongArray.filterNotTo(destination: C, predicate: (ULong) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements not matching the given [predicate] to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in UByte>> UByteArray.filterNotTo(destination: C, predicate: (UByte) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements not matching the given [predicate] to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in UShort>> UShortArray.filterNotTo(destination: C, predicate: (UShort) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in UInt>> UIntArray.filterTo(destination: C, predicate: (UInt) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in ULong>> ULongArray.filterTo(destination: C, predicate: (ULong) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in UByte>> UByteArray.filterTo(destination: C, predicate: (UByte) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <C : MutableCollection<in UShort>> UShortArray.filterTo(destination: C, predicate: (UShort) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
+
+/**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 @SinceKotlin("1.3")
@@ -1553,6 +2077,310 @@ public fun UByteArray.sliceArray(indices: IntRange): UByteArray {
 @ExperimentalUnsignedTypes
 public fun UShortArray.sliceArray(indices: IntRange): UShortArray {
     return UShortArray(storage.sliceArray(indices))
+}
+
+/**
+ * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.take(n: Int): List<UInt> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<UInt>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.take(n: Int): List<ULong> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<ULong>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.take(n: Int): List<UByte> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<UByte>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.take(n: Int): List<UShort> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<UShort>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.takeLast(n: Int): List<UInt> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<UInt>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.takeLast(n: Int): List<ULong> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<ULong>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.takeLast(n: Int): List<UByte> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<UByte>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.takeLast(n: Int): List<UShort> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<UShort>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.takeLastWhile(predicate: (UInt) -> Boolean): List<UInt> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
+
+/**
+ * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.takeLastWhile(predicate: (ULong) -> Boolean): List<ULong> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
+
+/**
+ * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.takeLastWhile(predicate: (UByte) -> Boolean): List<UByte> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
+
+/**
+ * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.takeLastWhile(predicate: (UShort) -> Boolean): List<UShort> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
+
+/**
+ * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.takeWhile(predicate: (UInt) -> Boolean): List<UInt> {
+    val list = ArrayList<UInt>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.takeWhile(predicate: (ULong) -> Boolean): List<ULong> {
+    val list = ArrayList<ULong>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.takeWhile(predicate: (UByte) -> Boolean): List<UByte> {
+    val list = ArrayList<UByte>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.takeWhile(predicate: (UShort) -> Boolean): List<UShort> {
+    val list = ArrayList<UShort>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
 }
 
 /**

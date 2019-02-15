@@ -823,4 +823,104 @@ class UnsignedArraysTest {
         )
     }
 
+    @Test
+    fun drop() {
+        expect(listOf(1.toUByte())) { ubyteArrayOf(1).drop(0) }
+        expect(listOf()) { ushortArrayOf().drop(1) }
+        expect(listOf()) { uintArrayOf(1).drop(1) }
+        expect(listOf(3uL)) { ulongArrayOf(2, 3).drop(1) }
+        assertFails {
+            uintArrayOf(2).drop(-1)
+        }
+    }
+
+    @Test
+    fun dropLast() {
+        expect(listOf()) { ubyteArrayOf().dropLast(1) }
+        expect(listOf()) { ushortArrayOf(1).dropLast(1) }
+        expect(listOf(1u)) { uintArrayOf(1).dropLast(0) }
+        expect(listOf(2uL)) { ulongArrayOf(2, 3).dropLast(1) }
+        assertFails {
+            ulongArrayOf(1).dropLast(-1)
+        }
+    }
+
+    @Test
+    fun dropWhile() {
+        expect(listOf(3.toUByte(), 1.toUByte())) { ubyteArrayOf(2, 3, 1).dropWhile { it < 3 } }
+        expect(listOf()) { ushortArrayOf().dropWhile { it < 3 } }
+        expect(listOf()) { uintArrayOf(1).dropWhile { it < 3 } }
+        expect(listOf(3uL, 1uL)) { ulongArrayOf(2, 3, 1).dropWhile { it < 3 } }
+    }
+
+    @Test
+    fun dropLastWhile() {
+        expect(listOf(2.toUByte(), 3.toUByte())) { ubyteArrayOf(2, 3, 1).dropLastWhile { it < 3 } }
+        expect(listOf()) { ushortArrayOf().dropLastWhile { it < 3 } }
+        expect(listOf()) { uintArrayOf(1).dropLastWhile { it < 3 } }
+        expect(listOf(2uL, 3uL)) { ulongArrayOf(2, 3, 1).dropLastWhile { it < 3 } }
+    }
+
+    @Test
+    fun take() {
+        expect(listOf()) { ubyteArrayOf().take(1) }
+        expect(listOf()) { ushortArrayOf(1).take(0) }
+        expect(listOf(1u)) { uintArrayOf(1).take(1) }
+        expect(listOf(2uL)) { ulongArrayOf(2, 3).take(1) }
+        assertFails {
+            ubyteArrayOf(1).take(-1)
+        }
+    }
+
+    @Test
+    fun takeLast() {
+        expect(listOf()) { ubyteArrayOf().takeLast(1) }
+        expect(listOf()) { ushortArrayOf(1).takeLast(0) }
+        expect(listOf(1u)) { uintArrayOf(1).takeLast(1) }
+        expect(listOf(3uL)) { ulongArrayOf(2, 3).takeLast(1) }
+        assertFails {
+            ushortArrayOf(1).takeLast(-1)
+        }
+    }
+
+    @Test
+    fun takeWhile() {
+        expect(listOf(2.toUByte())) { ubyteArrayOf(2, 3, 1).takeWhile { it < 3 } }
+        expect(listOf()) { ushortArrayOf().takeWhile { it < 3 } }
+        expect(listOf(1u)) { uintArrayOf(1).takeWhile { it < 3 } }
+        expect(listOf(2uL)) { ulongArrayOf(2, 3, 1).takeWhile { it < 3 } }
+    }
+
+    @Test
+    fun takeLastWhile() {
+        expect(listOf()) { ubyteArrayOf().takeLastWhile { it < 3 } }
+        expect(listOf(1.toUShort())) { ushortArrayOf(1).takeLastWhile { it < 3 } }
+        expect(listOf(1u)) { uintArrayOf(2, 3, 1).takeLastWhile { it < 3 } }
+        expect(listOf(1uL)) { ulongArrayOf(2, 3, 1).takeLastWhile { it < 3 } }
+    }
+
+    @Test
+    fun filter() {
+        expect(listOf(3.toByte())) { byteArrayOf(2, 3).filter { it > 2 } }
+        expect(listOf()) { ushortArrayOf().filter { it > 2 } }
+        expect(listOf()) { uintArrayOf(1).filter { it > 2 } }
+        expect(listOf(3uL)) { ulongArrayOf(2, 3).filter { it > 2 } }
+    }
+
+    @Test
+    fun filterIndexed() {
+        expect(listOf<UByte>(2, 5, 8)) { ubyteArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == (value % 2).toInt() } }
+        expect(listOf()) { ushortArrayOf().filterIndexed { i, v -> i > v.toInt() } }
+        expect(listOf<UInt>(2, 5, 8)) { uintArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == (value % 2).toInt() } }
+        expect(listOf<ULong>(2, 5, 8)) { ulongArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == (value % 2).toInt() } }
+    }
+
+    @Test
+    fun filterNot() {
+        expect(listOf(2.toUByte())) { ubyteArrayOf(2, 3).filterNot { it > 2 } }
+        expect(listOf()) { ushortArrayOf().filterNot { it > 2 } }
+        expect(listOf(1u)) { uintArrayOf(1).filterNot { it > 2 } }
+        expect(listOf(2uL)) { ulongArrayOf(2, 3).filterNot { it > 2 } }
+    }
+
 }
