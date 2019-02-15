@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -23,14 +24,28 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 fun makePropertiesPhase(originOfSyntheticMethodForAnnotations: IrDeclarationOrigin?) = makeIrFilePhase(
     { context -> PropertiesLowering(context, originOfSyntheticMethodForAnnotations) },
     name = "Properties",
-    description = "Move fields and accessors for properties to their classes"
+    description = "Move fields and accessors for properties to their classes",
+    stickyPostconditions = setOf(::checkNoProperties)
 )
+
+fun checkNoProperties(irFile: IrFile) {
+    irFile.acceptVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitProperty(declaration: IrProperty) {
+            error("No properties should remain at this stage")
+        }
+    })
+}
 
 class PropertiesLowering(
     private val context: BackendContext,
@@ -49,6 +64,7 @@ class PropertiesLowering(
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.transformChildrenVoid(this)
         declaration.transformDeclarationsFlat { lowerProperty(it, declaration.kind) }
+        declaration.declarations.removeAll { it is IrProperty }
         return declaration
     }
 

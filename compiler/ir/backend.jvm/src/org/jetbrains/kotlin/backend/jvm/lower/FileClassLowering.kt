@@ -39,8 +39,13 @@ import java.util.*
 internal val fileClassPhase = makeIrFilePhase(
     ::FileClassLowering,
     name = "FileClass",
-    description = "Put file level function and property declaration into a class"
+    description = "Put file level function and property declaration into a class",
+    stickyPostconditions = setOf(::checkAllFileLevelDeclarationsAreClasses)
 )
+
+private fun checkAllFileLevelDeclarationsAreClasses(irFile: IrFile) {
+    assert(irFile.declarations.all { it is IrClass })
+}
 
 private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
