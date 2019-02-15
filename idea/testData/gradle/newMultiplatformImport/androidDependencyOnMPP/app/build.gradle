@@ -22,10 +22,14 @@ android {
     }
 }
 
+apply from: "../include.gradle"
+def kotlinVersion = gradleKotlinPluginVersion('1.3.10')
+
+
 dependencies {
     implementation project(':shared')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.0-rc-146"
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'

@@ -22,7 +22,7 @@ import org.junit.Before
 import org.junit.Test
 
 class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-    private fun kotlinVersion() = if (gradleKotlinPluginVersion == MINIMAL_SUPPORTED_VERSION) "1.3.0-rc-146" else gradleKotlinPluginVersion
+    private fun kotlinVersion() = if (gradleKotlinPluginVersion == MINIMAL_SUPPORTED_VERSION) "1.3.10" else gradleKotlinPluginVersion
 
     @Before
     fun saveSdksBeforeTest() {
@@ -333,18 +333,18 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 sourceFolder("shared/src/androidTest/resources", JavaResourceRootType.TEST_RESOURCE)
             }
             var nativeVersion = when (gradleKotlinPluginVersion) {
-                MINIMAL_SUPPORTED_VERSION -> "1.0.2"
-                else -> "1.1.1"
+                MINIMAL_SUPPORTED_VERSION -> "1.3.10"
+                else -> "1.3.20"
             }
             module("shared_iOSMain") {
-                libraryDependency("Gradle: Kotlin/Native:stdlib:$nativeVersion", DependencyScope.COMPILE)
+                libraryDependency("Kotlin/Native $nativeVersion - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
                 moduleDependency("shared_commonMain", DependencyScope.COMPILE)
                 sourceFolder("shared/src/iOSMain/kotlin", KotlinSourceRootType.Source)
                 sourceFolder("shared/src/iOSMain/resources", KotlinResourceRootType.Resource)
             }
             module("shared_iOSTest") {
-                libraryDependency("Gradle: Kotlin/Native:stdlib:$nativeVersion", DependencyScope.TEST)
+                libraryDependency("Kotlin/Native $nativeVersion - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
                 moduleDependency("shared_iOSMain", DependencyScope.TEST)
                 moduleDependency("shared_commonMain", DependencyScope.TEST)

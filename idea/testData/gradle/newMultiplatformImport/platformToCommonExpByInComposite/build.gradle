@@ -6,7 +6,7 @@ buildscript {
 
     dependencies {
         apply from: "include.gradle"
-        def kotlinVersion = gradleKotlinPluginVersion('1.2.0-beta-74')
+        def kotlinVersion = gradleKotlinPluginVersion('1.3.20')
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }

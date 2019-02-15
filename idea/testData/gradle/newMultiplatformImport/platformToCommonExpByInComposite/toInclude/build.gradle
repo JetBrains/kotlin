@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         mavenCentral()
@@ -6,28 +5,31 @@ buildscript {
     }
 
     dependencies {
-        apply from: "include.gradle"
-        def kotlinVersion = gradleKotlinPluginVersion('1.2.0-beta-74')
+        apply from: "../include.gradle"
+        def kotlinVersion = gradleKotlinPluginVersion('1.3.20')
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
-project('common') {
-    apply plugin: 'kotlin-platform-common'
-}
 
-project('jvm') {
-    apply plugin: 'kotlin-platform-jvm'
+apply plugin: 'kotlin-multiplatform'
 
-    dependencies {
-        expectedBy project(':common')
-    }
-}
 
-project('js') {
-    apply plugin: 'kotlin-platform-js'
-
-    dependencies {
-        expectedBy project(':common')
+kotlin {
+    jvm()
+    js()
+    sourceSets {
+        commonMain {
+        }
+        commonTest {
+        }
+        jvmMain {
+        }
+        jvmTest {
+        }
+        jsMain {
+        }
+        jsTest {
+        }
     }
 }
