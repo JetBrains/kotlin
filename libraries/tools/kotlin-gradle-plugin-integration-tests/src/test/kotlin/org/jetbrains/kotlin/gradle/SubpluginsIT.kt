@@ -125,9 +125,18 @@ class SubpluginsIT : BaseGradleIT() {
     }
 
     @Test
+    fun testScriptingCustomExtensionNonIncremental() {
+        testScriptingCustomExtensionImpl(withIC = false)
+    }
+
+    @Test
     fun testScriptingCustomExtensionIncremental() {
+        testScriptingCustomExtensionImpl(withIC = true)
+    }
+
+    private fun testScriptingCustomExtensionImpl(withIC: Boolean) {
         val project = Project("scriptingCustomExtension")
-        val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
+        val options = defaultBuildOptions().copy(incremental = withIC)
 
         project.setupWorkingDir()
         val bobGreet = project.projectFile("bob.greet")
@@ -137,17 +146,24 @@ class SubpluginsIT : BaseGradleIT() {
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
             val classesDir = kotlinClassesDir("app", "main")
             assertFileExists("${classesDir}World.class")
             assertFileExists("${classesDir}Alice.class")
             assertFileExists("${classesDir}Bob.class")
+
+            if (withIC) {
+                // compile iterations are not logged when IC is disabled
+                assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
+            }
         }
 
         bobGreet.modify { it.replace("Bob", "Uncle Bob") }
         project.build("build", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(bobGreet))
+
+            if (withIC) {
+                assertCompiledKotlinSources(project.relativize(bobGreet))
+            }
         }
     }
 

@@ -76,11 +76,6 @@ internal open class GradleCompilerRunner(protected val task: Task) {
         args.commonSources = commonSources.map { it.absolutePath }.toTypedArray()
         args.javaSourceRoots = javaSourceRoots.map { it.absolutePath }.toTypedArray()
         args.javaPackagePrefix = javaPackagePrefix
-
-        if (environment.incrementalCompilationEnvironment == null || kotlinCompilerExecutionStrategy() != DAEMON_EXECUTION_STRATEGY) {
-            args.destination = null
-        }
-
         runCompilerAsync(KotlinCompilerClass.JVM, args, environment)
     }
 
