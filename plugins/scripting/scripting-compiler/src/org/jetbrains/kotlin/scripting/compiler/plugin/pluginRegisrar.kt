@@ -9,6 +9,7 @@ import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
@@ -20,11 +21,8 @@ import org.jetbrains.kotlin.scripting.legacy.CliScriptReportSink
 
 class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        CompilerConfigurationExtension.registerExtension(project,
-                                                         ScriptingCompilerConfigurationExtension(
-                                                                                             project
-                                                                                         )
-        )
+        CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project))
+        CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
 
         val scriptDefinitionProvider = CliScriptDefinitionProvider()
         project.registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
@@ -32,9 +30,7 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             ScriptDependenciesProvider::class.java,
             CliScriptDependenciesProvider(project)
         )
-        SyntheticResolveExtension.registerExtension(project,
-                                                    ScriptingResolveExtension()
-        )
+        SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         if (messageCollector != null) {

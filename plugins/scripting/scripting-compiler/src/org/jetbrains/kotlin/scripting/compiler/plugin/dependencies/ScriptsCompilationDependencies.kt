@@ -1,13 +1,15 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.jvm.compiler
+package org.jetbrains.kotlin.scripting.compiler.plugin.dependencies
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.createSourceFilesFromSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
@@ -48,13 +50,18 @@ fun collectScriptsCompilationDependencies(
                         KotlinSourceRoot(it.path, false)
                     }
                     val sourceDependencies =
-                        KotlinCoreEnvironment.createSourceFilesFromSourceRoots(
+                        createSourceFilesFromSourceRoots(
                             configuration, project, sourceDependenciesRoots,
                             // TODO: consider receiving and using precise location from the resolver in the future
                             source.virtualFile?.path?.let { CompilerMessageLocation.create(it) }
                         )
                     if (sourceDependencies.isNotEmpty()) {
-                        collectedSourceDependencies.add(ScriptsCompilationDependencies.SourceDependencies(source, sourceDependencies))
+                        collectedSourceDependencies.add(
+                            ScriptsCompilationDependencies.SourceDependencies(
+                                source,
+                                sourceDependencies
+                            )
+                        )
 
                         val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.virtualFile.path) }
                         for (newSource in newSources) {
