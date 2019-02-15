@@ -45,6 +45,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 // part of com.intellij.openapi.externalSystem.test.ExternalSystemImportingTestCase
@@ -71,6 +74,77 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         doImportProject();
     }
 
+    public void ensureIsNotGradleProxyObject(Object o, Map<Object, Object> referencingObjects) {
+        if (o instanceof Proxy) {
+            StringBuilder errMessage = new StringBuilder();
+            errMessage.append(String.format("Object [%s] seems to be a referenced gradle tooling api object. (it may lead to memory leaks during import) Referencing path: ", o));
+            while (o != null) {
+                errMessage.append(String.format("[%s] type: %s <-\r\n", o, o.getClass().toString()));
+                o = referencingObjects.get(o);
+            }
+            //TODO fail(errMessage.toString());
+        }
+    }
+
+    private boolean shouldBeProcessed(Object toProcess, Set<Object> processed) {
+        return toProcess != null && !processed.contains(toProcess);
+    }
+
+    public void inspectForGradleMemoryLeaks(DataNode<ProjectData> externalProject) {
+        long start = System.currentTimeMillis();
+        Set<Object> processed = new HashSet<>();
+        Queue<Object> toProcess = new LinkedList<>();
+        Map<Object, Object> referencingObjects = new HashMap<>();
+        toProcess.add(externalProject);
+        try {
+            while (! toProcess.isEmpty()) {
+                Object nextObject = toProcess.poll();
+                processed.add(nextObject);
+                ensureIsNotGradleProxyObject(nextObject, referencingObjects);
+
+                for (Field field : nextObject.getClass().getDeclaredFields()) {
+                    try {
+                        final Object fieldValue;
+                        boolean isAccessible = field.isAccessible();
+                        try {
+                            field.setAccessible(true);
+                            fieldValue = field.get(nextObject);
+                        } finally {
+                            field.setAccessible(isAccessible);
+                        }
+                        if (fieldValue == null) {
+                            continue;
+                        }
+                        if (fieldValue instanceof Collection) {
+                            for (Object o : (Collection)fieldValue) {
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, nextObject, o);
+                            }
+                        } else if (fieldValue.getClass().isArray()) {
+                            for (int i = 0; i < Array.getLength(fieldValue); i++) {
+                                Object o = Array.get(fieldValue, i);
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, nextObject, o);
+                            }
+                        } else {
+                            saveToProcessIfRequired(processed, toProcess, referencingObjects, nextObject, fieldValue);
+                        }
+                    } catch (IllegalAccessException e) {
+                        fail(e.getMessage());
+                    }
+                }
+
+            }
+        } finally {
+            System.out.println("Processed size = " + processed.size() + " Duration: " + (System.currentTimeMillis() - start));
+        }
+    }
+
+    private void saveToProcessIfRequired(Set<Object> processed, Queue<Object> toProcess, Map<Object, Object> referrers, Object referringObject, Object o) {
+        if (shouldBeProcessed(o, processed)) {
+            toProcess.add(o);
+            referrers.put(o, referringObject);
+        }
+    }
+
     private void doImportProject() {
         AbstractExternalSystemSettings systemSettings = ExternalSystemApiUtil.getSettings(myProject, getExternalSystemId());
         ExternalProjectSettings projectSettings = getCurrentExternalProjectSettings();
@@ -93,6 +167,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
                                     System.err.println("Got null External project after import");
                                     return;
                                 }
+                                inspectForGradleMemoryLeaks(externalProject);
                                 ServiceManager.getService(ProjectDataManager.class).importData(externalProject, myProject, true);
                                 System.out.println("External project was successfully imported");
                             }
