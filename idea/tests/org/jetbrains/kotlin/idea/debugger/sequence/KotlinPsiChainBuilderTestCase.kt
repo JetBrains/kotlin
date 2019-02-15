@@ -8,25 +8,16 @@ import com.intellij.debugger.streams.test.StreamChainBuilderTestCase
 import com.intellij.debugger.streams.wrapper.StreamChain
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.PsiManagerEx
-import com.intellij.psi.impl.file.impl.FileManagerImpl
-import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
-import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
-import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
 import java.nio.file.Paths
-import java.util.*
 
 abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) : StreamChainBuilderTestCase() {
     override fun getTestDataPath(): String =
@@ -38,10 +29,6 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
     private val stdLibName = "kotlin-stdlib"
 
     protected abstract fun doTest()
-
-    override fun tearDown() {
-        doKotlinTearDown(LightPlatformTestCase.getProject(), { super.tearDown() })
-    }
 
     final override fun getRelativeTestPath(): String = relativePath
 
@@ -66,39 +53,6 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
     override fun getProjectJDK(): Sdk {
         return PluginTestCaseBase.mockJdk9()
     }
-
-    private fun doKotlinTearDown(project: Project, runnable: () -> Unit) {
-        unInvalidateBuiltinsAndStdLib(project) {
-            runnable()
-        }
-    }
-
-    private fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
-        val stdLibViewProviders = HashSet<KotlinDecompiledFileViewProvider>()
-        val vFileToViewProviderMap =
-            ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
-        for ((file, viewProvider) in vFileToViewProviderMap) {
-            if (file.isStdLibFile && viewProvider is KotlinDecompiledFileViewProvider) {
-                stdLibViewProviders.add(viewProvider)
-            }
-        }
-
-        runnable()
-
-        // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
-        fun unInvalidateFile(file: PsiFileImpl) {
-            val field = PsiFileImpl::class.java.getDeclaredField("myInvalidated")!!
-            field.isAccessible = true
-            field.set(file, false)
-        }
-
-        stdLibViewProviders.forEach {
-            it.allFiles.forEach { unInvalidateFile(it as KtDecompiledFile) }
-            vFileToViewProviderMap[it.virtualFile] = it
-        }
-    }
-
-    private val VirtualFile.isStdLibFile: Boolean get() = presentableUrl.contains("kotlin-runtime.jar")
 
     abstract class Positive(relativePath: String) : KotlinPsiChainBuilderTestCase(relativePath) {
         override fun doTest() {
