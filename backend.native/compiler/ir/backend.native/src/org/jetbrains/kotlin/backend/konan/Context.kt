@@ -56,6 +56,7 @@ import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 
 /**
@@ -206,6 +207,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     lateinit var moduleDescriptor: ModuleDescriptor
+
+    lateinit var objCExport: ObjCExport
 
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns

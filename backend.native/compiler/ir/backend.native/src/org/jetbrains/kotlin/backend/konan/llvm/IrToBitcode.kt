@@ -314,7 +314,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         declaration.acceptChildrenVoid(this)
 
         // Note: it is here because it also generates some bitcode.
-        ObjCExport(codegen).produce()
+        context.objCExport.generate(codegen)
 
         codegen.objCDataGenerator?.finishModule()
 

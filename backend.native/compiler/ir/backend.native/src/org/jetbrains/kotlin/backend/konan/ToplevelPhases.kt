@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -45,6 +46,14 @@ internal val frontendPhase = konanUnitPhase(
         },
         name = "Frontend",
         description = "Frontend builds AST"
+)
+
+internal val objCExportPhase = konanUnitPhase(
+        op = {
+            objCExport = ObjCExport(this)
+        },
+        name = "ObjCExport",
+        description = "Objective-C header generation"
 )
 
 internal val psiToIrPhase = konanUnitPhase(
@@ -273,6 +282,7 @@ internal val toplevelPhase = namedUnitPhase(
         name = "Compiler",
         description = "The whole compilation process",
         lower = frontendPhase then
+                objCExportPhase then
                 psiToIrPhase then
                 irGeneratorPluginsPhase then
                 copyDefaultValuesToActualPhase then

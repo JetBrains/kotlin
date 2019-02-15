@@ -703,9 +703,9 @@ abstract class ObjCExportHeaderGenerator internal constructor(
                         this@ObjCExportHeaderGenerator.reportWarning(method, text)
             })
 
-    internal val generatedClasses = mutableSetOf<ClassDescriptor>()
-    internal val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
-    internal val topLevel = mutableMapOf<SourceFile, MutableList<CallableMemberDescriptor>>()
+    private val generatedClasses = mutableSetOf<ClassDescriptor>()
+    private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
+    private val topLevel = mutableMapOf<SourceFile, MutableList<CallableMemberDescriptor>>()
 
     fun build(): List<String> = mutableListOf<String>().apply {
         add("#import <Foundation/Foundation.h>")
@@ -730,6 +730,11 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         }
 
         add("NS_ASSUME_NONNULL_END")
+    }
+
+    internal fun buildInterface(): ObjCExportedInterface {
+        val headerLines = build()
+        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, mapper)
     }
 
     protected abstract fun reportWarning(text: String)
