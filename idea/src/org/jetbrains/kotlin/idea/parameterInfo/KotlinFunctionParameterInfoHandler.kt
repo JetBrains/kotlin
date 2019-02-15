@@ -103,6 +103,15 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         @JvmField
         val GREEN_BACKGROUND: Color = JBColor(Color(231, 254, 234), Gray._100)
 
+        val STOP_SEARCH_CLASSES: Set<Class<out KtElement>> = setOf(
+            KtNamedFunction::class.java,
+            KtVariableDeclaration::class.java,
+            KtValueArgumentList::class.java,
+            KtLambdaArgument::class.java,
+            KtContainerNode::class.java,
+            KtTypeArgumentList::class.java
+        )
+
         private val RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions {
             enhancedTypes = true
             renderUnabbreviatedType = false
@@ -115,7 +124,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
     override fun getActualParameterDelimiterType(): KtSingleValueToken = KtTokens.COMMA
 
-    override fun getArgListStopSearchClasses() = setOf(KtNamedFunction::class.java, KtVariableDeclaration::class.java)
+    override fun getArgListStopSearchClasses(): Set<Class<out KtElement>> = STOP_SEARCH_CLASSES
 
     override fun getArgumentListClass() = argumentListClass.java
 
@@ -141,7 +150,8 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val file = context.file as? KtFile ?: return null
 
         val token = file.findElementAt(context.offset) ?: return null
-        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java, true, KtValueArgumentList::class.java) ?: return null
+        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java, true, *STOP_SEARCH_CLASSES.toTypedArray())
+            ?: return null
 
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val call = findCall(argumentList, bindingContext) ?: return null

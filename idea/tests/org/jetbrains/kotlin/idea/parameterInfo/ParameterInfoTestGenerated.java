@@ -107,6 +107,11 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/functionCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("Conflicting.kt")
+        public void testConflicting() throws Exception {
+            runTest("idea/testData/parameterInfo/functionCall/Conflicting.kt");
+        }
+
         @TestMetadata("DefaultValuesFromLib.kt")
         public void testDefaultValuesFromLib() throws Exception {
             runTest("idea/testData/parameterInfo/functionCall/DefaultValuesFromLib.kt");
@@ -368,6 +373,11 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         @TestMetadata("BaseClass.kt")
         public void testBaseClass() throws Exception {
             runTest("idea/testData/parameterInfo/typeArguments/BaseClass.kt");
+        }
+
+        @TestMetadata("ConflictingWithArgument.kt")
+        public void testConflictingWithArgument() throws Exception {
+            runTest("idea/testData/parameterInfo/typeArguments/ConflictingWithArgument.kt");
         }
 
         @TestMetadata("Constraints.kt")
