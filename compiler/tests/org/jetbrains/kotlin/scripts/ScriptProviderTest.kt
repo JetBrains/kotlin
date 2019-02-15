@@ -22,7 +22,7 @@ class ScriptProviderTest : KtUsefulTestCase() {
         val genDefCounter = AtomicInteger()
         val standardDef = FakeScriptDefinition()
         val shadedDef = FakeScriptDefinition(".x.kts")
-        val provider = CliScriptDefinitionProvider().apply {
+        val provider = TestCliScriptDefinitionProvider(standardDef).apply {
             setScriptDefinitions(listOf(shadedDef, standardDef))
             setScriptDefinitionsSources(listOf(TestScriptDefinitionSource(genDefCounter, ".y.kts", ".x.kts")))
         }
@@ -41,8 +41,8 @@ class ScriptProviderTest : KtUsefulTestCase() {
 
         provider.isScript("a.x.kts").let {
             Assert.assertTrue(it)
-            Assert.assertEquals(2, genDefCounter.get())
-            Assert.assertEquals(0, shadedDef.matchCounter.get())
+            Assert.assertEquals(1, genDefCounter.get())
+            Assert.assertEquals(1, shadedDef.matchCounter.get())
         }
 
         provider.isScript("a.z.kts").let {
@@ -58,7 +58,7 @@ class ScriptProviderTest : KtUsefulTestCase() {
     }
 }
 
-private class FakeScriptDefinition(val suffix: String = ".kts") : KotlinScriptDefinition(ScriptTemplateWithArgs::class) {
+private open class FakeScriptDefinition(val suffix: String = ".kts") : KotlinScriptDefinition(ScriptTemplateWithArgs::class) {
     val matchCounter = AtomicInteger()
     override fun isScript(fileName: String): Boolean = fileName.endsWith(suffix).also {
         if (it) matchCounter.incrementAndGet()
@@ -76,4 +76,8 @@ private class TestScriptDefinitionSource(val counter: AtomicInteger, val defGens
             yield(gen())
         }
     }
+}
+
+private class TestCliScriptDefinitionProvider(private val standardDef: KotlinScriptDefinition) : CliScriptDefinitionProvider() {
+    override fun getDefaultScriptDefinition(): KotlinScriptDefinition = standardDef
 }
