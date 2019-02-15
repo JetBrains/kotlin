@@ -22,7 +22,7 @@ class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDepend
         val rootsChanged = cache.hasNotCachedRoots(deserialized)
         cache.save(file, deserialized)
         if (rootsChanged) {
-            notifyRootsChanged()
+            shouldNotifyRootsChanged = true
         }
     }
 

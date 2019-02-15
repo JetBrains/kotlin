@@ -37,6 +37,8 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
     protected abstract fun loadDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition)
     protected abstract fun shouldShowNotification(): Boolean
 
+    protected var shouldNotifyRootsChanged = false
+
     protected val contentLoader = ScriptContentLoader(project)
     protected val cache: ScriptDependenciesCache = ServiceManager.getService(project, ScriptDependenciesCache::class.java)
 
@@ -87,15 +89,20 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         }
 
         if (rootsChanged) {
-            notifyRootsChanged()
+            shouldNotifyRootsChanged = true
         }
     }
 
-    protected fun notifyRootsChanged() {
+    open fun notifyRootsChanged(): Boolean = submitMakeRootsChange()
+
+    protected fun submitMakeRootsChange(): Boolean {
+        if (!shouldNotifyRootsChanged) return false
+
         val doNotifyRootsChanged = Runnable {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
 
+                shouldNotifyRootsChanged = false
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
                 ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
             }
@@ -106,5 +113,7 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         } else {
             TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
         }
+
+        return true
     }
 }
