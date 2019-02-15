@@ -73,6 +73,12 @@ object CommonConfigurationKeys {
     val PROFILE_PHASES = CompilerConfigurationKey.create<Boolean>("profile backend phase execution")
 
     @JvmField
+    val CHECK_PHASE_CONDITIONS = CompilerConfigurationKey.create<Boolean>("run pre- and postcondition checkers for phases")
+
+    @JvmField
+    val CHECK_STICKY_CONDITIONS = CompilerConfigurationKey.create<Boolean>("run sticky postcondition checkers on subsequent phases as well")
+
+    @JvmField
     val EXCLUDED_ELEMENTS_FROM_DUMPING = CompilerConfigurationKey.create<Set<String>>("lowering elements which shouldn't be dumped at all")
 }
 

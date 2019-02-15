@@ -53,6 +53,8 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     }
 
     put(CommonConfigurationKeys.PROFILE_PHASES, arguments.profilePhases)
+    put(CommonConfigurationKeys.CHECK_PHASE_CONDITIONS, arguments.checkPhaseConditions or arguments.checkStickyConditions)
+    put(CommonConfigurationKeys.CHECK_STICKY_CONDITIONS, arguments.checkStickyConditions)
 }
 
 fun <A : CommonCompilerArguments> CompilerConfiguration.setupLanguageVersionSettings(arguments: A) {

@@ -35,6 +35,8 @@ class PhaseConfig(private val compoundPhase: CompilerPhase<*, *, *>, config: Com
     }
 
     val needProfiling = config.getBoolean(CommonConfigurationKeys.PROFILE_PHASES)
+    val checkConditions = config.getBoolean(CommonConfigurationKeys.CHECK_PHASE_CONDITIONS)
+    val checkStickyConditions = config.getBoolean(CommonConfigurationKeys.CHECK_STICKY_CONDITIONS)
 
     fun known(name: String): String {
         if (phases[name] == null) {
