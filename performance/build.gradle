@@ -33,7 +33,9 @@ task clean {
     subprojects.each {
         dependsOn it.getTasksByName('clean', true)[0]
     }
-    delete "${buildDir.absolutePath}"
+    doLast {
+        delete "${buildDir.absolutePath}"
+    }
 }
 
 defaultTasks 'konanRun'
