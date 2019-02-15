@@ -147,7 +147,7 @@ public inline fun repeat(times: Int, action: (Int) -> Unit) {
 public inline fun repeat(action: (Int) -> Unit) {
     contract { callsInPlace(action) }
 
-    var i = 0
+    var i = 0L
     while (true) {
         action(index++)
     }
