@@ -43,7 +43,10 @@ fun Zip.patchJavaXmls() {
     patchFiles(
         mapOf(
             javaPsiXmlPath to listOf("implementation=\"org.jetbrains.uast.java.JavaUastLanguagePlugin\""),
-            javaPluginXmlPath to listOf("implementation=\"com.intellij.spi.SPIFileTypeFactory\"")
+            javaPluginXmlPath to listOf(
+                "implementation=\"com.intellij.spi.SPIFileTypeFactory\"",
+                "implementationClass=\"com.intellij.lang.java.JavaDocumentationProvider\""
+            )
         )
     )
 }
