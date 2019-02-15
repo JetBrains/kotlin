@@ -163,10 +163,22 @@ class PlatformInfo {
     }
 
     boolean isAppleTarget(Project project) {
+        def target = getTarget(project)
+        return target.family == Family.IOS || target.family == Family.OSX
+    }
+
+    boolean isWindowsTarget(Project project) {
+        return getTarget(project).family == Family.MINGW
+    }
+
+    boolean isWasmTarget(Project project) {
+        return getTarget(project).family == Family.WASM
+    }
+
+    KonanTarget getTarget(Project project) {
         def platformManager = project.rootProject.platformManager
         def targetName = project.project.testTarget ?: 'host'
-        def target = platformManager.targetManager(targetName).target
-        return target.family == Family.IOS || target.family == Family.OSX
+        return platformManager.targetManager(targetName).target
     }
 
     Throwable unsupportedPlatformException() {
