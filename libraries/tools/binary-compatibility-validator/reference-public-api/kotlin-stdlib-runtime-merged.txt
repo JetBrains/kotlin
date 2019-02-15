@@ -2308,6 +2308,14 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun contentToString-GBYM_sE ([B)Ljava/lang/String;
 	public static final fun contentToString-QwZRm1k ([J)Ljava/lang/String;
 	public static final fun contentToString-rL5Bavg ([S)Ljava/lang/String;
+	public static final fun drop-PpDY95g ([BI)Ljava/util/List;
+	public static final fun drop-nggk6HY ([SI)Ljava/util/List;
+	public static final fun drop-qFRl0hI ([II)Ljava/util/List;
+	public static final fun drop-r7IrZao ([JI)Ljava/util/List;
+	public static final fun dropLast-PpDY95g ([BI)Ljava/util/List;
+	public static final fun dropLast-nggk6HY ([SI)Ljava/util/List;
+	public static final fun dropLast-qFRl0hI ([II)Ljava/util/List;
+	public static final fun dropLast-r7IrZao ([JI)Ljava/util/List;
 	public static final fun fill-2fe2U9s ([IIII)V
 	public static synthetic fun fill-2fe2U9s$default ([IIIIILjava/lang/Object;)V
 	public static final fun fill-EtDCXyQ ([SSII)V
@@ -2388,6 +2396,14 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun sumOfUInt ([Lkotlin/UInt;)I
 	public static final fun sumOfULong ([Lkotlin/ULong;)J
 	public static final fun sumOfUShort ([Lkotlin/UShort;)I
+	public static final fun take-PpDY95g ([BI)Ljava/util/List;
+	public static final fun take-nggk6HY ([SI)Ljava/util/List;
+	public static final fun take-qFRl0hI ([II)Ljava/util/List;
+	public static final fun take-r7IrZao ([JI)Ljava/util/List;
+	public static final fun takeLast-PpDY95g ([BI)Ljava/util/List;
+	public static final fun takeLast-nggk6HY ([SI)Ljava/util/List;
+	public static final fun takeLast-qFRl0hI ([II)Ljava/util/List;
+	public static final fun takeLast-r7IrZao ([JI)Ljava/util/List;
 	public static final fun toTypedArray--ajY-9A ([I)[Lkotlin/UInt;
 	public static final fun toTypedArray-GBYM_sE ([B)[Lkotlin/UByte;
 	public static final fun toTypedArray-QwZRm1k ([J)[Lkotlin/ULong;
