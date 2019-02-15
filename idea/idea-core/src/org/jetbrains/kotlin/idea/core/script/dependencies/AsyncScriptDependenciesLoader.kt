@@ -96,26 +96,51 @@ class AsyncScriptDependenciesLoader internal constructor(project: Project) : Scr
 
     private inner class LoaderBackgroundTask {
         private val sequenceOfFiles: ConcurrentLinkedQueue<VirtualFile> = ConcurrentLinkedQueue()
+        private var forceStop : Boolean = false
+        private var startedSilently : Boolean = false
 
         private var onFinish: (() -> Unit)? = null
 
         fun start() {
             if (shouldShowNotification()) {
-                BackgroundTaskUtil.executeOnPooledThread(project, Runnable {
-                    loadDependencies(null)
-                })
+                startSilently()
             } else {
-                object : Task.Backgroundable(project, "Kotlin: Loading script dependencies...", true) {
-                    override fun run(indicator: ProgressIndicator) {
-                        loadDependencies(indicator)
-                    }
-
-                }.queue()
+                startWithProgress()
             }
         }
 
+        private fun restartWithProgress() {
+            forceStop = true
+            startWithProgress()
+            forceStop = false
+        }
+
+        private fun startSilently() {
+            startedSilently = true
+            BackgroundTaskUtil.executeOnPooledThread(project, Runnable {
+                loadDependencies(EmptyProgressIndicator())
+            })
+        }
+
+        private fun startWithProgress() {
+            startedSilently = false
+            object : Task.Backgroundable(project, "Kotlin: Loading script dependencies...", true) {
+                override fun run(indicator: ProgressIndicator) {
+                    loadDependencies(indicator)
+                }
+
+            }.queue()
+        }
+
         fun addTask(file: VirtualFile) {
+            if (sequenceOfFiles.contains(file)) return
+
             sequenceOfFiles.add(file)
+
+            // If the queue is longer than 3, show progress and cancel button
+            if (sequenceOfFiles.size > 3 && startedSilently) {
+                restartWithProgress()
+            }
         }
 
         fun addOnFinishTask(task: () -> Unit) {
@@ -124,6 +149,7 @@ class AsyncScriptDependenciesLoader internal constructor(project: Project) : Scr
 
         private fun loadDependencies(indicator: ProgressIndicator?) {
             while (true) {
+                if (forceStop) return
                 if (indicator?.isCanceled == true || sequenceOfFiles.isEmpty()) {
                     lock.write {
                         onFinish?.invoke()
