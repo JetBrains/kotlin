@@ -29,8 +29,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdap
 
 class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
 
-    override fun getKey(): Key<EditorNotificationPanel> =
-        KEY
+    override fun getKey(): Key<EditorNotificationPanel> = KEY
 
     override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
         if (file.fileType != KotlinFileType.INSTANCE) return null
@@ -49,11 +48,20 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
             }
             .toList()
         if (allApplicableDefinitions.size < 2) return null
+        if (areDefinitionsForGradleKts(allApplicableDefinitions)) return null
 
         return createNotification(
             ktFile,
             allApplicableDefinitions
         )
+    }
+
+    private fun areDefinitionsForGradleKts(allApplicableDefinitions: List<KotlinScriptDefinition>): Boolean {
+        if (allApplicableDefinitions.size == 2) {
+            return (allApplicableDefinitions[0] as? KotlinScriptDefinitionFromAnnotatedTemplate)?.scriptFilePattern?.pattern == "^(settings|.+\\.settings)\\.gradle\\.kts\$"
+                    && (allApplicableDefinitions[1] as? KotlinScriptDefinitionFromAnnotatedTemplate)?.scriptFilePattern?.pattern == ".*\\.gradle\\.kts"
+        }
+        return false
     }
 
     companion object {
