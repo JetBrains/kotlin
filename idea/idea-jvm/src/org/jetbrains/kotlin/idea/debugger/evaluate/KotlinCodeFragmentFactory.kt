@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.DebuggerManagerEx
+import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.TextWithImports
@@ -39,8 +40,10 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.DebugLabelPropertyDescriptorProvider
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.refactoring.j2kText
@@ -67,6 +70,12 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         }
 
         val codeFragment = constructor(project, "fragment.kt", item.text, initImports(item.imports), contextElement)
+
+        val moduleDescriptor = codeFragment.getResolutionFacade().moduleDescriptor
+        val debugProcess = getDebugProcess(project, contextElement)
+        if (debugProcess != null) {
+            DebugLabelPropertyDescriptorProvider(codeFragment, moduleDescriptor, debugProcess).supplyDebugLabels()
+        }
 
         codeFragment.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, { expression: KtExpression ->
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
@@ -135,6 +144,14 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         }
 
         return codeFragment
+    }
+
+    private fun getDebugProcess(project: Project, context: PsiElement?): DebugProcessImpl? {
+        return if (ApplicationManager.getApplication().isUnitTestMode) {
+            context?.getCopyableUserData(DEBUG_CONTEXT_FOR_TESTS)?.debugProcess
+        } else {
+            DebuggerManagerEx.getInstanceEx(project).context.debugProcess
+        }
     }
 
     private fun getFrameInfo(contextElement: PsiElement?, debuggerContext: DebuggerContextImpl): FrameInfo? {

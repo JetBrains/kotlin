@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.externalDescriptors
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
@@ -141,13 +143,30 @@ class ReferenceVariantsCollector(
                     useReceiverType = runtimeReceiver?.type)
         }
 
+        val basicNameFilter = descriptorNameFilter.toNameFilter()
         val (descriptorKindFilter, additionalPropertyNameFilter) = filterConfiguration
 
-        var basicVariants = getReferenceVariants(descriptorKindFilter, descriptorNameFilter.toNameFilter())
+        var runDistinct = false
+
+        var basicVariants = getReferenceVariants(descriptorKindFilter, basicNameFilter)
         if (additionalPropertyNameFilter != null) {
             basicVariants += getReferenceVariants(descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES), additionalPropertyNameFilter.toNameFilter())
+            runDistinct = true
+        }
+
+        val containingCodeFragment = nameExpression.containingKtFile as? KtCodeFragment
+        if (containingCodeFragment != null) {
+            val externalDescriptors = containingCodeFragment.externalDescriptors
+            if (externalDescriptors != null) {
+                basicVariants += externalDescriptors
+                    .filter { descriptorKindFilter.accepts(it) && basicNameFilter(it.name) }
+            }
+        }
+
+        if (runDistinct) {
             basicVariants = basicVariants.distinct()
         }
+
         return ReferenceVariants(filterConfiguration.filterVariants(basicVariants).toHashSet(), emptyList())
     }
 
