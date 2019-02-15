@@ -82,7 +82,6 @@ def mergeReports(String fileName) {
         if (reportFile.exists()) {
             reports.add(reportFile)
         }
-    depends("build")
     }
     def output = MPPTools.mergeReports(reports)
     mkdir buildDir.absolutePath
