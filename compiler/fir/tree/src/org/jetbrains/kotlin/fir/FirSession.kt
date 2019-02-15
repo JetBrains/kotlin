@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.utils.Jsr305State
 import kotlin.reflect.KClass
 
 interface FirSession {
     val moduleInfo: ModuleInfo?
 
     val sessionProvider: FirSessionProvider? get() = null
+
+    val jsr305State: Jsr305State? get() = null
 
     val components: Map<KClass<*>, Any>
 

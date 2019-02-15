@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
-abstract class FirAbstractProviderBasedScope(val session: FirSession, lookupInFir: Boolean = true) : FirScope {
+abstract class FirAbstractProviderBasedScope(val session: FirSession, lookupInFir: Boolean = true) :
+    FirScope {
     val provider = when (val symbolProvider = FirSymbolProvider.getInstance(session)) {
         is FirCompositeSymbolProvider -> symbolProvider.takeIf { !lookupInFir }?.providers?.find {
             it is FirDependenciesSymbolProviderImpl

@@ -7,7 +7,7 @@ FILE: simpleFakeOverride.kt
         public constructor(): super<R|A<Some>|>()
 
         public final function test(): R|kotlin/Unit| {
-            R|FakeOverride</A.foo: R|ft<T, T>|!>|(<Unresolved name: Some>#())
+            R|FakeOverride</A.foo: R|ft<T, T?>|!>|(<Unresolved name: Some>#())
         }
 
     }

@@ -25,7 +25,7 @@ class FirJavaMethod(
     session, null, symbol, name,
     visibility, modality,
     false, isActual = false,
-    isOverride = false, // TODO: really it's unknown whether Java methods are overrides or not
+    isOverride = false,
     isOperator = true, // All Java methods with name that allows to use it in operator form are considered operators
     isInfix = false, isInline = false, isTailRec = false, isExternal = false, isSuspend = false,
     receiverTypeRef = null, returnTypeRef = returnTypeRef

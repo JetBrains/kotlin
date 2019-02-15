@@ -45,7 +45,7 @@ fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = unwrap().enhan
 fun KotlinType.hasEnhancedNullability()
         = annotations.findAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) != null
 
-private enum class TypeComponentPosition {
+enum class TypeComponentPosition {
     FLEXIBLE_LOWER,
     FLEXIBLE_UPPER,
     INFLEXIBLE
@@ -147,7 +147,7 @@ private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
     else -> CompositeAnnotations(this.toList())
 }
 
-private fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
+fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
 
 private data class EnhancementResult<out T>(val result: T, val enhancementAnnotations: Annotations?)
 private fun <T> T.noChange() = EnhancementResult(this, null)

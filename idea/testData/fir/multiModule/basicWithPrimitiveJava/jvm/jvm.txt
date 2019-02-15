@@ -1,0 +1,11 @@
+FILE: jvm.kt
+    public final class A : R|Some| {
+        public constructor(): super<R|Some|>()
+
+        public final function test(): R|kotlin/Unit| {
+            val res1: R|error: Not supported: FirImplicitTypeRefImpl| = R|/Some.foo|(Int(1))
+            val res2: R|error: Not supported: FirImplicitTypeRefImpl| = R|/Some.foo|(<Unresolved name: unaryMinus>#(Int(1)))
+            val res3: R|error: Not supported: FirImplicitTypeRefImpl| = R|/Some.bar|(<Unresolved name: intArrayOf>#(Int(0), Int(2), <Unresolved name: unaryMinus>#(Int(2))))
+        }
+
+    }

@@ -1,0 +1,6 @@
+public open class Some : R|java/lang/Object| {
+    public open operator function foo(param: R|kotlin/Int|): R|kotlin/Boolean|
+
+    public open operator function bar(arr: R|kotlin/IntArray|): R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|
+
+}

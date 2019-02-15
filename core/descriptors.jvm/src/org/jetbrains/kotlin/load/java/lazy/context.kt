@@ -93,9 +93,9 @@ interface JavaResolverSettings {
     }
 }
 
-private typealias QualifierByApplicabilityType = EnumMap<AnnotationTypeQualifierResolver.QualifierApplicabilityType, NullabilityQualifierWithMigrationStatus?>
+typealias QualifierByApplicabilityType = EnumMap<AnnotationTypeQualifierResolver.QualifierApplicabilityType, NullabilityQualifierWithMigrationStatus?>
 
-class JavaTypeQualifiersByElementType(internal val nullabilityQualifiers: QualifierByApplicabilityType) {
+class JavaTypeQualifiersByElementType(val nullabilityQualifiers: QualifierByApplicabilityType) {
     operator fun get(applicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType?): JavaTypeQualifiers? {
         val nullabilityQualifierWithMigrationStatus = nullabilityQualifiers[applicabilityType] ?: return null
 

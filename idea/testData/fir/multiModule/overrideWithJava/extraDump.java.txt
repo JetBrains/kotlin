@@ -1,0 +1,6 @@
+public open class A : R|java/lang/Object| {
+    public open operator function foo(): R|ft<A, A?>|!
+
+    public open operator function bar(): R|ft<A, A?>|!
+
+}
