@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocSection
 import org.jetbrains.kotlin.idea.kdoc.KDocTemplate.DescriptionBodyTemplate
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
@@ -496,6 +497,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             element: PsiElement,
             originalElement: PsiElement?
         ): String? {
+            if (isRunningInCidrIde) return null // no Java support in CIDR
+
             val originalInfo = JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement)
             if (originalInfo != null) {
                 val renderedDecl = constant { DESCRIPTOR_RENDERER.withOptions { withDefinedIn = false } }.render(declarationDescriptor)
