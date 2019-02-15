@@ -139,6 +139,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/sealedTypeAlias/");
     }
 
+    @TestMetadata("supertypesAreChangedOnPlatform")
+    public void testSupertypesAreChangedOnPlatform() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/supertypesAreChangedOnPlatform/");
+    }
+
     @TestMetadata("suppressHeaderWithoutImpl")
     public void testSuppressHeaderWithoutImpl() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/suppressHeaderWithoutImpl/");
@@ -171,6 +176,7 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
 
     @TestMetadata("useAppendable")
     public void testUseAppendable() throws Exception {
+        // Muted; related to type refiniment
         runTest("idea/testData/multiModuleHighlighting/multiplatform/useAppendable/");
     }
 
