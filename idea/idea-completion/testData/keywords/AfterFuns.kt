@@ -38,7 +38,6 @@ class A {
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
-// EXIST:  const val
 // EXIST:  suspend
 // EXIST:  typealias
 // EXIST:  expect

@@ -25,6 +25,11 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    @TestMetadata("AfterClassName.kt")
+    public void testAfterClassName() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/AfterClassName.kt");
+    }
+
     @TestMetadata("AfterClassProperty.kt")
     public void testAfterClassProperty() throws Exception {
         runTest("idea/idea-completion/testData/keywords/AfterClassProperty.kt");
