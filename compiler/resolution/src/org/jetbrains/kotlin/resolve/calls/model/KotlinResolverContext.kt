@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector

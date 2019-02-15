@@ -15,6 +15,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -219,7 +220,8 @@ class UsePropertyAccessSyntaxIntention :
             bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
             ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
             false, facade.frontendService<LanguageVersionSettings>(),
-            facade.frontendService<DataFlowValueFactory>()
+            facade.frontendService<DataFlowValueFactory>(),
+            facade.frontendService<ModuleDescriptor>()
         )
         val callResolver = facade.frontendService<CallResolver>()
         val result = callResolver.resolveSimpleProperty(context)

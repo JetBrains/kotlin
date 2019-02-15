@@ -11,6 +11,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
@@ -61,6 +62,9 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public final InferenceSession inferenceSession;
 
+    @NotNull
+    public final ModuleDescriptor moduleDescriptor;
+
     /**
      * Used for analyzing expression in the given context.
      * Should be used for going through parents to find containing function, loop etc.
@@ -88,7 +92,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull DataFlowValueFactory factory,
-            @NotNull InferenceSession inferenceSession
+            @NotNull InferenceSession inferenceSession,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.trace = trace;
         this.scope = scope;
@@ -105,6 +110,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.languageVersionSettings = languageVersionSettings;
         this.dataFlowValueFactory = factory;
         this.inferenceSession = inferenceSession;
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     protected abstract Context create(
@@ -120,7 +126,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull InferenceSession inferenceSession
+            @NotNull InferenceSession inferenceSession,
+            @NotNull ModuleDescriptor moduleDescriptor
     );
 
     @NotNull
@@ -134,7 +141,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (this.trace == trace) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @NotNull
@@ -142,7 +149,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (newDataFlowInfo == dataFlowInfo) return self();
         return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @NotNull
@@ -150,7 +157,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (newInferenceSession == inferenceSession) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      newInferenceSession);
+                      newInferenceSession, moduleDescriptor);
     }
 
     @NotNull
@@ -159,7 +166,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (expectedType == newExpectedType) return self();
         return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @NotNull
@@ -167,7 +174,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (newScope == scope) return self();
         return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @NotNull
@@ -175,7 +182,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (newContextDependency == contextDependency) return self();
         return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @NotNull
@@ -183,7 +190,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (newResolutionResultsCache == resolutionResultsCache) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @NotNull
@@ -195,28 +202,28 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public Context replaceCollectAllCandidates(boolean newCollectAllCandidates) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
                       newCollectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @NotNull
     public Context replaceStatementFilter(@NotNull StatementFilter statementFilter) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @NotNull
     public Context replaceCallPosition(@NotNull CallPosition callPosition) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @NotNull
     public Context replaceExpressionContextProvider(@NotNull Function1<KtExpression, KtExpression> expressionContextProvider) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
                       collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-                      inferenceSession);
+                      inferenceSession, moduleDescriptor);
     }
 
     @Nullable

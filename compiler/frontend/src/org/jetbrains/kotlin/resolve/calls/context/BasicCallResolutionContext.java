@@ -9,6 +9,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -39,11 +40,12 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull InferenceSession inferenceSession
+            @NotNull InferenceSession inferenceSession,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
               dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates,
-              callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory, inferenceSession);
+              callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory, inferenceSession, moduleDescriptor);
     }
 
     @NotNull
@@ -58,13 +60,14 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             boolean isAnnotationContext,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull InferenceSession inferenceSession
+            @NotNull InferenceSession inferenceSession,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                                               new ResolutionResultsCacheImpl(), null,
                                               StatementFilter.NONE, isAnnotationContext, false, false,
                                               CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER, languageVersionSettings,
-                                              dataFlowValueFactory, inferenceSession);
+                                              dataFlowValueFactory, inferenceSession, moduleDescriptor);
     }
 
     @NotNull
@@ -78,13 +81,14 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull CheckArgumentTypesMode checkArguments,
             boolean isAnnotationContext,
             @NotNull LanguageVersionSettings languageVersionSettings,
-            @NotNull DataFlowValueFactory dataFlowValueFactory
+            @NotNull DataFlowValueFactory dataFlowValueFactory,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                                               new ResolutionResultsCacheImpl(), null,
                                               StatementFilter.NONE, isAnnotationContext, false, false,
                                               CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER, languageVersionSettings,
-                                              dataFlowValueFactory, InferenceSession.Companion.getDefault());
+                                              dataFlowValueFactory, InferenceSession.Companion.getDefault(), moduleDescriptor);
     }
 
     @NotNull
@@ -97,7 +101,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
                 context.resolutionResultsCache, dataFlowInfoForArguments,
                 context.statementFilter, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
                 context.callPosition, context.expressionContextProvider, context.languageVersionSettings, context.dataFlowValueFactory,
-                context.inferenceSession);
+                context.inferenceSession, context.moduleDescriptor);
     }
 
     @NotNull
@@ -121,12 +125,14 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull InferenceSession inferenceSession
+            @NotNull InferenceSession inferenceSession,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
                 dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates,
-                callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory, inferenceSession);
+                callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory, inferenceSession,
+                moduleDescriptor);
     }
 
     @NotNull
@@ -134,6 +140,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
         return new BasicCallResolutionContext(
                 trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
                 dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates,
-                callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory, inferenceSession);
+                callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory, inferenceSession,
+                moduleDescriptor);
     }
 }

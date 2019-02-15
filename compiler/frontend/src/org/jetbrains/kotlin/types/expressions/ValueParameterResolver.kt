@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtParameter
@@ -37,7 +38,8 @@ class ValueParameterResolver(
     private val expressionTypingServices: ExpressionTypingServices,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
+    private val moduleDescriptor: ModuleDescriptor
 ) {
     fun resolveValueParameters(
         valueParameters: List<KtParameter>,
@@ -51,7 +53,7 @@ class ValueParameterResolver(
 
         val contextForDefaultValue = ExpressionTypingContext.newContext(
             trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
-            languageVersionSettings, dataFlowValueFactory
+            languageVersionSettings, dataFlowValueFactory, moduleDescriptor
         )
 
         for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {

@@ -70,6 +70,7 @@ public class CallResolver {
     private final DataFlowValueFactory dataFlowValueFactory;
     private final KotlinBuiltIns builtIns;
     private final LanguageVersionSettings languageVersionSettings;
+    private ModuleDescriptor moduleDescriptor;
 
     private static final PerformanceCounter callResolvePerfCounter = PerformanceCounter.Companion.create("Call resolve", ExpressionTypingVisitorDispatcher.typeInfoPerfCounter);
 
@@ -128,6 +129,11 @@ public class CallResolver {
     @Inject
     public void setSyntheticScopes(@NotNull SyntheticScopes syntheticScopes) {
         this.syntheticScopes = syntheticScopes;
+    }
+
+    @Inject
+    public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     @NotNull
@@ -297,7 +303,7 @@ public class CallResolver {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        isAnnotationContext, languageVersionSettings, dataFlowValueFactory, InferenceSession.Companion.getDefault()
+                        isAnnotationContext, languageVersionSettings, dataFlowValueFactory, InferenceSession.Companion.getDefault(), moduleDescriptor
                 )
         );
     }
@@ -427,7 +433,8 @@ public class CallResolver {
                 false,
                 languageVersionSettings,
                 dataFlowValueFactory,
-                InferenceSession.Companion.getDefault());
+                InferenceSession.Companion.getDefault(),
+                moduleDescriptor);
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 

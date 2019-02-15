@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
@@ -42,7 +43,8 @@ class IterableTypesDetection(
         private val project: Project,
         private val forLoopConventionsChecker: ForLoopConventionsChecker,
         private val languageVersionSettings: LanguageVersionSettings,
-        private val dataFlowValueFactory: DataFlowValueFactory
+        private val dataFlowValueFactory: DataFlowValueFactory,
+        private val moduleDescriptor: ModuleDescriptor
 ) {
     companion object {
         private val iteratorName = Name.identifier("iterator")
@@ -80,7 +82,8 @@ class IterableTypesDetection(
 
             val expression = KtPsiFactory(project).createExpression("fake")
             val context = ExpressionTypingContext.newContext(
-                    BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory)
+                    BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings,
+                    dataFlowValueFactory, moduleDescriptor)
             val expressionReceiver = ExpressionReceiver.create(expression, type.type, context.trace.bindingContext)
             val elementType = forLoopConventionsChecker.checkIterableConvention(expressionReceiver, context)
             return elementType?.let { it.toFuzzyType(type.freeParameters) }

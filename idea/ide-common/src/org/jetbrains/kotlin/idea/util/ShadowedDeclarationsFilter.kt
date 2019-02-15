@@ -209,7 +209,8 @@ class ShadowedDeclarationsFilter(
         val context = BasicCallResolutionContext.create(bindingTrace, scope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         false, /* languageVersionSettings */ resolutionFacade.frontendService(),
-                                                        resolutionFacade.frontendService<DataFlowValueFactory>())
+                                                        resolutionFacade.frontendService<DataFlowValueFactory>(),
+                                                        resolutionFacade.frontendService<ModuleDescriptor>())
         val callResolver = resolutionFacade.frontendService<CallResolver>()
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
         val resultingDescriptors = results.resultingCalls.map { it.resultingDescriptor }

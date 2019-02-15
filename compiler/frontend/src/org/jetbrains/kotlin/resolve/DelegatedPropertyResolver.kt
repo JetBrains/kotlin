@@ -62,7 +62,8 @@ class DelegatedPropertyResolver(
     private val psiCallResolver: PSICallResolver,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
-    private val callComponents: KotlinCallComponents
+    private val callComponents: KotlinCallComponents,
+    private val moduleDescriptor: ModuleDescriptor
 ) {
 
     fun resolvePropertyDelegate(
@@ -327,7 +328,7 @@ class DelegatedPropertyResolver(
 
         val context =
             knownContext ?: ExpressionTypingContext.newContext(
-                trace, delegateFunctionsScope, dataFlowInfo, expectedType, languageVersionSettings, dataFlowValueFactory
+                trace, delegateFunctionsScope, dataFlowInfo, expectedType, languageVersionSettings, dataFlowValueFactory, moduleDescriptor
             )
 
         val hasThis = propertyDescriptor.extensionReceiverParameter != null || propertyDescriptor.dispatchReceiverParameter != null
@@ -376,7 +377,7 @@ class DelegatedPropertyResolver(
         val delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForDelegate, propertyDescriptor)
         return ExpressionTypingContext.newContext(
             trace, delegateFunctionsScope, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
-            languageVersionSettings, dataFlowValueFactory, inferenceExtension
+            languageVersionSettings, dataFlowValueFactory, inferenceExtension, moduleDescriptor
         )
     }
 
@@ -389,7 +390,7 @@ class DelegatedPropertyResolver(
         return ExpressionTypingContext.newContext(
             trace, scopeForDelegate, dataFlowInfo,
             NO_EXPECTED_TYPE, ContextDependency.DEPENDENT, StatementFilter.NONE,
-            languageVersionSettings, dataFlowValueFactory, inferenceExtension
+            languageVersionSettings, dataFlowValueFactory, inferenceExtension, moduleDescriptor
         )
     }
 
@@ -401,7 +402,15 @@ class DelegatedPropertyResolver(
         initializerScope: LexicalScope,
         dataFlowInfo: DataFlowInfo
     ): OverloadResolutionResults<FunctionDescriptor> {
-        val context = ExpressionTypingContext.newContext(trace, initializerScope, dataFlowInfo, NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory)
+        val context = ExpressionTypingContext.newContext(
+            trace,
+            initializerScope,
+            dataFlowInfo,
+            NO_EXPECTED_TYPE,
+            languageVersionSettings,
+            dataFlowValueFactory,
+            moduleDescriptor
+        )
         return getProvideDelegateMethod(propertyDescriptor, delegateExpression, delegateExpressionType, context)
     }
 

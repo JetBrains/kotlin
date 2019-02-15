@@ -52,7 +52,8 @@ class CandidateResolver(
     private val reflectionTypes: ReflectionTypes,
     private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
     private val smartCastManager: SmartCastManager,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
+    private val moduleDescriptor: ModuleDescriptor
 ) {
     fun <D : CallableDescriptor> performResolutionForCandidateCall(
         context: CallCandidateResolutionContext<D>,

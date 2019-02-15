@@ -89,6 +89,7 @@ public class DescriptorResolver {
     private final DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer;
     private final DataFlowValueFactory dataFlowValueFactory;
     private final Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers;
+    private final ModuleDescriptor moduleDescriptor;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -108,7 +109,8 @@ public class DescriptorResolver {
             @NotNull TypeApproximator approximator,
             @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers
+            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -128,6 +130,7 @@ public class DescriptorResolver {
         this.declarationReturnTypeSanitizer = declarationReturnTypeSanitizer;
         this.dataFlowValueFactory = dataFlowValueFactory;
         this.anonymousTypeTransformers = anonymousTypeTransformers;
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -332,7 +335,7 @@ public class DescriptorResolver {
                                 destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
                                 ExpressionTypingContext.newContext(
                                         trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE,
-                                        languageVersionSettings, dataFlowValueFactory
+                                        languageVersionSettings, dataFlowValueFactory, moduleDescriptor
                                 )
                         );
 
@@ -798,7 +801,7 @@ public class DescriptorResolver {
         KtExpression initializer = destructuringDeclaration.getInitializer();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory
+                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory, moduleDescriptor
         );
 
         ExpressionReceiver receiver = createReceiverForDestructuringDeclaration(destructuringDeclaration, context);

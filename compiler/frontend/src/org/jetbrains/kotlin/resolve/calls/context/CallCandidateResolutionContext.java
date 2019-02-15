@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -52,12 +53,13 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull InferenceSession inferenceSession
+            @NotNull InferenceSession inferenceSession,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
               dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext,
               collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
-              inferenceSession);
+              inferenceSession, moduleDescriptor);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
         this.candidateResolveMode = candidateResolveMode;
@@ -75,7 +77,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 context.statementFilter,
                 candidateResolveMode, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
                 context.callPosition, context.expressionContextProvider, context.languageVersionSettings, context.dataFlowValueFactory,
-                context.inferenceSession);
+                context.inferenceSession, context.moduleDescriptor);
     }
 
     @NotNull
@@ -88,7 +90,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 context.dataFlowInfoForArguments, context.statementFilter,
                 CandidateResolveMode.FULLY, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
                 context.callPosition, context.expressionContextProvider, context.languageVersionSettings, context.dataFlowValueFactory,
-                context.inferenceSession);
+                context.inferenceSession, context.moduleDescriptor);
     }
 
     @Override
@@ -105,12 +107,13 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull InferenceSession inferenceSession
+            @NotNull InferenceSession inferenceSession,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         return new CallCandidateResolutionContext<>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, statementFilter,
                 candidateResolveMode, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition, expressionContextProvider,
-                languageVersionSettings, dataFlowValueFactory, inferenceSession);
+                languageVersionSettings, dataFlowValueFactory, inferenceSession, moduleDescriptor);
     }
 }

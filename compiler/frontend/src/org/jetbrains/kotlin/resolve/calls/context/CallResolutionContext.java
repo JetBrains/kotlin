@@ -9,6 +9,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -48,11 +49,12 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull InferenceSession inferenceSession
+            @NotNull InferenceSession inferenceSession,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
               statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings,
-              dataFlowValueFactory, inferenceSession);
+              dataFlowValueFactory, inferenceSession, moduleDescriptor);
         this.call = call;
         this.checkArguments = checkArguments;
         if (dataFlowInfoForArguments != null) {

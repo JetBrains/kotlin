@@ -156,7 +156,8 @@ public class ExpectedResolveDataUtil {
         LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(environment.getConfiguration());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 new BindingTraceContext(), lexicalScope,
-                DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, container.getDataFlowValueFactory());
+                DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, container.getDataFlowValueFactory(),
+                emptyModule);
 
         KtExpression callElement = KtPsiFactory(project).createExpression(name);
 

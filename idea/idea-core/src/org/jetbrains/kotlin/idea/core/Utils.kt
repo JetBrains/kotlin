@@ -122,7 +122,8 @@ fun Call.resolveCandidates(
             bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
             ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
             false, resolutionFacade.frontendService<LanguageVersionSettings>(),
-            resolutionFacade.frontendService<DataFlowValueFactory>()
+            resolutionFacade.frontendService<DataFlowValueFactory>(),
+            resolutionFacade.frontendService<ModuleDescriptor>()
     ).replaceCollectAllCandidates(true)
     val callResolver = resolutionFacade.frontendService<CallResolver>()
 

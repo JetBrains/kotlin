@@ -367,7 +367,9 @@ internal object IDELightClassContexts {
         private val codegenAffectingAnnotations: CodegenAffectingAnnotations,
         private val callResolver: CallResolver,
         private val languageVersionSettings: LanguageVersionSettings,
-        private val dataFlowValueFactory: DataFlowValueFactory,constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val dataFlowValueFactory: DataFlowValueFactory,
+        private val moduleDescriptor: ModuleDescriptor,
+        constantExpressionEvaluator: ConstantExpressionEvaluator,
         storageManager: StorageManager
     ) : AnnotationResolverImpl(callResolver, constantExpressionEvaluator, storageManager) {
 
@@ -395,7 +397,8 @@ internal object IDELightClassContexts {
                     trace, scope, CallMaker.makeCall(null, null, annotationEntry), TypeUtils.NO_EXPECTED_TYPE,
                     DataFlowInfoFactory.EMPTY, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                     true, languageVersionSettings,
-                    dataFlowValueFactory
+                    dataFlowValueFactory,
+                    moduleDescriptor
                 ),
                 annotationEntry.calleeExpression!!.constructorReferenceExpression!!,
                 annotationConstructor.returnType

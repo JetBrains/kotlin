@@ -104,9 +104,10 @@ public class ExpressionTypingServices {
             @NotNull KtExpression contextExpression,
             @NotNull ContextDependency contextDependency
     ) {
-        ExpressionTypingContext context = ExpressionTypingContext.newContext(
+        ExpressionTypingContext context = ExpressionTypingContext.
+                newContext(
                 trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
+                expressionTypingComponents.dataFlowValueFactory, expressionTypingComponents.moduleDescriptor
         );
         if (contextExpression != expression) {
             context = context.replaceExpressionContextProvider(arg -> arg == expression ? contextExpression : null);
@@ -149,7 +150,8 @@ public class ExpressionTypingServices {
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
                 trace,
                 functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
+                expressionTypingComponents.dataFlowValueFactory,
+                expressionTypingComponents.moduleDescriptor
         ));
     }
 
@@ -218,7 +220,8 @@ public class ExpressionTypingServices {
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
+                expressionTypingComponents.dataFlowValueFactory,
+                expressionTypingComponents.moduleDescriptor
         );
         KotlinTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
