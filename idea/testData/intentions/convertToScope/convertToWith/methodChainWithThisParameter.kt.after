@@ -7,8 +7,10 @@ class MyClass {
 
     fun foo4(a: MyClass) {
         a.foo1(this).foo2().foo3()
-        a.foo2()<caret>
-        a.foo3()
+        with(a) {
+            foo2()
+            foo3()
+        }
         a.foo1(this).foo2().foo3()
     }
 }
