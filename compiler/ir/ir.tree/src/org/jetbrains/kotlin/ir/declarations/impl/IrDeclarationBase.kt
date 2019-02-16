@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 abstract class IrDeclarationBase(
     startOffset: Int,
     endOffset: Int,
-    override val origin: IrDeclarationOrigin
+    override var origin: IrDeclarationOrigin
 ) : IrElementBase(startOffset, endOffset),
     IrDeclaration {
 

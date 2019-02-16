@@ -23,7 +23,7 @@ import kotlin.reflect.KProperty
 abstract class IrLazyDeclarationBase(
     startOffset: Int,
     endOffset: Int,
-    override val origin: IrDeclarationOrigin,
+    override var origin: IrDeclarationOrigin,
     private val stubGenerator: DeclarationStubGenerator,
     protected val typeTranslator: TypeTranslator
 ) : IrElementBase(startOffset, endOffset), IrDeclaration {
