@@ -111,7 +111,7 @@ sealed class ConvertToScopeIntention(
                 (prev + listOf(this) + next) to referenceName
             }
         }
-        if (targets.size < 2) return null
+        if (targets.isEmpty()) return null
         return targets to referenceName
     }
 

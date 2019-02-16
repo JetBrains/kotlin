@@ -7553,6 +7553,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/convertToScope/convertToAlso/onProperty.kt");
             }
 
+            @TestMetadata("singleCall.kt")
+            public void testSingleCall() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/singleCall.kt");
+            }
+
             @TestMetadata("untilItParameter.kt")
             public void testUntilItParameter() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToAlso/untilItParameter.kt");
@@ -7639,6 +7644,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("onProperty.kt")
             public void testOnProperty() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToApply/onProperty.kt");
+            }
+
+            @TestMetadata("singleCall.kt")
+            public void testSingleCall() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/singleCall.kt");
             }
 
             @TestMetadata("thisParameter.kt")
@@ -7744,6 +7754,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/convertToScope/convertToRun/onProperty.kt");
             }
 
+            @TestMetadata("singleCall.kt")
+            public void testSingleCall() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/singleCall.kt");
+            }
+
             @TestMetadata("thisParameter.kt")
             public void testThisParameter() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToRun/thisParameter.kt");
@@ -7840,6 +7855,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("onProperty.kt")
             public void testOnProperty() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToWith/onProperty.kt");
+            }
+
+            @TestMetadata("singleCall.kt")
+            public void testSingleCall() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/singleCall.kt");
             }
 
             @TestMetadata("thisParameter.kt")
