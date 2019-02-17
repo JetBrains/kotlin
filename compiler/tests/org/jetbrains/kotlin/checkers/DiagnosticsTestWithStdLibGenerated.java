@@ -3266,14 +3266,29 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/correctSmartcasts.kt");
         }
 
+        @TestMetadata("correctSmartcasts_after.kt")
+        public void testCorrectSmartcasts_after() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/correctSmartcasts_after.kt");
+        }
+
         @TestMetadata("falseNegativeSmartcasts.kt")
         public void testFalseNegativeSmartcasts() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/falseNegativeSmartcasts.kt");
         }
 
+        @TestMetadata("falseNegativeSmartcasts_after.kt")
+        public void testFalseNegativeSmartcasts_after() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/falseNegativeSmartcasts_after.kt");
+        }
+
         @TestMetadata("falsePositiveSmartcasts.kt")
         public void testFalsePositiveSmartcasts() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/falsePositiveSmartcasts.kt");
+        }
+
+        @TestMetadata("falsePositiveSmartcasts_after.kt")
+        public void testFalsePositiveSmartcasts_after() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/falsePositiveSmartcasts_after.kt");
         }
 
         @TestMetadata("tryExpression.kt")
