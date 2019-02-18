@@ -1,4 +1,5 @@
 // !WITH_NEW_INFERENCE
+// SKIP_TXT
 
 class ExcA : Exception()
 

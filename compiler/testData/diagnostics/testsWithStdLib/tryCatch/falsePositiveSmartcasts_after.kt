@@ -1,6 +1,7 @@
 // !WITH_NEW_INFERENCE
 // !LANGUAGE: +NewDataFlowForTryExpressions
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
+// SKIP_TXT
 // Related issue: KT-28370
 
 class ExcA : Exception()
