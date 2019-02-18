@@ -6,25 +6,32 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.asStatement
-import org.jetbrains.kotlin.nj2k.tree.JKLabeledStatement
-import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
-import org.jetbrains.kotlin.nj2k.tree.detached
-import org.jetbrains.kotlin.nj2k.tree.impl.JKBlockImpl
+import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKBlockStatementWithoutBracketsImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtConvertedFromForLoopSyntheticWhileStatementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKLabeledStatementImpl
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 class LabeledStatementConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKLabeledStatement) return recurse(element)
-        val statement = element.statement as? JKKtConvertedFromForLoopSyntheticWhileStatementImpl ?: return recurse(element)
+        if (element !is JKExpressionStatement) return recurse(element)
+        val labeledStatement = element.expression  as? JKLabeledStatement ?: return recurse(element)
+        val convertedFromForLoopSyntheticWhileStatement = labeledStatement.statement
+            .safeAs<JKBlockStatement>()
+            ?.block
+            ?.statements
+            ?.singleOrNull()
+            ?.safeAs<JKKtConvertedFromForLoopSyntheticWhileStatementImpl>() ?: return recurse(element)
 
         return recurse(
             JKBlockStatementWithoutBracketsImpl(
-                JKBlockImpl(
-                    statement::variableDeclaration.detached(),
-                    JKLabeledStatementImpl(statement::whileStatement.detached(), element::labels.detached()).asStatement()
+                listOf(
+                    convertedFromForLoopSyntheticWhileStatement::variableDeclaration.detached(),
+                    JKLabeledStatementImpl(
+                        convertedFromForLoopSyntheticWhileStatement::whileStatement.detached(),
+                        labeledStatement::labels.detached()
+                    ).asStatement()
                 )
             )
         )
