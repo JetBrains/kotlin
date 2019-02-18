@@ -95,18 +95,8 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
             }
 
-            @TestMetadata("abstractClassMember.kt")
-            public void testAbstractClassMember() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/abstractClassMember.kt");
-            }
-
             public void testAllFilesPresentInFunction() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/callableReference/function"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
-            }
-
-            @TestMetadata("classMemberAndExtension.kt")
-            public void testClassMemberAndExtension() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/classMemberAndExtension.kt");
             }
 
             @TestMetadata("classMemberAndNonExtensionCompatibility.kt")
@@ -119,54 +109,9 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberDirectCache.kt");
             }
 
-            @TestMetadata("classMemberFromClass.kt")
-            public void testClassMemberFromClass() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/classMemberFromClass.kt");
-            }
-
-            @TestMetadata("classMemberFromExtension.kt")
-            public void testClassMemberFromExtension() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/classMemberFromExtension.kt");
-            }
-
-            @TestMetadata("classMemberFromTopLevelStringNoArgs.kt")
-            public void testClassMemberFromTopLevelStringNoArgs() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/classMemberFromTopLevelStringNoArgs.kt");
-            }
-
-            @TestMetadata("classMemberFromTopLevelStringOneStringArg.kt")
-            public void testClassMemberFromTopLevelStringOneStringArg() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/classMemberFromTopLevelStringOneStringArg.kt");
-            }
-
-            @TestMetadata("classMemberFromTopLevelUnitNoArgs.kt")
-            public void testClassMemberFromTopLevelUnitNoArgs() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/classMemberFromTopLevelUnitNoArgs.kt");
-            }
-
-            @TestMetadata("classMemberFromTopLevelUnitOneStringArg.kt")
-            public void testClassMemberFromTopLevelUnitOneStringArg() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/classMemberFromTopLevelUnitOneStringArg.kt");
-            }
-
             @TestMetadata("classMemberOverridden.kt")
             public void testClassMemberOverridden() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberOverridden.kt");
-            }
-
-            @TestMetadata("closureWithSideEffect.kt")
-            public void testClosureWithSideEffect() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/closureWithSideEffect.kt");
-            }
-
-            @TestMetadata("constructorFromTopLevelNoArgs.kt")
-            public void testConstructorFromTopLevelNoArgs() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/constructorFromTopLevelNoArgs.kt");
-            }
-
-            @TestMetadata("constructorFromTopLevelOneStringArg.kt")
-            public void testConstructorFromTopLevelOneStringArg() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/constructorFromTopLevelOneStringArg.kt");
             }
 
             @TestMetadata("constructorsWithArgs.kt")
@@ -179,54 +124,9 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/function/constructorsWithArgsSimple.kt");
             }
 
-            @TestMetadata("extension.kt")
-            public void testExtension() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/extension.kt");
-            }
-
-            @TestMetadata("extensionFromClass.kt")
-            public void testExtensionFromClass() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/extensionFromClass.kt");
-            }
-
-            @TestMetadata("extensionFromExtension.kt")
-            public void testExtensionFromExtension() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/extensionFromExtension.kt");
-            }
-
             @TestMetadata("extensionFromTopLevel.kt")
             public void testExtensionFromTopLevel() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/extensionFromTopLevel.kt");
-            }
-
-            @TestMetadata("extensionFromTopLevelStringNoArgs.kt")
-            public void testExtensionFromTopLevelStringNoArgs() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/extensionFromTopLevelStringNoArgs.kt");
-            }
-
-            @TestMetadata("extensionFromTopLevelStringOneStringArg.kt")
-            public void testExtensionFromTopLevelStringOneStringArg() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/extensionFromTopLevelStringOneStringArg.kt");
-            }
-
-            @TestMetadata("extensionFromTopLevelUnitNoArgs.kt")
-            public void testExtensionFromTopLevelUnitNoArgs() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/extensionFromTopLevelUnitNoArgs.kt");
-            }
-
-            @TestMetadata("extensionFromTopLevelUnitOneStringArg.kt")
-            public void testExtensionFromTopLevelUnitOneStringArg() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/extensionFromTopLevelUnitOneStringArg.kt");
-            }
-
-            @TestMetadata("extensionToPrimitive.kt")
-            public void testExtensionToPrimitive() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/extensionToPrimitive.kt");
-            }
-
-            @TestMetadata("extensionWithClosure.kt")
-            public void testExtensionWithClosure() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/extensionWithClosure.kt");
             }
 
             @TestMetadata("functionReferenceName.kt")
@@ -239,59 +139,14 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/function/localAndTopLevelExtensions.kt");
             }
 
-            @TestMetadata("localLocal.kt")
-            public void testLocalLocal() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/localLocal.kt");
-            }
-
-            @TestMetadata("recursiveClosure.kt")
-            public void testRecursiveClosure() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/recursiveClosure.kt");
-            }
-
-            @TestMetadata("simple.kt")
-            public void testSimple() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/simple.kt");
-            }
-
-            @TestMetadata("simpleClosure.kt")
-            public void testSimpleClosure() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/simpleClosure.kt");
-            }
-
-            @TestMetadata("simpleWithArg.kt")
-            public void testSimpleWithArg() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/simpleWithArg.kt");
-            }
-
             @TestMetadata("stringNativeExtension.kt")
             public void testStringNativeExtension() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/stringNativeExtension.kt");
             }
 
-            @TestMetadata("topLevelFromClass.kt")
-            public void testTopLevelFromClass() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/topLevelFromClass.kt");
-            }
-
-            @TestMetadata("topLevelFromExtension.kt")
-            public void testTopLevelFromExtension() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/topLevelFromExtension.kt");
-            }
-
-            @TestMetadata("topLevelFromTopLevelStringNoArgs.kt")
-            public void testTopLevelFromTopLevelStringNoArgs() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/topLevelFromTopLevelStringNoArgs.kt");
-            }
-
             @TestMetadata("topLevelFromTopLevelWithArg.kt")
             public void testTopLevelFromTopLevelWithArg() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/topLevelFromTopLevelWithArg.kt");
-            }
-
-            @TestMetadata("unitWithSideEffect.kt")
-            public void testUnitWithSideEffect() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/unitWithSideEffect.kt");
             }
         }
 
@@ -303,23 +158,8 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
             }
 
-            @TestMetadata("accessViaSubclass.kt")
-            public void testAccessViaSubclass() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/accessViaSubclass.kt");
-            }
-
             public void testAllFilesPresentInProperty() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/callableReference/property"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
-            }
-
-            @TestMetadata("delegated.kt")
-            public void testDelegated() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/delegated.kt");
-            }
-
-            @TestMetadata("delegatedMutable.kt")
-            public void testDelegatedMutable() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/delegatedMutable.kt");
             }
 
             @TestMetadata("extensionProperty.kt")
@@ -327,49 +167,9 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/property/extensionProperty.kt");
             }
 
-            @TestMetadata("kClassInstanceIsInitializedFirst.kt")
-            public void testKClassInstanceIsInitializedFirst() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/kClassInstanceIsInitializedFirst.kt");
-            }
-
             @TestMetadata("memberProperty.kt")
             public void testMemberProperty() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/property/memberProperty.kt");
-            }
-
-            @TestMetadata("overriddenInSubclass.kt")
-            public void testOverriddenInSubclass() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/overriddenInSubclass.kt");
-            }
-
-            @TestMetadata("simpleExtension.kt")
-            public void testSimpleExtension() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/simpleExtension.kt");
-            }
-
-            @TestMetadata("simpleMember.kt")
-            public void testSimpleMember() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/simpleMember.kt");
-            }
-
-            @TestMetadata("simpleMutableExtension.kt")
-            public void testSimpleMutableExtension() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/simpleMutableExtension.kt");
-            }
-
-            @TestMetadata("simpleMutableMember.kt")
-            public void testSimpleMutableMember() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/simpleMutableMember.kt");
-            }
-
-            @TestMetadata("simpleMutableTopLevel.kt")
-            public void testSimpleMutableTopLevel() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/simpleMutableTopLevel.kt");
-            }
-
-            @TestMetadata("simpleTopLevel.kt")
-            public void testSimpleTopLevel() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/property/simpleTopLevel.kt");
             }
 
             @TestMetadata("topLevelVar.kt")
@@ -1313,21 +1113,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/delegation/complexDelegation.kt");
         }
 
-        @TestMetadata("delegation2.kt")
-        public void testDelegation2() throws Exception {
-            runTest("js/js.translator/testData/box/delegation/delegation2.kt");
-        }
-
-        @TestMetadata("delegation3.kt")
-        public void testDelegation3() throws Exception {
-            runTest("js/js.translator/testData/box/delegation/delegation3.kt");
-        }
-
-        @TestMetadata("delegation4.kt")
-        public void testDelegation4() throws Exception {
-            runTest("js/js.translator/testData/box/delegation/delegation4.kt");
-        }
-
         @TestMetadata("delegationByArg.kt")
         public void testDelegationByArg() throws Exception {
             runTest("js/js.translator/testData/box/delegation/delegationByArg.kt");
@@ -1391,16 +1176,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("delegationExtensionPropertyDelegated.kt")
         public void testDelegationExtensionPropertyDelegated() throws Exception {
             runTest("js/js.translator/testData/box/delegation/delegationExtensionPropertyDelegated.kt");
-        }
-
-        @TestMetadata("delegationGenericArg.kt")
-        public void testDelegationGenericArg() throws Exception {
-            runTest("js/js.translator/testData/box/delegation/delegationGenericArg.kt");
-        }
-
-        @TestMetadata("delegationMethodsWithArgs.kt")
-        public void testDelegationMethodsWithArgs() throws Exception {
-            runTest("js/js.translator/testData/box/delegation/delegationMethodsWithArgs.kt");
         }
 
         @TestMetadata("jsNamePropertyDelegation.kt")
@@ -1622,144 +1397,9 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/examples/basicmethod.kt");
         }
 
-        @TestMetadata("basicproperty.kt")
-        public void testBasicproperty() throws Exception {
-            runTest("js/js.translator/testData/box/examples/basicproperty.kt");
-        }
-
-        @TestMetadata("classObject.kt")
-        public void testClassObject() throws Exception {
-            runTest("js/js.translator/testData/box/examples/classObject.kt");
-        }
-
-        @TestMetadata("closureWithParameter.kt")
-        public void testClosureWithParameter() throws Exception {
-            runTest("js/js.translator/testData/box/examples/closureWithParameter.kt");
-        }
-
-        @TestMetadata("closureWithParameterAndBoxing.kt")
-        public void testClosureWithParameterAndBoxing() throws Exception {
-            runTest("js/js.translator/testData/box/examples/closureWithParameterAndBoxing.kt");
-        }
-
-        @TestMetadata("doubleEnclosedLocalVariable.kt")
-        public void testDoubleEnclosedLocalVariable() throws Exception {
-            runTest("js/js.translator/testData/box/examples/doubleEnclosedLocalVariable.kt");
-        }
-
-        @TestMetadata("enclosed.kt")
-        public void testEnclosed() throws Exception {
-            runTest("js/js.translator/testData/box/examples/enclosed.kt");
-        }
-
-        @TestMetadata("enclosingLocalVariable.kt")
-        public void testEnclosingLocalVariable() throws Exception {
-            runTest("js/js.translator/testData/box/examples/enclosingLocalVariable.kt");
-        }
-
-        @TestMetadata("extensionClosure.kt")
-        public void testExtensionClosure() throws Exception {
-            runTest("js/js.translator/testData/box/examples/extensionClosure.kt");
-        }
-
-        @TestMetadata("funDelegation.kt")
-        public void testFunDelegation() throws Exception {
-            runTest("js/js.translator/testData/box/examples/funDelegation.kt");
-        }
-
-        @TestMetadata("incrementProperty.kt")
-        public void testIncrementProperty() throws Exception {
-            runTest("js/js.translator/testData/box/examples/incrementProperty.kt");
-        }
-
-        @TestMetadata("inheritance.kt")
-        public void testInheritance() throws Exception {
-            runTest("js/js.translator/testData/box/examples/inheritance.kt");
-        }
-
-        @TestMetadata("inheritedInnerClass.kt")
-        public void testInheritedInnerClass() throws Exception {
-            runTest("js/js.translator/testData/box/examples/inheritedInnerClass.kt");
-        }
-
-        @TestMetadata("inheritedMethod.kt")
-        public void testInheritedMethod() throws Exception {
-            runTest("js/js.translator/testData/box/examples/inheritedMethod.kt");
-        }
-
-        @TestMetadata("initializerBlock.kt")
-        public void testInitializerBlock() throws Exception {
-            runTest("js/js.translator/testData/box/examples/initializerBlock.kt");
-        }
-
-        @TestMetadata("initializerBlockDImpl.kt")
-        public void testInitializerBlockDImpl() throws Exception {
-            runTest("js/js.translator/testData/box/examples/initializerBlockDImpl.kt");
-        }
-
-        @TestMetadata("innerClass.kt")
-        public void testInnerClass() throws Exception {
-            runTest("js/js.translator/testData/box/examples/innerClass.kt");
-        }
-
-        @TestMetadata("kt242.kt")
-        public void testKt242() throws Exception {
-            runTest("js/js.translator/testData/box/examples/kt242.kt");
-        }
-
         @TestMetadata("newInstanceDefaultConstructor.kt")
         public void testNewInstanceDefaultConstructor() throws Exception {
             runTest("js/js.translator/testData/box/examples/newInstanceDefaultConstructor.kt");
-        }
-
-        @TestMetadata("overloadBinaryOperator.kt")
-        public void testOverloadBinaryOperator() throws Exception {
-            runTest("js/js.translator/testData/box/examples/overloadBinaryOperator.kt");
-        }
-
-        @TestMetadata("overloadPlusAssignReturn.kt")
-        public void testOverloadPlusAssignReturn() throws Exception {
-            runTest("js/js.translator/testData/box/examples/overloadPlusAssignReturn.kt");
-        }
-
-        @TestMetadata("overloadPlusToPlusAssign.kt")
-        public void testOverloadPlusToPlusAssign() throws Exception {
-            runTest("js/js.translator/testData/box/examples/overloadPlusToPlusAssign.kt");
-        }
-
-        @TestMetadata("overloadUnaryOperator.kt")
-        public void testOverloadUnaryOperator() throws Exception {
-            runTest("js/js.translator/testData/box/examples/overloadUnaryOperator.kt");
-        }
-
-        @TestMetadata("propertyDelegation.kt")
-        public void testPropertyDelegation() throws Exception {
-            runTest("js/js.translator/testData/box/examples/propertyDelegation.kt");
-        }
-
-        @TestMetadata("propertyInInitializer.kt")
-        public void testPropertyInInitializer() throws Exception {
-            runTest("js/js.translator/testData/box/examples/propertyInInitializer.kt");
-        }
-
-        @TestMetadata("rightHandOverride.kt")
-        public void testRightHandOverride() throws Exception {
-            runTest("js/js.translator/testData/box/examples/rightHandOverride.kt");
-        }
-
-        @TestMetadata("simplestClosure.kt")
-        public void testSimplestClosure() throws Exception {
-            runTest("js/js.translator/testData/box/examples/simplestClosure.kt");
-        }
-
-        @TestMetadata("simplestClosureAndBoxing.kt")
-        public void testSimplestClosureAndBoxing() throws Exception {
-            runTest("js/js.translator/testData/box/examples/simplestClosureAndBoxing.kt");
-        }
-
-        @TestMetadata("traitproperty.kt")
-        public void testTraitproperty() throws Exception {
-            runTest("js/js.translator/testData/box/examples/traitproperty.kt");
         }
     }
 
