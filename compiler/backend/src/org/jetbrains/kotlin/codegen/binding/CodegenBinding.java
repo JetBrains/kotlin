@@ -55,7 +55,7 @@ public class CodegenBinding {
     public static final WritableSlice<FunctionDescriptor, FunctionDescriptor> SUSPEND_FUNCTION_TO_JVM_VIEW =
             Slices.createSimpleSlice();
 
-    public static final WritableSlice<FunctionDescriptor, Boolean> CAPTURES_CROSSINLINE_SUSPEND_LAMBDA =
+    public static final WritableSlice<FunctionDescriptor, Boolean> CAPTURES_CROSSINLINE_LAMBDA =
             Slices.createSimpleSlice();
 
     public static final WritableSlice<ClassDescriptor, Boolean> RECURSIVE_SUSPEND_CALLABLE_REFERENCE =

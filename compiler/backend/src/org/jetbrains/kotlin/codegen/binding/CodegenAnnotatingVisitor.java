@@ -655,7 +655,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     public void visitCallExpression(@NotNull KtCallExpression expression) {
         super.visitCallExpression(expression);
         checkSamCall(expression);
-        checkCrossinlineSuspendCall(expression);
+        checkCrossinlineCall(expression);
         recordSuspendFunctionTypeWrapperForArguments(expression);
     }
 
@@ -706,7 +706,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         }
     }
 
-    private void checkCrossinlineSuspendCall(@NotNull KtCallExpression expression) {
+    private void checkCrossinlineCall(@NotNull KtCallExpression expression) {
         KtExpression callee = expression.getCalleeExpression();
         Call call = bindingContext.get(CALL, callee);
         ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, call);
@@ -714,30 +714,21 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             VariableAsFunctionResolvedCall variableAsFunction = (VariableAsFunctionResolvedCall) resolvedCall;
             VariableDescriptor variableDescriptor = variableAsFunction.getVariableCall().getResultingDescriptor();
-            CallableDescriptor callableDescriptor = ((ResolvedCall) variableAsFunction).getResultingDescriptor();
 
             if (variableDescriptor instanceof ValueParameterDescriptor &&
-                ((ValueParameterDescriptor) variableDescriptor).isCrossinline() &&
-                callableDescriptor instanceof FunctionDescriptor &&
-                ((FunctionDescriptor) callableDescriptor).isSuspend()) {
-                FunctionDescriptor enclosingDescriptor =
-                        bindingContext.get(ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall());
-                if (enclosingDescriptor == null) return;
-
+                ((ValueParameterDescriptor) variableDescriptor).isCrossinline()) {
                 DeclarationDescriptor functionWithCrossinlineParameter = variableDescriptor.getContainingDeclaration();
                 for (int i = functionsStack.size() - 1; i >= 0; i--) {
-                    if (functionsStack.get(i).isSuspend()) {
-                        Boolean alreadyPutValue = bindingTrace.getBindingContext()
-                                .get(CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA, functionsStack.get(i));
-                        if (alreadyPutValue != null && alreadyPutValue) {
-                            return;
-                        }
-                        bindingTrace.record(
-                                CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA,
-                                functionsStack.get(i),
-                                true
-                        );
+                    Boolean alreadyPutValue = bindingTrace.getBindingContext()
+                            .get(CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA, functionsStack.get(i));
+                    if (alreadyPutValue != null && alreadyPutValue) {
+                        return;
                     }
+                    bindingTrace.record(
+                            CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA,
+                            functionsStack.get(i),
+                            true
+                    );
                     if (functionsStack.get(i) == functionWithCrossinlineParameter) {
                         return;
                     }

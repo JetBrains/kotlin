@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
@@ -498,7 +497,7 @@ class CoroutineCodegenForLambda private constructor(
                 classBuilder,
                 originalSuspendLambdaDescriptor,
                 // Local suspend lambdas, which call crossinline suspend parameters of containing functions must be generated after inlining
-                expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_SUSPEND_LAMBDA, originalSuspendLambdaDescriptor] == true
+                expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_LAMBDA, originalSuspendLambdaDescriptor] == true
             )
         }
     }
