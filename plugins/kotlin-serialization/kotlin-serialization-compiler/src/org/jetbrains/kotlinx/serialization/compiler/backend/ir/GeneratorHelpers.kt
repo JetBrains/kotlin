@@ -44,7 +44,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 val BackendContext.externalSymbols: ReferenceSymbolTable get() = ir.symbols.externalSymbolTable
 
 internal fun BackendContext.createTypeTranslator(moduleDescriptor: ModuleDescriptor): TypeTranslator =
-    TypeTranslator(externalSymbols, irBuiltIns.languageVersionSettings).apply {
+    TypeTranslator(externalSymbols, irBuiltIns.languageVersionSettings, moduleDescriptor.builtIns).apply {
         constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable = externalSymbols)
         constantValueGenerator.typeTranslator = this
     }

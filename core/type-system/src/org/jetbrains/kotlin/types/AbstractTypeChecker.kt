@@ -21,9 +21,7 @@ abstract class AbstractTypeCheckerContext : TypeSystemContext {
 
     abstract fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean
 
-    abstract fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker
-
-    open fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
+    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
         return type
     }
 
@@ -146,6 +144,15 @@ abstract class AbstractTypeCheckerContext : TypeSystemContext {
 }
 
 object AbstractTypeChecker {
+
+    fun isSubtypeOf(context: TypeCheckerProviderContext, subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
+        return AbstractTypeChecker.isSubtypeOf(context.newBaseTypeCheckerContext(true), subType, superType)
+    }
+
+    fun equalTypes(context: TypeCheckerProviderContext, a: KotlinTypeMarker, b: KotlinTypeMarker): Boolean {
+        return AbstractTypeChecker.equalTypes(context.newBaseTypeCheckerContext(false), a, b)
+    }
+
     fun isSubtypeOf(context: AbstractTypeCheckerContext, subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
         if (subType === superType) return true
         return context.completeIsSubTypeOf(context.prepareType(subType), context.prepareType(superType))
@@ -312,7 +319,7 @@ object AbstractTypeChecker {
                 !type.isDynamic() && !type.isDefinitelyNotNullType() &&
                 type.lowerBoundIfFlexible().typeConstructor() == type.upperBoundIfFlexible().typeConstructor()
 
-    private fun effectiveVariance(declared: TypeVariance, useSite: TypeVariance): TypeVariance? {
+    fun effectiveVariance(declared: TypeVariance, useSite: TypeVariance): TypeVariance? {
         if (declared == TypeVariance.INV) return useSite
         if (useSite == TypeVariance.INV) return declared
 
@@ -453,6 +460,14 @@ object AbstractNullabilityChecker {
     fun isPossibleSubtype(context: AbstractTypeCheckerContext, subType: SimpleTypeMarker, superType: SimpleTypeMarker): Boolean =
         context.runIsPossibleSubtype(subType, superType)
 
+    fun isSubtypeOfAny(context: TypeCheckerProviderContext, type: KotlinTypeMarker): Boolean =
+        AbstractNullabilityChecker.isSubtypeOfAny(context.newBaseTypeCheckerContext(false), type)
+
+    fun isSubtypeOfAny(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): Boolean =
+        with(context) {
+            hasNotNullSupertype(type.lowerBoundIfFlexible(), SupertypesPolicy.LowerIfFlexible)
+        }
+
     private fun AbstractTypeCheckerContext.runIsPossibleSubtype(subType: SimpleTypeMarker, superType: SimpleTypeMarker): Boolean {
         // it makes for case String? & Any <: String
         assert(subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || subType.isAllowedTypeVariable) {
@@ -500,6 +515,9 @@ object AbstractNullabilityChecker {
         }) {
             if (it.isMarkedNullable()) SupertypesPolicy.None else supertypesPolicy
         }
+
+    fun TypeCheckerProviderContext.hasPathByNotMarkedNullableNodes(start: SimpleTypeMarker, end: TypeConstructorMarker) =
+        newBaseTypeCheckerContext(false).hasPathByNotMarkedNullableNodes(start, end)
 
     fun AbstractTypeCheckerContext.hasPathByNotMarkedNullableNodes(start: SimpleTypeMarker, end: TypeConstructorMarker) =
         anySupertype(start, {

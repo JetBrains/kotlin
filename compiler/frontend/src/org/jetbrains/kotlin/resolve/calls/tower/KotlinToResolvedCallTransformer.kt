@@ -665,7 +665,9 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
         typeArguments = resolvedCallAtom.substitutor.freshVariables.map {
             val substituted = (substitutor ?: FreshVariableNewTypeSubstitutor.Empty).safeSubstitute(it.defaultType)
-            TypeApproximator().approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation) ?: substituted
+            TypeApproximator(substituted.constructor.builtIns)
+                .approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation)
+                ?: substituted
         }
 
         calculateExpedtedTypeForSamConvertedArgumentMap(substitutor)

@@ -40,7 +40,7 @@ class GeneratorContext(
 ) : IrGeneratorContext() {
 
     val constantValueGenerator: ConstantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-    val typeTranslator: TypeTranslator = TypeTranslator(symbolTable, languageVersionSettings)
+    val typeTranslator: TypeTranslator = TypeTranslator(symbolTable, languageVersionSettings, builtIns = moduleDescriptor.builtIns)
 
     init {
         typeTranslator.constantValueGenerator = constantValueGenerator

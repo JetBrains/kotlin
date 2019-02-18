@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.CompletedCallInfo
+import org.jetbrains.kotlin.resolve.calls.components.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class CoroutineInferenceSession(
     psiCallResolver: PSICallResolver,
@@ -88,7 +90,7 @@ class CoroutineInferenceSession(
 
         updateCalls(lambda, commonSystem)
 
-        return commonSystem.fixedTypeVariables
+        return commonSystem.fixedTypeVariables.cast() // TODO: SUB
     }
 
     private fun createNonFixedTypeToVariableSubstitutor(): NewTypeSubstitutorByConstructorMap {
@@ -117,8 +119,8 @@ class CoroutineInferenceSession(
         val callSubstitutor = storage.buildResultingSubstitutor() // substitutor only for fixed variables
 
         for (initialConstraint in storage.initialConstraints) {
-            val lower = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.a))
-            val upper = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.b))
+            val lower = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.a as UnwrappedType)) // TODO: SUB
+            val upper = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.b as UnwrappedType)) // TODO: SUB
 
             if (commonSystem.isProperType(lower) && commonSystem.isProperType(upper)) continue
 
@@ -183,9 +185,9 @@ class CoroutineInferenceSession(
         nonFixedTypesToResult: Map<TypeConstructor, UnwrappedType>
     ) {
         val resultingCallSubstitutor = completedCall.callResolutionResult.constraintSystem.fixedTypeVariables.entries
-            .associate { it.key to nonFixedTypesToResultSubstitutor.safeSubstitute(it.value) }
+            .associate { it.key to nonFixedTypesToResultSubstitutor.safeSubstitute(it.value as UnwrappedType) } // TODO: SUB
 
-        val resultingSubstitutor = NewTypeSubstitutorByConstructorMap(resultingCallSubstitutor + nonFixedTypesToResult)
+        val resultingSubstitutor = NewTypeSubstitutorByConstructorMap((resultingCallSubstitutor + nonFixedTypesToResult).cast()) // TODO: SUB
 
         val atomCompleter = createResolvedAtomCompleter(resultingSubstitutor, completedCall.context)
         val resultCallAtom = completedCall.callResolutionResult.resultCallAtom

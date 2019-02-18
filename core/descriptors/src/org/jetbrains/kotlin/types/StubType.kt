@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.model.StubTypeMarker
 
 // This type is used as a stub for postponed type variables, which are important for coroutine inference
 class StubType(
@@ -16,7 +17,7 @@ class StubType(
         ErrorUtils.createErrorTypeConstructor("Constructor for non fixed type: $originalTypeVariable"),
     override val memberScope: MemberScope =
         ErrorUtils.createErrorScope("Scope for non fixed type: $originalTypeVariable")
-) : SimpleType() {
+) : SimpleType(), StubTypeMarker {
 
     override val arguments: List<TypeProjection>
         get() = emptyList()

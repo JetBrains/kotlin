@@ -11,12 +11,15 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 
 
 class MutableVariableWithConstraints(
-    override val typeVariable: NewTypeVariable,
+    override val typeVariable: TypeVariableMarker,
     constraints: Collection<Constraint> = emptyList()
 ) : VariableWithConstraints {
     override val constraints: List<Constraint>
@@ -89,12 +92,12 @@ class MutableVariableWithConstraints(
 
 
 internal class MutableConstraintStorage : ConstraintStorage {
-    override val allTypeVariables: MutableMap<TypeConstructor, NewTypeVariable> = LinkedHashMap()
-    override val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints> = LinkedHashMap()
+    override val allTypeVariables: MutableMap<TypeConstructorMarker, TypeVariableMarker> = LinkedHashMap()
+    override val notFixedTypeVariables: MutableMap<TypeConstructorMarker, MutableVariableWithConstraints> = LinkedHashMap()
     override val initialConstraints: MutableList<InitialConstraint> = ArrayList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
     override val errors: MutableList<KotlinCallDiagnostic> = ArrayList()
     override val hasContradiction: Boolean get() = errors.any { !it.candidateApplicability.isSuccess }
-    override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType> = LinkedHashMap()
-    override val postponedTypeVariables: ArrayList<NewTypeVariable> = ArrayList()
+    override val fixedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = LinkedHashMap()
+    override val postponedTypeVariables: ArrayList<TypeVariableMarker> = ArrayList()
 }

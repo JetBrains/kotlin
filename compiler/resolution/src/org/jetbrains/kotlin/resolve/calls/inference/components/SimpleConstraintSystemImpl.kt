@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -31,7 +32,8 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 
 class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns) : SimpleConstraintSystem {
-    val csBuilder: ConstraintSystemBuilder = NewConstraintSystemImpl(constraintInjector, builtIns).getBuilder()
+    val csBuilder: ConstraintSystemBuilder =
+        NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns)).getBuilder()
 
     override fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor {
         val substitutionMap = typeParameters.associate {

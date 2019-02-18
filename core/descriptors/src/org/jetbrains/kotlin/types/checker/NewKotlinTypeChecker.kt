@@ -30,20 +30,21 @@ import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
+object SimpleClassicTypeSystemContext : ClassicTypeSystemContext
+
 object StrictEqualityTypeChecker {
 
-    private val context = object : ClassicTypeSystemContext {}
     /**
      * String! != String & A<String!> != A<String>, also A<in Nothing> != A<out Any?>
      * also A<*> != A<out Any?>
      * different error types non-equals even errorTypeEqualToAnything
      */
     fun strictEqualTypes(a: UnwrappedType, b: UnwrappedType): Boolean {
-        return AbstractStrictEqualityTypeChecker.strictEqualTypes(context, a, b)
+        return AbstractStrictEqualityTypeChecker.strictEqualTypes(SimpleClassicTypeSystemContext, a, b)
     }
 
     fun strictEqualTypes(a: SimpleType, b: SimpleType): Boolean {
-        return AbstractStrictEqualityTypeChecker.strictEqualTypes(context, a, b)
+        return AbstractStrictEqualityTypeChecker.strictEqualTypes(SimpleClassicTypeSystemContext, a, b)
     }
 
 }
@@ -64,11 +65,11 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         ClassicTypeCheckerContext(false).equalTypes(a.unwrap(), b.unwrap())
 
     fun ClassicTypeCheckerContext.equalTypes(a: UnwrappedType, b: UnwrappedType): Boolean {
-        return AbstractTypeChecker.equalTypes(this, a, b)
+        return AbstractTypeChecker.equalTypes(this as AbstractTypeCheckerContext, a, b)
     }
 
     fun ClassicTypeCheckerContext.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType): Boolean {
-        return AbstractTypeChecker.isSubtypeOf(this, subType, superType)
+        return AbstractTypeChecker.isSubtypeOf(this as AbstractTypeCheckerContext, subType, superType)
     }
 
     fun transformToNewType(type: SimpleType): SimpleType {
@@ -156,10 +157,9 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
 object NullabilityChecker {
 
     fun isSubtypeOfAny(type: UnwrappedType): Boolean =
-        ClassicTypeCheckerContext(false).hasNotNullSupertype(type.lowerIfFlexible(), SupertypesPolicy.LowerIfFlexible)
-
-    fun hasPathByNotMarkedNullableNodes(start: SimpleType, end: TypeConstructor) =
-        ClassicTypeCheckerContext(false).hasPathByNotMarkedNullableNodes(start, end)
+        SimpleClassicTypeSystemContext
+            .newBaseTypeCheckerContext(false)
+            .hasNotNullSupertype(type.lowerIfFlexible(), SupertypesPolicy.LowerIfFlexible)
 }
 
 fun UnwrappedType.hasSupertypeWithGivenTypeConstructor(typeConstructor: TypeConstructor) =

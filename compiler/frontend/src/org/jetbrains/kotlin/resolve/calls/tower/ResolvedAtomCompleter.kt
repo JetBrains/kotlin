@@ -134,7 +134,7 @@ class ResolvedAtomCompleter(
         }
 
         val approximatedReturnType =
-            TypeApproximator().approximateDeclarationType(
+            TypeApproximator(builtIns).approximateDeclarationType(
                 returnType,
                 local = true,
                 languageVersionSettings = topLevelCallContext.languageVersionSettings

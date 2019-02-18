@@ -24,27 +24,29 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface ConstraintSystemOperation {
     val hasContradiction: Boolean
-    fun registerVariable(variable: NewTypeVariable)
-    fun markPostponedVariable(variable: NewTypeVariable)
-    fun unmarkPostponedVariable(variable: NewTypeVariable)
+    fun registerVariable(variable: TypeVariableMarker)
+    fun markPostponedVariable(variable: TypeVariableMarker)
+    fun unmarkPostponedVariable(variable: TypeVariableMarker)
 
-    fun addSubtypeConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition)
-    fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition)
+    fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition)
+    fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition)
 
-    fun isProperType(type: UnwrappedType): Boolean
-    fun isTypeVariable(type: UnwrappedType): Boolean
-    fun isPostponedTypeVariable(typeVariable: NewTypeVariable): Boolean
+    fun isProperType(type: KotlinTypeMarker): Boolean
+    fun isTypeVariable(type: KotlinTypeMarker): Boolean
+    fun isPostponedTypeVariable(typeVariable: TypeVariableMarker): Boolean
 
-    fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor>
+    fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker>
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
-    val builtIns: KotlinBuiltIns
+    //val builtIns: KotlinBuiltIns
     // if runOperations return true, then this operation will be applied, and function return true
     fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
 
@@ -54,8 +56,8 @@ interface ConstraintSystemBuilder : ConstraintSystemOperation {
 }
 
 fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(
-    lowerType: UnwrappedType,
-    upperType: UnwrappedType,
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
     position: ConstraintPosition
 ) =
     runTransaction {
