@@ -194,7 +194,10 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
         val jar = buildTargetJar(gradleTarget, project)
         val target = KotlinTargetImpl(gradleTarget.name, targetPresetName, disambiguationClassifier, platform, compilations, jar)
-        compilations.forEach { it.target = target }
+        compilations.forEach {
+            it.disambiguationClassifier = target.disambiguationClassifier
+            it.platform = target.platform
+        }
         return target
     }
 

@@ -29,10 +29,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.artifacts.Dependency
 import org.gradle.tooling.model.idea.IdeaModule
-import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
-import org.jetbrains.kotlin.gradle.KotlinGradleModel
-import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
-import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.DataNodeUserDataProperty
@@ -203,8 +200,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         if (mppModel != null) {
             mppModel.targets.forEach { target ->
                 KotlinStatisticsTrigger.trigger(
-                        KotlinEventTrigger.KotlinGradleTargetTrigger,
-                        "MPP.${target.platform.id + (target.presetName?.let { ".$it"} ?: "")}"
+                    KotlinEventTrigger.KotlinGradleTargetTrigger,
+                    "MPP.${target.platform.id + (target.presetName?.let { ".$it" } ?: "")}"
                 )
             }
             return super.populateModuleDependencies(gradleModule, ideModule, ideProject)
@@ -222,13 +219,13 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
         ideModule.isResolved = true
         ideModule.hasKotlinPlugin = gradleModel.hasKotlinPlugin
-        ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
+        ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet.deepCopy()
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
 
         KotlinStatisticsTrigger.trigger(
-                KotlinEventTrigger.KotlinGradleTargetTrigger,
-                gradleModel.kotlinTarget ?: "unknown"
+            KotlinEventTrigger.KotlinGradleTargetTrigger,
+            gradleModel.kotlinTarget ?: "unknown"
         )
 
         addImplementedModuleNames(gradleModule, ideModule, ideProject, gradleModel)

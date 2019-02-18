@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.plugins.gradle.model.ExternalDependency
+import org.jetbrains.plugins.gradle.model.ModelFactory
 import java.io.File
 import java.io.Serializable
 
 typealias KotlinDependency = ExternalDependency
+
+fun KotlinDependency.deepCopy(): KotlinDependency = ModelFactory.createCopy(this)
 
 interface KotlinModule : Serializable {
     val name: String
@@ -55,10 +58,10 @@ interface KotlinCompilationArguments : Serializable {
 
 interface KotlinCompilation : KotlinModule {
     val sourceSets: Collection<KotlinSourceSet>
-    val target: KotlinTarget
     val output: KotlinCompilationOutput
     val arguments: KotlinCompilationArguments
     val dependencyClasspath: List<String>
+    val disambiguationClassifier: String?
 
     companion object {
         const val MAIN_COMPILATION_NAME = "main"
