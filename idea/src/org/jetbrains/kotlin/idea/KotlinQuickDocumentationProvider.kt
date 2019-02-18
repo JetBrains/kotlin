@@ -68,10 +68,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private object DocumentationURLs {
     const val LATE_INITIALIZED_PROPERTIES_AND_VARIABLES_URL =
-        "http://kotlinlang.org/docs/reference/properties.html#late-initialized-properties-and-variables"
+        "https://kotlinlang.org/docs/reference/properties.html#late-initialized-properties-and-variables"
 
     const val TAIL_RECURSIVE_FUNCTIONS_URL =
-        "http://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions"
+        "https://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions"
 }
 
 class HtmlClassifierNamePolicy(val base: ClassifierNamePolicy) : ClassifierNamePolicy {

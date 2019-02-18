@@ -17,20 +17,20 @@ package org.jetbrains.idl2k
 
 val urls = listOf(
         "https://raw.githubusercontent.com/whatwg/html-mirror/master/source" to "org.w3c.dom",
-        "http://html.spec.whatwg.org/" to "org.w3c.dom",
+        "https://html.spec.whatwg.org/" to "org.w3c.dom",
         "https://raw.githubusercontent.com/whatwg/dom/master/dom.html" to "org.w3c.dom",
         "https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html" to "org.w3c.dom",
-        "http://www.w3.org/TR/animation-timing/" to "org.w3c.dom",
-        "http://www.w3.org/TR/geometry-1/" to "org.w3c.dom",
-        "http://www.w3.org/TR/cssom-view/" to "org.w3c.dom",
-        "http://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
-        "http://www.w3.org/TR/pointerevents/" to "org.w3c.dom.pointerevents",
+        "https://www.w3.org/TR/animation-timing/" to "org.w3c.dom",
+        "https://www.w3.org/TR/geometry-1/" to "org.w3c.dom",
+        "https://www.w3.org/TR/cssom-view/" to "org.w3c.dom",
+        "https://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
+        "https://www.w3.org/TR/pointerevents/" to "org.w3c.dom.pointerevents",
 
         "https://drafts.csswg.org/cssom/" to "org.w3c.dom.css",
         "https://www.w3.org/TR/css-masking-1/" to "org.w3c.css.masking",
 
         "https://w3c.github.io/mediacapture-main/" to "org.w3c.dom.mediacapture",
-        "http://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
+        "https://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
         "https://w3c.github.io/clipboard-apis" to "org.w3c.dom.clipboard",
         "https://raw.githubusercontent.com/whatwg/url/master/url.html" to "org.w3c.dom.url",
 
@@ -44,10 +44,10 @@ val urls = listOf(
 
         "https://raw.githubusercontent.com/whatwg/notifications/master/notifications.html" to "org.w3c.notifications",
         "https://raw.githubusercontent.com/whatwg/fullscreen/master/fullscreen.html" to "org.w3c.fullscreen",
-        "http://www.w3.org/TR/vibration/" to "org.w3c.vibration",
+        "https://www.w3.org/TR/vibration/" to "org.w3c.vibration",
 
-        "http://www.w3.org/TR/hr-time/" to "org.w3c.performance",
-        "http://www.w3.org/TR/2012/REC-navigation-timing-20121217/" to "org.w3c.performance",
+        "https://www.w3.org/TR/hr-time/" to "org.w3c.performance",
+        "https://www.w3.org/TR/2012/REC-navigation-timing-20121217/" to "org.w3c.performance",
 
         "https://w3c.github.io/ServiceWorker/" to "org.w3c.workers"
 )

@@ -31,7 +31,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
         addBuildscriptRepositoriesDefinition("jcenter()")
-        addRepositoriesDefinition("maven { url \"http://dl.bintray.com/kotlin/ktor\" }")
+        addRepositoriesDefinition("maven { url \"https://dl.bintray.com/kotlin/ktor\" }")
         addRepositoriesDefinition("jcenter()")
     }
 

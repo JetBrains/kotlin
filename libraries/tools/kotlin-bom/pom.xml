@@ -14,7 +14,7 @@
 
     <name>Kotlin Libraries bill-of-materials</name>
     <description>Kotlin is a statically typed programming language that compiles to JVM byte codes and JavaScript</description>
-    <url>http://kotlinlang.org/</url>
+    <url>https://kotlinlang.org/</url>
 
     <licenses>
         <license>
@@ -36,7 +36,7 @@
             <id>JetBrains</id>
             <name>JetBrains Team</name>
             <organization>JetBrains</organization>
-            <organizationUrl>http://www.jetbrains.com</organizationUrl>
+            <organizationUrl>https://www.jetbrains.com</organizationUrl>
         </developer>
     </developers>
 
