@@ -44,7 +44,12 @@ class DynamicMemberLValue(
                 context.irBuiltIns.unitType,
                 IrDynamicOperator.EQ
             ).apply {
-                left = dynamicReceiver
+                left = IrDynamicMemberExpressionImpl(
+                    startOffset, endOffset,
+                    type,
+                    memberName,
+                    dynamicReceiver
+                )
                 right = irExpression
             }
         }

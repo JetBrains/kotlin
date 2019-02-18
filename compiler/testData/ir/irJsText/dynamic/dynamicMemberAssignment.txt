@@ -3,7 +3,8 @@ FILE fqName:<root> fileName:/dynamicMemberAssignment.kt
     VALUE_PARAMETER name:d index:0 type:dynamic flags:
     BLOCK_BODY
       DYN_OP operator=EQ type=kotlin.Unit
-        receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+        receiver: DYN_MEMBER memberName='m' type=kotlin.Unit
+          GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
         0: CONST Int type=kotlin.Int value=1
   FUN name:testSafeMemberAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:d index:0 type:dynamic flags:
@@ -22,5 +23,6 @@ FILE fqName:<root> fileName:/dynamicMemberAssignment.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: DYN_OP operator=EQ type=kotlin.Unit
-              receiver: GET_VAR 'tmp0_safe_receiver: dynamic' type=dynamic origin=null
+              receiver: DYN_MEMBER memberName='m' type=kotlin.Unit
+                GET_VAR 'tmp0_safe_receiver: dynamic' type=dynamic origin=null
               0: CONST Int type=kotlin.Int value=1
