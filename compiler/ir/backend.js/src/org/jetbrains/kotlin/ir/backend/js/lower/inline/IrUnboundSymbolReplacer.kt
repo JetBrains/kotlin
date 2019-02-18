@@ -360,8 +360,8 @@ private class IrUnboundSymbolReplacer(
     override fun visitBlock(expression: IrBlock): IrExpression {
         if (expression is IrReturnableBlock) {
             returnTargetStack.push(expression.symbol)
-            try {
-                return super.visitBlock(expression)
+            return try {
+                super.visitBlock(expression)
             } finally {
                 returnTargetStack.pop()
             }
