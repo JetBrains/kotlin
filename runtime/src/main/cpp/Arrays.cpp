@@ -248,10 +248,17 @@ KFloat Kotlin_ByteArray_getFloatAt(KConstRef thiz, KInt index) {
     KFloat f;
     uint8_t b[4];
   } u;
+#if __BIG_ENDIAN__
+  u.b[0] = address[3];
+  u.b[1] = address[2];
+  u.b[2] = address[1];
+  u.b[3] = address[0];
+#else
   u.b[0] = address[0];
   u.b[1] = address[1];
   u.b[2] = address[2];
   u.b[3] = address[3];
+#endif  //  __BIG_ENDIAN__
   return u.f;
 #else
   auto result = *reinterpret_cast<const KFloat*>(ByteArrayAddressOfElementAt(array, index));
@@ -270,6 +277,16 @@ KDouble Kotlin_ByteArray_getDoubleAt(KConstRef thiz, KInt index) {
       KDouble d;
       uint8_t b[8];
   } u;
+#if __BIG_ENDIAN__
+  u.b[0] = address[7];
+  u.b[1] = address[6];
+  u.b[2] = address[5];
+  u.b[3] = address[4];
+  u.b[4] = address[3];
+  u.b[5] = address[2];
+  u.b[6] = address[1];
+  u.b[7] = address[0];
+#else
   u.b[0] = address[0];
   u.b[1] = address[1];
   u.b[2] = address[2];
@@ -278,6 +295,7 @@ KDouble Kotlin_ByteArray_getDoubleAt(KConstRef thiz, KInt index) {
   u.b[5] = address[5];
   u.b[6] = address[6];
   u.b[7] = address[7];
+#endif  // __BIG_ENDIAN__
   return u.d;
 #else
   return *reinterpret_cast<const KDouble*>(ByteArrayAddressOfElementAt(array, index));
