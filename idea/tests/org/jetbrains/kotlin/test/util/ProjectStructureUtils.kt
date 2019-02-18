@@ -41,7 +41,11 @@ fun PlatformTestCase.projectLibrary(
     }
 }
 
-val File.jarRoot get() = JarFileSystem.getInstance().getRootByLocal(LocalFileSystem.getInstance().findFileByIoFile(this)!!)!!
+val File.jarRoot: VirtualFile
+    get() {
+        val virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(this) ?: error("Cannot find file $this")
+        return JarFileSystem.getInstance().getRootByLocal(virtualFile) ?: error("Can't find root by file $virtualFile")
+    }
 
 fun Module.addDependency(
         library: Library,
