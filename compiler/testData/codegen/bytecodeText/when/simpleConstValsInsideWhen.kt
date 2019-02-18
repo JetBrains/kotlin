@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 const val A = 10
 private const val B = 20
 

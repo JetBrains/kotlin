@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 object Constants {
     const val A = 30
     const val B = 40
