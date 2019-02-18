@@ -129,6 +129,12 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                         file.findElementByText<ULambdaExpression>("{ println(\"hello2\") }").functionalInterfaceType?.canonicalText
                     )
                 }, {
+                    val call = file.findElementByText<UCallExpression>("Runnable { println(\"hello2\") }")
+                    assertEquals(
+                        "java.lang.Runnable",
+                        (call.classReference?.resolve() as? PsiClass)?.qualifiedName
+                    )
+                }, {
                     assertEquals(
                         "java.util.function.Supplier<T>",
                         file.findElementByText<ULambdaExpression>("{ \"Supplier\" }").functionalInterfaceType?.canonicalText

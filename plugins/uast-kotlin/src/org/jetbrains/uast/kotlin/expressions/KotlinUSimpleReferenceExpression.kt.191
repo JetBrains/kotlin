@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
@@ -206,12 +208,14 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
         get() = (psi.getResolvedCall(psi.analyze())?.resultingDescriptor as? ConstructorDescriptor)
                 ?.containingDeclaration?.name?.asString()
 
-    override fun resolve(): PsiElement? {
-        val resolvedCall = psi.getResolvedCall(psi.analyze())
-        val resultingDescriptor = resolvedCall?.resultingDescriptor as? ConstructorDescriptor ?: return null
-        val clazz = resultingDescriptor.containingDeclaration
-        return clazz.toSource()?.getMaybeLightElement(this)
-    }
+    override fun resolve(): PsiElement? =
+        when (val resultingDescriptor = psi.getResolvedCall(psi.analyze())?.resultingDescriptor) {
+            is ConstructorDescriptor ->
+                resultingDescriptor.containingDeclaration.toSource()?.getMaybeLightElement(this)
+            is SamConstructorDescriptor ->
+                (resultingDescriptor.returnType?.getFunctionalInterfaceType(this, psi) as? PsiClassType)?.resolve()
+            else -> null
+        }
 }
 
 class KotlinStringUSimpleReferenceExpression(

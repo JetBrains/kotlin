@@ -1,6 +1,7 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
@@ -126,6 +127,12 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                     assertEquals(
                         "java.lang.Runnable",
                         file.findElementByText<ULambdaExpression>("{ println(\"hello2\") }").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    val call = file.findElementByText<UCallExpression>("Runnable { println(\"hello2\") }")
+                    assertEquals(
+                        "java.lang.Runnable",
+                        (call.classReference?.resolve() as? PsiClass)?.qualifiedName
                     )
                 }, {
                     assertEquals(
