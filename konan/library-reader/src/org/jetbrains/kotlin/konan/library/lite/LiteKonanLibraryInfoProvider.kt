@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.library.lite
 
 import org.jetbrains.kotlin.konan.library.KLIB_DIR_NAME
 import org.jetbrains.kotlin.konan.library.KLIB_MANIFEST_FILE_NAME
+import org.jetbrains.kotlin.konan.library.KLIB_PROPERTY_COMPILER_VERSION
 import org.jetbrains.kotlin.konan.library.KLIB_PROPERTY_UNIQUE_NAME
 import java.io.IOException
 import java.nio.file.Files
@@ -68,8 +69,9 @@ class LiteKonanLibraryInfoProvider(customKonanHomeDir: String? = null) {
         }
 
         val name = manifestProperties[KLIB_PROPERTY_UNIQUE_NAME]?.toString() ?: return null
+        val compilerVersion = manifestProperties[KLIB_PROPERTY_COMPILER_VERSION]?.toString() ?: return null
 
-        return LiteKonanLibrary(libraryPath, name, platform)
+        return LiteKonanLibrary(libraryPath, name, platform, compilerVersion)
     }
 
     private fun isUnderKonanRoot(libraryPath: Path): Boolean {

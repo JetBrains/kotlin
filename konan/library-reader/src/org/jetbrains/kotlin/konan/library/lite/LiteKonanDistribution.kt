@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.konan.library.lite
 
-import java.nio.file.Path
-
-data class LiteKonanLibrary(
-    val path: Path,
-    val name: String,
-    val platform: String?,
-    internal val compilerVersion: String
+data class LiteKonanDistribution(
+    val distributionHome: String,
+    val kotlinNativeVersion: KotlinVersion,
+    val kotlinNativeVersionString: String
 )
