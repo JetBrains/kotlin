@@ -181,7 +181,10 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                     }
                 }
 
-                val dependencies = if (useModulePerSourceSet()) moduleNode.getDependencies(ideProject) else getDependencyModules(ideModule, gradleModule.project)
+                val dependencies = if (useModulePerSourceSet()) moduleNode.getDependencies(ideProject) else getDependencyModules(
+                    ideModule,
+                    gradleModule.project
+                )
                 // queue only those dependencies that haven't been discovered earlier
                 dependencies.filterTo(toProcess, discovered::add)
             }
