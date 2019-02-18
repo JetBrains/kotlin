@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
@@ -147,6 +148,20 @@ class ScriptDependenciesUpdater(
                 )
             }
         }, project.messageBus.connect())
+    }
+
+    private fun areDependenciesCached(file: VirtualFile): Boolean {
+        return cache[file] != null
+    }
+
+    companion object {
+        @JvmStatic
+        fun getInstance(project: Project): ScriptDependenciesUpdater =
+            ServiceManager.getService(project, ScriptDependenciesUpdater::class.java)
+
+        fun areDependenciesCached(file: KtFile): Boolean {
+            return getInstance(file.project).areDependenciesCached(file.virtualFile)
+        }
     }
 }
 
