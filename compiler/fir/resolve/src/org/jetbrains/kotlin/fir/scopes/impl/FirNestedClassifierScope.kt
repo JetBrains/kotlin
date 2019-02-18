@@ -23,7 +23,7 @@ class FirNestedClassifierScope(
         processor: (ConeSymbol) -> Boolean
     ): Boolean {
         val child = classId.createNestedClassId(name)
-        val symbol = symbolProvider.getSymbolByFqName(child)
+        val symbol = symbolProvider.getClassLikeSymbolByFqName(child)
 
         return symbol == null || processor(symbol)
     }

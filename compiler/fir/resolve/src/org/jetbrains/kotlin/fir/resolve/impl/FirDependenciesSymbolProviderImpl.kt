@@ -28,10 +28,10 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
         }.toList()
     }
 
-    override fun getSymbolByFqName(classId: ClassId): ConeSymbol? {
+    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeSymbol? {
         return classCache.lookupCacheOrCalculate(classId) {
             for (provider in dependencyProviders) {
-                provider.getSymbolByFqName(classId)?.let {
+                provider.getClassLikeSymbolByFqName(classId)?.let {
                     return@lookupCacheOrCalculate it
                 }
             }

@@ -26,7 +26,7 @@ abstract class FirAbstractSimpleImportingScope(val session: FirSession) : FirSco
         if (imports.isEmpty()) return true
         val provider = FirSymbolProvider.getInstance(session)
         for (import in imports) {
-            val symbol = provider.getSymbolByFqName(import.resolvedFqName) ?: continue
+            val symbol = provider.getClassLikeSymbolByFqName(import.resolvedFqName) ?: continue
             if (!processor(symbol)) {
                 return false
             }

@@ -25,7 +25,7 @@ class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSy
         return providers.firstNotNullResult { it.getPackage(fqName) }
     }
 
-    override fun getSymbolByFqName(classId: ClassId): ConeSymbol? {
-        return providers.firstNotNullResult { it.getSymbolByFqName(classId) }
+    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeSymbol? {
+        return providers.firstNotNullResult { it.getClassLikeSymbolByFqName(classId) }
     }
 }

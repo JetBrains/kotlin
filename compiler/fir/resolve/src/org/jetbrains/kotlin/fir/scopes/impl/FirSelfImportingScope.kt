@@ -32,7 +32,7 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
         if (name in absentKeys) return true
         val symbol = cache[name] ?: run {
             val unambiguousFqName = ClassId(fqName, name)
-            val computed = symbolProvider.getSymbolByFqName(unambiguousFqName)
+            val computed = symbolProvider.getClassLikeSymbolByFqName(unambiguousFqName)
             if (computed == null) {
                 absentKeys += name
             } else {

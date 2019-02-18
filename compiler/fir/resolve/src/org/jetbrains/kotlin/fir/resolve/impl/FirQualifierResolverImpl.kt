@@ -23,7 +23,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
             parts.drop(1).fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
             false
         )
-        return symbolProvider.getSymbolByFqName(fqName) ?: return null
+        return symbolProvider.getClassLikeSymbolByFqName(fqName) ?: return null
     }
 
     override fun resolveSymbol(parts: List<FirQualifierPart>): ConeSymbol? {
@@ -38,7 +38,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
                 firstPart.removeAt(firstPart.lastIndex)
 
                 val fqName = ClassId(firstPart.toFqName(), lastPart.toFqName(), false)
-                val foundSymbol = firProvider.getSymbolByFqName(fqName)
+                val foundSymbol = firProvider.getClassLikeSymbolByFqName(fqName)
                 if (foundSymbol != null) {
                     return foundSymbol
                 }

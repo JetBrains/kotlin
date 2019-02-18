@@ -98,7 +98,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
     private val fictitiousFunctionSymbols = mutableMapOf<Int, ConeSymbol>()
 
-    override fun getSymbolByFqName(classId: ClassId): ConeSymbol? {
+    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeSymbol? {
         return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
             it.getSymbolByFqName(classId, this)
         } ?: with(classId) {

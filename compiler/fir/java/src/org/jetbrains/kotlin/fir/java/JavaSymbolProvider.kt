@@ -25,7 +25,7 @@ class JavaSymbolProvider(
         return emptyList()
     }
 
-    override fun getSymbolByFqName(classId: ClassId): ConeSymbol? {
+    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeSymbol? {
         return classCache.lookupCacheOrCalculate(classId) {
             val facade = KotlinJavaPsiFacade.getInstance(project)
             val foundClass = facade.findClass(JavaClassFinder.Request(classId), searchScope)

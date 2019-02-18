@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.FqName
 
 interface FirSymbolProvider {
 
-    fun getSymbolByFqName(classId: ClassId): ConeSymbol?
+    fun getClassLikeSymbolByFqName(classId: ClassId): ConeSymbol?
 
     fun getCallableSymbols(callableId: CallableId): List<ConeSymbol>
 

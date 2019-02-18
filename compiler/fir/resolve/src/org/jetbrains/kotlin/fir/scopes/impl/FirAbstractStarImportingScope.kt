@@ -30,7 +30,7 @@ abstract class FirAbstractStarImportingScope(
             } else {
                 ClassId(import.packageFqName, relativeClassName.child(name), false)
             }
-            val symbol = provider.getSymbolByFqName(classId) ?: continue
+            val symbol = provider.getClassLikeSymbolByFqName(classId) ?: continue
             if (!processor(symbol)) {
                 return false
             }

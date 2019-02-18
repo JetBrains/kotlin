@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 interface FirProvider : FirSymbolProvider {
     fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration?
 
-    override fun getSymbolByFqName(classId: ClassId): ConeSymbol?
+    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeSymbol?
 
     override fun getPackage(fqName: FqName): FqName? {
         if (getFirFilesByPackage(fqName).isNotEmpty()) return fqName

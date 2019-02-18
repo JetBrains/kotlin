@@ -31,7 +31,7 @@ class FirTypeDeserializer(
 
     private fun computeClassifier(fqNameIndex: Int): ConeSymbol? {
         val id = nameResolver.getClassId(fqNameIndex)
-        return symbolProvider.getSymbolByFqName(id)
+        return symbolProvider.getClassLikeSymbolByFqName(id)
     }
 
     fun type(proto: ProtoBuf.Type): ConeKotlinType {

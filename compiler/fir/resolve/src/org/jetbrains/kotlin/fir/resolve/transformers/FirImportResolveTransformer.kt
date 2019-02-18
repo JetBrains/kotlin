@@ -53,7 +53,7 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer() {
                 firstPart = firstPart.parent()
 
                 val resolvedFqName = ClassId(firstPart, FqName(lastPart.toString()), false)
-                val foundSymbol = symbolProvider.getSymbolByFqName(resolvedFqName)
+                val foundSymbol = symbolProvider.getClassLikeSymbolByFqName(resolvedFqName)
 
                 if (foundSymbol != null) {
                     return FirResolvedImportImpl(import, resolvedFqName).compose()
