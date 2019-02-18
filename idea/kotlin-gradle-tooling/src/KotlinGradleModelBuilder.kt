@@ -34,13 +34,29 @@ interface ArgsInfo : Serializable {
     val dependencyClasspath: List<String>
 }
 
-class ArgsInfoImpl(
+data class ArgsInfoImpl(
     override val currentArguments: List<String>,
     override val defaultArguments: List<String>,
     override val dependencyClasspath: List<String>
-) : ArgsInfo
+) : ArgsInfo {
+
+    constructor(argsInfo: ArgsInfo) : this(
+        ArrayList(argsInfo.currentArguments),
+        ArrayList(argsInfo.defaultArguments),
+        ArrayList(argsInfo.dependencyClasspath)
+    )
+}
 
 typealias CompilerArgumentsBySourceSet = Map<String, ArgsInfo>
+
+/**
+ * Creates deep copy in order to avoid holding links to Proxy objects created by gradle tooling api
+ */
+fun CompilerArgumentsBySourceSet.deepCopy(): CompilerArgumentsBySourceSet {
+    val result = HashMap<String, ArgsInfo>()
+    this.forEach { key, value -> result[key] = ArgsInfoImpl(value) }
+    return result
+}
 
 interface KotlinGradleModel : Serializable {
     val hasKotlinPlugin: Boolean
@@ -51,7 +67,7 @@ interface KotlinGradleModel : Serializable {
     val kotlinTarget: String?
 }
 
-class KotlinGradleModelImpl(
+data class KotlinGradleModelImpl(
     override val hasKotlinPlugin: Boolean,
     override val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
     override val coroutines: String?,
