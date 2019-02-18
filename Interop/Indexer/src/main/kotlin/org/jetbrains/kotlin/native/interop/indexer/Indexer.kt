@@ -522,14 +522,19 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
             }
 
             CXType_ConstantArray -> {
-                val elemType = convertType(clang_getArrayElementType(type))
+                val elementType = convertType(clang_getArrayElementType(type))
                 val length = clang_getArraySize(type)
-                ConstArrayType(elemType, length)
+                ConstArrayType(elementType, length)
             }
 
             CXType_IncompleteArray -> {
-                val elemType = convertType(clang_getArrayElementType(type))
-                IncompleteArrayType(elemType)
+                val elementType = convertType(clang_getArrayElementType(type))
+                IncompleteArrayType(elementType)
+            }
+
+            CXType_VariableArray -> {
+                val elementType = convertType(clang_getArrayElementType(type))
+                VariableArrayType(elementType)
             }
 
             CXType_FunctionProto -> {

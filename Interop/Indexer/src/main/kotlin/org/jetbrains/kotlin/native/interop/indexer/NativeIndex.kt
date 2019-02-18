@@ -266,6 +266,7 @@ interface ArrayType : Type {
 
 data class ConstArrayType(override val elemType: Type, val length: Long) : ArrayType
 data class IncompleteArrayType(override val elemType: Type) : ArrayType
+data class VariableArrayType(override val elemType: Type) : ArrayType
 
 data class Typedef(val def: TypedefDef) : Type
 

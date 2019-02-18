@@ -14,3 +14,38 @@ enum ForwardDeclaredEnum;
 enum ForwardDeclaredEnum {
     ZERO, ONE, TWO
 };
+
+static int vlaSum(int size, int array[size]) {
+    int result = 0;
+    for (int i = 0; i < size; ++i) {
+        result += array[i];
+    }
+    return result;
+}
+
+static int vlaSum2D(int size, int array[][size]) {
+    int result = 0;
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            result += array[i][j];
+        }
+    }
+    return result;
+}
+
+static int vlaSum2DBothDimensions(int rows, int columns, int array[rows][columns]) {
+    int result = 0;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < columns; ++j) {
+            result += array[i][j];
+        }
+    }
+    return result;
+}
+
+/*
+// Not supported by clang:
+static int vlaSum2DForward(int size; int array[][size], int size) {
+    return vlaSum2D(size, array);
+}
+*/
