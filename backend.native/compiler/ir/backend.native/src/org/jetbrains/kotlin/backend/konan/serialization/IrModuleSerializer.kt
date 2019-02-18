@@ -827,7 +827,7 @@ internal class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeIrFunctionBase(function: IrFunctionBase): KonanIr.IrFunctionBase {
+    private fun serializeIrFunctionBase(function: IrFunction): KonanIr.IrFunctionBase {
         val proto = KonanIr.IrFunctionBase.newBuilder()
             .setName(serializeString(function.name.toString()))
             .setVisibility(serializeVisibility(function.visibility))
@@ -858,7 +858,7 @@ internal class IrModuleSerializer(
     private fun serializeIrConstructor(declaration: IrConstructor): KonanIr.IrConstructor =
         KonanIr.IrConstructor.newBuilder()
             .setSymbol(serializeIrSymbol(declaration.symbol))
-            .setBase(serializeIrFunctionBase(declaration as IrFunctionBase))
+            .setBase(serializeIrFunctionBase(declaration))
             .setIsPrimary(declaration.isPrimary)
             .build()
 
@@ -879,7 +879,7 @@ internal class IrModuleSerializer(
         //    proto.setCorrespondingProperty(protoUniqId(uniqId))
         //}
 
-        val base = serializeIrFunctionBase(function as IrFunctionBase)
+        val base = serializeIrFunctionBase(function)
         proto.setBase(base)
 
         return proto.build()
