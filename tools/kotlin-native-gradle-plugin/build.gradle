@@ -191,6 +191,9 @@ test {
     if (project.hasProperty("filter")) {
         filter.includeTestsMatching project.property("filter")
     }
+    if (project.hasProperty("gradleVersion")) {
+        systemProperty("gradleVersion", project.property("gradleVersion"))
+    }
 }
 
 processResources {

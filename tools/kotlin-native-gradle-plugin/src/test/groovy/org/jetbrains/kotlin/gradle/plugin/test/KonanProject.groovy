@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 
 import java.nio.file.Files
@@ -49,6 +50,7 @@ class KonanProject {
     File konanBuildDir
 
     String konanHome
+    String gradleVersion
 
     File         buildFile
     File         propertiesFile
@@ -95,10 +97,15 @@ class KonanProject {
         }
         // Escape windows path separator
         this.konanHome = escapeBackSlashes(konanHomeDir.canonicalPath)
+        this.gradleVersion = System.getProperty("gradleVersion") ?: GradleVersion.current().version
     }
 
     GradleRunner createRunner(boolean withDebug = true) {
-        return GradleRunner.create().withProjectDir(projectDir).withPluginClasspath().withDebug(withDebug)
+        return GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withPluginClasspath()
+                .withDebug(withDebug)
+                .withGradleVersion(gradleVersion)
     }
 
     /** Creates a subdirectory specified by the given path. */
