@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -44,8 +45,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -133,27 +132,16 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val sourcePath = arguments.freeArgs.first()
                 configuration.addKotlinSourceRoot(sourcePath)
 
-                configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
-
                 val environment = createCoreEnvironment(rootDisposable, configuration, messageCollector)
                     ?: return COMPILATION_ERROR
 
-                val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(environment.project)
-                if (scriptDefinitionProvider == null) {
-                    messageCollector.report(ERROR, "Unable to process the script, scripting plugin is not configured")
-                    return COMPILATION_ERROR
-                }
-                val scriptFile = File(sourcePath)
-                if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
-                    val extensionHint =
-                        if (configuration.get(JVMConfigurationKeys.SCRIPT_DEFINITIONS) == listOf(StandardScriptDefinition)) " (.kts)"
-                        else ""
-                    messageCollector.report(ERROR, "Specify path to the script file$extensionHint as the first argument")
+                val scriptingEvaluator = ScriptEvaluationExtension.getInstances(environment.project).find { it.isAccepted(arguments) }
+                if (scriptingEvaluator == null) {
+                    messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin found")
                     return COMPILATION_ERROR
                 }
 
-                val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
-                return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, scriptArgs)
+                return scriptingEvaluator.eval(arguments, environment)
             } else {
                 if (destination != null) {
                     if (destination.endsWith(".jar")) {

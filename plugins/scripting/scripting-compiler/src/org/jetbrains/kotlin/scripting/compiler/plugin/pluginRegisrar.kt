@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
@@ -23,6 +24,7 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project))
         CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
+        ScriptEvaluationExtension.registerExtension(project, JvmCliScriptEvaluationExtension())
 
         val scriptDefinitionProvider = CliScriptDefinitionProvider()
         project.registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
