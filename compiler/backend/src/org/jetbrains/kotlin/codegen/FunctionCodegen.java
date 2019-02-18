@@ -1208,10 +1208,6 @@ public class FunctionCodegen {
                 getThrownExceptions(functionDescriptor, typeMapper)
         );
 
-        // Only method annotations are copied to the $default method. Parameter annotations are not copied until there are valid use cases;
-        // enum constructors have two additional synthetic parameters which somewhat complicate this task
-        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
-
         if (!state.getClassBuilderMode().generateBodies) {
             if (this.owner instanceof MultifileClassFacadeContext)
                 endVisit(mv, "default method delegation", getSourceFromDescriptor(functionDescriptor));
