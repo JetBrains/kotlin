@@ -30,7 +30,7 @@ interface IrSymbolOwner : IrElement {
 
 interface IrDeclaration : IrStatement, IrAnnotationContainer {
     val descriptor: DeclarationDescriptor
-    val origin: IrDeclarationOrigin
+    var origin: IrDeclarationOrigin
 
     var parent: IrDeclarationParent
 
