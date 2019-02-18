@@ -101,7 +101,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -224,7 +224,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                        url 'https://dl.bintray.com/kotlin/kotlin-dev'
                     }
                 }
 
@@ -237,7 +237,7 @@ compileTestKotlin {
 
             repositories {
                 mavenCentral()
-                maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+                maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
             }
 
             dependencies {
@@ -304,7 +304,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -393,7 +393,7 @@ compileTestKotlin {
             buildscript {
                 repositories {
                     mavenCentral()
-                    maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+                    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
                 }
 
                 dependencies {
@@ -405,7 +405,7 @@ compileTestKotlin {
 
             repositories {
                 mavenCentral()
-                maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+                maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
             }
 
             sourceSets {
@@ -485,7 +485,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -526,7 +526,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -560,7 +560,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -658,7 +658,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -720,7 +720,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -816,7 +816,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -850,7 +850,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -951,7 +951,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -1063,7 +1063,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -1108,7 +1108,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -1153,7 +1153,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -1319,8 +1319,8 @@ compileTestKotlin {
         )
         createProjectSubFile(
             "android-module/src/main/AndroidManifest.xml", """
-            <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-                      xmlns:tools="http://schemas.android.com/tools"
+            <manifest xmlns:android="https://schemas.android.com/apk/res/android"
+                      xmlns:tools="https://schemas.android.com/tools"
                       package="my.test.project" >
             </manifest>
         """
@@ -1334,7 +1334,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                        url 'https://dl.bintray.com/kotlin/kotlin-dev'
                     }
                 }
 
@@ -1479,8 +1479,8 @@ compileTestKotlin {
         )
         createProjectSubFile(
             "src/main/AndroidManifest.xml", """
-            <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-                      xmlns:tools="http://schemas.android.com/tools"
+            <manifest xmlns:android="https://schemas.android.com/apk/res/android"
+                      xmlns:tools="https://schemas.android.com/tools"
                       package="my.test.project" >
             </manifest>
         """
@@ -1568,7 +1568,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -1607,7 +1607,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -1650,7 +1650,7 @@ compileTestKotlin {
                     repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
 
@@ -1696,7 +1696,7 @@ compileTestKotlin {
                     repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
                     dependencies {
@@ -1709,7 +1709,7 @@ compileTestKotlin {
                 repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
 
@@ -1733,7 +1733,7 @@ compileTestKotlin {
                     repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
                     dependencies {
@@ -1746,7 +1746,7 @@ compileTestKotlin {
                 repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
 
@@ -1764,7 +1764,7 @@ compileTestKotlin {
                     repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
                     dependencies {
@@ -1777,7 +1777,7 @@ compileTestKotlin {
                 repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
 
@@ -1806,7 +1806,7 @@ compileTestKotlin {
                     repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
                     dependencies {
@@ -1832,7 +1832,7 @@ compileTestKotlin {
                 repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
 
@@ -1856,7 +1856,7 @@ compileTestKotlin {
                     repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
                     dependencies {
@@ -1882,7 +1882,7 @@ compileTestKotlin {
                 repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
 
@@ -1900,7 +1900,7 @@ compileTestKotlin {
                     repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
                     dependencies {
@@ -1926,7 +1926,7 @@ compileTestKotlin {
                 repositories {
                         mavenCentral()
                         maven {
-                            url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                         }
                     }
 
@@ -1954,7 +1954,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -1998,7 +1998,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
                     }
                 }
 
@@ -2035,7 +2035,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
+                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2'
                     }
                 }
 
@@ -2049,7 +2049,7 @@ compileTestKotlin {
             repositories {
                 mavenCentral()
                 maven {
-                    url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
+                    url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2'
                 }
             }
 
@@ -2244,7 +2244,7 @@ compileTestKotlin {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                        url 'https://dl.bintray.com/kotlin/kotlin-dev'
                     }
                 }
 
@@ -2258,7 +2258,7 @@ compileTestKotlin {
             repositories {
                 mavenCentral()
                 maven {
-                    url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                    url 'https://dl.bintray.com/kotlin/kotlin-dev'
                 }
             }
 

@@ -174,7 +174,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
                 allprojects {
                     repositories {
                         maven {
-                            url 'http://maven.labs.intellij.net/repo1'
+                            url 'https://maven.labs.intellij.net/repo1'
                         }
                     }
                 }

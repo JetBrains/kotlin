@@ -96,14 +96,14 @@ fun result(args : Array<String>) =
       p {+"this format can be used as an alternative markup to XML"}
 
       // an element with attributes and text content
-      a(href = "http://groovy.codehaus.org") {+"Groovy"}
+      a(href = "https://groovy.codehaus.org") {+"Groovy"}
 
       // mixed content
       p {
         +"This is some"
         b {+"mixed"}
         +"text. For more see the"
-        a(href = "http://groovy.codehaus.org") {+"Groovy"}
+        a(href = "https://groovy.codehaus.org") {+"Groovy"}
         +"project"
       }
       p {+"some text"}

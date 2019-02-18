@@ -7,7 +7,7 @@ version = '1.0'
 repositories {
     mavenLocal()
     jcenter()
-    maven { url  "http://dl.bintray.com/kotlin/kotlinx.html/" }
+    maven { url  "https://dl.bintray.com/kotlin/kotlinx.html/" }
 }
 
 kotlin {
