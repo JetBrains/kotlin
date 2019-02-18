@@ -33,7 +33,6 @@ import org.gradle.language.cpp.CppBinary
 import org.gradle.language.plugins.NativeBasePlugin
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.SubpluginEnvironment
@@ -151,7 +150,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
                 it.description = "Compiles Kotlin/Native source set '${binary.sourceSet.name}' into a ${binary.kind.name.toLowerCase()}"
 
                 SubpluginEnvironment.loadSubplugins(this, kotlinVersion)
-                    .addSubpluginOptions<CommonCompilerArguments>(this, it, it.compilerPluginOptions)
+                    .addSubpluginOptions(this, it, it.compilerPluginOptions)
                 it.compilerPluginClasspath = project.configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME)
 
                 // Register an API header produced for shared/static library as a task output.
