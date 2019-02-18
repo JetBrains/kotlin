@@ -2,7 +2,9 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifier
+import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -81,28 +83,61 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         }
     }
 
-    @Test fun testSAM() {
+    @Test
+    fun testSAM() {
         doTest("SAM") { _, file ->
-            assertNull(file.findElementByText<ULambdaExpression>("{ /* Not SAM */ }").functionalInterfaceType)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Variable */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Assignment */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                          file.findElementByText<ULambdaExpression>("{/* Type Cast */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Argument */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Return */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals(
-                "java.lang.Runnable",
-                file.findElementByText<ULambdaExpression>("{ /* SAM */ }").functionalInterfaceType?.canonicalText
+            runAll(
+                { assertNull(file.findElementByText<ULambdaExpression>("{ /* Not SAM */ }").functionalInterfaceType) }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Variable */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Assignment */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Type Cast */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Argument */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Return */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{ /* SAM */ }").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{ println(\"hello1\") }").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{ println(\"hello2\") }").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.util.function.Supplier<T>",
+                        file.findElementByText<ULambdaExpression>("{ \"Supplier\" }").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.util.concurrent.Callable<V>",
+                        file.findElementByText<ULambdaExpression>("{ \"Callable\" }").functionalInterfaceType?.canonicalText
+                    )
+                }
             )
         }
     }
@@ -529,3 +564,5 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T =
     find { transform(it) == value } ?: throw AssertionError("'$value' not found, only ${this.joinToString { transform(it).toString() }}")
+
+fun runAll(vararg asserts: () -> Unit) = RunAll(*asserts.map { ThrowableRunnable<Throwable>(it) }.toTypedArray()).run()
