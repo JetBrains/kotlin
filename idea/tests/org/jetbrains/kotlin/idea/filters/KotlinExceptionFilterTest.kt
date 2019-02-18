@@ -42,7 +42,7 @@ class KotlinExceptionFilterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun setUp() {
         super.setUp()
-        val rootDir = File("idea/testData/debugger/exceptionFilter/kt29871/")
+        val rootDir = File("idea/testData/debugger/nativeExceptions/")
         rootDir.listFiles().forEach {
             val virtualFile = it.toVirtualFile()
             if (virtualFile != null) {
