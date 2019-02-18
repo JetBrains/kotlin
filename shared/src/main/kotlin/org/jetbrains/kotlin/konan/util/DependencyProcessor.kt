@@ -92,7 +92,8 @@ class DependencyProcessor(dependenciesRoot: File,
                           maxAttempts: Int = DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
                           attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS,
                           customProgressCallback: ProgressCallback? = null,
-                          val keepUnstable: Boolean = true) {
+                          val keepUnstable: Boolean = true,
+                          val deleteArchives: Boolean = true) {
 
     val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
     val cacheDirectory = homeDependencyCache.apply { mkdirs() }
@@ -200,6 +201,9 @@ class DependencyProcessor(dependenciesRoot: File,
         }
         println("Extracting dependency: $archive into $dependenciesDirectory")
         extractor.extract(archive, dependenciesDirectory)
+        if (deleteArchives) {
+            archive.delete()
+        }
         extractedDependencies.addAndSave(depName)
     }
 
