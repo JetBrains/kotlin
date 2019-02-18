@@ -45,4 +45,13 @@ class Regexps {
         // Because the search starts from the index 2, it finds the last "to be".
         assertPrints(regex3.find(inputString, 2)!!.range, "13..17")
     }
+
+    @Sample
+    fun findAll() {
+        val text = "Hello Alice. Hello Bob. Hello Eve."
+        val regex = Regex("Hello (.*?)[.]")
+        val matches = regex.findAll(text)
+        val names = matches.map { it.groupValues[1] }.joinToString()
+        assertPrints(names, "Alice, Bob, Eve")
+    }
 }
