@@ -815,4 +815,12 @@ class KotlinGradleIT : BaseGradleIT() {
             assertContains("Kotlin build report is written to")
         }
     }
+
+    @Test
+    fun testKt29971() = with(Project("kt-29971", GradleVersionRequired.AtLeast("5.0"))) {
+        build("jvm-app:build") {
+            assertSuccessful()
+            assertTasksExecuted(":jvm-app:compileKotlin")
+        }
+    }
 }
