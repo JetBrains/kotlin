@@ -378,7 +378,7 @@ fun mirrorPrimitiveType(type: PrimitiveType, declarationMapper: DeclarationMappe
     val varClass = Classifier.topLevel("kotlinx.cinterop", varClassName)
     val varClassOf = Classifier.topLevel("kotlinx.cinterop", "${varClassName}Of")
 
-    val info = if (type == BoolType) {
+    val info = if (type is BoolType) {
         TypeInfo.Boolean()
     } else {
         TypeInfo.Primitive(type.getBridgedType(declarationMapper), varClassOf)

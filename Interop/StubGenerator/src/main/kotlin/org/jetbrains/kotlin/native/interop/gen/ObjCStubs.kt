@@ -351,7 +351,7 @@ private fun Type.isIntegerLikeType(): Boolean = when (this) {
                     }
         }
     }
-    is ObjCPointer, is PointerType, CharType, BoolType -> true
+    is ObjCPointer, is PointerType, CharType, is BoolType -> true
     is IntegerType -> this.size <= 4
     is Typedef -> this.def.aliased.isIntegerLikeType()
     is EnumType -> this.def.baseType.isIntegerLikeType()

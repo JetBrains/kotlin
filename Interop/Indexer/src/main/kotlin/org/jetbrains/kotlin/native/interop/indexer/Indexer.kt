@@ -430,7 +430,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         if (library.language == Language.OBJECTIVE_C) {
             if (name == "BOOL" || name == "Boolean") {
                 assert(clang_Type_getSizeOf(type) == 1L)
-                return BoolType
+                return ObjCBoolType
             }
 
             if (underlying is ObjCPointer && (name == "Class" || name == "id") ||
@@ -469,6 +469,36 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         Language.OBJECTIVE_C -> supplier()
     }
 
+    private fun convertUnqualifiedPrimitiveType(type: CValue<CXType>): Type = when (type.kind) {
+        CXTypeKind.CXType_Char_U, CXTypeKind.CXType_Char_S -> {
+            assert(type.getSize() == 1L)
+            CharType
+        }
+
+        CXTypeKind.CXType_UChar, CXTypeKind.CXType_UShort,
+        CXTypeKind.CXType_UInt, CXTypeKind.CXType_ULong, CXTypeKind.CXType_ULongLong -> IntegerType(
+                size = type.getSize().toInt(),
+                isSigned = false,
+                spelling = clang_getTypeSpelling(type).convertAndDispose()
+        )
+
+        CXTypeKind.CXType_SChar, CXTypeKind.CXType_Short,
+        CXTypeKind.CXType_Int, CXTypeKind.CXType_Long, CXTypeKind.CXType_LongLong -> IntegerType(
+                size = type.getSize().toInt(),
+                isSigned = true,
+                spelling = clang_getTypeSpelling(type).convertAndDispose()
+        )
+
+        CXTypeKind.CXType_Float, CXTypeKind.CXType_Double -> FloatingType(
+                size = type.getSize().toInt(),
+                spelling = clang_getTypeSpelling(type).convertAndDispose()
+        )
+
+        CXTypeKind.CXType_Bool -> CBoolType
+
+        else -> UnsupportedType
+    }
+
     fun convertType(type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>? = null): Type {
         val primitiveType = convertUnqualifiedPrimitiveType(type)
         if (primitiveType != UnsupportedType) {
@@ -476,6 +506,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         }
 
         val kind = type.kind
+
         return when (kind) {
             CXType_Elaborated -> convertType(clang_Type_getNamedType(type))
 

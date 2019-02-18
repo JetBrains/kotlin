@@ -242,7 +242,11 @@ interface PrimitiveType : Type
 
 object CharType : PrimitiveType
 
-object BoolType : PrimitiveType
+open class BoolType: PrimitiveType
+
+object CBoolType : BoolType()
+
+object ObjCBoolType : BoolType()
 
 data class IntegerType(val size: Int, val isSigned: Boolean, val spelling: String) : PrimitiveType
 
