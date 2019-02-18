@@ -77,11 +77,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             for (arg in arguments.freeArgs) {
                 val file = File(arg)
                 if (file.extension == JavaFileType.DEFAULT_EXTENSION) {
-                    configuration.addJavaSourceRoot(file)
+                    configuration.addJavaSourceRoot(file, arguments.javaPackagePrefix)
                 } else {
                     configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources)
                     if (file.isDirectory) {
-                        configuration.addJavaSourceRoot(file)
+                        configuration.addJavaSourceRoot(file, arguments.javaPackagePrefix)
                     }
                 }
             }

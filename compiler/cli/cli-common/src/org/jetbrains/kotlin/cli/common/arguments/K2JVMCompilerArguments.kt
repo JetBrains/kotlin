@@ -195,7 +195,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xjava-source-roots",
         valueDescription = "<path>",
-        description = "Paths to output directories for friend modules (whose internals should be visible)"
+        description = "Paths to directories with Java source files"
     )
     var javaSourceRoots: Array<String>? by FreezableVar(null)
 
