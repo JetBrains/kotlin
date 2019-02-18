@@ -1,8 +1,6 @@
 package samples.text
 
 import samples.*
-import kotlin.test.*
-import java.util.*
 
 class Regexps {
 
