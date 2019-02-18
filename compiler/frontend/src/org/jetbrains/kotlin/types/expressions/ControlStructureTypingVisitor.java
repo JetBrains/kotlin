@@ -646,7 +646,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         // it is not actually correct way (#KT-28370) of computing context, but it's how was in OI
         // Fix of it is breaking change and allowed with NewDataFlowForTryExpressions language feature.
         //   See [processTryBranchesWithNewDataFlowAlgorithm] function
-        ExpressionTypingContext tryOutputContext = getCleanedContextFromTryWithAssignmentsToVar(tryExpression, nothingInAllCatchBranches, context);
+        ExpressionTypingContext tryOutputContext = getCleanedContextFromTryWithAssignmentsToVar(tryExpression, nothingInAllCatchBranches, context)
+                .replaceExpectedType(NO_EXPECTED_TYPE)
+                .replaceContextDependency(INDEPENDENT);
 
         KotlinTypeInfo result = TypeInfoFactoryKt.createTypeInfo(resultType, tryOutputContext);
 
@@ -713,7 +715,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             PreliminaryLoopVisitor catchVisitor = PreliminaryLoopVisitor.visitCatchBlocks(tryExpression);
             ExpressionTypingContext catchOutputContextFromAllBranches = tryOutputContext.replaceDataFlowInfo(
                     catchVisitor.clearDataFlowInfoForAssignedLocalVariables(dataFlowInfoAfterTry, components.languageVersionSettings)
-            );
+            ).replaceContextDependency(INDEPENDENT).replaceExpectedType(NO_EXPECTED_TYPE);
             KotlinTypeInfo finallyTypeInfo = facade.getTypeInfo(finallyBlock, catchOutputContextFromAllBranches);
             DataFlowInfo finallyDataFlowInfo = finallyTypeInfo.getDataFlowInfo();
             resultDataFlowInfo = finallyDataFlowInfo.and(nonExceptionalTryCatchesOutputInfo);
