@@ -687,6 +687,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             getModuleId(resolverCtx, gradleModule) + ":" + kotlinModule.fullName()
 
         private fun ExternalProject.notImportedCommonSourceSets() =
-            GradlePropertiesFileFacade.forExternalProject(this).readProperty(KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING)?.equals("true", ignoreCase = true) ?: false
+            GradlePropertiesFileFacade.forExternalProject(this).readProperty(KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING)?.equals(
+                "true",
+                ignoreCase = true
+            ) ?: false
     }
 }

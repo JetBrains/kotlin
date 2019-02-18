@@ -35,9 +35,9 @@ interface ArgsInfo : Serializable {
 }
 
 class ArgsInfoImpl(
-        override val currentArguments: List<String>,
-        override val defaultArguments: List<String>,
-        override val dependencyClasspath: List<String>
+    override val currentArguments: List<String>,
+    override val defaultArguments: List<String>,
+    override val dependencyClasspath: List<String>
 ) : ArgsInfo
 
 typealias CompilerArgumentsBySourceSet = Map<String, ArgsInfo>
@@ -52,12 +52,12 @@ interface KotlinGradleModel : Serializable {
 }
 
 class KotlinGradleModelImpl(
-        override val hasKotlinPlugin: Boolean,
-        override val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
-        override val coroutines: String?,
-        override val platformPluginId: String?,
-        override val implements: List<String>,
-        override val kotlinTarget: String? = null
+    override val hasKotlinPlugin: Boolean,
+    override val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
+    override val coroutines: String?,
+    override val platformPluginId: String?,
+    override val implements: List<String>,
+    override val kotlinTarget: String? = null
 ) : KotlinGradleModel
 
 abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
@@ -72,8 +72,8 @@ abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
         )
         val platformPluginIds = listOf("kotlin-platform-jvm", "kotlin-platform-js", "kotlin-platform-common")
         val pluginToPlatform = linkedMapOf(
-                "kotlin" to "kotlin-platform-jvm",
-                "kotlin2js" to "kotlin-platform-js"
+            "kotlin" to "kotlin-platform-jvm",
+            "kotlin2js" to "kotlin-platform-js"
         )
         val kotlinPluginIds = listOf("kotlin", "kotlin2js", "kotlin-android")
         val ABSTRACT_KOTLIN_COMPILE_CLASS = "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile"
@@ -81,7 +81,7 @@ abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
         fun Task.getSourceSetName(): String {
             return try {
                 javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterTypes.isEmpty() }?.invoke(this) as? String
-            } catch (e : InvocationTargetException) {
+            } catch (e: InvocationTargetException) {
                 null // can be thrown if property is not initialized yet
             } ?: "main"
         }
@@ -90,16 +90,17 @@ abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
 
 class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
-        return ErrorMessageBuilder.create(project, e, "Gradle import errors").withDescription("Unable to build Kotlin project configuration")
+        return ErrorMessageBuilder.create(project, e, "Gradle import errors")
+            .withDescription("Unable to build Kotlin project configuration")
     }
 
     override fun canBuild(modelName: String?): Boolean = modelName == KotlinGradleModel::class.java.name
 
     private fun getImplementedProjects(project: Project): List<Project> {
         return listOf("expectedBy", "implement")
-                .flatMap { project.configurations.findByName(it)?.dependencies ?: emptySet<Dependency>() }
-                .filterIsInstance<ProjectDependency>()
-                .mapNotNull { it.dependencyProject }
+            .flatMap { project.configurations.findByName(it)?.dependencies ?: emptySet<Dependency>() }
+            .filterIsInstance<ProjectDependency>()
+            .mapNotNull { it.dependencyProject }
     }
 
     // see GradleProjectResolverUtil.getModuleId() in IDEA codebase
@@ -109,8 +110,7 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
     private fun Task.getCompilerArguments(methodName: String): List<String> {
         return try {
             javaClass.getDeclaredMethod(methodName).invoke(this) as List<String>
-        }
-        catch (e : Exception) {
+        } catch (e: Exception) {
             // No argument accessor method is available
             emptyList()
         }
@@ -122,14 +122,11 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
             val getCompileClasspath = abstractKotlinCompileClass.getDeclaredMethod("getCompileClasspath").apply { isAccessible = true }
             @Suppress("UNCHECKED_CAST")
             return (getCompileClasspath.invoke(this) as Collection<File>).map { it.path }
-        }
-        catch(e: ClassNotFoundException) {
+        } catch (e: ClassNotFoundException) {
             // Leave arguments unchanged
-        }
-        catch (e: NoSuchMethodException) {
+        } catch (e: NoSuchMethodException) {
             // Leave arguments unchanged
-        }
-        catch (e: InvocationTargetException) {
+        } catch (e: InvocationTargetException) {
             // We can safely ignore this exception here as getCompileClasspath() gets called again at a later time
             // Leave arguments unchanged
         }
@@ -140,15 +137,13 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         val kotlinExtension = project.extensions.findByName("kotlin") ?: return null
         val experimentalExtension = try {
             kotlinExtension::class.java.getMethod("getExperimental").invoke(kotlinExtension)
-        }
-        catch(e: NoSuchMethodException) {
+        } catch (e: NoSuchMethodException) {
             return null
         }
 
         return try {
             experimentalExtension::class.java.getMethod("getCoroutines").invoke(experimentalExtension)?.toString()
-        }
-        catch(e: NoSuchMethodException) {
+        } catch (e: NoSuchMethodException) {
             null
         }
     }
@@ -173,12 +168,12 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         val implementedProjects = getImplementedProjects(project)
 
         return KotlinGradleModelImpl(
-                kotlinPluginId != null || platformPluginId != null,
-                compilerArgumentsBySourceSet,
-                getCoroutines(project),
-                platform,
-                implementedProjects.map { it.pathOrName() },
-                platform ?: kotlinPluginId
+            kotlinPluginId != null || platformPluginId != null,
+            compilerArgumentsBySourceSet,
+            getCoroutines(project),
+            platform,
+            implementedProjects.map { it.pathOrName() },
+            platform ?: kotlinPluginId
         )
     }
 }
