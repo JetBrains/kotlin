@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
-import org.jetbrains.kotlin.nj2k.kotlinBinaryExpression
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKBinaryExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKParenthesizedExpressionImpl
 
 
-class PolyadicExpressionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class PolyadicExpressionConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
+        if (element !is JKJavaPolyadicExpression) return recurse(element)
+        val needParenthesis = element.operands.any { it.containsNewLine() }
+        val polyadic = convertPolyadic(element.operands.also { element.operands = emptyList() }, element.tokens)
+
         return recurse(
-            if (element is JKJavaPolyadicExpression)
-                convertPolyadic(
-                    element.operands.also { element.operands = emptyList() },
-                    element.tokens
-                )
-            else element
+            if (needParenthesis) JKParenthesizedExpressionImpl(polyadic)
+            else polyadic
         )
     }
 
@@ -27,12 +26,7 @@ class PolyadicExpressionConversion(private val context: ConversionContext) : Rec
         return if (operators.isEmpty())
             operands.first()
         else {
-            val operator = operators.maxBy { it.precedence }
-            when (operator) {
-                is JKJavaOperatorImpl -> operator.token.toKtToken()
-                is JKKtOperatorImpl -> operator.token
-                else -> error("operator should be either kotlin or java")
-            }
+            val operator = operators.maxBy { it.precedence }!!
             val index = operators.indexOf(operator)
             val left = convertPolyadic(operands.subList(0, index + 1), operators.subList(0, index))
             val right = convertPolyadic(operands.subList(index + 1, operands.size), operators.subList(index + 1, operators.size))
