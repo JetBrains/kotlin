@@ -219,7 +219,7 @@ open class RegressionsReporter : DefaultTask() {
                     "bintray:$compareToBuildNumber:$target:$bintrayFileName with $analyzer! " +
                     "Please check files existance and their correctness.")
         }
-        "$analyzer -r statistics $currentBenchmarksReportFile bintray:$compareToBuildNumber:$target:$bintrayFileName -o $summaryFile"
+        "$analyzer -r statistics $currentBenchmarksReportFile bintray:$compareToBuildNumber:$target:$bintrayFileName -o \"$summaryFile\""
                 .runCommand()
 
         val reportLink = "http://kotlin-native-performance.labs.jb.gg/?" +
