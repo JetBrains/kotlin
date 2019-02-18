@@ -23,8 +23,8 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaForLoopStatement) return recurse(element)
 
-        convertToForeach(element)?.also { return recurse(it) }
-        convertToWhile(element)?.also { return recurse(it) }
+        convertToForeach(element)?.also { return recurse(it.withNonCodeElementsFrom(element)) }
+        convertToWhile(element)?.also { return recurse(it.withNonCodeElementsFrom(element)) }
 
         return recurse(element)
     }
@@ -69,7 +69,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                 if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
                 val statements = loopStatement.updaters.map { it.copyTreeAndDetach() } + element.copyTreeAndDetach()
                 return if (element.parent is JKBlock)
-                    JKBlockStatementWithoutBracketsImpl(JKBlockImpl(statements))
+                    JKBlockStatementWithoutBracketsImpl(statements)
                 else JKBlockStatementImpl(JKBlockImpl(statements))
             }
         }

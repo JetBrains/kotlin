@@ -43,7 +43,7 @@ class BoxedTypeOperationsConversion(private val context: ConversionContext) : Re
                 "kotlin.${primitiveTypeName.capitalize()}.to${operationType.capitalize()}"
             ),
             JKArgumentListImpl()
-        )
+        ).withNonCodeElementsFrom(methodCallExpression)
     }
 
     companion object {

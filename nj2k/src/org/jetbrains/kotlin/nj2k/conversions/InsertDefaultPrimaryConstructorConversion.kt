@@ -22,9 +22,8 @@ class InsertDefaultPrimaryConstructorConversion(private val context: ConversionC
             JKStubExpressionImpl(),
             JKAnnotationListImpl(),
             emptyList(),
-            Visibility.PUBLIC,
-            Modality.FINAL
-
+            JKVisibilityModifierElementImpl(Visibility.PUBLIC),
+            JKModalityModifierElementImpl(Modality.FINAL)
         )
 
         element.classBody.declarations += constructor

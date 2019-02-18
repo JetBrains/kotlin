@@ -384,8 +384,7 @@ fun JKLiteralExpression.fixLiteral(expectedType: JKLiteralExpression.LiteralType
         JKLiteralExpression.LiteralType.CHAR -> convertCharLiteral(literal)
         JKLiteralExpression.LiteralType.STRING -> convertStringLiteral(literal)
         else -> this
-    }
-
+    }.withNonCodeElementsFrom(this)
 
 private fun convertDoubleLiteral(text: String): JKKtLiteralExpression {
     var newText =
@@ -399,6 +398,7 @@ private fun convertDoubleLiteral(text: String): JKKtLiteralExpression {
         newText += "."
     if (newText.endsWith("."))
         newText += "0"
+
 
     return JKKtLiteralExpressionImpl(
         newText,
@@ -491,8 +491,8 @@ fun createCompanion(declarations: List<JKDeclaration>): JKClass =
         JKClassBodyImpl(declarations),
         JKAnnotationListImpl(),
         emptyList(),
-        Visibility.PUBLIC,
-        Modality.FINAL
+        JKVisibilityModifierElementImpl(Visibility.PUBLIC),
+        JKModalityModifierElementImpl(Modality.FINAL)
     )
 
 fun JKClass.getCompanion(): JKClass? =
@@ -508,8 +508,8 @@ fun JKClass.getOrCreateCompainonObject(): JKClass =
             JKClassBodyImpl(),
             JKAnnotationListImpl(),
             emptyList(),
-            Visibility.PUBLIC,
-            Modality.FINAL
+            JKVisibilityModifierElementImpl(Visibility.PUBLIC),
+            JKModalityModifierElementImpl(Modality.FINAL)
         ).also { classBody.declarations += it }
 
 fun runExpression(body: JKStatement, symbolProvider: JKSymbolProvider): JKExpression {
@@ -523,6 +523,9 @@ fun runExpression(body: JKStatement, symbolProvider: JKSymbolProvider): JKExpres
     )
 }
 
+fun JKTreeElement.asQualifierWithThisAsSelector(): JKQualifiedExpression? =
+    parent?.safeAs<JKQualifiedExpression>()
+        ?.takeIf { it.selector == this }
 
 fun JKAnnotationMemberValue.toExpression(symbolProvider: JKSymbolProvider): JKExpression {
     fun handleAnnotationParameter(element: JKTreeElement): JKTreeElement =
@@ -562,6 +565,17 @@ fun JKAnnotationMemberValue.toExpression(symbolProvider: JKSymbolProvider): JKEx
         }
     ) as JKExpression
 }
+
+
+fun JKExpression.asLiteralTextWithPrefix(): String? =
+    when {
+        this is JKPrefixExpression
+                && (operator.token.text == "+" || operator.token.text == "-")
+                && expression is JKLiteralExpression
+        -> operator.token.text + expression.cast<JKLiteralExpression>().literal
+        this is JKLiteralExpression -> literal
+        else -> null
+    }
 
 inline fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? =
     classBody.declarations.firstIsInstanceOrNull()

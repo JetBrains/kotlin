@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.toExpression
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
@@ -24,8 +24,8 @@ class AnnotationClassConversion(private val context: ConversionContext) : Recurs
             JKStubExpressionImpl(),
             JKAnnotationListImpl(),
             emptyList(),
-            Visibility.PUBLIC,
-            Modality.FINAL
+            JKVisibilityModifierElementImpl(Visibility.PUBLIC),
+            JKModalityModifierElementImpl(Modality.FINAL)
         )
         element.modality = Modality.FINAL
         element.classBody.declarations += constructor

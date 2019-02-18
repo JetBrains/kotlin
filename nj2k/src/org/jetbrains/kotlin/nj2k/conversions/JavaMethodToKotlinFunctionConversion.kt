@@ -19,12 +19,9 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.throwAnnotation
-import org.jetbrains.kotlin.nj2k.tree.JKClassBody
-import org.jetbrains.kotlin.nj2k.tree.JKJavaMethod
-import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
+import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtFunctionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
-import org.jetbrains.kotlin.nj2k.tree.updateNullabilityRecursively
 
 class JavaMethodToKotlinFunctionConversion(private val context: ConversionContext) : TransformerBasedConversion() {
     override fun visitTreeElement(element: JKTreeElement) {
@@ -53,13 +50,15 @@ class JavaMethodToKotlinFunctionConversion(private val context: ConversionContex
                                 )
                         }
                     },
-                    declaration.extraModifiers,
-                    declaration.visibility,
-                    declaration.modality
+                    declaration.extraModifierElements,
+                    declaration.visibilityElement,
+                    declaration.modalityElement
                 ).also {
                     it.psi = declaration.psi
                     context.symbolProvider.transferSymbol(it, declaration)
-                }
+                    it.leftParen.takeNonCodeElementsFrom(declaration.leftParen)
+                    it.rightParen.takeNonCodeElementsFrom(declaration.rightParen)
+                }.withNonCodeElementsFrom(declaration)
             } else {
                 declaration
             }

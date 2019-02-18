@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.nj2k
 
 import org.jetbrains.kotlin.nj2k.tree.JKElement
 import org.jetbrains.kotlin.nj2k.tree.impl.JKElementBase
+import org.jetbrains.kotlin.nj2k.tree.withNonCodeElementsFrom
 
 fun <T : JKElement> T.copyTree(): T =
     when (this) {
         is JKElementBase ->
-            this.copy() as T
+            this.copy().withNonCodeElementsFrom(this) as T
         else -> TODO("Not supported+$this.toString()")
     }
 

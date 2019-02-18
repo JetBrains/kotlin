@@ -23,8 +23,7 @@ class ModalityConversion(private val context: ConversionContext) : RecursiveAppl
     private fun processClass(klass: JKClass) {
         klass.modality = when {
             klass.classKind == JKClass.ClassKind.ENUM -> Modality.FINAL
-            klass.modality == Modality.OPEN
-                    && context.converter.settings.openByDefault -> Modality.OPEN
+            klass.classKind == JKClass.ClassKind.INTERFACE -> Modality.OPEN
             klass.modality == Modality.OPEN
                     && context.converter.settings.openByDefault -> Modality.OPEN
             klass.modality == Modality.OPEN
@@ -37,16 +36,17 @@ class ModalityConversion(private val context: ConversionContext) : RecursiveAppl
 
     private fun processMethod(method: JKJavaMethod) {
         val psi = method.psi<PsiMethod>()!!
-        val containingClass = method.parentOfType<JKClass>()
+        val containingClass = method.parentOfType<JKClass>()!!
         method.modality = when {
             method.modality != Modality.ABSTRACT
-                    && (method.psi!! as PsiMethod).findSuperMethods().isNotEmpty() -> Modality.OVERRIDE
+                    && psi.findSuperMethods().isNotEmpty() -> Modality.OVERRIDE
             method.modality == Modality.OPEN
                     && context.converter.settings.openByDefault
-                    && containingClass?.modality == Modality.OPEN
+                    && containingClass.modality == Modality.OPEN
                     && method.visibility != Visibility.PRIVATE -> Modality.OPEN
 
             method.modality == Modality.OPEN
+                    && containingClass.classKind != JKClass.ClassKind.INTERFACE
                     && !context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi) -> Modality.FINAL
             else -> method.modality
         }

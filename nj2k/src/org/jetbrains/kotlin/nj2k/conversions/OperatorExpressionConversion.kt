@@ -25,7 +25,7 @@ class OperatorExpressionConversion(private val context: ConversionContext) : Rec
                 val operatorToken = operator.token.toKtToken()
                 val left = applyToElement(element::left.detached()) as JKExpression
                 val right = applyToElement(element::right.detached()) as JKExpression
-                recurse(convertBinaryExpression(left, right, operatorToken))
+                recurse(convertBinaryExpression(left, right, operatorToken).withNonCodeElementsFrom(element))
             }
             is JKPrefixExpression -> {
                 val operand = applyToElement(element::expression.detached()) as JKExpression
@@ -37,7 +37,7 @@ class OperatorExpressionConversion(private val context: ConversionContext) : Rec
                 recurse(kotlinPostfixExpression(operand, operatorToken, context.symbolProvider))
             }
             else -> TODO(element.javaClass.toString())
-        } ?: recurse(element)
+        }.withNonCodeElementsFrom(element)
     }
 
 

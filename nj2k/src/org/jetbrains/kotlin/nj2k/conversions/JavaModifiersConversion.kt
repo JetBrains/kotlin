@@ -29,25 +29,32 @@ class JavaModifiersConversion(private val context: ConversionContext) : Recursiv
             }
         }
         if (element is JKExtraModifiersOwner && element is JKAnnotationListOwner) {
-            if (ExtraModifier.VOLATILE in element.extraModifiers) {
-                element.extraModifiers -= ExtraModifier.VOLATILE
-                element.annotationList.annotations += jvmAnnotation("Volatile", context.symbolProvider)
+            element.elementByModifier(ExtraModifier.VOLATILE)?.also { modifierElement ->
+                element.extraModifierElements -= modifierElement
+                element.annotationList.annotations +=
+                    jvmAnnotation("Volatile", context.symbolProvider).withNonCodeElementsFrom(modifierElement)
             }
-            if (ExtraModifier.TRANSIENT in element.extraModifiers) {
-                element.extraModifiers -= ExtraModifier.TRANSIENT
-                element.annotationList.annotations += jvmAnnotation("Transient", context.symbolProvider)
+
+            element.elementByModifier(ExtraModifier.TRANSIENT)?.also { modifierElement ->
+                element.extraModifierElements -= modifierElement
+                element.annotationList.annotations +=
+                    jvmAnnotation("Transient", context.symbolProvider).withNonCodeElementsFrom(modifierElement)
             }
-            if (ExtraModifier.STRICTFP in element.extraModifiers) {
-                element.extraModifiers -= ExtraModifier.STRICTFP
-                element.annotationList.annotations += jvmAnnotation("Strictfp", context.symbolProvider)
+
+            element.elementByModifier(ExtraModifier.STRICTFP)?.also { modifierElement ->
+                element.extraModifierElements -= modifierElement
+                element.annotationList.annotations +=
+                    jvmAnnotation("Strictfp", context.symbolProvider).withNonCodeElementsFrom(modifierElement)
             }
-            if (ExtraModifier.SYNCHRONIZED in element.extraModifiers) {
-                element.extraModifiers -= ExtraModifier.SYNCHRONIZED
-                element.annotationList.annotations += jvmAnnotation("Synchronized", context.symbolProvider)
+
+            element.elementByModifier(ExtraModifier.SYNCHRONIZED)?.also { modifierElement ->
+                element.extraModifierElements -= modifierElement
+                element.annotationList.annotations +=
+                    jvmAnnotation("Synchronized", context.symbolProvider).withNonCodeElementsFrom(modifierElement)
             }
-            if (ExtraModifier.NATIVE in element.extraModifiers) {
-                element.extraModifiers -= ExtraModifier.NATIVE
-                element.extraModifiers += ExtraModifier.EXTERNAL
+
+            element.elementByModifier(ExtraModifier.NATIVE)?.also { modifierElement ->
+                modifierElement.extraModifier = ExtraModifier.EXTERNAL
             }
         }
         return recurse(element)

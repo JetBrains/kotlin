@@ -53,7 +53,7 @@ class StaticMemberAccessConversion(private val context: ConversionContext) : Rec
                 ?.safeAs<KtObjectDeclaration>()
                 ?.isCompanion() == true
             is JKTreeElement ->
-                target.safeAs<JKModalityOwner>()?.modifiers()?.contains(ExtraModifier.STATIC) == true
+                target.safeAs<JKExtraModifiersOwner>()?.hasExtraModifier(ExtraModifier.STATIC) == true
                         || target.parentOfType<JKClass>()?.classKind == JKClass.ClassKind.OBJECT
             else -> false
         }

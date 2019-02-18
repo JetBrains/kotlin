@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.nj2k.createCompanion
 import org.jetbrains.kotlin.nj2k.getCompanion
 import org.jetbrains.kotlin.nj2k.replace
-import org.jetbrains.kotlin.nj2k.tree.JKClass
-import org.jetbrains.kotlin.nj2k.tree.JKJavaStaticInitDeclaration
-import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
-import org.jetbrains.kotlin.nj2k.tree.detached
+import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtInitDeclarationImpl
 
 class StaticInitDeclarationConversion : RecursiveApplicableConversionBase() {
@@ -36,5 +33,5 @@ class StaticInitDeclarationConversion : RecursiveApplicableConversionBase() {
     }
 
     private fun JKJavaStaticInitDeclaration.toKtInitDeclaration() =
-        JKKtInitDeclarationImpl(::block.detached())
+        JKKtInitDeclarationImpl(::block.detached()).withNonCodeElementsFrom(this)
 }

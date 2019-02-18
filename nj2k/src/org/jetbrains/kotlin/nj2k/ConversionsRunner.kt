@@ -24,6 +24,7 @@ object ConversionsRunner {
     private fun createRootConversion(context: ConversionContext) =
         batchPipe {
             //Java --> Kotlin conversions
+            +NonCodeElementsConversion()
             +JavaModifiersConversion(context)
             +JavaAnnotationsConversion(context)
             +AnnotationClassConversion(context)
@@ -75,7 +76,7 @@ object ConversionsRunner {
             +ImplicitCastsConversion(context)
             +DefaultNullabilityToNullableConversion()
             +NullableQualifierConversion(context)
-            +InternalClassConversion()
+            +InternalDeclarationConversion()
 
             //Kotlin --> Kotlin conversions
             +InnerClassConversion()

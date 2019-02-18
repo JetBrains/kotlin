@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtCallExpressionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
-import org.jetbrains.kotlin.name.ClassId
 
 // TODO: Full special methods conversion
 class PrintlnConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -41,7 +41,9 @@ class PrintlnConversion(private val context: ConversionContext) : RecursiveAppli
         return JKKtCallExpressionImpl(
             context.symbolProvider.provideDirectSymbol(targetElements.first()) as JKMethodSymbol,
             selector.arguments
-        )
+        ).withNonCodeElementsFrom(element).also {
+            it.leftNonCodeElements += element.receiver.commentsFromInside()
+        }
     }
 
 }

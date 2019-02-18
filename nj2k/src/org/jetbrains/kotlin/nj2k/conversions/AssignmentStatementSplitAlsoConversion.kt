@@ -28,7 +28,7 @@ class AssignmentStatementSplitAlsoConversion : RecursiveApplicableConversionBase
                     if (statements.size == 1) statements.map { it.detached(this) }
                     else statements
                 }
-            )
+            ).withNonCodeElementsFrom(this)
         } else null
     }
 
@@ -58,8 +58,8 @@ class AssignmentStatementSplitAlsoConversion : RecursiveApplicableConversionBase
                             variable::type.detached(),
                             variable::name.detached(),
                             innerAssignmentStatement.field.copyTreeAndDetach(),
-                            variable.mutability
-                        )
+                            variable::mutabilityElement.detached()
+                        ).withNonCodeElementsFrom(variable)
                     )
                 )
             }
@@ -72,7 +72,7 @@ class AssignmentStatementSplitAlsoConversion : RecursiveApplicableConversionBase
                 qualifiedExpression::receiver.detached(),
                 innerAssignmentStatement.operator
             ),
-            secondAssignment
+            secondAssignment.withNonCodeElementsFrom(this)
         )
     }
 }

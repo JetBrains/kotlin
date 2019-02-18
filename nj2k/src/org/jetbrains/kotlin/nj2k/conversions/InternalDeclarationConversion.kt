@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.tree.*
 
-class InternalClassConversion : RecursiveApplicableConversionBase() {
+class InternalDeclarationConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKVisibilityOwner || element !is JKModalityOwner) return recurse(element)
         val containingClass = element.parentOfType<JKClass>() ?: return recurse(element)
@@ -18,6 +18,16 @@ class InternalClassConversion : RecursiveApplicableConversionBase() {
             && (element is JKMethod || element is JKField)
         ) {
             element.visibility = Visibility.PUBLIC
+        }
+
+        if (containingClass.classKind == JKClass.ClassKind.INTERFACE) {
+            element.visibility = Visibility.PUBLIC
+        }
+
+        if (containingClass.classKind == JKClass.ClassKind.ENUM
+            && element is JKKtPrimaryConstructor
+        ) {
+            element.visibility = Visibility.PRIVATE
         }
         return recurse(element)
     }

@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.ConversionContext
-import org.jetbrains.kotlin.nj2k.asAssignmentFromTarget
-import org.jetbrains.kotlin.nj2k.findUsages
 import org.jetbrains.kotlin.nj2k.hasWritableUsages
-import org.jetbrains.kotlin.nj2k.tree.*
+import org.jetbrains.kotlin.nj2k.tree.JKMethod
+import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
+import org.jetbrains.kotlin.nj2k.tree.Mutability
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
 
@@ -23,11 +23,13 @@ class ParameterModificationInMethodCallsConversion(private val context: Conversi
                         JKTypeElementImpl(parameter.type.type),
                         JKNameIdentifierImpl(parameter.name.value),
                         JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(parameter)),
-                        Mutability.MUTABLE
+                        JKMutabilityModifierElementImpl(Mutability.MUTABLE)
                     )
                 } else null
             }
-        element.block.statements = listOf(JKDeclarationStatementImpl(newVariables)) + element.block.statements
+        if (newVariables.isNotEmpty()) {
+            element.block.statements = listOf(JKDeclarationStatementImpl(newVariables)) + element.block.statements
+        }
         return recurse(element)
     }
 }

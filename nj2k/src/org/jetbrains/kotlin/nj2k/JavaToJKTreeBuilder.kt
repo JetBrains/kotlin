@@ -22,6 +22,7 @@ import com.intellij.psi.*
 import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
 import com.intellij.psi.impl.source.tree.ChildRole
+import com.intellij.psi.impl.source.tree.CompositeElement
 import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiLabeledStatementImpl
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.idea.j2k.content
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.ast.Nullability
@@ -69,6 +71,10 @@ class JavaToJKTreeBuilder(
 
     private fun PsiPackageStatement.toJK(): JKPackageDeclaration =
         JKPackageDeclarationImpl(JKNameIdentifierImpl(packageName))
+            .also {
+                it.assignNonCodeElements(this)
+            }
+
 
     private fun PsiImportStatement.toJK(): JKImportStatementImpl {
         val target = resolve()
@@ -77,7 +83,17 @@ class JavaToJKTreeBuilder(
             if (target is KtLightClassForFacade) rawName.replaceAfterLast('.', "*")
             else rawName
         return JKImportStatementImpl(JKNameIdentifierImpl(name))
+            .also {
+                it.assignNonCodeElements(this)
+            }
     }
+
+    private fun PsiIdentifier?.toJK(): JKNameIdentifier =
+        this?.let {
+            JKNameIdentifierImpl(it.text).also {
+                it.assignNonCodeElements(this)
+            }
+        } ?: JKNameIdentifierImpl("")
 
 
     private inner class ExpressionTreeMapper {
@@ -118,7 +134,10 @@ class JavaToJKTreeBuilder(
                     throw RuntimeException("Not supported: ${this::class}")
                 }
             }.also {
-                if (this != null) (it as PsiOwner).psi = this
+                if (this != null) {
+                    (it as PsiOwner).psi = this
+                    it.assignNonCodeElements(this)
+                }
             }
         }
 
@@ -131,19 +150,25 @@ class JavaToJKTreeBuilder(
                     is JKJavaVoidType -> JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE
                     else -> JKClassLiteralExpression.LiteralType.JAVA_CLASS
                 }
-            )
+            ).also {
+                it.assignNonCodeElements(this)
+            }
         }
 
         fun PsiInstanceOfExpression.toJK(): JKKtIsExpression =
             JKKtIsExpressionImpl(operand.toJK(), JKTypeElementImpl(checkType?.type?.toJK(symbolProvider) ?: JKNoTypeImpl))
-
+                .also {
+                    it.assignNonCodeElements(this)
+                }
 
         fun PsiAssignmentExpression.toJK(): JKJavaAssignmentExpression {
             return JKJavaAssignmentExpressionImpl(
                 lExpression.toJK() as? JKAssignableExpression ?: error("Its possible? ${lExpression.toJK().prettyDebugPrintTree()}"),
                 rExpression.toJK(),
                 operationSign.tokenType.toJK()
-            )
+            ).also {
+                it.assignNonCodeElements(this)
+            }
         }
 
         fun PsiBinaryExpression.toJK(): JKExpression {
@@ -157,6 +182,9 @@ class JavaToJKTreeBuilder(
                 else -> operationSign.tokenType
             }
             return JKBinaryExpressionImpl(lOperand.toJK(), rOperand.toJK(), token.toJK())
+                .also {
+                    it.assignNonCodeElements(this)
+                }
         }
 
         fun PsiLiteralExpression.toJK(): JKLiteralExpression {
@@ -173,6 +201,8 @@ class JavaToJKTreeBuilder(
                 JavaTokenType.FLOAT_LITERAL -> JKJavaLiteralExpressionImpl(text, FLOAT)
                 JavaTokenType.DOUBLE_LITERAL -> JKJavaLiteralExpressionImpl(text, DOUBLE)
                 else -> error("Unknown literal element type: ${this.literalElementType}")
+            }.also {
+                it.assignNonCodeElements(this)
             }
         }
 
@@ -188,11 +218,15 @@ class JavaToJKTreeBuilder(
                         (it.expression as JKLiteralExpression).type
                     )
                 } else it
+            }.also {
+                it.assignNonCodeElements(this)
             }
         }
 
         fun PsiPostfixExpression.toJK(): JKExpression {
-            return JKPostfixExpressionImpl(operand.toJK(), operationSign.tokenType.toJK())
+            return JKPostfixExpressionImpl(operand.toJK(), operationSign.tokenType.toJK()).also {
+                it.assignNonCodeElements(this)
+            }
         }
 
         fun PsiLambdaExpression.toJK(): JKExpression {
@@ -201,11 +235,13 @@ class JavaToJKTreeBuilder(
                     when (it) {
                         is PsiExpression -> JKExpressionStatementImpl(it.toJK())
                         is PsiCodeBlock -> JKBlockStatementImpl(with(declarationMapper) { it.toJK() })
-                        else -> JKBlockStatementImpl(JKBodyStub)
+                        else -> JKBlockStatementImpl(JKBodyStubImpl)
                     }
                 },
                 with(declarationMapper) { parameterList.parameters.map { it.toJK() } }
-            )
+            ).also {
+                it.assignNonCodeElements(this)
+            }
         }
 
         private fun JKExpression.qualified(qualifier: JKExpression?) =
@@ -296,6 +332,8 @@ class JavaToJKTreeBuilder(
                 symbol is JKFieldSymbol ->
                     JKFieldAccessExpressionImpl(symbol).qualified(qualifier)
                 else -> TODO(text)
+            }.also {
+                it.assignNonCodeElements(this)
             }
         }
 
@@ -316,14 +354,18 @@ class JavaToJKTreeBuilder(
                 is JKClassSymbol -> JKClassAccessExpressionImpl(symbol)
                 is JKFieldSymbol -> JKFieldAccessExpressionImpl(symbol)
                 else -> TODO()
-            }.qualified(qualifierExpression?.toJK())
+            }.qualified(qualifierExpression?.toJK()).also {
+                it.assignNonCodeElements(this)
+            }
         }
 
         fun PsiArrayInitializerExpression.toJK(): JKExpression {
             return JKJavaNewArrayImpl(
                 initializers.map { it.toJK() },
                 JKTypeElementImpl(type?.toJK(symbolProvider).safeAs<JKJavaArrayType>()?.type ?: JKContextType)
-            )
+            ).also {
+                it.assignNonCodeElements(this)
+            }
         }
 
         fun PsiNewExpression.toJK(): JKExpression {
@@ -371,23 +413,37 @@ class JavaToJKTreeBuilder(
                         with(declarationMapper) { anonymousClass?.createClassBody() } ?: JKEmptyClassBodyImpl()
                     )
                 }
-            return qualifier?.let { JKQualifiedExpressionImpl(it.toJK(), JKJavaQualifierImpl.DOT, newExpression) } ?: newExpression
+            return qualifier?.let {
+                JKQualifiedExpressionImpl(it.toJK(), JKJavaQualifierImpl.DOT, newExpression)
+            } ?: newExpression
         }
 
         fun PsiReferenceParameterList.toJK(): JKTypeArgumentList =
             JKTypeArgumentListImpl(this.typeArguments.map { JKTypeElementImpl(it.toJK(symbolProvider)) })
+                .also {
+                    it.assignNonCodeElements(this)
+                }
 
 
         fun PsiArrayAccessExpression.toJK(): JKExpression {
             return JKArrayAccessExpressionImpl(arrayExpression.toJK(), indexExpression?.toJK() ?: TODO())
+                .also {
+                    it.assignNonCodeElements(this)
+                }
         }
 
         fun PsiTypeCastExpression.toJK(): JKExpression {
             return JKTypeCastExpressionImpl(operand?.toJK() ?: TODO(), castType?.type?.toJK(symbolProvider)?.asTypeElement() ?: TODO())
+                .also {
+                    it.assignNonCodeElements(this)
+                }
         }
 
         fun PsiParenthesizedExpression.toJK(): JKExpression {
             return JKParenthesizedExpressionImpl(expression?.toJK() ?: TODO())
+                .also {
+                    it.assignNonCodeElements(this)
+                }
         }
 
         fun PsiExpressionList.toJK(): JKArgumentList {
@@ -402,10 +458,14 @@ class JavaToJKTreeBuilder(
                             JKPrefixExpressionImpl(
                                 jkExpressions.last(),
                                 JKKtSpreadOperator
-                            )
+                            ).withNonCodeElementsFrom(jkExpressions.last())
                         jkExpressions.dropLast(1) + staredExpression
                     } else jkExpressions
-                } ?: jkExpressions).let { it.toArgumentList() }
+                } ?: jkExpressions)
+                .toArgumentList()
+                .also {
+                    it.assignNonCodeElements(this)
+                }
         }
 
     }
@@ -413,10 +473,17 @@ class JavaToJKTreeBuilder(
     private inner class DeclarationMapper(val expressionTreeMapper: ExpressionTreeMapper) {
         fun PsiTypeParameterList.toJK(): JKTypeParameterList =
             JKTypeParameterListImpl(typeParameters.map { it.toJK() })
+                .also {
+                    it.assignNonCodeElements(this)
+                }
 
         fun PsiTypeParameter.toJK(): JKTypeParameter =
-            JKTypeParameterImpl(JKNameIdentifierImpl(name!!),
-                                extendsListTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) })
+            JKTypeParameterImpl(
+                nameIdentifier.toJK(),
+                extendsListTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) }
+            ).also {
+                it.assignNonCodeElements(this)
+            }
 
         fun PsiClass.toJK(): JKClass {
             val classKind: JKClass.ClassKind = when {
@@ -427,24 +494,37 @@ class JavaToJKTreeBuilder(
             }
 
             fun PsiReferenceList.mapTypes() =
-                this.referencedTypes.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) } }
+                this.referencedTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) }
 
-            val implTypes = this.implementsList?.mapTypes().orEmpty()
-            val extensionType = this.extendsList?.mapTypes().orEmpty()
             return JKClassImpl(
-                JKNameIdentifierImpl(name!!),
-                JKInheritanceInfoImpl(extensionType, implTypes),
+                nameIdentifier.toJK(),
+                inheritanceInfo(),
                 classKind,
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
                 createClassBody(),
                 annotationList(this),
-                modifiers(),
+                extraModifiers(),
                 visibility(),
                 modality()
             ).also { jkClassImpl ->
                 jkClassImpl.psi = this
                 symbolProvider.provideUniverseSymbol(this, jkClassImpl)
+            }.also {
+                it.assignNonCodeElements(this)
             }
+        }
+
+        fun PsiClass.inheritanceInfo(): JKInheritanceInfo {
+            val implTypes =
+                implementsList?.referencedTypes?.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) }.orEmpty()
+            val extensionType =
+                extendsList?.referencedTypes?.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) }.orEmpty()
+            return JKInheritanceInfoImpl(extensionType, implTypes)
+                .also {
+                    if (implementsList != null) {
+                        it.assignNonCodeElements(implementsList!!)
+                    }
+                }
         }
 
         fun PsiClass.createClassBody() =
@@ -460,42 +540,80 @@ class JavaToJKTreeBuilder(
                         else -> null
                     }
                 }
-            )
+            ).also {
+                it.leftBrace.assignNonCodeElements(lBrace)
+                it.rightBrace.assignNonCodeElements(rBrace)
+            }
 
         fun PsiClassInitializer.toJK(): JKDeclaration =
-            if (hasModifier(JvmModifier.STATIC))
+            (if (hasModifier(JvmModifier.STATIC))
                 JKJavaStaticInitDeclarationImpl(body.toJK())
-            else JKKtInitDeclarationImpl(body.toJK())
+            else JKKtInitDeclarationImpl(body.toJK()))
+                .also {
+                    it.assignNonCodeElements(this)
+                }
 
 
         fun PsiEnumConstant.toJK(): JKEnumConstant =
             JKEnumConstantImpl(
-                JKNameIdentifierImpl(name),
+                nameIdentifier.toJK(),
                 with(expressionTreeMapper) { argumentList?.toJK() ?: JKArgumentListImpl() },
                 initializingClass?.createClassBody() ?: JKEmptyClassBodyImpl(),
                 JKTypeElementImpl(JKClassTypeImpl(symbolProvider.provideDirectSymbol(containingClass!!) as JKClassSymbol, emptyList()))
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this
+            }.also {
+                it.assignNonCodeElements(this)
             }
+
 
         fun PsiMember.modality() =
-            when {
-                modifierList == null -> Modality.OPEN
-                hasModifierProperty(PsiModifier.FINAL) -> Modality.FINAL
-                hasModifierProperty(PsiModifier.ABSTRACT) -> Modality.ABSTRACT
-                else -> Modality.OPEN
-            }
+            modifierList?.children?.mapNotNull { child ->
+                if (child !is PsiKeyword) return@mapNotNull null
+                when (child.text) {
+                    PsiModifier.FINAL -> Modality.FINAL
+                    PsiModifier.ABSTRACT -> Modality.ABSTRACT
+
+                    else -> null
+                }?.let {
+                    JKModalityModifierElementImpl(it).withAssignedNonCodeElements(child)
+                }
+            }?.firstOrNull() ?: JKModalityModifierElementImpl(Modality.OPEN)
+
+
+        fun PsiMember.extraModifiers() =
+            modifierList?.children?.mapNotNull { child ->
+                if (child !is PsiKeyword) return@mapNotNull null
+                when (child.text) {
+                    PsiModifier.NATIVE -> ExtraModifier.NATIVE
+                    PsiModifier.STATIC -> ExtraModifier.STATIC
+                    PsiModifier.STRICTFP -> ExtraModifier.STRICTFP
+                    PsiModifier.SYNCHRONIZED -> ExtraModifier.SYNCHRONIZED
+                    PsiModifier.TRANSIENT -> ExtraModifier.TRANSIENT
+                    PsiModifier.VOLATILE -> ExtraModifier.VOLATILE
+
+                    else -> null
+                }?.let {
+                    JKExtraModifierElementImpl(it).withAssignedNonCodeElements(child)
+                }
+            }.orEmpty()
 
         fun PsiMember.visibility() =
-            when {
-                modifierList == null -> Visibility.PACKAGE_PRIVATE
-                hasModifierProperty(PsiModifier.PACKAGE_LOCAL) -> Visibility.PACKAGE_PRIVATE
-                hasModifierProperty(PsiModifier.PRIVATE) -> Visibility.PRIVATE
-                hasModifierProperty(PsiModifier.PROTECTED) -> handleProtectedVisibility()
-                hasModifierProperty(PsiModifier.PUBLIC) -> Visibility.PUBLIC
-                else -> Visibility.PACKAGE_PRIVATE
-            }
+            modifierList?.children?.mapNotNull { child ->
+                if (child !is PsiKeyword) return@mapNotNull null
+                when (child.text) {
+                    PsiModifier.PACKAGE_LOCAL -> Visibility.PACKAGE_PRIVATE
+                    PsiModifier.PRIVATE -> Visibility.PRIVATE
+                    PsiModifier.PROTECTED -> handleProtectedVisibility()
+                    PsiModifier.PUBLIC -> Visibility.PUBLIC
+
+                    else -> null
+                }?.let {
+                    JKVisibilityModifierElementImpl(it).withAssignedNonCodeElements(child)
+                }
+            }?.firstOrNull() ?: JKVisibilityModifierElementImpl(Visibility.PACKAGE_PRIVATE)
+
 
         private fun PsiMember.handleProtectedVisibility(): Visibility {
             val originalClass = containingClass ?: return Visibility.PROTECTED
@@ -532,44 +650,21 @@ class JavaToJKTreeBuilder(
         }
 
 
-        fun PsiMember.modifiers() =
-            if (modifierList == null) emptyList()
-            else
-                PsiModifier.MODIFIERS
-                    .filter { this.modifierList!!.hasExplicitModifier(it) }
-                    .mapNotNull {
-                        when (it) {
-                            PsiModifier.NATIVE -> ExtraModifier.NATIVE
-                            PsiModifier.STATIC -> ExtraModifier.STATIC
-                            PsiModifier.STRICTFP -> ExtraModifier.STRICTFP
-                            PsiModifier.SYNCHRONIZED -> ExtraModifier.SYNCHRONIZED
-                            PsiModifier.TRANSIENT -> ExtraModifier.TRANSIENT
-                            PsiModifier.VOLATILE -> ExtraModifier.VOLATILE
-
-                            PsiModifier.PROTECTED -> null
-                            PsiModifier.PUBLIC -> null
-                            PsiModifier.PRIVATE -> null
-                            PsiModifier.FINAL -> null
-                            PsiModifier.ABSTRACT -> null
-
-                            else -> TODO("Not yet supported")
-                        }
-                    }
-
-
         fun PsiField.toJK(): JKJavaField {
             return JKJavaFieldImpl(
-                JKTypeElementImpl(type.toJK(symbolProvider)),
-                JKNameIdentifierImpl(name),
+                JKTypeElementImpl(type.toJK(symbolProvider)).withAssignedNonCodeElements(typeElement),
+                nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 annotationList(this),
-                modifiers(),
+                extraModifiers(),
                 visibility(),
                 modality(),
-                Mutability.UNKNOWN
+                JKMutabilityModifierElementImpl(Mutability.UNKNOWN)
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this
+            }.also {
+                it.assignNonCodeElements(this)
             }
         }
 
@@ -598,7 +693,9 @@ class JavaToJKTreeBuilder(
                         )
                     }
                 }
-            )
+            ).also {
+                it.assignNonCodeElements(this)
+            }
 
         fun PsiDocComment.deprecatedAnnotation(): JKAnnotation? =
             findTagByName("deprecated")?.let { tag ->
@@ -619,6 +716,8 @@ class JavaToJKTreeBuilder(
                         initializers.map { it.toJK() }
                     )
                 else -> TODO(this::class.toString())
+            }.also {
+                it.assignNonCodeElements(this)
             }
 
         fun PsiAnnotationMethod.toJK(): JKJavaAnnotationMethod =
@@ -626,31 +725,40 @@ class JavaToJKTreeBuilder(
                 returnType?.toJK(symbolProvider)?.asTypeElement()
                     ?: JKTypeElementImpl(JKJavaVoidType).takeIf { isConstructor }
                     ?: TODO(),
-                JKNameIdentifierImpl(name),
+                nameIdentifier.toJK(),
                 defaultValue?.toJK() ?: JKStubExpressionImpl()
             ).also {
                 it.psi = this
                 symbolProvider.provideUniverseSymbol(this, it)
+            }.also {
+                it.assignNonCodeElements(this)
             }
+
 
         fun PsiMethod.toJK(): JKJavaMethod {
             return JKJavaMethodImpl(
                 returnType?.toJK(symbolProvider)?.asTypeElement()
                     ?: JKTypeElementImpl(JKJavaVoidType).takeIf { isConstructor }
                     ?: TODO(),
-                JKNameIdentifierImpl(name),
+                nameIdentifier.toJK(),
                 parameterList.parameters.map { it.toJK() },
-                body?.toJK() ?: JKBodyStub,
+                body?.toJK() ?: JKBodyStubImpl,
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
                 annotationList(this),
                 throwsList.referencedTypes.map { JKTypeElementImpl(it.toJK(symbolProvider)) },
-                modifiers(),
+                extraModifiers(),
                 visibility(),
                 modality()
-            ).also {
-                it.psi = this
-                symbolProvider.provideUniverseSymbol(this, it)
-            }
+            ).also { jkMethod ->
+                jkMethod.psi = this
+                symbolProvider.provideUniverseSymbol(this, jkMethod)
+                parameterList.node
+                    ?.safeAs<CompositeElement>()
+                    ?.also {
+                        jkMethod.leftParen.assignNonCodeElements(it.findChildByRoleAsPsiElement(ChildRole.LPARENTH))
+                        jkMethod.rightParen.assignNonCodeElements(it.findChildByRoleAsPsiElement(ChildRole.RPARENTH))
+                    }
+            }.withAssignedNonCodeElements(this)
         }
 
         fun PsiParameter.toJK(): JKParameter {
@@ -660,28 +768,40 @@ class JavaToJKTreeBuilder(
                 else rawType.asTypeElement()
             return JKParameterImpl(
                 type,
-                JKNameIdentifierImpl(name!!),
+                nameIdentifier.toJK(),
                 isVarArgs
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this
+            }.also {
+                it.assignNonCodeElements(this)
             }
         }
 
-        fun PsiCodeBlock.toJK(): JKBlock {
-            return JKBlockImpl(statements.map { it.toJK() })
-        }
+        fun PsiCodeBlock.toJK(): JKBlock =
+            JKBlockImpl(statements.map { it.toJK() })
+                .withAssignedNonCodeElements(this)
+                .also {
+                    it.leftBrace.assignNonCodeElements(lBrace)
+                    it.rightBrace.assignNonCodeElements(rBrace)
+                }
+
 
         fun PsiLocalVariable.toJK(): JKLocalVariable =
             JKLocalVariableImpl(
-                JKTypeElementImpl(type.toJK(symbolProvider)),
-                JKNameIdentifierImpl(this.name ?: TODO()),
+                JKTypeElementImpl(type.toJK(symbolProvider)).withAssignedNonCodeElements(typeElement),
+                nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
-                if (hasModifierProperty(PsiModifier.FINAL)) Mutability.IMMUTABLE else Mutability.UNKNOWN,
+                JKMutabilityModifierElementImpl(
+                    if (hasModifierProperty(PsiModifier.FINAL)) Mutability.IMMUTABLE
+                    else Mutability.UNKNOWN
+                ),
                 annotationList(null)
             ).also { i ->
                 symbolProvider.provideUniverseSymbol(this, i)
                 i.psi = this
+            }.also {
+                it.assignNonCodeElements(this)
             }
 
         fun PsiStatement?.toJK(): JKStatement {
@@ -735,12 +855,12 @@ class JavaToJKTreeBuilder(
                         when (statement) {
                             is PsiSwitchLabelStatement ->
                                 cases += if (statement.isDefaultCase)
-                                    JKJavaDefaultSwitchCaseImpl(emptyList())
+                                    JKJavaDefaultSwitchCaseImpl(emptyList()).withAssignedNonCodeElements(statement)
                                 else
                                     JKJavaLabelSwitchCaseImpl(
                                         with(expressionTreeMapper) { statement.caseValue.toJK() },
                                         emptyList()
-                                    )
+                                    ).withAssignedNonCodeElements(statement)
                             else ->
                                 //TODO Handle case then there is no last case
                                 cases.lastOrNull()?.also { it.statements = it.statements + statement.toJK() }
@@ -762,7 +882,7 @@ class JavaToJKTreeBuilder(
                 }
                 is PsiLabeledStatement -> {
                     val (labels, statement) = collectLabels()
-                    JKLabeledStatementImpl(statement.toJK(), labels.map { JKNameIdentifierImpl(it.text) })
+                    JKLabeledStatementImpl(statement.toJK(), labels.map { JKNameIdentifierImpl(it.text) }).asStatement()
                 }
                 is PsiEmptyStatement -> JKEmptyStatementImpl()
                 is PsiThrowStatement ->
@@ -770,24 +890,31 @@ class JavaToJKTreeBuilder(
                 is PsiTryStatement ->
                     JKJavaTryStatementImpl(
                         resourceList?.toList()?.map { (it as PsiLocalVariable).toJK() }.orEmpty(),
-                        tryBlock?.toJK() ?: JKBodyStub,
-                        finallyBlock?.toJK() ?: JKBodyStub,
+                        tryBlock?.toJK() ?: JKBodyStubImpl,
+                        finallyBlock?.toJK() ?: JKBodyStubImpl,
                         catchSections.map { it.toJK() }
                     )
                 is PsiSynchronizedStatement ->
                     JKJavaSynchronizedStatementImpl(
                         with(expressionTreeMapper) { lockExpression?.toJK() } ?: JKStubExpressionImpl(),
-                        body?.toJK() ?: JKBodyStub
+                        body?.toJK() ?: JKBodyStubImpl
                     )
                 else -> TODO("for ${this::class}")
             }.also {
-                if (this != null) (it as PsiOwner).psi = this
+                if (this != null) {
+                    (it as PsiOwner).psi = this
+                    it.assignNonCodeElements(this)
+                }
             }
         }
 
         fun PsiCatchSection.toJK(): JKJavaTryCatchSection =
-            JKJavaTryCatchSectionImpl(parameter?.toJK()!!, catchBlock?.toJK() ?: JKBodyStub)
-                .also { it.psi = this }
+            JKJavaTryCatchSectionImpl(parameter?.toJK()!!, catchBlock?.toJK() ?: JKBodyStubImpl)
+                .also {
+                    it.psi = this
+                }.also {
+                    it.assignNonCodeElements(this)
+                }
     }
 
     //TODO better way than generateSequence.last??
@@ -804,5 +931,79 @@ class JavaToJKTreeBuilder(
             else -> error("Cannot convert non-java file")
         }
 
+    private val tokenCache = mutableMapOf<PsiElement, JKNonCodeElement>()
+
+    private fun PsiElement.collectNonCodeElements(): Pair<List<JKNonCodeElement>, List<JKNonCodeElement>> {
+        fun PsiElement.toToken(): JKNonCodeElement? {
+            if (this in tokenCache) return tokenCache[this]!!
+            val token = when {
+                this is PsiDocComment ->
+                    JKCommentElementImpl(IdeaDocCommentConverter.convertDocComment(this))
+                this is PsiComment -> JKCommentElementImpl(text)
+                this is PsiWhiteSpace -> JKSpaceElementImpl(text)
+                text == ";" -> null
+                text == "" -> null
+                else -> error("Token should be either token or whitespace")
+            } ?: return null
+            tokenCache[this] = token
+            return token
+        }
+
+        fun Sequence<PsiElement>.toNonCodeElements(): List<JKNonCodeElement> =
+            takeWhile { it is PsiComment || it is PsiWhiteSpace || it.text == ";" }
+                .mapNotNull { it.toToken() }
+                .toList()
+
+        fun PsiElement.isNonCodeElement() =
+            this is PsiComment || this is PsiWhiteSpace || text == ";" || text == ""
+
+        fun PsiElement.nextNonCodeElements() =
+            generateSequence(nextSibling) { it.nextSibling }
+                .takeWhile { it.isNonCodeElement() }
+
+        fun PsiElement.prevNonCodeElements() =
+            generateSequence(prevSibling) { it.prevSibling }
+                .takeWhile { it.isNonCodeElement() }
+
+
+        fun PsiElement.nextNonCodeElementsWithParent(): Sequence<JKNonCodeElement> {
+            val innerElements = nextNonCodeElements()
+            return (if (innerElements.lastOrNull()?.nextSibling == null && this is PsiKeyword)
+                innerElements + parent?.nextNonCodeElements().orEmpty()
+            else innerElements).mapNotNull { it.toToken() }
+        }
+
+        fun PsiElement.prevNonCodeElementsWithParent(): Sequence<JKNonCodeElement> {
+            val innerElements = prevNonCodeElements()
+            return (if (innerElements.firstOrNull()?.prevSibling == null && this is PsiKeyword)
+                innerElements + parent?.prevNonCodeElements().orEmpty()
+            else innerElements).mapNotNull { it.toToken() }
+        }
+
+
+        val leftInnerTokens = children.asSequence().toNonCodeElements()
+        val rightInnerTokens =
+            if (children.isEmpty()) emptyList()
+            else generateSequence(children.last()) { it.prevSibling }
+                .toNonCodeElements()
+                .reversed()
+
+
+        val leftTokens = generateSequence(prevSibling) { it.prevSibling }
+            .toNonCodeElements()
+            .reversed()
+
+        return (leftInnerTokens + prevNonCodeElementsWithParent()) to (rightInnerTokens + nextNonCodeElementsWithParent())
+    }
+
+    private fun JKNonCodeElementsListOwner.assignNonCodeElements(psi: PsiElement?) {
+        if (psi == null) return
+        val (leftTokens, rightTokens) = psi.collectNonCodeElements()
+        this.leftNonCodeElements = leftTokens
+        this.rightNonCodeElements = rightTokens
+    }
+
+    private inline fun <reified T : JKNonCodeElementsListOwner> T.withAssignedNonCodeElements(psi: PsiElement?): T =
+        also { it.assignNonCodeElements(psi) }
 }
 

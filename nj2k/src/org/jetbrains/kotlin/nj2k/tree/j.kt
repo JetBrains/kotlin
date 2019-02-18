@@ -16,23 +16,28 @@
 
 package org.jetbrains.kotlin.nj2k.tree
 
-import org.jetbrains.kotlin.nj2k.tree.impl.JKClassSymbol
+import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-interface JKField : JKVariable, JKVisibilityOwner, JKMutabilityOwner, JKModalityOwner, JKExtraModifiersOwner, JKAnnotationListOwner
+abstract class JKField : JKVariable(), JKVisibilityOwner, JKMutabilityOwner, JKModalityOwner, JKExtraModifiersOwner, JKAnnotationListOwner
 
-interface JKJavaField : JKField, JKBranchElement
+abstract class JKJavaField : JKField()
 
-interface JKJavaMethod : JKMethod, JKBranchElement {
-    var throwsList: List<JKTypeElement>
+abstract class JKJavaMethod : JKMethod(), JKBranchElement {
+    abstract var throwsList: List<JKTypeElement>
 }
 
 interface JKJavaMethodCallExpression : JKMethodCallExpression
 
-interface JKClassBody : JKTreeElement, JKBranchElement {
-    var declarations: List<JKDeclaration>
+abstract class JKClassBody : JKTreeElement, JKBranchElementBase() {
+    abstract var declarations: List<JKDeclaration>
+
+    val leftBrace = JKTokenElementImpl("{")
+    val rightBrace = JKTokenElementImpl("}")
 }
 
-interface JKEmptyClassBody : JKClassBody
+abstract class JKEmptyClassBody : JKClassBody() {
+    override var declarations: List<JKDeclaration> = emptyList()
+}
 
 interface JKJavaNewExpression : JKExpression, JKTypeArgumentListOwner, PsiOwner {
     val classSymbol: JKClassSymbol
@@ -61,20 +66,20 @@ interface JKJavaNewArray : JKExpression {
 
 interface JKJavaLiteralExpression : JKLiteralExpression
 
-interface JKReturnStatement : JKStatement {
-    val expression: JKExpression
-    var label: JKLabel
+abstract class JKReturnStatement : JKStatement() {
+    abstract val expression: JKExpression
+    abstract var label: JKLabel
 }
 
-interface JKJavaAssertStatement : JKStatement {
-    val condition: JKExpression
-    val description: JKExpression
+abstract class JKJavaAssertStatement : JKStatement() {
+    abstract val condition: JKExpression
+    abstract val description: JKExpression
 }
 
-interface JKJavaForLoopStatement : JKLoopStatement {
-    var initializer: JKStatement
-    var condition: JKExpression
-    var updaters: List<JKStatement>
+abstract class JKJavaForLoopStatement : JKLoopStatement() {
+    abstract var initializer: JKStatement
+    abstract var condition: JKExpression
+    abstract var updaters: List<JKStatement>
 }
 
 
@@ -91,15 +96,15 @@ interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
     var operator: JKOperator
 }
 
-interface JKJavaThrowStatement : JKStatement {
-    var exception: JKExpression
+abstract class JKJavaThrowStatement : JKStatement() {
+    abstract var exception: JKExpression
 }
 
-interface JKJavaTryStatement : JKStatement {
-    var resourceDeclarations: List<JKDeclaration>
-    var tryBlock: JKBlock
-    var finallyBlock: JKBlock
-    var catchSections: List<JKJavaTryCatchSection>
+abstract class JKJavaTryStatement : JKStatement() {
+    abstract var resourceDeclarations: List<JKDeclaration>
+    abstract var tryBlock: JKBlock
+    abstract var finallyBlock: JKBlock
+    abstract var catchSections: List<JKJavaTryCatchSection>
 }
 
 interface JKJavaTryCatchSection : JKTreeElement {
@@ -108,9 +113,9 @@ interface JKJavaTryCatchSection : JKTreeElement {
 }
 
 
-interface JKJavaSwitchStatement : JKStatement {
-    var expression: JKExpression
-    var cases: List<JKJavaSwitchCase>
+abstract class JKJavaSwitchStatement : JKStatement() {
+    abstract var expression: JKExpression
+    abstract var cases: List<JKJavaSwitchCase>
 }
 
 interface JKJavaSwitchCase : JKTreeElement {
@@ -127,17 +132,21 @@ interface JKJavaLabelSwitchCase : JKJavaSwitchCase {
     var label: JKExpression
 }
 
-interface JKJavaContinueStatement: JKStatement
+abstract class JKJavaContinueStatement : JKStatement()
 
-interface JKJavaSynchronizedStatement : JKStatement, JKBranchElement {
-    val lockExpression: JKExpression
-    val body: JKBlock
+abstract class JKJavaSynchronizedStatement : JKStatement(), JKBranchElement {
+    abstract val lockExpression: JKExpression
+    abstract val body: JKBlock
 }
 
-interface JKJavaAnnotationMethod : JKMethod, JKBranchElement {
-    val defaultValue: JKAnnotationMemberValue
+abstract class JKJavaAnnotationMethod : JKMethod(), JKBranchElement {
+    abstract val defaultValue: JKAnnotationMemberValue
+
+    override var extraModifierElements by children<JKExtraModifierElement>()
+    override var visibilityElement by child(JKVisibilityModifierElementImpl(Visibility.PUBLIC))
+    override var modalityElement by child(JKModalityModifierElementImpl(Modality.FINAL))
 }
 
-interface JKJavaStaticInitDeclaration : JKDeclaration, JKBranchElement {
-    var block: JKBlock
+abstract class JKJavaStaticInitDeclaration : JKDeclaration(), JKBranchElement {
+    abstract var block: JKBlock
 }

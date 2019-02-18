@@ -27,14 +27,14 @@ class AssignmentStatementValCreationConversion(val context: ConversionContext) :
                                 JKTypeElementImpl(JKJavaVoidType/*TODO*/),
                                 JKNameIdentifierImpl("arr"),
                                 ex1,
-                                Mutability.IMMUTABLE
+                                JKMutabilityModifierElementImpl(Mutability.IMMUTABLE)
                             ).also {
                                 assignableExpr.expression = JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
                             }, JKLocalVariableImpl(
                                 JKTypeElementImpl(JKJavaVoidType/*TODO*/),
                                 JKNameIdentifierImpl("i"),
                                 ex2,
-                                Mutability.UNKNOWN
+                                JKMutabilityModifierElementImpl(Mutability.UNKNOWN)
                             ).also {
                                 assignableExpr.indexExpression =
                                         JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
@@ -53,7 +53,7 @@ class AssignmentStatementValCreationConversion(val context: ConversionContext) :
                                 JKTypeElementImpl(JKJavaVoidType/*TODO*/),
                                 JKNameIdentifierImpl("arg"),
                                 ex,
-                                Mutability.UNKNOWN
+                                JKMutabilityModifierElementImpl(Mutability.UNKNOWN)
                             ).also {
                                 assignableExpr.receiver = JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
                             }

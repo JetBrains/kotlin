@@ -66,13 +66,13 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
                         context.symbolProvider.provideByFqNameMulti(fqName),
                         argumentsProvider(from::arguments.detached()),
                         from::typeArgumentList.detached()
-                    )
+                    ).withNonCodeElementsFrom(from)
                 is JKFieldAccessExpression ->
                     JKKtCallExpressionImpl(
                         context.symbolProvider.provideByFqNameMulti(fqName),
                         JKArgumentListImpl(),
                         JKTypeArgumentListImpl()
-                    )
+                    ).withNonCodeElementsFrom(from)
                 else -> error("Bad conversion")
             }
     }
@@ -85,11 +85,11 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
                 is JKMethodCallExpression ->
                     JKFieldAccessExpressionImpl(
                         context.symbolProvider.provideByFqNameMulti(fqName)
-                    )
+                    ).withNonCodeElementsFrom(from)
                 is JKFieldAccessExpression ->
                     JKFieldAccessExpressionImpl(
                         context.symbolProvider.provideByFqNameMulti(fqName)
-                    )
+                    ).withNonCodeElementsFrom(from)
                 else -> error("Bad conversion")
             }
     }
@@ -109,7 +109,7 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
                             JKArgumentListImpl(arguments.drop(1)),
                             from::typeArgumentList.detached()
                         )
-                    )
+                    ).withNonCodeElementsFrom(from)
                 }
                 else -> error("Bad conversion")
             }

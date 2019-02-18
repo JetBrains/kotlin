@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKKtConstructorImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKStubExpressionImpl
 
 class ConstructorConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -24,12 +25,12 @@ class ConstructorConversion(private val context: ConversionContext) : RecursiveA
             element.block,
             delegationCall,
             element.annotationList,
-            element.extraModifiers,
-            element.visibility,
-            element.modality
+            element.extraModifierElements,
+            element.visibilityElement,
+            element.modalityElement
         ).also {
             context.symbolProvider.transferSymbol(it, element)
-        }
+        }.withNonCodeElementsFrom(element)
     }
 
     private fun lookupDelegationCall(block: JKBlock): JKDelegationConstructorCall? {

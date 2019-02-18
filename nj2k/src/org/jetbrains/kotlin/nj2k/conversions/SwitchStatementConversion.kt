@@ -49,7 +49,7 @@ class SwitchStatementConversion(private val context: ConversionContext) : Recurs
                                 statement.block.statements
                                     .takeWhile { !isSwitchBreak(it) }
                                     .map { it.copyTreeAndDetach() }
-                            )
+                            ).withNonCodeElementsFrom(statement)
                         isSwitchBreak(statement) -> null
                         else -> statement.copyTreeAndDetach()
                     }

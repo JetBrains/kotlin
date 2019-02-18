@@ -23,12 +23,13 @@ class FieldToPropertyConversion : RecursiveApplicableConversionBase() {
                 JKKtEmptyGetterOrSetterImpl(),
                 JKKtEmptyGetterOrSetterImpl(),
                 element.annotationList,
-                element.extraModifiers,
-                element.visibility,
-                Modality.FINAL,
-                mutability
+                element.extraModifierElements,
+                element.visibilityElement,
+                JKModalityModifierElementImpl(Modality.FINAL),
+                JKMutabilityModifierElementImpl(mutability).withNonCodeElementsFrom(element.modalityElement)
             ).also {
                 it.psi = element.psi
+                it.takeNonCodeElementsFrom(element)
             }
         )
     }

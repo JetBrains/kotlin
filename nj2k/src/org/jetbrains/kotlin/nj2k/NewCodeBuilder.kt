@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.nj2k.NewCodeBuilder.ParenthesisKind.*
 import org.jetbrains.kotlin.nj2k.conversions.parentOfType
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorVoid
+import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorWithCommentsPrinting
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class NewCodeBuilder {
 
@@ -41,7 +42,57 @@ class NewCodeBuilder {
         JKClass.ClassKind.COMPANION -> "companion object"
     }
 
-    inner class Visitor : JKVisitorVoid {
+    inner class Visitor : JKVisitorWithCommentsPrinting {
+        private val printedTokens = mutableSetOf<JKNonCodeElement>()
+
+        private fun JKNonCodeElement.createText() =
+            if (this !in printedTokens) {
+                printedTokens += this
+                text
+            } else ""
+
+
+        private fun List<JKNonCodeElement>.createText(): String {
+            val text = joinToString("") { token -> token.createText() }
+            val needNewLine = text.lastIndexOf('\n') < text.lastIndexOf("//")
+            return text +"\n".takeIf { needNewLine }.orEmpty()
+        }
+
+        private fun JKNonCodeElementsListOwner.needPreserveSpacesAfterLastCommit() =
+            this is JKArgument
+                    || this is JKParameter
+                    || safeAs<JKTreeElement>()?.parent is JKArgument
+                    || safeAs<JKTreeElement>()?.parent is JKBinaryExpression
+
+        override fun printLeftNonCodeElements(element: JKNonCodeElementsListOwner) {
+            val text = element.leftNonCodeElements
+                .let {
+                    if (element.needPreserveSpacesAfterLastCommit()) it
+                    else it.dropWhile { it is JKSpaceElement }
+                }.createText()
+            printer.printWithNoIndent(text)
+        }
+
+
+        override fun printRightNonCodeElements(element: JKNonCodeElementsListOwner) {
+            val text = element.rightNonCodeElements
+                .let {
+                    if (element.needPreserveSpacesAfterLastCommit()) it
+                    else it.dropLastWhile { it is JKSpaceElement }
+                }.createText()
+            printer.printWithNoIndent(text)
+        }
+
+        private fun renderTokenElement(tokenElement: JKTokenElement) {
+            printLeftNonCodeElements(tokenElement)
+            printer.printWithNoIndent(tokenElement.text)
+            printRightNonCodeElements(tokenElement)
+        }
+
+        override fun visitModifierElementRaw(modifierElement: JKModifierElement) {
+            printer.printWithNoIndent(modifierElement.modifier.text)
+        }
+
         private fun renderExtraTypeParametersUpperBounds(typeParameterList: JKTypeParameterList) {
             val extraTypeBounds = typeParameterList.typeParameters
                 .filter { it.upperBounds.size > 1 }
@@ -61,33 +112,29 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitTreeElement(treeElement: JKTreeElement) {
+        override fun visitTreeElementRaw(treeElement: JKTreeElement) {
             printer.print("/* !!! Hit visitElement for element type: ${treeElement::class} !!! */")
         }
 
-        override fun visitKtTryExpression(ktTryExpression: JKKtTryExpression) {
+        override fun visitKtTryExpressionRaw(ktTryExpression: JKKtTryExpression) {
             printer.printWithNoIndent("try ")
-            if (ktTryExpression.tryBlock != JKBodyStub) {
-                printer.block { ktTryExpression.tryBlock.accept(this) }
-            }
+            ktTryExpression.tryBlock.accept(this)
             ktTryExpression.catchSections.forEach { it.accept(this) }
-            if (ktTryExpression.finallyBlock != JKBodyStub) {
+            if (ktTryExpression.finallyBlock != JKBodyStubImpl) {
                 printer.printWithNoIndent("finally ")
-                printer.block { ktTryExpression.finallyBlock.accept(this) }
+                ktTryExpression.finallyBlock.accept(this)
             }
         }
 
-        override fun visitKtTryCatchSection(ktTryCatchSection: JKKtTryCatchSection) {
+        override fun visitKtTryCatchSectionRaw(ktTryCatchSection: JKKtTryCatchSection) {
             printer.printWithNoIndent("catch ")
             printer.par {
                 ktTryCatchSection.parameter.accept(this)
             }
-            if (ktTryCatchSection.block != JKBodyStub) {
-                printer.block { ktTryCatchSection.block.accept(this) }
-            }
+            ktTryCatchSection.block.accept(this)
         }
 
-        override fun visitForInStatement(forInStatement: JKForInStatement) {
+        override fun visitForInStatementRaw(forInStatement: JKForInStatement) {
             printer.printWithNoIndent("for (")
             forInStatement.declaration.accept(this)
             printer.printWithNoIndent(" in ")
@@ -100,12 +147,12 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression) {
+        override fun visitKtThrowExpressionRaw(ktThrowExpression: JKKtThrowExpression) {
             printer.printWithNoIndent("throw ")
             ktThrowExpression.exception.accept(this)
         }
 
-        override fun visitDoWhileStatement(doWhileStatement: JKDoWhileStatement) {
+        override fun visitDoWhileStatementRaw(doWhileStatement: JKDoWhileStatement) {
             printer.printWithNoIndent("do ")
             doWhileStatement.body.accept(this)
             printer.printWithNoIndent(" while (")
@@ -113,11 +160,11 @@ class NewCodeBuilder {
             printer.printWithNoIndent(")")
         }
 
-        override fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression) {
+        override fun visitClassAccessExpressionRaw(classAccessExpression: JKClassAccessExpression) {
             printer.printWithNoIndent(classAccessExpression.identifier.displayName().escaped())
         }
 
-        override fun visitFile(file: JKFile) {
+        override fun visitFileRaw(file: JKFile) {
             if (file.packageDeclaration.packageName.value.isNotEmpty()) {
                 file.packageDeclaration.accept(this)
             }
@@ -130,32 +177,32 @@ class NewCodeBuilder {
                 .map { it.escaped() }
                 .joinToString(".") { it }
 
-        override fun visitPackageDeclaration(packageDeclaration: JKPackageDeclaration) {
+        override fun visitPackageDeclarationRaw(packageDeclaration: JKPackageDeclaration) {
             printer.printWithNoIndent("package ")
             val packageNameEscaped =
                 packageDeclaration.packageName.value.escapedAsQualifiedName()
             printer.printlnWithNoIndent(packageNameEscaped)
         }
 
-        override fun visitImportStatement(importStatement: JKImportStatement) {
+        override fun visitImportStatementRaw(importStatement: JKImportStatement) {
             printer.printWithNoIndent("import ")
             val importNameEscaped =
                 importStatement.name.value.escapedAsQualifiedName()
             printer.printlnWithNoIndent(importNameEscaped)
         }
 
-        override fun visitBreakStatement(breakStatement: JKBreakStatement) {
+        override fun visitBreakStatementRaw(breakStatement: JKBreakStatement) {
             printer.printWithNoIndent("break")
         }
 
-        override fun visitBreakWithLabelStatement(breakWithLabelStatement: JKBreakWithLabelStatement) {
+        override fun visitBreakWithLabelStatementRaw(breakWithLabelStatement: JKBreakWithLabelStatement) {
             printer.printWithNoIndent("break@")
             breakWithLabelStatement.label.accept(this)
         }
 
         private fun renderModifiersList(modifiersList: JKModifiersListOwner) {
-            renderList(modifiersList.modifiers(), " ") {
-                printer.printWithNoIndent(it.text)
+            renderList(modifiersList.modifierElements(), " ") {
+                it.accept(this)
             }
         }
 
@@ -171,7 +218,7 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitClass(klass: JKClass) {
+        override fun visitClassRaw(klass: JKClass) {
             klass.annotationList.accept(this)
             if (klass.annotationList.annotations.isNotEmpty()) {
                 printer.println()
@@ -199,7 +246,7 @@ class NewCodeBuilder {
             klass.classBody.accept(this)
         }
 
-        override fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo) {
+        override fun visitInheritanceInfoRaw(inheritanceInfo: JKInheritanceInfo) {
             val parentClass = inheritanceInfo.parentOfType<JKClass>()!!
             val isInInterface = parentClass.classKind == JKClass.ClassKind.INTERFACE
             val extendTypes = inheritanceInfo.extends.map { it.type.updateNullability(Nullability.NotNull) }
@@ -243,7 +290,7 @@ class NewCodeBuilder {
         }
 
 
-        override fun visitKtProperty(ktProperty: JKKtProperty) {
+        override fun visitKtPropertyRaw(ktProperty: JKKtProperty) {
             ktProperty.annotationList.accept(this)
             if (ktProperty.annotationList.annotations.isNotEmpty()) {
                 printer.println()
@@ -270,7 +317,7 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitEnumConstant(enumConstant: JKEnumConstant) {
+        override fun visitEnumConstantRaw(enumConstant: JKEnumConstant) {
             enumConstant.name.accept(this)
             if (enumConstant.arguments.arguments.isNotEmpty()) {
                 printer.par {
@@ -282,22 +329,20 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration) {
+        override fun visitKtInitDeclarationRaw(ktInitDeclaration: JKKtInitDeclaration) {
             if (ktInitDeclaration.block.statements.isNotEmpty()) {
                 printer.print("init ")
-                printer.block(multiline = true) {
-                    ktInitDeclaration.block.accept(this)
-                }
+                ktInitDeclaration.block.accept(this)
             }
         }
 
-        override fun visitKtIsExpression(ktIsExpression: JKKtIsExpression) {
+        override fun visitKtIsExpressionRaw(ktIsExpression: JKKtIsExpression) {
             ktIsExpression.expression.accept(this)
             printer.printWithNoIndent(" is ")
             ktIsExpression.type.accept(this)
         }
 
-        override fun visitParameter(parameter: JKParameter) {
+        override fun visitParameterRaw(parameter: JKParameter) {
             renderModifiersList(parameter)
             printer.printWithNoIndent(" ")
             parameter.annotationList.accept(this)
@@ -321,7 +366,7 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtAnnotationArrayInitializerExpression(ktAnnotationArrayInitializerExpression: JKKtAnnotationArrayInitializerExpression) {
+        override fun visitKtAnnotationArrayInitializerExpressionRaw(ktAnnotationArrayInitializerExpression: JKKtAnnotationArrayInitializerExpression) {
             printer.print("[")
             renderList(ktAnnotationArrayInitializerExpression.initializers) {
                 it.accept(this)
@@ -329,7 +374,7 @@ class NewCodeBuilder {
             printer.print("]")
         }
 
-        override fun visitForLoopVariable(forLoopVariable: JKForLoopVariable) {
+        override fun visitForLoopVariableRaw(forLoopVariable: JKForLoopVariable) {
             forLoopVariable.name.accept(this)
             if (forLoopVariable.type.present() && forLoopVariable.type.type !is JKContextType) {
                 printer.printWithNoIndent(": ")
@@ -337,7 +382,7 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtFunction(ktFunction: JKKtFunction) {
+        override fun visitKtFunctionRaw(ktFunction: JKKtFunction) {
             printer.printIndent()
             if (ktFunction.annotationList.annotations.isNotEmpty()) {
                 ktFunction.annotationList.accept(this)
@@ -347,21 +392,18 @@ class NewCodeBuilder {
             printer.printWithNoIndent(" fun ")
             ktFunction.typeParameterList.accept(this)
             ktFunction.name.accept(this)
-            printer.printWithNoIndent("(")
+            renderTokenElement(ktFunction.leftParen)
             renderList(ktFunction.parameters) {
                 it.accept(this)
             }
-            printer.printWithNoIndent(")", ": ")
+            renderTokenElement(ktFunction.rightParen)
+            printer.printWithNoIndent(": ")
             ktFunction.returnType.accept(this)
             renderExtraTypeParametersUpperBounds(ktFunction.typeParameterList)
-            if (ktFunction.block !== JKBodyStub) {
-                printer.block(multiline = ktFunction.block.statements.isNotEmpty()) {
-                    ktFunction.block.accept(this)
-                }
-            }
+            ktFunction.block.accept(this)
         }
 
-        override fun visitIfElseExpression(ifElseExpression: JKIfElseExpression) {
+        override fun visitIfElseExpressionRaw(ifElseExpression: JKIfElseExpression) {
             printer.printWithNoIndent("if (")
             ifElseExpression.condition.accept(this)
             printer.printWithNoIndent(")")
@@ -370,34 +412,24 @@ class NewCodeBuilder {
             ifElseExpression.elseBranch.accept(this)
         }
 
-        override fun visitIfStatement(ifStatement: JKIfStatement) {
+        override fun visitIfStatementRaw(ifStatement: JKIfStatement) {
             printer.printWithNoIndent("if (")
             ifStatement.condition.accept(this)
             printer.printWithNoIndent(")")
             if (ifStatement.thenBranch.isEmpty()) {
                 printer.printWithNoIndent(";")
             } else {
-                renderStatementOrBlock(ifStatement.thenBranch)
+                ifStatement.thenBranch.accept(this)
             }
         }
 
-        override fun visitIfElseStatement(ifElseStatement: JKIfElseStatement) {
+        override fun visitIfElseStatementRaw(ifElseStatement: JKIfElseStatement) {
             visitIfStatement(ifElseStatement)
             printer.printWithNoIndent(" else ")
-            renderStatementOrBlock(ifElseStatement.elseBranch)
+            ifElseStatement.elseBranch.accept(this)
         }
 
-        private fun renderStatementOrBlock(statement: JKStatement, multiline: Boolean = false) {
-            if (statement is JKBlockStatement) {
-                printer.block(multiline) {
-                    statement.block.accept(this)
-                }
-            } else {
-                statement.accept(this)
-            }
-        }
-
-        override fun visitKtGetterOrSetter(ktGetterOrSetter: JKKtGetterOrSetter) {
+        override fun visitKtGetterOrSetterRaw(ktGetterOrSetter: JKKtGetterOrSetter) {
             printer.indented {
                 renderModifiersList(ktGetterOrSetter)
                 printer.printWithNoIndent(" ")
@@ -416,11 +448,11 @@ class NewCodeBuilder {
             printer.printlnWithNoIndent()
         }
 
-        override fun visitKtEmptyGetterOrSetter(ktEmptyGetterOrSetter: JKKtEmptyGetterOrSetter) {
+        override fun visitKtEmptyGetterOrSetterRaw(ktEmptyGetterOrSetter: JKKtEmptyGetterOrSetter) {
 
         }
 
-        override fun visitBinaryExpression(binaryExpression: JKBinaryExpression) {
+        override fun visitBinaryExpressionRaw(binaryExpression: JKBinaryExpression) {
             binaryExpression.left.accept(this)
             printer.printWithNoIndent(" ")
             printer.printWithNoIndent(binaryExpression.operator.token.text)
@@ -428,7 +460,7 @@ class NewCodeBuilder {
             binaryExpression.right.accept(this)
         }
 
-        override fun visitTypeParameterList(typeParameterList: JKTypeParameterList) {
+        override fun visitTypeParameterListRaw(typeParameterList: JKTypeParameterList) {
             if (typeParameterList.typeParameters.isNotEmpty()) {
                 printer.par(ANGLE) {
                     renderList(typeParameterList.typeParameters) {
@@ -438,7 +470,7 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitTypeParameter(typeParameter: JKTypeParameter) {
+        override fun visitTypeParameterRaw(typeParameter: JKTypeParameter) {
             typeParameter.name.accept(this)
             if (typeParameter.upperBounds.size == 1) {
                 printer.printWithNoIndent(" : ")
@@ -446,42 +478,42 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitLiteralExpression(literalExpression: JKLiteralExpression) {
+        override fun visitLiteralExpressionRaw(literalExpression: JKLiteralExpression) {
             printer.printWithNoIndent(literalExpression.literal)
         }
 
-        override fun visitPrefixExpression(prefixExpression: JKPrefixExpression) {
+        override fun visitPrefixExpressionRaw(prefixExpression: JKPrefixExpression) {
             printer.printWithNoIndent(prefixExpression.operator.token.text)
             prefixExpression.expression.accept(this)
         }
 
-        override fun visitThisExpression(thisExpression: JKThisExpression) {
+        override fun visitThisExpressionRaw(thisExpression: JKThisExpression) {
             printer.printWithNoIndent("this")
             thisExpression.qualifierLabel.accept(this)
         }
 
-        override fun visitSuperExpression(superExpression: JKSuperExpression) {
+        override fun visitSuperExpressionRaw(superExpression: JKSuperExpression) {
             printer.printWithNoIndent("super")
             superExpression.qualifierLabel.accept(this)
         }
 
-        override fun visitContinueStatement(continueStatement: JKContinueStatement) {
+        override fun visitContinueStatementRaw(continueStatement: JKContinueStatement) {
             printer.printWithNoIndent("continue")
             continueStatement.label.accept(this)
-            printer.printlnWithNoIndent(" ")
+            printer.printWithNoIndent(" ")
         }
 
-        override fun visitLabelEmpty(labelEmpty: JKLabelEmpty) {
+        override fun visitLabelEmptyRaw(labelEmpty: JKLabelEmpty) {
 
         }
 
-        override fun visitLabelText(labelText: JKLabelText) {
+        override fun visitLabelTextRaw(labelText: JKLabelText) {
             printer.printWithNoIndent("@")
             labelText.label.accept(this)
             printer.printWithNoIndent(" ")
         }
 
-        override fun visitLabeledStatement(labeledStatement: JKLabeledStatement) {
+        override fun visitLabeledStatementRaw(labeledStatement: JKLabeledStatement) {
             for (label in labeledStatement.labels) {
                 label.accept(this)
                 printer.printWithNoIndent("@")
@@ -489,16 +521,16 @@ class NewCodeBuilder {
             labeledStatement.statement.accept(this)
         }
 
-        override fun visitNameIdentifier(nameIdentifier: JKNameIdentifier) {
+        override fun visitNameIdentifierRaw(nameIdentifier: JKNameIdentifier) {
             printer.printWithNoIndent(nameIdentifier.value.escaped())
         }
 
-        override fun visitPostfixExpression(postfixExpression: JKPostfixExpression) {
+        override fun visitPostfixExpressionRaw(postfixExpression: JKPostfixExpression) {
             postfixExpression.expression.accept(this)
             printer.printWithNoIndent(postfixExpression.operator.token.text)
         }
 
-        override fun visitQualifiedExpression(qualifiedExpression: JKQualifiedExpression) {
+        override fun visitQualifiedExpressionRaw(qualifiedExpression: JKQualifiedExpression) {
             qualifiedExpression.receiver.accept(this)
             printer.printWithNoIndent(
                 when (qualifiedExpression.operator) {
@@ -510,26 +542,26 @@ class NewCodeBuilder {
             qualifiedExpression.selector.accept(this)
         }
 
-        override fun visitExpressionList(expressionList: JKExpressionList) {
+        override fun visitExpressionListRaw(expressionList: JKExpressionList) {
             renderList(expressionList.expressions) { it.accept(this) }
         }
 
 
-        override fun visitArgumentList(argumentList: JKArgumentList) {
+        override fun visitArgumentListRaw(argumentList: JKArgumentList) {
             renderList(argumentList.arguments) { it.accept(this) }
         }
 
-        override fun visitArgument(argument: JKArgument) {
+        override fun visitArgumentRaw(argument: JKArgument) {
             argument.value.accept(this)
         }
 
-        override fun visitNamedArgument(namedArgument: JKNamedArgument) {
+        override fun visitNamedArgumentRaw(namedArgument: JKNamedArgument) {
             namedArgument.name.accept(this)
             printer.printWithNoIndent(" = ")
             namedArgument.value.accept(this)
         }
 
-        override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
+        override fun visitMethodCallExpressionRaw(methodCallExpression: JKMethodCallExpression) {
             printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString().escaped())
             methodCallExpression.typeArgumentList.accept(this)
             printer.par {
@@ -537,7 +569,7 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitTypeArgumentList(typeArgumentList: JKTypeArgumentList) {
+        override fun visitTypeArgumentListRaw(typeArgumentList: JKTypeArgumentList) {
             if (typeArgumentList.typeArguments.isNotEmpty()) {
                 printer.par(ANGLE) {
                     renderList(typeArgumentList.typeArguments) {
@@ -547,36 +579,36 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitParenthesizedExpression(parenthesizedExpression: JKParenthesizedExpression) {
+        override fun visitParenthesizedExpressionRaw(parenthesizedExpression: JKParenthesizedExpression) {
             printer.par {
                 parenthesizedExpression.expression.accept(this)
             }
         }
 
-        override fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement) {
+        override fun visitDeclarationStatementRaw(declarationStatement: JKDeclarationStatement) {
             renderList(declarationStatement.declaredStatements, { printer.println() }) {
                 it.accept(this)
             }
         }
 
-        override fun visitTypeCastExpression(typeCastExpression: JKTypeCastExpression) {
+        override fun visitTypeCastExpressionRaw(typeCastExpression: JKTypeCastExpression) {
             typeCastExpression.expression.accept(this)
             printer.printWithNoIndent(" as ")
             typeCastExpression.type.accept(this)
         }
 
-        override fun visitWhileStatement(whileStatement: JKWhileStatement) {
+        override fun visitWhileStatementRaw(whileStatement: JKWhileStatement) {
             printer.print("while(")
             whileStatement.condition.accept(this)
             printer.printWithNoIndent(")")
             if (whileStatement.body.isEmpty()) {
                 printer.printWithNoIndent(";")
             } else {
-                renderStatementOrBlock(whileStatement.body, multiline = true)
+                whileStatement.body.accept(this)
             }
         }
 
-        override fun visitLocalVariable(localVariable: JKLocalVariable) {
+        override fun visitLocalVariableRaw(localVariable: JKLocalVariable) {
             printer.printWithNoIndent(" ")
             localVariable.annotationList.accept(this)
             printer.printWithNoIndent(" ")
@@ -593,13 +625,13 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitEmptyStatement(emptyStatement: JKEmptyStatement) {
+        override fun visitEmptyStatementRaw(emptyStatement: JKEmptyStatement) {
         }
 
-        override fun visitStubExpression(stubExpression: JKStubExpression) {
+        override fun visitStubExpressionRaw(stubExpression: JKStubExpression) {
         }
 
-        override fun visitKtConvertedFromForLoopSyntheticWhileStatement(
+        override fun visitKtConvertedFromForLoopSyntheticWhileStatementRaw(
             ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement
         ) {
             ktConvertedFromForLoopSyntheticWhileStatement.variableDeclaration.accept(this)
@@ -638,7 +670,7 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
+        override fun visitJavaNewExpressionRaw(javaNewExpression: JKJavaNewExpression) {
             if (javaNewExpression.isAnonymousClass()) {
                 printer.printWithNoIndent("object : ")
             }
@@ -655,62 +687,65 @@ class NewCodeBuilder {
         }
 
 
-        override fun visitClassBody(classBody: JKClassBody) {
+        override fun visitClassBodyRaw(classBody: JKClassBody) {
             val declarationsToPrint = classBody.declarations.filterNot { it is JKKtPrimaryConstructor }
-            printer.block(multiline = true) {
-                val enumConstants = declarationsToPrint.filterIsInstance<JKEnumConstant>()
-                val otherDeclarations = declarationsToPrint.filterNot { it is JKEnumConstant }
-                renderEnumConstants(enumConstants)
-                if ((classBody.parent as? JKClass)?.classKind == JKClass.ClassKind.ENUM
-                    && otherDeclarations.isNotEmpty()
-                ) {
-                    printer.printlnWithNoIndent(";")
-                }
-                if (enumConstants.isNotEmpty() && otherDeclarations.isNotEmpty()) {
-                    printer.println()
-                }
-                renderNonEnumClassDeclarations(otherDeclarations)
+            renderTokenElement(classBody.leftBrace)
+            val enumConstants = declarationsToPrint.filterIsInstance<JKEnumConstant>()
+            val otherDeclarations = declarationsToPrint.filterNot { it is JKEnumConstant }
+            renderEnumConstants(enumConstants)
+            if ((classBody.parent as? JKClass)?.classKind == JKClass.ClassKind.ENUM
+                && otherDeclarations.isNotEmpty()
+            ) {
+                printer.printlnWithNoIndent(";")
             }
+            if (enumConstants.isNotEmpty() && otherDeclarations.isNotEmpty()) {
+                printer.println()
+            }
+            renderNonEnumClassDeclarations(otherDeclarations)
+            renderTokenElement(classBody.rightBrace)
         }
 
-        override fun visitEmptyClassBody(emptyClassBody: JKEmptyClassBody) {}
+        override fun visitEmptyClassBodyRaw(emptyClassBody: JKEmptyClassBody) {}
 
-        override fun visitTypeElement(typeElement: JKTypeElement) {
+        override fun visitTypeElementRaw(typeElement: JKTypeElement) {
             renderType(typeElement.type)
         }
 
-        override fun visitBlock(block: JKBlock) {
+        override fun visitBlockRaw(block: JKBlock) {
+            renderTokenElement(block.leftBrace)
             renderList(block.statements, { printer.println() }) {
+                it.accept(this)
+            }
+            renderTokenElement(block.rightBrace)
+        }
+
+        override fun visitBlockStatementWithoutBracketsRaw(blockStatementWithoutBrackets: JKBlockStatementWithoutBrackets) {
+            renderList(blockStatementWithoutBrackets.statements, { printer.println() }) {
                 it.accept(this)
             }
         }
 
-        override fun visitBlockStatementWithoutBrackets(blockStatementWithoutBrackets: JKBlockStatementWithoutBrackets) {
-            blockStatementWithoutBrackets.block.accept(this)
-        }
-
-        override fun visitExpressionStatement(expressionStatement: JKExpressionStatement) {
-            printer.printIndent()
+        override fun visitExpressionStatementRaw(expressionStatement: JKExpressionStatement) {
             expressionStatement.expression.accept(this)
         }
 
-        override fun visitReturnStatement(returnStatement: JKReturnStatement) {
+        override fun visitReturnStatementRaw(returnStatement: JKReturnStatement) {
             printer.print("return")
             returnStatement.label.accept(this)
             printer.print(" ")
             returnStatement.expression.accept(this)
         }
 
-        override fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) {
+        override fun visitFieldAccessExpressionRaw(fieldAccessExpression: JKFieldAccessExpression) {
             printer.printWithNoIndent(fieldAccessExpression.identifier.name.escaped())
         }
 
-        override fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression) {
+        override fun visitArrayAccessExpressionRaw(arrayAccessExpression: JKArrayAccessExpression) {
             arrayAccessExpression.expression.accept(this)
             printer.par(SQUARE) { arrayAccessExpression.indexExpression.accept(this) }
         }
 
-        override fun visitDelegationConstructorCall(delegationConstructorCall: JKDelegationConstructorCall) {
+        override fun visitDelegationConstructorCallRaw(delegationConstructorCall: JKDelegationConstructorCall) {
             delegationConstructorCall.expression.accept(this)
             printer.par {
                 delegationConstructorCall.arguments.accept(this)
@@ -725,7 +760,7 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtConstructor(ktConstructor: JKKtConstructor) {
+        override fun visitKtConstructorRaw(ktConstructor: JKKtConstructor) {
             ktConstructor.annotationList.accept(this)
             if (ktConstructor.annotationList.annotations.isNotEmpty()) {
                 printer.println()
@@ -737,14 +772,10 @@ class NewCodeBuilder {
                 builder.append(" : ")
                 ktConstructor.delegationCall.accept(this)
             }
-            if (ktConstructor.block !== JKBodyStub) {
-                printer.block(multiline = true) {
-                    ktConstructor.block.accept(this)
-                }
-            }
+            ktConstructor.block.accept(this)
         }
 
-        override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) {
+        override fun visitKtPrimaryConstructorRaw(ktPrimaryConstructor: JKKtPrimaryConstructor) {
             ktPrimaryConstructor.annotationList.accept(this)
             printer.printWithNoIndent(" ")
             renderModifiersList(ktPrimaryConstructor)
@@ -756,6 +787,9 @@ class NewCodeBuilder {
             }
         }
 
+        override fun visitBodyStub(bodyStub: JKBodyStub) {
+        }
+
         private inline fun Printer.indented(block: () -> Unit) {
             this.pushIndent()
             block()
@@ -764,7 +798,6 @@ class NewCodeBuilder {
 
         private inline fun Printer.block(multiline: Boolean = false, crossinline body: () -> Unit) {
             par(CURVED) {
-                if (multiline) printer.printWithNoIndent("\n")
                 indented(body)
             }
         }
@@ -775,7 +808,7 @@ class NewCodeBuilder {
             this.printWithNoIndent(kind.close)
         }
 
-        override fun visitLambdaExpression(lambdaExpression: JKLambdaExpression) {
+        override fun visitLambdaExpressionRaw(lambdaExpression: JKLambdaExpression) {
             printer.par(CURVED) {
                 if (lambdaExpression.statement.statements.size > 1)
                     printer.println()
@@ -787,7 +820,7 @@ class NewCodeBuilder {
 
                 val statement = lambdaExpression.statement
                 if (statement is JKBlockStatement) {
-                    statement.block.accept(this)
+                    renderList(statement.block.statements, { printer.println() }) { it.accept(this) }
                 } else {
                     statement.accept(this)
                 }
@@ -796,13 +829,11 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitBlockStatement(blockStatement: JKBlockStatement) {
-            printer.par(CURVED) {
-                blockStatement.block.accept(this)
-            }
+        override fun visitBlockStatementRaw(blockStatement: JKBlockStatement) {
+            blockStatement.block.accept(this)
         }
 
-        override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement) {
+        override fun visitKtAssignmentStatementRaw(ktAssignmentStatement: JKKtAssignmentStatement) {
             ktAssignmentStatement.field.accept(this)
             printer.printWithNoIndent(" ")
             printer.printWithNoIndent(ktAssignmentStatement.operator.token.text)
@@ -810,7 +841,7 @@ class NewCodeBuilder {
             ktAssignmentStatement.expression.accept(this)
         }
 
-        override fun visitKtWhenStatement(ktWhenStatement: JKKtWhenStatement) {
+        override fun visitKtWhenStatementRaw(ktWhenStatement: JKKtWhenStatement) {
             printer.printWithNoIndent("when(")
             ktWhenStatement.expression.accept(this)
             printer.printWithNoIndent(")")
@@ -821,13 +852,13 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitAnnotationList(annotationList: JKAnnotationList) {
+        override fun visitAnnotationListRaw(annotationList: JKAnnotationList) {
             renderList(annotationList.annotations, " ") {
                 it.accept(this)
             }
         }
 
-        override fun visitAnnotation(annotation: JKAnnotation) {
+        override fun visitAnnotationRaw(annotation: JKAnnotation) {
             printer.printWithNoIndent("@")
             printer.printWithNoIndent(annotation.classSymbol.displayName().escapedAsQualifiedName())
             if (annotation.arguments.isNotEmpty()) {
@@ -837,17 +868,17 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitAnnotationNameParameter(annotationNameParameter: JKAnnotationNameParameter) {
+        override fun visitAnnotationNameParameterRaw(annotationNameParameter: JKAnnotationNameParameter) {
             annotationNameParameter.name.accept(this)
             printer.print(" = ")
             annotationNameParameter.value.accept(this)
         }
 
-        override fun visitAnnotationParameter(annotationParameter: JKAnnotationParameter) {
+        override fun visitAnnotationParameterRaw(annotationParameter: JKAnnotationParameter) {
             annotationParameter.value.accept(this)
         }
 
-        override fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) {
+        override fun visitClassLiteralExpressionRaw(classLiteralExpression: JKClassLiteralExpression) {
             if (classLiteralExpression.literalType == JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE) {
                 printer.printWithNoIndent("Void.TYPE")
             } else {
@@ -861,7 +892,7 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtWhenCase(ktWhenCase: JKKtWhenCase) {
+        override fun visitKtWhenCaseRaw(ktWhenCase: JKKtWhenCase) {
             renderList(ktWhenCase.labels, ", ") {
                 it.accept(this)
             }
@@ -869,11 +900,11 @@ class NewCodeBuilder {
             ktWhenCase.statement.accept(this)
         }
 
-        override fun visitKtElseWhenLabel(ktElseWhenLabel: JKKtElseWhenLabel) {
+        override fun visitKtElseWhenLabelRaw(ktElseWhenLabel: JKKtElseWhenLabel) {
             printer.printWithNoIndent("else")
         }
 
-        override fun visitKtValueWhenLabel(ktValueWhenLabel: JKKtValueWhenLabel) {
+        override fun visitKtValueWhenLabelRaw(ktValueWhenLabel: JKKtValueWhenLabel) {
             ktValueWhenLabel.expression.accept(this)
         }
     }
@@ -888,7 +919,6 @@ class NewCodeBuilder {
         return builder.toString()
     }
 }
-
 
 private inline fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
     val head = this.firstOrNull()

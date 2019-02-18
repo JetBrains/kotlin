@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class DefaultArgumentsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
 
     private fun JKMethod.canNotBeMerged(): Boolean =
-        modality == Modality.ABSTRACT ||
-                modality == Modality.OVERRIDE ||
-                context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi()!!) ||
-                annotationList.annotations.isNotEmpty()
+        modality == Modality.ABSTRACT
+                || modality == Modality.OVERRIDE
+                || hasExtraModifier(ExtraModifier.NATIVE)
+                || hasExtraModifier(ExtraModifier.SYNCHRONIZED)
+                || context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi()!!)
+                || annotationList.annotations.isNotEmpty()
 
 
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -39,13 +41,13 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
             if (calledMethod.parent != method.parent
                 || callee.name != method.name.value
                 || calledMethod.returnType.type != method.returnType.type
-                || call.arguments.expressions.size <= method.parameters.size
+                || call.arguments.arguments.size <= method.parameters.size
             ) {
                 continue
             }
 
 
-            // TODO: Filter by annotations, visibility, modality, modifiers like synchronized
+            // TODO: Filter by annotations, visibility, modality, extraModifiers like synchronized
             if (calledMethod.visibility != method.visibility) continue@checkMethod
             if (calledMethod.canNotBeMerged()) continue
 
@@ -54,8 +56,8 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
                 val targetParameter = calledMethod.parameters[i]
                 val argument = call.arguments.arguments[i].value
                 if (parameter.name.value != targetParameter.name.value) continue@checkMethod
-//                if (parameter.type.type != targetParameter.type.type) continue@checkMethod
-//                if (argument !is JKFieldAccessExpression || argument.identifier.target != parameter) continue@checkMethod
+                if (parameter.type.type != targetParameter.type.type) continue@checkMethod
+                if (argument !is JKFieldAccessExpression || argument.identifier.target != parameter) continue@checkMethod
             }
 
 

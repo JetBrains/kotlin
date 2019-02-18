@@ -32,8 +32,9 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
         primaryConstructorCandidate.invalidate()
         if (primaryConstructorCandidate.block.statements.isNotEmpty()) {
             val initDeclaration = JKKtInitDeclarationImpl(primaryConstructorCandidate.block)
+                .withNonCodeElementsFrom(primaryConstructorCandidate)
             element.classBody.declarations =
-                    element.classBody.declarations.replace(primaryConstructorCandidate, initDeclaration)
+                element.classBody.declarations.replace(primaryConstructorCandidate, initDeclaration)
         } else {
             element.classBody.declarations -= primaryConstructorCandidate
         }
@@ -44,10 +45,10 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
                 primaryConstructorCandidate.parameters,
                 primaryConstructorCandidate.delegationCall,
                 primaryConstructorCandidate.annotationList,
-                primaryConstructorCandidate.extraModifiers,
-                primaryConstructorCandidate.visibility,
-                primaryConstructorCandidate.modality
-            )
+                primaryConstructorCandidate.extraModifierElements,
+                primaryConstructorCandidate.visibilityElement,
+                primaryConstructorCandidate.modalityElement
+            ).withNonCodeElementsFrom(primaryConstructorCandidate)
 
         context.symbolProvider.transferSymbol(primaryConstructor, primaryConstructorCandidate)
 

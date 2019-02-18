@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.nj2k.getCompanion
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationListImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKClassImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKModalityModifierElementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
 class ClassToObjectPromotionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -49,10 +50,10 @@ class ClassToObjectPromotionConversion(private val context: ConversionContext) :
                             }.map { it.detached(element.classBody) }
                         },
                         JKAnnotationListImpl(),
-                        element.extraModifiers,
-                        element.visibility,
-                        Modality.FINAL
-                    )
+                        element.extraModifierElements,
+                        element.visibilityElement,
+                        JKModalityModifierElementImpl(Modality.FINAL)
+                    ).withNonCodeElementsFrom(element)
                 )
             }
         }

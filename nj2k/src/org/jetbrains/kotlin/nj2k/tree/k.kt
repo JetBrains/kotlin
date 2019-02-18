@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.nj2k.tree
 
-import org.jetbrains.kotlin.nj2k.tree.impl.JKMethodSymbol
-
 interface JKKtGetterOrSetter : JKTreeElement, JKVisibilityOwner, JKBranchElement {
     var body: JKStatement
     val kind: Kind
@@ -29,27 +27,24 @@ interface JKKtGetterOrSetter : JKTreeElement, JKVisibilityOwner, JKBranchElement
 
 interface JKKtEmptyGetterOrSetter : JKKtGetterOrSetter
 
-interface JKKtProperty : JKField, PsiOwner {
-    var getter: JKKtGetterOrSetter
-    var setter: JKKtGetterOrSetter
+abstract class JKKtProperty : JKField(), PsiOwner {
+    abstract var getter: JKKtGetterOrSetter
+    abstract var setter: JKKtGetterOrSetter
 }
 
 
-interface JKKtFunction : JKMethod, PsiOwner {
+abstract class JKKtFunction : JKMethod(), PsiOwner
+
+abstract class JKKtConstructor : JKMethod(), JKExtraModifiersOwner {
+    abstract var delegationCall: JKExpression
 }
 
-interface JKKtConstructor : JKDeclaration, JKExtraModifiersOwner, JKMethod, JKBranchElement {
-    override var name: JKNameIdentifier
-    override var parameters: List<JKParameter>
-    var delegationCall: JKExpression
-}
+abstract class JKKtPrimaryConstructor : JKKtConstructor()
 
-interface JKKtPrimaryConstructor : JKKtConstructor
-
-interface JKKtAssignmentStatement : JKStatement {
-    var field: JKAssignableExpression
-    var expression: JKExpression
-    var operator: JKOperator
+abstract class JKKtAssignmentStatement : JKStatement() {
+    abstract var field: JKAssignableExpression
+    abstract var expression: JKExpression
+    abstract var operator: JKOperator
 }
 
 interface JKKtCall : JKMethodCallExpression
@@ -62,9 +57,9 @@ interface JKKtAlsoCallExpression : JKKtMethodCallExpression {
 
 interface JKKtLiteralExpression : JKLiteralExpression
 
-interface JKKtWhenStatement : JKStatement {
-    var expression: JKExpression
-    var cases: List<JKKtWhenCase>
+abstract class JKKtWhenStatement : JKStatement() {
+    abstract var expression: JKExpression
+    abstract var cases: List<JKKtWhenCase>
 }
 
 interface JKKtWhenCase : JKTreeElement {
@@ -85,14 +80,14 @@ interface JKKtIsExpression : JKExpression, PsiOwner {
     var type: JKTypeElement
 }
 
-interface JKKtInitDeclaration : JKDeclaration {
-    var block: JKBlock
+abstract class JKKtInitDeclaration : JKDeclaration() {
+    abstract var block: JKBlock
 }
 
 
-interface JKKtConvertedFromForLoopSyntheticWhileStatement : JKStatement {
-    var variableDeclaration: JKStatement
-    var whileStatement: JKWhileStatement
+abstract class JKKtConvertedFromForLoopSyntheticWhileStatement : JKStatement() {
+    abstract var variableDeclaration: JKStatement
+    abstract var whileStatement: JKWhileStatement
 }
 
 

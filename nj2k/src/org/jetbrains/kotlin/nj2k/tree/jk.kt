@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.nj2k.tree
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.nj2k.tree.impl.JKClassSymbol
-import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldSymbol
-import org.jetbrains.kotlin.nj2k.tree.impl.JKMethodSymbol
+import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
 
-interface JKTreeElement : JKElement {
+interface JKTreeElement : JKElement, JKNonCodeElementsListOwner {
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
 
     fun <R> accept(visitor: JKVisitor<R, Nothing?>): R = accept(visitor, null)
@@ -38,7 +36,9 @@ interface PsiOwner {
     var psi: PsiElement?
 }
 
-interface JKDeclaration : JKTreeElement
+abstract class JKDeclaration : JKTreeElement, JKBranchElementBase() {
+    override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+}
 
 interface JKImportStatement : JKTreeElement {
     val name: JKNameIdentifier
@@ -50,14 +50,15 @@ interface JKFile : JKTreeElement, JKBranchElement {
     var declarationList: List<JKDeclaration>
 }
 
-interface JKClass : JKDeclaration, JKVisibilityOwner, JKExtraModifiersOwner, JKModalityOwner, JKTypeParameterListOwner, JKAnnotationListOwner,
+abstract class JKClass : JKDeclaration(), JKVisibilityOwner, JKExtraModifiersOwner, JKModalityOwner, JKTypeParameterListOwner,
+    JKAnnotationListOwner,
     JKBranchElement {
-    val name: JKNameIdentifier
+    abstract val name: JKNameIdentifier
 
-    val inheritance: JKInheritanceInfo
+    abstract val inheritance: JKInheritanceInfo
 
-    var classBody: JKClassBody
-    var classKind: ClassKind
+    abstract var classBody: JKClassBody
+    abstract var classKind: ClassKind
 
     enum class ClassKind {
         ANNOTATION, CLASS, ENUM, INTERFACE, OBJECT, COMPANION
@@ -100,31 +101,70 @@ interface JKAnnotationListOwner : JKTreeElement {
     var annotationList: JKAnnotationList
 }
 
-interface JKMethod : JKDeclaration, JKVisibilityOwner, JKModalityOwner, JKExtraModifiersOwner, JKTypeParameterListOwner,
+abstract class JKMethod : JKDeclaration(), JKVisibilityOwner, JKModalityOwner, JKExtraModifiersOwner, JKTypeParameterListOwner,
     JKAnnotationListOwner {
-    val name: JKNameIdentifier
-    var parameters: List<JKParameter>
-    var returnType: JKTypeElement
-    var block: JKBlock
+    abstract val name: JKNameIdentifier
+    abstract var parameters: List<JKParameter>
+    abstract var returnType: JKTypeElement
+    abstract var block: JKBlock
+
+    val leftParen = JKTokenElementImpl("(")
+    val rightParen = JKTokenElementImpl(")")
 }
 
-interface JKVariable : JKDeclaration, JKAnnotationListOwner {
-    var type: JKTypeElement
-    var name: JKNameIdentifier
-    var initializer: JKExpression
+abstract class JKVariable : JKDeclaration(), JKAnnotationListOwner {
+    abstract var type: JKTypeElement
+    abstract var name: JKNameIdentifier
+    abstract var initializer: JKExpression
 }
 
-interface JKForLoopVariable : JKVariable
+abstract class JKForLoopVariable : JKVariable()
 
-interface JKLocalVariable : JKVariable, JKMutabilityOwner
+abstract class JKLocalVariable : JKVariable(), JKMutabilityOwner
 
-interface JKExtraModifiersOwner : JKModifiersListOwner {
-    var extraModifiers: List<ExtraModifier>
+
+abstract class JKModifierElement : JKTreeElement, JKBranchElementBase(), JKNonCodeElementsListOwner
+
+val JKModifierElement.modifier: Modifier
+    get() = when (this) {
+        is JKMutabilityModifierElement -> mutability
+        is JKModalityModifierElement -> modality
+        is JKVisibilityModifierElement -> visibility
+        is JKExtraModifierElement -> extraModifier
+        else -> error("")
+    }
+
+abstract class JKMutabilityModifierElement : JKModifierElement() {
+    abstract var mutability: Mutability
+}
+
+abstract class JKModalityModifierElement : JKModifierElement() {
+    abstract var modality: Modality
+}
+
+abstract class JKVisibilityModifierElement : JKModifierElement() {
+    abstract var visibility: Visibility
+}
+
+abstract class JKExtraModifierElement : JKModifierElement() {
+    abstract var extraModifier: ExtraModifier
 }
 
 interface Modifier {
     val text: String
 }
+
+interface JKExtraModifiersOwner : JKModifiersListOwner {
+    var extraModifierElements: List<JKExtraModifierElement>
+}
+
+fun JKExtraModifiersOwner.elementByModifier(modifier: ExtraModifier): JKExtraModifierElement? =
+    extraModifierElements.firstOrNull { it.extraModifier == modifier }
+
+fun JKExtraModifiersOwner.hasExtraModifier(modifier: ExtraModifier): Boolean =
+    extraModifierElements.any { it.extraModifier == modifier }
+
+//val JKExtraModifiersOwner.extraModifiers
 
 enum class ExtraModifier(override val text: String) : Modifier {
     ACTUAL("actual"),
@@ -156,8 +196,8 @@ enum class ExtraModifier(override val text: String) : Modifier {
     VOLATILE("volatile")
 }
 
-interface JKVisibilityOwner : JKModifiersListOwner{
-    var visibility: Visibility
+interface JKVisibilityOwner : JKModifiersListOwner {
+    val visibilityElement: JKVisibilityModifierElement
 }
 
 enum class Visibility(override val text: String) : Modifier {
@@ -168,8 +208,14 @@ enum class Visibility(override val text: String) : Modifier {
     PRIVATE("private")
 }
 
+var JKVisibilityOwner.visibility: Visibility
+    get() = visibilityElement.visibility
+    set(value) {
+        visibilityElement.visibility = value
+    }
+
 interface JKModalityOwner : JKModifiersListOwner {
-    var modality: Modality
+    val modalityElement: JKModalityModifierElement
 }
 
 
@@ -180,8 +226,14 @@ enum class Modality(override val text: String) : Modifier {
     OVERRIDE("override")
 }
 
+var JKModalityOwner.modality: Modality
+    get() = modalityElement.modality
+    set(value) {
+        modalityElement.modality = value
+    }
+
 interface JKMutabilityOwner : JKModifiersListOwner {
-    var mutability: Mutability
+    val mutabilityElement: JKMutabilityModifierElement
 }
 
 enum class Mutability(override val text: String) : Modifier {
@@ -190,23 +242,38 @@ enum class Mutability(override val text: String) : Modifier {
     UNKNOWN("var")//TODO ???
 }
 
+var JKMutabilityOwner.mutability: Mutability
+    get() = mutabilityElement.mutability
+    set(value) {
+        mutabilityElement.mutability = value
+    }
+
 interface JKModifiersListOwner : JKTreeElement
 
-fun JKModifiersListOwner.modifiers(): List<Modifier> =
-    listOfNotNull((this as? JKVisibilityOwner)?.visibility) +
-            (this as? JKExtraModifiersOwner)?.extraModifiers.orEmpty() +
-            listOfNotNull((this as? JKModalityOwner)?.modality) +
-            listOfNotNull((this as? JKMutabilityOwner)?.mutability)
+fun JKModifiersListOwner.modifierElements(): List<JKModifierElement> =
+    listOfNotNull((this as? JKVisibilityOwner)?.visibilityElement) +
+            (this as? JKExtraModifiersOwner)?.extraModifierElements.orEmpty() +
+            listOfNotNull((this as? JKModalityOwner)?.modalityElement) +
+            listOfNotNull((this as? JKMutabilityOwner)?.mutabilityElement)
 
 
 interface JKTypeElement : JKTreeElement {
     val type: JKType
 }
 
-interface JKStatement : JKTreeElement
+abstract class JKStatement : JKTreeElement, JKBranchElementBase() {
+    override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+}
 
-interface JKBlock : JKTreeElement {
-    var statements: List<JKStatement>
+abstract class JKBlock : JKTreeElement, JKBranchElementBase() {
+    abstract var statements: List<JKStatement>
+
+    val leftBrace = JKTokenElementImpl("{")
+    val rightBrace = JKTokenElementImpl("}")
+}
+
+abstract class JKBodyStub : JKBlock() {
+
 }
 
 interface JKIdentifier : JKTreeElement
@@ -217,12 +284,12 @@ interface JKNameIdentifier : JKIdentifier {
 
 interface JKExpression : JKTreeElement, JKAnnotationMemberValue
 
-interface JKExpressionStatement : JKStatement, JKBranchElement {
-    val expression: JKExpression
+abstract class JKExpressionStatement : JKStatement() {
+    abstract val expression: JKExpression
 }
 
-interface JKDeclarationStatement : JKStatement {
-    val declaredStatements: List<JKDeclaration>
+abstract class JKDeclarationStatement : JKStatement() {
+    abstract val declaredStatements: List<JKDeclaration>
 }
 
 interface JKOperatorExpression : JKExpression {
@@ -310,8 +377,10 @@ interface JKLiteralExpression : JKExpression {
     }
 }
 
-interface JKParameter : JKVariable, JKModifiersListOwner {
-    var isVarArgs: Boolean
+abstract class JKParameter : JKVariable(), JKModifiersListOwner {
+    abstract var isVarArgs: Boolean
+
+    override var rightNonCodeElements: List<JKNonCodeElement> = emptyList()
 }
 
 interface JKStringLiteralExpression : JKLiteralExpression {
@@ -320,16 +389,16 @@ interface JKStringLiteralExpression : JKLiteralExpression {
 
 interface JKStubExpression : JKExpression
 
-interface JKLoopStatement : JKStatement {
-    var body: JKStatement
+abstract class JKLoopStatement : JKStatement() {
+    abstract var body: JKStatement
 }
 
-interface JKBlockStatement : JKStatement, JKBranchElement {
-    var block: JKBlock
+abstract class JKBlockStatement : JKStatement() {
+    abstract var block: JKBlock
 }
 
-interface JKBlockStatementWithoutBrackets : JKStatement, JKBranchElement {
-    var block: JKBlock
+abstract class JKBlockStatementWithoutBrackets : JKStatement() {
+    abstract var statements: List<JKStatement>
 }
 
 interface JKThisExpression : JKExpression {
@@ -340,27 +409,27 @@ interface JKSuperExpression : JKExpression {
     var qualifierLabel: JKLabel
 }
 
-interface JKWhileStatement : JKLoopStatement {
-    var condition: JKExpression
+abstract class JKWhileStatement : JKLoopStatement() {
+    abstract var condition: JKExpression
 }
 
-interface JKDoWhileStatement : JKLoopStatement {
-    var condition: JKExpression
+abstract class JKDoWhileStatement : JKLoopStatement() {
+    abstract var condition: JKExpression
 }
 
-interface JKBreakStatement : JKStatement
+abstract class JKBreakStatement : JKStatement()
 
-interface JKBreakWithLabelStatement : JKBreakStatement {
-    var label: JKNameIdentifier
+abstract class JKBreakWithLabelStatement : JKBreakStatement() {
+    abstract var label: JKNameIdentifier
 }
 
-interface JKIfStatement : JKStatement {
-    var condition: JKExpression
-    var thenBranch: JKStatement
+abstract class JKIfStatement : JKStatement() {
+    abstract var condition: JKExpression
+    abstract var thenBranch: JKStatement
 }
 
-interface JKIfElseStatement : JKIfStatement {
-    var elseBranch: JKStatement
+abstract class JKIfElseStatement : JKIfStatement() {
+    abstract var elseBranch: JKStatement
 }
 
 interface JKIfElseExpression : JKExpression {
@@ -391,16 +460,16 @@ interface JKLabelText : JKLabel {
     val label: JKNameIdentifier
 }
 
-interface JKContinueStatement : JKStatement {
-    var label: JKLabel
+abstract class JKContinueStatement : JKStatement() {
+    abstract var label: JKLabel
 }
 
-interface JKLabeledStatement : JKStatement {
+interface JKLabeledStatement : JKExpression {
     var statement: JKStatement
     val labels: List<JKNameIdentifier>
 }
 
-interface JKEmptyStatement : JKStatement
+abstract class JKEmptyStatement : JKStatement()
 
 interface JKTypeParameterList : JKTreeElement {
     var typeParameters: List<JKTypeParameter>
@@ -415,19 +484,19 @@ interface JKTypeParameterListOwner : JKTreeElement {
     var typeParameterList: JKTypeParameterList
 }
 
-interface JKEnumConstant : JKVariable {
-    val arguments: JKArgumentList
-    val body: JKClassBody
+abstract class JKEnumConstant : JKVariable() {
+    abstract val arguments: JKArgumentList
+    abstract val body: JKClassBody
 }
 
-interface JKForInStatement : JKStatement {
-    var declaration: JKDeclaration
-    var iterationExpression: JKExpression
-    var body: JKStatement
+abstract class JKForInStatement : JKStatement() {
+    abstract var declaration: JKDeclaration
+    abstract var iterationExpression: JKExpression
+    abstract var body: JKStatement
 }
 
-interface JKPackageDeclaration : JKDeclaration {
-    var packageName: JKNameIdentifier
+abstract class JKPackageDeclaration : JKDeclaration() {
+    abstract var packageName: JKNameIdentifier
 }
 
 interface JKClassLiteralExpression : JKExpression {

@@ -49,7 +49,7 @@
 import java.io.File
 
 
-val JK_ROOT = File("./j2k/newSrc/org/jetbrains/kotlin/j2k/tree")
+val JK_ROOT = File("./nj2k/src/org/jetbrains/kotlin/nj2k/tree")
 
 val JK_OUT_ROOT = File(JK_ROOT, "visitors")
 
@@ -58,17 +58,17 @@ val JK_JAVA_FILE = File(JK_ROOT, "j.kt")
 val JK_COMMON_FILE = File(JK_ROOT, "jk.kt")
 
 
-val interfaceRegex = "interface (JK[a-zA-Z]+)\\s?:?\\s?(JK[a-zA-Z]+)?".toRegex()
+val interfaceRegex = "(interface|abstract class)\\s+(JK[a-zA-Z]+)\\s+?:?\\s+(JK[a-zA-Z]+)?".toRegex()
 
 
 data class InterfaceData(val name: String, val extends: String?)
 
 fun File.interfaceNames() =
-        sequenceOf(this)
-                .map { it.readText() }
-                .flatMap { interfaceRegex.findAll(it) }
-                .map { match -> InterfaceData(match.groupValues[1], match.groupValues.getOrNull(2)) }
-                .toList()
+    sequenceOf(this)
+        .map { it.readText() }
+        .flatMap { interfaceRegex.findAll(it) }
+        .map { match -> InterfaceData(match.groupValues[2], match.groupValues.getOrNull(3)) }
+        .toList()
 
 
 fun String.safeVarName() = when (this) {
@@ -123,6 +123,41 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
             """
             |    fun visit$nameWithoutPrefix($arg) $generifyCall
             |    override fun visit$nameWithoutPrefix($arg, data: Nothing?) = visit$nameWithoutPrefix($argName)
+            """.trimMargin()
+        }
+        appendln()
+        appendln("}")
+    })
+
+    File(JK_OUT_ROOT, "${visitorName}WithCommentsPrinting.kt").writeText(buildString {
+        appendln(pkg)
+        appendln()
+        appendln("import org.jetbrains.kotlin.nj2k.tree.*")
+        appendln()
+
+        appendln("interface ${visitorName}WithCommentsPrinting : ${visitorName}Void {")
+        appendln(
+            """
+        |    fun printLeftNonCodeElements(element: JKNonCodeElementsListOwner)
+        |    fun printRightNonCodeElements(element: JKNonCodeElementsListOwner)
+        |
+        """.trimMargin()
+        )
+
+        interfaceData.joinTo(this, separator = "\n\n") { (name, ext) ->
+            val nameWithoutPrefix = name.removePrefix("JK")
+            val argName = nameWithoutPrefix.decapitalize().safeVarName()
+            val arg = "$argName: $name"
+            val rawVisitSuffix = "Raw"
+            val generifyCall = if (name != "JKTreeElement") "= visit${ext!!.removePrefix("JK")}$rawVisitSuffix($argName)" else ""
+            """
+            |    override fun visit$nameWithoutPrefix($arg) {
+            |        printLeftNonCodeElements($argName)
+            |        visit$nameWithoutPrefix$rawVisitSuffix($argName)
+            |        printRightNonCodeElements($argName)
+            |    }
+            |
+            |    fun visit$nameWithoutPrefix$rawVisitSuffix($arg) $generifyCall
             """.trimMargin()
         }
         appendln()

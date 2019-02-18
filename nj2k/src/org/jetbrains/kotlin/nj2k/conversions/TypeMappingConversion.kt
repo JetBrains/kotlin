@@ -39,7 +39,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
                     .fixRawType(element)
                     .mapType(element)
                     .refineNullability(element)
-                JKTypeElementImpl(newType)
+                JKTypeElementImpl(newType).withNonCodeElementsFrom(element)
             }
             is JKJavaNewExpression -> {
                 val newClassSymbol = element.classSymbol.mapClassSymbol(null)
@@ -49,7 +49,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
                         element::arguments.detached(),
                         element::typeArgumentList.detached().fixTypeArguments(newClassSymbol),
                         element::classBody.detached()
-                    )
+                    ).withNonCodeElementsFrom(element)
                 )
             }
             else -> recurse(element)

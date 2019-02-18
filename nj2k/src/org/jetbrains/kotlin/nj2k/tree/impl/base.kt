@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.nj2k.tree.impl
 
 import org.jetbrains.kotlin.nj2k.tree.JKBranchElement
 import org.jetbrains.kotlin.nj2k.tree.JKElement
+import org.jetbrains.kotlin.nj2k.tree.JKNonCodeElement
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
 import kotlin.properties.ReadWriteProperty
@@ -38,9 +39,12 @@ private class JKListChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKB
 }
 
 abstract class JKElementBase : JKTreeElement, Cloneable {
+    override var leftNonCodeElements: List<JKNonCodeElement> = emptyList()
+    override var rightNonCodeElements: List<JKNonCodeElement> = emptyList()
+
     override var parent: JKElement? = null
 
-    final override fun detach(from: JKElement) {
+    override fun detach(from: JKElement) {
         val prevParent = parent
         require(from == prevParent)
         parent = null
@@ -51,7 +55,7 @@ abstract class JKElementBase : JKTreeElement, Cloneable {
 
     }
 
-    final override fun attach(to: JKElement) {
+    override fun attach(to: JKElement) {
         check(parent == null)
         parent = to
         onAttach()
@@ -71,12 +75,12 @@ abstract class JKElementBase : JKTreeElement, Cloneable {
 
 abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
     private var childNum = 0
+
     protected fun <T : JKTreeElement, U : T> child(v: U): ReadWriteProperty<JKBranchElementBase, T> {
         children.add(childNum, v)
         v.attach(this)
         return JKChild(childNum++)
     }
-
 
     protected inline fun <reified T : JKTreeElement> children(): ReadWriteProperty<JKBranchElementBase, List<T>> {
         return children(emptyList())
@@ -88,7 +92,7 @@ abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
         return JKListChild(childNum++)
     }
 
-    final override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         forEachChild { it.accept(visitor, data) }
     }
 

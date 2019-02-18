@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.nj2k.ConversionContext
 import org.jetbrains.kotlin.nj2k.tree.JKJavaSynchronizedStatement
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.withNonCodeElementsFrom
 
 
 class SynchronizedStatementConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -26,7 +27,7 @@ class SynchronizedStatementConversion(private val context: ConversionContext) : 
                     element.lockExpression,
                     lambdaBody
                 )
-            )
+            ).withNonCodeElementsFrom(element)
         return recurse(JKExpressionStatementImpl(synchronizedCall))
     }
 

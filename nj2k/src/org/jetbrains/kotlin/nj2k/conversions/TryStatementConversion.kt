@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.useExpression
 
 
 class TryStatementConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -26,7 +28,7 @@ class TryStatementConversion(private val context: ConversionContext) : Recursive
                 tryStatement::finallyBlock.detached(),
                 tryStatement.catchSections.flatMap(::convertCatchSection)
             )
-        )
+        ).withNonCodeElementsFrom(tryStatement)
 
     private fun convertTryStatementWithResources(tryStatement: JKJavaTryStatement): JKStatement {
         val body =
@@ -41,7 +43,7 @@ class TryStatementConversion(private val context: ConversionContext) : Recursive
                     tryStatement::finallyBlock.detached(),
                     tryStatement.catchSections.flatMap(::convertCatchSection)
                 )
-            )
+            ).withNonCodeElementsFrom(tryStatement)
         } else body
     }
 
@@ -74,7 +76,7 @@ class TryStatementConversion(private val context: ConversionContext) : Recursive
             JKKtTryCatchSectionImpl(
                 parameter,
                 javaCatchSection.block.copyTreeAndDetach()
-            )
+            ).withNonCodeElementsFrom(javaCatchSection)
         }
     }
 }
