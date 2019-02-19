@@ -23,12 +23,24 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    private val intrinsics by lazy { context.intrinsics }
+    private val intrinsics = context.intrinsics
 
-    private val primitiveClassesObject by lazy { context.primitiveClassesObject }
+    private val primitiveClassesObject = context.primitiveClassesObject
 
-    private val primitiveClassProperties by lazy { context.primitiveClassProperties }
+    private val primitiveClassProperties = context.primitiveClassProperties
 
+    private val booleanClass by lazy {
+        primitiveClassProperties.singleOrNull { it.name == Name.identifier("booleanClass") }?.getter
+            ?: primitiveClassesObject.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.special("<get-booleanClass>") }
+    }
+    private val intClass by lazy {
+        primitiveClassProperties.singleOrNull { it.name == Name.identifier("intClass") }?.getter
+            ?: primitiveClassesObject.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.special("<get-intClass>") }
+    }
+    private val doubleClass by lazy {
+        primitiveClassProperties.singleOrNull { it.name == Name.identifier("doubleClass") }?.getter
+            ?: primitiveClassesObject.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.special("<get-doubleClass>") }
+    }
     private fun primitiveClassProperty(name: String) =
         primitiveClassProperties.single { it.name == Name.identifier(name) }
 
@@ -78,9 +90,17 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
 
     private fun getPrimitiveClass(target: IrSimpleFunction, returnType: IrType) =
         JsIrBuilder.buildCall(target.symbol, returnType).apply {
-            dispatchReceiver = JsIrBuilder.buildGetObjectValue(primitiveClassesObject.defaultType, primitiveClassesObject.symbol)
+            dispatchReceiver = JsIrBuilder.buildGetObjectValue(primitiveClassesObject.owner.defaultType, primitiveClassesObject)
         }
 
+    private fun callGetKClass(returnType: IrType, typeArgument: IrType) = when {
+        typeArgument.isBoolean() -> getPrimitiveClass(booleanClass, returnType)
+        typeArgument.isByte() -> getPrimitiveClass(intClass, returnType)
+        typeArgument.isShort() -> getPrimitiveClass(intClass, returnType)
+        typeArgument.isInt() -> getPrimitiveClass(intClass, returnType)
+        typeArgument.isFloat() -> getPrimitiveClass(doubleClass, returnType)
+        typeArgument.isDouble() -> getPrimitiveClass(doubleClass, returnType)
+        else -> JsIrBuilder.buildCall(intrinsics.jsGetKClass, returnType, listOf(typeArgument)).apply {
     private fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
         for ((typePredicate, v) in finalPrimitiveClasses) {
             if (typePredicate(typeArgument))

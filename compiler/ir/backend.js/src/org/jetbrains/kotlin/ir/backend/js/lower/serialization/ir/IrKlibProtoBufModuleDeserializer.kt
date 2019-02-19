@@ -344,9 +344,7 @@ class IrKlibProtoBufModuleDeserializer(
         }
         val module = IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
         module.patchDeclarationParents(null)
-        return module.also {
-            it.files.removeAll { f -> f.name == Namer.DYNAMIC_FILE_NAME }
-        }
+        return module
     }
 
     fun deserializeIrModule(moduleDescriptor: ModuleDescriptor, byteArray: ByteArray, deserializeAllDeclarations: Boolean = false): IrModuleFragment {

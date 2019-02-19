@@ -46,13 +46,12 @@ class ThrowableSuccessorsLowering(val context: JsIrBackendContext) : FileLowerin
     private val causeName get() = JsIrBuilder.buildString(stringType, "cause")
     private val nameName get() = JsIrBuilder.buildString(stringType, "name")
 
-    private val throwableClass by lazy { context.throwableClass }
-    private val throwableConstructors by lazy { context.throwableConstructors }
+    private val throwableClass = context.throwableClass
+    private val throwableConstructors = context.throwableConstructors
 
-    private val defaultCtor by lazy { context.defaultThrowableCtor }
-    private val toString by lazy {
+    private val defaultCtor = context.defaultThrowableCtor
+    private val toString =
         throwableClass.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.identifier("toString") }.symbol
-    }
 
     private val messagePropertyName = Name.identifier("message")
     private val causePropertyName = Name.identifier("cause")
@@ -66,8 +65,8 @@ class ThrowableSuccessorsLowering(val context: JsIrBackendContext) : FileLowerin
             ?: throwableClass.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == causePropertyName }?.getter?.symbol!!
     }
 
-    private val captureStackFunction by lazy { context.symbolTable.referenceSimpleFunction(context.getInternalFunctions("captureStack").single()) }
-    private val newThrowableFunction by lazy { context.symbolTable.referenceSimpleFunction(context.getInternalFunctions("newThrowable").single()) }
+    private val captureStackFunction = context.captureStackSymbol
+    private val newThrowableFunction = context.newThrowableSymbol
     private val pendingSuperUsages = mutableListOf<DirectThrowableSuccessors>()
 
     private data class DirectThrowableSuccessors(val klass: IrClass, val message: IrField, val cause: IrField)

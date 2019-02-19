@@ -126,39 +126,13 @@ class JsIrBackendContext(
     val callableReferencesCache = mutableMapOf<CallableReferenceKey, IrSimpleFunction>()
     val secondaryConstructorToFactoryCache = mutableMapOf<IrConstructor, ConstructorPair>()
 
-    val coroutineGetContext: IrFunctionSymbol
-        get() {
-            val continuation = symbolTable.referenceClass(
-                coroutinePackage.memberScope.getContributedClassifier(
-                    CONTINUATION_NAME,
-                    NoLookupLocation.FROM_BACKEND
-                ) as ClassDescriptor
-            )
-            val contextGetter =
-                continuation.owner.declarations.filterIsInstance<IrFunction>().atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
-                    ?: continuation.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
-            return contextGetter.symbol
-        }
-
-    val coroutineGetContextJs = symbolTable.referenceSimpleFunction(getInternalFunctions(GET_COROUTINE_CONTEXT_NAME).single())
-
-    val coroutineContextProperty: PropertyDescriptor
-        get() {
-            val vars = coroutinePackage.memberScope.getContributedVariables(
-                COROUTINE_CONTEXT_NAME,
-                NoLookupLocation.FROM_BACKEND
-            )
-            return vars.single()
-        }
-
-    val coroutineSuspendOrReturn =
-        symbolTable.referenceSimpleFunction(getInternalFunctions(COROUTINE_SUSPEND_OR_RETURN_JS_NAME).single())
-
-    val intrinsics by lazy { JsIntrinsics(irBuiltIns, this) }
+    val intrinsics = JsIntrinsics(irBuiltIns, this)
 
     private val operatorMap = referenceOperators()
 
+    // TODO: get rid of this
     val functions = (0..22).map { symbolTable.referenceClass(builtIns.getFunction(it)) }
+    val suspendFunctions = (0..22).map { symbolTable.referenceClass(builtIns.getSuspendFunction(it)) }
 
     private fun primitivesWithImplicitCompanionObject(): List<Name> {
         val numbers = PrimitiveType.NUMBER_TYPES
@@ -167,17 +141,6 @@ class JsIrBackendContext(
 
         return numbers + listOf(Name.identifier("String"))
     }
-
-    val primitiveCompanionObjects by lazy {
-        primitivesWithImplicitCompanionObject()
-            .associate {
-                it to symbolTable.lazyWrapper.referenceClass(
-                    getClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
-                )
-            }
-    }
-
-    val suspendFunctions = (0..22).map { symbolTable.referenceClass(builtIns.getSuspendFunction(it)) }
 
     val dynamicType = IrDynamicTypeImpl(createDynamicType(builtIns), emptyList(), Variance.INVARIANT)
 
@@ -203,54 +166,109 @@ class JsIrBackendContext(
             override val areEqual
                 get () = TODO("not implemented")
 
-            override val ThrowNullPointerException = getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).singleOrNull()?.let {
-                symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwNpeSymbol
+            override val ThrowNullPointerException =
+                symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
 
-            override val ThrowNoWhenBranchMatchedException
-                get () = irBuiltIns.noWhenBranchMatchedExceptionSymbol
+            override val ThrowNoWhenBranchMatchedException =
+                symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException"))).single())
 
-            override val ThrowTypeCastException = getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).singleOrNull()?.let {
-                symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwCceSymbol
+            override val ThrowTypeCastException =
+                symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).single())
 
-            override val ThrowUninitializedPropertyAccessException=
+            override val ThrowUninitializedPropertyAccessException =
                 symbolTable.referenceSimpleFunction(getFunctions(FqName("kotlin.throwUninitializedPropertyAccessException")).single())
 
             override val stringBuilder
                 get() = TODO("not implemented")
             override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
                 get() = TODO("not implemented")
-            override val coroutineImpl = symbolTable.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME.identifier))
-            override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
-                coroutineIntrinsicsPackage.memberScope.getContributedVariables(
-                    COROUTINE_SUSPENDED_NAME,
-                    NoLookupLocation.FROM_BACKEND
-                ).filterNot { it.isExpect }.single().getter!!
-            )
+            override val coroutineImpl =
+                symbolTable.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME.identifier))
+            override val coroutineSuspendedGetter =
+                symbolTable.referenceSimpleFunction(
+                    coroutineIntrinsicsPackage.memberScope.getContributedVariables(
+                        COROUTINE_SUSPENDED_NAME,
+                        NoLookupLocation.FROM_BACKEND
+                    ).filterNot { it.isExpect }.single().getter!!
+                )
 
-            override val lateinitIsInitializedPropertyGetter = symbolTable.referenceSimpleFunction(
-                module.getPackage(kotlinPackageFqn).memberScope.getContributedVariables(
-                    Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND
-                ).single {
-                    it.extensionReceiverParameter != null && !it.isExternal
-                }.getter!!
-            )
+            override val lateinitIsInitializedPropertyGetter =
+                symbolTable.referenceSimpleFunction(
+                    module.getPackage(kotlinPackageFqn).memberScope.getContributedVariables(
+                        Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND
+                    ).single {
+                        it.extensionReceiverParameter != null && !it.isExternal
+                    }.getter!!
+                )
         }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 
-    val throwISEymbol by lazy { getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).singleOrNull()?.let {
-        symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwIseSymbol }
+    // classes forced to be loaded
+
+    val primitiveClassesObject = symbolTable.referenceClass(
+        getClass(FqName.fromSegments(listOf("kotlin", "reflect", "js", "internal", "PrimitiveClasses")))
+    )
+
+    val throwableClass = symbolTable.referenceClass(getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable"))))
+
+    val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associate {
+        it to symbolTable.referenceClass(
+            getClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
+        )
+    }
+
+    val coroutineImpl = ir.symbols.coroutineImpl
+    val continuationClass = symbolTable.referenceClass(
+        coroutinePackage.memberScope.getContributedClassifier(
+            CONTINUATION_NAME,
+            NoLookupLocation.FROM_BACKEND
+        ) as ClassDescriptor
+    )
+
+
+    // Top-level functions forced to be loaded
+
+    val coroutineSuspendOrReturn = symbolTable.referenceSimpleFunction(getInternalFunctions(COROUTINE_SUSPEND_OR_RETURN_JS_NAME).single())
+    val coroutineSuspendGetter = ir.symbols.coroutineSuspendedGetter
+    val coroutineGetContext: IrFunctionSymbol
+        get() {
+            val contextGetter =
+                continuationClass.owner.declarations.filterIsInstance<IrFunction>().atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
+                    ?: continuationClass.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
+            return contextGetter.symbol
+        }
+
+    val coroutineGetContextJs = symbolTable.referenceSimpleFunction(getInternalFunctions(GET_COROUTINE_CONTEXT_NAME).single())
+
+    val coroutineContextProperty: PropertyDescriptor
+        get() {
+            val vars = coroutinePackage.memberScope.getContributedVariables(
+                COROUTINE_CONTEXT_NAME,
+                NoLookupLocation.FROM_BACKEND
+            )
+            return vars.single()
+        }
+
+    val lateinitIsInitializedPropertyGetter = ir.symbols.lateinitIsInitializedPropertyGetter
+
+    val captureStackSymbol = symbolTable.referenceSimpleFunction(getInternalFunctions("captureStack").single())
+    val newThrowableSymbol = symbolTable.referenceSimpleFunction(getInternalFunctions("newThrowable").single())
+
+    val throwISEymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
+    val throwNPESymbol = ir.symbols.ThrowNullPointerException
+    val throwCCESymbol = ir.symbols.ThrowTypeCastException
+    val throwNWBESymbol = ir.symbols.ThrowNoWhenBranchMatchedException
+    val throwUPAESymbol = ir.symbols.ThrowUninitializedPropertyAccessException
 
     val coroutineImplLabelProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("state")!! }
     val coroutineImplResultSymbol by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("result")!! }
     val coroutineImplExceptionProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("exception")!! }
     val coroutineImplExceptionStateProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("exceptionState")!! }
 
-    val primitiveClassesObject by lazy {
-        symbolTable.referenceClass(
-            getClass(FqName.fromSegments(listOf("kotlin", "reflect", "js", "internal", "PrimitiveClasses")))
-        ).owner
+    val primitiveClassProperties by lazy {
+        primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
     }
 
     val primitiveClassProperties by lazy { primitiveClassesObject.declarations.filterIsInstance<IrProperty>() }
@@ -266,7 +284,6 @@ class JsIrBackendContext(
         )
     }
     val throwableConstructors by lazy { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
-
     val defaultThrowableCtor by lazy { throwableConstructors.single { it.owner.valueParameters.size == 0 } }
 
     private fun referenceOperators() = OperatorNames.ALL.map { name ->

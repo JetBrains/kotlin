@@ -65,7 +65,7 @@ class ExternalDependenciesGenerator(
             assert(symbolTable.unboundConstructors.isEmpty())
             assert(symbolTable.unboundEnumEntries.isEmpty())
             assert(symbolTable.unboundFields.isEmpty())
-            assert(symbolTable.unboundSimpleFunctions.isEmpty())
+//            assert(symbolTable.unboundSimpleFunctions.isEmpty())
             assert(symbolTable.unboundTypeParameters.isEmpty())
         }
     }

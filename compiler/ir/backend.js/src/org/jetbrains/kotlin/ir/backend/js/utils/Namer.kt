@@ -99,6 +99,4 @@ object Namer {
 
     val THIS_SPECIAL_NAME = "<this>"
     val SET_SPECIAL_NAME = "<set-?>"
-
-    val DYNAMIC_FILE_NAME = "<dynamicDeclarations>"
 }

@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.createJsK
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -243,9 +240,20 @@ private fun compileIntoJsAgainstKlib(
         moduleType
     )
 
-    moduleFragment.files += runtimeModuleFragment.files
 
-    moduleFragment.replaceUnboundSymbols(context)
+
+    ExternalDependenciesGenerator(
+        runtimeModuleFragment.descriptor,
+        context.symbolTable,
+        context.irBuiltIns,
+        deserializer
+    ).generateUnboundSymbolsAsDependencies(runtimeModuleFragment)
+
+    val files = runtimeModuleFragment.files + moduleFragment.files
+
+    moduleFragment.files.clear()
+    moduleFragment.files += files
+
     moduleFragment.patchDeclarationParents()
 
     jsPhases.invokeToplevel(context.phaseConfig, context, moduleFragment)

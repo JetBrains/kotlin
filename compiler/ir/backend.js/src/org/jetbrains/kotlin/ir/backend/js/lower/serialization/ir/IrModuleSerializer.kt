@@ -389,19 +389,8 @@ internal class IrModuleSerializer(
     private fun serializeCall(call: IrCall): IrKlibProtoBuf.IrCall {
         val proto = IrKlibProtoBuf.IrCall.newBuilder()
 
-        if (call.dispatchReceiver?.type is IrDynamicType) {
-            val declaration = call.symbol.owner
-            dynamicFile.run {
-                if (!declarations.contains(declaration)) {
-                    declaration.parent = dynamicFile
-                    declarations += declaration
-                }
-            }
-        }
-
         proto.kind = irCallToPrimitiveKind(call)
         proto.symbol = serializeIrSymbol(call.symbol)
-
 
         call.superQualifierSymbol?.let {
             proto.`super` = serializeIrSymbol(it)
@@ -1138,7 +1127,7 @@ internal class IrModuleSerializer(
     fun serializeModule(module: IrModuleFragment): IrKlibProtoBuf.IrModule {
         val proto = IrKlibProtoBuf.IrModule.newBuilder()
             .setName(serializeString(module.name.toString()))
-        module.addSyntheticDynamicFile()
+
         module.files.forEach {
             proto.addFile(serializeIrFile(it))
         }
@@ -1155,31 +1144,6 @@ internal class IrModuleSerializer(
             .build()
 
         return proto.build()
-    }
-
-    private val dynamicPackage = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.dynamic"))
-    private lateinit var dynamicFile: IrFile
-
-    private fun IrModuleFragment.addSyntheticDynamicFile() {
-        dynamicFile = IrFileImpl(object : SourceManager.FileEntry {
-            override val name = Namer.DYNAMIC_FILE_NAME
-            override val maxOffset = UNDEFINED_OFFSET
-
-            override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int) =
-                SourceRangeInfo(
-                    "",
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET
-                )
-
-            override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
-            override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
-        }, dynamicPackage)
-        files += dynamicFile
     }
 
     fun serializedIrModule(module: IrModuleFragment): SerializedIr {

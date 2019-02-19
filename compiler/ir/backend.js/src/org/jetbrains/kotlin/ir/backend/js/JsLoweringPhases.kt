@@ -27,13 +27,13 @@ private fun ClassLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment
 
 private fun validationCallback(context: JsIrBackendContext, module: IrModuleFragment) {
     val validatorConfig = IrValidatorConfig(
-        abortOnError = true,
+        abortOnError = false,
         ensureAllNodesAreDifferent = true,
         checkTypes = false,
         checkDescriptors = false
     )
-    module.accept(IrValidator(context, validatorConfig), null)
-    module.accept(CheckDeclarationParentsVisitor, null)
+//    module.accept(IrValidator(context, validatorConfig), null)
+//    module.accept(CheckDeclarationParentsVisitor, null)
 }
 
 private fun makeJsModulePhase(
