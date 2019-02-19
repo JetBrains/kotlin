@@ -166,7 +166,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
     }
 
     private fun evaluateSafe(context: EvaluationContextImpl): Any? {
-        fun compilerFactory(): CompiledDataDescriptor = compileCodeFragment(context.debugProcess)
+        fun compilerFactory(): CompiledDataDescriptor = compileCodeFragment(context)
 
         val (compiledData, isCompiledDataFromCache) = compileCodeFragmentCacheAware(codeFragment, sourcePosition, ::compilerFactory)
         val classLoaderRef = loadClassesSafely(context, compiledData.classes)
@@ -194,7 +194,8 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         }
     }
 
-    private fun compileCodeFragment(debugProcess: DebugProcessImpl): CompiledDataDescriptor {
+    private fun compileCodeFragment(evaluationContext: EvaluationContextImpl): CompiledDataDescriptor {
+        val debugProcess = evaluationContext.debugProcess
         var analysisResult = checkForErrors(codeFragment, debugProcess)
 
         if (codeFragment.wrapToStringIfNeeded(analysisResult.bindingContext)) {
@@ -211,7 +212,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         val moduleDescriptor = analysisResult.moduleDescriptor
 
-        val result = CodeFragmentCompiler.compile(codeFragment, bindingContext, moduleDescriptor)
+        val result = CodeFragmentCompiler(evaluationContext).compile(codeFragment, bindingContext, moduleDescriptor)
         return CompiledDataDescriptor.from(result, sourcePosition)
     }
 

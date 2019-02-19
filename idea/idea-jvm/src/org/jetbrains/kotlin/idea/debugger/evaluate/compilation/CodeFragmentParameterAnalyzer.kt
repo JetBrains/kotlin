@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
+import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldPropertyDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory.Companion.FAKE_JAVA_CONTEXT_FUNCTION_NAME
+import org.jetbrains.kotlin.idea.debugger.safeLocation
+import org.jetbrains.kotlin.idea.debugger.safeMethod
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
@@ -61,11 +64,21 @@ class CodeFragmentParameterInfo(
     The purpose of this class is to figure out what parameters the received code fragment captures.
     It handles both directly mentioned names such as local variables or parameters and implicit values (dispatch/extension receivers).
  */
-class CodeFragmentParameterAnalyzer(private val codeFragment: KtCodeFragment, private val bindingContext: BindingContext) {
+class CodeFragmentParameterAnalyzer(
+    private val evaluationContext: EvaluationContextImpl,
+    private val codeFragment: KtCodeFragment,
+    private val bindingContext: BindingContext
+) {
     private val parameters = LinkedHashMap<DeclarationDescriptor, Smart>()
     private val crossingBounds = mutableSetOf<Dumb>()
 
     private val onceUsedChecker = OnceUsedChecker(CodeFragmentParameterAnalyzer::class.java)
+
+    private val containingPrimaryConstructor: ConstructorDescriptor? by lazy {
+        evaluationContext.frameProxy?.safeLocation()?.safeMethod()?.takeIf { it.isConstructor } ?: return@lazy null
+        val constructor = codeFragment.context?.getParentOfType<KtPrimaryConstructor>(false) ?: return@lazy null
+        bindingContext[BindingContext.CONSTRUCTOR, constructor]
+    }
 
     fun analyze(): CodeFragmentParameterInfo {
         onceUsedChecker.trigger()
@@ -112,15 +125,19 @@ class CodeFragmentParameterAnalyzer(private val codeFragment: KtCodeFragment, pr
                 if (dispatchReceiver is ImplicitReceiver) {
                     val descriptor = dispatchReceiver.declarationDescriptor
                     val parameter = processReceiver(dispatchReceiver)
-                    checkBounds(descriptor, expression, parameter)
-                    processed = true
+                    if (parameter != null) {
+                        checkBounds(descriptor, expression, parameter)
+                        processed = true
+                    }
                 }
 
                 if (!processed && resolvedCall.resultingDescriptor is SyntheticFieldDescriptor) {
                     val descriptor = resolvedCall.resultingDescriptor as SyntheticFieldDescriptor
                     val parameter = processSyntheticFieldVariable(descriptor)
-                    checkBounds(descriptor, expression, parameter)
-                    processed = true
+                    if (parameter != null) {
+                        checkBounds(descriptor, expression, parameter)
+                        processed = true
+                    }
                 }
 
                 // If a reference has receivers, we can calculate its value using them, no need to capture
@@ -177,7 +194,7 @@ class CodeFragmentParameterAnalyzer(private val codeFragment: KtCodeFragment, pr
     }
 
     private fun processDispatchReceiver(descriptor: ClassDescriptor): Smart? {
-        if (descriptor.kind == ClassKind.OBJECT) {
+        if (descriptor.kind == ClassKind.OBJECT || containingPrimaryConstructor != null) {
             return null
         }
 
@@ -239,8 +256,13 @@ class CodeFragmentParameterAnalyzer(private val codeFragment: KtCodeFragment, pr
     }
 
     private fun processSimpleNameExpression(target: DeclarationDescriptor): Smart? {
-        if ((target as? DeclarationDescriptorWithVisibility)?.visibility != Visibilities.LOCAL) {
-            // No need to capture non-local declarations
+        val isLocalTarget = (target as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.LOCAL
+
+        val isPrimaryConstructorParameter = !isLocalTarget
+                && target is PropertyDescriptor
+                && isContainingPrimaryConstructorParameter(target)
+
+        if (!isLocalTarget && !isPrimaryConstructorParameter) {
             return null
         }
 
@@ -259,6 +281,18 @@ class CodeFragmentParameterAnalyzer(private val codeFragment: KtCodeFragment, pr
             }
             else -> null
         }
+    }
+
+    private fun isContainingPrimaryConstructorParameter(target: PropertyDescriptor): Boolean {
+        val primaryConstructor = containingPrimaryConstructor ?: return false
+        for (parameter in primaryConstructor.valueParameters) {
+            val property = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter]
+            if (target == property) {
+                return true
+            }
+        }
+
+        return false
     }
 
     private fun processCoroutineContextCall(target: DeclarationDescriptor): Smart? {
