@@ -50,7 +50,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
                 is UastKotlinPsiVariable -> psi.ktInitializer
                 is UastKotlinPsiParameter -> psi.ktDefaultValue
                 is KtLightElement<*, *> -> {
-                    val origin = psi.kotlinOrigin
+                    val origin = psi.kotlinOrigin?.takeIf { it.canAnalyze() } // EA-137191
                     when (origin) {
                         is KtVariableDeclaration -> origin.initializer
                         is KtParameter -> origin.defaultValue

@@ -91,6 +91,7 @@ open class KotlinUMethod(
 
 
     override val uastBody by lz {
+        if (kotlinOrigin?.canAnalyze() != true) return@lz null // EA-137193
         val bodyExpression = when (kotlinOrigin) {
             is KtFunction -> kotlinOrigin.bodyExpression
             is KtProperty -> when {
