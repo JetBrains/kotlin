@@ -2,9 +2,9 @@ versions.intellijSdk=183.5153.4
 versions.androidBuildTools=r23.0.1
 versions.idea.NodeJS=181.3494.12
 # TODO: select appropriate 183 base build for AppCode
-versions.appcode=191.1411
-versions.appcode.strict=true
-versions.appcode.repo=ijplatform_master_CIDR_AppCode_Installers
+versions.appcode=191.5532.30
+versions.appcode.strict=false
+versions.appcode.repo=ijplatform_IjPlatform191_Cidr_AppCode_PublicInstallers
 versions.clion=183.5429.37
 versions.clion.strict=false
 versions.clion.repo=ijplatform_IjPlatform183_Cidr_CLion_PublicInstallers
