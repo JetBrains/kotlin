@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.KonanAbiVersion
 import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.konan.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.konan.parseKonanVersion
 
@@ -105,7 +106,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
 
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList()
+        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder)
     }
 
     internal val defaultNativeLibraries: List<String> = mutableListOf<String>().apply {

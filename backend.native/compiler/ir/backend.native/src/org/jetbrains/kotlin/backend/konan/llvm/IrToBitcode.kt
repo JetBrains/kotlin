@@ -324,7 +324,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
         appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
         appendStaticInitializers()
-        appendEntryPointSelector(context.ir.symbols.entryPoint?.owner)
         if (context.isNativeLibrary) {
             appendCAdapters()
         }
@@ -2336,14 +2335,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             appendingTo(bbNeedInit) {
                 LLVMBuildStore(builder, kImmOne, initGuard)
 
-                if (context.config.produce.isNativeBinary) {
-                    context.llvm.librariesToLink.forEach {
-                        val dependencyCtorFunction = context.llvm.externalFunction(
-                                it.moduleConstructorName, kVoidFuncType, CurrentKonanModuleOrigin)
-                        call(dependencyCtorFunction, emptyList(), Lifetime.IRRELEVANT,
-                                exceptionHandler = ExceptionHandler.Caller, verbatim = true)
-                    }
-                }
                 // TODO: shall we put that into the try block?
                 context.llvm.staticInitializers.forEach {
                     call(it, emptyList(), Lifetime.IRRELEVANT,

@@ -89,6 +89,8 @@ message IrFile {
     repeated UniqId declaration_id = 1;
     required FileEntry file_entry = 2;
     required String fq_name = 3;
+    required Annotations annotations = 4;
+    repeated IrSymbol explicitly_exported_to_compiler = 5; // Symbols referenced by C runtime. TODO: Make an extension?
 }
 
 message IrModule {

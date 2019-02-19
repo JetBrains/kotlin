@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.findTopLevelDeclaration
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.isSerializableExpectClass
@@ -39,6 +40,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrUnaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.library.impl.CombinedIrFileWriter
 import org.jetbrains.kotlin.konan.library.impl.DeclarationId
 import org.jetbrains.kotlin.metadata.KonanIr
@@ -1058,6 +1063,7 @@ internal class IrModuleSerializer(
         val proto = KonanIr.IrFile.newBuilder()
             .setFileEntry(serializeFileEntry(file.fileEntry))
             .setFqName(serializeString(file.fqName.toString()))
+            .setAnnotations(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
             if (it is IrTypeAlias || (it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass)) {
@@ -1070,6 +1076,26 @@ internal class IrModuleSerializer(
             writer.addDeclaration(DeclarationId(uniqId.index, uniqId.isLocal), byteArray)
             proto.addDeclarationId(protoUniqId(uniqId))
         }
+
+        file.acceptVoid(object: IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitFunction(declaration: IrFunction) {
+                if (declaration.descriptor.annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)
+                        || declaration.descriptor.annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation))
+                    proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
+                super.visitDeclaration(declaration)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                if (declaration.descriptor.annotations.hasAnnotation(RuntimeNames.exportTypeInfoAnnotation))
+                    proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
+                super.visitDeclaration(declaration)
+            }
+        })
+
         return proto.build()
     }
 

@@ -142,12 +142,7 @@ internal interface ContextUtils : RuntimeAware {
         get() = context.llvm.staticData
 
     fun isExternal(declaration: IrDeclaration): Boolean {
-        val pkg = declaration.findPackage()
-        return when (pkg) {
-            is IrFile -> pkg.packageFragmentDescriptor.containingDeclaration != context.moduleDescriptor
-            is IrExternalPackageFragment -> true
-            else -> error(pkg)
-        }
+        return false
     }
 
     /**
@@ -366,19 +361,6 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                 .filterRoots { (!it.isDefault && !context.config.purgeUserLibs) || imports.isImported(it.library) }
                 .getFullList(TopologicalLibraryOrder)
     }
-
-    val librariesForLibraryManifest: List<KonanLibrary>
-        get() {
-            // Note: library manifest should contain the list of all user libraries and frontend-used default libraries.
-            // However this would result into linking too many default libraries into the application which uses current
-            // library. This problem should probably be fixed by adding different kind of dependencies to library
-            // manifest.
-            // Currently the problem is workarounded like this:
-            return this.librariesToLink
-            // This list contains all user libraries and the default libraries required for link (not frontend).
-            // That's why the workaround doesn't work only in very special cases, e.g. when `-nodefaultlibs` is enabled
-            // when compiling the application, while the library API uses types from default libs.
-        }
 
     val staticData = StaticData(context)
 

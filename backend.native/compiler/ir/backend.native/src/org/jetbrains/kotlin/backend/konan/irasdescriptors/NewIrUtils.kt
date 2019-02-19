@@ -7,25 +7,22 @@ package org.jetbrains.kotlin.backend.konan.irasdescriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.descriptors.getArgumentValueOrNull
-import org.jetbrains.kotlin.backend.konan.descriptors.konanBackingField
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
 val IrConstructor.constructedClass get() = this.parent as IrClass
 
@@ -95,23 +92,7 @@ fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { i
 val IrProperty.konanBackingField: IrField?
     get() {
         assert(this.isReal)
-        this.backingField?.let { return it }
-
-        (this.descriptor as? DeserializedPropertyDescriptor)?.konanBackingField?.let { backingFieldDescriptor ->
-            val result = IrFieldImpl(
-                    this.startOffset,
-                    this.endOffset,
-                    IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                    backingFieldDescriptor,
-                    this.getter!!.returnType
-            ).also {
-                it.parent = this.parent
-            }
-            this.backingField = result
-            return result
-        }
-
-        return null
+        return this.backingField
     }
 
 val IrFunction.isReal get() = this.origin != IrDeclarationOrigin.FAKE_OVERRIDE

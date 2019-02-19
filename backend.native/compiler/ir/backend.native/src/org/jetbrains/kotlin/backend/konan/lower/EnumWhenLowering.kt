@@ -143,7 +143,7 @@ internal class EnumWhenLowering(private val context: Context) : IrElementTransfo
         if (lhs is IrValueAccessExpression && lhs.symbol.owner == topmostSubject && rhs is IrGetEnumValue &&
                 // Both entries should belong to the same class:
                 topmostSubject.type.classifierOrNull?.owner == rhs.symbol.owner.parent) {
-            val entryOrdinal = context.specialDeclarationsFactory.getEnumEntryOrdinal(rhs.descriptor)
+            val entryOrdinal = context.specialDeclarationsFactory.getEnumEntryOrdinal(rhs.symbol.owner)
             val subjectOrdinal = topmostOrdinalProvider.value
             return IrCallImpl(call.startOffset, call.endOffset, areEqualByValue.owner.returnType, areEqualByValue).apply {
                 putValueArgument(0,

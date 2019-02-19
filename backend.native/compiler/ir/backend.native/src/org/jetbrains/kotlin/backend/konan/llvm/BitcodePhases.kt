@@ -151,9 +151,9 @@ internal val cStubsPhase = makeKonanModuleOpPhase(
         op = { context, _ -> produceCStubs(context) }
 )
 
-internal val bitcodeLinkerPhase = makeKonanModuleOpPhase(
-        name = "BitcodeLinker",
-        description = "Bitcode linking",
+internal val produceOutputPhase = makeKonanModuleOpPhase(
+        name = "ProduceOutput",
+        description = "Produce output",
         op = { context, _ -> produceOutput(context) }
 )
 

@@ -153,7 +153,6 @@ classes.dependsOn 'compilerClasses', 'cli_bcClasses', 'bc_frontendClasses'
 
 // These are just a couple of aliases
 task stdlib(dependsOn: "${hostName}Stdlib")
-task start(dependsOn: "${hostName}Start")
 
 def commonSrc = file('build/stdlib')
 
@@ -180,7 +179,8 @@ final List<File> stdLibSrc = [
         project(':Interop:Runtime').file('src/main/kotlin'),
         project(':Interop:Runtime').file('src/native/kotlin'),
         project(':Interop:JsRuntime').file('src/main/kotlin'),
-        project(':runtime').file('src/main/kotlin')
+        project(':runtime').file('src/main/kotlin'),
+        project(':runtime').file('src/launcher/kotlin')
 ]
 
 task zipStdLibSources(type: Zip, dependsOn: unzipStdlibSources) {
@@ -243,21 +243,6 @@ targetList.each { target ->
         dependsOn 'unzipStdlibSources'
         dependsOn ":runtime:${target}Runtime"
         dependsOn ":distCompiler"
-    }
-
-    task("${target}Start", type: JavaExec) {
-        main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-        classpath = project.configurations.cli_bc
-        jvmArgs = konanJvmArgs
-        args = [*konanArgs, '-produce', 'bitcode',
-                '-output', project(':runtime').file("build/${target}Start"),
-                '-library', project(':runtime').file("build/${target}Stdlib"),
-                project(':runtime').file('src/launcher/kotlin')]
-
-        inputs.dir(project(':runtime').file('src/launcher/kotlin'))
-        outputs.file(project(':runtime').file("build/${target}Start.bc"))
-
-        dependsOn ":runtime:${target}Runtime", "${target}Stdlib"
     }
 }
 

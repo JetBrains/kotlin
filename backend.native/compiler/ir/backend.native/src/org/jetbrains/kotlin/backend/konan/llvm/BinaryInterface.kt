@@ -107,7 +107,7 @@ private val cnameAnnotation = FqName("kotlin.native.CName")
 
 private val exportForCppRuntimeAnnotation = RuntimeNames.exportForCppRuntime
 
-private val exportForCompilerAnnotation = FqName("kotlin.native.internal.ExportForCompiler")
+private val exportForCompilerAnnotation = RuntimeNames.exportForCompilerAnnotation
 
 private val publishedApiAnnotation = FqName("kotlin.PublishedApi")
 

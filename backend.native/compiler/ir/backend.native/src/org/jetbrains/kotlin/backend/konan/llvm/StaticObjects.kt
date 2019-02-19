@@ -86,15 +86,6 @@ internal fun StaticData.createConstKotlinObject(type: IrClass, vararg fields: Co
 internal fun StaticData.createInitializer(type: IrClass, vararg fields: ConstValue): ConstValue =
         Struct(objHeader(type.typeInfoPtr), *fields)
 
-private fun StaticData.getArrayListClass(): ClassDescriptor {
-    val module = context.irModule!!.descriptor
-    val pkg = module.getPackage(FqName.fromSegments(listOf("kotlin", "collections")))
-    val classifier = pkg.memberScope.getContributedClassifier(Name.identifier("ArrayList"),
-            NoLookupLocation.FROM_BACKEND)
-
-    return classifier as ClassDescriptor
-}
-
 /**
  * Creates static instance of `kotlin.collections.ArrayList<elementType>` with given values of fields.
  *

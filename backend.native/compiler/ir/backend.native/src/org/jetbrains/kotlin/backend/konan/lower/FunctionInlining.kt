@@ -131,6 +131,9 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, startOffset, endOffset)
 
             if (descriptor.isInlineConstructor) {
+                // Copier sets parent to be the current function but
+                // constructor's parent cannot be a function.
+                copiedCallee.parent = callee.parent
                 val delegatingConstructorCall = statements[0] as IrDelegatingConstructorCall
                 irBuilder.run {
                     val constructorDescriptor = delegatingConstructorCall.descriptor.original

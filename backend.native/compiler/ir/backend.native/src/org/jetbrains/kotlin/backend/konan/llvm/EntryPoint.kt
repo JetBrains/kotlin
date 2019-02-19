@@ -40,10 +40,9 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
         candidates.singleOrNull { it.hasSingleArrayOfStringParameter } ?:
         candidates.singleOrNull { it.hasNoParameters } ?:
         context.reportCompilationError("Could not find '$entryName' in '$packageName' package.")
-    
-    if (main.isSuspend) {
+
+    if (main.isSuspend)
         context.reportCompilationError("Entry point can not be a suspend function.")
-    }
 
     return main
 }

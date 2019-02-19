@@ -212,7 +212,7 @@ internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: 
     val found = LLVMGetNamedGlobal(context.llvmModule, name)
     if (found != null) {
         assert (getGlobalType(found) == type)
-        assert (LLVMGetInitializer(found) == null)
+        assert (LLVMGetInitializer(found) == null) { "$name is already declared in the current module" }
         if (threadLocal)
             assert(LLVMGetThreadLocalMode(found) == context.llvm.tlsMode)
         return found

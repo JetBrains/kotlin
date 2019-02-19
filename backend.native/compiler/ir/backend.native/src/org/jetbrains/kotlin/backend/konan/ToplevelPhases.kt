@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -65,22 +66,39 @@ internal val psiToIrPhase = konanUnitPhase(
                     forwardDeclarationsModuleDescriptor
             )
 
-            val irModules = moduleDescriptor.allDependencyModules.map {
-                val library  = it.konanLibrary
-                if (library == null) {
-                    return@map null
+            val modules = mutableMapOf<String, IrModuleFragment>()
+
+            var dependenciesCount = 0
+            while (true) {
+                // context.config.librariesWithDependencies could change at each iteration.
+                val dependencies = moduleDescriptor.allDependencyModules.filter {
+                    config.librariesWithDependencies(moduleDescriptor).contains(it.konanLibrary)
                 }
-                library.irHeader?.let { header -> deserializer.deserializeIrModule(it, header) }
-            }.filterNotNull()
+                for (dependency in dependencies) {
+                    val konanLibrary = dependency.konanLibrary!!
+                    if (modules.containsKey(konanLibrary.libraryName)) continue
+                    konanLibrary.irHeader?.let { header ->
+                        val deserializationStrategy = when {
+                            config.produce.isNativeBinary -> DeserializationStrategy.EXPLICITLY_EXPORTED
+                            else -> DeserializationStrategy.ONLY_REFERENCED
+                        }
+                        modules[konanLibrary.libraryName] = deserializer.deserializeIrModuleHeader(dependency, header, deserializationStrategy)
+                    }
+                }
+                if (dependencies.size == dependenciesCount) break
+                dependenciesCount = dependencies.size
+            }
+
 
             val symbols = KonanSymbols(this, generatorContext.symbolTable, generatorContext.symbolTable.lazyWrapper)
             val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), deserializer)
 
-            irModules.forEach {
+            modules.values.forEach {
                 it.patchDeclarationParents()
             }
 
             irModule = module
+            irModules = modules
             ir.symbols = symbols
 
 //        validateIrModule(this, module)
@@ -100,12 +118,6 @@ internal val irGeneratorPluginsPhase = konanUnitPhase(
         },
         name = "IrGeneratorPlugins",
         description = "Plugged-in ir generators"
-)
-
-internal val genSyntheticFieldsPhase = konanUnitPhase(
-        op = { markBackingFields(this) },
-        name = "GenSyntheticFields",
-        description = "Generate synthetic fields"
 )
 
 // TODO: We copy default value expressions from expects to actuals before IR serialization,
@@ -128,15 +140,13 @@ internal val patchDeclarationParents0Phase = konanUnitPhase(
 internal val serializerPhase = konanUnitPhase(
         op = {
             val declarationTable = DeclarationTable(irModule!!.irBuiltins, DescriptorTable())
-            val serializedIr = IrModuleSerializer(
-                    this, declarationTable, bodiesOnlyForInlines = config.isInteropStubs).serializedIrModule(irModule!!)
+            val serializedIr = IrModuleSerializer(this, declarationTable).serializedIrModule(irModule!!)
             val serializer = KonanSerializationUtil(this, config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, declarationTable)
             serializedLinkData =
                     serializer.serializeModule(moduleDescriptor, /*if (!config.isInteropStubs) serializedIr else null*/ serializedIr)
         },
         name = "Serializer",
-        description = "Serialize descriptor tree and inline IR bodies",
-        prerequisite = setOf(genSyntheticFieldsPhase)
+        description = "Serialize descriptor tree and inline IR bodies"
 )
 
 internal val setUpLinkStagePhase = konanUnitPhase(
@@ -165,13 +175,108 @@ internal val linkPhase = namedUnitPhase(
                 linkerPhase
 )
 
+internal val allLoweringsPhase = namedIrModulePhase(
+        name = "IrLowering",
+        description = "IR Lowering",
+        lower = removeExpectDeclarationsPhase then
+                lowerBeforeInlinePhase then
+                inlinePhase then
+                lowerAfterInlinePhase then
+                interopPart1Phase then
+                patchDeclarationParents1Phase then
+                performByIrFile(
+                        name = "IrLowerByFile",
+                        description = "IR Lowering by file",
+                        lower = lateinitPhase then
+                                stringConcatenationPhase then
+                                enumConstructorsPhase then
+                                initializersPhase then
+                                sharedVariablesPhase then
+                                localFunctionsPhase then
+                                tailrecPhase then
+                                defaultParameterExtentPhase then
+                                innerClassPhase then
+                                forLoopsPhase then
+                                dataClassesPhase then
+                                builtinOperatorPhase then
+                                finallyBlocksPhase then
+                                testProcessorPhase then
+                                enumClassPhase then
+                                delegationPhase then
+                                callableReferencePhase then
+                                interopPart2Phase then
+                                varargPhase then
+                                compileTimeEvaluatePhase then
+                                coroutinesPhase then
+                                typeOperatorPhase then
+                                bridgesPhase then
+                                autoboxPhase then
+                                returnsInsertionPhase
+                ) then
+                checkDeclarationParentsPhase
+//                                                validateIrModulePhase // Temporarily disabled until moving to new IR finished.
+)
+
+internal val dependenciesLowerPhase = SameTypeNamedPhaseWrapper(
+        name = "LowerLibIR",
+        description = "Lower library's IR",
+        prerequisite = emptySet(),
+        dumperVerifier = EmptyDumperVerifier(),
+        lower = object : CompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, irModule: IrModuleFragment): IrModuleFragment {
+
+                val files = mutableListOf<IrFile>()
+                files += irModule.files
+                irModule.files.clear()
+
+                // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
+                context.librariesWithDependencies
+                        .reversed()
+                        .forEach {
+                            val libModule = context.irModules[it.libraryName]
+                                    ?: return@forEach
+
+                            irModule.files += libModule.files
+                            allLoweringsPhase.invoke(phaseConfig, phaserState, context, irModule)
+
+                            irModule.files.clear()
+                        }
+
+                // Save all files for codegen in reverse topological order.
+                // This guarantees that libraries initializers are emitted in correct order.
+                context.librariesWithDependencies
+                        .forEach {
+                            val libModule = context.irModules[it.libraryName]
+                                    ?: return@forEach
+                            irModule.files += libModule.files
+                        }
+                irModule.files += files
+
+                return irModule
+            }
+
+        })
+
+internal val bitcodePhase = namedIrModulePhase(
+        name = "Bitcode",
+        description = "LLVM Bitcode generation",
+        lower = contextLLVMSetupPhase then
+                RTTIPhase then
+                generateDebugInfoHeaderPhase then
+                deserializeDFGPhase then
+                devirtualizationPhase then
+                escapeAnalysisPhase then
+                codegenPhase then
+                finalizeDebugInfoPhase then
+                cStubsPhase
+)
+
 internal val toplevelPhase = namedUnitPhase(
         name = "Compiler",
         description = "The whole compilation process",
         lower = frontendPhase then
                 psiToIrPhase then
                 irGeneratorPluginsPhase then
-                genSyntheticFieldsPhase then
                 copyDefaultValuesToActualPhase then
                 patchDeclarationParents0Phase then
                 serializerPhase then
@@ -179,67 +284,16 @@ internal val toplevelPhase = namedUnitPhase(
                         name = "Backend",
                         description = "All backend",
                         lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then
-                                namedIrModulePhase(
-                                        name = "IrLowering",
-                                        description = "IR Lowering",
-                                        lower = removeExpectDeclarationsPhase then
-                                                lowerBeforeInlinePhase then
-                                                inlinePhase then
-                                                lowerAfterInlinePhase then
-                                                interopPart1Phase then
-                                                patchDeclarationParents1Phase then
-                                                performByIrFile(
-                                                        name = "IrLowerByFile",
-                                                        description = "IR Lowering by file",
-                                                        lower = lateinitPhase then
-                                                                stringConcatenationPhase then
-                                                                enumConstructorsPhase then
-                                                                initializersPhase then
-                                                                sharedVariablesPhase then
-                                                                localFunctionsPhase then
-                                                                tailrecPhase then
-                                                                defaultParameterExtentPhase then
-                                                                innerClassPhase then
-                                                                forLoopsPhase then
-                                                                dataClassesPhase then
-                                                                builtinOperatorPhase then
-                                                                finallyBlocksPhase then
-                                                                testProcessorPhase then
-                                                                enumClassPhase then
-                                                                delegationPhase then
-                                                                callableReferencePhase then
-                                                                interopPart2Phase then
-                                                                varargPhase then
-                                                                compileTimeEvaluatePhase then
-                                                                coroutinesPhase then
-                                                                typeOperatorPhase then
-                                                                bridgesPhase then
-                                                                autoboxPhase then
-                                                                returnsInsertionPhase
-                                                ) then
-                                                checkDeclarationParentsPhase then
-//                                                validateIrModulePhase then // Temporarily disabled until moving to new IR finished.
-                                                moduleIndexForCodegenPhase
-                                ) then
-                                namedIrModulePhase(
-                                        name = "Bitcode",
-                                        description = "LLVM Bitcode generation",
-                                        lower = contextLLVMSetupPhase then
-                                                RTTIPhase then
-                                                generateDebugInfoHeaderPhase then
-                                                buildDFGPhase then
-                                                deserializeDFGPhase then
-                                                devirtualizationPhase then
-                                                escapeAnalysisPhase then
-                                                serializeDFGPhase then
-                                                codegenPhase then
-                                                finalizeDebugInfoPhase then
-                                                cStubsPhase then
-                                                bitcodeLinkerPhase
-                                ) then
+                                allLoweringsPhase then // Lower current module first.
+                                dependenciesLowerPhase then // Then lower all libraries in topological order.
+                                                            // With that we guarantee that inline functions are unlowered while being inlined.
+                                moduleIndexForCodegenPhase then
+                                buildDFGPhase then
+                                serializeDFGPhase then
+                                bitcodePhase then
+                                produceOutputPhase then
                                 verifyBitcodePhase then
-                                printBitcodePhase
-                                then
+                                printBitcodePhase then
                                 unitSink()
                 ) then
                 linkPhase
@@ -256,6 +310,8 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
 
         // Don't serialize anything to a final executable.
         switch(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
+        switch(dependenciesLowerPhase, config.produce != CompilerOutputKind.LIBRARY)
+        switch(bitcodePhase, config.produce != CompilerOutputKind.LIBRARY)
         switch(linkPhase, config.produce.isNativeBinary)
         switch(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE)
     }

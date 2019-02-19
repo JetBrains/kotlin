@@ -52,6 +52,7 @@ class IntrinsicType {
         const val IDENTITY                      = "IDENTITY"
         const val IMMUTABLE_BLOB                = "IMMUTABLE_BLOB"
         const val INIT_INSTANCE                 = "INIT_INSTANCE"
+        const val SELECT_ENTRY_POINT            = "SELECT_ENTRY_POINT"
 
         const val GET_CONTINUATION              = "GET_CONTINUATION"
         const val RETURN_IF_SUSPEND             = "RETURN_IF_SUSPEND"

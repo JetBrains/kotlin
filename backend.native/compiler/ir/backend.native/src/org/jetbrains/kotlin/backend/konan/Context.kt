@@ -99,7 +99,9 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                     DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS,
                     descriptor,
                     outerClass.defaultType
-            )
+            ).apply {
+                parent = innerClass
+            }
         }
 
     fun getLoweredEnum(enumClass: IrClass): LoweredEnum {
@@ -109,25 +111,8 @@ internal class SpecialDeclarationsFactory(val context: Context) {
         }
     }
 
-    private fun assignOrdinalsToEnumEntries(classDescriptor: ClassDescriptor): Map<ClassDescriptor, Int> {
-        val enumEntryOrdinals = mutableMapOf<ClassDescriptor, Int>()
-        classDescriptor.enumEntries.forEachIndexed { index, entry ->
-            enumEntryOrdinals[entry] = index
-        }
-        return enumEntryOrdinals
-    }
-
-    fun getEnumEntryOrdinal(entryDescriptor: ClassDescriptor): Int {
-        val enumClassDescriptor = entryDescriptor.containingDeclaration as ClassDescriptor
-        // If enum came from another module then we need to get serialized ordinal number.
-        // We serialize ordinal because current serialization cannot preserve enum entry order.
-        if (enumClassDescriptor is DeserializedClassDescriptor) {
-            return enumClassDescriptor.classProto.enumEntryList
-                    .first { entryDescriptor.name == enumClassDescriptor.c.nameResolver.getName(it.name) }
-                    .getExtension(KonanProtoBuf.enumEntryOrdinal)
-        }
-        return ordinals.getOrPut(enumClassDescriptor) { assignOrdinalsToEnumEntries(enumClassDescriptor) }[entryDescriptor]!!
-    }
+    fun getEnumEntryOrdinal(enumEntry: IrEnumEntry) =
+            enumEntry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(enumEntry)
 
     fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {
         val irFunction = overriddenFunction.function
@@ -294,6 +279,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         // assume its global init can be actually omitted.
         return true
     }
+
+    lateinit var irModules: Map<String, IrModuleFragment>
 
     // TODO: make lateinit?
     var irModule: IrModuleFragment? = null

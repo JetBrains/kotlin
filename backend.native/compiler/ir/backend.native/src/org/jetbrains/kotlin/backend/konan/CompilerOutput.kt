@@ -29,7 +29,6 @@ internal fun produceCStubs(context: Context) {
 
 internal fun produceOutput(context: Context) {
 
-    val llvmModule = context.llvmModule!!
     val config = context.config.configuration
     val tempFiles = context.config.tempFiles
     val produce = config.get(KonanConfigKeys.PRODUCE)
@@ -42,7 +41,7 @@ internal fun produceOutput(context: Context) {
             val output = tempFiles.nativeBinaryFileName
             context.bitcodeFileName = output
 
-            val generatedBitcodeFiles = 
+            val generatedBitcodeFiles =
                 if (produce == CompilerOutputKind.DYNAMIC || produce == CompilerOutputKind.STATIC) {
                     produceCAdapterBitcode(
                         context.config.clang, 
@@ -57,16 +56,15 @@ internal fun produceOutput(context: Context) {
                 generatedBitcodeFiles
 
             for (library in nativeLibraries) {
-                parseAndLinkBitcodeFile(llvmModule, library)
+                parseAndLinkBitcodeFile(context.llvmModule!!, library)
             }
 
-            LLVMWriteBitcodeToFile(llvmModule, output)
+            LLVMWriteBitcodeToFile(context.llvmModule!!, output)
         }
         CompilerOutputKind.LIBRARY -> {
             val output = context.config.outputFiles.outputName
             val libraryName = context.config.moduleId
-            val neededLibraries 
-                = context.llvm.librariesForLibraryManifest
+            val neededLibraries = context.librariesWithDependencies
             val abiVersion = KonanAbiVersion.CURRENT
             val compilerVersion = KonanVersion.CURRENT
             val libraryVersion = config.get(KonanConfigKeys.LIBRARY_VERSION)
@@ -85,7 +83,7 @@ internal fun produceOutput(context: Context) {
                 target,
                 output,
                 libraryName, 
-                llvmModule,
+                null,
                 nopack,
                 manifestProperties,
                 context.dataFlowGraph)
@@ -96,7 +94,7 @@ internal fun produceOutput(context: Context) {
         CompilerOutputKind.BITCODE -> {
             val output = context.config.outputFile
             context.bitcodeFileName = output
-            LLVMWriteBitcodeToFile(llvmModule, output)
+            LLVMWriteBitcodeToFile(context.llvmModule!!, output)
         }
     }
 }

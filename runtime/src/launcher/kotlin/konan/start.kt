@@ -4,16 +4,18 @@
  */
 
 import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.IntrinsicType
 
 // This function is produced by the code generator given
 // the '-entry foo.bar.main' flag. 
 // It calls the requested entry point.
 // The default is main(Array<String>):Unit in the root package.
-@SymbolName("EntryPointSelector")
-external fun EntryPointSelector(args: Array<String>)
+@TypedIntrinsic(IntrinsicType.SELECT_ENTRY_POINT)
+private external fun EntryPointSelector(args: Array<String>)
 
 @SymbolName("OnUnhandledException")
-external private fun OnUnhandledException(throwable: Throwable)
+private external fun OnUnhandledException(throwable: Throwable)
 
 @ExportForCppRuntime
 private fun Konan_start(args: Array<String>): Int {

@@ -190,7 +190,7 @@ internal val innerClassPhase = makeKonanFileLoweringPhase(
         ::InnerClassLowering,
         name = "InnerClasses",
         description = "Inner classes lowering",
-        prerequisite = setOf(defaultParameterExtentPhase, genSyntheticFieldsPhase )
+        prerequisite = setOf(defaultParameterExtentPhase)
 )
 
 internal val forLoopsPhase = makeKonanFileLoweringPhase(

@@ -44,6 +44,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun createOuterThisField() {
+            irClass.declarations += context.specialDeclarationsFactory.getOuterThisField(irClass)
             outerThisFieldSymbol = context.specialDeclarationsFactory.getOuterThisField(irClass).symbol
         }
 

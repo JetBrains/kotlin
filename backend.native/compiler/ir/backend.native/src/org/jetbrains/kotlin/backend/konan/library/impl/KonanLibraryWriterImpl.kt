@@ -121,14 +121,14 @@ internal fun buildLibrary(
         target: KonanTarget,
         output: String,
         moduleName: String,
-        llvmModule: LLVMModuleRef,
+        llvmModule: LLVMModuleRef?,
         nopack: Boolean,
         manifestProperties: Properties?,
         dataFlowGraph: ByteArray?): KonanLibraryWriter {
 
     val library = LibraryWriterImpl(File(output), moduleName, versions, target, nopack)
 
-    library.addKotlinBitcode(llvmModule)
+    llvmModule?.let { library.addKotlinBitcode(it) }
     library.addLinkData(linkData)
     natives.forEach {
         library.addNativeBitcode(it)
