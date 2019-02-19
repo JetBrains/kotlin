@@ -40,7 +40,8 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 import org.jetbrains.uast.visitor.UastVisitor
 
-abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractUElement(givenParent), PsiVariable, UVariable, UAnchorOwner {
+abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractUElement(givenParent), PsiVariable, UVariableExPlaceHolder,
+    UAnchorOwner {
 
     override val uastInitializer: UExpression?
         get() {
@@ -183,7 +184,7 @@ open class KotlinUParameter(
         psi: PsiParameter,
         final override val sourcePsi: KtElement?,
         givenParent: UElement?
-) : AbstractKotlinUVariable(givenParent), UParameter, PsiParameter by psi {
+) : AbstractKotlinUVariable(givenParent), UParameterExPlaceHolder, PsiParameter by psi {
 
     final override val javaPsi = unwrap<UParameter, PsiParameter>(psi)
 
@@ -290,7 +291,7 @@ open class KotlinUField(
         psi: PsiField,
         override val sourcePsi: KtElement?,
         givenParent: UElement?
-) : AbstractKotlinUVariable(givenParent), UField, PsiField by psi {
+) : AbstractKotlinUVariable(givenParent), UFieldExPlaceHolder, PsiField by psi {
     override fun getSourceElement() = sourcePsi ?: this
 
     override val javaPsi  = unwrap<UField, PsiField>(psi)
@@ -335,7 +336,7 @@ open class KotlinULocalVariable(
         psi: PsiLocalVariable,
         override val sourcePsi: KtElement,
         givenParent: UElement?
-) : AbstractKotlinUVariable(givenParent), ULocalVariable, PsiLocalVariable by psi {
+) : AbstractKotlinUVariable(givenParent), ULocalVariableExPlaceHolder, PsiLocalVariable by psi {
 
     override val javaPsi = unwrap<ULocalVariable, PsiLocalVariable>(psi)
 
@@ -382,7 +383,7 @@ class KotlinUEnumConstant(
         psi: PsiEnumConstant,
         override val sourcePsi: KtElement?,
         givenParent: UElement?
-) : AbstractKotlinUVariable(givenParent), UEnumConstant, UCallExpressionEx, DelegatedMultiResolve, PsiEnumConstant by psi {
+) : AbstractKotlinUVariable(givenParent), UEnumConstantExPlaceHolder, UCallExpressionEx, DelegatedMultiResolve, PsiEnumConstant by psi {
 
     override val initializingClass: UClass? by lz {
         (psi.initializingClass as? KtLightClass)?.let { initializingClass ->

@@ -14,7 +14,7 @@ internal class KotlinLocalFunctionUVariable(
         val function: KtFunction,
         override val psi: PsiVariable,
         givenParent: UElement?
-) : KotlinAbstractUElement(givenParent), UVariable, PsiVariable by psi {
+) : KotlinAbstractUElement(givenParent), UVariableExPlaceHolder, PsiVariable by psi {
 
     override val javaPsi = psi
     override val sourcePsi: PsiElement? = (psi as? UastKotlinPsiVariable?)?.ktElement ?: psi
