@@ -56,10 +56,11 @@ object TopDownAnalyzerFacadeForJS {
             "Can't simultaneously use custom built-ins module and set current module as built-ins"
         }
         val projectContext = ProjectContext(project)
-        val builtIns = if (thisIsBuiltInsModule || customBuiltInsModule != null) {
-            object : KotlinBuiltIns(projectContext.storageManager) {}
-        } else {
-            JsPlatform.builtIns
+
+        val builtIns = when {
+            thisIsBuiltInsModule -> object : KotlinBuiltIns(projectContext.storageManager) {}
+            customBuiltInsModule != null -> customBuiltInsModule.builtIns
+            else -> JsPlatform.builtIns
         }
 
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
@@ -71,10 +72,6 @@ object TopDownAnalyzerFacadeForJS {
         )
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
-
-        if (customBuiltInsModule != null) {
-            builtIns.builtInsModule = customBuiltInsModule
-        }
 
         if (thisIsBuiltInsModule) {
             builtIns.builtInsModule = context.module

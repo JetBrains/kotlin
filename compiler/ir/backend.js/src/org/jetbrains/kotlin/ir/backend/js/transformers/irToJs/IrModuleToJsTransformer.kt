@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.ModuleType
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
@@ -187,11 +186,8 @@ class IrModuleToJsTransformer(private val backendContext: JsIrBackendContext) : 
     }
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): JsNode =
-        when (backendContext.moduleType) {
-            ModuleType.MAIN -> generateModule(declaration)
-            ModuleType.SECONDARY -> JsEmpty
-            ModuleType.TEST_RUNTIME -> generateModuleInGlobalScope(declaration)
-        }
+        if (backendContext.compilationMode.generateKlib) generateModuleInGlobalScope(declaration)
+        else generateModule(declaration)
 
 
     private fun processClassModels(

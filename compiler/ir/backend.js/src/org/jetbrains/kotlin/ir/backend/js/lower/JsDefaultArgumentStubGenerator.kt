@@ -51,7 +51,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
     private fun resolveInvoke(paramCount: Int): IrSimpleFunction {
         assert(paramCount > 0)
         val fqn = FqName.fromSegments(listOf("kotlin", "Function$paramCount"))
-        val functionKlass = context.run { symbolTable.lazyWrapper.referenceClass(getClass(fqn)) }.owner
+        val functionKlass = context.functionN(paramCount).owner
         return functionKlass.declarations.filterIsInstance<IrSimpleFunction>().first { it.name == Name.identifier("invoke") }
     }
 }

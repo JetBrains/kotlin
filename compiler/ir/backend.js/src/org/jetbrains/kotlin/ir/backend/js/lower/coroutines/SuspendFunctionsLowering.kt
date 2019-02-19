@@ -307,12 +307,12 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
             if (unboundFunctionParameters != null) {
                 // Suspend lambda inherits SuspendFunction.
                 val numberOfParameters = unboundFunctionParameters.size
-                suspendFunctionClass = context.suspendFunctions[numberOfParameters].owner
+                suspendFunctionClass = context.suspendFunctionN(numberOfParameters).owner
                 val unboundParameterTypes = unboundFunctionParameters.map { it.type }
                 suspendFunctionClassTypeArguments = unboundParameterTypes + irFunction.returnType
                 superTypes += suspendFunctionClass.typeWith(suspendFunctionClassTypeArguments)
 
-                functionClass = context.functions[numberOfParameters + 1].owner
+                functionClass = context.functionN(numberOfParameters + 1).owner
                 val continuationType = continuationClassSymbol.typeWith(irFunction.returnType)
                 functionClassTypeArguments = unboundParameterTypes + continuationType + context.irBuiltIns.anyNType
                 superTypes += functionClass.typeWith(functionClassTypeArguments)

@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getPropertyDeclaration
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
-import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -43,13 +42,12 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.createDynamicType
 
 class JsIrBackendContext(
-    val module: ModuleDescriptor,
+    val module: ModuleDescriptorImpl,
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
     override val configuration: CompilerConfiguration,
-    val dependencies: List<CompiledModule>,
-    val moduleType: ModuleType
+    val compilationMode: CompilationMode
 ) : CommonBackendContext {
 
     override val builtIns = module.builtIns
@@ -131,8 +129,9 @@ class JsIrBackendContext(
     private val operatorMap = referenceOperators()
 
     // TODO: get rid of this
-    val functions = (0..22).map { symbolTable.referenceClass(builtIns.getFunction(it)) }
-    val suspendFunctions = (0..22).map { symbolTable.referenceClass(builtIns.getSuspendFunction(it)) }
+
+    fun functionN(n: Int) = symbolTable.lazyWrapper.referenceClass(builtIns.getFunction(n))
+    fun suspendFunctionN(n: Int) = symbolTable.lazyWrapper.referenceClass(builtIns.getSuspendFunction(n))
 
     private fun primitivesWithImplicitCompanionObject(): List<Name> {
         val numbers = PrimitiveType.NUMBER_TYPES
@@ -143,10 +142,6 @@ class JsIrBackendContext(
     }
 
     val dynamicType = IrDynamicTypeImpl(createDynamicType(builtIns), emptyList(), Variance.INVARIANT)
-
-    val originalModuleIndex = ModuleIndex(irModuleFragment)
-
-    lateinit var moduleFragmentCopy: IrModuleFragment
 
     fun getOperatorByName(name: Name, type: KotlinType) = operatorMap[name]?.get(type)
 

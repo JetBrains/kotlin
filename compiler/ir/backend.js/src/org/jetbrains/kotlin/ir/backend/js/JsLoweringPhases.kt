@@ -99,13 +99,6 @@ private val lateinitLoweringPhase = makeJsModulePhase(
     description = "Insert checks for lateinit field references"
 )
 
-private val moduleCopyingPhase = makeCustomJsModulePhase(
-    { context, module -> context.moduleFragmentCopy = module.deepCopyWithSymbols() },
-    name = "ModuleCopying",
-    description = "<Supposed to be removed> Copy current module to make it accessible from different one",
-    prerequisite = setOf(lateinitLoweringPhase)
-)
-
 private val functionInliningPhase = makeCustomJsModulePhase(
     { context, module ->
         FunctionInlining(context).inline(module)
@@ -114,7 +107,7 @@ private val functionInliningPhase = makeCustomJsModulePhase(
     },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
-    prerequisite = setOf(moduleCopyingPhase, lateinitLoweringPhase, arrayInlineConstructorLoweringPhase, coroutineIntrinsicLoweringPhase)
+    prerequisite = setOf(lateinitLoweringPhase, arrayInlineConstructorLoweringPhase, coroutineIntrinsicLoweringPhase)
 )
 
 private val removeInlineFunctionsWithReifiedTypeParametersLoweringPhase = makeJsModulePhase(
@@ -356,7 +349,6 @@ val jsPhases = namedIrModulePhase(
             coroutineIntrinsicLoweringPhase then
             arrayInlineConstructorLoweringPhase then
             lateinitLoweringPhase then
-            moduleCopyingPhase then
             functionInliningPhase then
             removeInlineFunctionsWithReifiedTypeParametersLoweringPhase then
             throwableSuccessorsLoweringPhase then

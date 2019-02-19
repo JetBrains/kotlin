@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
@@ -54,11 +55,12 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
 
 internal val IrFunction.isFunctionInvoke: Boolean
     get() {
-        val dispatchReceiver = dispatchReceiverParameter ?: return false
-        assert(!dispatchReceiver.type.isKFunction())
-
-        return dispatchReceiver.type.isFunctionTypeOrSubtype() &&
-                /*this.isOperator &&*/ this.name == OperatorNameConventions.INVOKE
+//        val dispatchReceiver = dispatchReceiverParameter ?: return false
+//        assert(!dispatchReceiver.type.isKFunction())
+//
+//        return dispatchReceiver.type.isFunctionTypeOrSubtype() &&
+//                /*this.isOperator &&*/ this.name == OperatorNameConventions.INVOKE
+        return descriptor is FunctionInvokeDescriptor
     }
 
 // It is possible to declare "external inline fun",

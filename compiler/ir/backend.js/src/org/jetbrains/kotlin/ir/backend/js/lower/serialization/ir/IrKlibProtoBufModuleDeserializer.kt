@@ -30,7 +30,6 @@ class IrKlibProtoBufModuleDeserializer(
     currentModule: ModuleDescriptor,
     logger: LoggingContext,
     builtIns: IrBuiltIns,
-    libraryDir: File,
     symbolTable: SymbolTable,
     val forwardModuleDescriptor: ModuleDescriptor?)
         : IrModuleDeserializer(logger, builtIns, symbolTable) {
@@ -53,8 +52,10 @@ class IrKlibProtoBufModuleDeserializer(
             builtIns.builtIns.getBuiltInClassByFqName(it)
         })
 
-    val moduleRoot = libraryDir
-    val irDirectory = File(libraryDir, "ir/")
+    val descriptorToDirectoryMap = mutableMapOf<ModuleDescriptor, File>()
+
+//    val moduleRoot = libraryDir
+    private fun irDirectory(m: ModuleDescriptor): File = descriptorToDirectoryMap[m]!!
 
 
     private val FUNCTION_INDEX_START: Long
@@ -204,7 +205,7 @@ class IrKlibProtoBufModuleDeserializer(
     }
 
     private fun loadTopLevelDeclarationProto(uniqIdKey: UniqIdKey): IrKlibProtoBuf.IrDeclaration {
-        val file = File(irDirectory, uniqIdKey.uniqId.declarationFileName)
+        val file = File(irDirectory(deserializedModuleDescriptor!!), uniqIdKey.uniqId.declarationFileName)
         return IrKlibProtoBuf.IrDeclaration.parseFrom(file.readBytes().codedInputStream, JsKlibMetadataSerializerProtocol.extensionRegistry)
     }
 
@@ -347,7 +348,8 @@ class IrKlibProtoBufModuleDeserializer(
         return module
     }
 
-    fun deserializeIrModule(moduleDescriptor: ModuleDescriptor, byteArray: ByteArray, deserializeAllDeclarations: Boolean = false): IrModuleFragment {
+    fun deserializeIrModule(moduleDescriptor: ModuleDescriptor, byteArray: ByteArray, klibLocation: File, deserializeAllDeclarations: Boolean = false): IrModuleFragment {
+        descriptorToDirectoryMap[moduleDescriptor] = File(klibLocation, "ir/")
         val proto = IrKlibProtoBuf.IrModule.parseFrom(byteArray.codedInputStream, JsKlibMetadataSerializerProtocol.extensionRegistry)
         return deserializeIrModule(proto, moduleDescriptor, deserializeAllDeclarations)
     }
