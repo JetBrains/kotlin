@@ -45,35 +45,35 @@ import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 
 class JavaResolverComponents(
-        val storageManager: StorageManager,
-        val finder: JavaClassFinder,
-        val kotlinClassFinder: KotlinClassFinder,
-        val deserializedDescriptorResolver: DeserializedDescriptorResolver,
-        val signaturePropagator: SignaturePropagator,
-        val errorReporter: ErrorReporter,
-        val javaResolverCache: JavaResolverCache,
-        val javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,
-        val samConversionResolver: SamConversionResolver,
-        val sourceElementFactory: JavaSourceElementFactory,
-        val moduleClassResolver: ModuleClassResolver,
-        val packagePartProvider: PackagePartProvider,
-        val supertypeLoopChecker: SupertypeLoopChecker,
-        val lookupTracker: LookupTracker,
-        val module: ModuleDescriptor,
-        val reflectionTypes: ReflectionTypes,
-        val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
-        val signatureEnhancement: SignatureEnhancement,
-        val javaClassesTracker: JavaClassesTracker,
-        val settings: JavaResolverSettings
+    val storageManager: StorageManager,
+    val finder: JavaClassFinder,
+    val kotlinClassFinder: KotlinClassFinder,
+    val deserializedDescriptorResolver: DeserializedDescriptorResolver,
+    val signaturePropagator: SignaturePropagator,
+    val errorReporter: ErrorReporter,
+    val javaResolverCache: JavaResolverCache,
+    val javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,
+    val samConversionResolver: SamConversionResolver,
+    val sourceElementFactory: JavaSourceElementFactory,
+    val moduleClassResolver: ModuleClassResolver,
+    val packagePartProvider: PackagePartProvider,
+    val supertypeLoopChecker: SupertypeLoopChecker,
+    val lookupTracker: LookupTracker,
+    val module: ModuleDescriptor,
+    val reflectionTypes: ReflectionTypes,
+    val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
+    val signatureEnhancement: SignatureEnhancement,
+    val javaClassesTracker: JavaClassesTracker,
+    val settings: JavaResolverSettings
 ) {
     fun replace(
-            javaResolverCache: JavaResolverCache = this.javaResolverCache
+        javaResolverCache: JavaResolverCache = this.javaResolverCache
     ) = JavaResolverComponents(
-            storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver,
-            signaturePropagator, errorReporter, javaResolverCache,
-            javaPropertyInitializerEvaluator, samConversionResolver, sourceElementFactory,
-            moduleClassResolver, packagePartProvider, supertypeLoopChecker, lookupTracker, module, reflectionTypes,
-            annotationTypeQualifierResolver, signatureEnhancement, javaClassesTracker, settings
+        storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver,
+        signaturePropagator, errorReporter, javaResolverCache,
+        javaPropertyInitializerEvaluator, samConversionResolver, sourceElementFactory,
+        moduleClassResolver, packagePartProvider, supertypeLoopChecker, lookupTracker, module, reflectionTypes,
+        annotationTypeQualifierResolver, signatureEnhancement, javaClassesTracker, settings
     )
 }
 
@@ -95,31 +95,27 @@ interface JavaResolverSettings {
 
 private typealias QualifierByApplicabilityType = EnumMap<AnnotationTypeQualifierResolver.QualifierApplicabilityType, NullabilityQualifierWithMigrationStatus?>
 
-class JavaTypeQualifiersByElementType(
-        internal val nullabilityQualifiers: QualifierByApplicabilityType
-) {
-    operator fun get(
-            applicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType?
-    ): JavaTypeQualifiers? {
+class JavaTypeQualifiersByElementType(internal val nullabilityQualifiers: QualifierByApplicabilityType) {
+    operator fun get(applicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType?): JavaTypeQualifiers? {
         val nullabilityQualifierWithMigrationStatus = nullabilityQualifiers[applicabilityType] ?: return null
 
         return JavaTypeQualifiers(
-                nullabilityQualifierWithMigrationStatus.qualifier, null,
-                isNotNullTypeParameter = false,
-                isNullabilityQualifierForWarning = nullabilityQualifierWithMigrationStatus.isForWarningOnly
+            nullabilityQualifierWithMigrationStatus.qualifier, null,
+            isNotNullTypeParameter = false,
+            isNullabilityQualifierForWarning = nullabilityQualifierWithMigrationStatus.isForWarningOnly
         )
     }
 }
 
 class LazyJavaResolverContext internal constructor(
-        val components: JavaResolverComponents,
-        val typeParameterResolver: TypeParameterResolver,
-        internal val delegateForDefaultTypeQualifiers: Lazy<JavaTypeQualifiersByElementType?>
+    val components: JavaResolverComponents,
+    val typeParameterResolver: TypeParameterResolver,
+    internal val delegateForDefaultTypeQualifiers: Lazy<JavaTypeQualifiersByElementType?>
 ) {
     constructor(
-            components: JavaResolverComponents,
-            typeParameterResolver: TypeParameterResolver,
-            typeQualifiersComputation: () -> JavaTypeQualifiersByElementType?
+        components: JavaResolverComponents,
+        typeParameterResolver: TypeParameterResolver,
+        typeQualifiersComputation: () -> JavaTypeQualifiersByElementType?
     ) : this(components, typeParameterResolver, lazy(LazyThreadSafetyMode.NONE, typeQualifiersComputation))
 
     val defaultTypeQualifiers: JavaTypeQualifiersByElementType? by delegateForDefaultTypeQualifiers
@@ -133,21 +129,21 @@ class LazyJavaResolverContext internal constructor(
 }
 
 fun LazyJavaResolverContext.child(
-        typeParameterResolver: TypeParameterResolver
+    typeParameterResolver: TypeParameterResolver
 ) = LazyJavaResolverContext(components, typeParameterResolver, delegateForDefaultTypeQualifiers)
 
 fun LazyJavaResolverContext.computeNewDefaultTypeQualifiers(
-        additionalAnnotations: Annotations
+    additionalAnnotations: Annotations
 ): JavaTypeQualifiersByElementType? {
     if (components.annotationTypeQualifierResolver.disabled) return defaultTypeQualifiers
 
     val nullabilityQualifiersWithApplicability =
-            additionalAnnotations.mapNotNull(this::extractDefaultNullabilityQualifier)
+        additionalAnnotations.mapNotNull(this::extractDefaultNullabilityQualifier)
 
     if (nullabilityQualifiersWithApplicability.isEmpty()) return defaultTypeQualifiers
 
     val nullabilityQualifiersByType =
-            defaultTypeQualifiers?.nullabilityQualifiers?.let(::QualifierByApplicabilityType)
+        defaultTypeQualifiers?.nullabilityQualifiers?.let(::QualifierByApplicabilityType)
             ?: QualifierByApplicabilityType(AnnotationTypeQualifierResolver.QualifierApplicabilityType::class.java)
 
     var wasUpdate = false
@@ -162,74 +158,74 @@ fun LazyJavaResolverContext.computeNewDefaultTypeQualifiers(
 }
 
 private fun LazyJavaResolverContext.extractDefaultNullabilityQualifier(
-        annotationDescriptor: AnnotationDescriptor
+    annotationDescriptor: AnnotationDescriptor
 ): NullabilityQualifierWithApplicability? {
     val typeQualifierResolver = components.annotationTypeQualifierResolver
     typeQualifierResolver.resolveQualifierBuiltInDefaultAnnotation(annotationDescriptor)?.let { return it }
 
     val (typeQualifier, applicability) =
-            typeQualifierResolver.resolveTypeQualifierDefaultAnnotation(annotationDescriptor)
+        typeQualifierResolver.resolveTypeQualifierDefaultAnnotation(annotationDescriptor)
             ?: return null
 
     val jsr305State = typeQualifierResolver.resolveJsr305CustomState(annotationDescriptor)
-                      ?: typeQualifierResolver.resolveJsr305AnnotationState(typeQualifier)
+        ?: typeQualifierResolver.resolveJsr305AnnotationState(typeQualifier)
 
     if (jsr305State.isIgnore) {
         return null
     }
 
     val nullabilityQualifier =
-            components
-                    .signatureEnhancement
-                    .extractNullability(typeQualifier)
-                    ?.copy(isForWarningOnly = jsr305State.isWarning)
+        components
+            .signatureEnhancement
+            .extractNullability(typeQualifier)
+            ?.copy(isForWarningOnly = jsr305State.isWarning)
             ?: return null
 
     return NullabilityQualifierWithApplicability(nullabilityQualifier, applicability)
 }
 
 data class NullabilityQualifierWithApplicability(
-        val nullabilityQualifier: NullabilityQualifierWithMigrationStatus,
-        val qualifierApplicabilityTypes: Collection<AnnotationTypeQualifierResolver.QualifierApplicabilityType>
+    val nullabilityQualifier: NullabilityQualifierWithMigrationStatus,
+    val qualifierApplicabilityTypes: Collection<AnnotationTypeQualifierResolver.QualifierApplicabilityType>
 )
 
 fun LazyJavaResolverContext.replaceComponents(
-        components: JavaResolverComponents
+    components: JavaResolverComponents
 ) = LazyJavaResolverContext(components, typeParameterResolver, delegateForDefaultTypeQualifiers)
 
 private fun LazyJavaResolverContext.child(
-        containingDeclaration: DeclarationDescriptor,
-        typeParameterOwner: JavaTypeParameterListOwner?,
-        typeParametersIndexOffset: Int = 0,
-        delegateForTypeQualifiers: Lazy<JavaTypeQualifiersByElementType?>
+    containingDeclaration: DeclarationDescriptor,
+    typeParameterOwner: JavaTypeParameterListOwner?,
+    typeParametersIndexOffset: Int = 0,
+    delegateForTypeQualifiers: Lazy<JavaTypeQualifiersByElementType?>
 ) = LazyJavaResolverContext(
-        components,
-        typeParameterOwner?.let { LazyJavaTypeParameterResolver(this, containingDeclaration, it, typeParametersIndexOffset) }
+    components,
+    typeParameterOwner?.let { LazyJavaTypeParameterResolver(this, containingDeclaration, it, typeParametersIndexOffset) }
         ?: typeParameterResolver,
-        delegateForTypeQualifiers
+    delegateForTypeQualifiers
 )
 
 fun LazyJavaResolverContext.childForMethod(
-        containingDeclaration: DeclarationDescriptor,
-        typeParameterOwner: JavaTypeParameterListOwner,
-        typeParametersIndexOffset: Int = 0
+    containingDeclaration: DeclarationDescriptor,
+    typeParameterOwner: JavaTypeParameterListOwner,
+    typeParametersIndexOffset: Int = 0
 ) = child(containingDeclaration, typeParameterOwner, typeParametersIndexOffset, delegateForDefaultTypeQualifiers)
 
 fun LazyJavaResolverContext.childForClassOrPackage(
-        containingDeclaration: ClassOrPackageFragmentDescriptor,
-        typeParameterOwner: JavaTypeParameterListOwner? = null,
-        typeParametersIndexOffset: Int = 0
+    containingDeclaration: ClassOrPackageFragmentDescriptor,
+    typeParameterOwner: JavaTypeParameterListOwner? = null,
+    typeParametersIndexOffset: Int = 0
 ) = child(
-        containingDeclaration, typeParameterOwner, typeParametersIndexOffset,
-        lazy(LazyThreadSafetyMode.NONE) { computeNewDefaultTypeQualifiers(containingDeclaration.annotations) }
+    containingDeclaration, typeParameterOwner, typeParametersIndexOffset,
+    lazy(LazyThreadSafetyMode.NONE) { computeNewDefaultTypeQualifiers(containingDeclaration.annotations) }
 )
 
 fun LazyJavaResolverContext.copyWithNewDefaultTypeQualifiers(
-        additionalAnnotations: Annotations
-) = if (additionalAnnotations.isEmpty())
-        this
-    else
-        LazyJavaResolverContext(
-            components, typeParameterResolver,
-            lazy(LazyThreadSafetyMode.NONE) { computeNewDefaultTypeQualifiers(additionalAnnotations) }
-        )
+    additionalAnnotations: Annotations
+) = when {
+    additionalAnnotations.isEmpty() -> this
+    else -> LazyJavaResolverContext(
+        components, typeParameterResolver,
+        lazy(LazyThreadSafetyMode.NONE) { computeNewDefaultTypeQualifiers(additionalAnnotations) }
+    )
+}
