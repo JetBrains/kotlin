@@ -858,8 +858,8 @@ class ExperimentalPluginTests {
                 }
 
                 repositories {
-                    maven { url "http://kotlin.bintray.com/kotlin-eap" }
-                    maven { url "http://kotlin.bintray.com/kotlin-dev" }
+                    maven { url "https://kotlin.bintray.com/kotlin-eap" }
+                    maven { url "https://kotlin.bintray.com/kotlin-dev" }
                     maven { url "${MultiplatformSpecification.KOTLIN_REPO}" }
                 }
 

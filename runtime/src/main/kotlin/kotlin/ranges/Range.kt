@@ -7,7 +7,7 @@ package kotlin.ranges
 
 /**
  * Represents a range of values (for example, numbers or characters).
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/ranges.html) for more information.
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/ranges.html) for more information.
  */
 public interface ClosedRange<T: Comparable<T>> {
     /**

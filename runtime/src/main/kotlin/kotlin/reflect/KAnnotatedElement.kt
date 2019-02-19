@@ -9,7 +9,7 @@ import kotlin.native.internal.FixmeReflection
 
 /**
  * Represents an annotated element and allows to obtain its annotations.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/annotations.html)
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/annotations.html)
  * for more information.
  */
 @FixmeReflection
