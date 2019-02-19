@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.navigation;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.editor.Document;
@@ -17,20 +15,20 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.MultiMap;
 import junit.framework.TestCase;
 import kotlin.collections.ArraysKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.util.ReferenceUtils;
 import org.junit.Assert;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class NavigationTestUtils {
     private NavigationTestUtils() {
@@ -62,18 +60,16 @@ public final class NavigationTestUtils {
         if (gotoData != null) {
             List<PsiElement> targets;
             if (InTextDirectivesUtils.isDirectiveDefined(documentText, "// DISTINCT_REF")) {
-                targets = ArraysKt.distinctBy(gotoData.targets, element -> LightClassUtilsKt.getUnwrapped(element));
-            } else {
+                targets = ArraysKt.distinctBy(gotoData.targets, LightClassUtilsKt::getUnwrapped);
+            }
+            else {
                 targets = Arrays.asList(gotoData.targets);
             }
             // Transform given reference result to strings
-            List<String> psiElements = Lists.transform(targets, new Function<PsiElement, String>() {
-                @Override
-                public String apply(@Nullable PsiElement element) {
-                    Assert.assertNotNull(element);
-                    return ReferenceUtils.renderAsGotoImplementation(element, renderModule);
-                }
-            });
+            List<String> psiElements = targets.stream().map(element -> {
+                Assert.assertNotNull(element);
+                return ReferenceUtils.renderAsGotoImplementation(element, renderModule);
+            }).collect(Collectors.toList());
 
             // Compare
             UsefulTestCase.assertOrderedEquals(Ordering.natural().sortedCopy(psiElements), expectedReferences);
@@ -84,10 +80,10 @@ public final class NavigationTestUtils {
     }
 
     public static String getNavigateElementsText(Project project, Collection<? extends PsiElement> navigableElements) {
-        MultiMap<PsiFile, Pair<Integer, Integer>> filesToNumbersAndOffsets = new MultiMap<PsiFile, Pair<Integer, Integer>>();
+        MultiMap<PsiFile, Pair<Integer, Integer>> filesToNumbersAndOffsets = new MultiMap<>();
         int refNumber = 1;
         for (PsiElement navigationElement : navigableElements) {
-            Pair<Integer, Integer> numberAndOffset = new Pair<Integer, Integer>(refNumber++, navigationElement.getTextOffset());
+            Pair<Integer, Integer> numberAndOffset = new Pair<>(refNumber++, navigationElement.getTextOffset());
             filesToNumbersAndOffsets.putValue(navigationElement.getContainingFile(), numberAndOffset);
         }
 
@@ -95,25 +91,15 @@ public final class NavigationTestUtils {
             return "<no references>";
         }
 
-        List<PsiFile> files = new ArrayList<PsiFile>(filesToNumbersAndOffsets.keySet());
-        Collections.sort(files, new Comparator<PsiFile>() {
-            @Override
-            public int compare(@NotNull PsiFile f1, @NotNull PsiFile f2) {
-                return f1.getName().compareTo(f2.getName());
-            }
-        });
+        List<PsiFile> files = new ArrayList<>(filesToNumbersAndOffsets.keySet());
+        files.sort(Comparator.comparing(PsiFileSystemItem::getName));
 
         StringBuilder result = new StringBuilder();
         for (PsiFile file : files) {
-            List<Pair<Integer, Integer>> numbersAndOffsets = new ArrayList<Pair<Integer, Integer>>(filesToNumbersAndOffsets.get(file));
+            List<Pair<Integer, Integer>> numbersAndOffsets = new ArrayList<>(filesToNumbersAndOffsets.get(file));
 
-            Collections.sort(numbersAndOffsets, Collections.reverseOrder(new Comparator<Pair<Integer, Integer>>() {
-                @Override
-                public int compare(Pair<Integer, Integer> t1, Pair<Integer, Integer> t2) {
-                    int offsets = t1.second.compareTo(t2.second);
-                    return offsets == 0 ? t1.first.compareTo(t2.first) : offsets;
-                }
-            }));
+            numbersAndOffsets.sort(Collections.reverseOrder(
+                    Comparator.comparingInt((Pair<Integer, Integer> t) -> t.second).thenComparingInt(t -> t.first)));
 
             Document document = PsiDocumentManager.getInstance(project).getDocument(file);
             TestCase.assertNotNull(document);
@@ -132,7 +118,7 @@ public final class NavigationTestUtils {
 
             Document annotated = EditorFactory.getInstance().createDocument(resultForFile);
             String filePart = annotated.getText().substring(annotated.getLineStartOffset(minLine),
-                                                             annotated.getLineEndOffset(maxLine));
+                                                            annotated.getLineEndOffset(maxLine));
             result.append(" ").append(file.getName()).append("\n");
             result.append(filePart).append("\n");
         }

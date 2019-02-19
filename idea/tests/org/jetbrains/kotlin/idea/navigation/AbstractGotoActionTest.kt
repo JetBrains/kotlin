@@ -34,8 +34,7 @@ abstract class AbstractGotoActionTest : KotlinLightCodeInsightFixtureTestCase() 
             val afterText = StringBuilder(text).insert(editor.caretModel.offset, "<caret>").toString()
 
             Assert.assertEquals(parts[1], afterText)
-        }
-        else {
+        } else {
             val fileOffset = currentEditor.caretModel.offset
             val lineNumber = currentEditor.document.getLineNumber(fileOffset)
             val lineStart = currentEditor.document.getLineStartOffset(lineNumber)

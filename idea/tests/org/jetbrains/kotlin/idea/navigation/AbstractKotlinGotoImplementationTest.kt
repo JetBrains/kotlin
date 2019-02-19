@@ -26,7 +26,10 @@ abstract class AbstractKotlinGotoImplementationTest : LightCodeInsightTestCase()
 
     protected fun doTest(path: String) {
         configureByFile(path)
-        val gotoData = NavigationTestUtils.invokeGotoImplementations(LightPlatformCodeInsightTestCase.getEditor(), LightPlatformCodeInsightTestCase.getFile())
+        val gotoData = NavigationTestUtils.invokeGotoImplementations(
+            LightPlatformCodeInsightTestCase.getEditor(),
+            LightPlatformCodeInsightTestCase.getFile()
+        )
         NavigationTestUtils.assertGotoDataMatching(LightPlatformCodeInsightTestCase.getEditor(), gotoData)
     }
 }

@@ -18,34 +18,34 @@ import org.jetbrains.kotlin.test.util.projectLibrary
 class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
     override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/multiModuleReferenceResolve/sameJarInDifferentLibraries/"
 
-    fun testOneHasSourceAndOneDoesnot() {
+    fun testOneHasSourceAndOneDoesNot() {
         doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(
-                withSource = 1,
-                noSource = 1
+            withSource = 1,
+            noSource = 1
         )
     }
 
-    fun testOneHasSourceAndManyDont() {
+    fun testOneHasSourceAndManyDoNot() {
         doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(
-                withSource = 1,
-                noSource = 3
+            withSource = 1,
+            noSource = 3
         )
     }
 
     fun testSeveralWithSource() {
         doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(
-                withSource = 2,
-                noSource = 2
+            withSource = 2,
+            noSource = 2
         )
     }
 
-    fun doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(withSource: Int, noSource: Int) {
+    private fun doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(withSource: Int, noSource: Int) {
         val srcPath = testDataPath + "src"
 
         val sharedJar = MockLibraryUtil.compileJvmLibraryToJar(testDataPath + "libSrc", "sharedJar", addSources = true)
         val jarRoot = sharedJar.jarRoot
 
-        var i: Int = 0
+        var i = 0
         repeat(noSource) {
             module("m${++i}", srcPath).addDependency(projectLibrary("libA", jarRoot))
         }
@@ -58,5 +58,5 @@ class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
         }
     }
 
-    protected fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)!!
+    private fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)!!
 }

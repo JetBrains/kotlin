@@ -38,6 +38,7 @@ public abstract class AbstractKotlinGotoTest extends KotlinLightCodeInsightFixtu
         dirPath = null;
     }
 
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return dirPath;
