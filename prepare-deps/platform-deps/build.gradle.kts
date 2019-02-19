@@ -9,7 +9,7 @@ plugins {
 
 repositories {
     teamcityServer {
-        setUrl("http://buildserver.labs.intellij.net")
+        setUrl("https://buildserver.labs.intellij.net")
         credentials {
             username = "guest"
             password = "guest"

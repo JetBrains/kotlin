@@ -9,7 +9,7 @@ plugins {
 
 repositories {
     teamcityServer {
-        setUrl("http://teamcity.jetbrains.com")
+        setUrl("https://teamcity.jetbrains.com")
         credentials {
             username = "guest"
             password = "guest"
