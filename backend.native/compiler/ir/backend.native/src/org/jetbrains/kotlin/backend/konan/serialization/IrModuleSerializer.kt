@@ -1077,6 +1077,12 @@ internal class IrModuleSerializer(
             proto.addDeclarationId(protoUniqId(uniqId))
         }
 
+        // Make sure that all top level properties are initialized on library's load.
+        file.declarations
+                .filterIsInstance<IrProperty>()
+                .filter { it.backingField?.initializer != null }
+                .forEach { proto.addExplicitlyExportedToCompiler(serializeIrSymbol(it.backingField!!.symbol)) }
+
         file.acceptVoid(object: IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)

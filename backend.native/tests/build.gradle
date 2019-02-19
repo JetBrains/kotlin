@@ -1084,6 +1084,18 @@ task initializers_correctOrder2(type: RunKonanTest) {
     source = "codegen/initializers/correctOrder2.kt"
 }
 
+task initializers_linkTest1(type: LinkKonanTest) {
+    goldValue = "1200\n"
+    source = "codegen/initializers/linkTest1_main.kt"
+    lib = "codegen/initializers/linkTest1_lib.kt"
+}
+
+task initializers_linkTest2(type: LinkKonanTest) {
+    goldValue = "2\n"
+    source = "codegen/initializers/linkTest2_main.kt"
+    lib = "codegen/initializers/linkTest2_lib.kt"
+}
+
 task arithmetic_basic(type: RunKonanTest) {
     source = "codegen/arithmetic/basic.kt"
 }
