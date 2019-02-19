@@ -356,6 +356,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/simple.kt");
         }
 
+        @TestMetadata("staticField.kt")
+        public void testStaticField() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/staticField.kt");
+        }
+
         @TestMetadata("stdlib.kt")
         public void testStdlib() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/stdlib.kt");

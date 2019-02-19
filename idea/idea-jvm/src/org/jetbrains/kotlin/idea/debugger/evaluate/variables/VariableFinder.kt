@@ -211,9 +211,15 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
     }
 
     private fun findFieldVariable(kind: VariableKind.FieldVar): Result? {
-        val thisObject = frameProxy.thisObject() ?: return null
-        val field = thisObject.referenceType().fieldByName(kind.fieldName) ?: return null
-        return Result(thisObject.getValue(field))
+        val thisObject = frameProxy.thisObject()
+        if (thisObject != null) {
+            val field = thisObject.referenceType().fieldByName(kind.fieldName) ?: return null
+            return Result(thisObject.getValue(field))
+        } else {
+            val containingType = frameProxy.safeLocation()?.declaringType() ?: return null
+            val field = containingType.fieldByName(kind.fieldName) ?: return null
+            return Result(containingType.getValue(field))
+        }
     }
 
     private fun findLocalFunction(kind: VariableKind.LocalFunction): Result? {
