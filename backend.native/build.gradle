@@ -211,7 +211,7 @@ task teamcityPublishStdLibSources {
 
 targetList.each { target ->
     def konanJvmArgs =  [*HostManager.regularJvmArgs,
-            "-Dkonan.home=${rootProject.projectDir}",
+            "-Dkonan.home=${rootProject.projectDir}/dist",
             "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
     ]
 
@@ -242,6 +242,7 @@ targetList.each { target ->
 
         dependsOn 'unzipStdlibSources'
         dependsOn ":runtime:${target}Runtime"
+        dependsOn ":distCompiler"
     }
 
     task("${target}Start", type: JavaExec) {

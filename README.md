@@ -25,6 +25,8 @@ Then, build the compiler and libraries:
 
 	./gradlew bundle
 
+To build with experimental targets support compile with `-Porg.jetbrains.kotlin.native.experimentalTargets`.
+
 The build can take about an hour on a Macbook Pro.
 To run a shorter build with only the host compiler and libraries, run:
 

@@ -41,7 +41,9 @@ convention.plugins.platformInfo = new PlatformInfo()
 ext {
     distDir = file('dist')
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
-    platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath))
+    experimentalEnabled = project.hasProperty("org.jetbrains.kotlin.native.experimentalTargets")
+    platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath),
+            ext.experimentalEnabled)
 
     kotlinCommonStdlibModule="org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion}:sources"
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
@@ -295,6 +297,11 @@ task distCompiler(type: Copy) {
     }
     from(project.file('konan')) {
         into('konan')
+    }
+    if (experimentalEnabled) {
+        file('konan/experimentalTargetsEnabled').text = ""
+    } else {
+        delete('konan/experimentalTargetsEnabled')
     }
 }
 

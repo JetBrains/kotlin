@@ -303,7 +303,10 @@ open class MingwLinker(targetProperties: MingwConfigurables)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
-        return listOf(Command(linker).apply {
+        return return listOf(when {
+                HostManager.hostIsMingw -> Command(linker)
+                else -> Command("wine64", "$linker.exe")
+        }.apply {
             +listOf("-o", executable)
             +objectFiles
             if (optimize) +linkerOptimizationFlags

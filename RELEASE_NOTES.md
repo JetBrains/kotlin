@@ -23,18 +23,23 @@ the following platforms:
 
  * Mac OS X 10.11 and later (x86-64), host and target (`-target macos_x64`, default on macOS hosts)
  * Ubuntu Linux x86-64 (14.04, 16.04 and later), other Linux flavours may work as well, host and target
-   (`-target linux_x64`, default on Linux hosts, hosted on Linux, Windows and macOS)
+   (`-target linux_x64`, default on Linux hosts, hosted on Linux, Windows and macOS).
  * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target (`-target mingw_x64`,
-   default on Windows hosts)
- * Microsoft Windows x86-32 cross-compiled target (`-target mingw_x86`), hosted on Windows
+   default on Windows hosts). Experimental support is available on Linux and macOS hosts (requires Wine).
+ * Microsoft Windows x86-32 cross-compiled target (`-target mingw_x86`), hosted on Windows.
+   Experimental support is available on Linux and macOS hosts (requires Wine).
  * Apple iOS (armv7 and arm64 devices, x86 simulator), cross-compiled target
-   (`-target ios_arm32|ios_arm64|ios_x64`), hosted on macOS
+   (`-target ios_arm32|ios_arm64|ios_x64`), hosted on macOS.
  * Linux arm32 hardfp, Raspberry Pi, cross-compiled target (`-target raspberrypi`), hosted on Linux, Windows and macOS
- * Linux MIPS big endian, cross-compiled target (`-target mips`), hosted on Linux
- * Linux MIPS little endian, cross-compiled target (`-target mipsel`), hosted on Linux
+ * Linux MIPS big endian, cross-compiled target (`-target mips`), hosted on Linux.
+ * Linux MIPS little endian, cross-compiled target (`-target mipsel`), hosted on Linux.
  * Android arm32 and arm64 (`-target android_arm32|android_arm64`) target, hosted on Linux, macOS and Windows
-   (only `android_arm32` at the moment)
- * WebAssembly (`-target wasm32`) target, hosted on Linux, Windows or macOS
+   (only `android_arm32` at the moment).
+ * WebAssembly (`-target wasm32`) target, hosted on Linux, Windows or macOS.
+ * Experimental support for Zephyr RTOS (`-target zephyr_stm32f4_disco`) is available on macOS, Linux
+   and Windows hosts.
+
+ To enable experimental targets Kotlin/Native must be recompiled with `org.jetbrains.kotlin.native.experimentalTargets` Gradle property set.
 
  Adding support for other target platforms shouldn't be too hard, if LLVM support is available.
 

@@ -127,7 +127,7 @@ private class TargetManagerImpl(val userRequest: String?, val hostManager: HostM
     override val targetSuffix get() = target.name
 }
 
-open class HostManager(protected val distribution: Distribution = Distribution()) {
+open class HostManager(protected val distribution: Distribution = Distribution(), experimental: Boolean = false) {
 
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)
 
@@ -141,6 +141,8 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             WASM32)
 
     private val zephyrSubtargets = distribution.availableSubTarget("zephyr").map { ZEPHYR(it) }
+
+    private val experimentalEnabled = experimental || distribution.experimentalEnabled
 
     private val configurableSubtargets = zephyrSubtargets
 
@@ -171,7 +173,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
         return target
     }
 
-    val enabled: List<KonanTarget> by lazy { 
+    val enabledRegular: List<KonanTarget> by lazy {
             when (host) {
                 KonanTarget.LINUX_X64 -> listOf(
                     KonanTarget.LINUX_X64,
@@ -181,7 +183,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
                     KonanTarget.ANDROID_ARM32,
                     KonanTarget.ANDROID_ARM64,
                     KonanTarget.WASM32
-                ) + zephyrSubtargets
+                )
                 KonanTarget.MINGW_X64 -> listOf(
                     KonanTarget.MINGW_X64,
                     KonanTarget.MINGW_X86,
@@ -191,7 +193,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
                     // TODO: toolchain to be fixed for that to work.
                     // KonanTarget.ANDROID_ARM64,
                     KonanTarget.WASM32
-                ) + zephyrSubtargets
+                )
                 KonanTarget.MACOS_X64 -> listOf(
                     KonanTarget.MACOS_X64,
                     KonanTarget.IOS_ARM32,
@@ -202,11 +204,28 @@ open class HostManager(protected val distribution: Distribution = Distribution()
                     KonanTarget.ANDROID_ARM32,
                     KonanTarget.ANDROID_ARM64,
                     KonanTarget.WASM32
-                ) + zephyrSubtargets
+                )
                 else ->
                     throw TargetSupportException("Unknown host platform: $host")
             }        
     }
+
+    val enabledExperimental: List<KonanTarget> by lazy {
+        when (host) {
+            KonanTarget.LINUX_X64 -> listOf(
+                    KonanTarget.MINGW_X86, KonanTarget.MINGW_X64
+            ) + zephyrSubtargets
+            KonanTarget.MACOS_X64 -> listOf(
+                    KonanTarget.MINGW_X86, KonanTarget.MINGW_X64
+            ) + zephyrSubtargets
+            KonanTarget.MINGW_X64 -> listOf<KonanTarget>(
+            ) + zephyrSubtargets
+            else -> throw TargetSupportException("Unknown host platform: $host")
+        }
+    }
+
+    val enabled : List<KonanTarget>
+        get() = if (experimentalEnabled) enabledRegular + enabledExperimental else enabledRegular
 
     fun isEnabled(target: KonanTarget) = enabled.contains(target)
 

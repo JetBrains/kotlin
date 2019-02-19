@@ -39,6 +39,9 @@ class Distribution(
     val konanHome = findKonanHome()
     val konanSubdir = "$konanHome/konan"
     val mainPropertyFileName = "$konanSubdir/konan.properties"
+    val experimentalEnabled by lazy {
+        File("$konanSubdir/experimentalTargetsEnabled").exists
+    }
 
     private fun propertyFilesFromConfigDir(configDir: String, genericName: String): List<File> {
         val directory = File(configDir, "platforms/$genericName")

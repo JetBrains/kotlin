@@ -29,7 +29,8 @@ class Platform(val configurables: Configurables)
     }
 }
 
-class PlatformManager(distribution: Distribution = Distribution()) : HostManager(distribution) {
+class PlatformManager(distribution: Distribution = Distribution(), experimental: Boolean = false) :
+        HostManager(distribution, experimental) {
 
     private val loaders = enabled.map {
         it to loadConfigurables(it, distribution.properties, DependencyProcessor.defaultDependenciesRoot.absolutePath)
