@@ -16,6 +16,7 @@
 
 package org.jetbrains.structsBenchmarks
 import kotlinx.cinterop.*
+import platform.posix.*
 import kotlin.math.sqrt
 
 const val benchmarkSize = 10000
@@ -38,7 +39,7 @@ actual fun structBenchmark() {
             val element = alloc<ElementS>()
             element.floatValue = i + sqrt(i.toDouble()).toFloat()
             element.integer = i.toLong()
-            itoa(i, element.string, 10)
+            sprintf(element.string, "%d", i)
             element.contains = containsFunction
 
             elementsList.add(element)

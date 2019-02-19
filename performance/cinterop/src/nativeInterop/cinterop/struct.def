@@ -75,14 +75,6 @@ struct ElementS multiplyElementS(struct ElementS element, int coefficient) {
     return newElement;
 }
 
-void itoa(int val, char* buffer, int base){
-    int i = 30;
-    for(; val && i ; --i, val /= base)
-        buffer[i] = "0123456789abcdef"[val % base];
-    buffer[31] = '\0';
-
-}
-
 union ElementU* sumElementUPtr(const union ElementU* first, const union ElementU* second) {
     if (first == NULL || second == NULL) {
         return NULL;
@@ -99,7 +91,7 @@ struct ElementS* sumElementSPtr(const struct ElementS* first, const struct Eleme
     struct ElementS* newElement = (struct ElementS*)malloc(sizeof(struct ElementS));
     newElement->integer = first->integer + second->integer;
     newElement->floatValue = first->floatValue + second->floatValue;
-    itoa(newElement->integer, newElement->string, 10);
+    sprintf(newElement->string, "%d", newElement->integer);
     return newElement;
 
 }
