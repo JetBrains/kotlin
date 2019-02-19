@@ -38,7 +38,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
                         listOf(PDependency.Library("annotations-13.0"))
                     )
                 },
-                DependencyMapper("org.jetbrains", "annotations", "default", version = "13.0") {
+                DependencyMapper("org.jetbrains", "annotations", "default", "runtime", version = "13.0") {
                     MappedDependency(
                         null,
                         listOf(PDependency.Library("annotations-13.0"))
