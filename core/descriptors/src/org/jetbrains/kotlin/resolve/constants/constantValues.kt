@@ -158,9 +158,17 @@ class IntValue(value: Int) : IntegerValueConstant<Int>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitIntValue(this, data)
 }
 
-class KClassValue(value: ClassLiteralValue) : ConstantValue<ClassLiteralValue>(value) {
-    val classId: ClassId get() = value.classId
-    val arrayDimensions: Int get() = value.arrayNestedness
+class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
+    sealed class Value {
+        data class NormalClass(val value: ClassLiteralValue) : Value() {
+            val classId: ClassId get() = value.classId
+            val arrayDimensions: Int get() = value.arrayNestedness
+        }
+
+        data class LocalClass(val type: KotlinType) : Value()
+    }
+
+    constructor(value: ClassLiteralValue) : this(Value.NormalClass(value))
 
     constructor(classId: ClassId, arrayDimensions: Int) : this(ClassLiteralValue(classId, arrayDimensions))
 
@@ -168,17 +176,23 @@ class KClassValue(value: ClassLiteralValue) : ConstantValue<ClassLiteralValue>(v
         KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, module.builtIns.kClass, listOf(TypeProjectionImpl(getArgumentType(module))))
 
     fun getArgumentType(module: ModuleDescriptor): KotlinType {
-        val descriptor = module.findClassAcrossModuleDependencies(classId)
-            ?: return ErrorUtils.createErrorType("Unresolved type: $classId (arrayDimensions=$arrayDimensions)")
+        when (value) {
+            is Value.LocalClass -> return value.type
+            is Value.NormalClass -> {
+                val (classId, arrayDimensions) = value.value
+                val descriptor = module.findClassAcrossModuleDependencies(classId)
+                    ?: return ErrorUtils.createErrorType("Unresolved type: $classId (arrayDimensions=$arrayDimensions)")
 
-        // If this value refers to a class named test.Foo.Bar where both Foo and Bar have generic type parameters,
-        // we're constructing a type `test.Foo<*>.Bar<*>` below
-        var type = descriptor.defaultType.replaceArgumentsWithStarProjections()
-        repeat(arrayDimensions) {
-            type = module.builtIns.getArrayType(Variance.INVARIANT, type)
+                // If this value refers to a class named test.Foo.Bar where both Foo and Bar have generic type parameters,
+                // we're constructing a type `test.Foo<*>.Bar<*>` below
+                var type = descriptor.defaultType.replaceArgumentsWithStarProjections()
+                repeat(arrayDimensions) {
+                    type = module.builtIns.getArrayType(Variance.INVARIANT, type)
+                }
+
+                return type
+            }
         }
-
-        return type
     }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitKClassValue(this, data)
@@ -196,7 +210,7 @@ class KClassValue(value: ClassLiteralValue) : ConstantValue<ClassLiteralValue>(v
 
             return when (val descriptor = type.constructor.declarationDescriptor) {
                 is ClassDescriptor -> {
-                    val classId = descriptor.classId ?: return null
+                    val classId = descriptor.classId ?: return KClassValue(KClassValue.Value.LocalClass(argumentType))
                     KClassValue(classId, arrayDimensions)
                 }
                 is TypeParameterDescriptor -> {

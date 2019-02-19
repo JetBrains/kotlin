@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -99,10 +101,31 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
 
             override fun visitKClassValue(value: KClassValue, data: Unit) {
                 type = Type.CLASS
-                classId = stringTable.getQualifiedClassNameIndex(value.classId)
 
-                if (value.arrayDimensions > 0) {
-                    arrayDimensionCount = value.arrayDimensions
+                when (val classValue = value.value) {
+                    is KClassValue.Value.NormalClass -> {
+                        classId = stringTable.getQualifiedClassNameIndex(classValue.classId)
+
+                        if (classValue.arrayDimensions > 0) {
+                            arrayDimensionCount = classValue.arrayDimensions
+                        }
+                    }
+                    is KClassValue.Value.LocalClass -> {
+                        var arrayDimensions = 0
+                        var type = classValue.type
+                        while (KotlinBuiltIns.isArray(type)) {
+                            arrayDimensions++
+                            type = type.arguments.single().type
+                        }
+
+                        val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor
+                            ?: error("Type parameters are not allowed in class literal annotation arguments: $classValue")
+                        classId = stringTable.getFqNameIndex(descriptor)
+
+                        if (arrayDimensions > 0) {
+                            arrayDimensionCount = arrayDimensions
+                        }
+                    }
                 }
             }
 

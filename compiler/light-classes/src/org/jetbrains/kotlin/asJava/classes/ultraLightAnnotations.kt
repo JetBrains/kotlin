@@ -141,6 +141,7 @@ private fun ConstantValue<*>.asStringForPsiLiteral(parent: PsiElement): String =
         is NullValue -> "null"
         is StringValue -> "\"$value\""
         is KClassValue -> {
+            val value = (value as KClassValue.Value.NormalClass).value
             val arrayPart = "[]".repeat(value.arrayNestedness)
             val fqName = value.classId.asSingleFqName()
             val canonicalText = psiType(

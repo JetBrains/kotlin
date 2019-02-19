@@ -19280,6 +19280,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/reflection/annotations/findAnnotation.kt");
             }
 
+            @TestMetadata("localClassLiteral.kt")
+            public void testLocalClassLiteral() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/annotations/localClassLiteral.kt");
+            }
+
             @TestMetadata("localClassParameterAnnotation.kt")
             public void testLocalClassParameterAnnotation() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/annotations/localClassParameterAnnotation.kt");

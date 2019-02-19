@@ -140,9 +140,13 @@ private fun ConstantValue<*>.toRuntimeValue(classLoader: ClassLoader): Any? = wh
             Util.getEnumConstantByName(enumClass as Class<out Enum<*>>, entryName.asString())
         }
     }
-    is KClassValue -> {
-        val (classId, arrayDimensions) = value
-        loadClass(classLoader, classId, arrayDimensions)
+    is KClassValue -> when (val classValue = value) {
+        is KClassValue.Value.NormalClass ->
+            loadClass(classLoader, classValue.classId, classValue.arrayDimensions)
+        is KClassValue.Value.LocalClass -> {
+            // TODO: this doesn't work because of KT-30013
+            (classValue.type.constructor.declarationDescriptor as? ClassDescriptor)?.toJavaClass()
+        }
     }
     is ErrorValue, is NullValue -> null
     else -> value  // Primitives and strings
