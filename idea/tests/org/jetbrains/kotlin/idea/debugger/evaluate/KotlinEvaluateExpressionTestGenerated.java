@@ -96,6 +96,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/delegatedPropertyInOtherFile.kt");
         }
 
+        @TestMetadata("delegatedVariables.kt")
+        public void testDelegatedVariables() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/delegatedVariables.kt");
+        }
+
         @TestMetadata("dependentOnFile.kt")
         public void testDependentOnFile() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/dependentOnFile.kt");

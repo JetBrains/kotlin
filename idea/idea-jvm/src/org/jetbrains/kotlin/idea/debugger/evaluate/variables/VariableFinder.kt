@@ -134,7 +134,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
     sealed class VariableKind(val asmType: AsmType) {
         abstract fun capturedNameMatches(name: String): Boolean
 
-        class Ordinary(val name: String, asmType: AsmType) : VariableKind(asmType) {
+        class Ordinary(val name: String, asmType: AsmType, val isDelegated: Boolean) : VariableKind(asmType) {
             private val capturedNameRegex = getCapturedVariableNameRegex(getCapturedFieldName(this.name))
             override fun capturedNameMatches(name: String) = capturedNameRegex.matches(name)
         }
@@ -184,7 +184,8 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
 
     fun find(parameter: CodeFragmentParameter, asmType: AsmType): Result? {
         return when (parameter.kind) {
-            Kind.ORDINARY -> findOrdinary(VariableKind.Ordinary(parameter.name, asmType))
+            Kind.ORDINARY -> findOrdinary(VariableKind.Ordinary(parameter.name, asmType, isDelegated = false))
+            Kind.DELEGATED -> findOrdinary(VariableKind.Ordinary(parameter.name, asmType, isDelegated = true))
             Kind.FAKE_JAVA_OUTER_CLASS -> frameProxy.thisObject()?.let { Result(it) }
             Kind.EXTENSION_RECEIVER -> findExtensionThis(VariableKind.ExtensionThis(parameter.name, asmType))
             Kind.LOCAL_FUNCTION -> findLocalFunction(VariableKind.LocalFunction(parameter.name, asmType))
@@ -421,8 +422,13 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
 
         return variables.namedEntitySequence()
             .filter { isReceiverOrPassedThis(it.name) }
-            .mapNotNull { findCapturedVariable(kind, it.value()) }
+            .mapNotNull { findCapturedVariable(kind, it.value) }
             .firstOrNull()
+    }
+
+    private fun findCapturedVariable(kind: VariableKind, parentFactory: () -> Value?): Result? {
+        val parent = getUnwrapDelegate(kind, parentFactory)
+        return findCapturedVariable(kind, parent)
     }
 
     private fun findCapturedVariable(kind: VariableKind, parent: Value?): Result? {
@@ -444,7 +450,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
             // Recursive search in captured receivers
             fields.namedEntitySequence(parent)
                 .filter { isCapturedReceiverFieldName(it.name) }
-                .mapNotNull { findCapturedVariable(kind, it.value()) }
+                .mapNotNull { findCapturedVariable(kind, it.value) }
                 .firstOrNull()
                 ?.let { return it }
         }
@@ -452,11 +458,25 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
         // Recursive search in outer and captured this
         fields.namedEntitySequence(parent)
             .filter { it.name == AsmUtil.THIS_IN_DEFAULT_IMPLS || it.name == AsmUtil.CAPTURED_THIS_FIELD }
-            .mapNotNull { findCapturedVariable(kind, it.value()) }
+            .mapNotNull { findCapturedVariable(kind, it.value) }
             .firstOrNull()
             ?.let { return it }
 
         return null
+    }
+
+    private fun getUnwrapDelegate(kind: VariableKind, valueFactory: () -> Value?): Value? {
+        val rawValue = valueFactory()
+        if (kind !is VariableKind.Ordinary || !kind.isDelegated) {
+            return rawValue
+        }
+
+        val delegateValue = rawValue as? ObjectReference ?: return rawValue
+        val getValueMethod = delegateValue.referenceType()
+            .methodsByName("getValue", "()Ljava/lang/Object;").firstOrNull()
+            ?: return rawValue
+
+        return delegateValue.invokeMethod(context.thread, getValueMethod, emptyList(), context.invokePolicy)
     }
 
     private fun isCapturedReceiverFieldName(name: String): Boolean {
@@ -465,11 +485,16 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
     }
 
     private fun VariableKind.typeMatches(actualType: JdiType?): Boolean {
+        if (this is VariableKind.Ordinary && isDelegated) {
+            // We can't figure out the actual type of the value yet.
+            // No worries: it will be checked again (and more carefully) in `unwrapAndCheck()`.
+            return true
+        }
         return evaluatorValueConverter.typeMatches(asmType, actualType)
     }
 
     private fun NamedEntity.unwrapAndCheck(kind: VariableKind): Result? {
-        return evaluatorValueConverter.coerce(value(), kind.asmType)
+        return evaluatorValueConverter.coerce(getUnwrapDelegate(kind, value), kind.asmType)
     }
 
     private fun List<Field>.namedEntitySequence(owner: ObjectReference): Sequence<NamedEntity> {

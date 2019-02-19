@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
 import org.jetbrains.kotlin.codegen.getCallLabelForLambdaArgument
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldPropertyDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.*
@@ -38,7 +39,7 @@ interface CodeFragmentParameter {
     val debugString: String
 
     enum class Kind {
-        ORDINARY, EXTENSION_RECEIVER, DISPATCH_RECEIVER, COROUTINE_CONTEXT, LOCAL_FUNCTION,
+        ORDINARY, DELEGATED, EXTENSION_RECEIVER, DISPATCH_RECEIVER, COROUTINE_CONTEXT, LOCAL_FUNCTION,
         FAKE_JAVA_OUTER_CLASS, FIELD_VAR, DEBUG_LABEL
     }
 
@@ -276,7 +277,8 @@ class CodeFragmentParameterAnalyzer(
             is ValueDescriptor -> {
                 parameters.getOrPut(target) {
                     val type = target.type
-                    Smart(Dumb(Kind.ORDINARY, target.name.asString()), type, target)
+                    val kind = if (target is LocalVariableDescriptor && target.isDelegated) Kind.DELEGATED else Kind.ORDINARY
+                    Smart(Dumb(kind, target.name.asString()), type, target)
                 }
             }
             else -> null
