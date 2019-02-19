@@ -19,6 +19,7 @@ val Project.kotlinVersion get() = p( /* Kotlin version enforced by Big Kotlin */
 }
 
 val Project.kotlinVersionFull get() = p("versions.kotlin4cidr")
+val Project.kotlinPluginBuildNumber get() = kotlinVersionFull.split("-release", limit = 2).takeIf { it.size == 2 }?.let { "${it[0]}-release" } ?: kotlinVersionFull
 val Project.kotlinPluginVersion get() = p("versions.kotlin4cidr.plugin")
 val Project.kotlinVersionRepo get() = p("versions.kotlin4cidr.repo")
 

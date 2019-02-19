@@ -20,7 +20,7 @@ repositories {
 val ideaPlugin by configurations.creating { isVisible = false }
 
 dependencies {
-    ideaPlugin(tc("$kotlinVersionRepo:$kotlinVersionFull:kotlin-plugin-$kotlinVersion-release-$kotlinPluginVersion.zip"))
+    ideaPlugin(tc("$kotlinVersionRepo:$kotlinVersionFull:kotlin-plugin-$kotlinPluginBuildNumber-$kotlinPluginVersion.zip"))
 }
 
 val downloadIdeaPlugin by tasks.creating(Copy::class) {
