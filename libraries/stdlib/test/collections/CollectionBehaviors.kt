@@ -19,7 +19,7 @@ public fun <T> CompareContext<List<T>>.listBehavior() {
     for (index in expected.indices)
         propertyEquals { this[index] }
 
-    propertyFails { this[size] }
+    propertyFailsWith<IndexOutOfBoundsException> { this[size] }
 
     propertyEquals { indexOf(elementAtOrNull(0)) }
     propertyEquals { lastIndexOf(elementAtOrNull(0)) }
@@ -103,6 +103,8 @@ public fun <T> CompareContext<Collection<T>>.collectionBehavior(objectName: Stri
     (object {}).let { propertyEquals { contains(it as Any?) } }
     propertyEquals { contains(firstOrNull()) }
     propertyEquals { containsAll(this) }
+    (object {}).let { propertyEquals { containsAll(listOf<Any?>(it)) } }
+    propertyEquals { containsAll(listOf<Any?>(null)) }
 }
 
 
