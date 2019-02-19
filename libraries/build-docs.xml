@@ -75,7 +75,7 @@
             <sourceRoot path="stdlib/common/src" />
             <sourceRoot path="stdlib/src" />
 
-            <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
+            <sourcelink path=".." url="https://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
 
             <!-- TODO Docs? -->
             <packageOptions prefix="org.w3c" reportUndocumented="false"/>
@@ -93,9 +93,9 @@
             <sourceRoot path="kotlin.test/testng/src/main/kotlin" platforms="JVM"/>
             <sourceRoot path="kotlin.test/js/src/main/kotlin" platforms="JS"/>
 
-            <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
+            <sourcelink path=".." url="https://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
             <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
-            <ExternalDocumentationLink url="http://junit.org/junit4/javadoc/latest/" />
+            <ExternalDocumentationLink url="https://junit.org/junit4/javadoc/latest/" />
             <packageoptions prefix="org.junit" skipdeprecated="true"/>
         </dokka>
     </target>
