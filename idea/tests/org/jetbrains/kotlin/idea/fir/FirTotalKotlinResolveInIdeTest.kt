@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.idea.fir
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationEx
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.impl.FileTypeManagerImpl
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -69,6 +71,16 @@ class FirTotalKotlinResolveInIdeTest : ModuleTestCase() {
     override fun setUp() {
         super.setUp()
         sessionProvider = FirProjectSessionProvider(project)
+    }
+
+    override fun tearDown() {
+        val jdkTable = ProjectJdkTable.getInstance()
+        runWriteAction {
+            for (sdk in jdkTable.allJdks) {
+                jdkTable.removeJdk(sdk)
+            }
+        }
+        super.tearDown()
     }
 
     fun testTotalKotlin() {
