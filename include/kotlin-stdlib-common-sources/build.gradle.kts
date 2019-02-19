@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    base
 }
 
 val sources by configurations.creating
@@ -13,6 +13,7 @@ val buildSources by tasks.creating(Jar::class.java) {
     from(provider { zipTree(sources.singleFile) })
 }
 
-artifacts.add("runtime", buildSources) {
+artifacts.add("default", buildSources) {
+    name = "kotlin-stdlib-common"
     classifier = "sources"
 }
