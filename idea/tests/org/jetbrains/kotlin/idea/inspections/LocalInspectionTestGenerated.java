@@ -4974,6 +4974,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantGetter/default.kt");
         }
 
+        @TestMetadata("external.kt")
+        public void testExternal() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantGetter/external.kt");
+        }
+
         @TestMetadata("fieldExpression.kt")
         public void testFieldExpression() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantGetter/fieldExpression.kt");
