@@ -792,7 +792,7 @@ public class KotlinTypeMapper {
     }
 
     //NB: similar platform agnostic code in DescriptorUtils.unwrapFakeOverride
-    private FunctionDescriptor findSuperDeclaration(@NotNull FunctionDescriptor descriptor, boolean isSuperCall) {
+    private static FunctionDescriptor findSuperDeclaration(@NotNull FunctionDescriptor descriptor, boolean isSuperCall) {
         while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             Collection<? extends FunctionDescriptor> overridden = descriptor.getOverriddenDescriptors();
             if (overridden.isEmpty()) {
@@ -1541,7 +1541,7 @@ public class KotlinTypeMapper {
      * In that case the generated method's return type should be boxed: otherwise it's not possible to use
      * this class from Java since javac issues errors when loading the class (incompatible return types)
      */
-    public boolean forceBoxedReturnType(@NotNull FunctionDescriptor descriptor) {
+    private boolean forceBoxedReturnType(@NotNull FunctionDescriptor descriptor) {
         if (isBoxMethodForInlineClass(descriptor)) return true;
 
         //noinspection ConstantConditions
