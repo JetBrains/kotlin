@@ -52,7 +52,7 @@ object ArrayOps : TemplateGroupBase() {
             "get() = size - 1"
         }
         specialFor(ArraysOfUnsigned) {
-            inlineOnly()
+            inline()    // TODO: Make inlineOnly after ADM-30185 is fixed.
             body { "get() = storage.lastIndex" }
         }
     }
@@ -66,7 +66,7 @@ object ArrayOps : TemplateGroupBase() {
             "get() = IntRange(0, lastIndex)"
         }
         specialFor(ArraysOfUnsigned) {
-            inlineOnly()
+            inline()    // TODO: Make inlineOnly after ADM-30185 is fixed.
             body { "get() = storage.indices" }
         }
     }

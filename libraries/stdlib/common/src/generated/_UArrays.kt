@@ -1848,7 +1848,6 @@ public inline fun UShortArray.copyOfRange(fromIndex: Int, toIndex: Int): UShortA
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UIntArray.indices: IntRange
     get() = storage.indices
 
@@ -1857,7 +1856,6 @@ public inline val UIntArray.indices: IntRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val ULongArray.indices: IntRange
     get() = storage.indices
 
@@ -1866,7 +1864,6 @@ public inline val ULongArray.indices: IntRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UByteArray.indices: IntRange
     get() = storage.indices
 
@@ -1875,7 +1872,6 @@ public inline val UByteArray.indices: IntRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UShortArray.indices: IntRange
     get() = storage.indices
 
@@ -1884,7 +1880,6 @@ public inline val UShortArray.indices: IntRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UIntArray.lastIndex: Int
     get() = storage.lastIndex
 
@@ -1893,7 +1888,6 @@ public inline val UIntArray.lastIndex: Int
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val ULongArray.lastIndex: Int
     get() = storage.lastIndex
 
@@ -1902,7 +1896,6 @@ public inline val ULongArray.lastIndex: Int
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UByteArray.lastIndex: Int
     get() = storage.lastIndex
 
@@ -1911,7 +1904,6 @@ public inline val UByteArray.lastIndex: Int
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
 public inline val UShortArray.lastIndex: Int
     get() = storage.lastIndex
 

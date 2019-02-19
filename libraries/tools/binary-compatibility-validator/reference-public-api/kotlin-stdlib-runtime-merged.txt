@@ -2316,6 +2316,14 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun firstOrNull-GBYM_sE ([B)Lkotlin/UByte;
 	public static final fun firstOrNull-QwZRm1k ([J)Lkotlin/ULong;
 	public static final fun firstOrNull-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun getIndices--ajY-9A ([I)Lkotlin/ranges/IntRange;
+	public static final fun getIndices-GBYM_sE ([B)Lkotlin/ranges/IntRange;
+	public static final fun getIndices-QwZRm1k ([J)Lkotlin/ranges/IntRange;
+	public static final fun getIndices-rL5Bavg ([S)Lkotlin/ranges/IntRange;
+	public static final fun getLastIndex--ajY-9A ([I)I
+	public static final fun getLastIndex-GBYM_sE ([B)I
+	public static final fun getLastIndex-QwZRm1k ([J)I
+	public static final fun getLastIndex-rL5Bavg ([S)I
 	public static final fun getOrNull-PpDY95g ([BI)Lkotlin/UByte;
 	public static final fun getOrNull-nggk6HY ([SI)Lkotlin/UShort;
 	public static final fun getOrNull-qFRl0hI ([II)Lkotlin/UInt;
