@@ -18,24 +18,31 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
 import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -177,9 +184,6 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
         var useVararg: Boolean = false
 
         fun build(): BuiltFunctionReference {
-            val startOffset = irFunctionReference.startOffset
-            val endOffset = irFunctionReference.endOffset
-
             val returnType = irFunctionReference.symbol.owner.returnType
             val functionReferenceClassSuperTypes: MutableList<IrType> = mutableListOf(
                 functionReferenceOrLambda.owner.defaultType // type arguments?
@@ -206,12 +210,11 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             )
 
             var suspendFunctionClass: IrClass? = null
-            var suspendFunctionClassTypeParameters: List<IrType>? = null
             val lastParameterType = unboundCalleeParameters.lastOrNull()?.type
             if ((lastParameterType as? IrSimpleType)?.classifier == continuationClass) {
                 // If the last parameter is Continuation<> inherit from SuspendFunction.
                 suspendFunctionClass = context.getIrClass(FqName("kotlin.Suspendfunction${numberOfParameters - 1}")).owner
-                suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
+                val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
                         (lastParameterType.arguments.single() as IrTypeProjection).type
                 functionReferenceClassSuperTypes += IrSimpleTypeImpl(
                     suspendFunctionClass.symbol,
@@ -221,22 +224,14 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 )
             }
 
-            val functionReferenceClassDescriptor = WrappedClassDescriptor()
-            functionReferenceClass = IrClassImpl(
-                startOffset, endOffset,
-                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
-                IrClassSymbolImpl(functionReferenceClassDescriptor),
-                name = "${callee.name}\$${functionReferenceCount++}".synthesizedName,
-                kind = ClassKind.CLASS,
-                visibility = Visibilities.PUBLIC,
-                modality = Modality.FINAL,
-                isCompanion = false,
-                isInner = false,
-                isData = false,
-                isExternal = false,
-                isInline = false
-            ).apply {
-                functionReferenceClassDescriptor.bind(this)
+            functionReferenceClass = buildClass {
+                setSourceRange(irFunctionReference)
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                name = "${callee.name}\$${functionReferenceCount++}".synthesizedName
+                kind = ClassKind.CLASS
+                visibility = Visibilities.PUBLIC
+                modality = Modality.FINAL
+            }.apply {
                 parent = referenceParent
                 superTypes.addAll(functionReferenceClassSuperTypes)
                 createImplicitParameterDeclarationWithWrappedDescriptor()
@@ -256,9 +251,12 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             functionReferenceClass.declarations.add(invokeMethod)
 
             if (!isLambda) {
-                val getSignatureMethod = createGetSignatureMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getSignature"}!!)
-                val getNameMethod = createGetNameMethod(functionReferenceOrLambda.owner.properties.find { it.name.asString() == "name" }!!)
-                val getOwnerMethod = createGetOwnerMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getOwner" }!!)
+                val getSignatureMethod =
+                    createGetSignatureMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getSignature"}!!)
+                val getNameMethod =
+                    createGetNameMethod(functionReferenceOrLambda.owner.properties.find { it.name.asString() == "name" }!!)
+                val getOwnerMethod =
+                    createGetOwnerMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getOwner" }!!)
 
                 val suspendInvokeMethod =
                     if (suspendFunctionClass != null) {
@@ -276,21 +274,15 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             return BuiltFunctionReference(functionReferenceClass, constructor)
         }
 
-        private fun createConstructor(): IrConstructor {
-            val descriptor = WrappedClassConstructorDescriptor()
-            return IrConstructorImpl(
-                irFunctionReference.startOffset, irFunctionReference.endOffset,
-                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
-                IrConstructorSymbolImpl(descriptor),
-                name = Name.special("<init>"),
-                visibility = Visibilities.PUBLIC,
-                returnType = functionReferenceClass.defaultType,
-                isInline = false,
-                isExternal = false,
+        private fun createConstructor(): IrConstructor =
+            buildConstructor {
+                setSourceRange(irFunctionReference)
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                visibility = Visibilities.PUBLIC
+                returnType = functionReferenceClass.defaultType
                 isPrimary = true
-            ).apply {
+            }.apply {
                 val constructor = this
-                descriptor.bind(this)
                 parent = functionReferenceClass
 
                 val boundArgsSet = boundCalleeParameters.toSet()
@@ -341,25 +333,17 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
                 }
             }
-        }
 
-        private fun createInvokeMethod(superFunction: IrSimpleFunction) : IrSimpleFunction {
-            val descriptor = WrappedSimpleFunctionDescriptor()
-            return IrFunctionImpl(
-                irFunctionReference.startOffset, irFunctionReference.endOffset,
-                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
-                IrSimpleFunctionSymbolImpl(descriptor),
-                Name.identifier("invoke"),
-                Visibilities.PUBLIC,
-                Modality.FINAL,
-                returnType = callee.returnType,
-                isInline = false,   // not sure
-                isExternal = false,
-                isTailrec = false,
+        private fun createInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction =
+            buildFun {
+                setSourceRange(irFunctionReference)
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                name = Name.identifier("invoke")
+                visibility = Visibilities.PUBLIC
+                returnType = callee.returnType
                 isSuspend = superFunction.isSuspend
-            ).apply {
+            }.apply {
                 val function = this
-                descriptor.bind(this)
                 parent = functionReferenceClass
                 overriddenSymbols.add(superFunction.symbol)
                 dispatchReceiverParameter = functionReferenceClass.thisReceiver?.copyTo(function)
@@ -448,47 +432,29 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 }
 
             }
-        }
 
-        private fun buildField(name: Name, type: IrType): IrField {
-            val descriptor = WrappedFieldDescriptor()
-            // TODO: make it synthetic
-            val field = IrFieldImpl(
-                irFunctionReference.startOffset,
-                irFunctionReference.endOffset,
-                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
-                IrFieldSymbolImpl(descriptor),
-                name,
-                type,
-                JavaVisibilities.PACKAGE_VISIBILITY,
-                isFinal = true,
-                isExternal = false,
-                isStatic = false
-            ).apply {
-                descriptor.bind(this)
+        private fun buildField(fieldName: Name, fieldType: IrType): IrField =
+            buildField {
+                setSourceRange(irFunctionReference)
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                name = fieldName
+                type = fieldType
+                visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                isFinal = true
+            }.also {
+                functionReferenceClass.declarations.add(it)
             }
 
-            functionReferenceClass.declarations.add(field)
-            return field
-        }
-
-        private fun createGetSignatureMethod(superFunction: IrSimpleFunction): IrSimpleFunction {
-            val descriptor = WrappedSimpleFunctionDescriptor()
-            return IrFunctionImpl(
-                irFunctionReference.startOffset, irFunctionReference.endOffset,
-                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
-                IrSimpleFunctionSymbolImpl(descriptor),
-                Name.identifier("getSignature"),
-                superFunction.visibility,
-                superFunction.modality,
-                returnType = superFunction.returnType,
-                isInline = false,
-                isExternal = false,
-                isTailrec = false,
-                isSuspend = false
-            ).apply {
+        private fun createGetSignatureMethod(superFunction: IrSimpleFunction): IrSimpleFunction =
+            buildFun {
+                setSourceRange(irFunctionReference)
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                name = Name.identifier("getSignature")
+                returnType = superFunction.returnType
+                visibility = superFunction.visibility
+                modality = superFunction.modality
+            }.apply {
                 val function = this
-                descriptor.bind(this)
                 parent = functionReferenceClass
                 overriddenSymbols.add(superFunction.symbol)
                 dispatchReceiverParameter = functionReferenceClass.thisReceiver!!.copyTo(function)
@@ -505,26 +471,18 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                     )
                 }
             }
-        }
 
         private fun createGetNameMethod(superNameProperty: IrProperty): IrSimpleFunction {
             val superGetter = superNameProperty.getter!!
-            val descriptor = WrappedSimpleFunctionDescriptor()
-            return IrFunctionImpl(
-                irFunctionReference.startOffset, irFunctionReference.endOffset,
-                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
-                IrSimpleFunctionSymbolImpl(descriptor),
-                Name.identifier("getName"),
-                superGetter.visibility,
-                superGetter.modality,
-                returnType = superGetter.returnType,
-                isInline = false,
-                isExternal = false,
-                isTailrec = false,
-                isSuspend = false
-            ).apply {
+            return buildFun {
+                setSourceRange(irFunctionReference)
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                name = Name.identifier("getName")
+                returnType = superGetter.returnType
+                visibility = superGetter.visibility
+                modality = superGetter.modality
+            }.apply {
                 val function = this
-                descriptor.bind(this)
                 parent = functionReferenceClass
                 overriddenSymbols.add(superGetter.symbol)
                 dispatchReceiverParameter = functionReferenceClass.thisReceiver?.copyTo(function)
@@ -538,23 +496,16 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             }
         }
 
-        private fun createGetOwnerMethod(superFunction: IrSimpleFunction): IrSimpleFunction {
-            val descriptor = WrappedSimpleFunctionDescriptor()
-            return IrFunctionImpl(
-                functionReferenceClass.startOffset, functionReferenceClass.endOffset,
-                JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
-                IrSimpleFunctionSymbolImpl(descriptor),
-                Name.identifier("getOwner"),
-                superFunction.visibility,
-                superFunction.modality,
-                returnType = superFunction.returnType,
-                isInline = false,
-                isExternal = false,
-                isTailrec = false,
-                isSuspend = false
-            ).apply {
+        private fun createGetOwnerMethod(superFunction: IrSimpleFunction): IrSimpleFunction =
+            buildFun {
+                setSourceRange(functionReferenceClass)
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                name = Name.identifier("getOwner")
+                returnType = superFunction.returnType
+                visibility = superFunction.visibility
+                modality = superFunction.modality
+            }.apply {
                 val function = this
-                descriptor.bind(this)
                 parent = functionReferenceClass
                 overriddenSymbols.add(superFunction.symbol)
                 dispatchReceiverParameter = functionReferenceClass.thisReceiver?.copyTo(function)
@@ -566,7 +517,6 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                     )
                 }
             }
-        }
 
         fun IrBuilderWithScope.generateCallableReferenceDeclarationContainer(): IrExpression {
             val globalContext = this@CallableReferenceLowering.context
