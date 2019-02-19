@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.*
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.coroutines.isSuspendFunctionNotSuspensionView
@@ -142,13 +141,13 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
 
         val container = descriptor.containingDeclaration
-        if (container is PackageFragmentDescriptor) {
-            val packageMemberOwner = internalNameForPackageMemberOwner(descriptor as CallableMemberDescriptor, publicFacade)
-            return Type.getObjectType(packageMemberOwner)
-        } else return if (container is ClassDescriptor) {
-            mapClass((container as ClassDescriptor?)!!)
-        } else {
-            throw UnsupportedOperationException("Don't know how to map owner for $descriptor")
+        return when (container) {
+            is PackageFragmentDescriptor -> {
+                val packageMemberOwner = internalNameForPackageMemberOwner(descriptor as CallableMemberDescriptor, publicFacade)
+                Type.getObjectType(packageMemberOwner)
+            }
+            is ClassDescriptor -> mapClass((container as ClassDescriptor?)!!)
+            else -> throw UnsupportedOperationException("Don't know how to map owner for $descriptor")
         }
     }
 
@@ -197,7 +196,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
     }
 
     private fun mapReturnType(descriptor: CallableDescriptor, sw: JvmSignatureWriter?, returnType: KotlinType): Type {
-        val isAnnotationMethod = DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)
+        val isAnnotationMethod = isAnnotationClass(descriptor.containingDeclaration)
         if (sw == null || sw.skipGenericSignature()) {
             return mapType(returnType, sw, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod))
         }
@@ -255,7 +254,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
     fun mapAnnotationParameterName(descriptor: PropertyDescriptor): String {
         val getter = descriptor.getter
-        return if (getter != null) mapFunctionName(getter!!, OwnerKind.IMPLEMENTATION) else descriptor.name.asString()
+        return if (getter != null) mapFunctionName(getter, OwnerKind.IMPLEMENTATION) else descriptor.name.asString()
     }
 
     fun mapType(descriptor: ClassifierDescriptor): Type {
@@ -308,7 +307,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         val innerTypesAsList = possiblyInnerType.segments()
 
-        val indexOfParameterizedType = innerTypesAsList.indexOfFirst { innerPart -> !innerPart.arguments.isEmpty() }
+        val indexOfParameterizedType = innerTypesAsList.indexOfFirst { innerPart -> innerPart.arguments.isNotEmpty() }
         if (indexOfParameterizedType < 0 || innerTypesAsList.size == 1) {
             signatureVisitor.writeClassBegin(asmType)
             writeGenericArguments(signatureVisitor, possiblyInnerType, mode)
@@ -409,8 +408,19 @@ class KotlinTypeMapper @JvmOverloads constructor(
             val owner = mapOwner(descriptor)
             val originalDescriptor = descriptor.original
             return CallableMethod(
-                owner, owner, { mapDefaultMethod(originalDescriptor, OwnerKind.IMPLEMENTATION).descriptor }, method,
-                INVOKESPECIAL, null, null, null, null, null, originalDescriptor.returnType, false, false
+                owner,
+                owner,
+                { mapDefaultMethod(originalDescriptor, OwnerKind.IMPLEMENTATION).descriptor },
+                method,
+                INVOKESPECIAL,
+                null,
+                null,
+                null,
+                null,
+                null,
+                originalDescriptor.returnType,
+                isInterfaceMethod = false,
+                isDefaultMethodInInterface = false
             )
         }
 
@@ -487,16 +497,20 @@ class KotlinTypeMapper @JvmOverloads constructor(
                             isStaticAccessor(functionDescriptor) ||
                             functionDescriptor.isJvmStaticInObjectOrClassOrInterface() ||
                             toInlinedErasedClass
-                if (isStaticInvocation) {
-                    invokeOpcode = INVOKESTATIC
-                    isInterfaceMember = currentIsInterface && functionParent is JavaClassDescriptor
-                } else if (isInterface) {
-                    invokeOpcode = INVOKEINTERFACE
-                    isInterfaceMember = true
-                } else {
-                    val isPrivateFunInvocation = Visibilities.isPrivate(functionDescriptor.visibility) && !functionDescriptor.isSuspend
-                    invokeOpcode = if (superCall || isPrivateFunInvocation) INVOKESPECIAL else INVOKEVIRTUAL
-                    isInterfaceMember = superCall && currentIsInterface
+                when {
+                    isStaticInvocation -> {
+                        invokeOpcode = INVOKESTATIC
+                        isInterfaceMember = currentIsInterface && functionParent is JavaClassDescriptor
+                    }
+                    isInterface -> {
+                        invokeOpcode = INVOKEINTERFACE
+                        isInterfaceMember = true
+                    }
+                    else -> {
+                        val isPrivateFunInvocation = Visibilities.isPrivate(functionDescriptor.visibility) && !functionDescriptor.isSuspend
+                        invokeOpcode = if (superCall || isPrivateFunInvocation) INVOKESPECIAL else INVOKEVIRTUAL
+                        isInterfaceMember = superCall && currentIsInterface
+                    }
                 }
 
                 val overriddenSpecialBuiltinFunction = functionDescriptor.original.getOverriddenBuiltinReflectingJvmDescriptor()
@@ -508,7 +522,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 signature = if (toInlinedErasedClass)
                     mapSignatureForInlineErasedClassSkipGeneric(functionToCall)
                 else
-                    mapSignature(functionToCall, resolvedCall, OwnerKind.IMPLEMENTATION, true, false)
+                    mapSignature(
+                        functionToCall, resolvedCall, OwnerKind.IMPLEMENTATION,
+                        skipGenericSignature = true,
+                        hasSpecialBridge = false
+                    )
                 returnKotlinType = functionToCall.returnType
 
                 val receiver = if (currentIsInterface && !originalIsInterface || functionParent is FunctionClassDescriptor)
@@ -526,22 +544,26 @@ class KotlinTypeMapper @JvmOverloads constructor(
             owner = mapOwner(functionDescriptor)
             ownerForDefaultImpl = owner
             baseMethodDescriptor = functionDescriptor
-            if (functionParent is PackageFragmentDescriptor) {
-                invokeOpcode = INVOKESTATIC
-                thisClass = null
-                dispatchReceiverKotlinType = null
-            } else if (functionDescriptor is ConstructorDescriptor) {
-                invokeOpcode = INVOKESPECIAL
-                thisClass = null
-                dispatchReceiverKotlinType = null
-            } else {
-                invokeOpcode = INVOKEVIRTUAL
-                thisClass = owner
-                val ownerDescriptor = functionDescriptor.containingDeclaration
-                dispatchReceiverKotlinType = if (ownerDescriptor is ClassDescriptor)
-                    ownerDescriptor.defaultType
-                else
-                    null
+            when {
+                functionParent is PackageFragmentDescriptor -> {
+                    invokeOpcode = INVOKESTATIC
+                    thisClass = null
+                    dispatchReceiverKotlinType = null
+                }
+                functionDescriptor is ConstructorDescriptor -> {
+                    invokeOpcode = INVOKESPECIAL
+                    thisClass = null
+                    dispatchReceiverKotlinType = null
+                }
+                else -> {
+                    invokeOpcode = INVOKEVIRTUAL
+                    thisClass = owner
+                    val ownerDescriptor = functionDescriptor.containingDeclaration
+                    dispatchReceiverKotlinType = if (ownerDescriptor is ClassDescriptor)
+                        ownerDescriptor.defaultType
+                    else
+                        null
+                }
             }
         }
 
@@ -563,7 +585,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             { mapDefaultMethod(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)).descriptor },
             signature, invokeOpcode, thisClass, dispatchReceiverKotlinType, receiverParameterType, extensionReceiverKotlinType,
             calleeType, returnKotlinType,
-            if (jvmTarget.compareTo(JvmTarget.JVM_1_8) >= 0) isInterfaceMember else invokeOpcode == INVOKEINTERFACE,
+            if (jvmTarget >= JvmTarget.JVM_1_8) isInterfaceMember else invokeOpcode == INVOKEINTERFACE,
             isDefaultMethodInInterface
         )
     }
@@ -582,41 +604,45 @@ class KotlinTypeMapper @JvmOverloads constructor(
         val nameForSpecialFunction = getJvmMethodNameIfSpecial(descriptor)
         if (nameForSpecialFunction != null) return nameForSpecialFunction
 
-        if (descriptor is PropertyAccessorDescriptor) {
-            val property = descriptor.correspondingProperty
-            if (isAnnotationClass(property.containingDeclaration)) {
-                return property.name.asString()
+        when {
+            descriptor is PropertyAccessorDescriptor -> {
+                val property = descriptor.correspondingProperty
+                if (isAnnotationClass(property.containingDeclaration)) {
+                    return property.name.asString()
+                }
+
+                val isAccessor = property is AccessorForPropertyDescriptor
+                val propertyName = if (isAccessor)
+                    (property as AccessorForPropertyDescriptor).accessorSuffix
+                else
+                    property.name.asString()
+
+                val accessorName = if (descriptor is PropertyGetterDescriptor)
+                    JvmAbi.getterName(propertyName)
+                else
+                    JvmAbi.setterName(propertyName)
+
+                return mangleMemberNameIfRequired(if (isAccessor) "access$$accessorName" else accessorName, descriptor, kind)
             }
-
-            val isAccessor = property is AccessorForPropertyDescriptor
-            val propertyName = if (isAccessor)
-                (property as AccessorForPropertyDescriptor).accessorSuffix
-            else
-                property.name.asString()
-
-            val accessorName = if (descriptor is PropertyGetterDescriptor)
-                JvmAbi.getterName(propertyName)
-            else
-                JvmAbi.setterName(propertyName)
-
-            return mangleMemberNameIfRequired(if (isAccessor) "access$$accessorName" else accessorName, descriptor, kind)
-        } else if (isFunctionLiteral(descriptor)) {
-            val element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)
-            if (element is KtFunctionLiteral) {
-                val expression = element.parent
-                if (expression is KtLambdaExpression) {
-                    val samType = bindingContext.get(SAM_VALUE, expression as KtExpression)
-                    if (samType != null) {
-                        return samType.originalAbstractMethod.name.asString()
+            isFunctionLiteral(descriptor) -> {
+                val element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)
+                if (element is KtFunctionLiteral) {
+                    val expression = element.parent
+                    if (expression is KtLambdaExpression) {
+                        val samType = bindingContext.get(SAM_VALUE, expression as KtExpression)
+                        if (samType != null) {
+                            return samType.originalAbstractMethod.name.asString()
+                        }
                     }
                 }
-            }
 
-            return OperatorNameConventions.INVOKE.asString()
-        } else return if (isLocalFunction(descriptor) || isFunctionExpression(descriptor)) {
-            OperatorNameConventions.INVOKE.asString()
-        } else {
-            mangleMemberNameIfRequired(descriptor.name.asString(), descriptor, kind)
+                return OperatorNameConventions.INVOKE.asString()
+            }
+            else -> return if (isLocalFunction(descriptor) || isFunctionExpression(descriptor)) {
+                OperatorNameConventions.INVOKE.asString()
+            } else {
+                mangleMemberNameIfRequired(descriptor.name.asString(), descriptor, kind)
+            }
         }
     }
 
@@ -625,7 +651,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
         descriptor: CallableMemberDescriptor,
         kind: OwnerKind?
     ): String {
-        var name = name
         val containingDeclaration = descriptor.containingDeclaration
         if (containingDeclaration is ScriptDescriptor && descriptor is PropertyDescriptor) {
             //script properties should be public
@@ -643,12 +668,13 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return name
         }
 
+        var newName = name
         // Constructor:
         //   either a constructor method for inline class (should be mangled),
         //   or should stay as it is ('<init>').
         if (descriptor is ConstructorDescriptor) {
             if (kind === OwnerKind.ERASED_INLINE_CLASS) {
-                name = JvmAbi.ERASED_INLINE_CONSTRUCTOR_NAME
+                newName = JvmAbi.ERASED_INLINE_CONSTRUCTOR_NAME
             } else {
                 return name
             }
@@ -656,27 +682,27 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         val suffix = getInlineClassSignatureManglingSuffix(descriptor)
         if (suffix != null) {
-            name += suffix
+            newName += suffix
         } else if (kind === OwnerKind.ERASED_INLINE_CLASS) {
-            name += JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
+            newName += JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
         }
 
-        name = JvmCodegenUtil.sanitizeNameIfNeeded(name, languageVersionSettings)
+        newName = sanitizeNameIfNeeded(newName, languageVersionSettings)
 
-        if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            if (Visibilities.isPrivate(descriptor.visibility) && descriptor !is ConstructorDescriptor && "<clinit>" != name) {
+        if (isTopLevelDeclaration(descriptor)) {
+            if (Visibilities.isPrivate(descriptor.visibility) && descriptor !is ConstructorDescriptor && "<clinit>" != newName) {
                 val partName = getPartSimpleNameForMangling(descriptor)
-                if (partName != null) return "$name$$partName"
+                if (partName != null) return "$newName$$partName"
             }
-            return name
+            return newName
         }
 
         return if (descriptor !is ConstructorDescriptor &&
             descriptor.visibility === Visibilities.INTERNAL &&
             !descriptor.isPublishedApi()
         ) {
-            InternalNameMapper.mangleInternalName(name, getModuleName(descriptor))
-        } else name
+            InternalNameMapper.mangleInternalName(newName, getModuleName(descriptor))
+        } else newName
 
     }
 
@@ -760,13 +786,17 @@ class KotlinTypeMapper @JvmOverloads constructor(
         if (isDeclarationOfBigArityFunctionInvoke(f) || isDeclarationOfBigArityCreateCoroutineMethod(f)) {
             val builtIns = f.builtIns
             val arrayOfNullableAny = builtIns.getArrayType(Variance.INVARIANT, builtIns.nullableAnyType)
-            return mapSignatureWithCustomParameters(f, kind, Stream.of(arrayOfNullableAny), null, false, false)
+            return mapSignatureWithCustomParameters(
+                f, kind, Stream.of(arrayOfNullableAny), null,
+                skipGenericSignature = false,
+                hasSpecialBridge = false
+            )
         }
 
         val parameterTypes: Stream<KotlinType>
         val returnType: KotlinType?
 
-        if (languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature) && JvmCodegenUtil.isPolymorphicSignature(f)) {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature) && isPolymorphicSignature(f)) {
             if (resolvedCall == null) {
                 throw UnsupportedOperationException("Cannot determine polymorphic signature without a resolved call: $f")
             }
@@ -789,7 +819,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         return mapSignatureWithCustomParameters(
             f,
             kind,
-            valueParameters.stream().map{ it.getType() },
+            valueParameters.stream().map { it.type },
             null,
             skipGenericSignature,
             false
@@ -1079,18 +1109,13 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return
         }
 
-        val typeMappingMode: TypeMappingMode
-
-        val typeMappingModeFromAnnotation =
-            extractTypeMappingModeFromAnnotation(callableDescriptor, type, /* isForAnnotationParameter = */ false)
-
-        if (typeMappingModeFromAnnotation != null) {
-            typeMappingMode = typeMappingModeFromAnnotation
-        } else if (callableDescriptor.isMethodWithDeclarationSiteWildcards && !type.arguments.isEmpty()) {
-            typeMappingMode = TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
-        } else {
-            typeMappingMode = TypeMappingMode.getOptimalModeForValueParameter(type)
-        }
+        val typeMappingMode =
+            extractTypeMappingModeFromAnnotation(callableDescriptor, type, isForAnnotationParameter = false)
+                ?: if (callableDescriptor.isMethodWithDeclarationSiteWildcards && type.arguments.isNotEmpty()) {
+                    TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
+                } else {
+                    TypeMappingMode.getOptimalModeForValueParameter(type)
+                }
 
         mapType(type, sw, typeMappingMode)
     }
@@ -1099,7 +1124,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         val isSynthesized = descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
         //if (isSynthesized) return;
 
-        val closure = bindingContext.get(CodegenBinding.CLOSURE, descriptor.containingDeclaration)
+        val closure = bindingContext.get(CLOSURE, descriptor.containingDeclaration)
 
         val captureThis = getDispatchReceiverParameterForConstructorCall(descriptor, closure)
         if (!isSynthesized && captureThis != null) {
@@ -1129,27 +1154,22 @@ class KotlinTypeMapper @JvmOverloads constructor(
         if (closure == null) return
 
         for (variableDescriptor in closure.captureVariables.keys) {
-            val type: Type?
-            if (variableDescriptor is VariableDescriptor && variableDescriptor !is PropertyDescriptor) {
-                var sharedVarType = getSharedVarType(variableDescriptor)
-                if (sharedVarType == null) {
-                    if (isDelegatedLocalVariable(variableDescriptor)) {
-
-                        val delegateType =
-                            JvmCodegenUtil.getPropertyDelegateType(variableDescriptor as LocalVariableDescriptor, bindingContext)
-                                ?: error("Local delegated property type should not be null: $variableDescriptor")
-                        sharedVarType = mapType(delegateType)
-                    } else {
-                        sharedVarType = mapType(variableDescriptor.type)
-                    }
+            val type =
+                if (variableDescriptor is VariableDescriptor && variableDescriptor !is PropertyDescriptor) {
+                    getSharedVarType(variableDescriptor)
+                        ?: if (isDelegatedLocalVariable(variableDescriptor)) {
+                            val delegateType =
+                                getPropertyDelegateType(variableDescriptor as LocalVariableDescriptor, bindingContext)
+                                    ?: error("Local delegated property type should not be null: $variableDescriptor")
+                            mapType(delegateType)
+                        } else {
+                            mapType(variableDescriptor.type)
+                        }
+                } else if (isLocalFunction(variableDescriptor)) {
+                    asmTypeForAnonymousClass(bindingContext, variableDescriptor as FunctionDescriptor)
+                } else {
+                    null
                 }
-                type = sharedVarType
-            } else if (isLocalFunction(variableDescriptor)) {
-
-                type = asmTypeForAnonymousClass(bindingContext, variableDescriptor as FunctionDescriptor)
-            } else {
-                type = null
-            }
 
             if (type != null) {
                 closure.setCapturedParameterOffsetInConstructor(variableDescriptor, sw.currentSignatureSize + 1)
@@ -1212,15 +1232,15 @@ class KotlinTypeMapper @JvmOverloads constructor(
     }
 
     private fun findFirstDelegatingSuperCall(descriptor: ConstructorDescriptor): ResolvedCall<ConstructorDescriptor>? {
-        var descriptor = descriptor
-        val constructorOwner = descriptor.containingDeclaration
+        var current = descriptor
+        val constructorOwner = current.containingDeclaration
         val visited = HashSet<ConstructorDescriptor>()
-        visited.add(descriptor)
+        visited.add(current)
         while (true) {
-            val next = getDelegationConstructorCall(bindingContext, descriptor) ?: return null
-            descriptor = next.resultingDescriptor.original
-            if (!visited.add(descriptor)) return null
-            if (descriptor.containingDeclaration !== constructorOwner) return next
+            val next = getDelegationConstructorCall(bindingContext, current) ?: return null
+            current = next.resultingDescriptor.original
+            if (!visited.add(current)) return null
+            if (current.containingDeclaration !== constructorOwner) return next
         }
     }
 
@@ -1239,7 +1259,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         sw.writeParametersStart()
 
-        if (importedScripts.size > 0) {
+        if (importedScripts.isNotEmpty()) {
             writeParameter(sw, script.module.builtIns.array.defaultType, null)
         }
 
@@ -1387,17 +1407,15 @@ class KotlinTypeMapper @JvmOverloads constructor(
             deserializedDescriptor: DeserializedCallableMemberDescriptor
         ): ContainingClassesInfo {
             val parentDeclaration = deserializedDescriptor.containingDeclaration
-            val containingClassesInfo: ContainingClassesInfo?
-            if (parentDeclaration is PackageFragmentDescriptor) {
-                containingClassesInfo = getPackageMemberContainingClassesInfo(deserializedDescriptor)
-            } else {
-                val classId = getContainerClassIdForClassDescriptor(parentDeclaration as ClassDescriptor)
-                containingClassesInfo = ContainingClassesInfo.forClassMember(classId)
-            }
-            if (containingClassesInfo == null) {
-                throw IllegalStateException("Couldn't find container for " + deserializedDescriptor.name)
-            }
-            return containingClassesInfo
+
+            val containingClassesInfo =
+                if (parentDeclaration is PackageFragmentDescriptor) {
+                    getPackageMemberContainingClassesInfo(deserializedDescriptor)
+                } else {
+                    val classId = getContainerClassIdForClassDescriptor(parentDeclaration as ClassDescriptor)
+                    ContainingClassesInfo.forClassMember(classId)
+                }
+            return containingClassesInfo ?: throw IllegalStateException("Couldn't find container for " + deserializedDescriptor.name)
         }
 
         private fun getContainerClassIdForClassDescriptor(classDescriptor: ClassDescriptor): ClassId {
@@ -1483,8 +1501,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         ): Type {
             return mapType(
                 kotlinType, AsmTypeFactory, mode, configuration, null,
-                { ktType, asmType, typeMappingMode -> Unit },
-                false
+                isIrBackend = false
             )
         }
 
@@ -1512,7 +1529,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
 
         private fun getJvmShortName(klass: ClassDescriptor): String {
-            val classId = JavaToKotlinClassMap.mapKotlinToJava(DescriptorUtils.getFqName(klass))
+            val classId = JavaToKotlinClassMap.mapKotlinToJava(getFqName(klass))
             return classId?.shortClassName?.asString() ?: SpecialNames.safeIdentifier(klass.name).identifier
 
         }
@@ -1627,30 +1644,30 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         private fun getKindForDefaultImplCall(baseMethodDescriptor: FunctionDescriptor): OwnerKind {
             val containingDeclaration = baseMethodDescriptor.containingDeclaration
-            if (containingDeclaration is PackageFragmentDescriptor) {
-                return OwnerKind.PACKAGE
-            } else if (isInterface(containingDeclaration)) {
-                return OwnerKind.DEFAULT_IMPLS
-            } else if (containingDeclaration.isInlineClass()) {
-                return OwnerKind.ERASED_INLINE_CLASS
+            return when {
+                containingDeclaration is PackageFragmentDescriptor -> OwnerKind.PACKAGE
+                isInterface(containingDeclaration) -> OwnerKind.DEFAULT_IMPLS
+                containingDeclaration.isInlineClass() -> OwnerKind.ERASED_INLINE_CLASS
+                else -> OwnerKind.IMPLEMENTATION
             }
-            return OwnerKind.IMPLEMENTATION
         }
 
         @JvmStatic
         fun mapDefaultFieldName(propertyDescriptor: PropertyDescriptor, isDelegated: Boolean): String {
-            val name: String
-            if (propertyDescriptor is AccessorForPropertyDescriptor) {
-                name = propertyDescriptor.calleeDescriptor.name.asString()
-            } else {
-                name = propertyDescriptor.name.asString()
-            }
+            val name: String =
+                if (propertyDescriptor is AccessorForPropertyDescriptor) {
+                    propertyDescriptor.calleeDescriptor.name.asString()
+                } else {
+                    propertyDescriptor.name.asString()
+                }
             return if (isDelegated) name + JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX else name
         }
 
-        @JvmField val BOX_JVM_METHOD_NAME = InlineClassDescriptorResolver.BOX_METHOD_NAME.toString() + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
+        @JvmField
+        val BOX_JVM_METHOD_NAME = InlineClassDescriptorResolver.BOX_METHOD_NAME.toString() + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
 
-        @JvmField val UNBOX_JVM_METHOD_NAME = InlineClassDescriptorResolver.UNBOX_METHOD_NAME.toString() + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
+        @JvmField
+        val UNBOX_JVM_METHOD_NAME = InlineClassDescriptorResolver.UNBOX_METHOD_NAME.toString() + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
 
         private fun getPartSimpleNameForMangling(descriptor: CallableMemberDescriptor): String? {
             var descriptor = descriptor
