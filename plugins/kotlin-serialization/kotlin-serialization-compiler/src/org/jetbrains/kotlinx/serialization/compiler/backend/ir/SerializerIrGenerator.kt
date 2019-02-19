@@ -91,14 +91,17 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                         nameHint = "serialDesc"
                     )
 
-                    fun addFieldCall(fieldName: String) =
-                        irCall(addFuncS, type = compilerContext.irBuiltIns.unitType).apply {
-                            dispatchReceiver = irGet(localDesc)
-                        }.mapValueParameters { irString(fieldName) }
+                    fun addFieldCall(prop: SerializableProperty) = irInvoke(
+                        irGet(localDesc),
+                        addFuncS,
+                        irString(prop.name),
+                        irBoolean(prop.optional),
+                        typeHint = compilerContext.irBuiltIns.unitType
+                    )
 
                     for (classProp in serializableProperties) {
                         if (classProp.transient) continue
-                        +addFieldCall(classProp.name)
+                        +addFieldCall(classProp)
                         // add property annotations
                         copySerialInfoAnnotationsToDescriptor(
                             classProp.irField.correspondingProperty?.annotations.orEmpty(),
