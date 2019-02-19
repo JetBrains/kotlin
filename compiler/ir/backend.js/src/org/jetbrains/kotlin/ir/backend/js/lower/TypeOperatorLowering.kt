@@ -186,7 +186,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                     }
                 }
 
-                val toNotNullable = toType.makeNotNull()
+                val toNotNullable = toType.makeNotNull(false)
                 val argumentInstance = argument()
                 val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable)
                 val isFromNullable = argumentInstance.type.isNullable()
@@ -246,7 +246,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
                 assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
                 return typeParameter.superTypes.fold(litTrue) { r, t ->
-                    val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull())
+                    val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull(false))
                     calculator.and(r, check)
                 }
             }

@@ -135,7 +135,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
             override fun visitClassReference(expression: IrClassReference) =
                 callGetKClass(
                     returnType = expression.type,
-                    typeArgument = expression.classType.makeNotNull()
+                    typeArgument = expression.classType.makeNotNull(false)
                 )
         })
     }
