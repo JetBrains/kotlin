@@ -19,10 +19,10 @@ buildscript {
 
 task konanRun {
     subprojects.each {
-       dependsOn it.getTasksByName('konanRun', true)[0]
+        dependsOn it.getTasksByName('konanRun', true)[0]
     }
 }
-
+    
 task jvmRun {
     subprojects.each {
         dependsOn it.getTasksByName('jvmRun', true)[0]

@@ -21,7 +21,7 @@ import kotlinx.cinterop.*
 import libcurl.*
 
 actual fun readFile(fileName: String): String {
-    val file = fopen(fileName, "r") ?: error("Cannot write file '$fileName'")
+    val file = fopen(fileName, "r") ?: error("Cannot read file '$fileName'")
     var buffer = ByteArray(1024)
     var text = StringBuilder()
     try {
