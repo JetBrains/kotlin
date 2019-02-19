@@ -22,7 +22,6 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.cpp.CPPLog
-import com.jetbrains.cidr.cpp.execution.CLionRunConfigurationExtensionsManager
 import com.jetbrains.cidr.cpp.execution.CLionRunParameters
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
@@ -30,6 +29,7 @@ import com.jetbrains.cidr.execution.BuildConfigurationProblems
 import com.jetbrains.cidr.execution.CidrCommandLineConfigurator
 import com.jetbrains.cidr.execution.CidrConsoleBuilder
 import com.jetbrains.cidr.execution.CidrDebugConsoleFilterProvider
+import com.jetbrains.cidr.execution.CidrRunConfigurationExtensionsManager
 import com.jetbrains.cidr.execution.ConfigurationExtensionContext
 import com.jetbrains.cidr.execution.RunParameters
 import com.jetbrains.cidr.execution.TrivialInstaller
@@ -46,7 +46,7 @@ class CLionGradleKonanLauncher(
         private val myConfiguration: GradleKonanAppRunConfiguration
 ) : GradleKonanLauncher() {
 
-    private val myExtensionsManager: CLionRunConfigurationExtensionsManager = CLionRunConfigurationExtensionsManager.getInstance()
+    private val myExtensionsManager: CidrRunConfigurationExtensionsManager = CidrRunConfigurationExtensionsManager.getInstance()
 
     private val projectBaseDir: File?
         get() = project.basePath?.let { File(it) }
