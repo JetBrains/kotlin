@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
     private val commonName: String = "common"
     private var jvmTargetName: String = "android"
     private var nativeTargetName: String = "ios"
-    private val androidAppName = "app"
+    private val androidAppName = mppDirName
 
     private val commonSourceName get() = "$commonName$productionSuffix"
     private val commonTestName get() = "$commonName$testSuffix"
