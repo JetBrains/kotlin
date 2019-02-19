@@ -25,11 +25,11 @@ import java.util.Base64
 import java.util.Properties
 
 // Run command line from string.
-fun String.runCommand(workingDir: File = File("."),
+fun Array<String>.runCommand(workingDir: File = File("."),
                       timeoutAmount: Long = 60,
                       timeoutUnit: TimeUnit = TimeUnit.SECONDS): String {
     return try {
-        ProcessBuilder(*this.split("\\s".toRegex()).toTypedArray())
+        ProcessBuilder(*this)
                 .directory(workingDir)
                 .redirectOutput(ProcessBuilder.Redirect.PIPE)
                 .redirectError(ProcessBuilder.Redirect.PIPE)
@@ -211,7 +211,7 @@ open class RegressionsReporter : DefaultTask() {
         val target = System.getProperty("os.name").replace("\\s".toRegex(), "")
 
         // Generate comparison report.
-        val output = "$analyzer -r html $currentBenchmarksReportFile bintray:$compareToBuildNumber:$target:$bintrayFileName -o $htmlReport"
+        val output = arrayOf("$analyzer", "-r", "html", "$currentBenchmarksReportFile", "bintray:$compareToBuildNumber:$target:$bintrayFileName", "-o", "$htmlReport")
                 .runCommand()
 
         if (output.contains("Uncaught exception")) {
@@ -219,7 +219,7 @@ open class RegressionsReporter : DefaultTask() {
                     "bintray:$compareToBuildNumber:$target:$bintrayFileName with $analyzer! " +
                     "Please check files existance and their correctness.")
         }
-        "$analyzer -r statistics $currentBenchmarksReportFile bintray:$compareToBuildNumber:$target:$bintrayFileName -o \"$summaryFile\""
+        arrayOf("$analyzer", "-r", "statistics", "$currentBenchmarksReportFile", "bintray:$compareToBuildNumber:$target:$bintrayFileName", "-o", "$summaryFile")
                 .runCommand()
 
         val reportLink = "http://kotlin-native-performance.labs.jb.gg/?" +
