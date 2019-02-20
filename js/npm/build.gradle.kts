@@ -49,7 +49,7 @@ fun Project.createPublishToNpmTask(templateName: String): NpmTask {
     val deployDir = File("$deployDir/$templateName")
     setWorkingDir(deployDir)
 
-    val deployArgs = listOf("publish", "--//registry.npmjs.org/:_authToken=$authToken", "--tag=$deployTag")
+    val deployArgs = listOf("publish", "https://registry.npmjs.org/:_authToken=$authToken", "--tag=$deployTag")
     if (dryRun == "true") {
       println("$deployDir \$ npm arguments: $deployArgs");
       setArgs(listOf("pack"))
