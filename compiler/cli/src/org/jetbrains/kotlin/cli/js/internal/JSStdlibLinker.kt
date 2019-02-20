@@ -1,20 +1,10 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js
+@file:JvmName("JSStdlibLinker")
+package org.jetbrains.kotlin.cli.js.internal
 
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
@@ -30,18 +20,29 @@ import java.io.File
 import java.io.StringReader
 
 fun main(args: Array<String>) {
+    val outputFile = File(args[0])
+    val baseDir = File(args[1]).canonicalFile
+    val wrapperFile = File(args[2])
+
+    val inputPaths = args.drop(3).map { File(it) }
+    mergeStdlibParts(outputFile, wrapperFile, baseDir, inputPaths)
+}
+
+/**
+ * Combines several JS input files, that comprise Kotlin JS Standard Library,
+ * into a single JS module.
+ * The source maps of these files are combined into a single source map.
+ */
+private fun mergeStdlibParts(outputFile: File, wrapperFile: File, baseDir: File, inputPaths: List<File>) {
     val program = JsProgram()
 
-    val outputFile = File(args[0])
-    val baseDir = File(args[1]).canonicalFile.toPath()
-    fun File.relativizeIfNecessary(): String = baseDir.relativize(canonicalFile.toPath()).toString()
+    fun File.relativizeIfNecessary(): String = canonicalFile.toRelativeString(baseDir)
 
-    val wrapperFile = File(args[2])
     val wrapper = parse(wrapperFile.readText(), ThrowExceptionOnErrorReporter, program.scope, wrapperFile.relativizeIfNecessary())!!
     val insertionPlace = wrapper.createInsertionPlace()
 
     val allFiles = mutableListOf<File>()
-    args.drop(3).map { File(it) }.forEach { collectFiles(it, allFiles) }
+    inputPaths.forEach { collectFiles(it, allFiles) }
 
     for (file in allFiles) {
         val statements = parse(file.readText(), ThrowExceptionOnErrorReporter, program.scope, file.relativizeIfNecessary())!!
@@ -87,8 +88,7 @@ fun main(args: Array<String>) {
         val sourceFile = File((sourcePath as JsonString).value)
         if (sourceFile.exists()) {
             JsonString(sourceFile.readText())
-        }
-        else {
+        } else {
             JsonNull
         }
     }.toTypedArray())
@@ -104,8 +104,7 @@ private fun List<JsStatement>.createInsertionPlace(): JsBlock {
             if (isInsertionPlace(x.expression)) {
                 ctx.replaceMe(block)
                 return false
-            }
-            else {
+            } else {
                 return super.visit(x, ctx)
             }
         }
@@ -130,8 +129,7 @@ private fun collectFiles(rootFile: File, target: MutableList<File>) {
         for (child in rootFile.listFiles().sorted()) {
             collectFiles(child, target)
         }
-    }
-    else if (rootFile.extension == "js") {
+    } else if (rootFile.extension == "js") {
         target += rootFile
     }
 }
