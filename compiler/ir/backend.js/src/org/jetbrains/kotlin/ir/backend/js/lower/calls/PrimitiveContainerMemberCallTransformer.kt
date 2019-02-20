@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
 
 class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
@@ -65,22 +65,22 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
 }
 
 private val IrClassSymbol.sizeProperty
-    get() = owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "size" }.getter!!.symbol
+    get() = getPropertyGetter("size")!!
 
 private val IrClassSymbol.getFunction
-    get() = owner.declarations.filterIsInstance<IrFunction>().first { it.name.asString() == "get" }.symbol
+    get() = getSimpleFunction("get")!!
 
 private val IrClassSymbol.setFunction
-    get() = owner.declarations.filterIsInstance<IrFunction>().first { it.name.asString() == "set" }.symbol
+    get() = getSimpleFunction("set")!!
 
 private val IrClassSymbol.iterator
-    get() = owner.declarations.filterIsInstance<IrFunction>().first { it.name.asString() == "iterator" }.symbol
+    get() = getSimpleFunction("iterator")!!
 
 private val IrClassSymbol.sizeConstructor
     get() = owner.declarations.filterIsInstance<IrConstructor>().first { it.valueParameters.size == 1 }.symbol
 
 private val IrClassSymbol.lengthProperty
-    get() = owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "length" }.getter!!.symbol
+    get() = getPropertyGetter("length")!!
 
 private val IrClassSymbol.subSequence
-    get() = owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "subSequence" }.symbol
+    get() = getSimpleFunction("subSequence")!!

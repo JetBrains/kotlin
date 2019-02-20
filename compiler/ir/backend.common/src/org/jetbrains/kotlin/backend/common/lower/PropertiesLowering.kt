@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -42,25 +43,26 @@ class PropertiesLowering(
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.transformChildrenVoid(this)
         declaration.transformDeclarationsFlat { lowerProperty(it, declaration.kind) }
-        declaration.declarations.removeAll { it is IrProperty }
         return declaration
     }
 
     private fun lowerProperty(declaration: IrDeclaration, kind: ClassKind): List<IrDeclaration>? =
         if (declaration is IrProperty)
-            ArrayList<IrDeclaration>(4).apply {
-                // JvmFields in a companion object refer to companion's owners and should not be generated within companion.
-                if (kind != ClassKind.ANNOTATION_CLASS && declaration.backingField?.parent == declaration.parent) {
-                    addIfNotNull(declaration.backingField)
-                }
-                addIfNotNull(declaration.getter)
-                addIfNotNull(declaration.setter)
+            if (declaration.isEffectivelyExternal()) listOf(declaration) else {
+                ArrayList<IrDeclaration>(4).apply {
+                    // JvmFields in a companion object refer to companion's owners and should not be generated within companion.
+                    if (kind != ClassKind.ANNOTATION_CLASS && declaration.backingField?.parent == declaration.parent) {
+                        addIfNotNull(declaration.backingField)
+                    }
+                    addIfNotNull(declaration.getter)
+                    addIfNotNull(declaration.setter)
 
-                if (declaration.annotations.isNotEmpty() && originOfSyntheticMethodForAnnotations != null
-                    && computeSyntheticMethodName != null
-                ) {
-                    val methodName = computeSyntheticMethodName.invoke(declaration.name) // Workaround KT-4113
-                    add(createSyntheticMethodForAnnotations(declaration, originOfSyntheticMethodForAnnotations, methodName))
+                    if (declaration.annotations.isNotEmpty() && originOfSyntheticMethodForAnnotations != null
+                        && computeSyntheticMethodName != null
+                    ) {
+                        val methodName = computeSyntheticMethodName.invoke(declaration.name) // Workaround KT-4113
+                        add(createSyntheticMethodForAnnotations(declaration, originOfSyntheticMethodForAnnotations, methodName))
+                    }
                 }
             }
         else

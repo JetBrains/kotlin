@@ -5,40 +5,25 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 // Replace array inline constructors with stdlib function invocations
-// Should be performed before inliner
-class ArrayInlineConstructorLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(ArrayConstructorTransformer(context))
-    }
-}
-
-private class ArrayConstructorTransformer(
+class ArrayConstructorTransformer(
     val context: JsIrBackendContext
-) : IrElementTransformerVoid() {
-
+) {
     // Inline constructor for CharArray is implemented in runtime
     private val primitiveArrayInlineToSizeConstructorMap =
         context.intrinsics.primitiveArrays.filter { it.value != PrimitiveType.CHAR }.keys.associate {
             it.inlineConstructor to it.sizeConstructor
         }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid(this)
-
+    fun transformCall(expression: IrCall): IrCall {
         if (expression.symbol == context.intrinsics.array.inlineConstructor) {
             return irCall(expression, context.intrinsics.jsArray)
         } else {

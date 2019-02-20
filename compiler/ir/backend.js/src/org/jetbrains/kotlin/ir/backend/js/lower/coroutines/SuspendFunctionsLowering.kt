@@ -228,8 +228,8 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
         builtCoroutines[irFunction] = coroutine
 
         if (functionReference == null) {
-            val resultSetter = context.coroutineImplResultSymbol.setter!!
-            val exceptionSetter = context.coroutineImplExceptionProperty.setter!!
+            val resultSetter = context.coroutineImplResultSymbolSetter
+            val exceptionSetter = context.coroutineImplExceptionPropertySetter
             // It is not a lambda - replace original function with a call to constructor of the built coroutine.
             val irBuilder = context.createIrBuilder(irFunction.symbol, irFunction.startOffset, irFunction.endOffset)
             irFunction.body = irBuilder.irBlockBody(irFunction) {
@@ -290,10 +290,13 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
 
         private val create1CompletionParameter = create1Function.valueParameters[0]
 
-        private val coroutineImplLabelProperty = context.coroutineImplLabelProperty
-        private val coroutineImplResultSymbol = context.coroutineImplResultSymbol
-        private val coroutineImplExceptionProperty = context.coroutineImplExceptionProperty
-        private val coroutineImplExceptionStateProperty = context.coroutineImplExceptionStateProperty
+        private val coroutineImplLabelPropertyGetter = context.coroutineImplLabelPropertyGetter
+        private val coroutineImplLabelPropertySetter = context.coroutineImplLabelPropertySetter
+        private val coroutineImplResultSymbolGetter = context.coroutineImplResultSymbolGetter
+        private val coroutineImplExceptionPropertyGetter = context.coroutineImplExceptionPropertyGetter
+        private val coroutineImplExceptionPropertySetter = context.coroutineImplExceptionPropertySetter
+        private val coroutineImplExceptionStatePropertyGetter = context.coroutineImplExceptionStatePropertyGetter
+        private val coroutineImplExceptionStatePropertySetter = context.coroutineImplExceptionStatePropertySetter
 
         private val coroutineConstructors = mutableListOf<IrConstructor>()
         private var exceptionTrapId = -1
@@ -727,8 +730,8 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     JsIrBuilder.buildValueParameter(p.name, p.index, p.type, p.origin).also { it.parent = declaration }
                 }
 
-                val resultSetter = context.coroutineImplResultSymbol.setter!!
-                val exceptionSetter = context.coroutineImplExceptionProperty.setter!!
+                val resultSetter = context.coroutineImplResultSymbolSetter
+                val exceptionSetter = context.coroutineImplExceptionPropertySetter
 
                 val thisReceiver = declaration.dispatchReceiverParameter!!
                 val irBuilder = context.createIrBuilder(symbol, irFunction.startOffset, irFunction.endOffset)
@@ -821,10 +824,10 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                         function,
                         "suspendResult",
                         true,
-                        initializer = JsIrBuilder.buildCall(coroutineImplResultSymbol.getter!!.symbol).apply { dispatchReceiver = thisReceiver }
+                        initializer = JsIrBuilder.buildCall(coroutineImplResultSymbolGetter.symbol).apply { dispatchReceiver = thisReceiver }
                     )
 
-                    suspendState = JsIrBuilder.buildVar(coroutineImplLabelProperty.getter!!.returnType, function, "suspendState", true)
+                    suspendState = JsIrBuilder.buildVar(coroutineImplLabelPropertyGetter.returnType, function, "suspendState", true)
 
                     val body =
                         (originalBody as IrBlockBody).run {
@@ -848,7 +851,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 (it.body as? IrBlockBody)?.run {
                     val receiver = JsIrBuilder.buildGetValue(coroutineClassThis.symbol)
                     val id = JsIrBuilder.buildInt(context.irBuiltIns.intType, exceptionTrapId)
-                    statements += JsIrBuilder.buildCall(coroutineImplExceptionStateProperty.setter!!.symbol).also { call ->
+                    statements += JsIrBuilder.buildCall(coroutineImplExceptionStatePropertySetter.symbol).also { call ->
                         call.dispatchReceiver = receiver
                         call.putValueArgument(0, id)
                     }
@@ -880,9 +883,11 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 context,
                 function.symbol,
                 rootLoop,
-                coroutineImplExceptionProperty,
-                coroutineImplExceptionStateProperty,
-                coroutineImplLabelProperty,
+                coroutineImplExceptionPropertyGetter,
+                coroutineImplExceptionPropertySetter,
+                coroutineImplExceptionStatePropertyGetter,
+                coroutineImplExceptionStatePropertySetter,
+                coroutineImplLabelPropertySetter,
                 thisReceiver,
                 suspendResult.symbol
             )
@@ -907,7 +912,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
 
             for (state in sortedStates) {
                 val condition = JsIrBuilder.buildCall(eqeqeqInt).apply {
-                    putValueArgument(0, JsIrBuilder.buildCall(coroutineImplLabelProperty.getter!!.symbol).also {
+                    putValueArgument(0, JsIrBuilder.buildCall(coroutineImplLabelPropertyGetter.symbol).also {
                         it.dispatchReceiver = JsIrBuilder.buildGetValue(thisReceiver)
                     })
                     putValueArgument(1, JsIrBuilder.buildInt(context.irBuiltIns.intType, state.id))

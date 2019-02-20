@@ -7,8 +7,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.ArrayConstructorTransformer
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
@@ -31,11 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.irTypeKotlinBuiltIns
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.getArguments
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -53,11 +49,27 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         return irModule.accept(this, data = null)
     }
 
+    private val arrayConstructorTransformer = ArrayConstructorTransformer(context)
+
     override fun visitCall(expression: IrCall): IrExpression {
-        val callSite = super.visitCall(expression) as IrCall
+        val callSite = arrayConstructorTransformer.transformCall(super.visitCall(expression) as IrCall)
         val functionDescriptor = callSite.descriptor
-        if (!functionDescriptor.needsInlining)
-            return callSite                                // This call does not need inlining.
+
+        if (!functionDescriptor.needsInlining) return callSite                                // This call does not need inlining.
+
+        val languageVersionSettings = context.configuration.languageVersionSettings
+        when {
+            callSite.symbol == context.ir.symbols.lateinitIsInitializedPropertyGetter ->
+                return callSite
+            // Handle coroutine intrinsics
+            // TODO These should actually be inlined.
+            callSite.descriptor.isBuiltInIntercepted(languageVersionSettings) ->
+                error("Continuation.intercepted is not available with release coroutines")
+            callSite.symbol.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
+                return irCall(callSite, context.coroutineSuspendOrReturn)
+            callSite.symbol == context.intrinsics.jsCoroutineContext ->
+                return irCall(callSite, context.coroutineGetContextJs)
+        }
 
         val callee = getFunctionDeclaration(callSite.symbol)                   // Get declaration of the function to be inlined.
         callee.transformChildrenVoid(this)                            // Process recursive inline.

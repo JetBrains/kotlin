@@ -81,18 +81,6 @@ private val expectDeclarationsRemovingPhase = makeJsModulePhase(
     description = "Remove expect declaration from module fragment"
 )
 
-private val coroutineIntrinsicLoweringPhase = makeJsModulePhase(
-    ::CoroutineIntrinsicLowering,
-    name = "CoroutineIntrinsicLowering",
-    description = "Replace common coroutine intrinsics with platform specific ones"
-)
-
-private val arrayInlineConstructorLoweringPhase = makeJsModulePhase(
-    ::ArrayInlineConstructorLowering,
-    name = "ArrayInlineConstructorLowering",
-    description = "Replace array constructor with platform specific factory functions"
-)
-
 private val lateinitLoweringPhase = makeJsModulePhase(
     ::LateinitLowering,
     name = "LateinitLowering",
@@ -107,7 +95,7 @@ private val functionInliningPhase = makeCustomJsModulePhase(
     },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
-    prerequisite = setOf(lateinitLoweringPhase, arrayInlineConstructorLoweringPhase, coroutineIntrinsicLoweringPhase)
+    prerequisite = setOf(expectDeclarationsRemovingPhase)
 )
 
 private val removeInlineFunctionsWithReifiedTypeParametersLoweringPhase = makeJsModulePhase(
@@ -136,16 +124,24 @@ private val unitMaterializationLoweringPhase = makeJsModulePhase(
     prerequisite = setOf(tailrecLoweringPhase)
 )
 
+private val enumClassConstructorLoweringPhase = makeJsModulePhase(
+    ::EnumClassConstructorLowering,
+    name = "EnumClassConstructorLowering",
+    description = "Transform Enum Class into regular Class"
+)
+
 private val enumClassLoweringPhase = makeJsModulePhase(
     ::EnumClassLowering,
     name = "EnumClassLowering",
-    description = "Transform Enum Class into regular Class"
+    description = "Transform Enum Class into regular Class",
+    prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
 private val enumUsageLoweringPhase = makeJsModulePhase(
     ::EnumUsageLowering,
     name = "EnumUsageLowering",
-    description = "Replace enum access with invocation of corresponding function"
+    description = "Replace enum access with invocation of corresponding function",
+    prerequisite = setOf(enumClassLoweringPhase)
 )
 
 private val sharedVariablesLoweringPhase = makeJsModulePhase(
@@ -171,7 +167,7 @@ private val localDeclarationsLoweringPhase = makeJsModulePhase(
     ::LocalDeclarationsLowering,
     name = "LocalDeclarationsLowering",
     description = "Move local declarations into nearest declaration container",
-    prerequisite = setOf(sharedVariablesLoweringPhase)
+    prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)
 )
 
 private val innerClassesLoweringPhase = makeJsModulePhase(
@@ -190,7 +186,7 @@ private val suspendFunctionsLoweringPhase = makeJsModulePhase(
     ::SuspendFunctionsLowering,
     name = "SuspendFunctionsLowering",
     description = "Transform suspend functions into CoroutineImpl instance and build state machine",
-    prerequisite = setOf(unitMaterializationLoweringPhase, coroutineIntrinsicLoweringPhase)
+    prerequisite = setOf(unitMaterializationLoweringPhase)
 )
 
 private val privateMembersLoweringPhase = makeJsModulePhase(
@@ -253,7 +249,7 @@ private val initializersLoweringPhase = makeCustomJsModulePhase(
     { context, module -> InitializersLowering(context, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).lower(module) },
     name = "InitializersLowering",
     description = "Merge init block and field initializers into [primary] constructor",
-    prerequisite = setOf(enumClassLoweringPhase)
+    prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
 private val multipleCatchesLoweringPhase = makeJsModulePhase(
@@ -344,24 +340,24 @@ private val callsLoweringPhase = makeJsModulePhase(
 val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = moveBodilessDeclarationsToSeparatePlacePhase then
-            expectDeclarationsRemovingPhase then
-            coroutineIntrinsicLoweringPhase then
-            arrayInlineConstructorLoweringPhase then
-            lateinitLoweringPhase then
+    lower = expectDeclarationsRemovingPhase then
             functionInliningPhase then
-            removeInlineFunctionsWithReifiedTypeParametersLoweringPhase then
-            throwableSuccessorsLoweringPhase then
+            lateinitLoweringPhase then
             tailrecLoweringPhase then
-            unitMaterializationLoweringPhase then
-            enumClassLoweringPhase then
-            enumUsageLoweringPhase then
+            enumClassConstructorLoweringPhase then
             sharedVariablesLoweringPhase then
-            returnableBlockLoweringPhase then
             localDelegatedPropertiesLoweringPhase then
             localDeclarationsLoweringPhase then
             innerClassesLoweringPhase then
             innerClassConstructorCallsLoweringPhase then
+            propertiesLoweringPhase then
+            initializersLoweringPhase then
+            // Common prefix ends
+            moveBodilessDeclarationsToSeparatePlacePhase then
+            enumClassLoweringPhase then
+            enumUsageLoweringPhase then
+            returnableBlockLoweringPhase then
+            unitMaterializationLoweringPhase then
             suspendFunctionsLoweringPhase then
             privateMembersLoweringPhase then
             callableReferenceLoweringPhase then
@@ -369,9 +365,9 @@ val jsPhases = namedIrModulePhase(
             defaultParameterInjectorPhase then
             defaultParameterCleanerPhase then
             jsDefaultCallbackGeneratorPhase then
+            removeInlineFunctionsWithReifiedTypeParametersLoweringPhase then
+            throwableSuccessorsLoweringPhase then
             varargLoweringPhase then
-            propertiesLoweringPhase then
-            initializersLoweringPhase then
             multipleCatchesLoweringPhase then
             bridgesConstructionPhase then
             typeOperatorLoweringPhase then

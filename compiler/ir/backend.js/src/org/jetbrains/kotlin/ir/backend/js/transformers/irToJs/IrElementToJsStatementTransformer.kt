@@ -21,7 +21,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitFunction(declaration: IrFunction, data: JsGenerationContext) = JsEmpty.also {
         assert(declaration.origin == JsIrBackendContext.callableClosureOrigin) {
-            "The only possible Function Declarartion is one composed in Callable Reference Lowering"
+            "The only possible Function Declaration is one composed in Callable Reference Lowering"
         }
     }
 

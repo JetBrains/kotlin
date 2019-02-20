@@ -244,7 +244,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 }
                 val typeParameter = typeParameterSymbol.owner
 
-                assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
+                // TODO either remove functions with reified type parameters or support this case
+                // assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
                 return typeParameter.superTypes.fold(litTrue) { r, t ->
                     val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull(false))
                     calculator.and(r, check)
