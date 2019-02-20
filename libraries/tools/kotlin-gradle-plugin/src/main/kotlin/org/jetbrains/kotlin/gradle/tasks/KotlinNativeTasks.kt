@@ -507,7 +507,7 @@ open class CInteropProcess : DefaultTask() {
             addArgIfNotNull("-def", defFile.canonicalPath)
             addArgIfNotNull("-pkg", packageName)
 
-            addFileArgs("-h", headers)
+            addFileArgs("-header", headers)
 
             compilerOpts.forEach {
                 addArg("-copt", it)
