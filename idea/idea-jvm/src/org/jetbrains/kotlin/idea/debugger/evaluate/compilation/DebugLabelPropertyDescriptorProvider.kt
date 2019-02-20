@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import com.sun.jdi.*
 import com.sun.jdi.Type as JdiType
 import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
@@ -25,15 +28,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.externalDescriptors
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 
-class DebugLabelPropertyDescriptorProvider(
-    val codeFragment: KtCodeFragment,
-    val moduleDescriptor: ModuleDescriptor,
-    val debugProcess: DebugProcessImpl
-) {
+class DebugLabelPropertyDescriptorProvider(val codeFragment: KtCodeFragment, val debugProcess: DebugProcessImpl) {
     companion object {
         fun getMarkupMap(debugProcess: DebugProcessImpl) = doGetMarkupMap(debugProcess) ?: emptyMap()
 
@@ -48,6 +48,8 @@ class DebugLabelPropertyDescriptorProvider(
             return debugSession?.valueMarkers?.allMarkers?.filterKeys { it is Value? } as Map<out Value?, ValueMarkup>?
         }
     }
+
+    private val moduleDescriptor = DebugLabelModuleDescriptor
 
     fun supplyDebugLabels() {
         val packageFragment = object : PackageFragmentDescriptorImpl(moduleDescriptor, FqName.ROOT) {
@@ -138,6 +140,58 @@ class DebugLabelPropertyDescriptorProvider(
             ?: return moduleDescriptor.builtIns.nullableAnyType
         return classDescriptor.defaultType
     }
+}
+
+private object DebugLabelModuleDescriptor
+    : DeclarationDescriptorImpl(Annotations.EMPTY, Name.identifier("DebugLabelExtensions")),
+    ModuleDescriptor
+{
+    override val builtIns: KotlinBuiltIns
+        get() = DefaultBuiltIns.Instance
+
+    override val stableName: Name?
+        get() = name
+
+    override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor) = false
+
+    override fun getPackage(fqName: FqName): PackageViewDescriptor {
+        return object : PackageViewDescriptor, DeclarationDescriptorImpl(Annotations.EMPTY, FqName.ROOT.shortNameOrSpecial()) {
+            override fun getContainingDeclaration(): PackageViewDescriptor? = null
+
+            override val fqName: FqName
+                get() = FqName.ROOT
+
+            override val memberScope: MemberScope
+                get() = MemberScope.Empty
+
+            override val module: ModuleDescriptor
+                get() = this@DebugLabelModuleDescriptor
+
+            override val fragments: List<PackageFragmentDescriptor>
+                get() = emptyList()
+
+            override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
+                return visitor.visitPackageViewDescriptor(this, data)
+            }
+        }
+    }
+
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        return emptyList()
+    }
+
+    override val allDependencyModules: List<ModuleDescriptor>
+        get() = emptyList()
+
+    override val expectedByModules: List<ModuleDescriptor>
+        get() = emptyList()
+
+    override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>): T? = null
+
+    override val isValid: Boolean
+        get() = true
+
+    override fun assertValid() {}
 }
 
 internal class DebugLabelPropertyDescriptor(

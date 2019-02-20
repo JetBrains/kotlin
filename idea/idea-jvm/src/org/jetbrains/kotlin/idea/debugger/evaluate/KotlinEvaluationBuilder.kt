@@ -256,7 +256,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val filesToAnalyze = listOf(codeFragment)
             val resolutionFacade = KotlinCacheService.getInstance(codeFragment.project).getResolutionFacade(filesToAnalyze)
 
-            DebugLabelPropertyDescriptorProvider(codeFragment, resolutionFacade.moduleDescriptor, debugProcess).supplyDebugLabels()
+            DebugLabelPropertyDescriptorProvider(codeFragment, debugProcess).supplyDebugLabels()
 
             val analysisResult = resolutionFacade.analyzeWithAllCompilerChecks(filesToAnalyze)
 

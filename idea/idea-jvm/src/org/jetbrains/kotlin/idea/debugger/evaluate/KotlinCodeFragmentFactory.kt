@@ -40,7 +40,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.DebugLabelPropertyDescriptorProvider
@@ -70,12 +69,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         }
 
         val codeFragment = constructor(project, "fragment.kt", item.text, initImports(item.imports), contextElement)
-
-        val moduleDescriptor = codeFragment.getResolutionFacade().moduleDescriptor
-        val debugProcess = getDebugProcess(project, contextElement)
-        if (debugProcess != null) {
-            DebugLabelPropertyDescriptorProvider(codeFragment, moduleDescriptor, debugProcess).supplyDebugLabels()
-        }
+        supplyDebugLabels(codeFragment, context)
 
         codeFragment.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, { expression: KtExpression ->
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
@@ -144,6 +138,12 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         }
 
         return codeFragment
+    }
+
+    private fun supplyDebugLabels(codeFragment: KtCodeFragment, context: PsiElement?) {
+        val project = codeFragment.project
+        val debugProcess = getDebugProcess(project, context) ?: return
+        DebugLabelPropertyDescriptorProvider(codeFragment, debugProcess).supplyDebugLabels()
     }
 
     private fun getDebugProcess(project: Project, context: PsiElement?): DebugProcessImpl? {
