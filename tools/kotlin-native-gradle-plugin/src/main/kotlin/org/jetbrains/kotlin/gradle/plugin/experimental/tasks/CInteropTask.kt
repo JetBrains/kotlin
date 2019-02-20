@@ -95,7 +95,7 @@ open class CInteropTask @Inject constructor(val settings: CInteropSettingsImpl):
             addArgIfNotNull("-def", defFile.canonicalPath)
             addArgIfNotNull("-pkg", packageName)
 
-            addFileArgs("-h", headers)
+            addFileArgs("-header", headers)
 
             compilerOpts.forEach {
                 addArg("-copt", it)

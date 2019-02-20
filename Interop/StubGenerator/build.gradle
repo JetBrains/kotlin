@@ -38,6 +38,9 @@ dependencies {
 }
 
 compileKotlin {
+    sourceSets {
+        main.kotlin.srcDirs += "$rootDir/tools/kliopt"
+    }
     kotlinOptions {
         freeCompilerArgs = ['-Xuse-experimental=kotlin.ExperimentalUnsignedTypes']
     }

@@ -80,7 +80,7 @@ open class KonanInteropTask @Inject constructor(val workerExecutor: WorkerExecut
         addArgIfNotNull("-def", defFile.canonicalPath)
         addArgIfNotNull("-pkg", packageName)
 
-        addFileArgs("-h", headers)
+        addFileArgs("-header", headers)
 
         compilerOpts.forEach {
             addArg("-copt", it)

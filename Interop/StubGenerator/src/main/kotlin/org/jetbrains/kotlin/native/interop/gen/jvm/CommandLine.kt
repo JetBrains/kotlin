@@ -16,97 +16,61 @@
 
 package org.jetbrains.kotlin.native.interop.tool
 
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kliopt.*
+
+const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "headerFilterAdditionalSearchPrefix"
+const val NODEFAULTLIBS = "nodefaultlibs"
+const val PURGE_USER_LIBS = "Xpurge-user-libs"
+const val TEMP_DIR = "Xtemporary-files-dir"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
-open class CommonInteropArguments : CommonToolArguments() {
-    @Argument(value = "-flavor", valueDescription = "<flavor>", description = "One of: jvm, native or wasm")
-    var flavor: String? = null
+fun getCommonInteropArguments() = listOf(
+        OptionDescriptor(ArgType.Boolean(), "verbose", description = "Enable verbose logging output", defaultValue = "false"),
+        OptionDescriptor(ArgType.Choice(listOf("jvm", "native", "wasm")),
+                "flavor", description = "Interop target", defaultValue = "jvm"),
+        OptionDescriptor(ArgType.String(), "pkg", description = "place generated bindings to the package"),
+        OptionDescriptor(ArgType.String(), "output", "o", "specifies the resulting library file", defaultValue = "nativelib"),
+        OptionDescriptor(ArgType.String(), "libraryPath", description = "add a library search path",
+                isMultiple = true, delimiter = ","),
+        OptionDescriptor(ArgType.String(), "staticLibrary", description = "embed static library to the result",
+                isMultiple = true, delimiter = ","),
+        OptionDescriptor(ArgType.String(), "generated", description = "place generated bindings to the directory",
+                defaultValue = System.getProperty("user.dir")),
+        OptionDescriptor(ArgType.String(), "natives", description = "where to put the built native files",
+                defaultValue = System.getProperty("user.dir")),
+        OptionDescriptor(ArgType.String(), "library",
+                description = "library to use for building", isMultiple = true),
+        OptionDescriptor(ArgType.String(), "repo", "r",
+                "repository to resolve dependencies", isMultiple = true),
+        OptionDescriptor(ArgType.Boolean(), NODEFAULTLIBS, description = "don't link the libraries from dist/klib automatically",
+                defaultValue = "false"),
+        OptionDescriptor(ArgType.Boolean(), PURGE_USER_LIBS, description = "don't link unused libraries even explicitly specified",
+                defaultValue = "false"),
+        OptionDescriptor(ArgType.String(), TEMP_DIR, description = "save temporary files to the given directory")
+    )
 
-    @Argument(value = "-pkg", valueDescription = "<fully qualified name>", description = "place generated bindings to the package")
-    var pkg: String? = null
-
-    @Argument(value = "-generated", valueDescription = "<dir>", description = "place generated bindings to the directory")
-    var generated: String? = null
-
-    @Argument(value = "-libraryPath", valueDescription = "<dir>", description = "add a library search path")
-    var libraryPath: Array<String> = arrayOf()
-
-    @Argument(value = "-manifest", valueDescription = "<file>", description = "library manifest addend")
-    var manifest: String? = null
-
-    @Argument(value = "-natives", valueDescription = "<directory>", description = "where to put the built native files") 
-    var natives: String? = null
-
-    @Argument(value = "-staticLibrary", valueDescription = "<file>", description = "embed static library to the result") 
-    var staticLibrary: Array<String> = arrayOf()
-
-    @Argument(value = "-temporaryFilesDir", valueDescription = "<dir>", description = "Save temporary files to the given directory")
-    var temporaryFilesDir: String? = null
+fun getCInteropArguments(): List<OptionDescriptor> {
+    val options = listOf(
+            OptionDescriptor(ArgType.String(), "target", description = "native target to compile to", defaultValue = "host"),
+            OptionDescriptor(ArgType.String(), "def", description = "the library definition file"),
+            OptionDescriptor(ArgType.String(), "header", "h", "header file to produce kotlin bindings for",
+                    isMultiple = true, delimiter = ",", deprecatedWarning = "Short form -h of option -header is deprecated"),
+            OptionDescriptor(ArgType.String(), HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX, "hfasp",
+                    "header file to produce kotlin bindings for", isMultiple = true, delimiter = ","),
+            OptionDescriptor(ArgType.String(), "compilerOpts", "copt",
+                    "additional compiler options", isMultiple = true, delimiter = " "),
+            OptionDescriptor(ArgType.String(), "linkerOpts", "lopt",
+                    "additional linker options", isMultiple = true, delimiter = " "),
+            OptionDescriptor(ArgType.Boolean(), "shims", description = "wrap bindings by a tracing layer", defaultValue = "false"),
+            OptionDescriptor(ArgType.String(), "linker", description = "use specified linker")
+    )
+    return (options + getCommonInteropArguments())
 }
-
-class CInteropArguments : CommonInteropArguments() {
-    @Argument(value = "-import", valueDescription = "<imports>", description = "a semicolon separated list of headers, prepended with the package name") 
-    var import: Array<String> = arrayOf()
-
-    @Argument(value = "-target", valueDescription = "<target>", description = "native target to compile to") 
-    var target: String? = null
-
-    @Argument(value = "-def", valueDescription = "<file>", description = "the library definition file") 
-    var def: String? = null
-
-    // TODO: the short -h for -header conflicts with -h for -help.
-    // The -header currently wins, but need to make it a little more sound.
-    @Argument(value = "-header", shortName = "-h",  valueDescription = "<file>", description = "header file to produce kotlin bindings for") 
-    var header: Array<String> = arrayOf()
-
-    @Argument(value = HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX, shortName = "-hfasp",  valueDescription = "<file>", description = "header file to produce kotlin bindings for") 
-    var headerFilterPrefix: Array<String> = arrayOf()
-
-    @Argument(value = "-compilerOpts", shortName = "-copt", valueDescription = "<arg>", description = "additional compiler options", delimiter = " ")
-    var compilerOpts: Array<String> = arrayOf()
-
-    @Argument(value = "-linkerOpts", shortName = "-lopt", valueDescription = "<arg>", description = "additional linker options", delimiter = " ")
-    var linkerOpts: Array<String> = arrayOf()
-
-    @Argument(value = "-shims", description = "wrap bindings by a tracing layer") 
-    var shims: Boolean = false
-
-    @Argument(value = "-linker", valueDescription = "<file>", description = "use specified linker") 
-
-    var linker: String? = null
-    @Argument(value = "-cstubsname", valueDescription = "<name>", description = "provide a name for the generated c stubs file") 
-    var cstubsname: String? = null
-}
-
-const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "-headerFilterAdditionalSearchPrefix"
-
-fun <T: CommonToolArguments> parseCommandLine(args: Array<String>, arguments: T): T {
-    parseCommandLineArguments(args.asList(), arguments)
-    arguments.errors?.let { reportArgumentParseProblems(it) }
-    return arguments
-}
-
-// Integrate with CLITool from the big Kotlin and get rid of the mess below.
 
 internal fun warn(msg: String) {
     println("warning: $msg")
 }
 
-// This is a copy of CLITool.kt's function adapted to work without a collector.
-private fun reportArgumentParseProblems(errors: ArgumentParseErrors) {
-    for (flag in errors.unknownExtraFlags) {
-        warn("Flag is not supported by this version of the compiler: $flag")
-    }
-    for (argument in errors.extraArgumentsPassedInObsoleteForm) {
-        warn("Advanced option value is passed in an obsolete form. Please use the '=' character " +
-                "to specify the value: $argument=...")
-    }
-    for ((key, value) in errors.duplicateArguments) {
-        warn("Argument $key is passed multiple times. Only the last value will be used: $value")
-    }
-    for ((deprecatedName, newName) in errors.deprecatedArguments) {
-        warn("Argument $deprecatedName is deprecated. Please use $newName instead")
-    }
-}
+fun ArgParser.getValuesAsArray(propertyName: String) =
+        (getAll<String>(propertyName) ?: listOf<String>()).toTypedArray()

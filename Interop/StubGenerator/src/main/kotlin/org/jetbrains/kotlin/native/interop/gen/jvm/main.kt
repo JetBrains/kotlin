@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
+import org.jetbrains.kliopt.ArgParser
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.nio.file.*
@@ -32,11 +33,12 @@ fun main(args: Array<String>) {
     processCLib(args)
 }
 
-fun interop(flavor: String, args: Array<String>) = when(flavor) {
-        "jvm", "native" -> processCLib(args)
-        "wasm" -> processIdlLib(args)
-        else -> error("Unexpected flavor")
-    }
+fun interop(flavor: String, args: Array<String>, additionalArgs: Map<String, Any> = mapOf()) =
+        when(flavor) {
+            "jvm", "native" -> processCLib(args, additionalArgs)
+            "wasm" -> processIdlLib(args, additionalArgs)
+            else -> error("Unexpected flavor")
+        }
 
 // Options, whose values are space-separated and can be escaped.
 val escapedOptions = setOf("-compilerOpts", "-linkerOpts")
@@ -78,23 +80,6 @@ private fun Properties.putAndRunOnReplace(key: Any, newValue: Any, beforeReplace
         beforeReplace(key, oldValue, newValue)
     }
     this[key] = newValue
-}
-
-// TODO: Utilize Usage from the big Kotlin.
-// That requires to extend the CLITool class.
-private fun usage() {
-    println("""
-Run interop tool with -def <def_file_for_lib>.def
-Following flags are supported:
-  -def <file>.def specifies library definition file
-  -compilerOpts <c compiler flags> specifies flags passed to clang
-  -linkerOpts <linker flags> specifies flags passed to linker
-  -verbose <boolean> increases verbosity
-  -shims <boolean> adds generation of shims tracing native library calls
-  -pkg <fully qualified package name> place the resulting definitions into the package
-  -h <file>.h header files to parse
-  -o <file>.klib specifies the resulting library file
-""")
 }
 
 private fun selectNativeLanguage(config: DefFile.DefFileConfig): Language {
@@ -173,29 +158,28 @@ private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, 
 }
 
 
-private fun processCLib(args: Array<String>): Array<String>? {
-
-    val arguments = parseCommandLine(args, CInteropArguments())
-    val userDir = System.getProperty("user.dir")
-    val ktGenRoot = arguments.generated ?: userDir
-    val nativeLibsDir = arguments.natives ?: userDir
-    val flavorName = arguments.flavor ?: "jvm"
-    val flavor = KotlinPlatform.values().single { it.name.equals(flavorName, ignoreCase = true) }
-    val defFile = arguments.def?.let { File(it) }
-    val manifestAddend = arguments.manifest?.let { File(it) }
-
-    if (defFile == null && arguments.pkg == null) {
-        usage()
+private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String>? {
+    val argParser = ArgParser(getCInteropArguments(), useDefaultHelpShortName = false)
+    if (!argParser.parse(args))
         return null
+    val ktGenRoot = argParser.get<String>("generated")
+    val nativeLibsDir = argParser.get<String>("natives")
+    val flavorName = argParser.get<String>("flavor")
+    val flavor = KotlinPlatform.values().single { it.name.equals(flavorName, ignoreCase = true) }
+    val defFile = argParser.get<String>("def")?.let { File(it) }
+    val manifestAddend = (additionalArgs["manifest"] as? String)?.let { File(it) }
+
+    if (defFile == null && argParser.get<String>("pkg") == null) {
+        argParser.printError("-def or -pkg should provided!")
     }
 
-    val tool = prepareTool(arguments.target, flavor)
+    val tool = prepareTool(argParser.get<String>("target"), flavor)
 
     val def = DefFile(defFile, tool.substitutions)
 
-    val additionalLinkerOpts = arguments.linkerOpts
-    val generateShims = arguments.shims
-    val verbose = arguments.verbose
+    val additionalLinkerOpts = argParser.getValuesAsArray("linkerOpts")
+    val generateShims = argParser.get<Boolean>("shims")!!
+    val verbose = argParser.get<Boolean>("verbose")!!
 
     val language = selectNativeLanguage(def.config)
 
@@ -204,14 +188,14 @@ private fun processCLib(args: Array<String>): Array<String>? {
             def.config.linkerOpts.toTypedArray() + 
             tool.defaultCompilerOpts + 
             additionalLinkerOpts
-    val linkerName = arguments.linker ?: def.config.linker
+    val linkerName = argParser.get<String>("linker") ?: def.config.linker
     val linker = "${tool.llvmHome}/bin/$linkerName"
     val compiler = "${tool.llvmHome}/bin/clang"
     val excludedFunctions = def.config.excludedFunctions.toSet()
     val excludedMacros = def.config.excludedMacros.toSet()
-    val staticLibraries = def.config.staticLibraries + arguments.staticLibrary
-    val libraryPaths = def.config.libraryPaths + arguments.libraryPath
-    val fqParts = (arguments.pkg ?: def.config.packageName)?.let {
+    val staticLibraries = def.config.staticLibraries + argParser.getValuesAsArray("staticLibrary")
+    val libraryPaths = def.config.libraryPaths + argParser.getValuesAsArray("libraryPath")
+    val fqParts = (argParser.get<String>("pkg") ?: def.config.packageName)?.let {
         it.split('.')
     } ?: defFile!!.name.split('.').reversed().drop(1)
 
@@ -221,13 +205,13 @@ private fun processCLib(args: Array<String>): Array<String>? {
     val outKtFileRelative = (fqParts + outKtFileName).joinToString("/")
     val outKtFile = File(ktGenRoot, outKtFileRelative)
 
-    val libName = arguments.cstubsname ?: fqParts.joinToString("") + "stubs"
+    val libName = (additionalArgs["cstubsname"] as? String)?: fqParts.joinToString("") + "stubs"
 
-    val tempFiles = TempFiles(libName, arguments.temporaryFilesDir)
+    val tempFiles = TempFiles(libName, argParser.get<String>("Xtemporary-files-dir"))
 
-    val imports = parseImports(arguments.import)
+    val imports = parseImports((additionalArgs["import"] as? List<String>)?.toTypedArray() ?: arrayOf())
 
-    val library = buildNativeLibrary(tool, def, arguments, imports)
+    val library = buildNativeLibrary(tool, def, argParser, imports)
 
     val configuration = InteropConfiguration(
             library = library,
@@ -311,11 +295,11 @@ internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {
 internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
-        arguments: CInteropArguments,
+        arguments: ArgParser,
         imports: ImportsImpl
 ): NativeLibrary {
-    val additionalHeaders = arguments.header
-    val additionalCompilerOpts = arguments.compilerOpts
+    val additionalHeaders = arguments.getValuesAsArray("header")
+    val additionalCompilerOpts = arguments.getValuesAsArray("compilerOpts")
 
     val headerFiles = def.config.headers + additionalHeaders
     val language = selectNativeLanguage(def.config)
@@ -323,7 +307,7 @@ internal fun buildNativeLibrary(
         addAll(def.config.compilerOpts)
         addAll(tool.defaultCompilerOpts)
         addAll(additionalCompilerOpts)
-        addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix, def))
+        addAll(getCompilerFlagsForVfsOverlay(arguments.getValuesAsArray("headerFilterPrefix"), def))
         addAll(when (language) {
             Language.C -> emptyList()
             Language.OBJECTIVE_C -> {
