@@ -15,3 +15,4 @@ suspend fun test() = foo(A("O", "K")) { (x_param, y_param) -> x_param + y_param 
 // VARIABLE : NAME=$i$a$-foo-InlineKt$test$2 TYPE=I INDEX=5
 // VARIABLE : NAME=a$iv TYPE=LA; INDEX=1
 // VARIABLE : NAME=$i$f$foo TYPE=I INDEX=2
+// VARIABLE : NAME=$completion TYPE=Lkotlin/coroutines/Continuation; INDEX=0

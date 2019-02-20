@@ -109,6 +109,49 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         runTest("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");
     }
 
+    @TestMetadata("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CompletionInSuspendFunction extends AbstractCheckLocalVariablesTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCompletionInSuspendFunction() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("nonStaticSimple.kt")
+        public void testNonStaticSimple() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/nonStaticSimple.kt");
+        }
+
+        @TestMetadata("nonStaticStateMachine.kt")
+        public void testNonStaticStateMachine() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/nonStaticStateMachine.kt");
+        }
+
+        @TestMetadata("staticSimple.kt")
+        public void testStaticSimple() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/staticSimple.kt");
+        }
+
+        @TestMetadata("staticSimpleReceiver.kt")
+        public void testStaticSimpleReceiver() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/staticSimpleReceiver.kt");
+        }
+
+        @TestMetadata("staticStateMachine.kt")
+        public void testStaticStateMachine() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/staticStateMachine.kt");
+        }
+
+        @TestMetadata("staticStateMachineReceiver.kt")
+        public void testStaticStateMachineReceiver() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/staticStateMachineReceiver.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Type
@@ -80,7 +81,7 @@ private fun useVar(
     val index = node.instructions.indexOf(insn)
     node.localVariables.filter {
         // Inliner fake variables, despite being present in LVT, are not read, thus are always dead
-        !it.name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) && !it.name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) &&
+        !it.name.isInvisibleDebuggerVariable() &&
                 node.instructions.indexOf(it.start) < index && index < node.instructions.indexOf(it.end) &&
                 Type.getType(it.desc).sort == typeAnnotatedFrame?.getLocal(it.index)?.type?.sort
     }.forEach {
@@ -93,3 +94,8 @@ private fun useVar(
         frame.markAlive(insn.`var`)
     }
 }
+
+private fun String.isInvisibleDebuggerVariable(): Boolean =
+    startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) ||
+            startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) ||
+            this == SUSPEND_FUNCTION_CONTINUATION_PARAMETER
