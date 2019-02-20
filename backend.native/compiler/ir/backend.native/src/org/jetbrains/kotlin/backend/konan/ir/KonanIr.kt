@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
@@ -103,6 +104,8 @@ class IrFileImpl(entry: SourceManager.FileEntry) : IrFile {
 
     //-------------------------------------------------------------------------//
 
+    override val metadata: MetadataSource.File?
+        get() = TODO("not implemented")
     override val annotations: MutableList<IrCall>
         get() = TODO("not implemented")
     override val fqName: FqName
