@@ -87,7 +87,7 @@ object KotlinEvaluationBuilder : EvaluatorBuilder {
         }
 
         if (position.line < 0) {
-            evaluationException("Couldn't evaluate kotlin expression at $position")
+            evaluationException("Couldn't evaluate Kotlin expression at $position")
         }
 
         val file = position.file
@@ -95,7 +95,7 @@ object KotlinEvaluationBuilder : EvaluatorBuilder {
             val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
             if (document == null || document.lineCount < position.line) {
                 evaluationException(
-                    "Couldn't evaluate kotlin expression: breakpoint is placed outside the file. " +
+                    "Couldn't evaluate Kotlin expression: breakpoint is placed outside the file. " +
                             "It may happen when you've changed source file after starting a debug process."
                 )
             }
@@ -112,7 +112,7 @@ object KotlinEvaluationBuilder : EvaluatorBuilder {
                 "Trying to evaluate ${codeFragment::class.java} with context ${codeFragment.context?.javaClass}",
                 mergeAttachments(*attachments)
             )
-            evaluationException("Couldn't evaluate kotlin expression in this context")
+            evaluationException("Couldn't evaluate Kotlin expression in this context")
         }
 
         return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment, position))
