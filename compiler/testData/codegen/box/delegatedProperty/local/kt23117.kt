@@ -1,5 +1,6 @@
-// IGNORE_BACKEND: JS_IR, JVM_IR
-//WITH_RUNTIME
+// KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND: JVM_IR
+// WITH_RUNTIME
 import kotlin.properties.Delegates.notNull
 
 fun box(): String {
