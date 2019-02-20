@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
@@ -29,10 +28,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.ErrorLexicalScope
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScopes
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -134,7 +130,15 @@ class CodeFragmentAnalyzer(
             }
         }
 
-        val scopeWithImports = enrichScopeWithImports(scope ?: ErrorLexicalScope(), codeFragment)
+        if (scope == null) {
+            val containingKtFile = codeFragment.context?.containingFile as? KtFile
+            if (containingKtFile != null) {
+                bindingContext = resolveSession.bindingContext
+                scope = resolveSession.fileScopeProvider.getFileResolutionScope(containingKtFile)
+            }
+        }
+
+        val scopeWithImports = enrichScopeWithImports(scope ?: createEmptyScope(resolveSession.moduleDescriptor), codeFragment)
         return ContextAnalysisResult(bindingContext, scopeWithImports, dataFlowInfo)
     }
 
@@ -197,5 +201,9 @@ class CodeFragmentAnalyzer(
                 excludedImportNames = emptyList(), packageFragmentForVisibilityCheck = null
             )
         }
+    }
+
+    private fun createEmptyScope(moduleDescriptor: ModuleDescriptor): LexicalScope {
+        return LexicalScope.Base(ImportingScope.Empty, moduleDescriptor)
     }
 }
