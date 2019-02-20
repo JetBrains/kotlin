@@ -59,7 +59,7 @@ fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
     extra["runtimeJarTask"] = task
     tasks.findByName("jar")?.let { defaultJarTask ->
         configurations.getOrCreate("archives")
-            .artifacts.removeAll { (it as? ArchivePublishArtifact)?.archiveTask?.let { it == defaultJarTask } ?: false }
+            .artifacts.removeAll { artifact -> artifact.file in defaultJarTask.outputs.files }
     }
     return task.apply {
         setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
