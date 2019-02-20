@@ -24,7 +24,6 @@ private fun SampleFormat.toSDLFormat(): SDL_AudioFormat? = when (this) {
 }
 
 class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
-    private val workerStable = StableRef.create(player.worker)
     private var state = State.STOPPED
 
     fun start(audio: AudioOutput) {
@@ -40,7 +39,7 @@ class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
                 channels = audio.channels.convert()
                 silence = 0u
                 samples = 4096u
-                userdata = workerStable.asCPointer()
+                userdata = player.worker.asCPointer()
                 callback = staticCFunction(::audioCallback)
             }
             val realSpec = alloc<SDL_AudioSpec>()
@@ -63,7 +62,6 @@ class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
     fun stop() {
         pause()
         state = state.transition(State.PAUSED, State.STOPPED) { SDL_CloseAudio() }
-        workerStable.dispose()
     }
 }
 
@@ -75,7 +73,7 @@ private fun audioCallback(userdata: COpaquePointer?, buffer: CPointer<Uint8Var>?
     // This handler will be invoked in the audio thread, so reinit runtime.
     kotlin.native.initRuntimeIfNeeded()
     val decoder = decoder ?:
-        DecoderWorker(userdata!!.asStableRef<Worker>().get()).also { decoder = it }
+        DecoderWorker(Worker.fromCPointer(userdata)).also { decoder = it }
     var outPosition = 0
     while (outPosition < length) {
         val frame = decoder.nextAudioFrame(length - outPosition)

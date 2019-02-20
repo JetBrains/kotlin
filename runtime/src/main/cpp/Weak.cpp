@@ -29,12 +29,10 @@ inline WeakReferenceCounter* asWeakReferenceCounter(ObjHeader* obj) {
   return reinterpret_cast<WeakReferenceCounter*>(obj);
 }
 
-constexpr int referredOffset = 0;
-constexpr int lockOffset = sizeof(void*);
-
 #if !KONAN_NO_THREADS
 
 inline void lock(int32_t* address) {
+    RuntimeAssert(*address == 0 || *address == 1, "Incorrect lock state");
     while (__sync_val_compare_and_swap(address, 0, 1) == 1);
 }
 

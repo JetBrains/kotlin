@@ -47,6 +47,14 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
             val id = currentInternal()
             return if (id != 0) Worker(id) else null
         }
+
+        /**
+         * Create worker object from a C pointer.
+         *
+         *  @param pointer value returned earlier by [Worker.asCPointer]
+         */
+        public fun fromCPointer(pointer: COpaquePointer?) =
+                if (pointer != null) Worker(pointer.toLong().toInt()) else throw IllegalArgumentException()
     }
 
     /**
@@ -81,4 +89,10 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
             throw RuntimeException("Shall not be called directly")
 
     override public fun toString(): String = "worker $id"
+
+    /**
+     * Convert worker to a COpaquePointer value that could be passed via native void* pointer.
+     * Can be used as an argument of [Worker.fromCPointer].
+     */
+    public fun asCPointer() : COpaquePointer? = id.toLong().toCPointer()
 }
