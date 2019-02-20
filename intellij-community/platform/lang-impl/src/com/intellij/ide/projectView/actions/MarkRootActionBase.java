@@ -60,7 +60,11 @@ public abstract class MarkRootActionBase extends DumbAwareAction {
     modifyRoots(e, module, files);
   }
 
-  protected void modifyRoots(@NotNull  AnActionEvent e, @NotNull final Module module, @NotNull VirtualFile[] files) {
+  protected void modifyRoots(@NotNull AnActionEvent e, @NotNull final Module module, @NotNull VirtualFile[] files) {
+    modifyRoots(module, files);
+  }
+
+  protected void modifyRoots(@NotNull Module module, @NotNull VirtualFile[] files) {
     final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
     for (VirtualFile file : files) {
       ContentEntry entry = findContentEntry(model, file);
