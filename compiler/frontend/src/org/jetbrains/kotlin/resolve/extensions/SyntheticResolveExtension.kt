@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.extensions
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -39,17 +38,6 @@ interface SyntheticResolveExtension {
     companion object : ProjectExtensionDescriptor<SyntheticResolveExtension>(
         "org.jetbrains.kotlin.syntheticResolveExtension", SyntheticResolveExtension::class.java
     ) {
-        private val logger = Logger.getInstance(this::class.java)
-
-        private inline fun <T : Any, R> withLinkageErrorLogger(receiver: T, block: T.() -> R): R {
-            try {
-                return receiver.block()
-            } catch (e: LinkageError) {
-                logger.error("${receiver::class.java.name} caused LinkageError", e)
-                throw e
-            }
-        }
-
         fun getInstance(project: Project): SyntheticResolveExtension {
             val instances = getInstances(project)
             if (instances.size == 1) return instances.single()

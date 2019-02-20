@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
+import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
@@ -33,6 +34,7 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             CliScriptDependenciesProvider(project)
         )
         SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
+        ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         if (messageCollector != null) {

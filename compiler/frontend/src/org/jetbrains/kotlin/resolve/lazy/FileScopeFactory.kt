@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
+import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 
@@ -66,13 +66,13 @@ class FileScopeFactory(
     }
 
     private data class DefaultImportResolvers(
-        val explicit: LazyImportResolver<DefaultImportImpl>,
-        val allUnder: LazyImportResolver<DefaultImportImpl>,
-        val lowPriority: LazyImportResolver<DefaultImportImpl>
+        val explicit: LazyImportResolver<KtImportInfo>,
+        val allUnder: LazyImportResolver<KtImportInfo>,
+        val lowPriority: LazyImportResolver<KtImportInfo>
     )
 
     private fun createDefaultImportResolvers(
-        extraImports: Collection<DefaultImportImpl>,
+        extraImports: Collection<KtImportInfo>,
         aliasImportNames: Collection<FqName>
     ): DefaultImportResolvers {
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve", false)
@@ -114,7 +114,7 @@ class FileScopeFactory(
     }
 
     private fun createDefaultImportResolver(
-        indexedImports: IndexedImports<DefaultImportImpl>,
+        indexedImports: IndexedImports<KtImportInfo>,
         trace: BindingTrace,
         aliasImportNames: Collection<FqName>,
         packageFragment: PackageFragmentDescriptor?,
@@ -178,10 +178,7 @@ class FileScopeFactory(
         val result = FileScopes(lexicalScope, lazyImportingScope, importResolver)
 
         private fun createDefaultImportResolversForFile(): DefaultImportResolvers {
-            val extraImports = file.takeIf { it.isScript() }?.let { ktFile ->
-                val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project)?.getScriptDependencies(ktFile.originalFile)
-                scriptDependencies?.imports?.map { DefaultImportImpl(ImportPath.fromString(it)) }
-            }.orEmpty()
+            val extraImports = ExtraImportsProviderExtension.getInstance(file.project).getExtraImports(file)
 
             if (extraImports.isEmpty() && aliasImportNames.isEmpty()) {
                 return defaultImportResolvers
