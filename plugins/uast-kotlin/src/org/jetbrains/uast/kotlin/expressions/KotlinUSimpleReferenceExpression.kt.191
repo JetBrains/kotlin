@@ -205,17 +205,21 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, KotlinUElementWithType {
     override val resolvedName: String?
-        get() = (psi.getResolvedCall(psi.analyze())?.resultingDescriptor as? ConstructorDescriptor)
-                ?.containingDeclaration?.name?.asString()
+        get() = (resolved as? PsiNamedElement)?.name
 
-    override fun resolve(): PsiElement? =
+    private val resolved by lazy {
         when (val resultingDescriptor = psi.getResolvedCall(psi.analyze())?.resultingDescriptor) {
-            is ConstructorDescriptor ->
-                resultingDescriptor.containingDeclaration.toSource()?.getMaybeLightElement(this)
+            is ConstructorDescriptor -> {
+                resultingDescriptor.constructedClass.toSource()?.getMaybeLightElement(this)
+                    ?: (resultingDescriptor as? DeserializedCallableMemberDescriptor)?.let { resolveContainingDeserializedClass(psi, it) }
+            }
             is SamConstructorDescriptor ->
                 (resultingDescriptor.returnType?.getFunctionalInterfaceType(this, psi) as? PsiClassType)?.resolve()
             else -> null
         }
+    }
+
+    override fun resolve(): PsiElement? = resolved
 }
 
 class KotlinStringUSimpleReferenceExpression(
