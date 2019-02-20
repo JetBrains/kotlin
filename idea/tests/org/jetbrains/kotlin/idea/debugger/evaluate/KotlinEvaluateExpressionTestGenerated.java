@@ -91,6 +91,16 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/collections.kt");
         }
 
+        @TestMetadata("defaultParameterValues.kt")
+        public void testDefaultParameterValues() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/defaultParameterValues.kt");
+        }
+
+        @TestMetadata("defaultParameterValues2.kt")
+        public void testDefaultParameterValues2() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/defaultParameterValues2.kt");
+        }
+
         @TestMetadata("delegatedPropertyInOtherFile.kt")
         public void testDelegatedPropertyInOtherFile() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/delegatedPropertyInOtherFile.kt");

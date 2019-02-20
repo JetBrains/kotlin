@@ -61,6 +61,8 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClassesSafely
 import org.jetbrains.kotlin.idea.debugger.evaluate.variables.EvaluatorValueConverter
 import org.jetbrains.kotlin.idea.debugger.evaluate.variables.VariableFinder
+import org.jetbrains.kotlin.idea.debugger.safeLocation
+import org.jetbrains.kotlin.idea.debugger.safeMethod
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -70,6 +72,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -343,10 +346,18 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             if (result == null) {
                 val name = parameter.debugString
 
+                fun isInsideDefaultInterfaceMethod(): Boolean {
+                    val method = evaluationContext.frameProxy?.safeLocation()?.safeMethod() ?: return false
+                    val desc = method.signature()
+                    return method.name().endsWith("\$default") && DEFAULT_METHOD_MARKERS.any { desc.contains("I${it.descriptor})") }
+                }
+
                 if (parameter in compiledData.crossingBounds) {
                     evaluationException("'$name' is not captured")
                 } else if (parameter.kind == CodeFragmentParameter.Kind.FIELD_VAR) {
                     evaluationException("Cannot find the backing field '${parameter.name}'")
+                } else if (parameter.kind == CodeFragmentParameter.Kind.ORDINARY && isInsideDefaultInterfaceMethod()) {
+                    evaluationException("Parameter evaluation is not supported for '\$default' methods")
                 } else {
                     throw VariableFinder.variableNotFound(evaluationContext, buildString {
                         append("Cannot find local variable: name = '").append(name).append("', type = ").append(asmType.className)
@@ -362,6 +373,8 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
     companion object {
         private val IGNORED_DIAGNOSTICS: Set<DiagnosticFactory<*>> = Errors.INVISIBLE_REFERENCE_DIAGNOSTICS
+
+        private val DEFAULT_METHOD_MARKERS = listOf(AsmTypes.OBJECT_TYPE, AsmTypes.DEFAULT_CONSTRUCTOR_MARKER)
 
         private fun InterpreterResult.toJdiValue(context: ExecutionContext): com.sun.jdi.Value? {
             val jdiValue = when (this) {

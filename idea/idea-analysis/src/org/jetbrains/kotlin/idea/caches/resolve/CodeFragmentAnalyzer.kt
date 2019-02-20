@@ -49,8 +49,8 @@ class CodeFragmentAnalyzer(
         return doAnalyzeCodeFragment(codeFragment, contextAnalysisResult)
     }
 
-    private fun doAnalyzeCodeFragment(codeFragment: KtCodeFragment, contextAnalysisResult: ContextAnalysisResult): BindingTrace {
-        val (bindingContext, scope, dataFlowInfo) = contextAnalysisResult
+    private fun doAnalyzeCodeFragment(codeFragment: KtCodeFragment, contextInfo: ContextInfo): BindingTrace {
+        val (bindingContext, scope, dataFlowInfo) = contextInfo
         val bindingTrace = DelegatingBindingTrace(bindingContext, "For code fragment analysis")
 
         when (val contentElement = codeFragment.getContentElement()) {
@@ -79,19 +79,19 @@ class CodeFragmentAnalyzer(
         return bindingTrace
     }
 
-    private data class ContextAnalysisResult(
-        val bindingContext: BindingContext,
-        val scope: LexicalScope,
-        val dataFlowInfo: DataFlowInfo
-    )
+    private data class ContextInfo(val bindingContext: BindingContext, val scope: LexicalScope, val dataFlowInfo: DataFlowInfo)
 
-    private fun analyzeCodeFragmentContext(codeFragment: KtCodeFragment, bodyResolveMode: BodyResolveMode): ContextAnalysisResult {
+    private fun analyzeCodeFragmentContext(codeFragment: KtCodeFragment, bodyResolveMode: BodyResolveMode): ContextInfo {
         fun resolutionFactory(element: KtElement): BindingContext {
             return resolveElementCache.resolveToElements(listOf(element), bodyResolveMode)
         }
 
         val context = refineContextElement(codeFragment.context)
+        val info = getContextInfo(context, ::resolutionFactory)
+        return info.copy(scope = enrichScopeWithImports(info.scope, codeFragment))
+    }
 
+    private fun getContextInfo(context: PsiElement?, resolutionFactory: (KtElement) -> BindingContext): ContextInfo {
         var bindingContext: BindingContext = BindingContext.EMPTY
         var dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY
         var scope: LexicalScope? = null
@@ -99,7 +99,7 @@ class CodeFragmentAnalyzer(
         when (context) {
             is KtPrimaryConstructor -> {
                 val containingClass = context.getContainingClassOrObject()
-                val resolutionResult = getClassDescriptor(containingClass, ::resolutionFactory)
+                val resolutionResult = getClassDescriptor(containingClass, resolutionFactory)
                 if (resolutionResult != null) {
                     bindingContext = resolutionResult.bindingContext
                     scope = resolutionResult.descriptor.scopeForInitializerResolution
@@ -113,10 +113,20 @@ class CodeFragmentAnalyzer(
                 }
             }
             is KtClassOrObject -> {
-                val resolutionResult = getClassDescriptor(context, ::resolutionFactory)
+                val resolutionResult = getClassDescriptor(context, resolutionFactory)
                 if (resolutionResult != null) {
                     bindingContext = resolutionResult.bindingContext
                     scope = resolutionResult.descriptor.scopeForMemberDeclarationResolution
+                }
+            }
+            is KtFunction -> {
+                val bindingContextForFunction = resolutionFactory(context)
+                val functionDescriptor = bindingContextForFunction[BindingContext.FUNCTION, context]
+                if (functionDescriptor != null) {
+                    bindingContext = bindingContextForFunction
+                    val outerScope = getContextInfo(context.getParentOfType<KtDeclaration>(true), resolutionFactory).scope
+                    val localRedeclarationChecker = LocalRedeclarationChecker.DO_NOTHING
+                    scope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, localRedeclarationChecker)
                 }
             }
             is KtFile -> {
@@ -131,15 +141,14 @@ class CodeFragmentAnalyzer(
         }
 
         if (scope == null) {
-            val containingKtFile = codeFragment.context?.containingFile as? KtFile
+            val containingKtFile = context?.containingFile as? KtFile
             if (containingKtFile != null) {
                 bindingContext = resolveSession.bindingContext
                 scope = resolveSession.fileScopeProvider.getFileResolutionScope(containingKtFile)
             }
         }
 
-        val scopeWithImports = enrichScopeWithImports(scope ?: createEmptyScope(resolveSession.moduleDescriptor), codeFragment)
-        return ContextAnalysisResult(bindingContext, scopeWithImports, dataFlowInfo)
+        return ContextInfo(bindingContext, scope ?: createEmptyScope(resolveSession.moduleDescriptor), dataFlowInfo)
     }
 
     private data class ClassResolutionResult(val bindingContext: BindingContext, val descriptor: ClassDescriptorWithResolutionScopes)
@@ -164,7 +173,7 @@ class CodeFragmentAnalyzer(
 
     private fun refineContextElement(context: PsiElement?): KtElement? {
         return when (context) {
-            is KtParameter -> context.getParentOfType<KtFunction>(true)
+            is KtParameter -> context.getParentOfType<KtFunction>(true)?.let { it }
             is KtProperty -> context.delegateExpressionOrInitializer
             is KtConstructor<*> -> context
             is KtFunctionLiteral -> context.bodyExpression?.statements?.lastOrNull()
