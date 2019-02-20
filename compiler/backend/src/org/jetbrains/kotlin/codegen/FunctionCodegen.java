@@ -1360,7 +1360,7 @@ public class FunctionCodegen {
             @NotNull List<ValueParameterDescriptor> valueParameters,
             boolean isStatic
     ) {
-        FrameMap frameMap = new FrameMap();
+        FrameMap frameMap = new FrameMapWithExpectActualSupport(state.getModule());
         if (!isStatic) {
             frameMap.enterTemp(OBJECT_TYPE);
         }
