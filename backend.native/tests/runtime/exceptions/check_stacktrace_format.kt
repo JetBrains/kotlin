@@ -33,9 +33,11 @@ fun main(args : Array<String>) {
     try {
         functionB()
     } catch (e: Throwable) {
-        val st = e.getStackTrace()
-        repeat(3) {
-            checkStringFormat(st[it])
+        val stacktrace = e.getStackTrace()
+        if (stacktrace.size >= 3) {
+          repeat(3) {
+            checkStringFormat(stacktrace[it])
+          }
         }
     }
 }
