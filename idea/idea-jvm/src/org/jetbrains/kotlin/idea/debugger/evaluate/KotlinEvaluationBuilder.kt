@@ -89,12 +89,12 @@ object KotlinEvaluationBuilder : EvaluatorBuilder {
             return EvaluatorBuilderImpl.getInstance()!!.build(codeFragment, position)
         }
 
-        if (position.line < 0) {
+        if (position.line < 0 && position.file !is KtFile) {
             evaluationException("Couldn't evaluate Kotlin expression at $position")
         }
 
         val file = position.file
-        if (file is KtFile) {
+        if (file is KtFile && position.line >= 0) {
             val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
             if (document == null || document.lineCount < position.line) {
                 evaluationException(
