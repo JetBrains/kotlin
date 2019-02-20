@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlinx.serialization.compiler.resolve.classSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
 
 class SerializableCompanionJsTranslator(
     declaration: ClassDescriptor,
@@ -37,7 +40,7 @@ class SerializableCompanionJsTranslator(
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
         val f = context.buildFunction(methodDescriptor) {jsFun, context ->
-            val serializer = serializableDescriptor.classSerializer?.toClassDescriptor!!
+            val serializer = serializableDescriptor.classSerializer!!
             val stmt: JsExpression = if (serializer.kind == ClassKind.OBJECT) {
                 context.serializerObjectGetter(serializer)
             } else {
