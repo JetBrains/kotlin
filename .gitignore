@@ -37,3 +37,6 @@ build/
 .idea/.name
 .idea/artifacts/dist_auto_*
 kotlin-ultimate/
+node_modules/
+.rpt2_cache/
+libraries/tools/kotlin-test-nodejs-runner/lib/

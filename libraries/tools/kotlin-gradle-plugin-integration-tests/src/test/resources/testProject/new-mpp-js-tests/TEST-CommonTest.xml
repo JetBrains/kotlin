@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results>
+  <testsuite name="CommonTest" tests="3" skipped="1" failures="1" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="test1" classname="CommonTest" time="..." />
+    <testcase name="test2" classname="CommonTest" time="...">
+      <skipped />
+    </testcase>
+    <testcase name="test3" classname="CommonTest" time="...">
+      <failure message="..." type="org.jetbrains.kotlin.gradle.targets.js.NodeJsTestFailure">...</failure>
+    </testcase>
+    <system-out />
+    <system-err />
+  </testsuite>
+  <testsuite name="InnerIgnored" tests="3" skipped="3" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="test4" classname="InnerIgnored" time="...">
+      <skipped />
+    </testcase>
+    <testcase name="test5" classname="InnerIgnored" time="...">
+      <skipped />
+    </testcase>
+    <testcase name="test6" classname="InnerIgnored" time="...">
+      <skipped />
+    </testcase>
+    <system-out />
+    <system-err />
+  </testsuite>
+</results>

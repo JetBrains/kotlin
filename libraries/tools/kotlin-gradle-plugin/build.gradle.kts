@@ -15,13 +15,14 @@ publish()
 
 // todo: make lazy
 val jar: Jar by tasks
-runtimeJar(rewriteDepsToShadedCompiler(jar))
+val jarContents by configurations.creating
 
 sourcesJar()
 javadocJar()
 
 repositories {
     google()
+    maven(url = "https://plugins.gradle.org/m2/")
 }
 
 pill {
@@ -61,6 +62,9 @@ dependencies {
     runtime(projectRuntimeJar(":kotlin-scripting-compiler-embeddable"))
     runtime(project(":kotlin-reflect"))
 
+    jarContents(compileOnly(intellijDep()) { includeJars("serviceMessages") })
+    jarContents(projectArchives(":kotlin-test-nodejs-runner"))
+
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
     compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:gradle-core:3.0.0") { isTransitive = false }
@@ -75,6 +79,17 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(project(":kotlin-annotation-processing"))
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
+}
+
+runtimeJar(rewriteDepsToShadedCompiler(jar)) {
+    dependsOn(jarContents)
+
+    from {
+        jarContents.asFileTree.map {
+            if (it.endsWith(".jar")) zipTree(it) 
+            else it
+        }
+    }
 }
 
 tasks {

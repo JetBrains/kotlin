@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "ESNext",
+//    "declaration": true,
+//    "outDir": "./lib",
+    "strict": true,
+//    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "inlineSourceMap": true
+  },
+  "exclude": [
+    "**/*Debug.ts"
+  ]
+}
