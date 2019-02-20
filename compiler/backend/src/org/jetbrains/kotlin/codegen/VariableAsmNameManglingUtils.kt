@@ -37,19 +37,11 @@ fun mangleNameIfNeeded(name: String): String {
             if (c.isValidCharacter()) {
                 append(c)
             } else {
-                append('-').append(c.toHex())
+                val hexString = Integer.toHexString(c.toInt())
+                assert(hexString.length <= 4)
+                append("_u").append(hexString)
             }
         }
-    }
-}
-
-private fun Char.toHex(): String {
-    val hexString = Integer.toHexString(this.toInt())
-    assert(hexString.length <= 4)
-    return if (hexString.length == 4) {
-        hexString
-    } else {
-        "0".repeat(4 - hexString.length) + hexString
     }
 }
 

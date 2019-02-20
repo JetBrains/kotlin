@@ -13,6 +13,6 @@ suspend fun test() = foo(A()) { (x_param, _, y_param) -> x_param + y_param }
 // METHOD : UnderscoreNamesKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 // VARIABLE : NAME=this TYPE=LUnderscoreNamesKt$test$2; INDEX=0
 // VARIABLE : NAME=result TYPE=Ljava/lang/Object; INDEX=1
-// VARIABLE : NAME=$dstr$x_param$-0024_-0024$y_param TYPE=LA; INDEX=2
+// VARIABLE : NAME=$dstr$x_param$_u24__u24$y_param TYPE=LA; INDEX=2
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=3
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=4

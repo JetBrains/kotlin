@@ -77,8 +77,8 @@ final class LocalFunctionsKt$foo$5 : kotlin/jvm/internal/Lambda, kotlin/jvm/func
 public final class LocalFunctionsKt : java/lang/Object {
     public final static void foo() {
         Local variables:
-            4 $fun$c-0024d$5: LLocalFunctionsKt$foo$5;
-            3 $fun$b-0020c$4: LLocalFunctionsKt$foo$4;
+            4 $fun$c_u24d$5: LLocalFunctionsKt$foo$5;
+            3 $fun$b_u20c$4: LLocalFunctionsKt$foo$4;
             2 $fun$a2$3: LLocalFunctionsKt$foo$3;
             1 $fun$a2$2: LLocalFunctionsKt$foo$2;
             0 $fun$a$1: LLocalFunctionsKt$foo$1;

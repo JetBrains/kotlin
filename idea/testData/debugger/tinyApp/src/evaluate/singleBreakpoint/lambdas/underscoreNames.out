@@ -8,7 +8,7 @@ Compile bytecode for arrayOfA
  frame    = invoke:18, UnderscoreNamesKt$main$1 {underscoreNames}
    this     = this = {underscoreNames.UnderscoreNamesKt$main$1@uniqueID}Function3<underscoreNames.A, java.lang.String, java.lang.Integer, java.lang.String>
      field    = arity: int = 3 (sp = Lambda.!EXT!)
-   local    = $dstr$x$-0024_-0024$y: underscoreNames.A = {underscoreNames.A@uniqueID}A(x=1.0, y=, z=0) (sp = null)
+   local    = $dstr$x$_u24__u24$y: underscoreNames.A = {underscoreNames.A@uniqueID}A(x=1.0, y=, z=0) (sp = null)
      field    = x: double = 1.0 (sp = underscoreNames.kt, 2)
      field    = y: java.lang.String =  (sp = underscoreNames.kt, 2)
        field    = value: char[] = {char[0]@uniqueID} (sp = String.!EXT!)
