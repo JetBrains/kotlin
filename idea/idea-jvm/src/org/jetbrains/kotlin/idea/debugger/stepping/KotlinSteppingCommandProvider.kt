@@ -339,7 +339,11 @@ fun getStepOverAction(
 
     val project = sourceFile.project
 
-    val methodLocations = location.method().allLineLocations()
+    val methodLocations = location.method().safeAllLineLocations()
+    if (methodLocations.isEmpty()) {
+        return Action.STEP_OVER()
+    }
+
     val locationsLineAndFile = methodLocations.keysToMap { ktLocationInfo(it, isDexDebug, project, true) }
 
     fun Location.ktLineNumber(): Int = (locationsLineAndFile[this] ?: ktLocationInfo(this, isDexDebug, project, true)).first
