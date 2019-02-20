@@ -37,7 +37,13 @@ internal constructor(@PublishedApi internal val storage: LongArray) : Collection
         override fun nextULong() = if (index < array.size) array[index++].toULong() else throw NoSuchElementException(index.toString())
     }
 
-    override fun contains(element: ULong): Boolean = storage.contains(element.toLong())
+    override fun contains(element: ULong): Boolean {
+        // TODO: Eliminate this check after KT-30016 gets fixed.
+        // Currently JS BE does not generate special bridge method for this method.
+        if ((element as Any?) !is ULong) return false
+
+        return storage.contains(element.toLong())
+    }
 
     override fun containsAll(elements: Collection<ULong>): Boolean {
         if ((elements as Collection<Any?>).any { it as? ULong == null }) return false

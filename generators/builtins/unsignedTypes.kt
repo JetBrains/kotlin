@@ -351,7 +351,13 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         override fun next$elementType() = if (index < array.size) array[index++].to$elementType() else throw NoSuchElementException(index.toString())
     }
 
-    override fun contains(element: $elementType): Boolean = storage.contains(element.to$storageElementType())
+    override fun contains(element: $elementType): Boolean {
+        // TODO: Eliminate this check after KT-30016 gets fixed.
+        // Currently JS BE does not generate special bridge method for this method.
+        if ((element as Any?) !is $elementType) return false
+
+        return storage.contains(element.to$storageElementType())
+    }
 
     override fun containsAll(elements: Collection<$elementType>): Boolean {
         if ((elements as Collection<Any?>).any { it as? $elementType == null }) return false

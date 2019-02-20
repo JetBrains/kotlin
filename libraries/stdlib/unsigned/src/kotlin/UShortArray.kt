@@ -37,7 +37,13 @@ internal constructor(@PublishedApi internal val storage: ShortArray) : Collectio
         override fun nextUShort() = if (index < array.size) array[index++].toUShort() else throw NoSuchElementException(index.toString())
     }
 
-    override fun contains(element: UShort): Boolean = storage.contains(element.toShort())
+    override fun contains(element: UShort): Boolean {
+        // TODO: Eliminate this check after KT-30016 gets fixed.
+        // Currently JS BE does not generate special bridge method for this method.
+        if ((element as Any?) !is UShort) return false
+
+        return storage.contains(element.toShort())
+    }
 
     override fun containsAll(elements: Collection<UShort>): Boolean {
         if ((elements as Collection<Any?>).any { it as? UShort == null }) return false

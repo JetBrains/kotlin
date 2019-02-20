@@ -37,7 +37,13 @@ internal constructor(@PublishedApi internal val storage: IntArray) : Collection<
         override fun nextUInt() = if (index < array.size) array[index++].toUInt() else throw NoSuchElementException(index.toString())
     }
 
-    override fun contains(element: UInt): Boolean = storage.contains(element.toInt())
+    override fun contains(element: UInt): Boolean {
+        // TODO: Eliminate this check after KT-30016 gets fixed.
+        // Currently JS BE does not generate special bridge method for this method.
+        if ((element as Any?) !is UInt) return false
+
+        return storage.contains(element.toInt())
+    }
 
     override fun containsAll(elements: Collection<UInt>): Boolean {
         if ((elements as Collection<Any?>).any { it as? UInt == null }) return false
