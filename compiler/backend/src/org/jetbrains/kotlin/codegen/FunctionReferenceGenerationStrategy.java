@@ -181,25 +181,28 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             }
         };
 
-        StackValue result;
-        Type returnType = codegen.getReturnType();
-        if (referencedFunction instanceof ConstructorDescriptor) {
-            if (returnType.getSort() == Type.ARRAY) {
-                //noinspection ConstantConditions
-                result = codegen.generateNewArray(fakeExpression, referencedFunction.getReturnType(), fakeResolvedCall);
+        codegen.runWithShouldMarkLineNumbers(codegen.shouldMarkLineNumbers && isInliningStrategy, () -> {
+            StackValue result;
+            Type returnType = codegen.getReturnType();
+            if (referencedFunction instanceof ConstructorDescriptor) {
+                if (returnType.getSort() == Type.ARRAY) {
+                    //noinspection ConstantConditions
+                    result = codegen.generateNewArray(fakeExpression, referencedFunction.getReturnType(), fakeResolvedCall);
+                }
+                else {
+                    result = codegen.generateConstructorCall(fakeResolvedCall, returnType);
+                }
             }
             else {
-                result = codegen.generateConstructorCall(fakeResolvedCall, returnType);
+                Call call = CallMaker.makeCall(fakeExpression, null, null, fakeExpression, fakeArguments);
+                result = codegen.invokeFunction(call, fakeResolvedCall, StackValue.none());
             }
-        }
-        else {
-            Call call = CallMaker.makeCall(fakeExpression, null, null, fakeExpression, fakeArguments);
-            result = codegen.invokeFunction(call, fakeResolvedCall, StackValue.none());
-        }
 
-        InstructionAdapter v = codegen.v;
-        result.put(returnType, v);
-        v.areturn(returnType);
+            InstructionAdapter v = codegen.v;
+            result.put(returnType, v);
+            v.areturn(returnType);
+            return null;
+        });
     }
 
     private void computeAndSaveArguments(

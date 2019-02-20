@@ -136,7 +136,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public final Map<KtElement, StackValue> tempVariables = new HashMap<>();
 
     private int myLastLineNumber = -1;
-    private boolean shouldMarkLineNumbers = true;
+    public boolean shouldMarkLineNumbers = true;
     private int finallyDepth = 0;
 
     public ExpressionCodegen(

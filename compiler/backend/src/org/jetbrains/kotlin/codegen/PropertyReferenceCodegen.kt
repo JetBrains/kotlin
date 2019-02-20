@@ -384,7 +384,9 @@ class PropertyReferenceCodegen(
                 else -> codegen.intermediateValueForProperty(target as PropertyDescriptor, false, null, StackValue.none())
             }
 
-            codegen.markStartLineNumber(expression)
+            if (isInliningStrategy) {
+                codegen.markStartLineNumber(expression)
+            }
 
             if (isGetter) {
                 value.put(OBJECT_TYPE, targetKotlinType, v)
@@ -403,4 +405,3 @@ class PropertyReferenceCodegen(
         }
     }
 }
-

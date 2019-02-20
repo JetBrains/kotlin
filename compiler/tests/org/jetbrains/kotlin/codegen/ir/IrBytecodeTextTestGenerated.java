@@ -3275,6 +3275,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/callableReference.kt");
+        }
+
         @TestMetadata("ifConsts.kt")
         public void testIfConsts() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/lineNumbers/ifConsts.kt");
