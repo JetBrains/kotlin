@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.native.interop.gen.argsToCompiler
 import org.jetbrains.kotlin.native.interop.gen.wasm.idl.*
 import org.jetbrains.kliopt.ArgParser
-import org.jetbrains.kotlin.native.interop.tool.getCommonInteropArguments
+import org.jetbrains.kotlin.native.interop.tool.getJSInteropArguments
 import org.jetbrains.kotlin.native.interop.tool.getValuesAsArray
 
 fun kotlinHeader(packageName: String): String {
@@ -393,7 +393,7 @@ const val idlMathPackage = "kotlinx.interop.wasm.math"
 const val idlDomPackage = "kotlinx.interop.wasm.dom"
 
 fun processIdlLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String>? {
-    val argParser = ArgParser(getCommonInteropArguments(), useDefaultHelpShortName = false)
+    val argParser = ArgParser(getJSInteropArguments(), useDefaultHelpShortName = false)
     if (!argParser.parse(args))
         return null
     // TODO: Refactor me.

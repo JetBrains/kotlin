@@ -68,6 +68,13 @@ fun getCInteropArguments(): List<OptionDescriptor> {
     return (options + getCommonInteropArguments())
 }
 
+fun getJSInteropArguments(): List<OptionDescriptor> {
+    val options = listOf(
+            OptionDescriptor(ArgType.Choice(listOf("wasm32")), "target", description = "wasm target to compile to", defaultValue = "wasm32")
+    )
+    return (options + getCommonInteropArguments())
+}
+
 internal fun warn(msg: String) {
     println("warning: $msg")
 }

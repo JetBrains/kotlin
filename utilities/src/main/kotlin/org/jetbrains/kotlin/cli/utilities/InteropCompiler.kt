@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.native.interop.tool.*
 // The interaction of interop and the compler should be streamlined.
 
 fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
-    val argParser = ArgParser(if (flavor == "native") getCInteropArguments() else getCommonInteropArguments(),
+    val argParser = ArgParser(if (flavor == "native") getCInteropArguments() else getJSInteropArguments(),
             useDefaultHelpShortName = false)
     if (!argParser.parse(args))
         return null
@@ -40,12 +40,10 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
     val cstubsName ="cstubs"
     val libraries = argParser.getAll<String>("library") ?: listOf<String>()
     val repos = argParser.getAll<String>("repo") ?: listOf<String>()
-    var targetName = "wasm32"
+    val targetRequest = argParser.get<String>("target")!!
+    val target = PlatformManager().targetManager(targetRequest).target
 
     if (flavor == "native") {
-        val targetRequest = argParser.get<String>("target")!!
-        val target = PlatformManager().targetManager(targetRequest).target
-        targetName = target.visibleName
         val resolver = defaultResolver(
                 repos,
                 libraries.filter { it.contains(File.separator) },
@@ -78,7 +76,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
         generatedDir.path, 
         "-produce", "library", 
         "-o", outputFileName,
-        "-target", targetName,
+        "-target", target.visibleName,
         "-manifest", manifest.path,
         "-Xtemporary-files-dir=$temporaryFilesDir") +
         nativeStubs +
