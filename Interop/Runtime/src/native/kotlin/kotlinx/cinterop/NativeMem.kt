@@ -127,37 +127,25 @@ internal object nativeMemUtils {
     }
 }
 
-fun CPointer<ShortVar>.toKString(): String {
-    val nativeBytes = this
-
-    var length = 0
-    while (nativeBytes[length] != 0.toShort()) {
-        ++length
-    }
-    val bytes = CharArray(length)
-    var index = 0
-    while (index < length) {
-        bytes[index] = nativeBytes[index].toChar()
-        ++index
-    }
-    return String(bytes)
-}
-
-fun CPointer<UShortVar>.toKString(): String {
+public fun CPointer<UShortVar>.toKStringFromUtf16(): String {
     val nativeBytes = this
 
     var length = 0
     while (nativeBytes[length] != 0.toUShort()) {
         ++length
     }
-    val bytes = CharArray(length)
+    val chars = kotlin.CharArray(length)
     var index = 0
     while (index < length) {
-        bytes[index] = nativeBytes[index].toShort().toChar()
+        chars[index] = nativeBytes[index].toShort().toChar()
         ++index
     }
-    return String(bytes)
+    return String(chars)
 }
+
+public fun CPointer<ShortVar>.toKString(): String = this.toKStringFromUtf16()
+
+public fun CPointer<UShortVar>.toKString(): String = this.toKStringFromUtf16()
 
 @SymbolName("Kotlin_interop_malloc")
 private external fun malloc(size: Long, align: Int): NativePtr
