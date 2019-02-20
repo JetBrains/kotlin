@@ -307,7 +307,7 @@ internal fun buildNativeLibrary(
         addAll(def.config.compilerOpts)
         addAll(tool.defaultCompilerOpts)
         addAll(additionalCompilerOpts)
-        addAll(getCompilerFlagsForVfsOverlay(arguments.getValuesAsArray("headerFilterPrefix"), def))
+        addAll(getCompilerFlagsForVfsOverlay(arguments.getValuesAsArray("headerFilterAdditionalSearchPrefix"), def))
         addAll(when (language) {
             Language.C -> emptyList()
             Language.OBJECTIVE_C -> {

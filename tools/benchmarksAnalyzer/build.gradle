@@ -107,7 +107,6 @@ kotlin {
                     includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
                 }
             }
-            compilations.test.linkerOpts "-L${getMingwPath()}/lib"
         }
         fromPreset(presets.macosX64, 'macos') {
             compilations.main.cinterops {
