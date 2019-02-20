@@ -281,6 +281,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         @JvmStatic
         fun filterGradleNativeSoftwareFlags(args: MutableList<String>) {
             args.remove("/usr/include") // HACK: over gradle-4.4.
+            args.remove("-nostdinc") // HACK: over gradle-5.1.
             when (HostManager.host) {
                 KonanTarget.LINUX_X64 -> args.remove("/usr/include/x86_64-linux-gnu")  // HACK: over gradle-4.4.
                 KonanTarget.MACOS_X64 -> {
