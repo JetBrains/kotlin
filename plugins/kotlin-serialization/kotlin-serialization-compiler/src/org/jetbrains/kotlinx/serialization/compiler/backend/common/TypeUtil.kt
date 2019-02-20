@@ -30,11 +30,9 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.internalPackageFqName
@@ -130,9 +128,11 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
     if (userOverride != null) return userOverride.toClassDescriptor
     if (kType.isTypeParameter()) return null
     if (KotlinBuiltIns.isArray(kType)) return module.getClassFromInternalSerializationPackage(SpecialBuiltins.referenceArraySerializer)
-    return kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
-            ?: findStandardKotlinTypeSerializer(module, kType) // otherwise see if there is a standard serializer
-            ?: findEnumTypeSerializer(module, kType)
+    val stdSer = findStandardKotlinTypeSerializer(module, kType) // see if there is a standard serializer
+        ?: findEnumTypeSerializer(module, kType)
+    if (stdSer != null) return stdSer
+    if (kType.isInterface()) return module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer)
+    return kType.toClassDescriptor?.classSerializer // check for serializer defined on the type
 }
 
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {

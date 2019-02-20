@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlinx.serialization.compiler.resolve.classSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
 
 class SerializableCompanionIrGenerator(
     val irClass: IrClass,
@@ -39,7 +42,7 @@ class SerializableCompanionIrGenerator(
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) =
         irClass.contributeFunction(methodDescriptor, fromStubs = true) { getter ->
-            val serializer = serializableDescriptor.classSerializer?.toClassDescriptor!!
+            val serializer = serializableDescriptor.classSerializer!!
             val expr = if (serializer.kind == ClassKind.OBJECT) {
                 irGetObject(serializer)
             } else {

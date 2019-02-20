@@ -117,19 +117,33 @@ internal val ClassDescriptor.hasSerializableAnnotationWithoutArgs: Boolean
         return psi.valueArguments.isEmpty()
     }
 
+// For abstract classes marked with @Serializable,
+// methods are generated anyway although they shouldn't have
+// generated $serializer and use Polymorphic one.
+internal fun isAbstractSerializableClass(serializableDescriptor: ClassDescriptor): Boolean =
+    serializableDescriptor.isInternalSerializable && serializableDescriptor.modality == Modality.ABSTRACT
+
+internal fun ClassDescriptor.polymorphicSerializerIfApplicableAutomatically(): ClassDescriptor? = if (
+    isAbstractSerializableClass(this)
+    || kind == ClassKind.INTERFACE
+) module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer)
+else null
+
 // serializer that was declared for this type
-internal val ClassDescriptor?.classSerializer: KotlinType?
+internal val ClassDescriptor?.classSerializer: ClassDescriptor?
     get() = this?.let {
         // serializer annotation on class?
-        serializableWith?.let { return it }
+        serializableWith?.let { return it.toClassDescriptor }
         // companion object serializer?
-        if (hasCompanionObjectAsSerializer) return companionObjectDescriptor?.defaultType
+        if (hasCompanionObjectAsSerializer) return companionObjectDescriptor
+        // can infer @Poly?
+        polymorphicSerializerIfApplicableAutomatically()?.let { return it }
         // default serializable?
         if (isInternalSerializable) {
             // $serializer nested class
             return this.unsubstitutedMemberScope
-                    .getDescriptorsFiltered(nameFilter = {it == SerialEntityNames.SERIALIZER_CLASS_NAME})
-                    .filterIsInstance<ClassDescriptor>().singleOrNull()?.defaultType
+                .getDescriptorsFiltered(nameFilter = { it == SerialEntityNames.SERIALIZER_CLASS_NAME })
+                .filterIsInstance<ClassDescriptor>().singleOrNull()
         }
         return null
     }
@@ -139,8 +153,8 @@ internal val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
 
 internal fun checkSerializerNullability(classType: KotlinType, serializerType: KotlinType): KotlinType {
     val castedToKSerial = requireNotNull(
-            serializerType.supertypes().find { isKSerializer(it) },
-            { "${KSERIALIZER_CLASS} is not a supertype of $serializerType" }
+        serializerType.supertypes().find { isKSerializer(it) },
+        { "${KSERIALIZER_CLASS} is not a supertype of $serializerType" }
     )
     if (!classType.isMarkedNullable && castedToKSerial.arguments.first().type.isMarkedNullable)
         throw IllegalStateException("Can't serialize non-nullable field of type ${classType} with nullable serializer ${serializerType}")
@@ -149,11 +163,13 @@ internal fun checkSerializerNullability(classType: KotlinType, serializerType: K
 
 // returns only user-overriden Serializer
 val KotlinType.overridenSerializer: KotlinType?
-    get() = (this.toClassDescriptor?.serializableWith)?.let { checkSerializerNullability(this, it) }
-
-// serializer that was declared for this specific type or annotation from a class declaration
-val KotlinType.typeSerializer: KotlinType?
-    get() = this.toClassDescriptor?.classSerializer
+    get() {
+        val desc = this.toClassDescriptor ?: return null
+        (desc.serializableWith)?.let { return checkSerializerNullability(this, it) }
+        if (desc.annotations.hasAnnotation(SerializationAnnotations.polymorphicFqName))
+            return desc.module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer).defaultType
+        return null
+    }
 
 val KotlinType.genericIndex: Int?
     get() = (this.constructor.declarationDescriptor as? TypeParameterDescriptor)?.index
