@@ -6,9 +6,18 @@
 @file:Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
 package test.collections
 
+import test.collections.behaviors.collectionBehavior
 import kotlin.test.*
 
 class UnsignedArraysTest {
+
+    @Test
+    fun collectionBehavior() {
+        compare(listOf<UByte>(), ubyteArrayOf()) { this.collectionBehavior() }
+        compare(listOf<UShort>(1), ushortArrayOf(1)) { this.collectionBehavior() }
+        compare(listOf<UInt>(1, 2), uintArrayOf(1u, 2u)) { this.collectionBehavior() }
+        compare(listOf<ULong>(1, 2, 3), ulongArrayOf(1u, 2u, 3u)) { this.collectionBehavior() }
+    }
 
     @Test
     fun ubyteArrayInit() {

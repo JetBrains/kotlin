@@ -353,7 +353,10 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
 
     override fun contains(element: $elementType): Boolean = storage.contains(element.to$storageElementType())
 
-    override fun containsAll(elements: Collection<$elementType>): Boolean = elements.all { storage.contains(it.to$storageElementType()) }
+    override fun containsAll(elements: Collection<$elementType>): Boolean {
+        if ((elements as Collection<Any?>).any { it as? $elementType == null }) return false
+        return elements.all { storage.contains(it.to$storageElementType()) }
+    }
 
     override fun isEmpty(): Boolean = this.storage.size == 0"""
         )

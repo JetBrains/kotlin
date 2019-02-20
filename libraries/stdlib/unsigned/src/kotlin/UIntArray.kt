@@ -39,7 +39,10 @@ internal constructor(@PublishedApi internal val storage: IntArray) : Collection<
 
     override fun contains(element: UInt): Boolean = storage.contains(element.toInt())
 
-    override fun containsAll(elements: Collection<UInt>): Boolean = elements.all { storage.contains(it.toInt()) }
+    override fun containsAll(elements: Collection<UInt>): Boolean {
+        if ((elements as Collection<Any?>).any { it as? UInt == null }) return false
+        return elements.all { storage.contains(it.toInt()) }
+    }
 
     override fun isEmpty(): Boolean = this.storage.size == 0
 }
