@@ -1,7 +1,7 @@
 FROM ubuntu
 
 ENV konan_data_dir=/opt/konan
-ENV gradle_version=4.10.2
+ENV gradle_version=5.1
 ENV gradle_install_path=/opt/gradle-${gradle_version}
 
 RUN apt-get -y update

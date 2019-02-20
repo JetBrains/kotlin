@@ -3,7 +3,7 @@ FROM ubuntu
 ENV jdk_download_url=https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz
 ENV jdk_install_path=/opt/jdk
 ENV konan_data_dir=/opt/konan
-ENV gradle_version=4.10.2
+ENV gradle_version=5.1
 ENV gradle_install_path=/opt/gradle-${gradle_version}
 
 RUN apt-get -y update
