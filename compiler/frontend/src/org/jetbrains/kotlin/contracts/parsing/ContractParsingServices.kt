@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
+import org.jetbrains.kotlin.contracts.description.LazyContractProvider
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -50,7 +51,8 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         if (!expression.isContractDescriptionCallPsiCheck()) return
 
         val callContext = ContractCallContext(expression, isFirstStatement, scope, trace)
-        val contractProviderIfAny = (scope.ownerDescriptor as? FunctionDescriptor)?.getUserData(ContractProviderKey)
+        val contractProviderIfAny =
+            (scope.ownerDescriptor as? FunctionDescriptor)?.getUserData(ContractProviderKey) as? LazyContractProvider?
         var resultingContractDescription: ContractDescription? = null
 
         try {

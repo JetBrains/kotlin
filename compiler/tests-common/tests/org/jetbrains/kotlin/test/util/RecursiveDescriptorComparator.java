@@ -201,7 +201,7 @@ public class RecursiveDescriptorComparator {
     }
 
     private static void printEffectsIfAny(FunctionDescriptor functionDescriptor, Printer printer) {
-        LazyContractProvider contractProvider = functionDescriptor.getUserData(ContractProviderKey.INSTANCE);
+        AbstractContractProvider contractProvider = functionDescriptor.getUserData(ContractProviderKey.INSTANCE);
         if (contractProvider == null) return;
 
         ContractDescription contractDescription = contractProvider.getContractDescription();

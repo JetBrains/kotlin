@@ -263,7 +263,7 @@ class FunctionDescriptorResolver(
 
         if (!isContractsEnabled || !function.mayHaveContract()) return null
 
-        return LazyContractProvider {
+        return LazyContractProvider(storageManager) {
             AstLoadingFilter.forceAllowTreeLoading(function.containingFile) {
                 expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
             }
