@@ -79,36 +79,37 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.configureExplicitContentRoots(arguments)
         configuration.configureStandardLibs(paths, arguments)
+        configuration.configureAdvancedJvmOptions(arguments)
 
-        if (arguments.buildFile == null && arguments.freeArgs.isEmpty() && !arguments.version && !arguments.allowNoSourceFiles) {
-            if (arguments.script) {
+        if (arguments.buildFile == null && !arguments.version  && !arguments.allowNoSourceFiles && (arguments.script || arguments.freeArgs.isEmpty())) {
+            // script or repl
+            if (arguments.script && arguments.freeArgs.isEmpty()) {
                 messageCollector.report(ERROR, "Specify script source path to evaluate")
                 return COMPILATION_ERROR
             }
-            ReplFromTerminal.run(rootDisposable, configuration)
-            return ExitCode.OK
-        }
 
-        configuration.configureAdvancedJvmOptions(arguments)
+            val projectEnvironment =
+                KotlinCoreEnvironment.ProjectEnvironment(
+                    rootDisposable,
+                    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration)
+                )
+            projectEnvironment.registerExtensionsFromPlugins(configuration)
 
-        messageCollector.report(LOGGING, "Configuring the compilation environment")
-        try {
             if (arguments.script) {
-                val sourcePath = arguments.freeArgs.first()
-                configuration.addKotlinSourceRoot(sourcePath)
-
-                val environment = createCoreEnvironment(rootDisposable, configuration, messageCollector)
-                    ?: return COMPILATION_ERROR
-
-                val scriptingEvaluator = ScriptEvaluationExtension.getInstances(environment.project).find { it.isAccepted(arguments) }
+                val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
                 if (scriptingEvaluator == null) {
                     messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin found")
                     return COMPILATION_ERROR
                 }
-
-                return scriptingEvaluator.eval(arguments, environment)
+                return scriptingEvaluator.eval(arguments, configuration, projectEnvironment)
+            } else {
+                ReplFromTerminal.run(rootDisposable, configuration)
+                return ExitCode.OK
             }
+        }
 
+        messageCollector.report(LOGGING, "Configuring the compilation environment")
+        try {
             val destination = arguments.destination?.let { File(it) }
             val buildFile = arguments.buildFile?.let { File(it) }
 

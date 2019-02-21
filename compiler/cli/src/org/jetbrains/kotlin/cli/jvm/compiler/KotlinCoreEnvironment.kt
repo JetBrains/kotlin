@@ -121,33 +121,46 @@ import java.util.zip.ZipFile
 import javax.xml.stream.XMLInputFactory
 
 class KotlinCoreEnvironment private constructor(
-    parentDisposable: Disposable,
-    applicationEnvironment: JavaCoreApplicationEnvironment,
+    private val projectEnvironment: JavaCoreProjectEnvironment,
     initialConfiguration: CompilerConfiguration,
     configFiles: EnvironmentConfigFiles
 ) {
-    private val projectEnvironment: JavaCoreProjectEnvironment =
-        object : KotlinCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
-            override fun preregisterServices() {
-                registerProjectExtensionPoints(Extensions.getArea(project))
-            }
 
-            override fun registerJavaPsiFacade() {
-                with(project) {
-                    registerService(
-                        CoreJavaFileManager::class.java,
-                        ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager
-                    )
+    class ProjectEnvironment(
+        disposable: Disposable, applicationEnvironment: JavaCoreApplicationEnvironment
+    ) :
+        KotlinCoreProjectEnvironment(disposable, applicationEnvironment) {
 
-                    registerKotlinLightClassSupport(project)
+        private var extensionRegistered = false
 
-                    registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
-                    registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
-                }
+        override fun preregisterServices() {
+            registerProjectExtensionPoints(Extensions.getArea(project))
+        }
 
-                super.registerJavaPsiFacade()
+        fun registerExtensionsFromPlugins(configuration: CompilerConfiguration) {
+            if (!extensionRegistered) {
+                registerPluginExtensionPoints(project)
+                registerExtensionsFromPlugins(project, configuration)
+                extensionRegistered = true
             }
         }
+
+        override fun registerJavaPsiFacade() {
+            with(project) {
+                registerService(
+                    CoreJavaFileManager::class.java,
+                    ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager
+                )
+
+                registerKotlinLightClassSupport(project)
+
+                registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
+                registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
+            }
+
+            super.registerJavaPsiFacade()
+        }
+    }
 
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
@@ -165,24 +178,11 @@ class KotlinCoreEnvironment private constructor(
 
         val project = projectEnvironment.project
 
-        registerPluginExtensionPoints(project)
-
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-        for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
-            try {
-                registrar.registerProjectComponents(project, configuration)
-            } catch (e: AbstractMethodError) {
-                val message = "The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler"
-                // Since the scripting plugin is often discovered in the compiler environment, it is often taken from the incompatible
-                // location, and in many cases this is not a fatal error, therefore strong warning is generated instead of exception
-                if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
-                    messageCollector?.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
-                } else {
-                    throw IllegalStateException(message, e)
-                }
-            }
-        }
+        (projectEnvironment as? ProjectEnvironment)?.registerExtensionsFromPlugins(configuration)
+        // otherwise consider that project environment is properly configured before passing to the environment
+        // TODO: consider some asserts to check important extension points
 
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
 
@@ -420,24 +420,27 @@ class KotlinCoreEnvironment private constructor(
         fun createForProduction(
             parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
-            val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration)
-            // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
-            // breaks a lot of tests, therefore it is disabled for production and enabled for tests
-            if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY).toBooleanLenient() != true) {
-                // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
-                // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
-                Disposer.register(parentDisposable, Disposable {
-                    synchronized(APPLICATION_LOCK) {
-                        if (--ourProjectCount <= 0) {
-                            disposeApplicationEnvironment()
-                        }
-                    }
-                })
-            }
-            val environment = KotlinCoreEnvironment(parentDisposable, appEnv, configuration, configFiles)
+            val appEnv = getOrCreateApplicationEnvironmentForProduction(parentDisposable, configuration)
+            val projectEnv = ProjectEnvironment(parentDisposable, appEnv)
+            val environment = KotlinCoreEnvironment(projectEnv, configuration, configFiles)
 
             synchronized(APPLICATION_LOCK) {
                 ourProjectCount++
+            }
+            return environment
+        }
+
+        @JvmStatic
+        fun createForProduction(
+            projectEnvironment: JavaCoreProjectEnvironment, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
+        ): KotlinCoreEnvironment {
+            val environment = KotlinCoreEnvironment(projectEnvironment, configuration, configFiles)
+
+            if (projectEnvironment.environment == applicationEnvironment) {
+                // accounting for core environment disposing
+                synchronized(APPLICATION_LOCK) {
+                    ourProjectCount++
+                }
             }
             return environment
         }
@@ -449,30 +452,42 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
             // Tests are supposed to create a single project and dispose it right after use
-            return KotlinCoreEnvironment(
-                parentDisposable,
-                createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true),
-                configuration,
-                extensionConfigs
-            )
+            val appEnv = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true)
+            val projectEnv = ProjectEnvironment(parentDisposable, appEnv)
+            return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
         }
 
         // used in the daemon for jar cache cleanup
         val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
-        private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration): JavaCoreApplicationEnvironment {
+        internal fun getOrCreateApplicationEnvironmentForProduction(
+            parentDisposable: Disposable, configuration: CompilerConfiguration
+        ): JavaCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {
-                if (ourApplicationEnvironment != null)
-                    return ourApplicationEnvironment!!
+                if (ourApplicationEnvironment == null) {
+                    val disposable = Disposer.newDisposable()
+                    ourApplicationEnvironment = createApplicationEnvironment(disposable, configuration, unitTestMode = false)
+                    ourProjectCount = 0
+                    Disposer.register(disposable, Disposable {
+                        synchronized(APPLICATION_LOCK) {
+                            ourApplicationEnvironment = null
+                        }
+                    })
+                }
+                // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
+                // breaks a lot of tests, therefore it is disabled for production and enabled for tests
+                if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY).toBooleanLenient() != true) {
+                    // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
+                    // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
+                    Disposer.register(parentDisposable, Disposable {
+                        synchronized(APPLICATION_LOCK) {
+                            if (--ourProjectCount <= 0) {
+                                disposeApplicationEnvironment()
+                            }
+                        }
+                    })
+                }
 
-                val parentDisposable = Disposer.newDisposable()
-                ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = false)
-                ourProjectCount = 0
-                Disposer.register(parentDisposable, Disposable {
-                    synchronized(APPLICATION_LOCK) {
-                        ourApplicationEnvironment = null
-                    }
-                })
                 return ourApplicationEnvironment!!
             }
         }
@@ -600,6 +615,25 @@ class KotlinCoreEnvironment private constructor(
             IrGenerationExtension.registerExtensionPoint(project)
             ScriptEvaluationExtension.registerExtensionPoint(project)
         }
+
+        internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
+            val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
+                try {
+                    registrar.registerProjectComponents(project, configuration)
+                } catch (e: AbstractMethodError) {
+                    val message = "The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler"
+                    // Since the scripting plugin is often discovered in the compiler environment, it is often taken from the incompatible
+                    // location, and in many cases this is not a fatal error, therefore strong warning is generated instead of exception
+                    if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
+                        messageCollector?.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
+                    } else {
+                        throw IllegalStateException(message, e)
+                    }
+                }
+            }
+        }
+
 
         private fun registerApplicationServicesForCLI(applicationEnvironment: JavaCoreApplicationEnvironment) {
             // ability to get text from annotations xml files
