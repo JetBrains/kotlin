@@ -20,9 +20,13 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.checkers.TypeOfChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -38,6 +42,8 @@ internal fun generateInlineIntrinsic(
     return when {
         isSpecialEnumMethod(descriptor) ->
             createSpecialEnumMethodBody(descriptor.name.asString(), typeArguments!!.keys.single().defaultType, typeMapper)
+        TypeOfChecker.isTypeOf(descriptor) ->
+            createTypeOfMethodBody(typeArguments!!.keys.single().defaultType)
         descriptor.isBuiltInIntercepted(languageVersionSettings) ->
             createMethodNodeForIntercepted(descriptor, typeMapper, languageVersionSettings)
         descriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
@@ -94,3 +100,101 @@ private fun createSpecialEnumMethodBody(name: String, type: KotlinType, typeMapp
 internal fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String =
     if (isValueOf) Type.getMethodDescriptor(type, JAVA_STRING_TYPE)
     else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
+
+private fun createTypeOfMethodBody(type: KotlinType): MethodNode {
+    val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", Type.getMethodDescriptor(K_TYPE), null, null)
+    val v = InstructionAdapter(node)
+
+    putTypeOfReifiedTypeParameter(v, type)
+    v.areturn(K_TYPE)
+
+    v.visitMaxs(2, 0)
+
+    return node
+}
+
+private fun putTypeOfReifiedTypeParameter(v: InstructionAdapter, type: KotlinType) {
+    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(type, ReifiedTypeInliner.OperationKind.TYPE_OF, v)
+    v.aconst(null)
+}
+
+// Returns some upper bound on maximum stack size
+internal fun generateTypeOf(v: InstructionAdapter, kotlinType: KotlinType, typeMapper: KotlinTypeMapper): Int {
+    val asmType = typeMapper.mapType(kotlinType)
+    AsmUtil.putJavaLangClassInstance(v, asmType, kotlinType, typeMapper)
+
+    val arguments = kotlinType.arguments
+    val useArray = arguments.size >= 3
+
+    if (useArray) {
+        v.iconst(arguments.size)
+        v.newarray(K_TYPE_PROJECTION)
+    }
+
+    var maxStackSize = 3
+
+    for (i in 0 until arguments.size) {
+        if (useArray) {
+            v.dup()
+            v.iconst(i)
+        }
+
+        val stackSize = doGenerateTypeProjection(v, arguments[i], typeMapper)
+        maxStackSize = maxOf(maxStackSize, stackSize + i + 5)
+
+        if (useArray) {
+            v.astore(K_TYPE_PROJECTION)
+        }
+    }
+
+    val methodName = if (kotlinType.isMarkedNullable) "nullableTypeOf" else "typeOf"
+
+    val projections = when (arguments.size) {
+        0 -> emptyArray()
+        1 -> arrayOf(K_TYPE_PROJECTION)
+        2 -> arrayOf(K_TYPE_PROJECTION, K_TYPE_PROJECTION)
+        else -> arrayOf(AsmUtil.getArrayType(K_TYPE_PROJECTION))
+    }
+    val signature = Type.getMethodDescriptor(K_TYPE, JAVA_CLASS_TYPE, *projections)
+
+    v.invokestatic(REFLECTION, methodName, signature, false)
+
+    return maxStackSize
+}
+
+private fun doGenerateTypeProjection(
+    v: InstructionAdapter,
+    projection: TypeProjection,
+    typeMapper: KotlinTypeMapper
+): Int {
+    // KTypeProjection members could be static, see KT-30083 and KT-30084
+    v.getstatic(K_TYPE_PROJECTION.internalName, "Companion", K_TYPE_PROJECTION_COMPANION.descriptor)
+
+    if (projection.isStarProjection) {
+        v.invokevirtual(K_TYPE_PROJECTION_COMPANION.internalName, "getSTAR", Type.getMethodDescriptor(K_TYPE_PROJECTION), false)
+        return 1
+    }
+
+    val type = projection.type
+    val descriptor = type.constructor.declarationDescriptor
+    val stackSize = if (descriptor is TypeParameterDescriptor) {
+        if (descriptor.isReified) {
+            putTypeOfReifiedTypeParameter(v, type)
+            2
+        } else {
+            // TODO: support non-reified type parameters in typeOf
+            generateTypeOf(v, type.builtIns.nullableAnyType, typeMapper)
+        }
+    } else {
+        generateTypeOf(v, type, typeMapper)
+    }
+
+    val methodName = when (projection.projectionKind) {
+        Variance.INVARIANT -> "invariant"
+        Variance.IN_VARIANCE -> "contravariant"
+        Variance.OUT_VARIANCE -> "covariant"
+    }
+    v.invokevirtual(K_TYPE_PROJECTION_COMPANION.internalName, methodName, Type.getMethodDescriptor(K_TYPE_PROJECTION, K_TYPE), false)
+
+    return stackSize + 1
+}

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.generateAsCast
 import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -60,9 +61,13 @@ class ReificationArgument(
     }
 }
 
-class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, private val isReleaseCoroutines: Boolean) {
+class ReifiedTypeInliner(
+    private val parametersMapping: TypeParameterMappings?,
+    private val typeMapper: KotlinTypeMapper,
+    private val isReleaseCoroutines: Boolean
+) {
     enum class OperationKind {
-        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED;
+        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED, TYPE_OF;
 
         val id: Int get() = ordinal
     }
@@ -143,6 +148,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, 
                     OperationKind.IS -> processIs(insn, instructions, kotlinType, asmType)
                     OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
                     OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, asmType)
+                    OperationKind.TYPE_OF -> processTypeOf(insn, instructions, kotlinType)
                 }
             ) {
                 instructions.remove(insn.previous.previous!!) // PUSH operation ID
@@ -198,6 +204,21 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, 
 
         // TODO: refine max stack calculation (it's not always as big as +2)
         maxStackSize = Math.max(maxStackSize, 2)
+        return true
+    }
+
+    private fun processTypeOf(
+        insn: MethodInsnNode,
+        instructions: InsnList,
+        kotlinType: KotlinType
+    ) = rewriteNextTypeInsn(insn, Opcodes.ACONST_NULL) { stubConstNull: AbstractInsnNode ->
+        val newMethodNode = MethodNode(Opcodes.API_VERSION)
+        val stackSize = generateTypeOf(InstructionAdapter(newMethodNode), kotlinType, typeMapper)
+
+        instructions.insert(insn, newMethodNode.instructions)
+        instructions.remove(stubConstNull)
+
+        maxStackSize = Math.max(maxStackSize, stackSize)
         return true
     }
 

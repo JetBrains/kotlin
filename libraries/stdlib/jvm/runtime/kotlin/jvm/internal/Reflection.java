@@ -6,7 +6,11 @@
 package kotlin.jvm.internal;
 
 import kotlin.SinceKotlin;
+import kotlin.collections.ArraysKt;
 import kotlin.reflect.*;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This class serves as a facade to the actual reflection implementation. JVM back-end generates calls to static methods of this class
@@ -104,5 +108,47 @@ public class Reflection {
 
     public static KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         return factory.mutableProperty2(p);
+    }
+
+    // typeOf
+
+    @SinceKotlin(version = "1.4")
+    public static KType typeOf(Class klass) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Collections.<KTypeProjection>emptyList(), false);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType typeOf(Class klass, KTypeProjection arg1) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Collections.singletonList(arg1), false);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType typeOf(Class klass, KTypeProjection arg1, KTypeProjection arg2) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Arrays.asList(arg1, arg2), false);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType typeOf(Class klass, KTypeProjection... arguments) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), ArraysKt.<KTypeProjection>toList(arguments), false);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType nullableTypeOf(Class klass) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Collections.<KTypeProjection>emptyList(), true);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType nullableTypeOf(Class klass, KTypeProjection arg1) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Collections.singletonList(arg1), true);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType nullableTypeOf(Class klass, KTypeProjection arg1, KTypeProjection arg2) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Arrays.asList(arg1, arg2), true);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType nullableTypeOf(Class klass, KTypeProjection... arguments) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), ArraysKt.<KTypeProjection>toList(arguments), true);
     }
 }

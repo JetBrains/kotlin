@@ -63,6 +63,10 @@ public class AsmTypes {
     public static final Type K_MUTABLE_PROPERTY1_TYPE = reflect("KMutableProperty1");
     public static final Type K_MUTABLE_PROPERTY2_TYPE = reflect("KMutableProperty2");
 
+    public static final Type K_TYPE = reflect("KType");
+    public static final Type K_TYPE_PROJECTION = reflect("KTypeProjection");
+    public static final Type K_TYPE_PROJECTION_COMPANION = reflect("KTypeProjection$Companion");
+
     public static final Type SUSPEND_FUNCTION_TYPE = Type.getObjectType("kotlin/coroutines/jvm/internal/SuspendFunction");
 
     public static final String REFLECTION = "kotlin/jvm/internal/Reflection";

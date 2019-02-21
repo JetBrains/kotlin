@@ -3531,11 +3531,19 @@ public class kotlin/jvm/internal/Reflection {
 	public static fun mutableProperty0 (Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
 	public static fun mutableProperty1 (Lkotlin/jvm/internal/MutablePropertyReference1;)Lkotlin/reflect/KMutableProperty1;
 	public static fun mutableProperty2 (Lkotlin/jvm/internal/MutablePropertyReference2;)Lkotlin/reflect/KMutableProperty2;
+	public static fun nullableTypeOf (Ljava/lang/Class;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;[Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
 	public static fun property0 (Lkotlin/jvm/internal/PropertyReference0;)Lkotlin/reflect/KProperty0;
 	public static fun property1 (Lkotlin/jvm/internal/PropertyReference1;)Lkotlin/reflect/KProperty1;
 	public static fun property2 (Lkotlin/jvm/internal/PropertyReference2;)Lkotlin/reflect/KProperty2;
 	public static fun renderLambdaToString (Lkotlin/jvm/internal/FunctionBase;)Ljava/lang/String;
 	public static fun renderLambdaToString (Lkotlin/jvm/internal/Lambda;)Ljava/lang/String;
+	public static fun typeOf (Ljava/lang/Class;)Lkotlin/reflect/KType;
+	public static fun typeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun typeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun typeOf (Ljava/lang/Class;[Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
 }
 
 public class kotlin/jvm/internal/ReflectionFactory {
@@ -3554,6 +3562,7 @@ public class kotlin/jvm/internal/ReflectionFactory {
 	public fun property2 (Lkotlin/jvm/internal/PropertyReference2;)Lkotlin/reflect/KProperty2;
 	public fun renderLambdaToString (Lkotlin/jvm/internal/FunctionBase;)Ljava/lang/String;
 	public fun renderLambdaToString (Lkotlin/jvm/internal/Lambda;)Ljava/lang/String;
+	public fun typeOf (Lkotlin/reflect/KClassifier;Ljava/util/List;Z)Lkotlin/reflect/KType;
 }
 
 public final class kotlin/jvm/internal/ShortCompanionObject {
@@ -3624,6 +3633,17 @@ public class kotlin/jvm/internal/TypeIntrinsics {
 	public static fun throwCce (Ljava/lang/ClassCastException;)Ljava/lang/ClassCastException;
 	public static fun throwCce (Ljava/lang/Object;Ljava/lang/String;)V
 	public static fun throwCce (Ljava/lang/String;)V
+}
+
+public final class kotlin/jvm/internal/TypeReference : kotlin/reflect/KType {
+	public fun <init> (Lkotlin/reflect/KClassifier;Ljava/util/List;Z)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAnnotations ()Ljava/util/List;
+	public fun getArguments ()Ljava/util/List;
+	public fun getClassifier ()Lkotlin/reflect/KClassifier;
+	public fun hashCode ()I
+	public fun isMarkedNullable ()Z
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class kotlin/jvm/internal/markers/KMappedMarker {
