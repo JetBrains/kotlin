@@ -46,7 +46,8 @@ class CallableReferenceOverloadConflictResolver(
     { SimpleConstraintSystemImpl(constraintInjector, builtIns) },
     Companion::createFlatSignature,
     { null },
-    { statelessCallbacks.isDescriptorFromSource(it) }
+    { statelessCallbacks.isDescriptorFromSource(it) },
+    null
 ) {
     companion object {
         private fun createFlatSignature(candidate: CallableReferenceCandidate) =

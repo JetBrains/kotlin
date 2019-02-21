@@ -11,8 +11,11 @@ public interface Runnable {
 // FILE: k.kt
 
 fun fail() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>({ }, { })
+    foo({ }, { })
+    foo(::bar, { })
 }
 
 fun foo(f: Runnable, selector: () -> Unit) {}
 fun foo(func1: () -> Unit, func2: () -> Unit) {}
+
+fun bar() {}

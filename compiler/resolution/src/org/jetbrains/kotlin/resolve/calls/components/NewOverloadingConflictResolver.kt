@@ -46,7 +46,8 @@ class NewOverloadingConflictResolver(
     { SimpleConstraintSystemImpl(constraintInjector, builtIns) },
     Companion::createFlatSignature,
     { it.variableCandidateIfInvoke },
-    { statelessCallbacks.isDescriptorFromSource(it) }
+    { statelessCallbacks.isDescriptorFromSource(it) },
+    { it.resolvedCall.hasSamConversion }
 ) {
 
     companion object {
