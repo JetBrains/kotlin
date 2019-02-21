@@ -52,17 +52,20 @@ fun ConeSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isN
 fun ConeSymbol.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
     constructType(parts.toTypeProjections(), isNullable)
 
+fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjection =
+    when (variance) {
+        Variance.INVARIANT -> this
+        Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(this)
+        Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(this)
+    }
+
 private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeKotlinTypeProjection> = flatMap {
-    it.typeArguments.map {
-        when (it) {
+    it.typeArguments.map { typeArgument ->
+        when (typeArgument) {
             is FirStarProjection -> StarProjection
             is FirTypeProjectionWithVariance -> {
-                val type = (it.typeRef as FirResolvedTypeRef).type
-                when (it.variance) {
-                    Variance.INVARIANT -> type
-                    Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(type)
-                    Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(type)
-                }
+                val type = (typeArgument.typeRef as FirResolvedTypeRef).type
+                type.toTypeProjection(typeArgument.variance)
             }
             else -> error("!")
         }

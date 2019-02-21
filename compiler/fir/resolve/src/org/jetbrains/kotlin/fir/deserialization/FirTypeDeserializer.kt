@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.toTypeProjection
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.types.Variance
 import java.lang.RuntimeException
 import java.util.*
 
@@ -129,15 +129,11 @@ class FirTypeDeserializer(
             return StarProjection
         }
 
-        val projection = ProtoEnumFlags.variance(typeArgumentProto.projection)
+        val variance = ProtoEnumFlags.variance(typeArgumentProto.projection)
         val type = typeArgumentProto.type(typeTable) ?: return ConeKotlinErrorType("No type recorded")
 
         val coneType = type(type)
-        return when (projection) {
-            Variance.INVARIANT -> coneType
-            Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
-            Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
-        }
+        return coneType.toTypeProjection(variance)
     }
 
 }
