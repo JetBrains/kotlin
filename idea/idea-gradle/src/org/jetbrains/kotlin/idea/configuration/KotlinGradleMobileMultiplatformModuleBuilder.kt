@@ -100,6 +100,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
                 import android.support.v7.app.AppCompatActivity
                 import android.os.Bundle
+                import android.widget.TextView
 
                 actual class Sample {
                     actual fun checkMe() = 44
@@ -113,9 +114,9 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
                     override fun onCreate(savedInstanceState: Bundle?) {
                         super.onCreate(savedInstanceState)
-                        hello()
                         Sample().checkMe()
                         setContentView(R.layout.activity_main)
+                        findViewById<TextView>(R.id.main_text).text = hello()
                     }
                 }
             """.trimIndent()
@@ -254,9 +255,12 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/main_text"
+        android:textSize="42sp"
+        android:layout_margin="5sp"
+        android:textAlignment="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -310,7 +314,9 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
                 // This is for iPhone emulator
                 // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
                 iosX64("$nativeTargetName") {
-                    compilations.main.outputKinds("framework")
+                    binaries {
+                        framework()
+                    }
                 }
                 sourceSets {
                     $commonSourceName {
@@ -350,10 +356,10 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
             task copyFramework {
                 def buildType = project.findProperty('kotlin.build.type') ?: 'DEBUG'
                 def target = project.findProperty('kotlin.target') ?: 'ios'
-                dependsOn kotlin.targets."${"$"}target".compilations.main.linkTaskName('FRAMEWORK', buildType)
+                dependsOn kotlin.targets."${"$"}target".binaries.getFramework(buildType).linkTask
 
                 doLast {
-                    def srcFile = kotlin.targets."${"$"}target".compilations.main.getBinary('FRAMEWORK', buildType)
+                    def srcFile = kotlin.targets."${"$"}target".binaries.getFramework(buildType).outputFile
                     def targetDir = getProperty('configuration.build.dir')
                     copy {
                         from srcFile.parent

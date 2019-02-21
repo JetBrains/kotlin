@@ -12,7 +12,7 @@ class XcodeProjectConfigurator {
 
     private fun VirtualFile.bufferedWriter() = getOutputStream(this).bufferedWriter()
 
-    private val mppDirName = "main"
+    private val mppDirName = "app"
 
     fun createSkeleton(rootDir: VirtualFile) {
         val iosDir = rootDir.createChildDirectory(this, "iosApp")

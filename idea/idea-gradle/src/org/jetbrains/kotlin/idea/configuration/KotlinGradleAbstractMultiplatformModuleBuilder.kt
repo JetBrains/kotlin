@@ -32,7 +32,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
     val mppInApplication: Boolean = false
 ) : GradleModuleBuilder() {
     var explicitPluginVersion: String? = null
-    val mppDirName = "main"
+    val mppDirName = "app"
 
     override fun getNodeIcon(): Icon = KotlinIcons.MPP
 
