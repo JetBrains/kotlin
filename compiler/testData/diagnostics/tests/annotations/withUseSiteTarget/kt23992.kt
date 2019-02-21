@@ -1,5 +1,9 @@
+// !LANGUAGE: -ProhibitUseSiteTargetAnnotationsOnSuperTypes
+
 interface Foo
 
 annotation class Ann
 
-class E : @field:<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!> @get:<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!> @set:<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!> @setparam:<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!> Foo
+class E : <!ANNOTATION_ON_SUPERCLASS_WARNING!>@field:Ann<!> <!ANNOTATION_ON_SUPERCLASS_WARNING!>@get:Ann<!> <!ANNOTATION_ON_SUPERCLASS_WARNING!>@set:Ann<!> <!ANNOTATION_ON_SUPERCLASS_WARNING!>@setparam:Ann<!> Foo
+
+interface G : @Ann Foo

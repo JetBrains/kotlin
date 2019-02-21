@@ -41,6 +41,9 @@ class AnnotationChecker(
         if (annotated is KtProperty) {
             checkPropertyUseSiteTargetAnnotations(annotated, trace)
         }
+        if (annotated is KtClass) {
+            checkSuperTypeAnnotations(annotated, trace)
+        }
         if (annotated is KtCallableDeclaration) {
             annotated.typeReference?.let { check(it, trace) }
             annotated.receiverTypeReference?.let { check(it, trace) }
@@ -99,6 +102,23 @@ class AnnotationChecker(
                     trace.reportDiagnosticOnce(Errors.REPEATED_ANNOTATION.on(entry))
                 } else {
                     trace.report(Errors.REPEATED_ANNOTATION_WARNING.on(entry))
+                }
+            }
+        }
+    }
+
+    private fun checkSuperTypeAnnotations(annotated: KtClass, trace: BindingTrace) {
+        val reportError = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes)
+
+        for (superType in annotated.superTypeListEntries.mapNotNull { it.typeReference }) {
+            for (entry in superType.annotationEntries) {
+                if (entry.useSiteTarget != null) {
+                    val diagnostic = if (reportError) {
+                        Errors.ANNOTATION_ON_SUPERCLASS.on(entry)
+                    } else {
+                        Errors.ANNOTATION_ON_SUPERCLASS_WARNING.on(entry)
+                    }
+                    trace.report(diagnostic)
                 }
             }
         }
