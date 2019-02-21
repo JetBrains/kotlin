@@ -7,61 +7,21 @@ package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
+import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.types.Variance
 
 class FirTypeResolverImpl : FirTypeResolver {
 
-
-    private fun List<FirQualifierPart>.toTypeProjections() = flatMap {
-        it.typeArguments.map {
-            when (it) {
-                is FirStarProjection -> StarProjection
-                is FirTypeProjectionWithVariance -> {
-                    val type = (it.typeRef as FirResolvedTypeRef).type
-                    when (it.variance) {
-                        Variance.INVARIANT -> type
-                        Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(type)
-                        Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(type)
-                    }
-                }
-                else -> error("!")
-            }
-        }
-    }.toTypedArray()
-
-    private fun ConeSymbol.toConeKotlinType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType? {
-
-        return when (this) {
-            is ConeTypeParameterSymbol -> {
-                ConeTypeParameterTypeImpl(this, isNullable)
-            }
-            is ConeClassSymbol -> {
-                ConeClassTypeImpl(this, parts.toTypeProjections(), isNullable)
-            }
-            is FirTypeAliasSymbol -> {
-                ConeAbbreviatedTypeImpl(
-                    abbreviationSymbol = this as ConeClassLikeSymbol,
-                    typeArguments = parts.toTypeProjections(),
-                    directExpansion = fir.expandedConeType ?: ConeClassErrorType("Unresolved expansion"),
-                    isNullable = isNullable
-                )
-            }
-            else -> error("!")
-        }
-    }
 
     private data class ClassIdInSession(val session: FirSession, val id: ClassId)
 
@@ -119,8 +79,7 @@ class FirTypeResolverImpl : FirTypeResolver {
 
     override fun resolveUserType(typeRef: FirUserTypeRef, symbol: ConeSymbol?, scope: FirScope): ConeKotlinType {
         symbol ?: return ConeKotlinErrorType("Symbol not found, for `${typeRef.render()}`")
-        return symbol.toConeKotlinType(typeRef.qualifier, typeRef.isMarkedNullable)
-            ?: ConeKotlinErrorType("Failed to resolve qualified type")
+        return symbol.constructType(typeRef.qualifier, typeRef.isMarkedNullable)
     }
 
     override fun resolveType(
@@ -146,7 +105,7 @@ class FirTypeResolverImpl : FirTypeResolver {
                 )
             }
             is FirImplicitBuiltinTypeRef -> {
-                resolveToSymbol(typeRef, scope, position)!!.toConeKotlinType(emptyList(), isNullable = false)!!
+                resolveToSymbol(typeRef, scope, position)!!.constructType(emptyList(), isNullable = false)
             }
             is FirDynamicTypeRef, is FirImplicitTypeRef, is FirDelegatedTypeRef -> {
                 ConeKotlinErrorType("Not supported: ${typeRef::class.simpleName}")
