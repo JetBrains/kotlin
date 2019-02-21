@@ -13,15 +13,12 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.isDynamic
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
-import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -32,8 +29,7 @@ class SimpleNameGenerator : NameGenerator {
     private val loopCache = mutableMapOf<IrLoop, JsName>()
 
     override fun getNameForSymbol(symbol: IrSymbol, context: JsGenerationContext): JsName =
-        if (symbol.isBound) getNameForDeclaration(symbol.owner as IrDeclarationWithName, context) else
-            declareDynamic(symbol.descriptor, context)
+        getNameForDeclaration(symbol.owner as IrDeclarationWithName, context)
 
     override fun getNameForLoop(loop: IrLoop, context: JsGenerationContext): JsName? = loop.label?.let {
         loopCache.getOrPut(loop) { context.currentScope.declareFreshName(sanitizeName(loop.label!!)) }
@@ -41,24 +37,6 @@ class SimpleNameGenerator : NameGenerator {
 
     override fun getNameForType(type: IrType, context: JsGenerationContext) =
         getNameForDeclaration(type.classifierOrFail.owner as IrDeclarationWithName, context)
-
-    @Deprecated("Descriptors-based code is deprecated")
-    private fun declareDynamic(descriptor: DeclarationDescriptor, context: JsGenerationContext): JsName {
-        if (descriptor.isDynamic()) {
-            return context.currentScope.declareName(descriptor.name.asString())
-        }
-
-        if (descriptor is MemberDescriptor && descriptor.isEffectivelyExternal()) {
-            val descriptorForName = when (descriptor) {
-                is ConstructorDescriptor -> descriptor.constructedClass
-                is PropertyAccessorDescriptor -> descriptor.correspondingProperty
-                else -> descriptor
-            }
-            return context.currentScope.declareName(descriptorForName.name.asString())
-        }
-
-        throw IllegalStateException("Unbound non-dynamic symbol")
-    }
 
     private val RESERVED_IDENTIFIERS = setOf(
         // keywords
@@ -95,10 +73,6 @@ class SimpleNameGenerator : NameGenerator {
         nameCache.getOrPut(declaration) {
             var nameDeclarator: (String) -> JsName = context.currentScope::declareName
             val nameBuilder = StringBuilder()
-
-            if (declaration.isDynamic()) {
-                return@getOrPut nameDeclarator(declaration.descriptor.name.asString())
-            }
 
             val declarationName = declaration.getJsNameOrKotlinName().asString()
 

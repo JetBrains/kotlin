@@ -424,8 +424,6 @@ fun IrDeclaration.isEffectivelyExternal(): Boolean {
     }
 }
 
-fun IrDeclaration.isDynamic() = this is IrFunction && dispatchReceiverParameter?.type is IrDynamicType
-
 inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(predicate: (T) -> Boolean): T? =
     declarations.find { it is T && predicate(it) } as? T
 

@@ -20,7 +20,6 @@ class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val transformers = listOf(
         NumberOperatorCallsTransformer(context),
         NumberConversionCallsTransformer(context),
-        DynamicCallsTransformer(context),
         EqualityAndComparisonCallsTransformer(context),
         PrimitiveContainerMemberCallTransformer(context),
         MethodsOfAnyCallsTransformer(context),
