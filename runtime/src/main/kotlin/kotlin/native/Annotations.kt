@@ -40,14 +40,8 @@ public annotation class Retain
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
-@Deprecated("ThreadLocal was moved to kotlin.native.concurrent package " +
-        "and became available in Kotlin Common as optional annotation",
-        ReplaceWith("kotlin.native.concurrent.ThreadLocal"))
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 
-@Deprecated("SharedImmutable was moved to kotlin.native.concurrent package " +
-        "and became available in Kotlin Common as optional annotation",
-        ReplaceWith("kotlin.native.concurrent.SharedImmutable"))
 public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 
 /**
