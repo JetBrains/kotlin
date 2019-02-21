@@ -26,69 +26,23 @@ buildscript {
     }
 }
 
-abstract class NativeDep extends DefaultTask {
+/**
+ * Downloads dependencies from the given URL into the given directory.
+ * The set of dependencies is determined by konanPropertiesLoader.
+ */
+class NativeDep extends DefaultTask {
     static final String baseUrl = "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native"
 
-    @Input
-    abstract String getFileName()
+    KonanPropertiesLoader konanPropertiesLoader = null
 
-    protected String getUrl() {
-        return "$baseUrl/$fileName"
-    }
-
-    protected File getBaseOutDir() {
+    final File getBaseOutDir() {
         final File res = project.rootProject.ext.dependenciesDir
         res.mkdirs()
         return res
     }
 
-    protected File download() {
-        File result = new File(baseOutDir, fileName)
-        if (!result.exists())
-            ant.get(src: url, dest: result, usetimestamp: true)
-        return result
-    }
-}
-
-class TgzNativeDep extends NativeDep {
-    String baseName
-
-    @Override
-    String getFileName() {
-        return "${baseName}.tar.gz"
-    }
-
-    @OutputDirectory
-    File getOutputDir() {
-        return new File(baseOutDir, baseName)
-    }
-
     @TaskAction
-    public void downloadAndExtract() {
-        File archived = this.download()
-
-        try {
-            // Builtin Gradle unpacking tools seem to unable to handle symlinks;
-            // Use external "tar" executable as workaround:
-            project.exec {
-                executable "tar"
-                workingDir baseOutDir
-                args "xf", archived
-            }
-        } catch (Throwable e) {
-            e.printStackTrace()
-            project.delete(outputDir)
-            throw e
-        }
-    }
-}
-
-class HelperNativeDep extends TgzNativeDep {
-
-    KonanPropertiesLoader konanPropertiesLoader = null
-
-    @TaskAction
-    public void downloadAndExtract() {
+    void downloadAndExtract() {
         def downloader = new DependencyProcessor(baseOutDir, konanPropertiesLoader, baseUrl, false)
         downloader.showInfo = false
         downloader.run()
@@ -128,13 +82,9 @@ def platformManager = rootProject.ext.platformManager
 
 platformManager.enabled.each { target ->
     def loader = platformManager.loader(target)
-    loader.dependencies.each { dependency ->
-        if (tasks.findByName(dependency) == null) {
-            task "${dependency}"(type: HelperNativeDep) {
-                baseName = dependency
-                it.konanPropertiesLoader = loader
-            }
-        }
+
+    task "${target}Dependencies"(type: NativeDep) {
+        konanPropertiesLoader = loader
     }
 
     // Also resolves all dependencies:
@@ -142,7 +92,7 @@ platformManager.enabled.each { target ->
             project.rootProject.ext.dependenciesDir,
             loader.properties,
             loader.dependencies,
-            HelperNativeDep.baseUrl,
+            NativeDep.baseUrl,
             false
     )
 
