@@ -1,4 +1,5 @@
 // !JVM_DEFAULT_MODE: enable
+// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 interface Test {
     fun test(): String {
