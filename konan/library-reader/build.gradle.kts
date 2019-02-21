@@ -23,6 +23,6 @@ sourceSets {
     "test" { none() }
 }
 
-standardPublicJars()
-
 publish()
+
+standardPublicJars()

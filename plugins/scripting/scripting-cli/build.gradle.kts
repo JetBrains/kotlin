@@ -43,11 +43,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     }
 }
 
+publish()
+
 val jar = runtimeJar {}
 sourcesJar()
 javadocJar()
-
-publish()
 
 dist()
 

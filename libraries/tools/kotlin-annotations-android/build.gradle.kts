@@ -22,9 +22,10 @@ sourceSets {
     }
 }
 
+publish()
+
 sourcesJar()
 javadocJar()
 runtimeJar()
 dist()
 
-publish()

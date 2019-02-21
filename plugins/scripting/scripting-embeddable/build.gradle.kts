@@ -12,12 +12,15 @@ dependencies {
     packedJars(project(":kotlin-scripting-jvm")) { isTransitive = false }
 }
 
+publish()
+
 noDefaultJar()
+
 runtimeJar(rewriteDepsToShadedCompiler(
     task<ShadowJar>("shadowJar")  {
         from(packedJars)
     }
 ))
+
 sourcesJar()
 javadocJar()
-publish()

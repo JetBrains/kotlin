@@ -17,6 +17,8 @@ sourceSets {
     "test" {}
 }
 
+publish()
+
 val jar = runtimeJar()
 val sourcesJar = sourcesJar()
 val javadocJar = javadocJar()
@@ -26,7 +28,3 @@ dist()
 ideaPlugin {
     from(jar, sourcesJar)
 }
-
-standardPublicJars()
-
-publish()

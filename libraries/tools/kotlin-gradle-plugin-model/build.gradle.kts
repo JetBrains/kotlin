@@ -6,8 +6,9 @@ plugins {
     maven
 }
 
-standardPublicJars()
 publish()
+
+standardPublicJars()
 
 dependencies {
     compile(kotlinStdlib())

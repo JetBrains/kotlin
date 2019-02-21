@@ -11,13 +11,14 @@ plugins {
     id("jps-compatible")
 }
 
+publish()
+
 // todo: make lazy
 val jar: Jar by tasks
 runtimeJar(rewriteDepsToShadedCompiler(jar))
 
 sourcesJar()
 javadocJar()
-publish()
 
 repositories {
     google()

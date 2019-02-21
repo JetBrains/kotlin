@@ -38,10 +38,10 @@ projectTest {
     workingDir = rootDir
 }
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
 
 dist()
-
-publish()
