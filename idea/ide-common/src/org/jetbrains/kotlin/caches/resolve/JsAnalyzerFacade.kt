@@ -60,7 +60,7 @@ object JsAnalyzerFacade : ResolverForModuleFactory() {
         val container = createContainerForLazyResolve(
             moduleContext,
             declarationProviderFactory,
-            BindingTraceContext(),
+            BindingTraceContext(/* allowSliceRewrite = */ true),
             JsPlatform,
             TargetPlatformVersion.NoVersion,
             targetEnvironment,
