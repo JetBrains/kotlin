@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.DebuggerContext
-import com.intellij.debugger.engine.AsyncStackTraceProvider
 import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.engine.JavaValue
 import com.intellij.debugger.engine.SuspendContextImpl
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.variables.VariableFinder.Comp
 import org.jetbrains.kotlin.idea.debugger.evaluate.getInvokePolicy
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class KotlinCoroutinesAsyncStackTraceProvider : AsyncStackTraceProvider {
+class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceProviderBase {
     private companion object {
         const val DEBUG_METADATA_KT = "kotlin.coroutines.jvm.internal.DebugMetadataKt"
 
