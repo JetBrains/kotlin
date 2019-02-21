@@ -32,12 +32,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameReferenceExpression>(
-        KtNameReferenceExpression::class.java,
-        "Add import for member"
-){
+    KtNameReferenceExpression::class.java,
+    "Add import for member"
+) {
 
-    private fun getFullQualifier(element: KtNameReferenceExpression): KtQualifiedExpression?
-            = element.getTopmostParentOfType<KtQualifiedExpression>()
+    private fun getFullQualifier(element: KtNameReferenceExpression): KtQualifiedExpression? = element.getTopmostParentOfType()
 
     override fun isApplicableTo(element: KtNameReferenceExpression): Boolean {
         if (element.getQualifiedElement() == element) return false //Ignore simple name expressions

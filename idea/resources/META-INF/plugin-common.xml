@@ -226,7 +226,7 @@
                         serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
-                    serviceImplementation="org.jetbrains.kotlin.util.ImportInsertHelperImpl"/>
+                    serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
