@@ -233,6 +233,11 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
                 is KtParameter -> {
                     searchPropertyAccessorMethods(element)
+                    if (element.getStrictParentOfType<KtPrimaryConstructor>() != null) {
+                        // Simple parameters without val and var shouldn't be processed here because of local search scope
+                        val methods = LightClassUtil.getLightClassPropertyMethods(element)
+                        methods.allDeclarations.forEach { searchNamedElement(it) }
+                    }
                 }
 
                 is KtLightMethod -> {
