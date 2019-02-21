@@ -973,6 +973,11 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 runTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyUsages2.0.kt");
             }
 
+            @TestMetadata("javaPropertyUsages3.0.kt")
+            public void testJavaPropertyUsages3() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyUsages3.0.kt");
+            }
+
             @TestMetadata("javaPropertyWriteUsages.0.kt")
             public void testJavaPropertyWriteUsages() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyWriteUsages.0.kt");
