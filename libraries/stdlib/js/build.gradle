@@ -71,14 +71,12 @@ sourceSets {
 }
 
 configurations {
-    merger
     commonSources
 }
 dependencies {
     expectedBy project(":kotlin-stdlib-common")
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
     testCompile project(':kotlin-test:kotlin-test-js')
-    merger project(":tools:kotlin-stdlib-js-merger")
     coroutinesExperimentalCompile project.files { sourceSets.main.output.files }.builtBy(compileKotlin2Js)
 }
 
@@ -207,7 +205,7 @@ task compileJs(type: NoDebugJavaExec) {
         include '**/*.js'
     }
 
-    main = "org.jetbrains.kotlin.js.FileMergerKt"
+    main = "org.jetbrains.kotlin.cli.js.internal.JSStdlibLinker"
     doFirst {
         args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
                (compileBuiltinsKotlin2Js.outputs.files.collect { it.path }.sort() +
@@ -217,7 +215,7 @@ task compileJs(type: NoDebugJavaExec) {
                    it.endsWith(".js") && !it.endsWith(".meta.js")
                }
     }
-    classpath = configurations.merger
+    classpath = configurations.kotlinCompilerClasspath
 
     doLast {
         ant.replaceregexp(
