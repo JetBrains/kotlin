@@ -32,7 +32,7 @@ class SimpleNameGenerator : NameGenerator {
     private val loopCache = mutableMapOf<IrLoop, JsName>()
 
     override fun getNameForSymbol(symbol: IrSymbol, context: JsGenerationContext): JsName =
-        if (symbol.isBound) getNameForDeclaration(symbol.owner as IrDeclaration, context) else
+        if (symbol.isBound) getNameForDeclaration(symbol.owner as IrDeclarationWithName, context) else
             declareDynamic(symbol.descriptor, context)
 
     override fun getNameForLoop(loop: IrLoop, context: JsGenerationContext): JsName? = loop.label?.let {
@@ -40,7 +40,7 @@ class SimpleNameGenerator : NameGenerator {
     }
 
     override fun getNameForType(type: IrType, context: JsGenerationContext) =
-        getNameForDeclaration(type.classifierOrFail.owner as IrDeclaration, context)
+        getNameForDeclaration(type.classifierOrFail.owner as IrDeclarationWithName, context)
 
     @Deprecated("Descriptors-based code is deprecated")
     private fun declareDynamic(descriptor: DeclarationDescriptor, context: JsGenerationContext): JsName {
@@ -91,35 +91,24 @@ class SimpleNameGenerator : NameGenerator {
         "Kotlin"
     )
 
-    private fun getNameForDeclaration(declaration: IrDeclaration, context: JsGenerationContext): JsName =
+    private fun getNameForDeclaration(declaration: IrDeclarationWithName, context: JsGenerationContext): JsName =
         nameCache.getOrPut(declaration) {
             var nameDeclarator: (String) -> JsName = context.currentScope::declareName
             val nameBuilder = StringBuilder()
-
-            val descriptor = declaration.descriptor
 
             if (declaration.isDynamic()) {
                 return@getOrPut nameDeclarator(declaration.descriptor.name.asString())
             }
 
-            val jsName = declaration.getJsName()
-            if (jsName != null) {
-                return@getOrPut context.currentScope.declareName(jsName)
-            }
+            val declarationName = declaration.getJsNameOrKotlinName().asString()
 
             if (declaration is IrSimpleFunction && declaration.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION) {
-                return@getOrPut context.staticContext.rootScope.declareName(declaration.name.identifier)
+                return@getOrPut nameDeclarator(declarationName)
             }
 
             if (declaration.isEffectivelyExternal()) {
-                // TODO: descriptors are still used here due to the corresponding declaration doesn't have enough information yet
-                val descriptorName = when (descriptor) {
-                    is ConstructorDescriptor -> descriptor.constructedClass
-                    is PropertyAccessorDescriptor -> descriptor.correspondingProperty
-                    else -> descriptor
-                }.name
-
-                if (declaration is IrConstructor) return@getOrPut getNameForDeclaration(declaration.parentAsClass, context)
+                if (declaration is IrConstructor)
+                    return@getOrPut getNameForDeclaration(declaration.parentAsClass, context)
 
                 if (declaration is IrClass && declaration.parent is IrClass) {
                     val parentName = getNameForDeclaration(declaration.parentAsClass, context)
@@ -127,9 +116,14 @@ class SimpleNameGenerator : NameGenerator {
                         // External companions are class references
                         return@getOrPut parentName
                     }
-                    return@getOrPut context.currentScope.declareFreshName(parentName.ident + "$" + descriptorName.identifier)
+                    return@getOrPut context.currentScope.declareFreshName(parentName.ident + "$" + declarationName)
                 }
-                return@getOrPut context.staticContext.rootScope.declareName(descriptorName.identifier)
+                return@getOrPut nameDeclarator(declarationName)
+            }
+
+            val jsName = declaration.getJsName()
+            if (jsName != null) {
+                return@getOrPut context.currentScope.declareName(jsName)
             }
 
             when (declaration) {
@@ -141,7 +135,7 @@ class SimpleNameGenerator : NameGenerator {
                     else if (declaration == context.currentFunction?.extensionReceiverParameter) {
                         nameBuilder.append(Namer.EXTENSION_RECEIVER_NAME)
                     } else {
-                        val declaredName = declaration.name.asString()
+                        val declaredName = declarationName
                         nameBuilder.append(declaredName)
                         if (declaredName.startsWith("\$")) {
                             nameBuilder.append('.')
@@ -151,22 +145,22 @@ class SimpleNameGenerator : NameGenerator {
                     }
                 }
                 is IrField -> {
-                    nameBuilder.append(declaration.name.asString())
+                    nameBuilder.append(declarationName)
                     if (declaration.isTopLevel) {
                         nameDeclarator = context.staticContext.rootScope::declareFreshName
                     } else {
                         nameBuilder.append('.')
-                        nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
+                        nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclarationWithName, context))
                         if (declaration.visibility == Visibilities.PRIVATE) nameDeclarator = context.currentScope::declareFreshName
                     }
                 }
                 is IrClass -> {
                     if (declaration.isCompanion) {
-                        nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
+                        nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclarationWithName, context))
                         nameBuilder.append('.')
                     }
 
-                    nameBuilder.append(declaration.name.asString())
+                    nameBuilder.append(declarationName)
 
                     (declaration.parent as? IrClass)?.let {
                         nameBuilder.append("$")
@@ -181,7 +175,7 @@ class SimpleNameGenerator : NameGenerator {
                         }
                         val parent = declaration.parent
                         when (parent) {
-                            is IrDeclaration -> nameBuilder.append(getNameForDeclaration(parent, context))
+                            is IrDeclarationWithName -> nameBuilder.append(getNameForDeclaration(parent, context))
                             is IrPackageFragment -> nameBuilder.append(parent.fqName.asString())
                         }
                     }
@@ -204,14 +198,14 @@ class SimpleNameGenerator : NameGenerator {
                 is IrSimpleFunction -> {
 
                     if (declaration.isStaticMethodOfClass) {
-                        nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
+                        nameBuilder.append(getNameForDeclaration(declaration.parent as IrClass, context))
                         nameBuilder.append('.')
                     }
                     if (declaration.dispatchReceiverParameter == null) {
                         nameDeclarator = context.staticContext.rootScope::declareFreshName
                     }
 
-                    nameBuilder.append(declaration.name.asString())
+                    nameBuilder.append(declarationName)
                     // TODO should we skip type parameters and use upper bound of type parameter when print type of value parameters?
                     declaration.typeParameters.ifNotEmpty {
                         nameBuilder.append("_\$t")

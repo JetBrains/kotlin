@@ -143,13 +143,18 @@ class IrModuleToJsTransformer(private val backendContext: JsIrBackendContext) : 
         }
 
         for (externalClass in backendContext.externalNestedClasses) {
+
+            // External companions are not "nested". Instead they use parent class name.
+            if (externalClass.isCompanion)
+                continue
+
             val declName = rootContext.getNameForDeclaration(externalClass)
             val parentName = rootContext.getNameForDeclaration(externalClass.parentAsClass)
             importStatements.add(
                 JsExpressionStatement(
                     jsAssignment(
                         declName.makeRef(),
-                        JsNameRef(externalClass.name.identifier, parentName.makeRef())
+                        JsNameRef(externalClass.getJsNameOrKotlinName().identifier, parentName.makeRef())
                     )
                 )
             )
