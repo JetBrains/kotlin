@@ -5733,6 +5733,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testReturnAsNullableAny() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantUnitExpression/returnAsNullableAny.kt");
         }
+
+        @TestMetadata("returnAsNullableUnit.kt")
+        public void testReturnAsNullableUnit() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/returnAsNullableUnit.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantVisibilityModifier")

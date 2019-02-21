@@ -44,7 +44,8 @@ private fun KtReferenceExpression.isRedundantUnit(): Boolean {
     if (!isUnitLiteral()) return false
     val parent = this.parent ?: return false
     if (parent is KtReturnExpression) {
-        return parent.expectedReturnType()?.nameIfStandardType != KotlinBuiltIns.FQ_NAMES.any.shortName()
+        val expectedReturnType = parent.expectedReturnType() ?: return false
+        return expectedReturnType.nameIfStandardType != KotlinBuiltIns.FQ_NAMES.any.shortName() && !expectedReturnType.isMarkedNullable
     }
     if (parent is KtBlockExpression) {
         // Do not report just 'Unit' in function literals (return@label Unit is OK even in literals)
