@@ -15396,6 +15396,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/kotlinCollectionToJava.kt");
                 }
 
+                @TestMetadata("kt27565.kt")
+                public void testKt27565() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/kt27565.kt");
+                }
+
                 @TestMetadata("list.kt")
                 public void testList() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/list.kt");
