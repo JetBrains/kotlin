@@ -57,18 +57,24 @@ compileCompilerKotlin {
 }
 
 compileCompilerJava {
-    doFirst {
-        delete 'build/generated'
-    }
     dependsOn('renamePackage')
 }
 
-task renamePackage(type: Copy) {
+task copyGenerated(type: Copy) {
     dependsOn('generateCompilerProto')
     from 'build/generated/source/proto/compiler/java'
     into 'build/renamed/source/proto/compiler/java'
     filter { line -> line.replaceAll("com.google.protobuf", "org.jetbrains.kotlin.protobuf") }
     outputs.dir('build/renamed')
+}
+
+task deleteGenerated(type: Delete) {
+    dependsOn('copyGenerated')
+    delete 'build/generated'
+}
+
+task renamePackage {
+    dependsOn('copyGenerated', 'deleteGenerated')
 }
 
 kotlinNativeInterop {
