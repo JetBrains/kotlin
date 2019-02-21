@@ -49,6 +49,8 @@ projectTest {
     }
 }
 
+publish()
+
 noDefaultJar()
 
 runtimeJar(task<ShadowJar>("shadowJar")) {
@@ -57,5 +59,3 @@ runtimeJar(task<ShadowJar>("shadowJar")) {
 
 sourcesJar()
 javadocJar()
-
-publish()

@@ -91,6 +91,8 @@ dependencies {
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
 }
 
+publish()
+
 noDefaultJar()
 
 val packCompiler by task<ShadowJar> {
@@ -156,5 +158,3 @@ sourcesJar {
 }
 
 javadocJar()
-
-publish()

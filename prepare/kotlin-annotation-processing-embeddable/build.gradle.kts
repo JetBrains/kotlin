@@ -14,12 +14,13 @@ dependencies {
     packedJars(project(":kotlin-annotation-processing")) { isTransitive = false }
 }
 
+publish()
+
 runtimeJar(rewriteDepsToShadedCompiler(
         task<ShadowJar>("shadowJar")  {
             from(packedJars)
         }
 ))
+
 sourcesJar()
 javadocJar()
-
-publish()

@@ -20,6 +20,8 @@ projectTest {
     workingDir = projectDir
 }
 
+publish()
+
 val jar: Jar by tasks
 jar.apply {
     classifier = "base"
@@ -33,5 +35,3 @@ runtimeJar(rewriteDepsToShadedCompiler(
 
 sourcesJar()
 javadocJar()
-
-publish()

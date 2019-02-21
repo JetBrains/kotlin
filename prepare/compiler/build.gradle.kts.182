@@ -154,6 +154,8 @@ dist(targetName = "$compilerBaseName.jar", fromTask = pack) {
     from(trove4jJar)
 }
 
+publish()
+
 runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
     name = compilerBaseName
     classifier = ""
@@ -164,5 +166,3 @@ sourcesJar {
 }
 
 javadocJar()
-
-publish()

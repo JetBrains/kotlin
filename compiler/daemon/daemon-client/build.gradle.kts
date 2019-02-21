@@ -41,6 +41,8 @@ sourceSets {
     "test" {}
 }
 
+publish()
+
 noDefaultJar()
 
 runtimeJar(task<ShadowJar>("shadowJar")) {
@@ -55,5 +57,3 @@ javadocJar()
 dist()
 
 ideaPlugin()
-
-publish()

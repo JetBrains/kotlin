@@ -16,9 +16,8 @@ sourceSets {
     "test" { }
 }
 
+publish()
+
 standardPublicJars()
 
 ideaPlugin()
-
-publish()
-

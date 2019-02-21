@@ -32,6 +32,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
@@ -39,5 +41,3 @@ javadocJar()
 testsJar()
 
 projectTest()
-
-publish()

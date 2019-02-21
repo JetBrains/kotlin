@@ -34,8 +34,9 @@ jar.apply {
     duplicatesStrategy = DuplicatesStrategy.FAIL
 }
 
+publish()
+
 runtimeJar(rewriteDepsToShadedCompiler(jar))
 sourcesJar()
 javadocJar()
 
-publish()

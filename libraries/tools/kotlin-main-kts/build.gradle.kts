@@ -55,6 +55,8 @@ sourceSets {
     "test" { }
 }
 
+publish()
+
 noDefaultJar()
 
 val packJar by task<ShadowJar> {
@@ -98,5 +100,3 @@ dist(
 
 sourcesJar()
 javadocJar()
-
-publish()

@@ -26,9 +26,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+publish()
+
 standardPublicJars()
 
-publish()
 
 projectTest {
     workingDir = rootDir
