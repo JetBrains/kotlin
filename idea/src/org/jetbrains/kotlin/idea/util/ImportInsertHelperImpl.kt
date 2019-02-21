@@ -386,8 +386,12 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         private fun KtReferenceExpression.resolveTargets(): Collection<DeclarationDescriptor> =
             this.getImportableTargets(resolutionFacade.analyze(this, BodyResolveMode.PARTIAL))
 
-        private fun addImport(fqName: FqName, allUnder: Boolean): KtImportDirective {
-            val importPath = ImportPath(fqName, allUnder)
+        private fun addImport(fqName: FqName, allUnder: Boolean): KtImportDirective = addImport(project, file, fqName, allUnder)
+    }
+
+    companion object {
+        fun addImport(project: Project, file: KtFile, fqName: FqName, allUnder: Boolean = false, alias: Name? = null): KtImportDirective {
+            val importPath = ImportPath(fqName, allUnder, alias)
 
             val psiFactory = KtPsiFactory(project)
             if (file is KtCodeFragment) {

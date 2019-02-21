@@ -78,6 +78,8 @@ fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     }
 }
 
+fun DeclarationDescriptor.canBeAddedToImport(): Boolean = this !is PackageViewDescriptor && canBeReferencedViaImport()
+
 fun KotlinType.canBeReferencedViaImport(): Boolean {
     val descriptor = constructor.declarationDescriptor
     return descriptor != null && descriptor.canBeReferencedViaImport()

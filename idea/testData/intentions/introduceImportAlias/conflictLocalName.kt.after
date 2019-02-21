@@ -1,0 +1,18 @@
+import Outer.Middle.Inner.Companion.foo as foo1
+
+class Outer {
+    class Middle {
+        class Inner {
+            companion object {
+                fun foo() {}
+            }
+        }
+    }
+}
+
+class Test() {
+    fun test() {
+        val foo = 1
+        foo1()
+    }
+}

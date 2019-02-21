@@ -9602,6 +9602,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/importMember/NoTarget.kt");
         }
 
+        @TestMetadata("NotApplicablePackage.kt")
+        public void testNotApplicablePackage() throws Exception {
+            runTest("idea/testData/intentions/importMember/NotApplicablePackage.kt");
+        }
+
         @TestMetadata("NotForQualifier.kt")
         public void testNotForQualifier() throws Exception {
             runTest("idea/testData/intentions/importMember/NotForQualifier.kt");
@@ -9940,6 +9945,129 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("varWithAccessor.kt")
         public void testVarWithAccessor() throws Exception {
             runTest("idea/testData/intentions/introduceBackingProperty/varWithAccessor.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/introduceImportAlias")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntroduceImportAlias extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("addImport.kt")
+        public void testAddImport() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/addImport.kt");
+        }
+
+        @TestMetadata("addImportHasOtherAlias.kt")
+        public void testAddImportHasOtherAlias() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/addImportHasOtherAlias.kt");
+        }
+
+        @TestMetadata("addImportWithDefaultClass.kt")
+        public void testAddImportWithDefaultClass() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/addImportWithDefaultClass.kt");
+        }
+
+        @TestMetadata("addImportWithDefaultClassAndFunction.kt")
+        public void testAddImportWithDefaultClassAndFunction() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/addImportWithDefaultClassAndFunction.kt");
+        }
+
+        @TestMetadata("addImportWithDefaultClassCompanion.kt")
+        public void testAddImportWithDefaultClassCompanion() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/addImportWithDefaultClassCompanion.kt");
+        }
+
+        @TestMetadata("addImportWithDefaultClassCompanion2.kt")
+        public void testAddImportWithDefaultClassCompanion2() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/addImportWithDefaultClassCompanion2.kt");
+        }
+
+        public void testAllFilesPresentInIntroduceImportAlias() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/introduceImportAlias"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("alreadyImportAlias.kt")
+        public void testAlreadyImportAlias() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/alreadyImportAlias.kt");
+        }
+
+        @TestMetadata("class.kt")
+        public void testClass() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/class.kt");
+        }
+
+        @TestMetadata("classWithConstructor.kt")
+        public void testClassWithConstructor() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/classWithConstructor.kt");
+        }
+
+        @TestMetadata("conflictLocalName.kt")
+        public void testConflictLocalName() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/conflictLocalName.kt");
+        }
+
+        @TestMetadata("conflictPackage.kt")
+        public void testConflictPackage() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/conflictPackage.kt");
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/function.kt");
+        }
+
+        @TestMetadata("middleImport.kt")
+        public void testMiddleImport() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/middleImport.kt");
+        }
+
+        @TestMetadata("notApplicableAlias.kt")
+        public void testNotApplicableAlias() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/notApplicableAlias.kt");
+        }
+
+        @TestMetadata("notApplicableLocalClass.kt")
+        public void testNotApplicableLocalClass() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/notApplicableLocalClass.kt");
+        }
+
+        @TestMetadata("notApplicableLocalVariable.kt")
+        public void testNotApplicableLocalVariable() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/notApplicableLocalVariable.kt");
+        }
+
+        @TestMetadata("notApplicablePackage.kt")
+        public void testNotApplicablePackage() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/notApplicablePackage.kt");
+        }
+
+        @TestMetadata("notApplicableStar.kt")
+        public void testNotApplicableStar() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/notApplicableStar.kt");
+        }
+
+        @TestMetadata("onImport.kt")
+        public void testOnImport() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/onImport.kt");
+        }
+
+        @TestMetadata("userType.kt")
+        public void testUserType() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/userType.kt");
+        }
+
+        @TestMetadata("userTypeInner.kt")
+        public void testUserTypeInner() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/userTypeInner.kt");
+        }
+
+        @TestMetadata("variable.kt")
+        public void testVariable() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/variable.kt");
         }
     }
 
