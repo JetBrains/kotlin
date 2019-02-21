@@ -1444,6 +1444,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/GetterAnnotations.kt");
                 }
 
+                @TestMetadata("kt23992.kt")
+                public void testKt23992() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/kt23992.kt");
+                }
+
                 @TestMetadata("kt26638.kt")
                 public void testKt26638() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/kt26638.kt");
