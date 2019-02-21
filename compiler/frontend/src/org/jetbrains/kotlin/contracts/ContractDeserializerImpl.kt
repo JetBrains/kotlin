@@ -47,7 +47,7 @@ class ContractDeserializerImpl(
         if (!configuration.readDeserializedContracts) return null
 
         val worker = ContractDeserializationWorker(typeTable, typeDeserializer, ownerFunction, storageManager)
-        val contract = worker.deserializeContract(proto.contract)
+        val contract = worker.deserializeContract(proto.contract) ?: return null
         return ContractProviderKey to LazyContractProvider.createInitialized(contract)
     }
 
