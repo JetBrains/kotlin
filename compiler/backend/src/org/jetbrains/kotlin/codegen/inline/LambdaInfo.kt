@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -177,11 +179,11 @@ class DefaultLambda(
     }
 }
 
-fun Type.boxReceiverForBoundReference() =
+internal fun Type.boxReceiverForBoundReference() =
     AsmUtil.boxType(this)
 
-fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, state: GenerationState) =
-    AsmUtil.boxType(this, kotlinType, state)
+internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMapper: KotlinTypeMapper) =
+    AsmUtil.boxType(this, kotlinType, typeMapper)
 
 abstract class ExpressionLambda(protected val typeMapper: KotlinTypeMapper, isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
 

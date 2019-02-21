@@ -3181,7 +3181,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS);
                 }
 
-                putJavaLangClassInstance(v, typeMapper.mapType(type), type, state);
+                putJavaLangClassInstance(v, typeMapper.mapType(type), type, typeMapper);
             }
 
             if (wrapIntoKClass) {
@@ -4468,7 +4468,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             KotlinType elementKotlinType = state.getModule().getBuiltIns().getArrayElementType(arrayKotlinType);
             Type elementType;
             if (KotlinBuiltIns.isArray(arrayKotlinType)) {
-                elementType = boxType(asmType(elementKotlinType), elementKotlinType, state);
+                elementType = boxType(asmType(elementKotlinType), elementKotlinType, typeMapper);
             }
             else {
                 elementType = correctElementType(arrayType);

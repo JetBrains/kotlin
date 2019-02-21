@@ -713,7 +713,7 @@ class PsiInlineCodegen(
                 val receiverKotlinType = receiver.kotlinType
                 val boxedReceiver =
                     if (receiverKotlinType != null)
-                        receiver.type.boxReceiverForBoundReference(receiverKotlinType, state)
+                        receiver.type.boxReceiverForBoundReference(receiverKotlinType, state.typeMapper)
                     else
                         receiver.type.boxReceiverForBoundReference()
 

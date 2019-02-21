@@ -218,9 +218,9 @@ public class AsmUtil {
     }
 
     @NotNull
-    public static Type boxType(@NotNull Type type, @NotNull KotlinType kotlinType, @NotNull GenerationState state) {
+    public static Type boxType(@NotNull Type type, @NotNull KotlinType kotlinType, @NotNull KotlinTypeMapper typeMapper) {
         if (InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
-            return state.getTypeMapper().mapTypeAsDeclaration(kotlinType);
+            return typeMapper.mapTypeAsDeclaration(kotlinType);
         }
 
         Type boxedPrimitiveType = boxPrimitiveType(type);
@@ -1236,10 +1236,10 @@ public class AsmUtil {
             @NotNull InstructionAdapter v,
             @NotNull Type type,
             @Nullable KotlinType kotlinType,
-            @NotNull GenerationState state
+            @NotNull KotlinTypeMapper typeMapper
     ) {
         if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
-            v.aconst(boxType(type, kotlinType, state));
+            v.aconst(boxType(type, kotlinType, typeMapper));
         }
         else if (isPrimitive(type)) {
             v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");
