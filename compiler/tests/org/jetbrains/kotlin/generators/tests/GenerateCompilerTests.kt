@@ -182,7 +182,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBytecodeTextTest> {
-            model("codegen/bytecodeText")
+            model("codegen/bytecodeText", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractIrTextTestCase> {
