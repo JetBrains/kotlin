@@ -858,14 +858,26 @@ class ExpressionCodegen(
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: BlockInfo): StackValue {
         expression.markLineNumber(startOffset = true)
-        AsmUtil.genStringBuilderConstructor(mv)
-        expression.arguments.forEach {
-            val stackValue = gen(it, data)
-            AsmUtil.genInvokeAppendMethod(mv, stackValue.type, stackValue.kotlinType)
+        return when (expression.arguments.size) {
+            0 -> StackValue.constant("", expression.asmType)
+            1 -> {
+                // Convert single arg to string.
+                val arg = expression.arguments[0]
+                val argStackValue = gen(arg, arg.asmType, data)
+                AsmUtil.genToString(argStackValue, argStackValue.type, argStackValue.kotlinType, typeMapper).put(expression.asmType, mv)
+                expression.onStack
+            }
+            else -> {
+                // Use StringBuilder to concatenate.
+                AsmUtil.genStringBuilderConstructor(mv)
+                expression.arguments.forEach {
+                    val stackValue = gen(it, data)
+                    AsmUtil.genInvokeAppendMethod(mv, stackValue.type, stackValue.kotlinType)
+                }
+                mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
+                expression.onStack
+            }
         }
-
-        mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
-        return expression.onStack
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): StackValue {
