@@ -33,6 +33,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.panels.HorizontalLayout
+import com.intellij.util.messages.Topic
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
@@ -177,5 +178,13 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
             })
             allowEmptySelection(ConfigurationModuleSelector.NO_MODULE_TEXT)
         }
+    }
+}
+
+interface ScratchPanelListener {
+    fun panelAdded(panel: ScratchTopPanel)
+
+    companion object {
+        val TOPIC = Topic.create("ScratchPanelListener", ScratchPanelListener::class.java)
     }
 }
