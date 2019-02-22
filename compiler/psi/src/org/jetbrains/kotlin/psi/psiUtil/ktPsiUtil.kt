@@ -308,7 +308,12 @@ fun KtNamedFunction.isContractPresentPsiCheck(): Boolean {
 }
 
 fun KtExpression.isContractDescriptionCallPsiCheck(): Boolean =
-    this is KtCallExpression && calleeExpression?.text == "contract"
+    (this is KtCallExpression && calleeExpression?.text == "contract") || (this is KtQualifiedExpression && isContractDescriptionCallPsiCheck())
+
+fun KtQualifiedExpression.isContractDescriptionCallPsiCheck(): Boolean {
+    val expression = selectorExpression ?: return false
+    return receiverExpression.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
+}
 
 
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
