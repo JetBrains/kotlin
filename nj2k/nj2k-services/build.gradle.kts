@@ -15,7 +15,6 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.common"))
     compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:frontend.script"))
     compile(project(":js:js.frontend"))
     compile(project(":js:js.serializer"))
     compile(project(":compiler:light-classes"))

@@ -10,7 +10,6 @@ dependencies {
     compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:frontend.script"))
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:backend.jvm"))

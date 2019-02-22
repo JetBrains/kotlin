@@ -9,7 +9,6 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":compiler:frontend.script"))
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
@@ -38,8 +37,6 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        languageVersion = "1.2"
-        apiVersion = "1.2"
         freeCompilerArgs += "-Xskip-metadata-version-check"
     }
 }

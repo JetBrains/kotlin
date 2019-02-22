@@ -1,7 +1,6 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
@@ -204,7 +203,6 @@ extra["compilerModules"] = arrayOf(
         ":compiler:frontend",
         ":compiler:frontend.common",
         ":compiler:frontend.java",
-        ":compiler:frontend.script",
         ":compiler:cli-common",
         ":compiler:daemon-common",
         ":compiler:daemon",

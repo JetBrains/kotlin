@@ -21,7 +21,6 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:frontend.script"))
     testCompile(project(":compiler:plugin-api"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
