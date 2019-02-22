@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-class FirValueParameterImpl(
+open class FirValueParameterImpl(
     session: FirSession,
     psi: PsiElement?,
     name: Name,

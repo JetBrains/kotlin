@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-class FirUserTypeRefImpl(
+open class FirUserTypeRefImpl(
     session: FirSession,
     psi: PsiElement?,
-    isNullable: Boolean
-) : FirAbstractAnnotatedTypeRef(session, psi, isNullable), FirUserTypeRef {
+    isMarkedNullable: Boolean
+) : FirAbstractAnnotatedTypeRef(session, psi, isMarkedNullable), FirUserTypeRef {
     override val qualifier = mutableListOf<FirQualifierPart>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {

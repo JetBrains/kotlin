@@ -397,7 +397,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         }
 
         private fun KtClassOrObject.toDelegatedSelfType(): FirTypeRef =
-            FirUserTypeRefImpl(session, this, isNullable = false).apply {
+            FirUserTypeRefImpl(session, this, isMarkedNullable = false).apply {
                 qualifier.add(FirQualifierPartImpl(nameAsSafeName))
             }
 

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
-class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, FirModifiableFunction {
+open class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, FirModifiableFunction {
 
     constructor(
         session: FirSession,
