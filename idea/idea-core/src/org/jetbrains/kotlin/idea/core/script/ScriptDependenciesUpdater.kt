@@ -40,10 +40,8 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.LegacyResolverWrapper
 import org.jetbrains.kotlin.scripting.shared.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.shared.definitions.scriptDefinition
-import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class ScriptDependenciesUpdater(
