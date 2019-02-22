@@ -10608,6 +10608,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FieldRename extends AbstractLightAnalysisModeTest {
+        @TestMetadata("jvmFieldNoClash1.kt")
+        public void ignoreJvmFieldNoClash1() throws Exception {
+            runTest("compiler/testData/codegen/box/fieldRename/jvmFieldNoClash1.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -10629,11 +10634,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("genericPropertyWithItself.kt")
         public void testGenericPropertyWithItself() throws Exception {
             runTest("compiler/testData/codegen/box/fieldRename/genericPropertyWithItself.kt");
-        }
-
-        @TestMetadata("jvmFieldNoClash1.kt")
-        public void testJvmFieldNoClash1() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/jvmFieldNoClash1.kt");
         }
 
         @TestMetadata("jvmFieldNoClash2.kt")
