@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.resolve.DeclarationReturnTypeSanitizer
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
+import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
@@ -46,7 +45,6 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
                 ExpectedActualDeclarationChecker()
         ),
         additionalCallCheckers = listOf(
-                ReifiedTypeParameterSubstitutionChecker(),
                 JsModuleCallChecker,
                 JsDynamicCallChecker,
                 JsDefinedExternallyCallChecker
