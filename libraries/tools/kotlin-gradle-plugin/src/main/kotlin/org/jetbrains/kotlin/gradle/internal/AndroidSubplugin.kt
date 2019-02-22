@@ -123,7 +123,8 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val sourceSets = androidExtension.sourceSets
 
         val pluginOptions = arrayListOf<SubpluginOption>()
-        pluginOptions += SubpluginOption("features", AndroidExtensionsFeature.VIEWS.featureName)
+        pluginOptions += SubpluginOption("features",
+                                         AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName })
 
         val mainSourceSet = sourceSets.getByName("main")
         val manifestFile = mainSourceSet.manifest.srcFile
