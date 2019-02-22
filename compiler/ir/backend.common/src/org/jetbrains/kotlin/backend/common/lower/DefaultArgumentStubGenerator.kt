@@ -391,6 +391,7 @@ class DefaultParameterCleaner constructor(val context: CommonBackendContext) : F
 // TODO this implementation is exponential
 private fun IrFunction.needsDefaultArgumentsLowering(skipInlineMethods: Boolean): Boolean {
     if (isInline && skipInlineMethods) return false
+    if (isEffectivelyExternal()) return false
     if (valueParameters.any { it.defaultValue != null }) return true
 
     if (this !is IrSimpleFunction) return false
