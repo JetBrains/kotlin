@@ -3,10 +3,10 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.builtins.UnsignedTypes
@@ -166,15 +166,6 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(
 
 }
 
-// TODO: inline and remove then ScriptCodegen is converted to Kotlin
-fun mapSupertypesNames(
-    typeMapper: KotlinTypeMapper,
-    supertypes: List<ClassDescriptor>,
-    signatureVisitor: JvmSignatureWriter?
-): Array<String> =
-    supertypes.map { typeMapper.mapSupertype(it.defaultType, signatureVisitor).internalName }.toTypedArray()
-
-
 // Top level subclasses of a sealed class should be generated before that sealed class,
 // so that we'd generate the necessary accessor for its constructor afterwards
 fun sortTopLevelClassesAndPrepareContextForSealedClasses(
@@ -211,8 +202,10 @@ fun sortTopLevelClassesAndPrepareContextForSealedClasses(
     }
 
     // topologicalOrder(listOf(1, 2, 3)) { emptyList() } = listOf(3, 2, 1). Because of this used keys.reversed().
-    val sortedDescriptors = DFS.topologicalOrder(descriptorToPsi.keys.reversed()) {
-        it.typeConstructor.supertypes.map { it.constructor.declarationDescriptor as? ClassDescriptor }.filter { it in descriptorToPsi.keys }
+    val sortedDescriptors = DFS.topologicalOrder(descriptorToPsi.keys.reversed()) { descriptor ->
+        descriptor.typeConstructor.supertypes
+            .map { it.constructor.declarationDescriptor as? ClassDescriptor }
+            .filter { it in descriptorToPsi.keys }
     }
     sortedDescriptors.mapTo(result) { descriptorToPsi[it]!! }
     return result
@@ -301,7 +294,7 @@ fun FunctionDescriptor.isGenericToArray(): Boolean {
 
 fun FunctionDescriptor.isNonGenericToArray(): Boolean {
     if (name.asString() != "toArray") return false
-    if (!valueParameters.isEmpty() || !typeParameters.isEmpty()) return false
+    if (valueParameters.isNotEmpty() || typeParameters.isNotEmpty()) return false
 
     val returnType = returnType
     return returnType != null && KotlinBuiltIns.isArray(returnType)
@@ -367,8 +360,8 @@ fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
     }
 }
 
-fun extractReificationArgument(type: KotlinType): Pair<TypeParameterDescriptor, ReificationArgument>? {
-    var type = type
+fun extractReificationArgument(initialType: KotlinType): Pair<TypeParameterDescriptor, ReificationArgument>? {
+    var type = initialType
     var arrayDepth = 0
     val isNullable = type.isMarkedNullable
     while (KotlinBuiltIns.isArray(type)) {
@@ -394,15 +387,6 @@ fun ClassDescriptor.isPossiblyUninitializedSingleton() =
     DescriptorUtils.isEnumEntry(this) ||
             DescriptorUtils.isCompanionObject(this) && JvmCodegenUtil.isJvmInterface(this.containingDeclaration)
 
-val CodegenContext<*>.parentContextsWithSelf
-    get() = generateSequence(this) { it.parentContext }
-
-val CodegenContext<*>.parentContexts
-    get() = parentContext?.parentContextsWithSelf ?: emptySequence()
-
-val CodegenContext<*>.contextStackText
-    get() = parentContextsWithSelf.joinToString(separator = "\n") { it.toString() }
-
 inline fun FrameMap.evaluateOnce(
     value: StackValue,
     asType: Type,
@@ -423,6 +407,8 @@ inline fun FrameMap.evaluateOnce(
 }
 
 // Handy debugging routine. Print all instructions from methodNode.
+@TestOnly
+@Suppress("unused")
 fun MethodNode.textifyMethodNode(): String {
     val text = Textifier()
     val tmv = TraceMethodVisitor(text)
@@ -487,7 +473,7 @@ fun generateBridgeForMainFunctionIfNecessary(
         unwrappedFunctionDescriptor.extensionReceiverParameter == null && unwrappedFunctionDescriptor.valueParameters.isEmpty()
 
     if (!functionDescriptor.isSuspend && !isParameterless) return
-    if (!state.mainFunctionDetector.isMain(unwrappedFunctionDescriptor, false, true)) return
+    if (!state.mainFunctionDetector.isMain(unwrappedFunctionDescriptor, checkJvmStaticAnnotation = false, checkReturnType = true)) return
 
     val bridgeMethodVisitor = packagePartClassBuilder.newMethod(
         Synthetic(originElement, functionDescriptor),

@@ -47,7 +47,9 @@ class ScriptCodegen private constructor(
                 classAsmType.internalName,
                 null,
                 typeMapper.mapSupertype(scriptDescriptor.getSuperClassOrAny().defaultType, null).internalName,
-                mapSupertypesNames(typeMapper, scriptDescriptor.getSuperInterfaces(), null)
+                scriptDescriptor.getSuperInterfaces().map {
+                    typeMapper.mapSupertype(it.defaultType, null).internalName
+                }.toTypedArray()
         )
         AnnotationCodegen.forClass(v.visitor, this, state).genAnnotations(scriptDescriptor, null)
     }
