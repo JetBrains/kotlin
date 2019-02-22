@@ -172,15 +172,17 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             return generateArrayAccessAssignmentReceiver(ktLeft, origin)
         }
 
-        val resolvedCall = getResolvedCall(ktLeft) ?: TODO("no resolved call for LHS")
+        val resolvedCall = getResolvedCall(ktLeft)
+            ?: return generateExpressionAssignmentReceiver(ktLeft, origin, isAssignmentStatement)
         val descriptor = resolvedCall.resultingDescriptor
 
+        val startOffset = ktLeft.startOffsetSkippingComments
+        val endOffset = ktLeft.endOffset
         return when (descriptor) {
             is SyntheticFieldDescriptor -> {
                 val receiverValue =
                     statementGenerator.generateBackingFieldReceiver(
-                        ktLeft.startOffsetSkippingComments,
-                        ktLeft.endOffset,
+                        startOffset, endOffset,
                         resolvedCall,
                         descriptor
                     )
@@ -191,7 +193,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 if (descriptor.isDelegated)
                     DelegatedLocalPropertyLValue(
                         context,
-                        ktLeft.startOffsetSkippingComments, ktLeft.endOffset,
+                        startOffset, endOffset,
                         descriptor.type.toIrType(),
                         descriptor.getter?.let { context.symbolTable.referenceDeclaredFunction(it) },
                         descriptor.setter?.let { context.symbolTable.referenceDeclaredFunction(it) },
@@ -206,6 +208,24 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             else ->
                 OnceExpressionValue(ktLeft.genExpr())
         }
+    }
+
+    private fun generateExpressionAssignmentReceiver(
+        ktLeft: KtExpression,
+        origin: IrStatementOrigin,
+        isAssignmentStatement: Boolean
+    ): AssignmentReceiver {
+        // This is a somewhat special case when LHS of the augmented assignment operator is an arbitrary expression without resolved call.
+        // This can happen only in case of compound assignment resolved to '<op>Assign' operator, e.g.,
+        //      (a as MutableList<Any>) += 42
+        if (!isAssignmentStatement) {
+            throw AssertionError("Arbitrary assignment receiver found in assignment-like expression: ${ktLeft.parent.text}")
+        }
+
+        return SpecialExpressionAssignmentReceiver(
+            statementGenerator, ktLeft, origin,
+            context.bindingContext.getType(ktLeft)?.toIrType() ?: throw AssertionError("No type for expression ${ktLeft.text}")
+        )
     }
 
     private fun createVariableValue(

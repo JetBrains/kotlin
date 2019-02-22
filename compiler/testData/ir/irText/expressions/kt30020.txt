@@ -1,0 +1,273 @@
+FILE fqName:<root> fileName:/kt30020.kt
+  CLASS INTERFACE name:X modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X flags:
+    PROPERTY name:xs visibility:public modality:ABSTRACT flags:val
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:ABSTRACT <> ($this:X) returnType:kotlin.collections.MutableList<kotlin.Any> flags:
+        correspondingProperty: PROPERTY name:xs visibility:public modality:ABSTRACT flags:val
+        $this: VALUE_PARAMETER name:<this> type:X flags:
+    FUN name:f visibility:public modality:ABSTRACT <> ($this:X) returnType:kotlin.collections.MutableList<kotlin.Any> flags:
+      $this: VALUE_PARAMETER name:<this> type:X flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test visibility:public modality:FINAL <> (x:X, nx:X?) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:x index:0 type:X flags:
+    VALUE_PARAMETER name:nx index:1 type:X? flags:
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit origin=PLUSEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_this type:X flags:val
+          GET_VAR 'value-parameter x: X' type=X origin=null
+        CALL 'plusAssign(T) on MutableCollection<in T>: Unit' type=kotlin.Unit origin=PLUSEQ
+          <T>: kotlin.Int
+          $receiver: CALL '<get-xs>(): MutableList<Any>' type=kotlin.collections.MutableList<kotlin.Any> origin=PLUSEQ
+            $this: GET_VAR 'tmp0_this: X' type=X origin=null
+          element: CONST Int type=kotlin.Int value=1
+      CALL 'plusAssign(T) on MutableCollection<in T>: Unit' type=kotlin.Unit origin=PLUSEQ
+        <T>: kotlin.Int
+        $receiver: CALL 'f(): MutableList<Any>' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+          $this: GET_VAR 'value-parameter x: X' type=X origin=null
+        element: CONST Int type=kotlin.Int value=2
+      CALL 'plusAssign(T) on MutableCollection<in T>: Unit' type=kotlin.Unit origin=PLUSEQ
+        <T>: kotlin.Int
+        $receiver: TYPE_OP type=kotlin.collections.MutableList<kotlin.Int> origin=CAST typeOperand=kotlin.collections.MutableList<kotlin.Int>
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableList modality:ABSTRACT visibility:public flags: superTypes:[kotlin.collections.List<E>; kotlin.collections.MutableCollection<E>]
+          CALL '<get-xs>(): MutableList<Any>' type=kotlin.collections.MutableList<kotlin.Any> origin=GET_PROPERTY
+            $this: GET_VAR 'value-parameter x: X' type=X origin=null
+        element: CONST Int type=kotlin.Int value=3
+      CALL 'plusAssign(T) on MutableCollection<in T>: Unit' type=kotlin.Unit origin=PLUSEQ
+        <T>: kotlin.Int
+        $receiver: TYPE_OP type=kotlin.collections.MutableList<kotlin.Int> origin=CAST typeOperand=kotlin.collections.MutableList<kotlin.Int>
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableList modality:ABSTRACT visibility:public flags: superTypes:[kotlin.collections.List<E>; kotlin.collections.MutableCollection<E>]
+          CALL 'f(): MutableList<Any>' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+            $this: GET_VAR 'value-parameter x: X' type=X origin=null
+        element: CONST Int type=kotlin.Int value=4
+      CALL 'plusAssign(T) on MutableCollection<in T>: Unit' type=kotlin.Unit origin=PLUSEQ
+        <T>: kotlin.Int
+        $receiver: BLOCK type=kotlin.collections.MutableList<kotlin.Any> origin=EXCLEXCL
+          VAR IR_TEMPORARY_VARIABLE name:tmp2_notnull type:kotlin.collections.MutableList<kotlin.Any>? flags:val
+            BLOCK type=kotlin.collections.MutableList<kotlin.Any>? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:X? flags:val
+                GET_VAR 'value-parameter nx: X?' type=X? origin=null
+              WHEN type=kotlin.collections.MutableList<kotlin.Any>? origin=null
+                BRANCH
+                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'tmp1_safe_receiver: X?' type=X? origin=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CALL '<get-xs>(): MutableList<Any>' type=kotlin.collections.MutableList<kotlin.Any> origin=GET_PROPERTY
+                    $this: GET_VAR 'tmp1_safe_receiver: X?' type=X? origin=null
+          WHEN type=kotlin.collections.MutableList<kotlin.Any> origin=null
+            BRANCH
+              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp2_notnull: MutableList<Any>?' type=kotlin.collections.MutableList<kotlin.Any>? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: GET_VAR 'tmp2_notnull: MutableList<Any>?' type=kotlin.collections.MutableList<kotlin.Any>? origin=null
+        element: CONST Int type=kotlin.Int value=5
+      CALL 'plusAssign(T) on MutableCollection<in T>: Unit' type=kotlin.Unit origin=PLUSEQ
+        <T>: kotlin.Int
+        $receiver: BLOCK type=kotlin.collections.MutableList<kotlin.Any> origin=EXCLEXCL
+          VAR IR_TEMPORARY_VARIABLE name:tmp4_notnull type:kotlin.collections.MutableList<kotlin.Any>? flags:val
+            BLOCK type=kotlin.collections.MutableList<kotlin.Any>? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:X? flags:val
+                GET_VAR 'value-parameter nx: X?' type=X? origin=null
+              WHEN type=kotlin.collections.MutableList<kotlin.Any>? origin=null
+                BRANCH
+                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'tmp3_safe_receiver: X?' type=X? origin=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CALL 'f(): MutableList<Any>' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+                    $this: GET_VAR 'tmp3_safe_receiver: X?' type=X? origin=null
+          WHEN type=kotlin.collections.MutableList<kotlin.Any> origin=null
+            BRANCH
+              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp4_notnull: MutableList<Any>?' type=kotlin.collections.MutableList<kotlin.Any>? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: GET_VAR 'tmp4_notnull: MutableList<Any>?' type=kotlin.collections.MutableList<kotlin.Any>? origin=null
+        element: CONST Int type=kotlin.Int value=6
+  FUN name:testExtensionReceiver visibility:public modality:FINAL <> ($receiver:kotlin.collections.MutableList<kotlin.Any>) returnType:kotlin.Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Any> flags:
+    BLOCK_BODY
+      CALL 'plusAssign(T) on MutableCollection<in T>: Unit' type=kotlin.Unit origin=PLUSEQ
+        <T>: kotlin.Int
+        $receiver: GET_VAR 'this@testExtensionReceiver: MutableList<Any>' type=kotlin.collections.MutableList<kotlin.Any> origin=PLUSEQ
+        element: CONST Int type=kotlin.Int value=100
+  CLASS CLASS name:AML modality:ABSTRACT visibility:public flags: superTypes:[kotlin.collections.MutableList<kotlin.Int>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:AML flags:
+    CONSTRUCTOR visibility:public <> () returnType:AML flags:primary
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='AML'
+    FUN name:testExplicitThis visibility:public modality:FINAL <> ($this:AML) returnType:kotlin.Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:AML flags:
+      BLOCK_BODY
+        CALL 'plusAssign(T) on MutableCollection<in T>: Unit' type=kotlin.Unit origin=PLUSEQ
+          <T>: kotlin.Int
+          $receiver: GET_VAR 'this@AML: AML' type=AML origin=PLUSEQ
+          element: CONST Int type=kotlin.Int value=200
+    CLASS CLASS name:Inner modality:FINAL visibility:public flags:inner superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:AML.Inner flags:
+      CONSTRUCTOR visibility:public <> ($this:AML) returnType:AML.Inner flags:primary
+        $outer: VALUE_PARAMETER name:<this> type:AML flags:
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
+      FUN name:testOuterThis visibility:public modality:FINAL <> ($this:AML.Inner) returnType:kotlin.Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:AML.Inner flags:
+        BLOCK_BODY
+          CALL 'plusAssign(T) on MutableCollection<in T>: Unit' type=kotlin.Unit origin=PLUSEQ
+            <T>: kotlin.Int
+            $receiver: GET_VAR 'this@AML: AML' type=AML origin=PLUSEQ
+            element: CONST Int type=kotlin.Int value=300
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, element:kotlin.Int) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, element:E) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:element index:0 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, index:kotlin.Int, element:kotlin.Int) returnType:kotlin.Unit flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, index:kotlin.Int, element:E) returnType:kotlin.Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int flags:
+      VALUE_PARAMETER name:element index:1 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, elements:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, elements:kotlin.collections.Collection<E>) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, index:kotlin.Int, elements:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, index:kotlin.Int, elements:kotlin.collections.Collection<E>) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int flags:
+      VALUE_PARAMETER name:elements index:1 type:kotlin.collections.Collection<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>) returnType:kotlin.Unit flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>) returnType:kotlin.Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>, element:kotlin.Int) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<E>, element:E) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<kotlin.Int> flags:
+      VALUE_PARAMETER name:element index:0 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>, elements:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<E>, elements:kotlin.collections.Collection<E>) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<kotlin.Int> flags:
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>, index:kotlin.Int) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<E>, index:kotlin.Int) returnType:E flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<kotlin.Int> flags:
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:indexOf visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>, element:kotlin.Int) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:indexOf visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<E>, element:E) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<kotlin.Int> flags:
+      VALUE_PARAMETER name:element index:0 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<E>) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<kotlin.Int>) returnType:kotlin.collections.MutableIterator<kotlin.Int> flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>) returnType:kotlin.collections.MutableIterator<E> flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:lastIndexOf visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>, element:kotlin.Int) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:lastIndexOf visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<E>, element:E) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<kotlin.Int> flags:
+      VALUE_PARAMETER name:element index:0 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:listIterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>) returnType:kotlin.collections.MutableListIterator<kotlin.Int> flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:listIterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>) returnType:kotlin.collections.MutableListIterator<E> flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:listIterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, index:kotlin.Int) returnType:kotlin.collections.MutableListIterator<kotlin.Int> flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:listIterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, index:kotlin.Int) returnType:kotlin.collections.MutableListIterator<E> flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, element:kotlin.Int) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, element:E) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:element index:0 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, elements:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, elements:kotlin.collections.Collection<E>) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, index:kotlin.Int) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:removeAt visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, index:kotlin.Int) returnType:E flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:retainAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, elements:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, elements:kotlin.collections.Collection<E>) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:set visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, index:kotlin.Int, element:kotlin.Int) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:set visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, index:kotlin.Int, element:E) returnType:E flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int flags:
+      VALUE_PARAMETER name:element index:1 type:kotlin.Int flags:
+    FUN FAKE_OVERRIDE name:subList visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>, fromIndex:kotlin.Int, toIndex:kotlin.Int) returnType:kotlin.collections.MutableList<kotlin.Int> flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:subList visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<E>, fromIndex:kotlin.Int, toIndex:kotlin.Int) returnType:kotlin.collections.MutableList<E> flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int> flags:
+      VALUE_PARAMETER name:fromIndex index:0 type:kotlin.Int flags:
+      VALUE_PARAMETER name:toIndex index:1 type:kotlin.Int flags:
+    PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT flags:val
+      FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT flags:val
+        overridden:
+          FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<E>) returnType:kotlin.Int flags:
+        $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<kotlin.Int> flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
