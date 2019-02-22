@@ -54,6 +54,7 @@ enum class PrimitiveType {
     ULong;
 
     val capacity by lazy { descendingByDomainCapacity.indexOf(this).let { if (it < 0) it else descendingByDomainCapacity.size - it } }
+    val capacityUnsigned by lazy { descendingByDomainCapacityUnsigned.indexOf(this).let { if (it < 0) it else descendingByDomainCapacityUnsigned.size - it } }
 
     companion object {
         val unsignedPrimitives = setOf(UInt, ULong, UByte, UShort)
