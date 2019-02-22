@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.contracts.description.LazyContractProvider
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.isOverridable
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -110,7 +107,7 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         if (!callContext.isFirstStatement)
             collector.contractNotAllowed("Contract should be the first statement")
 
-        if (functionDescriptor == null)
+        if (functionDescriptor == null || functionDescriptor is PropertyAccessorDescriptor)
             collector.contractNotAllowed("Contracts are allowed only for functions")
 
 
