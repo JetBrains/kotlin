@@ -94,8 +94,8 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             }
 
             IrFieldImpl(
-                    innerClass.descriptor.startOffsetOrUndefined,
-                    innerClass.descriptor.endOffsetOrUndefined,
+                    innerClass.startOffset,
+                    innerClass.endOffset,
                     DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS,
                     descriptor,
                     outerClass.defaultType
