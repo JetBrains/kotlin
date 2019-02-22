@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.findNonGenericClassAcrossDependencies
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.TypeUsage
+import org.jetbrains.kotlin.load.java.descriptors.PossiblyExternalAnnotationDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.*
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.types.isError
 class LazyJavaAnnotationDescriptor(
     private val c: LazyJavaResolverContext,
     private val javaAnnotation: JavaAnnotation
-) : AnnotationDescriptor {
+) : AnnotationDescriptor, PossiblyExternalAnnotationDescriptor {
     override val fqName by c.storageManager.createNullableLazyValue {
         javaAnnotation.classId?.asSingleFqName()
     }
@@ -112,4 +113,6 @@ class LazyJavaAnnotationDescriptor(
             ClassId.topLevel(fqName),
             c.components.deserializedDescriptorResolver.components.notFoundClasses
         )
+
+    override val isIdeExternalAnnotation: Boolean = javaAnnotation.isIdeExternalAnnotation
 }

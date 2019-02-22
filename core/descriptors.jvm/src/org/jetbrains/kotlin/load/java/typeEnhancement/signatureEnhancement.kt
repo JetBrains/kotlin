@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
+import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -34,6 +31,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.deprecation.DEPRECATED_FUNCTION_KEY
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSourceAnnotation
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -103,6 +101,12 @@ class SignatureEnhancement(
                 isForWarningOnly = true
             )
             else -> null
+        }?.let { migrationStatus ->
+            if (!migrationStatus.isForWarningOnly
+                    && annotationDescriptor is PossiblyExternalAnnotationDescriptor
+                    && annotationDescriptor.isIdeExternalAnnotation)
+                migrationStatus.copy(isForWarningOnly = true)
+            else migrationStatus
         }
     }
 

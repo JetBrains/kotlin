@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.load.java.descriptors.PossiblyExternalAnnotationDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaAnnotationDescriptor
 import org.jetbrains.kotlin.load.java.structure.*
@@ -103,7 +104,7 @@ open class JavaAnnotationDescriptor(
     c: LazyJavaResolverContext,
     annotation: JavaAnnotation?,
     override val fqName: FqName
-) : AnnotationDescriptor {
+) : AnnotationDescriptor, PossiblyExternalAnnotationDescriptor {
     override val source: SourceElement = annotation?.let { c.components.sourceElementFactory.source(it) } ?: SourceElement.NO_SOURCE
 
     override val type: SimpleType by c.storageManager.createLazyValue { c.module.builtIns.getBuiltInClassByFqName(fqName).defaultType }
@@ -111,6 +112,8 @@ open class JavaAnnotationDescriptor(
     protected val firstArgument: JavaAnnotationArgument? = annotation?.arguments?.firstOrNull()
 
     override val allValueArguments: Map<Name, ConstantValue<*>> get() = emptyMap()
+
+    override val isIdeExternalAnnotation: Boolean = annotation?.isIdeExternalAnnotation == true
 }
 
 class JavaDeprecatedAnnotationDescriptor(
