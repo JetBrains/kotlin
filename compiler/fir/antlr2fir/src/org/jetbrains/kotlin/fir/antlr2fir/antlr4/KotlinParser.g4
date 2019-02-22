@@ -728,7 +728,6 @@ modifier
 
 classModifier
     : 'enum'
-    | 'sealed'
     | 'annotation'
     | 'data'
     | 'inner'
@@ -768,6 +767,7 @@ inheritanceModifier
     : 'abstract'
     | 'final'
     | 'open'
+    | 'sealed'
     ;
 
 parameterModifier

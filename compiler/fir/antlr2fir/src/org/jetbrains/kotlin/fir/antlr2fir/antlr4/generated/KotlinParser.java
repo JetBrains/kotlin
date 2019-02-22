@@ -1,4 +1,4 @@
-// Generated from E:/!PROJECTS/IntelliJ IDEA/kotlin/compiler/fir/antlr2fir/src/org/jetbrains/kotlin/fir/antlr2fir/antlr4\KotlinParser.g4 by ANTLR 4.7
+// Generated from E:/!PROJECTS/IntelliJ IDEA/kotlin/compiler/fir/antlr2fir/src/org/jetbrains/kotlin/fir/antlr2fir/antlr4\KotlinParser.g4 by ANTLR 4.7.2
 package org.jetbrains.kotlin.fir.antlr2fir.antlr4.generated;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class KotlinParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -101,98 +101,108 @@ public class KotlinParser extends Parser {
 		RULE_unescapedAnnotation = 156, RULE_simpleIdentifier = 157, RULE_identifier = 158, 
 		RULE_shebangLine = 159, RULE_quest = 160, RULE_elvis = 161, RULE_safeNav = 162, 
 		RULE_excl = 163, RULE_semi = 164, RULE_semis = 165;
-	public static final String[] ruleNames = {
-		"kotlinFile", "script", "fileAnnotation", "packageHeader", "importList", 
-		"importHeader", "importAlias", "topLevelObject", "classDeclaration", "primaryConstructor", 
-		"classParameters", "classParameter", "delegationSpecifiers", "annotatedDelegationSpecifier", 
-		"delegationSpecifier", "constructorInvocation", "explicitDelegation", 
-		"classBody", "classMemberDeclarations", "classMemberDeclaration", "anonymousInitializer", 
-		"secondaryConstructor", "constructorDelegationCall", "enumClassBody", 
-		"enumEntries", "enumEntry", "functionDeclaration", "functionValueParameters", 
-		"functionValueParameter", "parameter", "setterParameter", "functionBody", 
-		"objectDeclaration", "companionObject", "propertyDeclaration", "multiVariableDeclaration", 
-		"variableDeclaration", "propertyDelegate", "getter", "setter", "typeAlias", 
-		"typeParameters", "typeParameter", "typeParameterModifiers", "typeParameterModifier", 
-		"type", "typeModifiers", "typeModifier", "parenthesizedType", "nullableType", 
-		"typeReference", "functionType", "receiverType", "userType", "parenthesizedUserType", 
-		"simpleUserType", "functionTypeParameters", "typeConstraints", "typeConstraint", 
-		"block", "statements", "statement", "declaration", "assignment", "expression", 
-		"disjunction", "conjunction", "equality", "comparison", "infixOperation", 
-		"elvisExpression", "infixFunctionCall", "rangeExpression", "additiveExpression", 
-		"multiplicativeExpression", "asExpression", "prefixUnaryExpression", "unaryPrefix", 
-		"postfixUnaryExpression", "postfixUnarySuffix", "directlyAssignableExpression", 
-		"assignableExpression", "assignableSuffix", "indexingSuffix", "navigationSuffix", 
-		"callSuffix", "annotatedLambda", "valueArguments", "typeArguments", "typeProjection", 
-		"typeProjectionModifiers", "typeProjectionModifier", "valueArgument", 
-		"primaryExpression", "parenthesizedExpression", "collectionLiteral", "literalConstant", 
-		"stringLiteral", "lineStringLiteral", "multiLineStringLiteral", "lineStringContent", 
-		"lineStringExpression", "multiLineStringContent", "multiLineStringExpression", 
-		"lambdaLiteral", "lambdaParameters", "lambdaParameter", "anonymousFunction", 
-		"functionLiteral", "objectLiteral", "thisExpression", "superExpression", 
-		"controlStructureBody", "ifExpression", "whenExpression", "whenEntry", 
-		"whenCondition", "rangeTest", "typeTest", "tryExpression", "catchBlock", 
-		"finallyBlock", "loopStatement", "forStatement", "whileStatement", "doWhileStatement", 
-		"jumpExpression", "callableReference", "assignmentAndOperator", "equalityOperator", 
-		"comparisonOperator", "inOperator", "isOperator", "additiveOperator", 
-		"multiplicativeOperator", "asOperator", "prefixUnaryOperator", "postfixUnaryOperator", 
-		"memberAccessOperator", "modifiers", "modifier", "classModifier", "memberModifier", 
-		"visibilityModifier", "varianceModifier", "functionModifier", "propertyModifier", 
-		"inheritanceModifier", "parameterModifier", "reificationModifier", "platformModifier", 
-		"label", "annotation", "singleAnnotation", "multiAnnotation", "annotationUseSiteTarget", 
-		"unescapedAnnotation", "simpleIdentifier", "identifier", "shebangLine", 
-		"quest", "elvis", "safeNav", "excl", "semi", "semis"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"kotlinFile", "script", "fileAnnotation", "packageHeader", "importList", 
+			"importHeader", "importAlias", "topLevelObject", "classDeclaration", 
+			"primaryConstructor", "classParameters", "classParameter", "delegationSpecifiers", 
+			"annotatedDelegationSpecifier", "delegationSpecifier", "constructorInvocation", 
+			"explicitDelegation", "classBody", "classMemberDeclarations", "classMemberDeclaration", 
+			"anonymousInitializer", "secondaryConstructor", "constructorDelegationCall", 
+			"enumClassBody", "enumEntries", "enumEntry", "functionDeclaration", "functionValueParameters", 
+			"functionValueParameter", "parameter", "setterParameter", "functionBody", 
+			"objectDeclaration", "companionObject", "propertyDeclaration", "multiVariableDeclaration", 
+			"variableDeclaration", "propertyDelegate", "getter", "setter", "typeAlias", 
+			"typeParameters", "typeParameter", "typeParameterModifiers", "typeParameterModifier", 
+			"type", "typeModifiers", "typeModifier", "parenthesizedType", "nullableType", 
+			"typeReference", "functionType", "receiverType", "userType", "parenthesizedUserType", 
+			"simpleUserType", "functionTypeParameters", "typeConstraints", "typeConstraint", 
+			"block", "statements", "statement", "declaration", "assignment", "expression", 
+			"disjunction", "conjunction", "equality", "comparison", "infixOperation", 
+			"elvisExpression", "infixFunctionCall", "rangeExpression", "additiveExpression", 
+			"multiplicativeExpression", "asExpression", "prefixUnaryExpression", 
+			"unaryPrefix", "postfixUnaryExpression", "postfixUnarySuffix", "directlyAssignableExpression", 
+			"assignableExpression", "assignableSuffix", "indexingSuffix", "navigationSuffix", 
+			"callSuffix", "annotatedLambda", "valueArguments", "typeArguments", "typeProjection", 
+			"typeProjectionModifiers", "typeProjectionModifier", "valueArgument", 
+			"primaryExpression", "parenthesizedExpression", "collectionLiteral", 
+			"literalConstant", "stringLiteral", "lineStringLiteral", "multiLineStringLiteral", 
+			"lineStringContent", "lineStringExpression", "multiLineStringContent", 
+			"multiLineStringExpression", "lambdaLiteral", "lambdaParameters", "lambdaParameter", 
+			"anonymousFunction", "functionLiteral", "objectLiteral", "thisExpression", 
+			"superExpression", "controlStructureBody", "ifExpression", "whenExpression", 
+			"whenEntry", "whenCondition", "rangeTest", "typeTest", "tryExpression", 
+			"catchBlock", "finallyBlock", "loopStatement", "forStatement", "whileStatement", 
+			"doWhileStatement", "jumpExpression", "callableReference", "assignmentAndOperator", 
+			"equalityOperator", "comparisonOperator", "inOperator", "isOperator", 
+			"additiveOperator", "multiplicativeOperator", "asOperator", "prefixUnaryOperator", 
+			"postfixUnaryOperator", "memberAccessOperator", "modifiers", "modifier", 
+			"classModifier", "memberModifier", "visibilityModifier", "varianceModifier", 
+			"functionModifier", "propertyModifier", "inheritanceModifier", "parameterModifier", 
+			"reificationModifier", "platformModifier", "label", "annotation", "singleAnnotation", 
+			"multiAnnotation", "annotationUseSiteTarget", "unescapedAnnotation", 
+			"simpleIdentifier", "identifier", "shebangLine", "quest", "elvis", "safeNav", 
+			"excl", "semi", "semis"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, null, null, null, null, null, "'...'", "'.'", "','", "'('", "')'", 
-		"'['", "']'", "'{'", "'}'", "'*'", "'%'", "'/'", "'+'", "'-'", "'++'", 
-		"'--'", "'&&'", "'||'", null, "'!'", "':'", "';'", "'='", "'+='", "'-='", 
-		"'*='", "'/='", "'%='", "'->'", "'=>'", "'..'", "'::'", "';;'", "'#'", 
-		"'@'", null, null, "'?'", "'<'", "'>'", "'<='", "'>='", "'!='", "'!=='", 
-		"'as?'", "'=='", "'==='", "'''", null, null, null, null, null, "'package'", 
-		"'import'", "'class'", "'interface'", "'fun'", "'object'", "'val'", "'var'", 
-		"'typealias'", "'constructor'", "'by'", "'companion'", "'init'", "'this'", 
-		"'super'", "'typeof'", "'where'", "'if'", "'else'", "'when'", "'try'", 
-		"'catch'", "'finally'", "'for'", "'do'", "'while'", "'throw'", "'return'", 
-		"'continue'", "'break'", "'as'", "'is'", "'in'", null, null, "'out'", 
-		"'get'", "'set'", "'dynamic'", "'@file'", "'@field'", "'@property'", "'@get'", 
-		"'@set'", "'@receiver'", "'@param'", "'@setparam'", "'@delegate'", "'public'", 
-		"'private'", "'protected'", "'internal'", "'enum'", "'sealed'", "'annotation'", 
-		"'data'", "'inner'", "'tailrec'", "'operator'", "'inline'", "'infix'", 
-		"'external'", "'suspend'", "'override'", "'abstract'", "'final'", "'open'", 
-		"'const'", "'lateinit'", "'vararg'", "'noinline'", "'crossinline'", "'reified'", 
-		"'expect'", "'actual'", null, "'\"\"\"'", null, null, null, null, null, 
-		null, null, null, "'null'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, "ShebangLine", "DelimitedComment", "LineComment", "WS", "NL", "RESERVED", 
-		"DOT", "COMMA", "LPAREN", "RPAREN", "LSQUARE", "RSQUARE", "LCURL", "RCURL", 
-		"MULT", "MOD", "DIV", "ADD", "SUB", "INCR", "DECR", "CONJ", "DISJ", "EXCL_WS", 
-		"EXCL_NO_WS", "COLON", "SEMICOLON", "ASSIGNMENT", "ADD_ASSIGNMENT", "SUB_ASSIGNMENT", 
-		"MULT_ASSIGNMENT", "DIV_ASSIGNMENT", "MOD_ASSIGNMENT", "ARROW", "DOUBLE_ARROW", 
-		"RANGE", "COLONCOLON", "DOUBLE_SEMICOLON", "HASH", "AT", "AT_WS", "QUEST_WS", 
-		"QUEST_NO_WS", "LANGLE", "RANGLE", "LE", "GE", "EXCL_EQ", "EXCL_EQEQ", 
-		"AS_SAFE", "EQEQ", "EQEQEQ", "SINGLE_QUOTE", "RETURN_AT", "CONTINUE_AT", 
-		"BREAK_AT", "THIS_AT", "SUPER_AT", "PACKAGE", "IMPORT", "CLASS", "INTERFACE", 
-		"FUN", "OBJECT", "VAL", "VAR", "TYPE_ALIAS", "CONSTRUCTOR", "BY", "COMPANION", 
-		"INIT", "THIS", "SUPER", "TYPEOF", "WHERE", "IF", "ELSE", "WHEN", "TRY", 
-		"CATCH", "FINALLY", "FOR", "DO", "WHILE", "THROW", "RETURN", "CONTINUE", 
-		"BREAK", "AS", "IS", "IN", "NOT_IS", "NOT_IN", "OUT", "GETTER", "SETTER", 
-		"DYNAMIC", "AT_FILE", "AT_FIELD", "AT_PROPERTY", "AT_GET", "AT_SET", "AT_RECEIVER", 
-		"AT_PARAM", "AT_SETPARAM", "AT_DELEGATE", "PUBLIC", "PRIVATE", "PROTECTED", 
-		"INTERNAL", "ENUM", "SEALED", "ANNOTATION", "DATA", "INNER", "TAILREC", 
-		"OPERATOR", "INLINE", "INFIX", "EXTERNAL", "SUSPEND", "OVERRIDE", "ABSTRACT", 
-		"FINAL", "OPEN", "CONST", "LATEINIT", "VARARG", "NOINLINE", "CROSSINLINE", 
-		"REIFIED", "EXPECT", "ACTUAL", "QUOTE_OPEN", "TRIPLE_QUOTE_OPEN", "RealLiteral", 
-		"FloatLiteral", "DoubleLiteral", "LongLiteral", "IntegerLiteral", "HexLiteral", 
-		"BinLiteral", "BooleanLiteral", "NullLiteral", "Identifier", "IdentifierAt", 
-		"FieldIdentifier", "CharacterLiteral", "ErrorCharacter", "UNICODE_CLASS_LL", 
-		"UNICODE_CLASS_LM", "UNICODE_CLASS_LO", "UNICODE_CLASS_LT", "UNICODE_CLASS_LU", 
-		"UNICODE_CLASS_ND", "UNICODE_CLASS_NL", "Inside_Comment", "Inside_WS", 
-		"Inside_NL", "QUOTE_CLOSE", "LineStrRef", "LineStrText", "LineStrEscapedChar", 
-		"LineStrExprStart", "TRIPLE_QUOTE_CLOSE", "MultiLineStringQuote", "MultiLineStrRef", 
-		"MultiLineStrText", "MultiLineStrExprStart"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, null, null, null, null, null, "'...'", "'.'", "','", "'('", "')'", 
+			"'['", "']'", "'{'", "'}'", "'*'", "'%'", "'/'", "'+'", "'-'", "'++'", 
+			"'--'", "'&&'", "'||'", null, "'!'", "':'", "';'", "'='", "'+='", "'-='", 
+			"'*='", "'/='", "'%='", "'->'", "'=>'", "'..'", "'::'", "';;'", "'#'", 
+			"'@'", null, null, "'?'", "'<'", "'>'", "'<='", "'>='", "'!='", "'!=='", 
+			"'as?'", "'=='", "'==='", "'''", null, null, null, null, null, "'package'", 
+			"'import'", "'class'", "'interface'", "'fun'", "'object'", "'val'", "'var'", 
+			"'typealias'", "'constructor'", "'by'", "'companion'", "'init'", "'this'", 
+			"'super'", "'typeof'", "'where'", "'if'", "'else'", "'when'", "'try'", 
+			"'catch'", "'finally'", "'for'", "'do'", "'while'", "'throw'", "'return'", 
+			"'continue'", "'break'", "'as'", "'is'", "'in'", null, null, "'out'", 
+			"'get'", "'set'", "'dynamic'", "'@file'", "'@field'", "'@property'", 
+			"'@get'", "'@set'", "'@receiver'", "'@param'", "'@setparam'", "'@delegate'", 
+			"'public'", "'private'", "'protected'", "'internal'", "'enum'", "'sealed'", 
+			"'annotation'", "'data'", "'inner'", "'tailrec'", "'operator'", "'inline'", 
+			"'infix'", "'external'", "'suspend'", "'override'", "'abstract'", "'final'", 
+			"'open'", "'const'", "'lateinit'", "'vararg'", "'noinline'", "'crossinline'", 
+			"'reified'", "'expect'", "'actual'", null, "'\"\"\"'", null, null, null, 
+			null, null, null, null, null, "'null'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, "ShebangLine", "DelimitedComment", "LineComment", "WS", "NL", "RESERVED", 
+			"DOT", "COMMA", "LPAREN", "RPAREN", "LSQUARE", "RSQUARE", "LCURL", "RCURL", 
+			"MULT", "MOD", "DIV", "ADD", "SUB", "INCR", "DECR", "CONJ", "DISJ", "EXCL_WS", 
+			"EXCL_NO_WS", "COLON", "SEMICOLON", "ASSIGNMENT", "ADD_ASSIGNMENT", "SUB_ASSIGNMENT", 
+			"MULT_ASSIGNMENT", "DIV_ASSIGNMENT", "MOD_ASSIGNMENT", "ARROW", "DOUBLE_ARROW", 
+			"RANGE", "COLONCOLON", "DOUBLE_SEMICOLON", "HASH", "AT", "AT_WS", "QUEST_WS", 
+			"QUEST_NO_WS", "LANGLE", "RANGLE", "LE", "GE", "EXCL_EQ", "EXCL_EQEQ", 
+			"AS_SAFE", "EQEQ", "EQEQEQ", "SINGLE_QUOTE", "RETURN_AT", "CONTINUE_AT", 
+			"BREAK_AT", "THIS_AT", "SUPER_AT", "PACKAGE", "IMPORT", "CLASS", "INTERFACE", 
+			"FUN", "OBJECT", "VAL", "VAR", "TYPE_ALIAS", "CONSTRUCTOR", "BY", "COMPANION", 
+			"INIT", "THIS", "SUPER", "TYPEOF", "WHERE", "IF", "ELSE", "WHEN", "TRY", 
+			"CATCH", "FINALLY", "FOR", "DO", "WHILE", "THROW", "RETURN", "CONTINUE", 
+			"BREAK", "AS", "IS", "IN", "NOT_IS", "NOT_IN", "OUT", "GETTER", "SETTER", 
+			"DYNAMIC", "AT_FILE", "AT_FIELD", "AT_PROPERTY", "AT_GET", "AT_SET", 
+			"AT_RECEIVER", "AT_PARAM", "AT_SETPARAM", "AT_DELEGATE", "PUBLIC", "PRIVATE", 
+			"PROTECTED", "INTERNAL", "ENUM", "SEALED", "ANNOTATION", "DATA", "INNER", 
+			"TAILREC", "OPERATOR", "INLINE", "INFIX", "EXTERNAL", "SUSPEND", "OVERRIDE", 
+			"ABSTRACT", "FINAL", "OPEN", "CONST", "LATEINIT", "VARARG", "NOINLINE", 
+			"CROSSINLINE", "REIFIED", "EXPECT", "ACTUAL", "QUOTE_OPEN", "TRIPLE_QUOTE_OPEN", 
+			"RealLiteral", "FloatLiteral", "DoubleLiteral", "LongLiteral", "IntegerLiteral", 
+			"HexLiteral", "BinLiteral", "BooleanLiteral", "NullLiteral", "Identifier", 
+			"IdentifierAt", "FieldIdentifier", "CharacterLiteral", "ErrorCharacter", 
+			"UNICODE_CLASS_LL", "UNICODE_CLASS_LM", "UNICODE_CLASS_LO", "UNICODE_CLASS_LT", 
+			"UNICODE_CLASS_LU", "UNICODE_CLASS_ND", "UNICODE_CLASS_NL", "Inside_Comment", 
+			"Inside_WS", "Inside_NL", "QUOTE_CLOSE", "LineStrRef", "LineStrText", 
+			"LineStrEscapedChar", "LineStrExprStart", "TRIPLE_QUOTE_CLOSE", "MultiLineStringQuote", 
+			"MultiLineStrRef", "MultiLineStrText", "MultiLineStrExprStart"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -242,6 +252,7 @@ public class KotlinParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class KotlinFileContext extends ParserRuleContext {
 		public ImportListContext importList() {
 			return getRuleContext(ImportListContext.class,0);
@@ -502,6 +513,10 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class FileAnnotationContext extends ParserRuleContext {
+		public TerminalNode AT_FILE() { return getToken(KotlinParser.AT_FILE, 0); }
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
+		public TerminalNode LSQUARE() { return getToken(KotlinParser.LSQUARE, 0); }
+		public TerminalNode RSQUARE() { return getToken(KotlinParser.RSQUARE, 0); }
 		public List<UnescapedAnnotationContext> unescapedAnnotation() {
 			return getRuleContexts(UnescapedAnnotationContext.class);
 		}
@@ -666,6 +681,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class PackageHeaderContext extends ParserRuleContext {
+		public TerminalNode PACKAGE() { return getToken(KotlinParser.PACKAGE, 0); }
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
@@ -771,9 +787,12 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ImportHeaderContext extends ParserRuleContext {
+		public TerminalNode IMPORT() { return getToken(KotlinParser.IMPORT, 0); }
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(KotlinParser.DOT, 0); }
+		public TerminalNode MULT() { return getToken(KotlinParser.MULT, 0); }
 		public ImportAliasContext importAlias() {
 			return getRuleContext(ImportAliasContext.class,0);
 		}
@@ -943,6 +962,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ImportAliasContext extends ParserRuleContext {
+		public TerminalNode AS() { return getToken(KotlinParser.AS, 0); }
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
@@ -1033,6 +1053,8 @@ public class KotlinParser extends Parser {
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
+		public TerminalNode CLASS() { return getToken(KotlinParser.CLASS, 0); }
+		public TerminalNode INTERFACE() { return getToken(KotlinParser.INTERFACE, 0); }
 		public ModifiersContext modifiers() {
 			return getRuleContext(ModifiersContext.class,0);
 		}
@@ -1046,6 +1068,7 @@ public class KotlinParser extends Parser {
 		public PrimaryConstructorContext primaryConstructor() {
 			return getRuleContext(PrimaryConstructorContext.class,0);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public DelegationSpecifiersContext delegationSpecifiers() {
 			return getRuleContext(DelegationSpecifiersContext.class,0);
 		}
@@ -1288,6 +1311,7 @@ public class KotlinParser extends Parser {
 		public ClassParametersContext classParameters() {
 			return getRuleContext(ClassParametersContext.class,0);
 		}
+		public TerminalNode CONSTRUCTOR() { return getToken(KotlinParser.CONSTRUCTOR, 0); }
 		public ModifiersContext modifiers() {
 			return getRuleContext(ModifiersContext.class,0);
 		}
@@ -1363,6 +1387,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ClassParametersContext extends ParserRuleContext {
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -1372,6 +1398,10 @@ public class KotlinParser extends Parser {
 		}
 		public ClassParameterContext classParameter(int i) {
 			return getRuleContext(ClassParameterContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public ClassParametersContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1501,6 +1531,7 @@ public class KotlinParser extends Parser {
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -1511,9 +1542,12 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode ASSIGNMENT() { return getToken(KotlinParser.ASSIGNMENT, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode VAL() { return getToken(KotlinParser.VAL, 0); }
+		public TerminalNode VAR() { return getToken(KotlinParser.VAR, 0); }
 		public ClassParameterContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1656,6 +1690,10 @@ public class KotlinParser extends Parser {
 		}
 		public AnnotatedDelegationSpecifierContext annotatedDelegationSpecifier(int i) {
 			return getRuleContext(AnnotatedDelegationSpecifierContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
@@ -1935,6 +1973,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ExplicitDelegationContext extends ParserRuleContext {
+		public TerminalNode BY() { return getToken(KotlinParser.BY, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -2031,9 +2070,11 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ClassBodyContext extends ParserRuleContext {
+		public TerminalNode LCURL() { return getToken(KotlinParser.LCURL, 0); }
 		public ClassMemberDeclarationsContext classMemberDeclarations() {
 			return getRuleContext(ClassMemberDeclarationsContext.class,0);
 		}
+		public TerminalNode RCURL() { return getToken(KotlinParser.RCURL, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -2247,6 +2288,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class AnonymousInitializerContext extends ParserRuleContext {
+		public TerminalNode INIT() { return getToken(KotlinParser.INIT, 0); }
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
@@ -2304,6 +2346,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class SecondaryConstructorContext extends ParserRuleContext {
+		public TerminalNode CONSTRUCTOR() { return getToken(KotlinParser.CONSTRUCTOR, 0); }
 		public FunctionValueParametersContext functionValueParameters() {
 			return getRuleContext(FunctionValueParametersContext.class,0);
 		}
@@ -2314,6 +2357,7 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public ConstructorDelegationCallContext constructorDelegationCall() {
 			return getRuleContext(ConstructorDelegationCallContext.class,0);
 		}
@@ -2447,6 +2491,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ConstructorDelegationCallContext extends ParserRuleContext {
+		public TerminalNode THIS() { return getToken(KotlinParser.THIS, 0); }
 		public ValueArgumentsContext valueArguments() {
 			return getRuleContext(ValueArgumentsContext.class,0);
 		}
@@ -2454,6 +2499,7 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode SUPER() { return getToken(KotlinParser.SUPER, 0); }
 		public ConstructorDelegationCallContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2535,6 +2581,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class EnumClassBodyContext extends ParserRuleContext {
+		public TerminalNode LCURL() { return getToken(KotlinParser.LCURL, 0); }
+		public TerminalNode RCURL() { return getToken(KotlinParser.RCURL, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -2542,6 +2590,7 @@ public class KotlinParser extends Parser {
 		public EnumEntriesContext enumEntries() {
 			return getRuleContext(EnumEntriesContext.class,0);
 		}
+		public TerminalNode SEMICOLON() { return getToken(KotlinParser.SEMICOLON, 0); }
 		public ClassMemberDeclarationsContext classMemberDeclarations() {
 			return getRuleContext(ClassMemberDeclarationsContext.class,0);
 		}
@@ -2669,6 +2718,10 @@ public class KotlinParser extends Parser {
 		}
 		public EnumEntryContext enumEntry(int i) {
 			return getRuleContext(EnumEntryContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
@@ -2903,6 +2956,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class FunctionDeclarationContext extends ParserRuleContext {
+		public TerminalNode FUN() { return getToken(KotlinParser.FUN, 0); }
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
@@ -2918,10 +2972,12 @@ public class KotlinParser extends Parser {
 		public ReceiverTypeContext receiverType() {
 			return getRuleContext(ReceiverTypeContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(KotlinParser.DOT, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -3159,6 +3215,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class FunctionValueParametersContext extends ParserRuleContext {
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -3168,6 +3226,10 @@ public class KotlinParser extends Parser {
 		}
 		public FunctionValueParameterContext functionValueParameter(int i) {
 			return getRuleContext(FunctionValueParameterContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public FunctionValueParametersContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3298,6 +3360,7 @@ public class KotlinParser extends Parser {
 		public ModifiersContext modifiers() {
 			return getRuleContext(ModifiersContext.class,0);
 		}
+		public TerminalNode ASSIGNMENT() { return getToken(KotlinParser.ASSIGNMENT, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -3395,6 +3458,7 @@ public class KotlinParser extends Parser {
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -3475,6 +3539,7 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -3555,6 +3620,7 @@ public class KotlinParser extends Parser {
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
+		public TerminalNode ASSIGNMENT() { return getToken(KotlinParser.ASSIGNMENT, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -3629,6 +3695,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ObjectDeclarationContext extends ParserRuleContext {
+		public TerminalNode OBJECT() { return getToken(KotlinParser.OBJECT, 0); }
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
@@ -3639,6 +3706,7 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public DelegationSpecifiersContext delegationSpecifiers() {
 			return getRuleContext(DelegationSpecifiersContext.class,0);
 		}
@@ -3772,6 +3840,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class CompanionObjectContext extends ParserRuleContext {
+		public TerminalNode COMPANION() { return getToken(KotlinParser.COMPANION, 0); }
+		public TerminalNode OBJECT() { return getToken(KotlinParser.OBJECT, 0); }
 		public ModifiersContext modifiers() {
 			return getRuleContext(ModifiersContext.class,0);
 		}
@@ -3782,6 +3852,7 @@ public class KotlinParser extends Parser {
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public DelegationSpecifiersContext delegationSpecifiers() {
 			return getRuleContext(DelegationSpecifiersContext.class,0);
 		}
@@ -3939,6 +4010,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class PropertyDeclarationContext extends ParserRuleContext {
+		public TerminalNode VAL() { return getToken(KotlinParser.VAL, 0); }
+		public TerminalNode VAR() { return getToken(KotlinParser.VAR, 0); }
 		public ModifiersContext modifiers() {
 			return getRuleContext(ModifiersContext.class,0);
 		}
@@ -3948,9 +4021,11 @@ public class KotlinParser extends Parser {
 		public ReceiverTypeContext receiverType() {
 			return getRuleContext(ReceiverTypeContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(KotlinParser.DOT, 0); }
 		public TypeConstraintsContext typeConstraints() {
 			return getRuleContext(TypeConstraintsContext.class,0);
 		}
+		public TerminalNode SEMICOLON() { return getToken(KotlinParser.SEMICOLON, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -3961,6 +4036,7 @@ public class KotlinParser extends Parser {
 		public VariableDeclarationContext variableDeclaration() {
 			return getRuleContext(VariableDeclarationContext.class,0);
 		}
+		public TerminalNode ASSIGNMENT() { return getToken(KotlinParser.ASSIGNMENT, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -4404,15 +4480,21 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class MultiVariableDeclarationContext extends ParserRuleContext {
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public List<VariableDeclarationContext> variableDeclaration() {
 			return getRuleContexts(VariableDeclarationContext.class);
 		}
 		public VariableDeclarationContext variableDeclaration(int i) {
 			return getRuleContext(VariableDeclarationContext.class,i);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public MultiVariableDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -4544,6 +4626,7 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -4649,6 +4732,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class PropertyDelegateContext extends ParserRuleContext {
+		public TerminalNode BY() { return getToken(KotlinParser.BY, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -4708,9 +4792,12 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class GetterContext extends ParserRuleContext {
+		public TerminalNode GETTER() { return getToken(KotlinParser.GETTER, 0); }
 		public ModifiersContext modifiers() {
 			return getRuleContext(ModifiersContext.class,0);
 		}
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public FunctionBodyContext functionBody() {
 			return getRuleContext(FunctionBodyContext.class,0);
 		}
@@ -4718,6 +4805,7 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -4876,12 +4964,15 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class SetterContext extends ParserRuleContext {
+		public TerminalNode SETTER() { return getToken(KotlinParser.SETTER, 0); }
 		public ModifiersContext modifiers() {
 			return getRuleContext(ModifiersContext.class,0);
 		}
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public SetterParameterContext setterParameter() {
 			return getRuleContext(SetterParameterContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public FunctionBodyContext functionBody() {
 			return getRuleContext(FunctionBodyContext.class,0);
 		}
@@ -4901,6 +4992,7 @@ public class KotlinParser extends Parser {
 		public ParameterModifierContext parameterModifier(int i) {
 			return getRuleContext(ParameterModifierContext.class,i);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -5088,9 +5180,11 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class TypeAliasContext extends ParserRuleContext {
+		public TerminalNode TYPE_ALIAS() { return getToken(KotlinParser.TYPE_ALIAS, 0); }
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
+		public TerminalNode ASSIGNMENT() { return getToken(KotlinParser.ASSIGNMENT, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -5220,15 +5314,21 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class TypeParametersContext extends ParserRuleContext {
+		public TerminalNode LANGLE() { return getToken(KotlinParser.LANGLE, 0); }
 		public List<TypeParameterContext> typeParameter() {
 			return getRuleContexts(TypeParameterContext.class);
 		}
 		public TypeParameterContext typeParameter(int i) {
 			return getRuleContext(TypeParameterContext.class,i);
 		}
+		public TerminalNode RANGLE() { return getToken(KotlinParser.RANGLE, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public TypeParametersContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -5357,6 +5457,7 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -5771,6 +5872,7 @@ public class KotlinParser extends Parser {
 		public AnnotationContext annotation() {
 			return getRuleContext(AnnotationContext.class,0);
 		}
+		public TerminalNode SUSPEND() { return getToken(KotlinParser.SUSPEND, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -5846,9 +5948,11 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ParenthesizedTypeContext extends ParserRuleContext {
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -6062,6 +6166,7 @@ public class KotlinParser extends Parser {
 		public UserTypeContext userType() {
 			return getRuleContext(UserTypeContext.class,0);
 		}
+		public TerminalNode DYNAMIC() { return getToken(KotlinParser.DYNAMIC, 0); }
 		public TypeReferenceContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -6111,12 +6216,14 @@ public class KotlinParser extends Parser {
 		public FunctionTypeParametersContext functionTypeParameters() {
 			return getRuleContext(FunctionTypeParametersContext.class,0);
 		}
+		public TerminalNode ARROW() { return getToken(KotlinParser.ARROW, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
 		public ReceiverTypeContext receiverType() {
 			return getRuleContext(ReceiverTypeContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(KotlinParser.DOT, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -6308,6 +6415,10 @@ public class KotlinParser extends Parser {
 		public SimpleUserTypeContext simpleUserType(int i) {
 			return getRuleContext(SimpleUserTypeContext.class,i);
 		}
+		public List<TerminalNode> DOT() { return getTokens(KotlinParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(KotlinParser.DOT, i);
+		}
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -6393,9 +6504,11 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ParenthesizedUserTypeContext extends ParserRuleContext {
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public UserTypeContext userType() {
 			return getRuleContext(UserTypeContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -6582,6 +6695,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class FunctionTypeParametersContext extends ParserRuleContext {
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -6597,6 +6712,10 @@ public class KotlinParser extends Parser {
 		}
 		public TypeContext type(int i) {
 			return getRuleContext(TypeContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public FunctionTypeParametersContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -6741,6 +6860,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class TypeConstraintsContext extends ParserRuleContext {
+		public TerminalNode WHERE() { return getToken(KotlinParser.WHERE, 0); }
 		public List<TypeConstraintContext> typeConstraint() {
 			return getRuleContexts(TypeConstraintContext.class);
 		}
@@ -6750,6 +6870,10 @@ public class KotlinParser extends Parser {
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public TypeConstraintsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -6851,6 +6975,7 @@ public class KotlinParser extends Parser {
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -6944,9 +7069,11 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class BlockContext extends ParserRuleContext {
+		public TerminalNode LCURL() { return getToken(KotlinParser.LCURL, 0); }
 		public StatementsContext statements() {
 			return getRuleContext(StatementsContext.class,0);
 		}
+		public TerminalNode RCURL() { return getToken(KotlinParser.RCURL, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -7309,6 +7436,7 @@ public class KotlinParser extends Parser {
 		public DirectlyAssignableExpressionContext directlyAssignableExpression() {
 			return getRuleContext(DirectlyAssignableExpressionContext.class,0);
 		}
+		public TerminalNode ASSIGNMENT() { return getToken(KotlinParser.ASSIGNMENT, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -7451,6 +7579,10 @@ public class KotlinParser extends Parser {
 		public ConjunctionContext conjunction(int i) {
 			return getRuleContext(ConjunctionContext.class,i);
 		}
+		public List<TerminalNode> DISJ() { return getTokens(KotlinParser.DISJ); }
+		public TerminalNode DISJ(int i) {
+			return getToken(KotlinParser.DISJ, i);
+		}
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -7543,6 +7675,10 @@ public class KotlinParser extends Parser {
 		}
 		public EqualityContext equality(int i) {
 			return getRuleContext(EqualityContext.class,i);
+		}
+		public List<TerminalNode> CONJ() { return getTokens(KotlinParser.CONJ); }
+		public TerminalNode CONJ(int i) {
+			return getToken(KotlinParser.CONJ, i);
 		}
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
@@ -8107,6 +8243,10 @@ public class KotlinParser extends Parser {
 		}
 		public AdditiveExpressionContext additiveExpression(int i) {
 			return getRuleContext(AdditiveExpressionContext.class,i);
+		}
+		public List<TerminalNode> RANGE() { return getTokens(KotlinParser.RANGE); }
+		public TerminalNode RANGE(int i) {
+			return getToken(KotlinParser.RANGE, i);
 		}
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
@@ -8910,15 +9050,21 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class IndexingSuffixContext extends ParserRuleContext {
+		public TerminalNode LSQUARE() { return getToken(KotlinParser.LSQUARE, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode RSQUARE() { return getToken(KotlinParser.RSQUARE, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public IndexingSuffixContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -9046,6 +9192,7 @@ public class KotlinParser extends Parser {
 		public ParenthesizedExpressionContext parenthesizedExpression() {
 			return getRuleContext(ParenthesizedExpressionContext.class,0);
 		}
+		public TerminalNode CLASS() { return getToken(KotlinParser.CLASS, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -9349,6 +9496,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ValueArgumentsContext extends ParserRuleContext {
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -9358,6 +9507,10 @@ public class KotlinParser extends Parser {
 		}
 		public ValueArgumentContext valueArgument(int i) {
 			return getRuleContext(ValueArgumentContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public ValueArgumentsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -9505,15 +9658,21 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class TypeArgumentsContext extends ParserRuleContext {
+		public TerminalNode LANGLE() { return getToken(KotlinParser.LANGLE, 0); }
 		public List<TypeProjectionContext> typeProjection() {
 			return getRuleContexts(TypeProjectionContext.class);
 		}
 		public TypeProjectionContext typeProjection(int i) {
 			return getRuleContext(TypeProjectionContext.class,i);
 		}
+		public TerminalNode RANGLE() { return getToken(KotlinParser.RANGLE, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public TypeArgumentsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -9634,6 +9793,7 @@ public class KotlinParser extends Parser {
 		public TypeProjectionModifiersContext typeProjectionModifiers() {
 			return getRuleContext(TypeProjectionModifiersContext.class,0);
 		}
+		public TerminalNode MULT() { return getToken(KotlinParser.MULT, 0); }
 		public TypeProjectionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -9895,6 +10055,8 @@ public class KotlinParser extends Parser {
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
+		public TerminalNode ASSIGNMENT() { return getToken(KotlinParser.ASSIGNMENT, 0); }
+		public TerminalNode MULT() { return getToken(KotlinParser.MULT, 0); }
 		public ValueArgumentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -10196,9 +10358,11 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ParenthesizedExpressionContext extends ParserRuleContext {
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -10272,15 +10436,21 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class CollectionLiteralContext extends ParserRuleContext {
+		public TerminalNode LSQUARE() { return getToken(KotlinParser.LSQUARE, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode RSQUARE() { return getToken(KotlinParser.RSQUARE, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public CollectionLiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -10747,6 +10917,7 @@ public class KotlinParser extends Parser {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RCURL() { return getToken(KotlinParser.RCURL, 0); }
 		public LineStringExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -10833,6 +11004,7 @@ public class KotlinParser extends Parser {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RCURL() { return getToken(KotlinParser.RCURL, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -11326,6 +11498,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class AnonymousFunctionContext extends ParserRuleContext {
+		public TerminalNode FUN() { return getToken(KotlinParser.FUN, 0); }
 		public FunctionValueParametersContext functionValueParameters() {
 			return getRuleContext(FunctionValueParametersContext.class,0);
 		}
@@ -11335,10 +11508,12 @@ public class KotlinParser extends Parser {
 		public TypeContext type(int i) {
 			return getRuleContext(TypeContext.class,i);
 		}
+		public TerminalNode DOT() { return getToken(KotlinParser.DOT, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public TypeConstraintsContext typeConstraints() {
 			return getRuleContext(TypeConstraintsContext.class,0);
 		}
@@ -11577,6 +11752,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ObjectLiteralContext extends ParserRuleContext {
+		public TerminalNode OBJECT() { return getToken(KotlinParser.OBJECT, 0); }
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public DelegationSpecifiersContext delegationSpecifiers() {
 			return getRuleContext(DelegationSpecifiersContext.class,0);
 		}
@@ -11709,6 +11886,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ThisExpressionContext extends ParserRuleContext {
+		public TerminalNode THIS() { return getToken(KotlinParser.THIS, 0); }
 		public TerminalNode THIS_AT() { return getToken(KotlinParser.THIS_AT, 0); }
 		public ThisExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -11752,9 +11930,13 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class SuperExpressionContext extends ParserRuleContext {
+		public TerminalNode SUPER() { return getToken(KotlinParser.SUPER, 0); }
+		public TerminalNode LANGLE() { return getToken(KotlinParser.LANGLE, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
+		public TerminalNode RANGLE() { return getToken(KotlinParser.RANGLE, 0); }
+		public TerminalNode AT() { return getToken(KotlinParser.AT, 0); }
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
@@ -11918,9 +12100,12 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class IfExpressionContext extends ParserRuleContext {
+		public TerminalNode IF() { return getToken(KotlinParser.IF, 0); }
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<ControlStructureBodyContext> controlStructureBody() {
 			return getRuleContexts(ControlStructureBodyContext.class);
 		}
@@ -11931,6 +12116,8 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode ELSE() { return getToken(KotlinParser.ELSE, 0); }
+		public TerminalNode SEMICOLON() { return getToken(KotlinParser.SEMICOLON, 0); }
 		public IfExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -12207,13 +12394,18 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class WhenExpressionContext extends ParserRuleContext {
+		public TerminalNode WHEN() { return getToken(KotlinParser.WHEN, 0); }
+		public TerminalNode LCURL() { return getToken(KotlinParser.LCURL, 0); }
+		public TerminalNode RCURL() { return getToken(KotlinParser.RCURL, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<WhenEntryContext> whenEntry() {
 			return getRuleContexts(WhenEntryContext.class);
 		}
@@ -12371,8 +12563,13 @@ public class KotlinParser extends Parser {
 		public WhenConditionContext whenCondition(int i) {
 			return getRuleContext(WhenConditionContext.class,i);
 		}
+		public TerminalNode ARROW() { return getToken(KotlinParser.ARROW, 0); }
 		public ControlStructureBodyContext controlStructureBody() {
 			return getRuleContext(ControlStructureBodyContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(KotlinParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(KotlinParser.COMMA, i);
 		}
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
@@ -12381,6 +12578,7 @@ public class KotlinParser extends Parser {
 		public SemiContext semi() {
 			return getRuleContext(SemiContext.class,0);
 		}
+		public TerminalNode ELSE() { return getToken(KotlinParser.ELSE, 0); }
 		public WhenEntryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -12931,6 +13129,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class TryExpressionContext extends ParserRuleContext {
+		public TerminalNode TRY() { return getToken(KotlinParser.TRY, 0); }
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
@@ -13084,12 +13283,16 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class CatchBlockContext extends ParserRuleContext {
+		public TerminalNode CATCH() { return getToken(KotlinParser.CATCH, 0); }
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public UserTypeContext userType() {
 			return getRuleContext(UserTypeContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
@@ -13191,6 +13394,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class FinallyBlockContext extends ParserRuleContext {
+		public TerminalNode FINALLY() { return getToken(KotlinParser.FINALLY, 0); }
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
@@ -13312,9 +13516,13 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ForStatementContext extends ParserRuleContext {
+		public TerminalNode FOR() { return getToken(KotlinParser.FOR, 0); }
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
+		public TerminalNode IN() { return getToken(KotlinParser.IN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public VariableDeclarationContext variableDeclaration() {
 			return getRuleContext(VariableDeclarationContext.class,0);
 		}
@@ -13500,9 +13708,12 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class WhileStatementContext extends ParserRuleContext {
+		public TerminalNode WHILE() { return getToken(KotlinParser.WHILE, 0); }
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public ControlStructureBodyContext controlStructureBody() {
 			return getRuleContext(ControlStructureBodyContext.class,0);
 		}
@@ -13510,6 +13721,7 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode SEMICOLON() { return getToken(KotlinParser.SEMICOLON, 0); }
 		public WhileStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -13632,9 +13844,13 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class DoWhileStatementContext extends ParserRuleContext {
+		public TerminalNode DO() { return getToken(KotlinParser.DO, 0); }
+		public TerminalNode WHILE() { return getToken(KotlinParser.WHILE, 0); }
+		public TerminalNode LPAREN() { return getToken(KotlinParser.LPAREN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RPAREN() { return getToken(KotlinParser.RPAREN, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -13739,6 +13955,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class JumpExpressionContext extends ParserRuleContext {
+		public TerminalNode THROW() { return getToken(KotlinParser.THROW, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -13746,8 +13963,11 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode RETURN() { return getToken(KotlinParser.RETURN, 0); }
 		public TerminalNode RETURN_AT() { return getToken(KotlinParser.RETURN_AT, 0); }
+		public TerminalNode CONTINUE() { return getToken(KotlinParser.CONTINUE, 0); }
 		public TerminalNode CONTINUE_AT() { return getToken(KotlinParser.CONTINUE_AT, 0); }
+		public TerminalNode BREAK() { return getToken(KotlinParser.BREAK, 0); }
 		public TerminalNode BREAK_AT() { return getToken(KotlinParser.BREAK_AT, 0); }
 		public JumpExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -13864,9 +14084,11 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class CallableReferenceContext extends ParserRuleContext {
+		public TerminalNode COLONCOLON() { return getToken(KotlinParser.COLONCOLON, 0); }
 		public SimpleIdentifierContext simpleIdentifier() {
 			return getRuleContext(SimpleIdentifierContext.class,0);
 		}
+		public TerminalNode CLASS() { return getToken(KotlinParser.CLASS, 0); }
 		public ReceiverTypeContext receiverType() {
 			return getRuleContext(ReceiverTypeContext.class,0);
 		}
@@ -14005,6 +14227,11 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class AssignmentAndOperatorContext extends ParserRuleContext {
+		public TerminalNode ADD_ASSIGNMENT() { return getToken(KotlinParser.ADD_ASSIGNMENT, 0); }
+		public TerminalNode SUB_ASSIGNMENT() { return getToken(KotlinParser.SUB_ASSIGNMENT, 0); }
+		public TerminalNode MULT_ASSIGNMENT() { return getToken(KotlinParser.MULT_ASSIGNMENT, 0); }
+		public TerminalNode DIV_ASSIGNMENT() { return getToken(KotlinParser.DIV_ASSIGNMENT, 0); }
+		public TerminalNode MOD_ASSIGNMENT() { return getToken(KotlinParser.MOD_ASSIGNMENT, 0); }
 		public AssignmentAndOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14047,6 +14274,10 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class EqualityOperatorContext extends ParserRuleContext {
+		public TerminalNode EXCL_EQ() { return getToken(KotlinParser.EXCL_EQ, 0); }
+		public TerminalNode EXCL_EQEQ() { return getToken(KotlinParser.EXCL_EQEQ, 0); }
+		public TerminalNode EQEQ() { return getToken(KotlinParser.EQEQ, 0); }
+		public TerminalNode EQEQEQ() { return getToken(KotlinParser.EQEQEQ, 0); }
 		public EqualityOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14089,6 +14320,10 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ComparisonOperatorContext extends ParserRuleContext {
+		public TerminalNode LANGLE() { return getToken(KotlinParser.LANGLE, 0); }
+		public TerminalNode RANGLE() { return getToken(KotlinParser.RANGLE, 0); }
+		public TerminalNode LE() { return getToken(KotlinParser.LE, 0); }
+		public TerminalNode GE() { return getToken(KotlinParser.GE, 0); }
 		public ComparisonOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14131,6 +14366,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class InOperatorContext extends ParserRuleContext {
+		public TerminalNode IN() { return getToken(KotlinParser.IN, 0); }
 		public TerminalNode NOT_IN() { return getToken(KotlinParser.NOT_IN, 0); }
 		public InOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -14174,6 +14410,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class IsOperatorContext extends ParserRuleContext {
+		public TerminalNode IS() { return getToken(KotlinParser.IS, 0); }
 		public TerminalNode NOT_IS() { return getToken(KotlinParser.NOT_IS, 0); }
 		public IsOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -14217,6 +14454,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class AdditiveOperatorContext extends ParserRuleContext {
+		public TerminalNode ADD() { return getToken(KotlinParser.ADD, 0); }
+		public TerminalNode SUB() { return getToken(KotlinParser.SUB, 0); }
 		public AdditiveOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14259,6 +14498,9 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class MultiplicativeOperatorContext extends ParserRuleContext {
+		public TerminalNode MULT() { return getToken(KotlinParser.MULT, 0); }
+		public TerminalNode DIV() { return getToken(KotlinParser.DIV, 0); }
+		public TerminalNode MOD() { return getToken(KotlinParser.MOD, 0); }
 		public MultiplicativeOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14301,6 +14543,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class AsOperatorContext extends ParserRuleContext {
+		public TerminalNode AS() { return getToken(KotlinParser.AS, 0); }
+		public TerminalNode AS_SAFE() { return getToken(KotlinParser.AS_SAFE, 0); }
 		public AsOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14343,6 +14587,10 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class PrefixUnaryOperatorContext extends ParserRuleContext {
+		public TerminalNode INCR() { return getToken(KotlinParser.INCR, 0); }
+		public TerminalNode DECR() { return getToken(KotlinParser.DECR, 0); }
+		public TerminalNode SUB() { return getToken(KotlinParser.SUB, 0); }
+		public TerminalNode ADD() { return getToken(KotlinParser.ADD, 0); }
 		public ExclContext excl() {
 			return getRuleContext(ExclContext.class,0);
 		}
@@ -14416,6 +14664,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class PostfixUnaryOperatorContext extends ParserRuleContext {
+		public TerminalNode INCR() { return getToken(KotlinParser.INCR, 0); }
+		public TerminalNode DECR() { return getToken(KotlinParser.DECR, 0); }
 		public TerminalNode EXCL_NO_WS() { return getToken(KotlinParser.EXCL_NO_WS, 0); }
 		public ExclContext excl() {
 			return getRuleContext(ExclContext.class,0);
@@ -14477,9 +14727,11 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class MemberAccessOperatorContext extends ParserRuleContext {
+		public TerminalNode DOT() { return getToken(KotlinParser.DOT, 0); }
 		public SafeNavContext safeNav() {
 			return getRuleContext(SafeNavContext.class,0);
 		}
+		public TerminalNode COLONCOLON() { return getToken(KotlinParser.COLONCOLON, 0); }
 		public MemberAccessOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14696,7 +14948,6 @@ public class KotlinParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ENUM:
-			case SEALED:
 			case ANNOTATION:
 			case DATA:
 			case INNER:
@@ -14738,6 +14989,7 @@ public class KotlinParser extends Parser {
 				propertyModifier();
 				}
 				break;
+			case SEALED:
 			case ABSTRACT:
 			case FINAL:
 			case OPEN:
@@ -14794,6 +15046,10 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ClassModifierContext extends ParserRuleContext {
+		public TerminalNode ENUM() { return getToken(KotlinParser.ENUM, 0); }
+		public TerminalNode ANNOTATION() { return getToken(KotlinParser.ANNOTATION, 0); }
+		public TerminalNode DATA() { return getToken(KotlinParser.DATA, 0); }
+		public TerminalNode INNER() { return getToken(KotlinParser.INNER, 0); }
 		public ClassModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14814,7 +15070,7 @@ public class KotlinParser extends Parser {
 			{
 			setState(3134);
 			_la = _input.LA(1);
-			if ( !(((((_la - 111)) & ~0x3f) == 0 && ((1L << (_la - 111)) & ((1L << (ENUM - 111)) | (1L << (SEALED - 111)) | (1L << (ANNOTATION - 111)) | (1L << (DATA - 111)) | (1L << (INNER - 111)))) != 0)) ) {
+			if ( !(((((_la - 111)) & ~0x3f) == 0 && ((1L << (_la - 111)) & ((1L << (ENUM - 111)) | (1L << (ANNOTATION - 111)) | (1L << (DATA - 111)) | (1L << (INNER - 111)))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -14836,6 +15092,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class MemberModifierContext extends ParserRuleContext {
+		public TerminalNode OVERRIDE() { return getToken(KotlinParser.OVERRIDE, 0); }
+		public TerminalNode LATEINIT() { return getToken(KotlinParser.LATEINIT, 0); }
 		public MemberModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14878,6 +15136,10 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class VisibilityModifierContext extends ParserRuleContext {
+		public TerminalNode PUBLIC() { return getToken(KotlinParser.PUBLIC, 0); }
+		public TerminalNode PRIVATE() { return getToken(KotlinParser.PRIVATE, 0); }
+		public TerminalNode INTERNAL() { return getToken(KotlinParser.INTERNAL, 0); }
+		public TerminalNode PROTECTED() { return getToken(KotlinParser.PROTECTED, 0); }
 		public VisibilityModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14920,6 +15182,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class VarianceModifierContext extends ParserRuleContext {
+		public TerminalNode IN() { return getToken(KotlinParser.IN, 0); }
+		public TerminalNode OUT() { return getToken(KotlinParser.OUT, 0); }
 		public VarianceModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -14962,6 +15226,12 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class FunctionModifierContext extends ParserRuleContext {
+		public TerminalNode TAILREC() { return getToken(KotlinParser.TAILREC, 0); }
+		public TerminalNode OPERATOR() { return getToken(KotlinParser.OPERATOR, 0); }
+		public TerminalNode INFIX() { return getToken(KotlinParser.INFIX, 0); }
+		public TerminalNode INLINE() { return getToken(KotlinParser.INLINE, 0); }
+		public TerminalNode EXTERNAL() { return getToken(KotlinParser.EXTERNAL, 0); }
+		public TerminalNode SUSPEND() { return getToken(KotlinParser.SUSPEND, 0); }
 		public FunctionModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15004,6 +15274,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class PropertyModifierContext extends ParserRuleContext {
+		public TerminalNode CONST() { return getToken(KotlinParser.CONST, 0); }
 		public PropertyModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15037,6 +15308,10 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class InheritanceModifierContext extends ParserRuleContext {
+		public TerminalNode ABSTRACT() { return getToken(KotlinParser.ABSTRACT, 0); }
+		public TerminalNode FINAL() { return getToken(KotlinParser.FINAL, 0); }
+		public TerminalNode OPEN() { return getToken(KotlinParser.OPEN, 0); }
+		public TerminalNode SEALED() { return getToken(KotlinParser.SEALED, 0); }
 		public InheritanceModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15057,7 +15332,7 @@ public class KotlinParser extends Parser {
 			{
 			setState(3146);
 			_la = _input.LA(1);
-			if ( !(((((_la - 123)) & ~0x3f) == 0 && ((1L << (_la - 123)) & ((1L << (ABSTRACT - 123)) | (1L << (FINAL - 123)) | (1L << (OPEN - 123)))) != 0)) ) {
+			if ( !(((((_la - 112)) & ~0x3f) == 0 && ((1L << (_la - 112)) & ((1L << (SEALED - 112)) | (1L << (ABSTRACT - 112)) | (1L << (FINAL - 112)) | (1L << (OPEN - 112)))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -15079,6 +15354,9 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ParameterModifierContext extends ParserRuleContext {
+		public TerminalNode VARARG() { return getToken(KotlinParser.VARARG, 0); }
+		public TerminalNode NOINLINE() { return getToken(KotlinParser.NOINLINE, 0); }
+		public TerminalNode CROSSINLINE() { return getToken(KotlinParser.CROSSINLINE, 0); }
 		public ParameterModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15121,6 +15399,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class ReificationModifierContext extends ParserRuleContext {
+		public TerminalNode REIFIED() { return getToken(KotlinParser.REIFIED, 0); }
 		public ReificationModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15154,6 +15433,8 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class PlatformModifierContext extends ParserRuleContext {
+		public TerminalNode EXPECT() { return getToken(KotlinParser.EXPECT, 0); }
+		public TerminalNode ACTUAL() { return getToken(KotlinParser.ACTUAL, 0); }
 		public PlatformModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15328,6 +15609,7 @@ public class KotlinParser extends Parser {
 		public AnnotationUseSiteTargetContext annotationUseSiteTarget() {
 			return getRuleContext(AnnotationUseSiteTargetContext.class,0);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public UnescapedAnnotationContext unescapedAnnotation() {
 			return getRuleContext(UnescapedAnnotationContext.class,0);
 		}
@@ -15335,6 +15617,7 @@ public class KotlinParser extends Parser {
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
 		}
+		public TerminalNode AT() { return getToken(KotlinParser.AT, 0); }
 		public SingleAnnotationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15428,6 +15711,9 @@ public class KotlinParser extends Parser {
 		public AnnotationUseSiteTargetContext annotationUseSiteTarget() {
 			return getRuleContext(AnnotationUseSiteTargetContext.class,0);
 		}
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
+		public TerminalNode LSQUARE() { return getToken(KotlinParser.LSQUARE, 0); }
+		public TerminalNode RSQUARE() { return getToken(KotlinParser.RSQUARE, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -15438,6 +15724,7 @@ public class KotlinParser extends Parser {
 		public UnescapedAnnotationContext unescapedAnnotation(int i) {
 			return getRuleContext(UnescapedAnnotationContext.class,i);
 		}
+		public TerminalNode AT() { return getToken(KotlinParser.AT, 0); }
 		public MultiAnnotationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15560,6 +15847,14 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class AnnotationUseSiteTargetContext extends ParserRuleContext {
+		public TerminalNode AT_FIELD() { return getToken(KotlinParser.AT_FIELD, 0); }
+		public TerminalNode AT_PROPERTY() { return getToken(KotlinParser.AT_PROPERTY, 0); }
+		public TerminalNode AT_GET() { return getToken(KotlinParser.AT_GET, 0); }
+		public TerminalNode AT_SET() { return getToken(KotlinParser.AT_SET, 0); }
+		public TerminalNode AT_RECEIVER() { return getToken(KotlinParser.AT_RECEIVER, 0); }
+		public TerminalNode AT_PARAM() { return getToken(KotlinParser.AT_PARAM, 0); }
+		public TerminalNode AT_SETPARAM() { return getToken(KotlinParser.AT_SETPARAM, 0); }
+		public TerminalNode AT_DELEGATE() { return getToken(KotlinParser.AT_DELEGATE, 0); }
 		public AnnotationUseSiteTargetContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15655,6 +15950,45 @@ public class KotlinParser extends Parser {
 
 	public static class SimpleIdentifierContext extends ParserRuleContext {
 		public TerminalNode Identifier() { return getToken(KotlinParser.Identifier, 0); }
+		public TerminalNode ABSTRACT() { return getToken(KotlinParser.ABSTRACT, 0); }
+		public TerminalNode ANNOTATION() { return getToken(KotlinParser.ANNOTATION, 0); }
+		public TerminalNode BY() { return getToken(KotlinParser.BY, 0); }
+		public TerminalNode CATCH() { return getToken(KotlinParser.CATCH, 0); }
+		public TerminalNode COMPANION() { return getToken(KotlinParser.COMPANION, 0); }
+		public TerminalNode CONSTRUCTOR() { return getToken(KotlinParser.CONSTRUCTOR, 0); }
+		public TerminalNode CROSSINLINE() { return getToken(KotlinParser.CROSSINLINE, 0); }
+		public TerminalNode DATA() { return getToken(KotlinParser.DATA, 0); }
+		public TerminalNode DYNAMIC() { return getToken(KotlinParser.DYNAMIC, 0); }
+		public TerminalNode ENUM() { return getToken(KotlinParser.ENUM, 0); }
+		public TerminalNode EXTERNAL() { return getToken(KotlinParser.EXTERNAL, 0); }
+		public TerminalNode FINAL() { return getToken(KotlinParser.FINAL, 0); }
+		public TerminalNode FINALLY() { return getToken(KotlinParser.FINALLY, 0); }
+		public TerminalNode GETTER() { return getToken(KotlinParser.GETTER, 0); }
+		public TerminalNode IMPORT() { return getToken(KotlinParser.IMPORT, 0); }
+		public TerminalNode INFIX() { return getToken(KotlinParser.INFIX, 0); }
+		public TerminalNode INIT() { return getToken(KotlinParser.INIT, 0); }
+		public TerminalNode INLINE() { return getToken(KotlinParser.INLINE, 0); }
+		public TerminalNode INNER() { return getToken(KotlinParser.INNER, 0); }
+		public TerminalNode INTERNAL() { return getToken(KotlinParser.INTERNAL, 0); }
+		public TerminalNode LATEINIT() { return getToken(KotlinParser.LATEINIT, 0); }
+		public TerminalNode NOINLINE() { return getToken(KotlinParser.NOINLINE, 0); }
+		public TerminalNode OPEN() { return getToken(KotlinParser.OPEN, 0); }
+		public TerminalNode OPERATOR() { return getToken(KotlinParser.OPERATOR, 0); }
+		public TerminalNode OUT() { return getToken(KotlinParser.OUT, 0); }
+		public TerminalNode OVERRIDE() { return getToken(KotlinParser.OVERRIDE, 0); }
+		public TerminalNode PRIVATE() { return getToken(KotlinParser.PRIVATE, 0); }
+		public TerminalNode PROTECTED() { return getToken(KotlinParser.PROTECTED, 0); }
+		public TerminalNode PUBLIC() { return getToken(KotlinParser.PUBLIC, 0); }
+		public TerminalNode REIFIED() { return getToken(KotlinParser.REIFIED, 0); }
+		public TerminalNode SEALED() { return getToken(KotlinParser.SEALED, 0); }
+		public TerminalNode TAILREC() { return getToken(KotlinParser.TAILREC, 0); }
+		public TerminalNode SETTER() { return getToken(KotlinParser.SETTER, 0); }
+		public TerminalNode VARARG() { return getToken(KotlinParser.VARARG, 0); }
+		public TerminalNode WHERE() { return getToken(KotlinParser.WHERE, 0); }
+		public TerminalNode EXPECT() { return getToken(KotlinParser.EXPECT, 0); }
+		public TerminalNode ACTUAL() { return getToken(KotlinParser.ACTUAL, 0); }
+		public TerminalNode CONST() { return getToken(KotlinParser.CONST, 0); }
+		public TerminalNode SUSPEND() { return getToken(KotlinParser.SUSPEND, 0); }
 		public SimpleIdentifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15702,6 +16036,10 @@ public class KotlinParser extends Parser {
 		}
 		public SimpleIdentifierContext simpleIdentifier(int i) {
 			return getRuleContext(SimpleIdentifierContext.class,i);
+		}
+		public List<TerminalNode> DOT() { return getTokens(KotlinParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(KotlinParser.DOT, i);
 		}
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
@@ -15878,6 +16216,7 @@ public class KotlinParser extends Parser {
 
 	public static class ElvisContext extends ParserRuleContext {
 		public TerminalNode QUEST_NO_WS() { return getToken(KotlinParser.QUEST_NO_WS, 0); }
+		public TerminalNode COLON() { return getToken(KotlinParser.COLON, 0); }
 		public ElvisContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15914,6 +16253,7 @@ public class KotlinParser extends Parser {
 
 	public static class SafeNavContext extends ParserRuleContext {
 		public TerminalNode QUEST_NO_WS() { return getToken(KotlinParser.QUEST_NO_WS, 0); }
+		public TerminalNode DOT() { return getToken(KotlinParser.DOT, 0); }
 		public SafeNavContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15993,6 +16333,7 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class SemiContext extends ParserRuleContext {
+		public TerminalNode SEMICOLON() { return getToken(KotlinParser.SEMICOLON, 0); }
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -16073,6 +16414,10 @@ public class KotlinParser extends Parser {
 	}
 
 	public static class SemisContext extends ParserRuleContext {
+		public List<TerminalNode> SEMICOLON() { return getTokens(KotlinParser.SEMICOLON); }
+		public TerminalNode SEMICOLON(int i) {
+			return getToken(KotlinParser.SEMICOLON, i);
+		}
 		public List<TerminalNode> NL() { return getTokens(KotlinParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(KotlinParser.NL, i);
@@ -16434,147 +16779,147 @@ public class KotlinParser extends Parser {
 		"\u0146\u0148\u014a\u014c\2\36\3\2?@\3\2CD\5\2\u008a\u008a\u008d\u0092"+
 		"\u0096\u0096\3\2\u00a3\u00a5\3\2\u00a8\u00aa\4\2;;JJ\4\288XX\3\2\37#\4"+
 		"\2\62\63\65\66\3\2.\61\4\2]]__\4\2\\\\^^\3\2\24\25\3\2\21\23\4\2\64\64"+
-		"[[\3\2qu\4\2||\u0081\u0081\3\2mp\4\2]]``\3\2v{\3\2}\177\3\2\u0082\u0084"+
-		"\3\2\u0086\u0087\3\2el\t\2>>FIMMRS`cm\u0087\u0093\u0093\3\2,-\3\2\32\33"+
-		"\4\2\7\7\35\35\2\u0e50\2\u014f\3\2\2\2\4\u016a\3\2\2\2\6\u0186\3\2\2\2"+
-		"\b\u01a5\3\2\2\2\n\u01ad\3\2\2\2\f\u01b0\3\2\2\2\16\u01ba\3\2\2\2\20\u01bd"+
-		"\3\2\2\2\22\u01c2\3\2\2\2\24\u0211\3\2\2\2\26\u0215\3\2\2\2\30\u023b\3"+
-		"\2\2\2\32\u025f\3\2\2\2\34\u0276\3\2\2\2\36\u0285\3\2\2\2 \u0287\3\2\2"+
-		"\2\"\u028c\3\2\2\2$\u029d\3\2\2\2&\u02b3\3\2\2\2(\u02ba\3\2\2\2*\u02bc"+
-		"\3\2\2\2,\u02c6\3\2\2\2.\u02f9\3\2\2\2\60\u02fb\3\2\2\2\62\u031d\3\2\2"+
-		"\2\64\u0341\3\2\2\2\66\u0357\3\2\2\28\u03a4\3\2\2\2:\u03ca\3\2\2\2<\u03dd"+
-		"\3\2\2\2>\u03ed\3\2\2\2@\u0407\3\2\2\2B\u040a\3\2\2\2D\u042e\3\2\2\2F"+
-		"\u045b\3\2\2\2H\u04cc\3\2\2\2J\u04f2\3\2\2\2L\u050c\3\2\2\2N\u0542\3\2"+
-		"\2\2P\u0574\3\2\2\2R\u0577\3\2\2\2T\u0599\3\2\2\2V\u05bd\3\2\2\2X\u05d7"+
-		"\3\2\2\2Z\u05ea\3\2\2\2\\\u05ed\3\2\2\2^\u05f6\3\2\2\2`\u0602\3\2\2\2"+
-		"b\u0604\3\2\2\2d\u0616\3\2\2\2f\u0625\3\2\2\2h\u0635\3\2\2\2j\u0648\3"+
-		"\2\2\2l\u064f\3\2\2\2n\u0683\3\2\2\2p\u0685\3\2\2\2r\u068f\3\2\2\2t\u06b8"+
-		"\3\2\2\2v\u06d6\3\2\2\2x\u06e9\3\2\2\2z\u0705\3\2\2\2|\u070b\3\2\2\2~"+
-		"\u0719\3\2\2\2\u0080\u072f\3\2\2\2\u0082\u0731\3\2\2\2\u0084\u0733\3\2"+
-		"\2\2\u0086\u0747\3\2\2\2\u0088\u075b\3\2\2\2\u008a\u076a\3\2\2\2\u008c"+
-		"\u0776\3\2\2\2\u008e\u078e\3\2\2\2\u0090\u07a3\3\2\2\2\u0092\u07b2\3\2"+
-		"\2\2\u0094\u07c0\3\2\2\2\u0096\u07cf\3\2\2\2\u0098\u07de\3\2\2\2\u009a"+
-		"\u07f3\3\2\2\2\u009c\u0801\3\2\2\2\u009e\u080a\3\2\2\2\u00a0\u0811\3\2"+
-		"\2\2\u00a2\u0817\3\2\2\2\u00a4\u0819\3\2\2\2\u00a6\u081e\3\2\2\2\u00a8"+
-		"\u0820\3\2\2\2\u00aa\u0846\3\2\2\2\u00ac\u0860\3\2\2\2\u00ae\u0865\3\2"+
-		"\2\2\u00b0\u089e\3\2\2\2\u00b2\u08a0\3\2\2\2\u00b4\u08c8\3\2\2\2\u00b6"+
-		"\u08cb\3\2\2\2\u00b8\u08d7\3\2\2\2\u00ba\u08da\3\2\2\2\u00bc\u090b\3\2"+
-		"\2\2\u00be\u090d\3\2\2\2\u00c0\u0948\3\2\2\2\u00c2\u094a\3\2\2\2\u00c4"+
-		"\u094e\3\2\2\2\u00c6\u0950\3\2\2\2\u00c8\u095a\3\2\2\2\u00ca\u0965\3\2"+
-		"\2\2\u00cc\u0967\3\2\2\2\u00ce\u096b\3\2\2\2\u00d0\u096d\3\2\2\2\u00d2"+
-		"\u09ad\3\2\2\2\u00d4\u09af\3\2\2\2\u00d6\u09d5\3\2\2\2\u00d8\u09d7\3\2"+
-		"\2\2\u00da\u0a14\3\2\2\2\u00dc\u0a36\3\2\2\2\u00de\u0a38\3\2\2\2\u00e0"+
-		"\u0a52\3\2\2\2\u00e2\u0a56\3\2\2\2\u00e4\u0ab6\3\2\2\2\u00e6\u0ab8\3\2"+
-		"\2\2\u00e8\u0b1d\3\2\2\2\u00ea\u0b22\3\2\2\2\u00ec\u0b24\3\2\2\2\u00ee"+
-		"\u0b2d\3\2\2\2\u00f0\u0b36\3\2\2\2\u00f2\u0b5b\3\2\2\2\u00f4\u0b75\3\2"+
-		"\2\2\u00f6\u0b81\3\2\2\2\u00f8\u0b83\3\2\2\2\u00fa\u0bc5\3\2\2\2\u00fc"+
-		"\u0bc7\3\2\2\2\u00fe\u0bf2\3\2\2\2\u0100\u0bf5\3\2\2\2\u0102\u0c08\3\2"+
-		"\2\2\u0104\u0c0a\3\2\2\2\u0106\u0c0c\3\2\2\2\u0108\u0c0e\3\2\2\2\u010a"+
-		"\u0c10\3\2\2\2\u010c\u0c12\3\2\2\2\u010e\u0c14\3\2\2\2\u0110\u0c16\3\2"+
-		"\2\2\u0112\u0c1d\3\2\2\2\u0114\u0c23\3\2\2\2\u0116\u0c28\3\2\2\2\u0118"+
-		"\u0c2c\3\2\2\2\u011a\u0c38\3\2\2\2\u011c\u0c40\3\2\2\2\u011e\u0c42\3\2"+
-		"\2\2\u0120\u0c44\3\2\2\2\u0122\u0c46\3\2\2\2\u0124\u0c48\3\2\2\2\u0126"+
-		"\u0c4a\3\2\2\2\u0128\u0c4c\3\2\2\2\u012a\u0c4e\3\2\2\2\u012c\u0c50\3\2"+
-		"\2\2\u012e\u0c52\3\2\2\2\u0130\u0c54\3\2\2\2\u0132\u0c5d\3\2\2\2\u0134"+
-		"\u0c77\3\2\2\2\u0136\u0c98\3\2\2\2\u0138\u0c9a\3\2\2\2\u013a\u0c9e\3\2"+
-		"\2\2\u013c\u0ca0\3\2\2\2\u013e\u0ca2\3\2\2\2\u0140\u0cb0\3\2\2\2\u0142"+
-		"\u0cb6\3\2\2\2\u0144\u0cb8\3\2\2\2\u0146\u0cbb\3\2\2\2\u0148\u0cbe\3\2"+
-		"\2\2\u014a\u0cc8\3\2\2\2\u014c\u0cd0\3\2\2\2\u014e\u0150\5\u0140\u00a1"+
-		"\2\u014f\u014e\3\2\2\2\u014f\u0150\3\2\2\2\u0150\u0154\3\2\2\2\u0151\u0153"+
-		"\7\7\2\2\u0152\u0151\3\2\2\2\u0153\u0156\3\2\2\2\u0154\u0152\3\2\2\2\u0154"+
-		"\u0155\3\2\2\2\u0155\u015a\3\2\2\2\u0156\u0154\3\2\2\2\u0157\u0159\5\6"+
-		"\4\2\u0158\u0157\3\2\2\2\u0159\u015c\3\2\2\2\u015a\u0158\3\2\2\2\u015a"+
-		"\u015b\3\2\2\2\u015b\u015e\3\2\2\2\u015c\u015a\3\2\2\2\u015d\u015f\5\b"+
-		"\5\2\u015e\u015d\3\2\2\2\u015e\u015f\3\2\2\2\u015f\u0160\3\2\2\2\u0160"+
-		"\u0164\5\n\6\2\u0161\u0163\5\20\t\2\u0162\u0161\3\2\2\2\u0163\u0166\3"+
-		"\2\2\2\u0164\u0162\3\2\2\2\u0164\u0165\3\2\2\2\u0165\u0167\3\2\2\2\u0166"+
-		"\u0164\3\2\2\2\u0167\u0168\7\2\2\3\u0168\3\3\2\2\2\u0169\u016b\5\u0140"+
-		"\u00a1\2\u016a\u0169\3\2\2\2\u016a\u016b\3\2\2\2\u016b\u016f\3\2\2\2\u016c"+
-		"\u016e\7\7\2\2\u016d\u016c\3\2\2\2\u016e\u0171\3\2\2\2\u016f\u016d\3\2"+
-		"\2\2\u016f\u0170\3\2\2\2\u0170\u0175\3\2\2\2\u0171\u016f\3\2\2\2\u0172"+
-		"\u0174\5\6\4\2\u0173\u0172\3\2\2\2\u0174\u0177\3\2\2\2\u0175\u0173\3\2"+
-		"\2\2\u0175\u0176\3\2\2\2\u0176\u0179\3\2\2\2\u0177\u0175\3\2\2\2\u0178"+
-		"\u017a\5\b\5\2\u0179\u0178\3\2\2\2\u0179\u017a\3\2\2\2\u017a\u017b\3\2"+
-		"\2\2\u017b\u0181\5\n\6\2\u017c\u017d\5|?\2\u017d\u017e\5\u014a\u00a6\2"+
-		"\u017e\u0180\3\2\2\2\u017f\u017c\3\2\2\2\u0180\u0183\3\2\2\2\u0181\u017f"+
-		"\3\2\2\2\u0181\u0182\3\2\2\2\u0182\u0184\3\2\2\2\u0183\u0181\3\2\2\2\u0184"+
-		"\u0185\7\2\2\3\u0185\5\3\2\2\2\u0186\u018a\7d\2\2\u0187\u0189\7\7\2\2"+
-		"\u0188\u0187\3\2\2\2\u0189\u018c\3\2\2\2\u018a\u0188\3\2\2\2\u018a\u018b"+
-		"\3\2\2\2\u018b\u018d\3\2\2\2\u018c\u018a\3\2\2\2\u018d\u0191\7\34\2\2"+
-		"\u018e\u0190\7\7\2\2\u018f\u018e\3\2\2\2\u0190\u0193\3\2\2\2\u0191\u018f"+
-		"\3\2\2\2\u0191\u0192\3\2\2\2\u0192\u019d\3\2\2\2\u0193\u0191\3\2\2\2\u0194"+
-		"\u0196\7\r\2\2\u0195\u0197\5\u013a\u009e\2\u0196\u0195\3\2\2\2\u0197\u0198"+
-		"\3\2\2\2\u0198\u0196\3\2\2\2\u0198\u0199\3\2\2\2\u0199\u019a\3\2\2\2\u019a"+
-		"\u019b\7\16\2\2\u019b\u019e\3\2\2\2\u019c\u019e\5\u013a\u009e\2\u019d"+
-		"\u0194\3\2\2\2\u019d\u019c\3\2\2\2\u019e\u01a2\3\2\2\2\u019f\u01a1\7\7"+
-		"\2\2\u01a0\u019f\3\2\2\2\u01a1\u01a4\3\2\2\2\u01a2\u01a0\3\2\2\2\u01a2"+
-		"\u01a3\3\2\2\2\u01a3\7\3\2\2\2\u01a4\u01a2\3\2\2\2\u01a5\u01a6\7=\2\2"+
-		"\u01a6\u01a8\5\u013e\u00a0\2\u01a7\u01a9\5\u014a\u00a6\2\u01a8\u01a7\3"+
-		"\2\2\2\u01a8\u01a9\3\2\2\2\u01a9\t\3\2\2\2\u01aa\u01ac\5\f\7\2\u01ab\u01aa"+
-		"\3\2\2\2\u01ac\u01af\3\2\2\2\u01ad\u01ab\3\2\2\2\u01ad\u01ae\3\2\2\2\u01ae"+
-		"\13\3\2\2\2\u01af\u01ad\3\2\2\2\u01b0\u01b1\7>\2\2\u01b1\u01b5\5\u013e"+
-		"\u00a0\2\u01b2\u01b3\7\t\2\2\u01b3\u01b6\7\21\2\2\u01b4\u01b6\5\16\b\2"+
-		"\u01b5\u01b2\3\2\2\2\u01b5\u01b4\3\2\2\2\u01b5\u01b6\3\2\2\2\u01b6\u01b8"+
-		"\3\2\2\2\u01b7\u01b9\5\u014a\u00a6\2\u01b8\u01b7\3\2\2\2\u01b8\u01b9\3"+
-		"\2\2\2\u01b9\r\3\2\2\2\u01ba\u01bb\7[\2\2\u01bb\u01bc\5\u013c\u009f\2"+
-		"\u01bc\17\3\2\2\2\u01bd\u01bf\5~@\2\u01be\u01c0\5\u014c\u00a7\2\u01bf"+
-		"\u01be\3\2\2\2\u01bf\u01c0\3\2\2\2\u01c0\21\3\2\2\2\u01c1\u01c3\5\u0118"+
-		"\u008d\2\u01c2\u01c1\3\2\2\2\u01c2\u01c3\3\2\2\2\u01c3\u01c4\3\2\2\2\u01c4"+
-		"\u01c8\t\2\2\2\u01c5\u01c7\7\7\2\2\u01c6\u01c5\3\2\2\2\u01c7\u01ca\3\2"+
-		"\2\2\u01c8\u01c6\3\2\2\2\u01c8\u01c9\3\2\2\2\u01c9\u01cb\3\2\2\2\u01ca"+
-		"\u01c8\3\2\2\2\u01cb\u01d3\5\u013c\u009f\2\u01cc\u01ce\7\7\2\2\u01cd\u01cc"+
-		"\3\2\2\2\u01ce\u01d1\3\2\2\2\u01cf\u01cd\3\2\2\2\u01cf\u01d0\3\2\2\2\u01d0"+
-		"\u01d2\3\2\2\2\u01d1\u01cf\3\2\2\2\u01d2\u01d4\5T+\2\u01d3\u01cf\3\2\2"+
-		"\2\u01d3\u01d4\3\2\2\2\u01d4\u01dc\3\2\2\2\u01d5\u01d7\7\7\2\2\u01d6\u01d5"+
-		"\3\2\2\2\u01d7\u01da\3\2\2\2\u01d8\u01d6\3\2\2\2\u01d8\u01d9\3\2\2\2\u01d9"+
-		"\u01db\3\2\2\2\u01da\u01d8\3\2\2\2\u01db\u01dd\5\24\13\2\u01dc\u01d8\3"+
-		"\2\2\2\u01dc\u01dd\3\2\2\2\u01dd\u01ec\3\2\2\2\u01de\u01e0\7\7\2\2\u01df"+
-		"\u01de\3\2\2\2\u01e0\u01e3\3\2\2\2\u01e1\u01df\3\2\2\2\u01e1\u01e2\3\2"+
-		"\2\2\u01e2\u01e4\3\2\2\2\u01e3\u01e1\3\2\2\2\u01e4\u01e8\7\34\2\2\u01e5"+
-		"\u01e7\7\7\2\2\u01e6\u01e5\3\2\2\2\u01e7\u01ea\3\2\2\2\u01e8\u01e6\3\2"+
-		"\2\2\u01e8\u01e9\3\2\2\2\u01e9\u01eb\3\2\2\2\u01ea\u01e8\3\2\2\2\u01eb"+
-		"\u01ed\5\32\16\2\u01ec\u01e1\3\2\2\2\u01ec\u01ed\3\2\2\2\u01ed\u01f5\3"+
-		"\2\2\2\u01ee\u01f0\7\7\2\2\u01ef\u01ee\3\2\2\2\u01f0\u01f3\3\2\2\2\u01f1"+
-		"\u01ef\3\2\2\2\u01f1\u01f2\3\2\2\2\u01f2\u01f4\3\2\2\2\u01f3\u01f1\3\2"+
-		"\2\2\u01f4\u01f6\5t;\2\u01f5\u01f1\3\2\2\2\u01f5\u01f6\3\2\2\2\u01f6\u0205"+
-		"\3\2\2\2\u01f7\u01f9\7\7\2\2\u01f8\u01f7\3\2\2\2\u01f9\u01fc\3\2\2\2\u01fa"+
-		"\u01f8\3\2\2\2\u01fa\u01fb\3\2\2\2\u01fb\u01fd\3\2\2\2\u01fc\u01fa\3\2"+
-		"\2\2\u01fd\u0206\5$\23\2\u01fe\u0200\7\7\2\2\u01ff\u01fe\3\2\2\2\u0200"+
-		"\u0203\3\2\2\2\u0201\u01ff\3\2\2\2\u0201\u0202\3\2\2\2\u0202\u0204\3\2"+
-		"\2\2\u0203\u0201\3\2\2\2\u0204\u0206\5\60\31\2\u0205\u01fa\3\2\2\2\u0205"+
-		"\u0201\3\2\2\2\u0205\u0206\3\2\2\2\u0206\23\3\2\2\2\u0207\u0209\5\u0118"+
-		"\u008d\2\u0208\u0207\3\2\2\2\u0208\u0209\3\2\2\2\u0209\u020a\3\2\2\2\u020a"+
-		"\u020e\7F\2\2\u020b\u020d\7\7\2\2\u020c\u020b\3\2\2\2\u020d\u0210\3\2"+
-		"\2\2\u020e\u020c\3\2\2\2\u020e\u020f\3\2\2\2\u020f\u0212\3\2\2\2\u0210"+
-		"\u020e\3\2\2\2\u0211\u0208\3\2\2\2\u0211\u0212\3\2\2\2\u0212\u0213\3\2"+
-		"\2\2\u0213\u0214\5\26\f\2\u0214\25\3\2\2\2\u0215\u0219\7\13\2\2\u0216"+
-		"\u0218\7\7\2\2\u0217\u0216\3\2\2\2\u0218\u021b\3\2\2\2\u0219\u0217\3\2"+
-		"\2\2\u0219\u021a\3\2\2\2\u021a\u0230\3\2\2\2\u021b\u0219\3\2\2\2\u021c"+
-		"\u022d\5\30\r\2\u021d\u021f\7\7\2\2\u021e\u021d\3\2\2\2\u021f\u0222\3"+
-		"\2\2\2\u0220\u021e\3\2\2\2\u0220\u0221\3\2\2\2\u0221\u0223\3\2\2\2\u0222"+
-		"\u0220\3\2\2\2\u0223\u0227\7\n\2\2\u0224\u0226\7\7\2\2\u0225\u0224\3\2"+
-		"\2\2\u0226\u0229\3\2\2\2\u0227\u0225\3\2\2\2\u0227\u0228\3\2\2\2\u0228"+
-		"\u022a\3\2\2\2\u0229\u0227\3\2\2\2\u022a\u022c\5\30\r\2\u022b\u0220\3"+
-		"\2\2\2\u022c\u022f\3\2\2\2\u022d\u022b\3\2\2\2\u022d\u022e\3\2\2\2\u022e"+
-		"\u0231\3\2\2\2\u022f\u022d\3\2\2\2\u0230\u021c\3\2\2\2\u0230\u0231\3\2"+
-		"\2\2\u0231\u0235\3\2\2\2\u0232\u0234\7\7\2\2\u0233\u0232\3\2\2\2\u0234"+
-		"\u0237\3\2\2\2\u0235\u0233\3\2\2\2\u0235\u0236\3\2\2\2\u0236\u0238\3\2"+
-		"\2\2\u0237\u0235\3\2\2\2\u0238\u0239\7\f\2\2\u0239\27\3\2\2\2\u023a\u023c"+
-		"\5\u0118\u008d\2\u023b\u023a\3\2\2\2\u023b\u023c\3\2\2\2\u023c\u023e\3"+
-		"\2\2\2\u023d\u023f\t\3\2\2\u023e\u023d\3\2\2\2\u023e\u023f\3\2\2\2\u023f"+
-		"\u0243\3\2\2\2\u0240\u0242\7\7\2\2\u0241\u0240\3\2\2\2\u0242\u0245\3\2"+
-		"\2\2\u0243\u0241\3\2\2\2\u0243\u0244\3\2\2\2\u0244\u0246\3\2\2\2\u0245"+
-		"\u0243\3\2\2\2\u0246\u0247\5\u013c\u009f\2\u0247\u024b\7\34\2\2\u0248"+
-		"\u024a\7\7\2\2\u0249\u0248\3\2\2\2\u024a\u024d\3\2\2\2\u024b\u0249\3\2"+
-		"\2\2\u024b\u024c\3\2\2\2\u024c\u024e\3\2\2\2\u024d\u024b\3\2\2\2\u024e"+
-		"\u025d\5\\/\2\u024f\u0251\7\7\2\2\u0250\u024f\3\2\2\2\u0251\u0254\3\2"+
-		"\2\2\u0252\u0250\3\2\2\2\u0252\u0253\3\2\2\2\u0253\u0255\3\2\2\2\u0254"+
-		"\u0252\3\2\2\2\u0255\u0259\7\36\2\2\u0256\u0258\7\7\2\2\u0257\u0256\3"+
-		"\2\2\2\u0258\u025b\3\2\2\2\u0259\u0257\3\2\2\2\u0259\u025a\3\2\2\2\u025a"+
-		"\u025c\3\2\2\2\u025b\u0259\3\2\2\2\u025c\u025e\5\u0082B\2\u025d\u0252"+
-		"\3\2\2\2\u025d\u025e\3\2\2\2\u025e\31\3\2\2\2\u025f\u0270\5\34\17\2\u0260"+
-		"\u0262\7\7\2\2\u0261\u0260\3\2\2\2\u0262\u0265\3\2\2\2\u0263\u0261\3\2"+
-		"\2\2\u0263\u0264\3\2\2\2\u0264\u0266\3\2\2\2\u0265\u0263\3\2\2\2\u0266"+
+		"[[\4\2qqsu\4\2||\u0081\u0081\3\2mp\4\2]]``\3\2v{\4\2rr}\177\3\2\u0082"+
+		"\u0084\3\2\u0086\u0087\3\2el\t\2>>FIMMRS`cm\u0087\u0093\u0093\3\2,-\3"+
+		"\2\32\33\4\2\7\7\35\35\2\u0e50\2\u014f\3\2\2\2\4\u016a\3\2\2\2\6\u0186"+
+		"\3\2\2\2\b\u01a5\3\2\2\2\n\u01ad\3\2\2\2\f\u01b0\3\2\2\2\16\u01ba\3\2"+
+		"\2\2\20\u01bd\3\2\2\2\22\u01c2\3\2\2\2\24\u0211\3\2\2\2\26\u0215\3\2\2"+
+		"\2\30\u023b\3\2\2\2\32\u025f\3\2\2\2\34\u0276\3\2\2\2\36\u0285\3\2\2\2"+
+		" \u0287\3\2\2\2\"\u028c\3\2\2\2$\u029d\3\2\2\2&\u02b3\3\2\2\2(\u02ba\3"+
+		"\2\2\2*\u02bc\3\2\2\2,\u02c6\3\2\2\2.\u02f9\3\2\2\2\60\u02fb\3\2\2\2\62"+
+		"\u031d\3\2\2\2\64\u0341\3\2\2\2\66\u0357\3\2\2\28\u03a4\3\2\2\2:\u03ca"+
+		"\3\2\2\2<\u03dd\3\2\2\2>\u03ed\3\2\2\2@\u0407\3\2\2\2B\u040a\3\2\2\2D"+
+		"\u042e\3\2\2\2F\u045b\3\2\2\2H\u04cc\3\2\2\2J\u04f2\3\2\2\2L\u050c\3\2"+
+		"\2\2N\u0542\3\2\2\2P\u0574\3\2\2\2R\u0577\3\2\2\2T\u0599\3\2\2\2V\u05bd"+
+		"\3\2\2\2X\u05d7\3\2\2\2Z\u05ea\3\2\2\2\\\u05ed\3\2\2\2^\u05f6\3\2\2\2"+
+		"`\u0602\3\2\2\2b\u0604\3\2\2\2d\u0616\3\2\2\2f\u0625\3\2\2\2h\u0635\3"+
+		"\2\2\2j\u0648\3\2\2\2l\u064f\3\2\2\2n\u0683\3\2\2\2p\u0685\3\2\2\2r\u068f"+
+		"\3\2\2\2t\u06b8\3\2\2\2v\u06d6\3\2\2\2x\u06e9\3\2\2\2z\u0705\3\2\2\2|"+
+		"\u070b\3\2\2\2~\u0719\3\2\2\2\u0080\u072f\3\2\2\2\u0082\u0731\3\2\2\2"+
+		"\u0084\u0733\3\2\2\2\u0086\u0747\3\2\2\2\u0088\u075b\3\2\2\2\u008a\u076a"+
+		"\3\2\2\2\u008c\u0776\3\2\2\2\u008e\u078e\3\2\2\2\u0090\u07a3\3\2\2\2\u0092"+
+		"\u07b2\3\2\2\2\u0094\u07c0\3\2\2\2\u0096\u07cf\3\2\2\2\u0098\u07de\3\2"+
+		"\2\2\u009a\u07f3\3\2\2\2\u009c\u0801\3\2\2\2\u009e\u080a\3\2\2\2\u00a0"+
+		"\u0811\3\2\2\2\u00a2\u0817\3\2\2\2\u00a4\u0819\3\2\2\2\u00a6\u081e\3\2"+
+		"\2\2\u00a8\u0820\3\2\2\2\u00aa\u0846\3\2\2\2\u00ac\u0860\3\2\2\2\u00ae"+
+		"\u0865\3\2\2\2\u00b0\u089e\3\2\2\2\u00b2\u08a0\3\2\2\2\u00b4\u08c8\3\2"+
+		"\2\2\u00b6\u08cb\3\2\2\2\u00b8\u08d7\3\2\2\2\u00ba\u08da\3\2\2\2\u00bc"+
+		"\u090b\3\2\2\2\u00be\u090d\3\2\2\2\u00c0\u0948\3\2\2\2\u00c2\u094a\3\2"+
+		"\2\2\u00c4\u094e\3\2\2\2\u00c6\u0950\3\2\2\2\u00c8\u095a\3\2\2\2\u00ca"+
+		"\u0965\3\2\2\2\u00cc\u0967\3\2\2\2\u00ce\u096b\3\2\2\2\u00d0\u096d\3\2"+
+		"\2\2\u00d2\u09ad\3\2\2\2\u00d4\u09af\3\2\2\2\u00d6\u09d5\3\2\2\2\u00d8"+
+		"\u09d7\3\2\2\2\u00da\u0a14\3\2\2\2\u00dc\u0a36\3\2\2\2\u00de\u0a38\3\2"+
+		"\2\2\u00e0\u0a52\3\2\2\2\u00e2\u0a56\3\2\2\2\u00e4\u0ab6\3\2\2\2\u00e6"+
+		"\u0ab8\3\2\2\2\u00e8\u0b1d\3\2\2\2\u00ea\u0b22\3\2\2\2\u00ec\u0b24\3\2"+
+		"\2\2\u00ee\u0b2d\3\2\2\2\u00f0\u0b36\3\2\2\2\u00f2\u0b5b\3\2\2\2\u00f4"+
+		"\u0b75\3\2\2\2\u00f6\u0b81\3\2\2\2\u00f8\u0b83\3\2\2\2\u00fa\u0bc5\3\2"+
+		"\2\2\u00fc\u0bc7\3\2\2\2\u00fe\u0bf2\3\2\2\2\u0100\u0bf5\3\2\2\2\u0102"+
+		"\u0c08\3\2\2\2\u0104\u0c0a\3\2\2\2\u0106\u0c0c\3\2\2\2\u0108\u0c0e\3\2"+
+		"\2\2\u010a\u0c10\3\2\2\2\u010c\u0c12\3\2\2\2\u010e\u0c14\3\2\2\2\u0110"+
+		"\u0c16\3\2\2\2\u0112\u0c1d\3\2\2\2\u0114\u0c23\3\2\2\2\u0116\u0c28\3\2"+
+		"\2\2\u0118\u0c2c\3\2\2\2\u011a\u0c38\3\2\2\2\u011c\u0c40\3\2\2\2\u011e"+
+		"\u0c42\3\2\2\2\u0120\u0c44\3\2\2\2\u0122\u0c46\3\2\2\2\u0124\u0c48\3\2"+
+		"\2\2\u0126\u0c4a\3\2\2\2\u0128\u0c4c\3\2\2\2\u012a\u0c4e\3\2\2\2\u012c"+
+		"\u0c50\3\2\2\2\u012e\u0c52\3\2\2\2\u0130\u0c54\3\2\2\2\u0132\u0c5d\3\2"+
+		"\2\2\u0134\u0c77\3\2\2\2\u0136\u0c98\3\2\2\2\u0138\u0c9a\3\2\2\2\u013a"+
+		"\u0c9e\3\2\2\2\u013c\u0ca0\3\2\2\2\u013e\u0ca2\3\2\2\2\u0140\u0cb0\3\2"+
+		"\2\2\u0142\u0cb6\3\2\2\2\u0144\u0cb8\3\2\2\2\u0146\u0cbb\3\2\2\2\u0148"+
+		"\u0cbe\3\2\2\2\u014a\u0cc8\3\2\2\2\u014c\u0cd0\3\2\2\2\u014e\u0150\5\u0140"+
+		"\u00a1\2\u014f\u014e\3\2\2\2\u014f\u0150\3\2\2\2\u0150\u0154\3\2\2\2\u0151"+
+		"\u0153\7\7\2\2\u0152\u0151\3\2\2\2\u0153\u0156\3\2\2\2\u0154\u0152\3\2"+
+		"\2\2\u0154\u0155\3\2\2\2\u0155\u015a\3\2\2\2\u0156\u0154\3\2\2\2\u0157"+
+		"\u0159\5\6\4\2\u0158\u0157\3\2\2\2\u0159\u015c\3\2\2\2\u015a\u0158\3\2"+
+		"\2\2\u015a\u015b\3\2\2\2\u015b\u015e\3\2\2\2\u015c\u015a\3\2\2\2\u015d"+
+		"\u015f\5\b\5\2\u015e\u015d\3\2\2\2\u015e\u015f\3\2\2\2\u015f\u0160\3\2"+
+		"\2\2\u0160\u0164\5\n\6\2\u0161\u0163\5\20\t\2\u0162\u0161\3\2\2\2\u0163"+
+		"\u0166\3\2\2\2\u0164\u0162\3\2\2\2\u0164\u0165\3\2\2\2\u0165\u0167\3\2"+
+		"\2\2\u0166\u0164\3\2\2\2\u0167\u0168\7\2\2\3\u0168\3\3\2\2\2\u0169\u016b"+
+		"\5\u0140\u00a1\2\u016a\u0169\3\2\2\2\u016a\u016b\3\2\2\2\u016b\u016f\3"+
+		"\2\2\2\u016c\u016e\7\7\2\2\u016d\u016c\3\2\2\2\u016e\u0171\3\2\2\2\u016f"+
+		"\u016d\3\2\2\2\u016f\u0170\3\2\2\2\u0170\u0175\3\2\2\2\u0171\u016f\3\2"+
+		"\2\2\u0172\u0174\5\6\4\2\u0173\u0172\3\2\2\2\u0174\u0177\3\2\2\2\u0175"+
+		"\u0173\3\2\2\2\u0175\u0176\3\2\2\2\u0176\u0179\3\2\2\2\u0177\u0175\3\2"+
+		"\2\2\u0178\u017a\5\b\5\2\u0179\u0178\3\2\2\2\u0179\u017a\3\2\2\2\u017a"+
+		"\u017b\3\2\2\2\u017b\u0181\5\n\6\2\u017c\u017d\5|?\2\u017d\u017e\5\u014a"+
+		"\u00a6\2\u017e\u0180\3\2\2\2\u017f\u017c\3\2\2\2\u0180\u0183\3\2\2\2\u0181"+
+		"\u017f\3\2\2\2\u0181\u0182\3\2\2\2\u0182\u0184\3\2\2\2\u0183\u0181\3\2"+
+		"\2\2\u0184\u0185\7\2\2\3\u0185\5\3\2\2\2\u0186\u018a\7d\2\2\u0187\u0189"+
+		"\7\7\2\2\u0188\u0187\3\2\2\2\u0189\u018c\3\2\2\2\u018a\u0188\3\2\2\2\u018a"+
+		"\u018b\3\2\2\2\u018b\u018d\3\2\2\2\u018c\u018a\3\2\2\2\u018d\u0191\7\34"+
+		"\2\2\u018e\u0190\7\7\2\2\u018f\u018e\3\2\2\2\u0190\u0193\3\2\2\2\u0191"+
+		"\u018f\3\2\2\2\u0191\u0192\3\2\2\2\u0192\u019d\3\2\2\2\u0193\u0191\3\2"+
+		"\2\2\u0194\u0196\7\r\2\2\u0195\u0197\5\u013a\u009e\2\u0196\u0195\3\2\2"+
+		"\2\u0197\u0198\3\2\2\2\u0198\u0196\3\2\2\2\u0198\u0199\3\2\2\2\u0199\u019a"+
+		"\3\2\2\2\u019a\u019b\7\16\2\2\u019b\u019e\3\2\2\2\u019c\u019e\5\u013a"+
+		"\u009e\2\u019d\u0194\3\2\2\2\u019d\u019c\3\2\2\2\u019e\u01a2\3\2\2\2\u019f"+
+		"\u01a1\7\7\2\2\u01a0\u019f\3\2\2\2\u01a1\u01a4\3\2\2\2\u01a2\u01a0\3\2"+
+		"\2\2\u01a2\u01a3\3\2\2\2\u01a3\7\3\2\2\2\u01a4\u01a2\3\2\2\2\u01a5\u01a6"+
+		"\7=\2\2\u01a6\u01a8\5\u013e\u00a0\2\u01a7\u01a9\5\u014a\u00a6\2\u01a8"+
+		"\u01a7\3\2\2\2\u01a8\u01a9\3\2\2\2\u01a9\t\3\2\2\2\u01aa\u01ac\5\f\7\2"+
+		"\u01ab\u01aa\3\2\2\2\u01ac\u01af\3\2\2\2\u01ad\u01ab\3\2\2\2\u01ad\u01ae"+
+		"\3\2\2\2\u01ae\13\3\2\2\2\u01af\u01ad\3\2\2\2\u01b0\u01b1\7>\2\2\u01b1"+
+		"\u01b5\5\u013e\u00a0\2\u01b2\u01b3\7\t\2\2\u01b3\u01b6\7\21\2\2\u01b4"+
+		"\u01b6\5\16\b\2\u01b5\u01b2\3\2\2\2\u01b5\u01b4\3\2\2\2\u01b5\u01b6\3"+
+		"\2\2\2\u01b6\u01b8\3\2\2\2\u01b7\u01b9\5\u014a\u00a6\2\u01b8\u01b7\3\2"+
+		"\2\2\u01b8\u01b9\3\2\2\2\u01b9\r\3\2\2\2\u01ba\u01bb\7[\2\2\u01bb\u01bc"+
+		"\5\u013c\u009f\2\u01bc\17\3\2\2\2\u01bd\u01bf\5~@\2\u01be\u01c0\5\u014c"+
+		"\u00a7\2\u01bf\u01be\3\2\2\2\u01bf\u01c0\3\2\2\2\u01c0\21\3\2\2\2\u01c1"+
+		"\u01c3\5\u0118\u008d\2\u01c2\u01c1\3\2\2\2\u01c2\u01c3\3\2\2\2\u01c3\u01c4"+
+		"\3\2\2\2\u01c4\u01c8\t\2\2\2\u01c5\u01c7\7\7\2\2\u01c6\u01c5\3\2\2\2\u01c7"+
+		"\u01ca\3\2\2\2\u01c8\u01c6\3\2\2\2\u01c8\u01c9\3\2\2\2\u01c9\u01cb\3\2"+
+		"\2\2\u01ca\u01c8\3\2\2\2\u01cb\u01d3\5\u013c\u009f\2\u01cc\u01ce\7\7\2"+
+		"\2\u01cd\u01cc\3\2\2\2\u01ce\u01d1\3\2\2\2\u01cf\u01cd\3\2\2\2\u01cf\u01d0"+
+		"\3\2\2\2\u01d0\u01d2\3\2\2\2\u01d1\u01cf\3\2\2\2\u01d2\u01d4\5T+\2\u01d3"+
+		"\u01cf\3\2\2\2\u01d3\u01d4\3\2\2\2\u01d4\u01dc\3\2\2\2\u01d5\u01d7\7\7"+
+		"\2\2\u01d6\u01d5\3\2\2\2\u01d7\u01da\3\2\2\2\u01d8\u01d6\3\2\2\2\u01d8"+
+		"\u01d9\3\2\2\2\u01d9\u01db\3\2\2\2\u01da\u01d8\3\2\2\2\u01db\u01dd\5\24"+
+		"\13\2\u01dc\u01d8\3\2\2\2\u01dc\u01dd\3\2\2\2\u01dd\u01ec\3\2\2\2\u01de"+
+		"\u01e0\7\7\2\2\u01df\u01de\3\2\2\2\u01e0\u01e3\3\2\2\2\u01e1\u01df\3\2"+
+		"\2\2\u01e1\u01e2\3\2\2\2\u01e2\u01e4\3\2\2\2\u01e3\u01e1\3\2\2\2\u01e4"+
+		"\u01e8\7\34\2\2\u01e5\u01e7\7\7\2\2\u01e6\u01e5\3\2\2\2\u01e7\u01ea\3"+
+		"\2\2\2\u01e8\u01e6\3\2\2\2\u01e8\u01e9\3\2\2\2\u01e9\u01eb\3\2\2\2\u01ea"+
+		"\u01e8\3\2\2\2\u01eb\u01ed\5\32\16\2\u01ec\u01e1\3\2\2\2\u01ec\u01ed\3"+
+		"\2\2\2\u01ed\u01f5\3\2\2\2\u01ee\u01f0\7\7\2\2\u01ef\u01ee\3\2\2\2\u01f0"+
+		"\u01f3\3\2\2\2\u01f1\u01ef\3\2\2\2\u01f1\u01f2\3\2\2\2\u01f2\u01f4\3\2"+
+		"\2\2\u01f3\u01f1\3\2\2\2\u01f4\u01f6\5t;\2\u01f5\u01f1\3\2\2\2\u01f5\u01f6"+
+		"\3\2\2\2\u01f6\u0205\3\2\2\2\u01f7\u01f9\7\7\2\2\u01f8\u01f7\3\2\2\2\u01f9"+
+		"\u01fc\3\2\2\2\u01fa\u01f8\3\2\2\2\u01fa\u01fb\3\2\2\2\u01fb\u01fd\3\2"+
+		"\2\2\u01fc\u01fa\3\2\2\2\u01fd\u0206\5$\23\2\u01fe\u0200\7\7\2\2\u01ff"+
+		"\u01fe\3\2\2\2\u0200\u0203\3\2\2\2\u0201\u01ff\3\2\2\2\u0201\u0202\3\2"+
+		"\2\2\u0202\u0204\3\2\2\2\u0203\u0201\3\2\2\2\u0204\u0206\5\60\31\2\u0205"+
+		"\u01fa\3\2\2\2\u0205\u0201\3\2\2\2\u0205\u0206\3\2\2\2\u0206\23\3\2\2"+
+		"\2\u0207\u0209\5\u0118\u008d\2\u0208\u0207\3\2\2\2\u0208\u0209\3\2\2\2"+
+		"\u0209\u020a\3\2\2\2\u020a\u020e\7F\2\2\u020b\u020d\7\7\2\2\u020c\u020b"+
+		"\3\2\2\2\u020d\u0210\3\2\2\2\u020e\u020c\3\2\2\2\u020e\u020f\3\2\2\2\u020f"+
+		"\u0212\3\2\2\2\u0210\u020e\3\2\2\2\u0211\u0208\3\2\2\2\u0211\u0212\3\2"+
+		"\2\2\u0212\u0213\3\2\2\2\u0213\u0214\5\26\f\2\u0214\25\3\2\2\2\u0215\u0219"+
+		"\7\13\2\2\u0216\u0218\7\7\2\2\u0217\u0216\3\2\2\2\u0218\u021b\3\2\2\2"+
+		"\u0219\u0217\3\2\2\2\u0219\u021a\3\2\2\2\u021a\u0230\3\2\2\2\u021b\u0219"+
+		"\3\2\2\2\u021c\u022d\5\30\r\2\u021d\u021f\7\7\2\2\u021e\u021d\3\2\2\2"+
+		"\u021f\u0222\3\2\2\2\u0220\u021e\3\2\2\2\u0220\u0221\3\2\2\2\u0221\u0223"+
+		"\3\2\2\2\u0222\u0220\3\2\2\2\u0223\u0227\7\n\2\2\u0224\u0226\7\7\2\2\u0225"+
+		"\u0224\3\2\2\2\u0226\u0229\3\2\2\2\u0227\u0225\3\2\2\2\u0227\u0228\3\2"+
+		"\2\2\u0228\u022a\3\2\2\2\u0229\u0227\3\2\2\2\u022a\u022c\5\30\r\2\u022b"+
+		"\u0220\3\2\2\2\u022c\u022f\3\2\2\2\u022d\u022b\3\2\2\2\u022d\u022e\3\2"+
+		"\2\2\u022e\u0231\3\2\2\2\u022f\u022d\3\2\2\2\u0230\u021c\3\2\2\2\u0230"+
+		"\u0231\3\2\2\2\u0231\u0235\3\2\2\2\u0232\u0234\7\7\2\2\u0233\u0232\3\2"+
+		"\2\2\u0234\u0237\3\2\2\2\u0235\u0233\3\2\2\2\u0235\u0236\3\2\2\2\u0236"+
+		"\u0238\3\2\2\2\u0237\u0235\3\2\2\2\u0238\u0239\7\f\2\2\u0239\27\3\2\2"+
+		"\2\u023a\u023c\5\u0118\u008d\2\u023b\u023a\3\2\2\2\u023b\u023c\3\2\2\2"+
+		"\u023c\u023e\3\2\2\2\u023d\u023f\t\3\2\2\u023e\u023d\3\2\2\2\u023e\u023f"+
+		"\3\2\2\2\u023f\u0243\3\2\2\2\u0240\u0242\7\7\2\2\u0241\u0240\3\2\2\2\u0242"+
+		"\u0245\3\2\2\2\u0243\u0241\3\2\2\2\u0243\u0244\3\2\2\2\u0244\u0246\3\2"+
+		"\2\2\u0245\u0243\3\2\2\2\u0246\u0247\5\u013c\u009f\2\u0247\u024b\7\34"+
+		"\2\2\u0248\u024a\7\7\2\2\u0249\u0248\3\2\2\2\u024a\u024d\3\2\2\2\u024b"+
+		"\u0249\3\2\2\2\u024b\u024c\3\2\2\2\u024c\u024e\3\2\2\2\u024d\u024b\3\2"+
+		"\2\2\u024e\u025d\5\\/\2\u024f\u0251\7\7\2\2\u0250\u024f\3\2\2\2\u0251"+
+		"\u0254\3\2\2\2\u0252\u0250\3\2\2\2\u0252\u0253\3\2\2\2\u0253\u0255\3\2"+
+		"\2\2\u0254\u0252\3\2\2\2\u0255\u0259\7\36\2\2\u0256\u0258\7\7\2\2\u0257"+
+		"\u0256\3\2\2\2\u0258\u025b\3\2\2\2\u0259\u0257\3\2\2\2\u0259\u025a\3\2"+
+		"\2\2\u025a\u025c\3\2\2\2\u025b\u0259\3\2\2\2\u025c\u025e\5\u0082B\2\u025d"+
+		"\u0252\3\2\2\2\u025d\u025e\3\2\2\2\u025e\31\3\2\2\2\u025f\u0270\5\34\17"+
+		"\2\u0260\u0262\7\7\2\2\u0261\u0260\3\2\2\2\u0262\u0265\3\2\2\2\u0263\u0261"+
+		"\3\2\2\2\u0263\u0264\3\2\2\2\u0264\u0266\3\2\2\2\u0265\u0263\3\2\2\2\u0266"+
 		"\u026a\7\n\2\2\u0267\u0269\7\7\2\2\u0268\u0267\3\2\2\2\u0269\u026c\3\2"+
 		"\2\2\u026a\u0268\3\2\2\2\u026a\u026b\3\2\2\2\u026b\u026d\3\2\2\2\u026c"+
 		"\u026a\3\2\2\2\u026d\u026f\5\34\17\2\u026e\u0263\3\2\2\2\u026f\u0272\3"+
@@ -17102,80 +17447,80 @@ public class KotlinParser extends Parser {
 		"\u0878\3\2\2\2\u0878\u087a\3\2\2\2\u0879\u0877\3\2\2\2\u087a\u089f\7\f"+
 		"\2\2\u087b\u087f\7\13\2\2\u087c\u087e\7\7\2\2\u087d\u087c\3\2\2\2\u087e"+
 		"\u0881\3\2\2\2\u087f\u087d\3\2\2\2\u087f\u0880\3\2\2\2\u0880\u0882\3\2"+
-		"\2\2\u0881\u087f\3\2\2\2\u0882\u0893\5\u00ba^\2\u0883\u0885\7";
+		"\2\2\u0881\u087f\3\2\2\2\u0882\u0893\5\u00ba^";
 	private static final String _serializedATNSegment1 =
-		"\7\2\2\u0884\u0883\3\2\2\2\u0885\u0888\3\2\2\2\u0886\u0884\3\2\2\2\u0886"+
-		"\u0887\3\2\2\2\u0887\u0889\3\2\2\2\u0888\u0886\3\2\2\2\u0889\u088d\7\n"+
-		"\2\2\u088a\u088c\7\7\2\2\u088b\u088a\3\2\2\2\u088c\u088f\3\2\2\2\u088d"+
-		"\u088b\3\2\2\2\u088d\u088e\3\2\2\2\u088e\u0890\3\2\2\2\u088f\u088d\3\2"+
-		"\2\2\u0890\u0892\5\u00ba^\2\u0891\u0886\3\2\2\2\u0892\u0895\3\2\2\2\u0893"+
-		"\u0891\3\2\2\2\u0893\u0894\3\2\2\2\u0894\u0899\3\2\2\2\u0895\u0893\3\2"+
-		"\2\2\u0896\u0898\7\7\2\2\u0897\u0896\3\2\2\2\u0898\u089b\3\2\2\2\u0899"+
-		"\u0897\3\2\2\2\u0899\u089a\3\2\2\2\u089a\u089c\3\2\2\2\u089b\u0899\3\2"+
-		"\2\2\u089c\u089d\7\f\2\2\u089d\u089f\3\2\2\2\u089e\u0873\3\2\2\2\u089e"+
-		"\u087b\3\2\2\2\u089f\u00b1\3\2\2\2\u08a0\u08a4\7.\2\2\u08a1\u08a3\7\7"+
-		"\2\2\u08a2\u08a1\3\2\2\2\u08a3\u08a6\3\2\2\2\u08a4\u08a2\3\2\2\2\u08a4"+
-		"\u08a5\3\2\2\2\u08a5\u08a7\3\2\2\2\u08a6\u08a4\3\2\2\2\u08a7\u08b8\5\u00b4"+
-		"[\2\u08a8\u08aa\7\7\2\2\u08a9\u08a8\3\2\2\2\u08aa\u08ad\3\2\2\2\u08ab"+
-		"\u08a9\3\2\2\2\u08ab\u08ac\3\2\2\2\u08ac\u08ae\3\2\2\2\u08ad\u08ab\3\2"+
-		"\2\2\u08ae\u08b2\7\n\2\2\u08af\u08b1\7\7\2\2\u08b0\u08af\3\2\2\2\u08b1"+
-		"\u08b4\3\2\2\2\u08b2\u08b0\3\2\2\2\u08b2\u08b3\3\2\2\2\u08b3\u08b5\3\2"+
-		"\2\2\u08b4\u08b2\3\2\2\2\u08b5\u08b7\5\u00b4[\2\u08b6\u08ab\3\2\2\2\u08b7"+
-		"\u08ba\3\2\2\2\u08b8\u08b6\3\2\2\2\u08b8\u08b9\3\2\2\2\u08b9\u08be\3\2"+
-		"\2\2\u08ba\u08b8\3\2\2\2\u08bb\u08bd\7\7\2\2\u08bc\u08bb\3\2\2\2\u08bd"+
-		"\u08c0\3\2\2\2\u08be\u08bc\3\2\2\2\u08be\u08bf\3\2\2\2\u08bf\u08c1\3\2"+
-		"\2\2\u08c0\u08be\3\2\2\2\u08c1\u08c2\7/\2\2\u08c2\u00b3\3\2\2\2\u08c3"+
-		"\u08c5\5\u00b6\\\2\u08c4\u08c3\3\2\2\2\u08c4\u08c5\3\2\2\2\u08c5\u08c6"+
-		"\3\2\2\2\u08c6\u08c9\5\\/\2\u08c7\u08c9\7\21\2\2\u08c8\u08c4\3\2\2\2\u08c8"+
-		"\u08c7\3\2\2\2\u08c9\u00b5\3\2\2\2\u08ca\u08cc\5\u00b8]\2\u08cb\u08ca"+
-		"\3\2\2\2\u08cc\u08cd\3\2\2\2\u08cd\u08cb\3\2\2\2\u08cd\u08ce\3\2\2\2\u08ce"+
-		"\u00b7\3\2\2\2\u08cf\u08d3\5\u0122\u0092\2\u08d0\u08d2\7\7\2\2\u08d1\u08d0"+
-		"\3\2\2\2\u08d2\u08d5\3\2\2\2\u08d3\u08d1\3\2\2\2\u08d3\u08d4\3\2\2\2\u08d4"+
-		"\u08d8\3\2\2\2\u08d5\u08d3\3\2\2\2\u08d6\u08d8\5\u0132\u009a\2\u08d7\u08cf"+
-		"\3\2\2\2\u08d7\u08d6\3\2\2\2\u08d8\u00b9\3\2\2\2\u08d9\u08db\5\u0132\u009a"+
-		"\2\u08da\u08d9\3\2\2\2\u08da\u08db\3\2\2\2\u08db\u08df\3\2\2\2\u08dc\u08de"+
-		"\7\7\2\2\u08dd\u08dc\3\2\2\2\u08de\u08e1\3\2\2\2\u08df\u08dd\3\2\2\2\u08df"+
-		"\u08e0\3\2\2\2\u08e0\u08f0\3\2\2\2\u08e1\u08df\3\2\2\2\u08e2\u08e6\5\u013c"+
-		"\u009f\2\u08e3\u08e5\7\7\2\2\u08e4\u08e3\3\2\2\2\u08e5\u08e8\3\2\2\2\u08e6"+
-		"\u08e4\3\2\2\2\u08e6\u08e7\3\2\2\2\u08e7\u08e9\3\2\2\2\u08e8\u08e6\3\2"+
-		"\2\2\u08e9\u08ed\7\36\2\2\u08ea\u08ec\7\7\2\2\u08eb\u08ea\3\2\2\2\u08ec"+
-		"\u08ef\3\2\2\2\u08ed\u08eb\3\2\2\2\u08ed\u08ee\3\2\2\2\u08ee\u08f1\3\2"+
-		"\2\2\u08ef\u08ed\3\2\2\2\u08f0\u08e2\3\2\2\2\u08f0\u08f1\3\2\2\2\u08f1"+
-		"\u08f3\3\2\2\2\u08f2\u08f4\7\21\2\2\u08f3\u08f2\3\2\2\2\u08f3\u08f4\3"+
-		"\2\2\2\u08f4\u08f8\3\2\2\2\u08f5\u08f7\7\7\2\2\u08f6\u08f5\3\2\2\2\u08f7"+
-		"\u08fa\3\2\2\2\u08f8\u08f6\3\2\2\2\u08f8\u08f9\3\2\2\2\u08f9\u08fb\3\2"+
-		"\2\2\u08fa\u08f8\3\2\2\2\u08fb\u08fc\5\u0082B\2\u08fc\u00bb\3\2\2\2\u08fd"+
-		"\u090c\5\u00be`\2\u08fe\u090c\5\u00c2b\2\u08ff\u090c\5\u00c4c\2\u0900"+
-		"\u090c\5\u013c\u009f\2\u0901\u090c\5\u0100\u0081\2\u0902\u090c\5\u00da"+
-		"n\2\u0903\u090c\5\u00dco\2\u0904\u090c\5\u00c0a\2\u0905\u090c\5\u00de"+
-		"p\2\u0906\u090c\5\u00e0q\2\u0907\u090c\5\u00e4s\2\u0908\u090c\5\u00e6"+
-		"t\2\u0909\u090c\5\u00f0y\2\u090a\u090c\5\u00fe\u0080\2\u090b\u08fd\3\2"+
-		"\2\2\u090b\u08fe\3\2\2\2\u090b\u08ff\3\2\2\2\u090b\u0900\3\2\2\2\u090b"+
-		"\u0901\3\2\2\2\u090b\u0902\3\2\2\2\u090b\u0903\3\2\2\2\u090b\u0904\3\2"+
-		"\2\2\u090b\u0905\3\2\2\2\u090b\u0906\3\2\2\2\u090b\u0907\3\2\2\2\u090b"+
-		"\u0908\3\2\2\2\u090b\u0909\3\2\2\2\u090b\u090a\3\2\2\2\u090c\u00bd\3\2"+
-		"\2\2\u090d\u0911\7\13\2\2\u090e\u0910\7\7\2\2\u090f\u090e\3\2\2\2\u0910"+
-		"\u0913\3\2\2\2\u0911\u090f\3\2\2\2\u0911\u0912\3\2\2\2\u0912\u0914\3\2"+
-		"\2\2\u0913\u0911\3\2\2\2\u0914\u0918\5\u0082B\2\u0915\u0917\7\7\2\2\u0916"+
-		"\u0915\3\2\2\2\u0917\u091a\3\2\2\2\u0918\u0916\3\2\2\2\u0918\u0919\3\2"+
-		"\2\2\u0919\u091b\3\2\2\2\u091a\u0918\3\2\2\2\u091b\u091c\7\f\2\2\u091c"+
-		"\u00bf\3\2\2\2\u091d\u0921\7\r\2\2\u091e\u0920\7\7\2\2\u091f\u091e\3\2"+
-		"\2\2\u0920\u0923\3\2\2\2\u0921\u091f\3\2\2\2\u0921\u0922\3\2\2\2\u0922"+
-		"\u0924\3\2\2\2\u0923\u0921\3\2\2\2\u0924\u0935\5\u0082B\2\u0925\u0927"+
-		"\7\7\2\2\u0926\u0925\3\2\2\2\u0927\u092a\3\2\2\2\u0928\u0926\3\2\2\2\u0928"+
-		"\u0929\3\2\2\2\u0929\u092b\3\2\2\2\u092a\u0928\3\2\2\2\u092b\u092f\7\n"+
-		"\2\2\u092c\u092e\7\7\2\2\u092d\u092c\3\2\2\2\u092e\u0931\3\2\2\2\u092f"+
-		"\u092d\3\2\2\2\u092f\u0930\3\2\2\2\u0930\u0932\3\2\2\2\u0931\u092f\3\2"+
-		"\2\2\u0932\u0934\5\u0082B\2\u0933\u0928\3\2\2\2\u0934\u0937\3\2\2\2\u0935"+
-		"\u0933\3\2\2\2\u0935\u0936\3\2\2\2\u0936\u093b\3\2\2\2\u0937\u0935\3\2"+
-		"\2\2\u0938\u093a\7\7\2\2\u0939\u0938\3\2\2\2\u093a\u093d\3\2\2\2\u093b"+
-		"\u0939\3\2\2\2\u093b\u093c\3\2\2\2\u093c\u093e\3\2\2\2\u093d\u093b\3\2"+
-		"\2\2\u093e\u093f\7\16\2\2\u093f\u0949\3\2\2\2\u0940\u0944\7\r\2\2\u0941"+
-		"\u0943\7\7\2\2\u0942\u0941\3\2\2\2\u0943\u0946\3\2\2\2\u0944\u0942\3\2"+
-		"\2\2\u0944\u0945\3\2\2\2\u0945\u0947\3\2\2\2\u0946\u0944\3\2\2\2\u0947"+
-		"\u0949\7\16\2\2\u0948\u091d\3\2\2\2\u0948\u0940\3\2\2\2\u0949\u00c1\3"+
-		"\2\2\2\u094a\u094b\t\4\2\2\u094b\u00c3\3\2\2\2\u094c\u094f\5\u00c6d\2"+
-		"\u094d\u094f\5\u00c8e\2\u094e\u094c\3\2\2\2\u094e\u094d\3\2\2\2\u094f"+
+		"\2\u0883\u0885\7\7\2\2\u0884\u0883\3\2\2\2\u0885\u0888\3\2\2\2\u0886\u0884"+
+		"\3\2\2\2\u0886\u0887\3\2\2\2\u0887\u0889\3\2\2\2\u0888\u0886\3\2\2\2\u0889"+
+		"\u088d\7\n\2\2\u088a\u088c\7\7\2\2\u088b\u088a\3\2\2\2\u088c\u088f\3\2"+
+		"\2\2\u088d\u088b\3\2\2\2\u088d\u088e\3\2\2\2\u088e\u0890\3\2\2\2\u088f"+
+		"\u088d\3\2\2\2\u0890\u0892\5\u00ba^\2\u0891\u0886\3\2\2\2\u0892\u0895"+
+		"\3\2\2\2\u0893\u0891\3\2\2\2\u0893\u0894\3\2\2\2\u0894\u0899\3\2\2\2\u0895"+
+		"\u0893\3\2\2\2\u0896\u0898\7\7\2\2\u0897\u0896\3\2\2\2\u0898\u089b\3\2"+
+		"\2\2\u0899\u0897\3\2\2\2\u0899\u089a\3\2\2\2\u089a\u089c\3\2\2\2\u089b"+
+		"\u0899\3\2\2\2\u089c\u089d\7\f\2\2\u089d\u089f\3\2\2\2\u089e\u0873\3\2"+
+		"\2\2\u089e\u087b\3\2\2\2\u089f\u00b1\3\2\2\2\u08a0\u08a4\7.\2\2\u08a1"+
+		"\u08a3\7\7\2\2\u08a2\u08a1\3\2\2\2\u08a3\u08a6\3\2\2\2\u08a4\u08a2\3\2"+
+		"\2\2\u08a4\u08a5\3\2\2\2\u08a5\u08a7\3\2\2\2\u08a6\u08a4\3\2\2\2\u08a7"+
+		"\u08b8\5\u00b4[\2\u08a8\u08aa\7\7\2\2\u08a9\u08a8\3\2\2\2\u08aa\u08ad"+
+		"\3\2\2\2\u08ab\u08a9\3\2\2\2\u08ab\u08ac\3\2\2\2\u08ac\u08ae\3\2\2\2\u08ad"+
+		"\u08ab\3\2\2\2\u08ae\u08b2\7\n\2\2\u08af\u08b1\7\7\2\2\u08b0\u08af\3\2"+
+		"\2\2\u08b1\u08b4\3\2\2\2\u08b2\u08b0\3\2\2\2\u08b2\u08b3\3\2\2\2\u08b3"+
+		"\u08b5\3\2\2\2\u08b4\u08b2\3\2\2\2\u08b5\u08b7\5\u00b4[\2\u08b6\u08ab"+
+		"\3\2\2\2\u08b7\u08ba\3\2\2\2\u08b8\u08b6\3\2\2\2\u08b8\u08b9\3\2\2\2\u08b9"+
+		"\u08be\3\2\2\2\u08ba\u08b8\3\2\2\2\u08bb\u08bd\7\7\2\2\u08bc\u08bb\3\2"+
+		"\2\2\u08bd\u08c0\3\2\2\2\u08be\u08bc\3\2\2\2\u08be\u08bf\3\2\2\2\u08bf"+
+		"\u08c1\3\2\2\2\u08c0\u08be\3\2\2\2\u08c1\u08c2\7/\2\2\u08c2\u00b3\3\2"+
+		"\2\2\u08c3\u08c5\5\u00b6\\\2\u08c4\u08c3\3\2\2\2\u08c4\u08c5\3\2\2\2\u08c5"+
+		"\u08c6\3\2\2\2\u08c6\u08c9\5\\/\2\u08c7\u08c9\7\21\2\2\u08c8\u08c4\3\2"+
+		"\2\2\u08c8\u08c7\3\2\2\2\u08c9\u00b5\3\2\2\2\u08ca\u08cc\5\u00b8]\2\u08cb"+
+		"\u08ca\3\2\2\2\u08cc\u08cd\3\2\2\2\u08cd\u08cb\3\2\2\2\u08cd\u08ce\3\2"+
+		"\2\2\u08ce\u00b7\3\2\2\2\u08cf\u08d3\5\u0122\u0092\2\u08d0\u08d2\7\7\2"+
+		"\2\u08d1\u08d0\3\2\2\2\u08d2\u08d5\3\2\2\2\u08d3\u08d1\3\2\2\2\u08d3\u08d4"+
+		"\3\2\2\2\u08d4\u08d8\3\2\2\2\u08d5\u08d3\3\2\2\2\u08d6\u08d8\5\u0132\u009a"+
+		"\2\u08d7\u08cf\3\2\2\2\u08d7\u08d6\3\2\2\2\u08d8\u00b9\3\2\2\2\u08d9\u08db"+
+		"\5\u0132\u009a\2\u08da\u08d9\3\2\2\2\u08da\u08db\3\2\2\2\u08db\u08df\3"+
+		"\2\2\2\u08dc\u08de\7\7\2\2\u08dd\u08dc\3\2\2\2\u08de\u08e1\3\2\2\2\u08df"+
+		"\u08dd\3\2\2\2\u08df\u08e0\3\2\2\2\u08e0\u08f0\3\2\2\2\u08e1\u08df\3\2"+
+		"\2\2\u08e2\u08e6\5\u013c\u009f\2\u08e3\u08e5\7\7\2\2\u08e4\u08e3\3\2\2"+
+		"\2\u08e5\u08e8\3\2\2\2\u08e6\u08e4\3\2\2\2\u08e6\u08e7\3\2\2\2\u08e7\u08e9"+
+		"\3\2\2\2\u08e8\u08e6\3\2\2\2\u08e9\u08ed\7\36\2\2\u08ea\u08ec\7\7\2\2"+
+		"\u08eb\u08ea\3\2\2\2\u08ec\u08ef\3\2\2\2\u08ed\u08eb\3\2\2\2\u08ed\u08ee"+
+		"\3\2\2\2\u08ee\u08f1\3\2\2\2\u08ef\u08ed\3\2\2\2\u08f0\u08e2\3\2\2\2\u08f0"+
+		"\u08f1\3\2\2\2\u08f1\u08f3\3\2\2\2\u08f2\u08f4\7\21\2\2\u08f3\u08f2\3"+
+		"\2\2\2\u08f3\u08f4\3\2\2\2\u08f4\u08f8\3\2\2\2\u08f5\u08f7\7\7\2\2\u08f6"+
+		"\u08f5\3\2\2\2\u08f7\u08fa\3\2\2\2\u08f8\u08f6\3\2\2\2\u08f8\u08f9\3\2"+
+		"\2\2\u08f9\u08fb\3\2\2\2\u08fa\u08f8\3\2\2\2\u08fb\u08fc\5\u0082B\2\u08fc"+
+		"\u00bb\3\2\2\2\u08fd\u090c\5\u00be`\2\u08fe\u090c\5\u00c2b\2\u08ff\u090c"+
+		"\5\u00c4c\2\u0900\u090c\5\u013c\u009f\2\u0901\u090c\5\u0100\u0081\2\u0902"+
+		"\u090c\5\u00dan\2\u0903\u090c\5\u00dco\2\u0904\u090c\5\u00c0a\2\u0905"+
+		"\u090c\5\u00dep\2\u0906\u090c\5\u00e0q\2\u0907\u090c\5\u00e4s\2\u0908"+
+		"\u090c\5\u00e6t\2\u0909\u090c\5\u00f0y\2\u090a\u090c\5\u00fe\u0080\2\u090b"+
+		"\u08fd\3\2\2\2\u090b\u08fe\3\2\2\2\u090b\u08ff\3\2\2\2\u090b\u0900\3\2"+
+		"\2\2\u090b\u0901\3\2\2\2\u090b\u0902\3\2\2\2\u090b\u0903\3\2\2\2\u090b"+
+		"\u0904\3\2\2\2\u090b\u0905\3\2\2\2\u090b\u0906\3\2\2\2\u090b\u0907\3\2"+
+		"\2\2\u090b\u0908\3\2\2\2\u090b\u0909\3\2\2\2\u090b\u090a\3\2\2\2\u090c"+
+		"\u00bd\3\2\2\2\u090d\u0911\7\13\2\2\u090e\u0910\7\7\2\2\u090f\u090e\3"+
+		"\2\2\2\u0910\u0913\3\2\2\2\u0911\u090f\3\2\2\2\u0911\u0912\3\2\2\2\u0912"+
+		"\u0914\3\2\2\2\u0913\u0911\3\2\2\2\u0914\u0918\5\u0082B\2\u0915\u0917"+
+		"\7\7\2\2\u0916\u0915\3\2\2\2\u0917\u091a\3\2\2\2\u0918\u0916\3\2\2\2\u0918"+
+		"\u0919\3\2\2\2\u0919\u091b\3\2\2\2\u091a\u0918\3\2\2\2\u091b\u091c\7\f"+
+		"\2\2\u091c\u00bf\3\2\2\2\u091d\u0921\7\r\2\2\u091e\u0920\7\7\2\2\u091f"+
+		"\u091e\3\2\2\2\u0920\u0923\3\2\2\2\u0921\u091f\3\2\2\2\u0921\u0922\3\2"+
+		"\2\2\u0922\u0924\3\2\2\2\u0923\u0921\3\2\2\2\u0924\u0935\5\u0082B\2\u0925"+
+		"\u0927\7\7\2\2\u0926\u0925\3\2\2\2\u0927\u092a\3\2\2\2\u0928\u0926\3\2"+
+		"\2\2\u0928\u0929\3\2\2\2\u0929\u092b\3\2\2\2\u092a\u0928\3\2\2\2\u092b"+
+		"\u092f\7\n\2\2\u092c\u092e\7\7\2\2\u092d\u092c\3\2\2\2\u092e\u0931\3\2"+
+		"\2\2\u092f\u092d\3\2\2\2\u092f\u0930\3\2\2\2\u0930\u0932\3\2\2\2\u0931"+
+		"\u092f\3\2\2\2\u0932\u0934\5\u0082B\2\u0933\u0928\3\2\2\2\u0934\u0937"+
+		"\3\2\2\2\u0935\u0933\3\2\2\2\u0935\u0936\3\2\2\2\u0936\u093b\3\2\2\2\u0937"+
+		"\u0935\3\2\2\2\u0938\u093a\7\7\2\2\u0939\u0938\3\2\2\2\u093a\u093d\3\2"+
+		"\2\2\u093b\u0939\3\2\2\2\u093b\u093c\3\2\2\2\u093c\u093e\3\2\2\2\u093d"+
+		"\u093b\3\2\2\2\u093e\u093f\7\16\2\2\u093f\u0949\3\2\2\2\u0940\u0944\7"+
+		"\r\2\2\u0941\u0943\7\7\2\2\u0942\u0941\3\2\2\2\u0943\u0946\3\2\2\2\u0944"+
+		"\u0942\3\2\2\2\u0944\u0945\3\2\2\2\u0945\u0947\3\2\2\2\u0946\u0944\3\2"+
+		"\2\2\u0947\u0949\7\16\2\2\u0948\u091d\3\2\2\2\u0948\u0940\3\2\2\2\u0949"+
+		"\u00c1\3\2\2\2\u094a\u094b\t\4\2\2\u094b\u00c3\3\2\2\2\u094c\u094f\5\u00c6"+
+		"d\2\u094d\u094f\5\u00c8e\2\u094e\u094c\3\2\2\2\u094e\u094d\3\2\2\2\u094f"+
 		"\u00c5\3\2\2\2\u0950\u0955\7\u0088\2\2\u0951\u0954\5\u00caf\2\u0952\u0954"+
 		"\5\u00ccg\2\u0953\u0951\3\2\2\2\u0953\u0952\3\2\2\2\u0954\u0957\3\2\2"+
 		"\2\u0955\u0953\3\2\2\2\u0955\u0956\3\2\2\2\u0956\u0958\3\2\2\2\u0957\u0955"+

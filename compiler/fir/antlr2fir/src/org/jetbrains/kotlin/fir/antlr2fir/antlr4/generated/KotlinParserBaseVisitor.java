@@ -1,4 +1,4 @@
-// Generated from E:/!PROJECTS/IntelliJ IDEA/kotlin/compiler/fir/antlr2fir/src/org/jetbrains/kotlin/fir/antlr2fir/antlr4\KotlinParser.g4 by ANTLR 4.7
+// Generated from E:/!PROJECTS/IntelliJ IDEA/kotlin/compiler/fir/antlr2fir/src/org/jetbrains/kotlin/fir/antlr2fir/antlr4\KotlinParser.g4 by ANTLR 4.7.2
 package org.jetbrains.kotlin.fir.antlr2fir.antlr4.generated;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
