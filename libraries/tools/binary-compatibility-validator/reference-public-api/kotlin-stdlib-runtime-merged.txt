@@ -2392,6 +2392,30 @@ public final class kotlin/collections/UArraysKt {
 	public static final fun sliceArray-ojwP5H8 ([SLjava/util/Collection;)[S
 	public static final fun sliceArray-tAntMlw ([ILkotlin/ranges/IntRange;)[I
 	public static final fun sliceArray-xo_DsdI ([BLjava/util/Collection;)[B
+	public static final fun sort--ajY-9A ([I)V
+	public static final fun sort-GBYM_sE ([B)V
+	public static final fun sort-QwZRm1k ([J)V
+	public static final fun sort-rL5Bavg ([S)V
+	public static final fun sortDescending--ajY-9A ([I)V
+	public static final fun sortDescending-GBYM_sE ([B)V
+	public static final fun sortDescending-QwZRm1k ([J)V
+	public static final fun sortDescending-rL5Bavg ([S)V
+	public static final fun sorted--ajY-9A ([I)Ljava/util/List;
+	public static final fun sorted-GBYM_sE ([B)Ljava/util/List;
+	public static final fun sorted-QwZRm1k ([J)Ljava/util/List;
+	public static final fun sorted-rL5Bavg ([S)Ljava/util/List;
+	public static final fun sortedArray--ajY-9A ([I)[I
+	public static final fun sortedArray-GBYM_sE ([B)[B
+	public static final fun sortedArray-QwZRm1k ([J)[J
+	public static final fun sortedArray-rL5Bavg ([S)[S
+	public static final fun sortedArrayDescending--ajY-9A ([I)[I
+	public static final fun sortedArrayDescending-GBYM_sE ([B)[B
+	public static final fun sortedArrayDescending-QwZRm1k ([J)[J
+	public static final fun sortedArrayDescending-rL5Bavg ([S)[S
+	public static final fun sortedDescending--ajY-9A ([I)Ljava/util/List;
+	public static final fun sortedDescending-GBYM_sE ([B)Ljava/util/List;
+	public static final fun sortedDescending-QwZRm1k ([J)Ljava/util/List;
+	public static final fun sortedDescending-rL5Bavg ([S)Ljava/util/List;
 	public static final fun sumOfUByte ([Lkotlin/UByte;)I
 	public static final fun sumOfUInt ([Lkotlin/UInt;)I
 	public static final fun sumOfULong ([Lkotlin/ULong;)J

@@ -923,4 +923,118 @@ class UnsignedArraysTest {
         expect(listOf(2uL)) { ulongArrayOf(2, 3).filterNot { it > 2 } }
     }
 
+    @Test
+    fun sort() {
+        val ubyteArray = ubyteArrayOf(5, 2, 1, 9, 80, 0, UByte.MAX_VALUE, 250)
+        assertArrayContentEquals(ubyteArrayOf(0, 1, 2, 5, 9, 80, 250, UByte.MAX_VALUE), ubyteArray.apply { sort() })
+
+        val ushortArray = ushortArrayOf(5, 2, 1, 9, 80, 0, UShort.MAX_VALUE, 65501)
+        assertArrayContentEquals(ushortArrayOf(0, 1, 2, 5, 9, 80, 65501, UShort.MAX_VALUE), ushortArray.apply { sort() })
+
+        val uintArray = uintArrayOf(5, 2, 1, 9, 80, 0, UInt.MAX_VALUE, 4294967200)
+        assertArrayContentEquals(uintArrayOf(0, 1, 2, 5, 9, 80, 4294967200, UInt.MAX_VALUE), uintArray.apply { sort() })
+
+        val ulongArray = ulongArrayOf(5, 2, 1, 9, 80, 0, ULong.MAX_VALUE, ULong.MAX_VALUE - 123)
+        assertArrayContentEquals(ulongArrayOf(0, 1, 2, 5, 9, 80, ULong.MAX_VALUE - 123, ULong.MAX_VALUE), ulongArray.apply { sort() })
+    }
+
+    @Test
+    fun sortDescending() {
+        val ubyteArray = ubyteArrayOf(5, 2, 1, 9, 80, 0, UByte.MAX_VALUE, 250)
+        assertArrayContentEquals(ubyteArrayOf(UByte.MAX_VALUE, 250, 80, 9, 5, 2, 1, 0), ubyteArray.apply { sortDescending() })
+
+        val ushortArray = ushortArrayOf(5, 2, 1, 9, 80, 0, UShort.MAX_VALUE, 65501)
+        assertArrayContentEquals(ushortArrayOf(UShort.MAX_VALUE, 65501, 80, 9, 5, 2, 1, 0), ushortArray.apply { sortDescending() })
+
+        val uintArray = uintArrayOf(5, 2, 1, 9, 80, 0, UInt.MAX_VALUE, 4294967200)
+        assertArrayContentEquals(uintArrayOf(UInt.MAX_VALUE, 4294967200, 80, 9, 5, 2, 1, 0), uintArray.apply { sortDescending() })
+
+        val ulongArray = ulongArrayOf(5, 2, 1, 9, 80, 0, ULong.MAX_VALUE, ULong.MAX_VALUE - 123)
+        assertArrayContentEquals(ulongArrayOf(ULong.MAX_VALUE, ULong.MAX_VALUE - 123, 80, 9, 5, 2, 1, 0), ulongArray.apply { sortDescending() })
+    }
+
+    @Test
+    fun sorted() {
+        assertTrue(uintArrayOf().sorted().none())
+        assertEquals(listOf(1u), uintArrayOf(1).sorted())
+
+        val ubyteArray = ubyteArrayOf(5, 2, 1, 9, 80, 0, UByte.MAX_VALUE, 250)
+        assertEquals(listOf<UByte>(0, 1, 2, 5, 9, 80, 250, UByte.MAX_VALUE), ubyteArray.sorted())
+
+        val ushortArray = ushortArrayOf(5, 2, 1, 9, 80, 0, UShort.MAX_VALUE, 65501)
+        assertEquals(listOf<UShort>(0, 1, 2, 5, 9, 80, 65501, UShort.MAX_VALUE), ushortArray.sorted())
+
+        val uintArray = uintArrayOf(5, 2, 1, 9, 80, 0, UInt.MAX_VALUE, 4294967200)
+        assertEquals(listOf<UInt>(0, 1, 2, 5, 9, 80, 4294967200, UInt.MAX_VALUE), uintArray.sorted())
+
+        val ulongArray = ulongArrayOf(5, 2, 1, 9, 80, 0, ULong.MAX_VALUE, ULong.MAX_VALUE - 123)
+        assertEquals(listOf<ULong>(0, 1, 2, 5, 9, 80, ULong.MAX_VALUE - 123, ULong.MAX_VALUE), ulongArray.sorted())
+    }
+
+    @Test
+    fun sortedDescending() {
+        assertTrue(uintArrayOf().sortedDescending().none())
+        assertEquals(listOf(1u), uintArrayOf(1).sortedDescending())
+
+        val ubyteArray = ubyteArrayOf(5, 2, 1, 9, 80, 0, UByte.MAX_VALUE, 250)
+        assertEquals(listOf<UByte>(UByte.MAX_VALUE, 250, 80, 9, 5, 2, 1, 0), ubyteArray.sortedDescending())
+
+        val ushortArray = ushortArrayOf(5, 2, 1, 9, 80, 0, UShort.MAX_VALUE, 65501)
+        assertEquals(listOf<UShort>(UShort.MAX_VALUE, 65501, 80, 9, 5, 2, 1, 0), ushortArray.sortedDescending())
+
+        val uintArray = uintArrayOf(5, 2, 1, 9, 80, 0, UInt.MAX_VALUE, 4294967200)
+        assertEquals(listOf<UInt>(UInt.MAX_VALUE, 4294967200, 80, 9, 5, 2, 1, 0), uintArray.sortedDescending())
+
+        val ulongArray = ulongArrayOf(5, 2, 1, 9, 80, 0, ULong.MAX_VALUE, ULong.MAX_VALUE - 123)
+        assertEquals(listOf<ULong>(ULong.MAX_VALUE, ULong.MAX_VALUE - 123, 80, 9, 5, 2, 1, 0), ulongArray.sortedDescending())
+    }
+
+    @Test
+    fun sortedBy() {
+        assertTrue(uintArrayOf().sortedBy { it.toString() }.none())
+        assertEquals(listOf(1u), uintArrayOf(1).sortedBy { it.toString() })
+
+        val ubyteArray = ubyteArrayOf(5, 2, 1, 9, 80, 0, UByte.MAX_VALUE, 250)
+        assertEquals(listOf<UByte>(250, UByte.MAX_VALUE, 0, 1, 2, 5, 9, 80), ubyteArray.sortedBy { it.toByte() })
+
+        val ushortArray = ushortArrayOf(5, 2, 1, 9, 80, 0, UShort.MAX_VALUE, 65501)
+        assertEquals(listOf<UShort>(65501, UShort.MAX_VALUE, 0, 1, 2, 5, 9, 80), ushortArray.sortedBy { it.toShort() })
+
+        val uintArray = uintArrayOf(5, 2, 1, 9, 80, 0, UInt.MAX_VALUE, 4294967200)
+        assertEquals(listOf<UInt>(4294967200, UInt.MAX_VALUE, 0, 1, 2, 5, 9, 80), uintArray.sortedBy { it.toInt() })
+
+        val ulongArray = ulongArrayOf(5, 2, 1, 9, 80, 0, ULong.MAX_VALUE, ULong.MAX_VALUE - 123)
+        assertEquals(listOf<ULong>(ULong.MAX_VALUE - 123, ULong.MAX_VALUE, 0, 1, 2, 5, 9, 80), ulongArray.sortedBy { it.toLong() })
+    }
+
+    @Test
+    fun sortedArray() {
+        val ubyteArray = ubyteArrayOf(5, 2, 1, 9, 80, 0, UByte.MAX_VALUE, 250)
+        assertArrayContentEquals(ubyteArrayOf(0, 1, 2, 5, 9, 80, 250, UByte.MAX_VALUE), ubyteArray.sortedArray())
+
+        val ushortArray = ushortArrayOf(5, 2, 1, 9, 80, 0, UShort.MAX_VALUE, 65501)
+        assertArrayContentEquals(ushortArrayOf(0, 1, 2, 5, 9, 80, 65501, UShort.MAX_VALUE), ushortArray.sortedArray())
+
+        val uintArray = uintArrayOf(5, 2, 1, 9, 80, 0, UInt.MAX_VALUE, 4294967200)
+        assertArrayContentEquals(uintArrayOf(0, 1, 2, 5, 9, 80, 4294967200, UInt.MAX_VALUE), uintArray.sortedArray())
+
+        val ulongArray = ulongArrayOf(5, 2, 1, 9, 80, 0, ULong.MAX_VALUE, ULong.MAX_VALUE - 123)
+        assertArrayContentEquals(ulongArrayOf(0, 1, 2, 5, 9, 80, ULong.MAX_VALUE - 123, ULong.MAX_VALUE), ulongArray.sortedArray())
+    }
+
+    @Test
+    fun sortedArrayDescending() {
+        val ubyteArray = ubyteArrayOf(5, 2, 1, 9, 80, 0, UByte.MAX_VALUE, 250)
+        assertArrayContentEquals(ubyteArrayOf(UByte.MAX_VALUE, 250, 80, 9, 5, 2, 1, 0), ubyteArray.sortedArrayDescending())
+
+        val ushortArray = ushortArrayOf(5, 2, 1, 9, 80, 0, UShort.MAX_VALUE, 65501)
+        assertArrayContentEquals(ushortArrayOf(UShort.MAX_VALUE, 65501, 80, 9, 5, 2, 1, 0), ushortArray.sortedArrayDescending())
+
+        val uintArray = uintArrayOf(5, 2, 1, 9, 80, 0, UInt.MAX_VALUE, 4294967200)
+        assertArrayContentEquals(uintArrayOf(UInt.MAX_VALUE, 4294967200, 80, 9, 5, 2, 1, 0), uintArray.sortedArrayDescending())
+
+        val ulongArray = ulongArrayOf(5, 2, 1, 9, 80, 0, ULong.MAX_VALUE, ULong.MAX_VALUE - 123)
+        assertArrayContentEquals(ulongArrayOf(ULong.MAX_VALUE, ULong.MAX_VALUE - 123, 80, 9, 5, 2, 1, 0), ulongArray.sortedArrayDescending())
+    }
+
 }

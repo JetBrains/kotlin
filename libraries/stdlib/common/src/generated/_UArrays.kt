@@ -2512,6 +2512,214 @@ public inline fun UShortArray.reversedArray(): UShortArray {
 }
 
 /**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Returns a list of all elements sorted according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.sorted(): List<UInt> {
+    return copyOf().apply { sort() }.asList()
+}
+
+/**
+ * Returns a list of all elements sorted according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.sorted(): List<ULong> {
+    return copyOf().apply { sort() }.asList()
+}
+
+/**
+ * Returns a list of all elements sorted according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.sorted(): List<UByte> {
+    return copyOf().apply { sort() }.asList()
+}
+
+/**
+ * Returns a list of all elements sorted according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.sorted(): List<UShort> {
+    return copyOf().apply { sort() }.asList()
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.sortedArray(): UIntArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.sortedArray(): ULongArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.sortedArray(): UByteArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.sortedArray(): UShortArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.sortedArrayDescending(): UIntArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.sortedArrayDescending(): ULongArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.sortedArrayDescending(): UByteArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.sortedArrayDescending(): UShortArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
+
+/**
+ * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.sortedDescending(): List<UInt> {
+    return copyOf().apply { sort() }.reversed()
+}
+
+/**
+ * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.sortedDescending(): List<ULong> {
+    return copyOf().apply { sort() }.reversed()
+}
+
+/**
+ * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.sortedDescending(): List<UByte> {
+    return copyOf().apply { sort() }.reversed()
+}
+
+/**
+ * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.sortedDescending(): List<UShort> {
+    return copyOf().apply { sort() }.reversed()
+}
+
+/**
  * Returns an array of type [ByteArray], which is a view of this array where each element is a signed reinterpretation
  * of the corresponding element of this array.
  */
@@ -3189,6 +3397,42 @@ public inline operator fun UByteArray.plus(elements: UByteArray): UByteArray {
 @kotlin.internal.InlineOnly
 public inline operator fun UShortArray.plus(elements: UShortArray): UShortArray {
     return UShortArray(storage + elements.storage)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.sort(): Unit {
+    if (size > 1) sortArray(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.sort(): Unit {
+    if (size > 1) sortArray(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.sort(): Unit {
+    if (size > 1) sortArray(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.sort(): Unit {
+    if (size > 1) sortArray(this)
 }
 
 /**
