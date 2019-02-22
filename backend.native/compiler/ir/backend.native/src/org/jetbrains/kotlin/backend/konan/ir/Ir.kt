@@ -217,17 +217,11 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
 
     val interopAllocObjCObject = symbolTable.referenceSimpleFunction(context.interopBuiltIns.allocObjCObject)
 
-    val interopObjCRelease = symbolTable.referenceSimpleFunction(
-            context.interopBuiltIns.packageScope
-                    .getContributedFunctions(Name.identifier("objc_release"), NoLookupLocation.FROM_BACKEND)
-                    .single()
-    )
+    val interopObjCRelease = interopFunction("objc_release")
 
-    val interopObjCRetain = symbolTable.referenceSimpleFunction(
-            context.interopBuiltIns.packageScope
-                    .getContributedFunctions(Name.identifier("objc_retain"), NoLookupLocation.FROM_BACKEND)
-                    .single()
-    )
+    val interopObjCRetain = interopFunction("objc_retain")
+
+    val interopObjcRetainAutoreleaseReturnValue = interopFunction("objc_retainAutoreleaseReturnValue")
 
     val interopGetObjCClass = symbolTable.referenceSimpleFunction(context.interopBuiltIns.getObjCClass)
 
@@ -501,6 +495,12 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
             builtInsPackage("kotlin", "native", "internal", "test").getContributedClassifier(
                     Name.identifier(className), NoLookupLocation.FROM_BACKEND
             ) as ClassDescriptor)
+
+    private fun interopFunction(name: String) = symbolTable.referenceSimpleFunction(
+            context.interopBuiltIns.packageScope
+                    .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
+                    .single()
+    )
 
     val functions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
             .map { symbolTable.referenceClass(builtIns.getFunction(it)) }

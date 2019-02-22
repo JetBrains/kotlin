@@ -10,7 +10,6 @@ import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
-import org.jetbrains.kotlin.backend.konan.descriptors.getStringValueOrNull
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -27,7 +26,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         val instanceMethods = generateInstanceMethodDescs(irClass)
 
         val companionObject = irClass.declarations.filterIsInstance<IrClass>().atMostOne { it.isCompanion  }
-        val classMethods = companionObject?.generateOverridingMethodDescs() ?: emptyList()
+        val classMethods = companionObject?.generateMethodDescs().orEmpty()
 
         val superclassName = irClass.getSuperClassNotAny()!!.let {
             context.llvm.imports.add(it.llvmSymbolOrigin)
@@ -71,11 +70,13 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         objCLLvmDeclarations.bodyOffsetGlobal.setInitializer(Int32(0))
     }
 
+    private fun IrClass.generateMethodDescs(): List<ObjCMethodDesc> =
+            this.generateOverridingMethodDescs() + this.generateImpMethodDescs()
+
     private fun generateInstanceMethodDescs(
             irClass: IrClass
     ): List<ObjCMethodDesc> = mutableListOf<ObjCMethodDesc>().apply {
-        addAll(irClass.generateOverridingMethodDescs())
-        addAll(irClass.generateImpMethodDescs())
+        addAll(irClass.generateMethodDescs())
         val allImplementedSelectors = this.map { it.selector }.toSet()
 
         assert(irClass.getSuperClassNotAny()!!.isExternalObjCClass())
@@ -112,19 +113,21 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
             staticData.cStringLiteral(encoding)
     )
 
-    private fun generateMethodDesc(info: ObjCMethodInfo) = ObjCMethodDesc(
-            info.selector,
-            info.encoding,
-            context.llvm.externalFunction(
-                    info.imp,
-                    functionType(voidType),
-                    origin = info.bridge.llvmSymbolOrigin
-            )
-    )
+    private fun generateMethodDesc(info: ObjCMethodInfo) = info.imp?.let { imp ->
+        ObjCMethodDesc(
+                info.selector,
+                info.encoding,
+                context.llvm.externalFunction(
+                        imp,
+                        functionType(voidType),
+                        origin = info.bridge.llvmSymbolOrigin
+                )
+        )
+    }
 
     private fun IrClass.generateOverridingMethodDescs(): List<ObjCMethodDesc> =
             this.simpleFunctions().filter { it.isReal }
-                    .mapNotNull { it.getObjCMethodInfo() }.map { generateMethodDesc(it) }
+                    .mapNotNull { it.getObjCMethodInfo() }.mapNotNull { generateMethodDesc(it) }
 
     private fun IrClass.generateImpMethodDescs(): List<ObjCMethodDesc> = this.declarations
             .filterIsInstance<IrSimpleFunction>()

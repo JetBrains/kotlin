@@ -82,6 +82,30 @@ fun run() {
 
     println(STRING_MACRO)
     println(CFSTRING_MACRO)
+
+    // Ensure that overriding method bridge has retain-autorelease sequence:
+    createObjectWithFactory(object : NSObject(), ObjectFactoryProtocol {
+        override fun create() = autoreleasepool { NSObject() }
+    })
+
+    assertEquals(222, callProvidedBlock(object : NSObject(), BlockProviderProtocol {
+        override fun block(): (Int) -> Int = { it * 2 }
+    }, 111))
+
+    assertEquals(322, callPlusOneBlock(object : NSObject(), BlockConsumerProtocol {
+        override fun callBlock(block: ((Int) -> Int)?, argument: Int) = block!!(argument)
+    }, 321))
+
+    autoreleasepool {
+        useCustomRetainMethods(object : Foo(), CustomRetainMethodsProtocol {
+            override fun returnRetained(obj: Any?) = obj
+            override fun consume(obj: Any?) {}
+            override fun consumeSelf() {}
+        })
+    }
+
+    assertFalse(unexpectedDeallocation)
+
 }
 
 fun MutablePairProtocol.swap() {

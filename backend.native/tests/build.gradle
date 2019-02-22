@@ -3046,7 +3046,7 @@ task interop_objc_smoke(type: RunInteropKonanTest) {
             "5\n" +
             "String macro\n" +
             "CFString macro\n" +
-            "Deallocated\nDeallocated\n"
+            "Deallocated\nDeallocated\nDeallocated\n"
 
     if (isAppleTarget(project)) {
         source = "interop/objc/smoke.kt"

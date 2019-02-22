@@ -68,3 +68,11 @@ int formatStringLength(NSString* format, ...) {
   va_end(args);
   return result.length;
 }
+
+BOOL unexpectedDeallocation = NO;
+
+@implementation MustNotBeDeallocated
+-(void)dealloc {
+  unexpectedDeallocation = YES;
+}
+@end;

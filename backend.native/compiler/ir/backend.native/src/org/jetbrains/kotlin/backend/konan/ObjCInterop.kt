@@ -95,7 +95,7 @@ fun IrClass.isKotlinObjCClass(): Boolean = this.isObjCClass() && !this.isExterna
 data class ObjCMethodInfo(val bridge: FunctionDescriptor,
                           val selector: String,
                           val encoding: String,
-                          val imp: String)
+                          val imp: String?)
 
 private fun CallableDescriptor.getBridgeAnnotation() =
         this.annotations.findAnnotation(objCBridgeFqName)
@@ -121,7 +121,7 @@ private fun objCMethodInfoByBridge(packageView: PackageViewDescriptor, bridgeNam
             bridge = bridge,
             selector = bridgeAnnotation.getStringValue("selector"),
             encoding = bridgeAnnotation.getStringValue("encoding"),
-            imp = bridgeAnnotation.getStringValue("imp")
+            imp = bridgeAnnotation.getStringValueOrNull("imp")
     )
 }
 

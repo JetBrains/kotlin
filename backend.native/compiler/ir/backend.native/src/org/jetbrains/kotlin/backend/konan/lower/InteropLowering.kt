@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.KotlinStubs
 import org.jetbrains.kotlin.backend.konan.cgen.generateCCall
+import org.jetbrains.kotlin.backend.konan.cgen.generateCFunctionAndFakeKotlinExternalFunction
 import org.jetbrains.kotlin.backend.konan.cgen.generateCFunctionPointer
 import org.jetbrains.kotlin.backend.konan.getInlinedClass
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
@@ -794,8 +795,33 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         }
     }
 
+    override fun visitClass(declaration: IrClass): IrStatement {
+        super.visitClass(declaration)
+        if (declaration.isKotlinObjCClass()) {
+            val imps = declaration.simpleFunctions().filter { it.isReal }.flatMap { function ->
+                function.overriddenSymbols.mapNotNull {
+                    val info = it.owner.getExternalObjCMethodInfo()
+                    if (info == null || info.imp != null) {
+                        null
+                    } else {
+                        generateWithStubs(it.owner) {
+                            generateCFunctionAndFakeKotlinExternalFunction(
+                                    function,
+                                    it.owner,
+                                    isObjCMethod = true,
+                                    location = function
+                            )
+                        }
+                    }
+                }
+            }
+            declaration.addChildren(imps)
+        }
+        return declaration
+    }
+
     private fun generateCFunctionPointer(function: IrSimpleFunction, expression: IrExpression): IrExpression =
-            generateWithStubs { generateCFunctionPointer(function, function, false, expression) }
+            generateWithStubs { generateCFunctionPointer(function, function, expression) }
 
     override fun visitCall(expression: IrCall): IrExpression {
 

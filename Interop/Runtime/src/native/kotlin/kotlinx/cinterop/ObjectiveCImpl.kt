@@ -106,7 +106,7 @@ annotation class ObjCMethod(val selector: String, val bridge: String)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class ObjCBridge(val selector: String, val encoding: String, val imp: String)
+annotation class ObjCBridge(val selector: String, val encoding: String, val imp: String = "")
 
 @Target(AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)

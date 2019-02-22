@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.native.interop.gen
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.native.interop.gen.jvm.StubGenerator
 import org.jetbrains.kotlin.native.interop.indexer.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 private fun ObjCMethod.getKotlinParameterNames(forConstructorOrFactory: Boolean = false): List<String> {
     val selectorParts = this.selector.split(":")
@@ -74,6 +75,8 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
             if (context.nativeBridges.isSupported(this)) {
                 val result = mutableListOf<String>()
                 result.add("@ObjCMethod".applyToStrings(method.selector, bridgeName))
+                if (method.nsConsumesSelf) result.add("@CCall.ConsumesReceiver")
+                if (method.nsReturnsRetained) result.add("@CCall.ReturnsRetained")
                 result.add(header)
 
                 if (method.isInit) {
@@ -136,9 +139,16 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                     }
                 }
 
+                val objCBridge = "@ObjCBridge".applyToStrings(
+                        *mutableListOf<String>().apply {
+                            add(method.selector)
+                            add(method.encoding)
+                            addIfNotNull(implementationTemplate)
+                        }.toTypedArray()
+                )
+
                 context.addTopLevelDeclaration(
-                        listOf("@kotlin.native.internal.ExportForCompiler",
-                                "@ObjCBridge".applyToStrings(method.selector, method.encoding, implementationTemplate))
+                        listOf("@kotlin.native.internal.ExportForCompiler", objCBridge)
                                 + block(bridgeHeader, bodyLines)
                 )
 
@@ -154,7 +164,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
     private val kotlinParameters: List<KotlinParameter>
     private val kotlinReturnType: String
     private val header: String
-    private val implementationTemplate: String
+    private val implementationTemplate: String?
     internal val bridgeName: String
     private val bridgeHeader: String
 
@@ -194,7 +204,8 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
             val name = kotlinParameterNames[index]
 
             val kotlinType = stubGenerator.mirror(it.type).argType
-            kotlinParameters.add(KotlinParameter(name, kotlinType))
+            val annotatedName = if (it.nsConsumed) "@CCall.Consumed $name" else name
+            kotlinParameters.add(KotlinParameter(annotatedName, kotlinType))
 
             kotlinObjCBridgeParameters.add(KotlinParameter(name, kotlinType))
             nativeBridgeArguments.add(TypedKotlinValue(it.type, name.asSimpleName()))
@@ -233,7 +244,12 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
         }
         bodyGenerator.returnResult(result)
 
-        this.implementationTemplate = genImplementationTemplate(stubGenerator)
+        this.implementationTemplate = if (needsImplementationTemplate()) {
+            genImplementationTemplate(stubGenerator)
+        } else {
+            null
+        }
+
         this.bodyLines = bodyGenerator.build()
 
         bridgeName = "objcKniBridge${stubGenerator.nextUniqueId()}"
@@ -277,6 +293,10 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
         }
     }
 
+    private fun needsImplementationTemplate(): Boolean =
+            method.getReturnType(container.classOrProtocol).isBlockPointer() ||
+                    method.parameters.any { it.type.isBlockPointer() }
+
     private fun genImplementationTemplate(stubGenerator: StubGenerator): String = when (container) {
         is ObjCClassOrProtocol -> {
             val codeBuilder = NativeCodeBuilder(stubGenerator.simpleBridgeGenerator.topLevelNativeScope)
@@ -288,6 +308,8 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
         is ObjCCategory -> ""
     }
 }
+
+private fun Type.isBlockPointer() = this.unwrapTypedefs() is ObjCBlockPointer
 
 private fun deprecatedInit(className: String, initParameterNames: List<String>, factory: Boolean): String {
     val replacement = if (factory) "$className.create" else className
