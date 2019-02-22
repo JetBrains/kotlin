@@ -94,6 +94,60 @@ public inline operator fun ULongRange.contains(element: ULong?): Boolean {
 }
 
 /**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun UIntRange.contains(value: UByte): Boolean {
+    return contains(value.toUInt())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun ULongRange.contains(value: UByte): Boolean {
+    return contains(value.toULong())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun ULongRange.contains(value: UInt): Boolean {
+    return contains(value.toULong())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun UIntRange.contains(value: ULong): Boolean {
+    return (value shr UInt.SIZE_BITS) == 0uL && contains(value.toUInt())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun UIntRange.contains(value: UShort): Boolean {
+    return contains(value.toUInt())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun ULongRange.contains(value: UShort): Boolean {
+    return contains(value.toULong())
+}
+
+/**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
@@ -187,7 +241,8 @@ public infix fun ULongProgression.step(step: Long): ULongProgression {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public infix fun UByte.until(to: UByte): UIntRange {
-    return this.toUInt() .. (to.toUInt() - 1u).toUInt()
+    if (to <= UByte.MIN_VALUE) return UIntRange.EMPTY
+    return this.toUInt() .. (to - 1u).toUInt()
 }
 
 /**
@@ -222,6 +277,7 @@ public infix fun ULong.until(to: ULong): ULongRange {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public infix fun UShort.until(to: UShort): UIntRange {
-    return this.toUInt() .. (to.toUInt() - 1u).toUInt()
+    if (to <= UShort.MIN_VALUE) return UIntRange.EMPTY
+    return this.toUInt() .. (to - 1u).toUInt()
 }
 
