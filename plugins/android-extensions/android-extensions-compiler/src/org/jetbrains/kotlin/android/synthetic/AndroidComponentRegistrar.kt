@@ -151,7 +151,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
         val features = configuration.get(AndroidConfigurationKeys.FEATURES) ?: AndroidExtensionsFeature.values().toSet()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
 
-        if (isExperimental && AndroidExtensionsFeature.PARCELIZE in features) {
+        if (AndroidExtensionsFeature.PARCELIZE in features) {
             registerParcelExtensions(project)
         }
 
