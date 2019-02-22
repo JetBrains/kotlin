@@ -168,7 +168,6 @@ private class ScratchToolWindowFactory : ToolWindowFactory {
     }
 }
 
-@TestOnly
 private object TestOutputHandler : ScratchOutputHandlerAdapter() {
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         testPrint(file, output.text, expression)

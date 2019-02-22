@@ -286,7 +286,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
     companion object {
         private val LOG = Logger.getInstance(this::class.java)
 
-        @TestOnly
+        @get:TestOnly
         val DEBUG_CONTEXT_FOR_TESTS: Key<DebuggerContextImpl> = Key.create("DEBUG_CONTEXT_FOR_TESTS")
 
         const val FAKE_JAVA_CONTEXT_FUNCTION_NAME = "_java_locals_debug_fun_"

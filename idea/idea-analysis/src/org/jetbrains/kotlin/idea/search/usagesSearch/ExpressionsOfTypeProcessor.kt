@@ -72,7 +72,7 @@ class ExpressionsOfTypeProcessor(
     private val possibleMatchHandler: (KtExpression) -> Unit,
     private val possibleMatchesInScopeHandler: (SearchScope) -> Unit
 ) {
-    @TestOnly
+    /** For tests only */
     enum class Mode {
         ALWAYS_SMART,
         ALWAYS_PLAIN,
@@ -80,9 +80,10 @@ class ExpressionsOfTypeProcessor(
     }
 
     companion object {
-        @TestOnly
+        @get:TestOnly
         var mode = if (ApplicationManager.getApplication().isUnitTestMode) Mode.ALWAYS_SMART else Mode.PLAIN_WHEN_NEEDED
-        @TestOnly
+
+        @get:TestOnly
         var testLog: MutableList<String>? = null
 
         inline fun testLog(s: () -> String) {

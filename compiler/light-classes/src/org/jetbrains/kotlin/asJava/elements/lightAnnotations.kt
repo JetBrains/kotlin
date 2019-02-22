@@ -408,7 +408,7 @@ private fun getAnnotationName(callee: KtExpression): String? {
     return null
 }
 
-@TestOnly
+@get:TestOnly
 var accessAnnotationsClsDelegateIsAllowed = false
 
 @TestOnly
