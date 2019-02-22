@@ -495,6 +495,36 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         }
     }
 
+    @Test
+    fun testVariablesTypeReferences() {
+        doTest("TypeReferences") { _, file ->
+            run {
+                val localVariable = file.findElementByTextFromPsi<UVariable>("val varWithType: String? = \"Not Null\"")
+                val typeReference = localVariable.typeReference
+                assertEquals("java.lang.String", typeReference?.getQualifiedName())
+                val sourcePsi = typeReference?.sourcePsi ?: kotlin.test.fail("no sourcePsi")
+                assertTrue("sourcePsi = $sourcePsi should be physical", sourcePsi.isPhysical)
+                assertEquals("String?", sourcePsi.text)
+            }
+
+            run {
+                val localVariable = file.findElementByTextFromPsi<UVariable>("val varWithoutType = \"lorem ipsum\"")
+                val typeReference = localVariable.typeReference
+                assertEquals("java.lang.String", typeReference?.getQualifiedName())
+                assertNull(typeReference?.sourcePsi)
+            }
+
+            run {
+                val localVariable = file.findElementByTextFromPsi<UVariable>("parameter: Int")
+                val typeReference = localVariable.typeReference
+                assertEquals("int", typeReference?.type?.presentableText)
+                val sourcePsi = typeReference?.sourcePsi ?: kotlin.test.fail("no sourcePsi")
+                assertTrue("sourcePsi = $sourcePsi should be physical", sourcePsi.isPhysical)
+                assertEquals("Int", sourcePsi.text)
+            }
+        }
+    }
+
 }
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T =
