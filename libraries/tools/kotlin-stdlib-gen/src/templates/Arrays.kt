@@ -1010,54 +1010,62 @@ object ArrayOps : TemplateGroupBase() {
 
     val f_sort = fn("sort()") {
         include(ArraysOfPrimitives, PrimitiveType.numericPrimitives + PrimitiveType.Char)
+        include(ArraysOfUnsigned)
         include(ArraysOfObjects)
     } builder {
         typeParam("T : Comparable<T>")
         doc { "Sorts the array in-place according to the natural order of its elements." }
         appendStableSortNote()
-        specialFor(ArraysOfPrimitives) {
+        specialFor(ArraysOfPrimitives, ArraysOfUnsigned) {
             doc { "Sorts the array in-place." }
         }
 
         returns("Unit")
-        on(Platform.JS) {
-            body {
-                """if (size > 1) sortArray(this)"""
+
+        body(ArraysOfUnsigned) {
+            """if (size > 1) sortArray(this)"""
+        }
+
+        specialFor(ArraysOfPrimitives, ArraysOfObjects) {
+            on(Platform.JS) {
+                body {
+                    """if (size > 1) sortArray(this)"""
+                }
+                specialFor(ArraysOfPrimitives) {
+                    if (primitive != PrimitiveType.Long) {
+                        on(Backend.Legacy) {
+                            annotation("""@library("primitiveArraySort")""")
+                            body { "definedExternally" }
+                        }
+                        on(Backend.IR) {
+                            body { "this.asDynamic().sort()" }
+                        }
+                    } else {
+                        body {
+                            """if (size > 1) sort { a: T, b: T -> a.compareTo(b) }"""
+                        }
+                    }
+                }
             }
-            specialFor(ArraysOfPrimitives) {
-                if (primitive != PrimitiveType.Long) {
-                    on(Backend.Legacy) {
-                        annotation("""@library("primitiveArraySort")""")
-                        body { "definedExternally" }
-                    }
-                    on(Backend.IR) {
-                        body { "this.asDynamic().sort()" }
-                    }
-                } else {
+            on(Platform.JVM) {
+                specialFor(ArraysOfObjects) {
+                    inlineOnly()
                     body {
-                        """if (size > 1) sort { a: T, b: T -> a.compareTo(b) }"""
+                        """
+                        @Suppress("UNCHECKED_CAST")
+                        (this as Array<Any?>).sort()
+                        """
+                    }
+                }
+                specialFor(ArraysOfPrimitives) {
+                    body {
+                        "if (size > 1) java.util.Arrays.sort(this)"
                     }
                 }
             }
-        }
-        on(Platform.JVM) {
-            specialFor(ArraysOfObjects) {
-                inlineOnly()
-                body {
-                    """
-                    @Suppress("UNCHECKED_CAST")
-                    (this as Array<Any?>).sort()
-                    """
-                }
+            on(Platform.Native) {
+                body { """if (size > 1) sortArray(this)""" }
             }
-            specialFor(ArraysOfPrimitives) {
-                body {
-                    "if (size > 1) java.util.Arrays.sort(this)"
-                }
-            }
-        }
-        on(Platform.Native) {
-            body { """if (size > 1) sortArray(this)""" }
         }
     }
 

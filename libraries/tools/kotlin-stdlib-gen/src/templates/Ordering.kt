@@ -133,6 +133,7 @@ object Ordering : TemplateGroupBase() {
     val f_sorted = fn("sorted()") {
         includeDefault()
         exclude(PrimitiveType.Boolean)
+        include(ArraysOfUnsigned)
     } builder {
 
         doc {
@@ -140,7 +141,7 @@ object Ordering : TemplateGroupBase() {
             Returns a list of all elements sorted according to their natural sort order.
             """
         }
-        if (f != ArraysOfPrimitives) {
+        if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
         }
         returns("List<T>")
@@ -158,6 +159,11 @@ object Ordering : TemplateGroupBase() {
         body(ArraysOfPrimitives) {
             """
             return toTypedArray().apply { sort() }.asList()
+            """
+        }
+        body(ArraysOfUnsigned) {
+            """
+            return copyOf().apply { sort() }.asList()
             """
         }
         body(ArraysOfObjects) {
@@ -188,7 +194,7 @@ object Ordering : TemplateGroupBase() {
     }
 
     val f_sortedArray = fn("sortedArray()") {
-        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
         exclude(PrimitiveType.Boolean)
     } builder {
         doc {
@@ -208,11 +214,11 @@ object Ordering : TemplateGroupBase() {
     }
 
     val f_sortDescending = fn("sortDescending()") {
-        include(Lists, ArraysOfObjects, ArraysOfPrimitives)
+        include(Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
         exclude(PrimitiveType.Boolean)
     } builder {
         doc { """Sorts elements in the ${f.collection} in-place descending according to their natural sort order.""" }
-        if (f != ArraysOfPrimitives) {
+        if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
         }
         returns("Unit")
@@ -222,7 +228,7 @@ object Ordering : TemplateGroupBase() {
         }
 
         body { """sortWith(reverseOrder())""" }
-        body(ArraysOfPrimitives) {
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
                 if (size > 1) {
                     sort()
@@ -235,6 +241,7 @@ object Ordering : TemplateGroupBase() {
     val f_sortedDescending = fn("sortedDescending()") {
         includeDefault()
         exclude(PrimitiveType.Boolean)
+        include(ArraysOfUnsigned)
     } builder {
 
         doc {
@@ -252,7 +259,7 @@ object Ordering : TemplateGroupBase() {
             return sortedWith(reverseOrder())
             """
         }
-        body(ArraysOfPrimitives) {
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             return copyOf().apply { sort() }.reversed()
             """
@@ -269,7 +276,7 @@ object Ordering : TemplateGroupBase() {
     }
 
     val f_sortedArrayDescending = fn("sortedArrayDescending()") {
-        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
         exclude(PrimitiveType.Boolean)
     } builder {
         doc {
@@ -286,7 +293,7 @@ object Ordering : TemplateGroupBase() {
             return this.copyOf().apply { sortWith(reverseOrder()) }
             """
         }
-        body(ArraysOfPrimitives) {
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (isEmpty()) return this
             return this.copyOf().apply { sortDescending() }
