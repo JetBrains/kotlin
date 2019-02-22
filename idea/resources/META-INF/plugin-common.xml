@@ -101,6 +101,10 @@
 
     <group id="InternalKotlin" text="Kotlin Internal Actions" internal="true">
       <separator/>
+
+      <action id="DumbModeTremble" class="org.jetbrains.kotlin.idea.actions.internal.DumbModeTrembleAction"
+              text="Tremble Dumb Mode"/>
+
       <group id="KotlinInternalGroup" text="Kotlin" popup="true">
         <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion">
           <action id="TopLevelCompletionBenchmarkAction"
@@ -138,7 +142,7 @@
         <action id="KotlinFormattingSettingsStatusAction" class="org.jetbrains.kotlin.idea.actions.internal.KotlinFormattingSettingsStatusAction"
                 text="Formatter settings info"/>
 
-<!--        <action id="ShowFirAction" class="org.jetbrains.kotlin.idea.actions.internal.ShowFirAction"
+        <!--        <action id="ShowFirAction" class="org.jetbrains.kotlin.idea.actions.internal.ShowFirAction"
                 text="Show RAW FIR Explorer"/> -->
       </group>
       <separator/>
