@@ -60,6 +60,19 @@ fun Project.intellijDep(module: String = "intellij") = "kotlin.build.custom.deps
 
 fun Project.intellijCoreDep() = intellijDep("intellij-core")
 
+/**
+ * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
+ *
+ * SHOULD NOT BE USED IN COMPILE CLASSPATH!
+ *
+ * `@NonNull`, `@Nullabe` from `idea/annotations.jar` has `TYPE` target which leads to different types treatment in Kotlin compiler.
+ * On the other hand, `idea/annotations.jar` contains org/jetbrains/annotations/Async annations which is required for IDEA debugger.
+ *
+ * So, we are excluding `annotaions.jar` from all other `kotlin.build.custom.deps` and using this one for runtime only
+ * to avoid accidentally including `annotations.jar` by calling `intellijDep()`.
+ */
+fun Project.intellijRuntimeAnnotations() = intellijDep("intellij-runtime-annotations")
+
 fun Project.intellijPluginDep(plugin: String) = intellijDep(plugin)
 
 fun Project.intellijUltimateDep() = intellijDep("intellij")
@@ -69,9 +82,6 @@ fun Project.intellijUltimatePluginDep(plugin: String) = intellijDep(plugin)
 fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = null) {
     names.forEach {
         var baseName = it.removeSuffix(".jar")
-        if (baseName == "annotations") {
-            error("Don't use anntations.jar from intellij. Kotlin stdlib already has this annotations.")
-        }
         if (rootProject != null && rootProject.extra.has("ignore.jar.$baseName")) {
             return@forEach
         }

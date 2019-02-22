@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     testRuntime(intellijDep())
+    testRuntime(intellijRuntimeAnnotations())
 
     compile(kotlinStdlib("jdk8"))
     compileOnly(project(":kotlin-reflect-api"))
