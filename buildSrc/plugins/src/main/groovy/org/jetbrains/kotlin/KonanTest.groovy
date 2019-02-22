@@ -531,8 +531,8 @@ class RunDriverKonanTest extends KonanTest {
 
     RunDriverKonanTest() {
         super()
-        // We don't build the compiler if a custom org.jetbrains.kotlin.native.home path is specified.
-        if (!project.hasProperty("org.jetbrains.kotlin.native.home")) {
+        // We don't build the compiler if a custom konan.home path is specified.
+        if (!project.hasProperty("konan.home")) {
             dependsOn(project.rootProject.tasks['cross_dist'])
         }
     }
