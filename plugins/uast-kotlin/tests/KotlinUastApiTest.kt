@@ -440,9 +440,9 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 "invoke",
                 lambdaCall.methodName
             )
-            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            val receiver = lambdaCall.receiver ?: kfail("receiver expected")
             assertEquals("UReferenceExpression", receiver.asLogString())
-            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
             assertEquals("UParameter (name = selectItemFunction)", uParameter.asLogString())
         }
     }
@@ -463,9 +463,9 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 "invoke",
                 lambdaCall.methodName
             )
-            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            val receiver = lambdaCall.receiver ?: kfail("receiver expected")
             assertEquals("UReferenceExpression", receiver.asLogString())
-            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
             assertEquals("ULocalVariable (name = baz)", uParameter.asLogString())
         }
     }
@@ -488,9 +488,9 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 localFunction.methodName
             )
             assertNull(localFunction.resolve())
-            val receiver = localFunction.receiver ?: kotlin.test.fail("receiver expected")
+            val receiver = localFunction.receiver ?: kfail("receiver expected")
             assertEquals("UReferenceExpression", receiver.asLogString())
-            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
             assertEquals("ULambdaExpression", uParameter.asLogString())
         }
     }
@@ -502,7 +502,7 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 val localVariable = file.findElementByTextFromPsi<UVariable>("val varWithType: String? = \"Not Null\"")
                 val typeReference = localVariable.typeReference
                 assertEquals("java.lang.String", typeReference?.getQualifiedName())
-                val sourcePsi = typeReference?.sourcePsi ?: kotlin.test.fail("no sourcePsi")
+                val sourcePsi = typeReference?.sourcePsi ?: kfail("no sourcePsi")
                 assertTrue("sourcePsi = $sourcePsi should be physical", sourcePsi.isPhysical)
                 assertEquals("String?", sourcePsi.text)
             }
@@ -518,7 +518,7 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 val localVariable = file.findElementByTextFromPsi<UVariable>("parameter: Int")
                 val typeReference = localVariable.typeReference
                 assertEquals("int", typeReference?.type?.presentableText)
-                val sourcePsi = typeReference?.sourcePsi ?: kotlin.test.fail("no sourcePsi")
+                val sourcePsi = typeReference?.sourcePsi ?: kfail("no sourcePsi")
                 assertTrue("sourcePsi = $sourcePsi should be physical", sourcePsi.isPhysical)
                 assertEquals("Int", sourcePsi.text)
             }
