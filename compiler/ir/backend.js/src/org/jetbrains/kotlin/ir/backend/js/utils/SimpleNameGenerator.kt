@@ -143,6 +143,11 @@ class SimpleNameGenerator : NameGenerator {
             }
             is IrSimpleFunction -> {
 
+                // Handle names for special functions
+                if (declaration.isEqualsInheritedFromAny()) {
+                    return context.staticContext.rootScope.declareName("equals")
+                }
+
                 if (declaration.isStaticMethodOfClass) {
                     nameBuilder.append(getNameForDeclaration(declaration.parent as IrClass, context))
                     nameBuilder.append('.')

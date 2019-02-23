@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -171,11 +172,5 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
     private fun IrFunction.isMethodOfPotentiallyPrimitiveJSType() =
         isMethodOfPrimitiveJSType() || isFakeOverriddenFromAny()
-
-    private fun IrFunction.isEqualsInheritedFromAny() =
-        name == Name.identifier("equals") &&
-                dispatchReceiverParameter != null &&
-                valueParameters.size == 1 &&
-                valueParameters[0].type.isNullableAny()
 
 }
