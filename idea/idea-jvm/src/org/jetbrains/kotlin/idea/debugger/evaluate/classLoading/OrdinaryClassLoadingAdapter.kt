@@ -21,8 +21,8 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.ClassLoadingUtils
 import com.intellij.debugger.impl.DebuggerUtilsEx
+import com.intellij.debugger.ui.impl.watch.CompilingEvaluatorImpl
 import com.intellij.openapi.projectRoots.JavaSdkVersion
-import com.intellij.openapi.util.SystemInfo
 import com.sun.jdi.ClassLoaderReference
 import com.sun.jdi.ClassType
 import org.jetbrains.kotlin.idea.debugger.isDexDebug
@@ -62,6 +62,12 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
             ClassReader(bytes).accept(classVisitor, 0)
             return classWriter.toByteArray()
         }
+
+        fun useMagicAccessor(evaluationContext: EvaluationContextImpl): Boolean {
+            val rawVersion = evaluationContext.debugProcess.virtualMachineProxy.version()?.substringBefore('_') ?: return false
+            val javaVersion = JavaSdkVersion.fromVersionString(rawVersion) ?: return false
+            return !javaVersion.isAtLeast(JavaSdkVersion.JDK_1_9)
+        }
     }
 
     override fun isApplicable(context: EvaluationContextImpl, info: ClassLoadingAdapter.Companion.ClassInfoForEvaluator) = with(info) {
@@ -75,21 +81,6 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
             ClassLoadingUtils.getClassLoader(context, process)
         } catch (e: Exception) {
             throw EvaluateException("Error creating evaluation class loader: $e", e)
-        }
-
-        val debugProcessVersionString = process.virtualMachineProxy.version()
-        val debugProcessVersion = JavaSdkVersion.fromVersionString(debugProcessVersionString)
-            ?: throw EvaluateException("Unable to parse java version from $debugProcessVersionString.")
-
-        val ideaJavaVersion = JavaSdkVersion.fromVersionString(SystemInfo.JAVA_RUNTIME_VERSION)
-            ?: throw EvaluateException("Unable to parse java version from ${SystemInfo.JAVA_RUNTIME_VERSION}.")
-
-        if (!ideaJavaVersion.isAtLeast(debugProcessVersion)) {
-            throw EvaluateException(
-                "Unable to compile for target level ${debugProcessVersion.description}. " +
-                        "Need to run IDEA on java version at least $debugProcessVersion, " +
-                        "currently running on $ideaJavaVersion"
-            )
         }
 
         try {
@@ -118,7 +109,7 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
         }
 
         for ((className, _, bytes) in classesToLoad) {
-            val patchedBytes = changeSuperToMagicAccessor(bytes)
+            val patchedBytes = if (useMagicAccessor(context)) changeSuperToMagicAccessor(bytes) else bytes
             defineClass(className, patchedBytes, context, process, classLoader)
         }
     }
