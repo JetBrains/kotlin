@@ -1,5 +1,6 @@
 import java.io.FileReader
-import java.util.*
+import java.util.Properties
+import java.nio.file.Path
 
 fun locatePropertiesFile(): Pair<File, Boolean> {
     rootProject.findProject(":kotlin-ultimate")?.let { kotlinUltimateProject ->
@@ -27,26 +28,26 @@ FileReader(propertiesFile).use {
     }
 }
 
-val prepareDepsPath = propertiesFile.toPath().resolve("../buildSrc/prepare-deps").toRealPath()!!
+val prepareDepsPath: Path = propertiesFile.toPath().resolve("../buildSrc/prepare-deps").toRealPath()
 
 fun externalDepsDir(depsProjectName: String, suffix: String): File =
         prepareDepsPath.resolve(depsProjectName).resolve("build/external-deps").resolve(suffix).toFile()
 
-val clionVersion = rootProject.extra["versions.clion"] as String
+val clionVersion: String = rootProject.extra["versions.clion"] as String
 rootProject.extra["clionVersion"] = clionVersion
-rootProject.extra["clionRepo"] = rootProject.extra["versions.clion.repo"]
+rootProject.extra["clionRepo"] = rootProject.extra["versions.clion.repo"] as String
 rootProject.extra["clionVersionStrict"] = (rootProject.extra["versions.clion.strict"] as String).toBoolean()
 rootProject.extra["clionPlatformDepsDir"] = externalDepsDir("platform-deps", "clion-platform-deps-$clionVersion")
 rootProject.extra["clionUnscrambledJarDir"] = externalDepsDir("platform-deps", "clion-unscrambled-$clionVersion")
 
-val appcodeVersion = rootProject.extra["versions.appcode"] as String
+val appcodeVersion: String = rootProject.extra["versions.appcode"] as String
 rootProject.extra["appcodeVersion"] = appcodeVersion
-rootProject.extra["appcodeRepo"] = rootProject.extra["versions.appcode.repo"]
+rootProject.extra["appcodeRepo"] = rootProject.extra["versions.appcode.repo"] as String
 rootProject.extra["appcodeVersionStrict"] = (rootProject.extra["versions.appcode.strict"] as String).toBoolean()
 rootProject.extra["appcodePlatformDepsDir"] = externalDepsDir("platform-deps", "appcode-platform-deps-$appcodeVersion")
 rootProject.extra["appcodeUnscrambledJarDir"] = externalDepsDir("platform-deps", "appcode-unscrambled-$appcodeVersion")
 
-val artifactsForCidrDir = rootProject.rootDir.resolve("dist/artifacts")
+val artifactsForCidrDir: File = rootProject.rootDir.resolve("dist/artifacts")
 rootProject.extra["artifactsForCidrDir"] = artifactsForCidrDir
 rootProject.extra["clionPluginDir"] = artifactsForCidrDir.resolve("clionPlugin/Kotlin")
 rootProject.extra["appcodePluginDir"] = artifactsForCidrDir.resolve("appcodePlugin/Kotlin")
@@ -55,10 +56,12 @@ if (isStandaloneBuild) {
     // setup additional properties that are required only when running in standalone mode:
     rootProject.extra["clionDir"] = externalDepsDir("cidr", "clion-$clionVersion")
 
-    val ideaPluginForCidrVersion = rootProject.extra["versions.ideaPluginForCidr"] as String
-    val ideaPluginForCidrBuildNumber = ideaPluginForCidrVersion.split("-release", limit = 2).takeIf { it.size == 2 }?.let { "${it[0]}-release" }
-            ?: ideaPluginForCidrVersion
-    val ideaPluginForCidrIde = rootProject.extra["versions.ideaPluginForCidr.ide"] as String
+    val ideaPluginForCidrVersion: String = rootProject.extra["versions.ideaPluginForCidr"] as String
+    val ideaPluginForCidrBuildNumber: String = ideaPluginForCidrVersion
+            .split("-release", limit = 2)
+            .takeIf { it.size == 2 }
+            ?.let { "${it[0]}-release" } ?: ideaPluginForCidrVersion
+    val ideaPluginForCidrIde: String = rootProject.extra["versions.ideaPluginForCidr.ide"] as String
 
     rootProject.extra["ideaPluginForCidrVersion"] = ideaPluginForCidrVersion
     rootProject.extra["ideaPluginForCidrBuildNumber"] = ideaPluginForCidrBuildNumber

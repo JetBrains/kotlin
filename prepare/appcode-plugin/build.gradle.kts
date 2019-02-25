@@ -10,26 +10,26 @@ val appcodePlatformDepsDir: File by rootProject.extra
 val appcodePluginDir: File by rootProject.extra
 
 // Do not rename, used in pill importer
-val projectsToShadow by extra(listOf(ultimatePath(":appcode-native")))
+val projectsToShadow: List<String> by extra(listOf(ultimatePath(":appcode-native")))
 
-val cidrPlugin by configurations.creating
+val cidrPlugin: Configuration by configurations.creating
 
 dependencies {
     cidrPlugin(ultimateProjectDep(":prepare:cidr-plugin"))
 }
 
-val preparePluginXml by preparePluginXml(
+val preparePluginXml: Task by preparePluginXml(
         ultimatePath(":appcode-native"),
         appcodeVersion,
         appcodeVersionStrict,
         appcodePluginVersionFull
 )
 
-val pluginJar = pluginJar(cidrPlugin, preparePluginXml, projectsToShadow)
+val pluginJar: Task = pluginJar(cidrPlugin, preparePluginXml, projectsToShadow)
 
-val platformDepsJar by platformDepsJar("AppCode", appcodePlatformDepsDir)
+val platformDepsJar: Task by platformDepsJar("AppCode", appcodePlatformDepsDir)
 
-val appcodePlugin by packageCidrPlugin(
+val appcodePlugin: Task by packageCidrPlugin(
         ultimatePath(":appcode-native"),
         appcodePluginDir,
         pluginJar,

@@ -10,26 +10,26 @@ val clionPlatformDepsDir: File by rootProject.extra
 val clionPluginDir: File by rootProject.extra
 
 // Do not rename, used in pill importer
-val projectsToShadow by extra(listOf(ultimatePath(":clion-native")))
+val projectsToShadow: List<String> by extra(listOf(ultimatePath(":clion-native")))
 
-val cidrPlugin by configurations.creating
+val cidrPlugin: Configuration by configurations.creating
 
 dependencies {
     cidrPlugin(ultimateProjectDep(":prepare:cidr-plugin"))
 }
 
-val preparePluginXml by preparePluginXml(
+val preparePluginXml: Task by preparePluginXml(
         ultimatePath(":clion-native"),
         clionVersion,
         clionVersionStrict,
         clionPluginVersionFull
 )
 
-val pluginJar = pluginJar(cidrPlugin, preparePluginXml, projectsToShadow)
+val pluginJar: Task = pluginJar(cidrPlugin, preparePluginXml, projectsToShadow)
 
-val platformDepsJar by platformDepsJar("CLion", clionPlatformDepsDir)
+val platformDepsJar: Task by platformDepsJar("CLion", clionPlatformDepsDir)
 
-val clionPlugin by packageCidrPlugin(
+val clionPlugin: Task by packageCidrPlugin(
         ultimatePath(":clion-native"),
         clionPluginDir,
         pluginJar,

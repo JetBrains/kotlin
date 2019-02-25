@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     if (rootProject.findProject(":cidr-native") != null) { // only for standalone build:
-        val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+        val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
         repositories {
             if (cacheRedirectorEnabled) { maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com") }
@@ -17,7 +17,7 @@ buildscript {
 }
 
 if (isStandaloneBuild) { // only for standalone build:
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+    val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
     allprojects {
         repositories {
@@ -37,7 +37,7 @@ rootProject.apply {
     from(ultimateProject(":").file("versions.gradle.kts"))
 }
 
-val zipCLionPlugin by zipCidrPlugin("clionPlugin", clionPluginZipPath)
-val zipAppCodePlugin by zipCidrPlugin("appcodePlugin", appcodePluginZipPath)
+val zipCLionPlugin: Task by zipCidrPlugin("clionPlugin", clionPluginZipPath)
+val zipAppCodePlugin: Task by zipCidrPlugin("appcodePlugin", appcodePluginZipPath)
 
 tasks["clean"].doLast { delete("dist") }
