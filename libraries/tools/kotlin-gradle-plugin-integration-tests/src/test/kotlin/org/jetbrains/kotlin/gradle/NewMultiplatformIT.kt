@@ -25,22 +25,36 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class NewMultiplatformIT : BaseGradleIT() {
-    val gradleVersion = GradleVersionRequired.AtLeast("4.7")
+data class NativeTargets(val current: String, val supported: List<String>, val unsupported: List<String>)
 
-    val nativeHostTargetName = when {
+fun configure(): NativeTargets {
+    val all = listOf("linux64", "macos64", "mingw64", "wasm32")
+
+    val current = when {
         HostManager.hostIsMingw -> "mingw64"
         HostManager.hostIsLinux -> "linux64"
         HostManager.hostIsMac -> "macos64"
         else -> error("Unknown host")
     }
 
-    val supportedNativeTargets = when {
-        HostManager.hostIsMingw -> listOf("linux64", "mingw64", "wasm32")
-        HostManager.hostIsLinux -> listOf("linux64", "mingw64", "wasm32")
-        HostManager.hostIsMac -> listOf("linux64", "macos64", "wasm32")
+    val unsupported = when {
+        HostManager.hostIsMingw -> listOf("macos64")
+        HostManager.hostIsLinux -> listOf("macos64", "mingw64")
+        HostManager.hostIsMac -> listOf("mingw64")
         else -> error("Unknown host")
     }
+
+    val supported = all.filter { !unsupported.contains(it) }
+
+    return NativeTargets(current, supported, unsupported)
+}
+
+class NewMultiplatformIT : BaseGradleIT() {
+    val gradleVersion = GradleVersionRequired.AtLeast("4.7")
+
+    val nativeHostTargetName = configure().current
+    val supportedNativeTargets = configure().supported
+    val unsupportedNativeTargets = configure().unsupported
 
     private fun Project.targetClassesDir(targetName: String, sourceSetName: String = "main") =
         classesDir(sourceSet = "$targetName/$sourceSetName")
@@ -649,12 +663,8 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testPublishingOnlySupportedNativeTargets() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-        val (publishedVariant, nonPublishedVariant) = when {
-            HostManager.hostIsMac -> "macos64" to "linux64"
-            HostManager.hostIsLinux -> "linux64" to "macos64"
-            HostManager.hostIsMingw -> "mingw64" to "linux64"
-            else -> error("Unknown host")
-        }
+        val publishedVariant = nativeHostTargetName
+        val nonPublishedVariant = unsupportedNativeTargets[0]
 
         build("publish") {
             assertSuccessful()
