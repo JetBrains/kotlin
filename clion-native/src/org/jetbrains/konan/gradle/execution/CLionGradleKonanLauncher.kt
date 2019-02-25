@@ -16,7 +16,6 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.util.ProgramParametersConfigurator
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
@@ -161,7 +160,7 @@ class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment
                                    cl: GeneralCommandLine): RunParameters {
         val installer = TrivialInstaller(cl)
 
-        for (each in Extensions.getExtensions(CidrCustomDebuggerProvider.EP_NAME)) {
+        for (each in CidrCustomDebuggerProvider.EP_NAME.extensionList) {
             val config = ContainerUtil.getFirstItem(each.debuggerConfigurations)
             if (config != null) return CLionRunParameters(config, installer)
         }
@@ -189,7 +188,7 @@ class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment
             val cl: GeneralCommandLine
             if (usePty) {
                 cl = PtyCommandLine()
-                cl.setUseCygwinLaunch(environment.isCygwin)
+                cl.withUseCygwinLaunch(environment.isCygwin)
             }
             else {
                 cl = GeneralCommandLine()

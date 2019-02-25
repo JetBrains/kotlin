@@ -5,7 +5,6 @@
 
 package org.jetbrains.konan.gradle.execution
 
-import com.intellij.execution.configuration.ConfigurationFactoryEx
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationTypeBase
 import com.intellij.execution.configurations.ConfigurationTypeUtil
@@ -18,14 +17,17 @@ import org.jetbrains.annotations.NonNls
 /**
  * @author Vladislav.Soroka
  */
-class GradleKonanAppRunConfigurationType protected constructor() : ConfigurationTypeBase("GradleKonanAppRunConfiguration",
-                                                                                         "Kotlin/Native Application",
-                                                                                         "Kotlin/Native application configuration",
-                                                                                         AllIcons.RunConfigurations.Application) {
+class GradleKonanAppRunConfigurationType private constructor() : ConfigurationTypeBase(
+        "GradleKonanAppRunConfiguration",
+        "Kotlin/Native Application",
+        "Kotlin/Native application configuration",
+        AllIcons.RunConfigurations.Application
+) {
+
     private val myDefaultFactoryId: String = "Application"
 
     val factory: ConfigurationFactory
-        get() = object : ConfigurationFactoryEx<GradleKonanAppRunConfiguration>(this) {
+        get() = object : ConfigurationFactory(this) {
             override fun createTemplateConfiguration(project: Project): RunConfiguration {
                 return createRunConfiguration(project, this)
             }
@@ -40,7 +42,7 @@ class GradleKonanAppRunConfigurationType protected constructor() : Configuration
         addFactory(factory)
     }
 
-    protected fun createRunConfiguration(project: Project, factory: ConfigurationFactory): GradleKonanAppRunConfiguration {
+    private fun createRunConfiguration(project: Project, factory: ConfigurationFactory): GradleKonanAppRunConfiguration {
         return GradleKonanAppRunConfiguration(project, factory, "")
     }
 

@@ -7,15 +7,14 @@ package org.jetbrains.konan.internal
 
 import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.ide.util.TipAndTrickBean
-import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.extensions.Extensions
 
 /**
  * @author Vladislav.Soroka
  */
-class KotlinNativeIdeInitializer : ApplicationComponent {
+class KotlinNativeIdeInitializer {
 
-    override fun initComponent() {
+    init {
         unregisterGroovyInspections()
         suppressKotlinJvmTipsAndTricks()
     }

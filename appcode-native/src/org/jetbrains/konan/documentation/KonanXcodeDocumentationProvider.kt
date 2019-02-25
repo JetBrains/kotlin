@@ -48,7 +48,7 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
 
     when (element) {
       is KtSimpleNameExpression -> { // workaround, until resolve will work correctly
-        val referenceText = element.reference?.canonicalText ?: element.text
+        val referenceText = element.references.firstOrNull()?.canonicalText ?: element.text
         if (referenceText != null) {
           return `fun`.`fun`(InfoBuilder.createWithoutContainer(referenceText.getObjcClassName())
                                .addTokenTypes(FUNCTION, CLASS, STRUCT, INSTANCE_PROPERTY, PROTOCOL, TYPEDEF, MACRO, ENUM, MODULE)

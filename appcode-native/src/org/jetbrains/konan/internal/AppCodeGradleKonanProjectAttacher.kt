@@ -12,6 +12,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjec
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectEx
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -61,11 +62,15 @@ class AppCodeGradleKonanProjectAttacher(
     }
 
     private fun findGradleProject(): File? {
-        val baseDir = Paths.get(project.baseDir.path, "Supporting Files")
-        return FileUtil.findFirstThatExist(
-            "$baseDir/${GradleConstants.DEFAULT_SCRIPT_NAME}",
-            "$baseDir/${GradleConstants.KOTLIN_DSL_SCRIPT_NAME}"
-        )
+        project.guessProjectDir()?.let { projectDir ->
+            val baseDir = Paths.get(projectDir.path, "Supporting Files")
+            return FileUtil.findFirstThatExist(
+                    "$baseDir/${GradleConstants.DEFAULT_SCRIPT_NAME}",
+                    "$baseDir/${GradleConstants.KOTLIN_DSL_SCRIPT_NAME}"
+            )
+        }
+
+        return null
     }
 
     private fun refreshOCRoots() {
