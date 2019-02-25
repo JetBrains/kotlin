@@ -107,7 +107,7 @@ dependencies {
 shadowJar {
     from sourceSets.main.output
     configurations = [project.configurations.bundleDependencies]
-    archiveClassifier.set(null)
+    classifier = null
     relocate('org.jetbrains.kotlinx', 'shadow.org.jetbrains.kotlinx')
     relocate('org.jetbrains.kotlin.compilerRunner', 'shadow.org.jetbrains.kotlin.compilerRunner')
     relocate('org.jetbrains.kotlin.konan', 'shadow.org.jetbrains.kotlin.konan')
