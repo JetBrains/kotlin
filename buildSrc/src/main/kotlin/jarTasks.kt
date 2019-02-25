@@ -55,7 +55,7 @@ fun Project.pluginJar(
 fun Project.platformDepsJar(productName: String, platformDepsDir: File) = tasks.creating(Zip::class) {
     archiveFileName.value = "kotlinNative-platformDeps-$productName.jar"
     destinationDirectory.value = file("$buildDir/$name")
-    from(zipTree(fileTree(platformDepsDir).matching { include("**/$PLATFORM_DEPS_JAR_NAME") }.singleFile)) { exclude(PLUGIN_XML_PATH) }
+    from(zipTree(fileTree(platformDepsDir).matching { include(PLATFORM_DEPS_JAR_NAME) }.singleFile)) { exclude(PLUGIN_XML_PATH) }
     patchJavaXmls()
 }
 

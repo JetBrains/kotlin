@@ -36,8 +36,8 @@ fun Project.packageCidrPlugin(
         from(platformDepsJarTask)
 
         val otherPlatformDepsJars = fileTree(platformDepsDir) {
-            include("**/*.jar")
-            exclude("**/$PLATFORM_DEPS_JAR_NAME")
+            include("*.jar")
+            exclude(PLATFORM_DEPS_JAR_NAME)
         }.files
         from(otherPlatformDepsJars)
     }

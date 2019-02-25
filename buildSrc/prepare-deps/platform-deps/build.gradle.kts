@@ -26,37 +26,46 @@ val appcodeVersion: String by rootProject.extra
 val appcodePlatformDepsDir: File by rootProject.extra
 val appcodeUnscrambledJarDir: File by rootProject.extra
 
-val clionPlatformDepsZip by configurations.creating
-val clionUnscrambledJar by configurations.creating
+val clionUnscrambledJar: Configuration by configurations.creating
+val clionPlatformDepsZip: Configuration by configurations.creating
 
-val appcodePlatformDepsZip by configurations.creating
-val appcodeUnscrambledJar by configurations.creating
+val appcodeUnscrambledJar: Configuration by configurations.creating
+val appcodePlatformDepsZip: Configuration by configurations.creating
 
 dependencies {
-    clionPlatformDepsZip(tc("$clionRepo:$clionVersion:CL-plugins/kotlinNative-platformDeps-$clionVersion.zip"))
     clionUnscrambledJar(tc("$clionRepo:$clionVersion:unscrambled/clion.jar"))
+    clionPlatformDepsZip(tc("$clionRepo:$clionVersion:CL-plugins/kotlinNative-platformDeps-$clionVersion.zip"))
 
-    appcodePlatformDepsZip(tc("$appcodeRepo:$appcodeVersion:OC-plugins/kotlinNative-platformDeps-$appcodeVersion.zip"))
     appcodeUnscrambledJar(tc("$appcodeRepo:$appcodeVersion:unscrambled/appcode.jar"))
+    appcodePlatformDepsZip(tc("$appcodeRepo:$appcodeVersion:OC-plugins/kotlinNative-platformDeps-$appcodeVersion.zip"))
 }
 
-val downloadCLionPlatformDeps by downloading(clionPlatformDepsZip, clionPlatformDepsDir, extract = true)
-val downloadCLionUnscrambledJar by downloading(clionUnscrambledJar, clionUnscrambledJarDir)
+val downloadCLionUnscrambledJar: Task by downloading(clionUnscrambledJar, clionUnscrambledJarDir)
+val downloadCLionPlatformDeps: Task by downloading(
+        clionPlatformDepsZip,
+        clionPlatformDepsDir,
+        pathRemap = { it.substringAfterLast('/') }
+) { zipTree(it.singleFile) }
 
-val downloadAppCodePlatformDeps by downloading(appcodePlatformDepsZip, appcodePlatformDepsDir, extract = true)
-val downloadAppCodeUnscrambledJar by downloading(appcodeUnscrambledJar, appcodeUnscrambledJarDir)
+val downloadAppCodeUnscrambledJar: Task by downloading(appcodeUnscrambledJar, appcodeUnscrambledJarDir)
+val downloadAppCodePlatformDeps: Task by downloading(
+        appcodePlatformDepsZip,
+        appcodePlatformDepsDir,
+        pathRemap = { it.substringAfterLast('/') }
+) { zipTree(it.singleFile) }
 
 tasks["build"].dependsOn(
-        downloadCLionPlatformDeps,
         downloadCLionUnscrambledJar,
-        downloadAppCodePlatformDeps,
-        downloadAppCodeUnscrambledJar
+        downloadCLionPlatformDeps,
+        downloadAppCodeUnscrambledJar,
+        downloadAppCodePlatformDeps
 )
 
 fun Project.downloading(
         sourceConfiguration: Configuration,
-        targetDir: Any,
-        extract: Boolean = false
+        targetDir: File,
+        pathRemap: (String) -> String = { it },
+        extractor: (Configuration) -> Any = { it }
 ) = tasks.creating {
     dependsOn(sourceConfiguration)
     inputs.files(sourceConfiguration)
@@ -64,8 +73,13 @@ fun Project.downloading(
 
     doFirst {
         copy {
-            if (extract) from(zipTree(sourceConfiguration.singleFile)) else from(sourceConfiguration)
+            from(extractor(sourceConfiguration))
             into(targetDir)
+            includeEmptyDirs = false
+            duplicatesStrategy = DuplicatesStrategy.FAIL
+            eachFile {
+                path = pathRemap(path)
+            }
         }
     }
 }

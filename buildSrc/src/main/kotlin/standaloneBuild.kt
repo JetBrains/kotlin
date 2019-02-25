@@ -60,7 +60,7 @@ fun Project.addIdeaNativeModuleDeps() {
 
             // Java APIs (private artifact that goes together with CLion builds)
             val clionPlatformDepsDir: String by rootProject.extra
-            val cidrPlatformDeps = fileTree(clionPlatformDepsDir) { include("**/$PLATFORM_DEPS_JAR_NAME") }
+            val cidrPlatformDeps = fileTree(clionPlatformDepsDir) { include(PLATFORM_DEPS_JAR_NAME) }
             add("compile", cidrPlatformDeps)
         } else {
             // Gradle projects with Kotlin/Native-specific logic
