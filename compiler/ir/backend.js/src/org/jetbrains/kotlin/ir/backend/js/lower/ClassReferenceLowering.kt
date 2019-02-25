@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isFunction
+import org.jetbrains.kotlin.ir.util.isThrowable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -26,29 +29,90 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
 
     private val primitiveClassProperties = context.primitiveClassProperties
 
-    private val booleanClass = primitiveClassProperties.single { it.name == Name.identifier("booleanClass") }
-    private val intClass = primitiveClassProperties.single { it.name == Name.identifier("intClass") }
-    private val doubleClass = primitiveClassProperties.single { it.name == Name.identifier("doubleClass") }
+    private fun primitiveClassProperty(name: String) =
+        primitiveClassProperties.single { it.name == Name.identifier(name) }
 
-    private fun callGetKClassFromExpression(returnType: IrType, typeArgument: IrType, argument: IrExpression) =
-        JsIrBuilder.buildCall(intrinsics.jsGetKClassFromExpression, returnType, listOf(typeArgument)).apply {
+
+    private val finalPrimitiveClasses = mapOf(
+        IrType::isBoolean to "booleanClass",
+        IrType::isByte to "byteClass",
+        IrType::isShort to "shortClass",
+        IrType::isInt to "intClass",
+        IrType::isFloat to "floatClass",
+        IrType::isDouble to "doubleClass",
+        IrType::isArray to "arrayClass",
+        IrType::isString to "stringClass",
+        IrType::isThrowable to "throwableClass",
+        IrType::isBooleanArray to "booleanArrayClass",
+        IrType::isCharArray to "charArrayClass",
+        IrType::isByteArray to "byteArrayClass",
+        IrType::isShortArray to "shortArrayClass",
+        IrType::isIntArray to "intArrayClass",
+        IrType::isLongArray to "longArrayClass",
+        IrType::isFloatArray to "floatArrayClass",
+        IrType::isDoubleArray to "doubleArrayClass"
+    ).mapValues {
+        primitiveClassProperty(it.value).getter!!
+    }
+
+    private val openPrimitiveClasses = mapOf(
+        IrType::isAny to "anyClass",
+        IrType::isNumber to "numberClass",
+        IrType::isNothing to "nothingClass"
+    ).mapValues {
+        primitiveClassProperty(it.value).getter!!
+    }
+
+    private fun callGetKClassFromExpression(returnType: IrType, typeArgument: IrType, argument: IrExpression): IrExpression {
+        val primitiveKClass = getFinalPrimitiveKClass(returnType, typeArgument)
+        if (primitiveKClass != null)
+            return JsIrBuilder.buildBlock(returnType, listOf(argument, primitiveKClass))
+
+        return JsIrBuilder.buildCall(intrinsics.jsGetKClassFromExpression, returnType, listOf(typeArgument)).apply {
             putValueArgument(0, argument)
         }
-
+    }
 
     private fun getPrimitiveClass(target: IrSimpleFunction, returnType: IrType) =
         JsIrBuilder.buildCall(target.symbol, returnType).apply {
             dispatchReceiver = JsIrBuilder.buildGetObjectValue(primitiveClassesObject.defaultType, primitiveClassesObject.symbol)
         }
 
-    private fun callGetKClass(returnType: IrType, typeArgument: IrType) = when {
-        typeArgument.isBoolean() -> getPrimitiveClass(booleanClass.getter!!, returnType)
-        typeArgument.isByte() -> getPrimitiveClass(intClass.getter!!, returnType)
-        typeArgument.isShort() -> getPrimitiveClass(intClass.getter!!, returnType)
-        typeArgument.isInt() -> getPrimitiveClass(intClass.getter!!, returnType)
-        typeArgument.isFloat() -> getPrimitiveClass(doubleClass.getter!!, returnType)
-        typeArgument.isDouble() -> getPrimitiveClass(doubleClass.getter!!, returnType)
-        else -> JsIrBuilder.buildCall(intrinsics.jsGetKClass, returnType, listOf(typeArgument)).apply {
+    private fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
+        for ((typePredicate, v) in finalPrimitiveClasses) {
+            if (typePredicate(typeArgument))
+                return getPrimitiveClass(v, returnType)
+        }
+
+        return null
+    }
+
+
+    private fun getOpenPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
+        for ((typePredicate, v) in openPrimitiveClasses) {
+            if (typePredicate(typeArgument))
+                return getPrimitiveClass(v, returnType)
+        }
+
+        if (typeArgument.isFunction()) {
+            val functionInterface = typeArgument.getClass()!!
+            val arity = functionInterface.typeParameters.size - 1
+            return getPrimitiveClass(context.primitiveClassFunctionClass, returnType).apply {
+                putValueArgument(0, JsIrBuilder.buildInt(context.irBuiltIns.intType, arity))
+            }
+        }
+
+        return null
+    }
+
+    private fun callGetKClass(returnType: IrType, typeArgument: IrType): IrCall {
+        val primitiveKClass =
+            getFinalPrimitiveKClass(returnType, typeArgument) ?: getOpenPrimitiveKClass(returnType, typeArgument)
+
+        if (primitiveKClass != null)
+            return primitiveKClass
+
+        return JsIrBuilder.buildCall(intrinsics.jsGetKClass, returnType, listOf(typeArgument)).apply {
             putValueArgument(0, callJsClass(typeArgument))
         }
     }

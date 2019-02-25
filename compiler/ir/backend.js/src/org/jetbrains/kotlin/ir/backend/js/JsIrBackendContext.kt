@@ -250,6 +250,9 @@ class JsIrBackendContext(
     ).owner
 
     val primitiveClassProperties = primitiveClassesObject.declarations.filterIsInstance<IrProperty>()
+    val primitiveClassFunctionClass = primitiveClassesObject.declarations
+        .filterIsInstance<IrSimpleFunction>()
+        .find { it.name == Name.identifier("functionClass") }!!
 
     val throwableClass = symbolTable.referenceClass(
         getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
