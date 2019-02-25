@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.nj2k
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -37,8 +38,11 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.AnalysisScope
+import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.NullabilityAnalysisFacade
+import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.nullabilityByUndefinedNullabilityComment
+import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
@@ -100,13 +104,18 @@ class NewJ2kPostProcessor(
 
 
     override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) {
-        OptimizeImportsProcessor(file.project, file.containingKtFile).run()
-
-        runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
-            NewJ2KPostProcessingRegistrar.mainProcessings.runProcessings(file, rangeMarker)
-
-
-            if (formatCode) {
+        CommandProcessor.getInstance().runUndoTransparentAction {
+            runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
+                withContext(EDT) {
+                    NullabilityAnalysisFacade(
+                        getTypeElementNullability = ::nullabilityByUndefinedNullabilityComment,
+                        prepareTypeElement = ::prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment,
+                        debugPrint = false
+                    ).fixNullability(AnalysisScope(file))
+                }
+                withContext(EDT) {
+                    NewJ2KPostProcessingRegistrar.mainProcessings.runProcessings(file, rangeMarker)
+                }
                 withContext(EDT) {
                     runWriteAction {
                         val codeStyleManager = CodeStyleManager.getInstance(file.project)
