@@ -472,6 +472,11 @@ tasks {
         dependsOn(":js:js.tests:runMocha")
     }
 
+    create("firCompilerTest") {
+        dependsOn(":compiler:fir:psi2fir:test")
+        dependsOn(":compiler:fir:resolve:test")
+    }
+
     create("scriptingTest") {
         dependsOn("dist")
         dependsOn(":kotlin-script-util:test")
@@ -481,6 +486,7 @@ tasks {
     create("compilerTest") {
         dependsOn("jvmCompilerTest")
         dependsOn("jsCompilerTest")
+        dependsOn("firCompilerTest")
 
         dependsOn("scriptingTest")
         dependsOn(":kotlin-build-common:test")
