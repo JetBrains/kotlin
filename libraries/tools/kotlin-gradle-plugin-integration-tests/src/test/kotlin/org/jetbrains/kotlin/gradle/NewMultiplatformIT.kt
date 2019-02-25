@@ -637,21 +637,21 @@ class NewMultiplatformIT : BaseGradleIT() {
             projectDir.resolve("repo")
         }
 
-        val dependencyBuilder = StringBuilder()
-        dependencyBuilder.append("dependencies {\n")
-        dependencyBuilder.append("    allJvmImplementation 'com.example:sample-lib-jvm6:1.0'\n")
-        dependencyBuilder.append("    nodeJsMainImplementation 'com.example:sample-lib-nodejs:1.0'\n")
-
-        for (target in supportedNativeTargets) {
-            dependencyBuilder.append("    ${target}MainImplementation 'com.example:sample-lib-$target:1.0'\n")
+        val dependencies = buildString {
+            append("dependencies {\n")
+            append("    allJvmImplementation 'com.example:sample-lib-jvm6:1.0'\n")
+            append("    nodeJsMainImplementation 'com.example:sample-lib-nodejs:1.0'\n")
+            for (target in supportedNativeTargets) {
+                append("    ${target}MainImplementation 'com.example:sample-lib-$target:1.0'\n")
+            }
+            append("}")
         }
-        dependencyBuilder.append("}")
 
         with(Project("sample-app", gradleVersion, "new-mpp-lib-and-app")) {
             setupWorkingDir()
             gradleBuildScript().modify {
                 it.replace("implementation 'com.example:sample-lib:1.0'", "implementation 'com.example:sample-lib-metadata:1.0'") +
-                "\nrepositories { maven { url '${repoDir.toURI()}' } }\n\n" + dependencyBuilder.toString()
+                "\nrepositories { maven { url '${repoDir.toURI()}' } }\n\n" + dependencies
             }
 
             build("assemble") {
