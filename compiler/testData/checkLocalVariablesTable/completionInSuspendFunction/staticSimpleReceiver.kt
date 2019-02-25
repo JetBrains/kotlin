@@ -6,5 +6,5 @@ class A
 suspend fun A.foo() {}
 
 // METHOD : StaticSimpleReceiverKt.foo(LA;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-// VARIABLE : NAME=$receiver TYPE=LA; INDEX=0
+// VARIABLE : NAME=$this$foo TYPE=LA; INDEX=0
 // VARIABLE : NAME=$completion TYPE=Lkotlin/coroutines/Continuation; INDEX=1
