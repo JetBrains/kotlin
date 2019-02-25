@@ -30,9 +30,13 @@ import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
 import java.io.File
 
-class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment,
-                                 protected val myConfiguration: GradleKonanAppRunConfiguration) : GradleKonanLauncher() {
-  private val myExtensionsManager: AppCodeRunConfigurationExtensionManager
+class AppCodeGradleKonanLauncher(
+        private val myEnvironment: ExecutionEnvironment,
+        private val myConfiguration: GradleKonanAppRunConfiguration
+) : GradleKonanLauncher() {
+
+  @Suppress("unused")
+  private val myExtensionsManager: AppCodeRunConfigurationExtensionManager = AppCodeRunConfigurationExtensionManager.instance
 
   private val projectBaseDir: File?
     get() = XcodeMetaData.getInstance(project).workspaceFile?.xcWorkspaceFile?.let { File(it.path) }
@@ -50,10 +54,6 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
                                                           buildConfigurationProblems, true) ?: throw ExecutionException(
         buildConfigurationProblems.text)
     }
-
-  init {
-    myExtensionsManager = AppCodeRunConfigurationExtensionManager.instance
-  }
 
   override fun getProject(): Project {
     return myConfiguration.project
@@ -86,7 +86,7 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
   }
 
   @Throws(ExecutionException::class)
-  protected fun createProcessHandler(environment: CidrToolEnvironment, cl: GeneralCommandLine, usePty: Boolean): ProcessHandler {
+  private fun createProcessHandler(environment: CidrToolEnvironment, cl: GeneralCommandLine, usePty: Boolean): ProcessHandler {
     val overrideWinPtyWidth = SystemInfo.isWindows && usePty
 
     var oldCols: String? = null
@@ -118,7 +118,7 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
     return CidrConsoleBuilder(myConfiguration.project, environment, projectBaseDir)
   }
 
-  fun usePty(): Boolean {
+  private fun usePty(): Boolean {
     val application = ApplicationManager.getApplication()
     return PtyCommandLine.isEnabled() || application.isInternal || application.isUnitTestMode
   }
@@ -230,7 +230,7 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
   }
 
   companion object {
-    private val WIN_PTY_COLS = "win.pty.cols"
-    private val WIN_PTY_CONSOLE_WIDTH = 120
+    private const val WIN_PTY_COLS = "win.pty.cols"
+    private const val WIN_PTY_CONSOLE_WIDTH = 120
   }
 }

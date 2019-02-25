@@ -35,9 +35,10 @@ import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.toolchains.EnvironmentProblems
 import java.io.File
 
-class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment,
-                               protected val myConfiguration: GradleKonanAppRunConfiguration) : GradleKonanLauncher() {
-    private val myExtensionsManager: CLionRunConfigurationExtensionsManager
+class CLionGradleKonanLauncher(private val myEnvironment: ExecutionEnvironment,
+                               private val myConfiguration: GradleKonanAppRunConfiguration) : GradleKonanLauncher() {
+
+    private val myExtensionsManager: CLionRunConfigurationExtensionsManager = CLionRunConfigurationExtensionsManager.getInstance()
 
     private val projectBaseDir: File?
         get() = project.basePath?.let { File(it) }
@@ -55,10 +56,6 @@ class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment
                                                                 buildConfigurationProblems, true) ?: throw ExecutionException(
                 buildConfigurationProblems.text)
         }
-
-    init {
-        myExtensionsManager = CLionRunConfigurationExtensionsManager.getInstance()
-    }
 
     override fun getProject(): Project {
         return myConfiguration.project
@@ -229,7 +226,7 @@ class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment
     }
 
     companion object {
-        private val WIN_PTY_COLS = "win.pty.cols"
-        private val WIN_PTY_CONSOLE_WIDTH = 120
+        private const val WIN_PTY_COLS = "win.pty.cols"
+        private const val WIN_PTY_CONSOLE_WIDTH = 120
     }
 }
