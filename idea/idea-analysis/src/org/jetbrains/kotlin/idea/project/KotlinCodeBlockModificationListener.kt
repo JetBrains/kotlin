@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.idea.caches.project.cached
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parents
 
 val KOTLIN_CONSOLE_KEY = Key.create<Boolean>("kotlin.console")
 
@@ -128,8 +127,8 @@ class KotlinCodeBlockModificationListener(
                         ?.let { return it }
             }
 
-            val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return null
-            if (blockDeclaration.parents.any { it !is KtClassBody && it !is KtClassOrObject && it !is KtFile }) return null // should not be local declaration
+            val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) as? KtDeclaration ?: return null
+            if (KtPsiUtil.isLocal(blockDeclaration)) return null // should not be local declaration
 
             when (blockDeclaration) {
                 is KtNamedFunction -> {
@@ -151,6 +150,13 @@ class KotlinCodeBlockModificationListener(
                     }
                 }
 
+                is KtScriptInitializer -> {
+                    return (blockDeclaration.body as? KtCallExpression)
+                        ?.lambdaArguments?.last()
+                        ?.getLambdaExpression()
+                        ?.takeIf { it.isAncestor(element) }
+                }
+
                 else -> throw IllegalStateException()
             }
 
@@ -163,7 +169,8 @@ class KotlinCodeBlockModificationListener(
 
         private val BLOCK_DECLARATION_TYPES = arrayOf<Class<out KtDeclaration>>(
                 KtProperty::class.java,
-                KtNamedFunction::class.java
+                KtNamedFunction::class.java,
+                KtScriptInitializer::class.java
         )
 
         fun getInstance(project: Project) = project.getComponent(KotlinCodeBlockModificationListener::class.java)

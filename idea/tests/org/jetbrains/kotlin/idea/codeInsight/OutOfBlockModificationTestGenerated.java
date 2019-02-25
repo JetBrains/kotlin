@@ -26,7 +26,7 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
     }
 
     public void testAllFilesPresentInOutOfBlock() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/outOfBlock"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/outOfBlock"), Pattern.compile("^(.+)\\.(kt|kts)$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("Class_Class_FunNoType_Block.kt")
@@ -217,6 +217,16 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
     @TestMetadata("PropertyWithType_Initializer_String.kt")
     public void testPropertyWithType_Initializer_String() throws Exception {
         runTest("idea/testData/codeInsight/outOfBlock/PropertyWithType_Initializer_String.kt");
+    }
+
+    @TestMetadata("scriptInLambdaExpression.kts")
+    public void testScriptInLambdaExpression() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/scriptInLambdaExpression.kts");
+    }
+
+    @TestMetadata("scriptTopLevelExpression.kts")
+    public void testScriptTopLevelExpression() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/scriptTopLevelExpression.kts");
     }
 
     @TestMetadata("StringInSuperConstroctorCall.kt")
