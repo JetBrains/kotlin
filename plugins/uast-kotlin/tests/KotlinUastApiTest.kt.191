@@ -1,6 +1,7 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
