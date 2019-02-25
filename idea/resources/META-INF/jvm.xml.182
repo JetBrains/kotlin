@@ -83,6 +83,9 @@
         <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches"
                         serviceImplementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches"/>
 
+        <projectService serviceInterface="org.jetbrains.kotlin.idea.scratch.ScratchFileAutoRunner"
+                        serviceImplementation="org.jetbrains.kotlin.idea.scratch.ScratchFileAutoRunner"/>
+
         <projectService serviceImplementation="org.jetbrains.kotlin.idea.versions.SuppressNotificationState"/>
 
         <applicationService serviceImplementation="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState"/>
@@ -135,6 +138,9 @@
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
 
+        <scratch.creationHelper language="kotlin"
+                                implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileCreationHelper"/>
+
         <localInspection
             groupName="Plugin DevKit"
             shortName="IncompatibleAPI"
@@ -158,7 +164,7 @@
       <registryKey key="kotlin.uast.multiresolve.enabled"
                    description="Whether to use muiti resolve for UAST in Kotlin provided by `Call.resolveCandidates`,
                       otherwise PsiPolyVariantReference-based multiResolve will be performed"
-                   defaultValue="false"
+                   defaultValue="true"
                    restartRequired="false"/>
     </extensions>
 
