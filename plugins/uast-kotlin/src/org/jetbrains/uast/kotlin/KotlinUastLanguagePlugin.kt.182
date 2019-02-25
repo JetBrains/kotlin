@@ -155,6 +155,7 @@ internal object KotlinConverter {
         is KtSimpleNameStringTemplateEntry -> unwrapElements(element.parent)
         is KtLightParameterList -> unwrapElements(element.parent)
         is KtTypeElement -> unwrapElements(element.parent)
+        is KtSuperTypeList -> unwrapElements(element.parent)
         else -> element
     }
 
@@ -487,6 +488,9 @@ internal object KotlinConverter {
                         el<UAnnotation> { KotlinUNestedAnnotation.tryCreate(original, givenParent) }
                     } else null
                 is KtLightAnnotationForSourceEntry -> convertDeclarationOrElement(original.kotlinOrigin, givenParent, requiredType)
+                is KtDelegatedSuperTypeEntry -> el<KotlinSupertypeDelegationUExpression> {
+                    KotlinSupertypeDelegationUExpression(original, givenParent)
+                }
                 else -> null
             }
         }
@@ -563,3 +567,5 @@ private fun convertVariablesDeclaration(
     }
     return declarationsExpression.apply { declarations = listOf(variable) }
 }
+
+val kotlinUastPlugin get() = UastLanguagePlugin.getInstances().find { it.language == KotlinLanguage.INSTANCE } ?: KotlinUastLanguagePlugin()

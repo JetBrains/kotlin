@@ -84,4 +84,10 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testLambdas() = doTest("Lambdas")
+
+    @Test
+    fun testDelegate() = doTest("Delegate")
+
+    @Test
+    fun testConstructorDelegate() = doTest("ConstructorDelegate")
 }
