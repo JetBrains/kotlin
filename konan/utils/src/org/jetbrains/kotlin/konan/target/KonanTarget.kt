@@ -23,6 +23,7 @@ enum class Family(
 
 enum class Architecture(val bitness: Int) {
     X64(64),
+    X86(32),
     ARM64(64),
     ARM32(32),
     MIPS32(32),
@@ -38,6 +39,7 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
     object IOS_X64 : KonanTarget("ios_x64", Family.IOS, Architecture.X64)
     object LINUX_X64 : KonanTarget("linux_x64", Family.LINUX, Architecture.X64)
     object MINGW_X64 : KonanTarget("mingw_x64", Family.MINGW, Architecture.X64)
+    object MINGW_X86 : KonanTarget("mingw_x86", Family.MINGW, Architecture.X86)
     object MACOS_X64 : KonanTarget("macos_x64", Family.OSX, Architecture.X64)
     object LINUX_ARM32_HFP : KonanTarget("linux_arm32_hfp", Family.LINUX, Architecture.ARM32)
     object LINUX_MIPS32 : KonanTarget("linux_mips32", Family.LINUX, Architecture.MIPS32)
@@ -58,7 +60,7 @@ object PredefinedKonanTargets {
         ANDROID_ARM32, ANDROID_ARM64,
         IOS_ARM32, IOS_ARM64, IOS_X64,
         LINUX_X64, LINUX_ARM32_HFP, LINUX_MIPS32, LINUX_MIPSEL32,
-        MINGW_X64,
+        MINGW_X64, MINGW_X86,
         MACOS_X64,
         KonanTarget.WASM32
     )
@@ -188,13 +190,18 @@ open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
         ) + zephyrSubtargets,
         KonanTarget.MINGW_X64 to setOf(
             KonanTarget.MINGW_X64,
-            KonanTarget.WASM32
+            KonanTarget.WASM32,
+            KonanTarget.LINUX_X64,
+            KonanTarget.LINUX_ARM32_HFP,
+            KonanTarget.ANDROID_ARM32
         ) + zephyrSubtargets,
         KonanTarget.MACOS_X64 to setOf(
             KonanTarget.MACOS_X64,
             KonanTarget.IOS_ARM32,
             KonanTarget.IOS_ARM64,
             KonanTarget.IOS_X64,
+            KonanTarget.LINUX_X64,
+            KonanTarget.LINUX_ARM32_HFP,
             KonanTarget.ANDROID_ARM32,
             KonanTarget.ANDROID_ARM64,
             KonanTarget.WASM32
