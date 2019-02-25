@@ -34,7 +34,7 @@ import java.util.regex.Pattern
 // You may need to provide custom path to protoc executable, just modify this constant:
 private const val PROTOC_EXE = "protoc"
 
-class ProtoPath(val file: String) {
+class ProtoPath(val file: String, val generateDebug: Boolean = true) {
     val outPath: String = File(file).parent
     val packageName: String = findFirst(Pattern.compile("package (.+);"))
     val className: String = findFirst(Pattern.compile("option java_outer_classname = \"(.+)\";"))
@@ -53,7 +53,7 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("core/metadata/src/metadata.proto"),
         ProtoPath("core/metadata/src/builtins.proto"),
         ProtoPath("js/js.serializer/src/js.proto"),
-        ProtoPath("js/js.serializer/src/js-ast.proto"),
+        ProtoPath("js/js.serializer/src/js-ast.proto", false),
         ProtoPath("konan/library-reader/src/konan.proto"),
         ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
         ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
@@ -142,13 +142,15 @@ private fun renamePackages(protoPath: String, outPath: String) {
 }
 
 private fun modifyAndExecProtoc(protoPath: ProtoPath) {
-    val debugProtoFile = File(protoPath.file.replace(".proto", ".debug.proto"))
-    debugProtoFile.writeText(modifyForDebug(protoPath))
-    debugProtoFile.deleteOnExit()
+    if (protoPath.generateDebug) {
+        val debugProtoFile = File(protoPath.file.replace(".proto", ".debug.proto"))
+        debugProtoFile.writeText(modifyForDebug(protoPath))
+        debugProtoFile.deleteOnExit()
 
-    val outPath = "build-common/test"
-    execProtoc(debugProtoFile.path, outPath)
-    renamePackages(debugProtoFile.path, outPath)
+        val outPath = "build-common/test"
+        execProtoc(debugProtoFile.path, outPath)
+        renamePackages(debugProtoFile.path, outPath)
+    }
 }
 
 private fun modifyForDebug(protoPath: ProtoPath): String {
