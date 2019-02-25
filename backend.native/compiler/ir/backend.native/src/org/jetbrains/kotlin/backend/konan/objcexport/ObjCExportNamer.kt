@@ -184,7 +184,22 @@ internal class ObjCExportNamerImpl(
             if (containingDeclaration is ClassDescriptor) {
                 append(getClassOrProtocolSwiftName(containingDeclaration))
 
-                if (!descriptor.isInterface && !containingDeclaration.isInterface) {
+                val importAsMember = when {
+                    descriptor.isInterface || containingDeclaration.isInterface -> {
+                        // Swift doesn't support neither nested nor outer protocols.
+                        false
+                    }
+
+                    this.contains('.') -> {
+                        // Swift doesn't support swift_name with deeply nested names.
+                        // It seems to support "OriginalObjCName.SwiftName" though,
+                        // but this doesn't seem neither documented nor reliable.
+                        false
+                    }
+
+                    else -> true
+                }
+                if (importAsMember) {
                     append(".").append(descriptor.name.asString())
                 } else {
                     append(descriptor.name.asString().capitalize())

@@ -269,3 +269,12 @@ fun Any.same() = this
 
 // https://github.com/JetBrains/kotlin-native/issues/2571
 val PROPERTY_NAME_MUST_NOT_BE_ALTERED_BY_SWIFT = 111
+
+// https://github.com/JetBrains/kotlin-native/issues/2667
+class Deeply {
+    class Nested {
+        class Type {
+            val thirtyTwo = 32
+        }
+    }
+}

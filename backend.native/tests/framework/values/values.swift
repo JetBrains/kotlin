@@ -492,6 +492,7 @@ func testPureSwiftClasses() throws {
 
 func testNames() throws {
     try assertEquals(actual: ValuesKt.PROPERTY_NAME_MUST_NOT_BE_ALTERED_BY_SWIFT, expected: 111)
+    try assertEquals(actual: Deeply.NestedType().thirtyTwo, expected: 32)
 }
 
 // -------- Execution of the test --------
