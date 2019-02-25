@@ -198,7 +198,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         }
         val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
         if (mppModel != null) {
-            mppModel.targets.filterNot { it.name == "metadata" }.forEach { target ->
+            mppModel.targets.forEach { target ->
                 KotlinStatisticsTrigger.trigger(
                         KotlinEventTrigger.KotlinGradleTargetTrigger,
                         "MPP.${target.platform.id + (target.presetName?.let { ".$it"} ?: "")}"
