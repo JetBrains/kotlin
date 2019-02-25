@@ -4,3 +4,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+include ":prepare-deps:platform-deps",
+        ":prepare-deps:cidr",
+        ":prepare-deps:idea-plugin"

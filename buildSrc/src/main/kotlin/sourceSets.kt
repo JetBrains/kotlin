@@ -12,7 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceSetOutput
-import org.gradle.kotlin.dsl.the
+import org.gradle.kotlin.dsl.*
 
 fun Project.defaultSourceSets() {
     sourceSets.maybeCreate("main").apply {
@@ -26,12 +26,12 @@ fun Project.defaultSourceSets() {
     }
 }
 
-fun Project.getMainSourceSetOutput(projectPath: String): SourceSetOutput {
+internal fun Project.getMainSourceSetOutput(projectPath: String): SourceSetOutput {
     evaluationDependsOn(projectPath)
     return project(projectPath).sourceSets.mainSourceSetOutput
 }
 
-val Project.mainSourceSetOutput: SourceSetOutput
+internal val Project.mainSourceSetOutput: SourceSetOutput
     get() = sourceSets.mainSourceSetOutput
 
 private val Project.sourceSets: SourceSetContainer

@@ -4,9 +4,11 @@ plugins {
     kotlin("jvm")
 }
 
+val appcodeUnscrambledJarDir: File by rootProject.extra
+
 dependencies {
     compile(ultimateProjectDep(":cidr-native"))
-    compileOnly(ultimateProjectDep(":prepare-deps:platform-deps", configuration = "appcodeUnscrambledJar"))
+    compileOnly(fileTree(appcodeUnscrambledJarDir) { include("**/*.jar") })
 }
 
 defaultSourceSets()

@@ -4,9 +4,11 @@ plugins {
     kotlin("jvm")
 }
 
+val clionUnscrambledJarDir: File by rootProject.extra
+
 dependencies {
     addIdeaNativeModuleDeps()
-    compileOnly(ultimateProjectDep(":prepare-deps:platform-deps", configuration = "clionUnscrambledJar"))
+    compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
 }
 
 defaultSourceSets()

@@ -11,13 +11,22 @@ package org.jetbrains.kotlin.ultimate
 import org.gradle.api.Action
 import org.gradle.api.file.CopySourceSpec
 import org.gradle.api.file.CopySpec
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.AbstractCopyTask
+import java.io.File
 
-fun AbstractCopyTask.lazyFrom(
-    filesProvider: () -> Any?
-): CopySourceSpec = from(project.provider{ filesProvider() })
+// an adapter to use `from()` in pure Kotlin code in the same way as it is used in *.gradle.kts
+internal fun AbstractCopyTask.from(
+        sourcePath: Any?,
+        configureAction: CopySpec.() -> Unit
+): CopySourceSpec = from(sourcePath as Any, Action { configureAction() })
 
-fun AbstractCopyTask.lazyFrom(
-    filesProvider: () -> Any?,
-    configureAction: CopySpec.() -> Unit
-): CopySourceSpec = from(project.provider { filesProvider() }, Action { configureAction() })
+// property-like access to Gradle `Property` instance
+var Property<String>.value
+    get() = get()
+    set(value) = set(value)
+
+var DirectoryProperty.value: File
+    get() = get().asFile
+    set(value) = set(value)

@@ -4,58 +4,35 @@ plugins {
     kotlin("jvm")
 }
 
-val cidrPlugin by configurations.creating
-val appcodePlatformDepsJar by configurations.creating
-val appcodePlatformDepsOtherJars by configurations.creating
+val appcodeVersion: String by rootProject.extra
+val appcodeVersionStrict: Boolean by rootProject.extra
+val appcodePlatformDepsDir: File by rootProject.extra
+val appcodePluginDir: File by rootProject.extra
 
 // Do not rename, used in pill importer
 val projectsToShadow by extra(listOf(ultimatePath(":appcode-native")))
 
+val cidrPlugin by configurations.creating
+
 dependencies {
     cidrPlugin(ultimateProjectDep(":prepare:cidr-plugin"))
-    appcodePlatformDepsJar(ultimateProjectDep(":prepare-deps:platform-deps", configuration = "appcodePlatformDepsJar"))
-    appcodePlatformDepsOtherJars(ultimateProjectDep(":prepare-deps:platform-deps", configuration = "appcodePlatformDepsOtherJars"))
 }
 
-val preparePluginXml by tasks.creating(Copy::class) {
-    dependsOn(ultimatePath(":appcode-native:assemble"))
+val preparePluginXml by preparePluginXml(
+        ultimatePath(":appcode-native"),
+        appcodeVersion,
+        appcodeVersionStrict,
+        appcodePluginVersionFull
+)
 
-    inputs.property("appcodePluginVersion", appcodePluginVersionFull)
-    outputs.dir("$buildDir/$name")
+val pluginJar = pluginJar(cidrPlugin, preparePluginXml, projectsToShadow)
 
-    from(ultimateProject(":appcode-native").mainSourceSetOutput.resourcesDir) { include(pluginXmlPath) }
-    into(outputs.files.singleFile)
+val platformDepsJar by platformDepsJar("AppCode", appcodePlatformDepsDir)
 
-    applyCidrVersionRestrictions(appcodeVersion, appcodeVersionStrict, appcodePluginVersionFull)
-}
-
-val jar = pluginJar {
-    dependsOn(cidrPlugin)
-    dependsOn(preparePluginXml)
-
-    lazyFrom { zipTree(cidrPlugin.singleFile).matching { exclude(pluginXmlPath) } }
-
-    for (p in projectsToShadow) {
-        dependsOn("$p:classes")
-        from(getMainSourceSetOutput(p)) { exclude(pluginXmlPath) }
-    }
-    
-    from(preparePluginXml) { include(pluginXmlPath) }
-}
-
-val platformDepsJar = task<Zip>("platformDepsJar") {
-    dependsOn(appcodePlatformDepsJar)
-    archiveName = "kotlinNative-platformDeps-AppCode.jar"
-    destinationDir = file("$buildDir/$name")
-    lazyFrom { zipTree(appcodePlatformDepsJar.singleFile).matching { exclude(pluginXmlPath) } }
-    patchJavaXmls()
-}
-
-task<Copy>("appcodePlugin") {
-    dependsOn(appcodePlatformDepsOtherJars)
-    into(appcodePluginDir)
-    from(jar) { into("lib") }
-    from(platformDepsJar) { into("lib") }
-    lazyFrom({ zipTree(appcodePlatformDepsOtherJars.singleFile).files }) { into("lib") }
-    from(ultimateProject(":appcode-native").file("templates")) { into("templates") }
-}
+val appcodePlugin by packageCidrPlugin(
+        ultimatePath(":appcode-native"),
+        appcodePluginDir,
+        pluginJar,
+        platformDepsJar,
+        appcodePlatformDepsDir
+)

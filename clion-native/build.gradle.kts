@@ -4,16 +4,18 @@ plugins {
     kotlin("jvm")
 }
 
+val clionUnscrambledJarDir: File by rootProject.extra
+
 repositories {
     maven("https://dl.bintray.com/jetbrains/markdown")
 }
 
 dependencies {
     compile(ultimateProjectDep(":cidr-native"))
-    compileOnly(ultimateProjectDep(":prepare-deps:platform-deps", configuration = "clionUnscrambledJar"))
+    compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
 
     if (!isStandaloneBuild) {
-        compileOnly("org.jetbrains:markdown:$markdownVersion")
+        compileOnly("org.jetbrains:markdown:${rootProject.extra["versions.markdown"]}")
     }
 }
 

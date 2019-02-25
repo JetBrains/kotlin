@@ -9,51 +9,56 @@
 package org.jetbrains.kotlin.ultimate
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.extra
-import java.io.FileReader
-import java.util.*
+import org.gradle.kotlin.dsl.*
+import java.io.File
 
-val Project.kotlinVersion get() = p( /* Kotlin version enforced by Big Kotlin */ "kotlinVersion") {
-    // otherwise: take Kotlin version from properties
-    kotlinVersionFull.substringBefore('-')
+// Note: "appcodePluginVersion" has different format and semantics from "pluginVersion" used in IJ and AS plugins.
+val Project.appcodePluginVersion: String
+    get() = findProperty("appcodePluginVersion")?.toString() ?: "beta-1"
+
+val Project.appcodePluginVersionFull: String
+    get() {
+        val appcodeVersion: String by rootProject.extra
+        return cidrPluginVersionFull("AppCode", appcodeVersion, appcodePluginVersion)
+    }
+
+// Note: "appcodePluginZipPath" property can be used to override the standard location of packed plugin artifacts
+val Project.appcodePluginZipPath: File
+    get() = propertyAsPath("appcodePluginZipPath")
+        ?: defaultCidrPluginZipPath(appcodePluginVersionFull)
+
+// Note: "clionPluginVersion" has different format and semantics from "pluginVersion" used in IJ and AS plugins.
+val Project.clionPluginVersion: String
+    get() = findProperty("clionPluginVersion")?.toString() ?: "beta-1"
+
+val Project.clionPluginVersionFull: String
+    get() {
+        val clionVersion: String by rootProject.extra
+        return cidrPluginVersionFull("CLion", clionVersion, clionPluginVersion)
+    }
+
+// Note: "clionPluginZipPath" property can be used to override the standard location of packed plugin artifacts
+val Project.clionPluginZipPath: File
+    get() = propertyAsPath("clionPluginZipPath")
+        ?: defaultCidrPluginZipPath(clionPluginVersionFull)
+
+private fun Project.cidrPluginVersionFull(productName: String, productVersion: String, cidrPluginVersion: String): String {
+    val kotlinVersion = if (isStandaloneBuild) {
+        val kotlinForCidrVersion: String by rootProject.extra
+        kotlinForCidrVersion
+    } else {
+        // take it from Big Kotlin
+        val kotlinVersion: String by rootProject.extra
+        kotlinVersion
+    }
+
+    return "$kotlinVersion-$productName-$cidrPluginVersion-$productVersion"
 }
 
-val Project.kotlinVersionFull get() = p("versions.kotlin4cidr")
-val Project.kotlinPluginBuildNumber get() = kotlinVersionFull.split("-release", limit = 2).takeIf { it.size == 2 }?.let { "${it[0]}-release" } ?: kotlinVersionFull
-val Project.kotlinPluginVersion get() = p("versions.kotlin4cidr.plugin")
-val Project.kotlinVersionRepo get() = p("versions.kotlin4cidr.repo")
+private fun Project.propertyAsPath(propertyName: String): File? =
+    findProperty(propertyName)?.let { File(it.toString()).canonicalFile }
 
-val Project.appcodeVersion get() = p("versions.appcode")
-val Project.appcodeVersionStrict get() = p("versions.appcode.strict").toBoolean()
-val Project.appcodeVersionRepo get() = p("versions.appcode.repo")
-
-val Project.clionVersion get() = p("versions.clion")
-val Project.clionVersionStrict get() = p("versions.clion.strict").toBoolean()
-val Project.clionVersionRepo get() = p("versions.clion.repo")
-
-// Note: "appcodePluginVersion" and "clionPluginVersion" have different format and semantics from
-// "pluginVersion" used in IJ and AS plugins.
-val Project.appcodePluginVersion get() = findProperty("appcodePluginVersion") ?: "beta-1"
-val Project.appcodePluginVersionFull get() = "$kotlinVersion-AppCode-$appcodePluginVersion-$appcodeVersion"
-
-val Project.clionPluginVersion get() = findProperty("clionPluginVersion") ?: "beta-1"
-val Project.clionPluginVersionFull get() = "$kotlinVersion-CLion-$clionPluginVersion-$clionVersion"
-
-val Project.intellijSdkVersion get() = p("versions.intellijSdk")
-val Project.markdownVersion get() = p("versions.markdown")
-
-internal fun Project.p(name: String, defaultValue: (Project.() -> String)? = null) =
-    if (!rootProject.extra.has(name) && defaultValue != null)
-        defaultValue()
-    else
-        rootProject.extra[name].toString()
-
-fun Project.setupVersionProperties() {
-    FileReader(ultimateProject(":").file("versions.properties")).use {
-        val properties = Properties()
-        properties.load(it)
-        properties.forEach { (k, v) ->
-            rootProject.extra[k.toString()] = v
-        }
-    }
+private fun Project.defaultCidrPluginZipPath(cidrProductVersionFull: String): File {
+    val artifactsForCidrDir: File by rootProject.extra
+    return artifactsForCidrDir.resolve("kotlin-plugin-$cidrProductVersionFull.zip").canonicalFile
 }

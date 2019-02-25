@@ -33,12 +33,11 @@ plugins {
     base
 }
 
-setupVersionProperties()
+rootProject.apply {
+    from(ultimateProject(":").file("versions.gradle.kts"))
+}
 
-val appcodePlugin by cidrPlugin("AppCode", appcodePluginDir)
-val zipAppCodePlugin by zipCidrPlugin("AppCode", appcodeVersion)
-
-val clionPlugin by cidrPlugin("CLion", clionPluginDir)
-val zipCLionPlugin by zipCidrPlugin("CLion", clionVersion)
+val zipCLionPlugin by zipCidrPlugin("clionPlugin", clionPluginZipPath)
+val zipAppCodePlugin by zipCidrPlugin("appcodePlugin", appcodePluginZipPath)
 
 tasks["clean"].doLast { delete("dist") }

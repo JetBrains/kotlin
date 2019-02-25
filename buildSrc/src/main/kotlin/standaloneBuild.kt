@@ -10,8 +10,7 @@ package org.jetbrains.kotlin.ultimate
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.*
 
 // absolute path to "cidr-native" sub-project in standalone Kotlin Ultimate build
 private const val CIDR_NATIVE_SUBPROJECT_PATH_IN_KOTLIN_ULTIMATE = ":cidr-native"
@@ -20,12 +19,13 @@ val Project.isStandaloneBuild
     get() = rootProject.findProject(CIDR_NATIVE_SUBPROJECT_PATH_IN_KOTLIN_ULTIMATE) != null
 
 fun Project.ideaPluginJarDep(): Any {
-    return if (isStandaloneBuild)
+    return if (isStandaloneBuild) {
         // reuse JAR artifact from downloaded plugin
-        fileTree(ideaPluginDir) {
+        val ideaPluginForCidrDir: String by rootProject.extra
+        fileTree(ideaPluginForCidrDir) {
             include("lib/kotlin-plugin.jar")
-            builtBy(":prepare-deps:idea-plugin:downloadIdeaPlugin")
         }
+    }
     else
         // depend on the artifact to be build
         dependencies.project(":prepare:idea-plugin", configuration = "runtimeJar")
@@ -36,18 +36,18 @@ fun Project.addIdeaNativeModuleDeps() {
 
         if (isStandaloneBuild) {
             // contents of Kotlin plugin
-            val ideaPluginJars = fileTree(ideaPluginDir) {
-                exclude(excludesListFromIdeaPlugin)
-                builtBy(":prepare-deps:idea-plugin:downloadIdeaPlugin")
+            val ideaPluginForCidrDir: String by rootProject.extra
+            val ideaPluginJars = fileTree(ideaPluginForCidrDir) {
+                exclude(EXCLUDES_LIST_FROM_IDEA_PLUGIN)
             }
             add("compile", ideaPluginJars)
 
             // IntelliJ platform (out of CLion distribution)
+            val clionDir: String by rootProject.extra
             val cidrPlatform = fileTree(clionDir) {
                 include("lib/*.jar")
                 exclude("lib/kotlin*.jar") // because Kotlin should be taken from Kotlin plugin
                 exclude("lib/clion*.jar") // don't take scrambled CLion JAR
-                builtBy(":prepare-deps:cidr:downloadCLion")
             }
             add("compile", cidrPlatform)
 
@@ -55,12 +55,13 @@ fun Project.addIdeaNativeModuleDeps() {
             val cidrPlugins = fileTree(clionDir) {
                 include("plugins/cidr-*/lib/*.jar")
                 include("plugins/gradle/lib/*.jar")
-                builtBy(":prepare-deps:cidr:downloadCLion")
             }
             add("compile", cidrPlugins)
 
             // Java APIs (private artifact that goes together with CLion builds)
-            add("compile", project(":prepare-deps:platform-deps", configuration = "clionPlatformDepsJar"))
+            val clionPlatformDepsDir: String by rootProject.extra
+            val cidrPlatformDeps = fileTree(clionPlatformDepsDir) { include("**/$PLATFORM_DEPS_JAR_NAME") }
+            add("compile", cidrPlatformDeps)
         } else {
             // Gradle projects with Kotlin/Native-specific logic
             // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
@@ -68,7 +69,11 @@ fun Project.addIdeaNativeModuleDeps() {
             add("compile", project(":idea:idea-gradle-native"))
 
             // Java APIs (from Big Kotlin project)
-            val javaApis = add("compile", "kotlin.build.custom.deps:intellij:$intellijSdkVersion") as ExternalModuleDependency
+            val javaApis = add(
+                    "compile",
+                    "kotlin.build.custom.deps:intellij:${rootProject.extra["versions.intellijSdk"]}"
+            ) as ExternalModuleDependency
+
             with(javaApis) {
                 artifact {
                     name = "java-api"
@@ -85,13 +90,3 @@ fun Project.addIdeaNativeModuleDeps() {
         }
     }
 }
-
-internal val Project.ideaPluginPackagingTask: String
-    get() {
-        return if (isStandaloneBuild)
-            // download already built Idea plugin
-            ":prepare-deps:idea-plugin:downloadIdeaPlugin"
-        else
-            // build and package Idea plugin
-            ":ideaPlugin"
-    }

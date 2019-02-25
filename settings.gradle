@@ -5,10 +5,7 @@ pluginManagement {
     }
 }
 
-include ":prepare-deps:idea-plugin",
-        ":prepare-deps:cidr",
-        ":prepare-deps:platform-deps",
-        ":prepare:cidr-plugin",
+include ":prepare:cidr-plugin",
         ":prepare:appcode-plugin",
         ":prepare:clion-plugin",
         ":cidr-native",
