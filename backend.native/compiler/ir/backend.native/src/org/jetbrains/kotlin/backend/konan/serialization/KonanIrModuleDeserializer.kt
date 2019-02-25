@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -58,6 +59,7 @@ class KonanIrModuleDeserializer(
     var deserializedModuleProtoSymbolTables = mutableMapOf<ModuleDescriptor, KonanIr.IrSymbolTable>()
     var deserializedModuleProtoStringTables = mutableMapOf<ModuleDescriptor, KonanIr.StringTable>()
     var deserializedModuleProtoTypeTables = mutableMapOf<ModuleDescriptor, KonanIr.IrTypeTable>()
+    var deserializedModuleLoops = mutableMapOf<Pair<ModuleDescriptor, Int>, IrLoopBase>()
 
     val resolvedForwardDeclarations = mutableMapOf<UniqIdKey, UniqIdKey>()
     val descriptorReferenceDeserializer = DescriptorReferenceDeserializer(currentModule, resolvedForwardDeclarations)
@@ -142,6 +144,9 @@ class KonanIrModuleDeserializer(
 
     override fun deserializeString(proto: KonanIr.String) =
         deserializedModuleProtoStringTables[deserializedModuleDescriptor]!!.getStrings(proto.index)
+
+    override fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase) =
+            deserializedModuleLoops.getOrPut(deserializedModuleDescriptor!! to loopIndex, loopBuilder)
 
     fun deserializeIrSymbolData(proto: KonanIr.IrSymbolData): IrSymbol {
         val key = proto.uniqId.uniqIdKey(deserializedModuleDescriptor!!)

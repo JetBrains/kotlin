@@ -63,6 +63,7 @@ abstract class IrModuleDeserializer(
     abstract fun deserializeIrType(proto: KonanIr.IrTypeIndex): IrType
     abstract fun deserializeDescriptorReference(proto: KonanIr.DescriptorReference): DeclarationDescriptor
     abstract fun deserializeString(proto: KonanIr.String): String
+    abstract fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase): IrLoopBase
 
     private fun deserializeTypeArguments(proto: KonanIr.TypeArguments): List<IrType> {
         logger.log { "### deserializeTypeArguments" }
@@ -542,12 +543,7 @@ abstract class IrModuleDeserializer(
         return IrWhenImpl(start, end, type, null, branches)
     }
 
-    private val loopIndex = mutableMapOf<Int, IrLoop>()
-
     private fun deserializeLoop(proto: KonanIr.Loop, loop: IrLoopBase): IrLoopBase {
-        val loopId = proto.loopId
-        loopIndex.getOrPut(loopId) { loop }
-
         val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val body = if (proto.hasBody()) deserializeExpression(proto.body) else null
         val condition = deserializeExpression(proto.condition)
@@ -559,26 +555,18 @@ abstract class IrModuleDeserializer(
         return loop
     }
 
-    private fun deserializeDoWhile(proto: KonanIr.IrDoWhile, start: Int, end: Int, type: IrType): IrDoWhileLoop {
-        // we create the loop before deserializing the body, so that 
-        // IrBreak statements have something to put into 'loop' field.
-        val loop = IrDoWhileLoopImpl(start, end, type, null)
-        deserializeLoop(proto.loop, loop)
-        return loop
-    }
+    // we create the loop before deserializing the body, so that
+    // IrBreak statements have something to put into 'loop' field.
+    private fun deserializeDoWhile(proto: KonanIr.IrDoWhile, start: Int, end: Int, type: IrType) =
+            deserializeLoop(proto.loop, deserializeLoopHeader(proto.loop.loopId) { IrDoWhileLoopImpl(start, end, type, null) })
 
-    private fun deserializeWhile(proto: KonanIr.IrWhile, start: Int, end: Int, type: IrType): IrWhileLoop {
-        // we create the loop before deserializing the body, so that 
-        // IrBreak statements have something to put into 'loop' field.
-        val loop = IrWhileLoopImpl(start, end, type, null)
-        deserializeLoop(proto.loop, loop)
-        return loop
-    }
+    private fun deserializeWhile(proto: KonanIr.IrWhile, start: Int, end: Int, type: IrType) =
+            deserializeLoop(proto.loop, deserializeLoopHeader(proto.loop.loopId) { IrWhileLoopImpl(start, end, type, null) })
 
     private fun deserializeBreak(proto: KonanIr.IrBreak, start: Int, end: Int, type: IrType): IrBreak {
         val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val loopId = proto.loopId
-        val loop = loopIndex[loopId]!!
+        val loop = deserializeLoopHeader(loopId) { error("break clause before loop header") }
         val irBreak = IrBreakImpl(start, end, type, loop)
         irBreak.label = label
 
@@ -588,7 +576,7 @@ abstract class IrModuleDeserializer(
     private fun deserializeContinue(proto: KonanIr.IrContinue, start: Int, end: Int, type: IrType): IrContinue {
         val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val loopId = proto.loopId
-        val loop = loopIndex[loopId]!!
+        val loop = deserializeLoopHeader(loopId) { error("continue clause before loop header") }
         val irContinue = IrContinueImpl(start, end, type, loop)
         irContinue.label = label
 
