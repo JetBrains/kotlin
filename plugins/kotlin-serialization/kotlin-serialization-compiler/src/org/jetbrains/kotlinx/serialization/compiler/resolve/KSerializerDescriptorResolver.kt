@@ -154,7 +154,7 @@ object KSerializerDescriptorResolver {
         if (classDescriptor.declaredTypeParameters.isNotEmpty() &&
             findSerializerConstructorForTypeArgumentsSerializers(thisDescriptor, onlyIfSynthetic = true) != null
         ) {
-            result.addAll(createLocalSerializersFieldsDescriptors(classDescriptor, thisDescriptor))
+            result.addAll(createLocalSerializersFieldsDescriptor(name, classDescriptor, thisDescriptor))
         }
     }
 
@@ -547,17 +547,22 @@ object KSerializerDescriptorResolver {
     }
 
     // create properties typeSerial0, typeSerial1, etc... for storing generic arguments' serializers
-    private fun createLocalSerializersFieldsDescriptors(serializableDescriptor: ClassDescriptor, serializerDescriptor: ClassDescriptor): List<PropertyDescriptor> {
+    private fun createLocalSerializersFieldsDescriptor(
+        name: Name,
+        serializableDescriptor: ClassDescriptor,
+        serializerDescriptor: ClassDescriptor
+    ): List<PropertyDescriptor> {
         if (serializableDescriptor.declaredTypeParameters.isEmpty()) return emptyList()
         val serializerClass = serializableDescriptor.getClassFromSerializationPackage(SerialEntityNames.KSERIALIZER_CLASS)
-        return serializerDescriptor.declaredTypeParameters.mapIndexed { index, param ->
-            val pType =
-                KotlinTypeFactory.simpleNotNullType(
-                    Annotations.EMPTY,
-                    serializerClass,
-                    listOf(TypeProjectionImpl(param.defaultType))
-                )
-            SimpleSyntheticPropertyDescriptor(serializerDescriptor, "$typeArgPrefix$index", pType)
-        }
+        val index = name.identifier.removePrefix(typeArgPrefix).toIntOrNull() ?: return emptyList()
+        val param = serializerDescriptor.declaredTypeParameters[index]
+        val pType =
+            KotlinTypeFactory.simpleNotNullType(
+                Annotations.EMPTY,
+                serializerClass,
+                listOf(TypeProjectionImpl(param.defaultType))
+            )
+        val desc = SimpleSyntheticPropertyDescriptor(serializerDescriptor, "$typeArgPrefix$index", pType)
+        return listOf(desc)
     }
 }
