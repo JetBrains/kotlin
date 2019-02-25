@@ -40,7 +40,8 @@ interface ScriptDefinitionProvider {
 }
 
 fun PsiFile.scriptDefinition(): KotlinScriptDefinition? {
-    if (this !is KtFile || this.script == null) return null
+    // Do not use psiFile.script, see comments in findScriptDefinition
+    if (this !is KtFile/* || this.script == null*/) return null
     val file = virtualFile ?: originalFile.virtualFile ?: return null
     if (file.isNonScript()) return null
 
@@ -49,7 +50,10 @@ fun PsiFile.scriptDefinition(): KotlinScriptDefinition? {
 
 fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? {
     if (file.isNonScript()) return null
-    if ((PsiManager.getInstance(project).findFile(file) as? KtFile)?.script == null) return null
+    // Do not use psiFile.script here because this method can be called during indexes access
+    // and accessing stubs may cause deadlock
+    // TODO: measure performace effect and if necessary consider detecting indexing here or using separate logic for non-IDE operations to speed up filtering
+    if ((PsiManager.getInstance(project).findFile(file) as? KtFile)/*?.script*/ == null) return null
 
     return scriptDefinitionByFileName(project, file.name)
 }
