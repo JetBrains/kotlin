@@ -200,16 +200,20 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
     })
   }
 
-  @Throws(ExecutionException::class)
-  fun getRunEnvironment(buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations): CidrToolEnvironment {
-    val environmentProblems = EnvironmentProblems()
-    val environment = CidrToolEnvironment()// CPPToolchains.createCPPEnvironment(project, null, environmentProblems, false, null)
-    if (environment == null) {
-      environmentProblems.throwAsExecutionException()
-    }
-    assert(environment != null)
-    return environment!!
-  }
+//  @Throws(ExecutionException::class)
+//  fun getRunEnvironment(buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations): CidrToolEnvironment {
+//    val environmentProblems = EnvironmentProblems()
+//    val environment = CPPToolchains.createCPPEnvironment(project, null, environmentProblems, false, null)
+//    if (environment == null) {
+//      environmentProblems.throwAsExecutionException()
+//    }
+//    assert(environment != null)
+//    return environment
+//  }
+
+  private fun getRunEnvironment(
+          @Suppress("UNUSED_PARAMETER") buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations
+  ) = CidrToolEnvironment()
 
   private fun getParameters(defaultWorkingDir: String): SimpleProgramParameters {
     val params = SimpleProgramParameters()

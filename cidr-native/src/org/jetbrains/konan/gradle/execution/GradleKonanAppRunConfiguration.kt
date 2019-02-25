@@ -149,7 +149,7 @@ class GradleKonanAppRunConfiguration(
 
             if (buildConfig == null || !runTargetIsValid) return@compute null
 
-            BuildAndRunConfigurations(buildConfig!!, runConfig, runExecutable, null)
+            BuildAndRunConfigurations(buildConfig, runConfig, runExecutable, null)
         }
     }
 
