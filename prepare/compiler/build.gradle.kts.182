@@ -99,6 +99,8 @@ dependencies {
     fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
 }
 
+publish()
+
 noDefaultJar()
 
 val packCompiler by task<ShadowJar> {
@@ -153,8 +155,6 @@ val pack = if (shrink) proguard else packCompiler
 dist(targetName = "$compilerBaseName.jar", fromTask = pack) {
     from(trove4jJar)
 }
-
-publish()
 
 runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
     name = compilerBaseName

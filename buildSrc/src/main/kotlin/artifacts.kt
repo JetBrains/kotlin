@@ -35,14 +35,26 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     }
 }
 
+var Project.artifactsRemovedDiagnosticFlag: Boolean
+    get() = extra.has("artifactsRemovedDiagnosticFlag") && extra["artifactsRemovedDiagnosticFlag"] == true
+    set(value) {
+        extra["artifactsRemovedDiagnosticFlag"] = value
+    }
+
+fun Project.removeArtifacts(configuration: Configuration, task: Task) {
+    configuration.artifacts.removeAll { artifact ->
+        artifact.file in task.outputs.files
+    }
+
+    artifactsRemovedDiagnosticFlag = true
+}
+
 fun Project.noDefaultJar() {
     tasks.findByName("jar")?.let { defaultJarTask ->
         defaultJarTask.enabled = false
         defaultJarTask.actions = emptyList()
         configurations.forEach { cfg ->
-            cfg.artifacts.removeAll { artifact ->
-                artifact.file in defaultJarTask.outputs.files
-            }
+            removeArtifacts(cfg, defaultJarTask)
         }
     }
 }
@@ -58,8 +70,7 @@ fun Project.runtimeJarArtifactBy(task: Task, artifactRef: Any, body: Configurabl
 fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
     extra["runtimeJarTask"] = task
     tasks.findByName("jar")?.let { defaultJarTask ->
-        configurations.getOrCreate("archives")
-            .artifacts.removeAll { artifact -> artifact.file in defaultJarTask.outputs.files }
+        removeArtifacts(configurations.getOrCreate("archives"), defaultJarTask)
     }
     return task.apply {
         setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
@@ -108,6 +119,10 @@ fun Project.standardPublicJars() {
 
 fun Project.publish(body: Upload.() -> Unit = {}): Upload {
     apply<plugins.PublishedKotlinModule>()
+
+    if (artifactsRemovedDiagnosticFlag) {
+        error("`publish()` should be called before removing artifacts typically done in `noDefaultJar()` of `runtimeJar()` calls")
+    }
 
     afterEvaluate {
         if (configurations.findByName("classes-dirs") != null)

@@ -91,6 +91,8 @@ dependencies {
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
 }
 
+publish()
+
 noDefaultJar()
 
 val packCompiler by task<ShadowJar> {
@@ -146,8 +148,6 @@ dist(targetName = "$compilerBaseName.jar", fromTask = pack) {
     from(trove4jJar)
 }
 
-publish()
-
 runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
     name = compilerBaseName
     classifier = ""
@@ -158,4 +158,3 @@ sourcesJar {
 }
 
 javadocJar()
-
