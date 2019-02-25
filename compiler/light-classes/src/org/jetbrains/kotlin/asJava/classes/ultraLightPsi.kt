@@ -59,7 +59,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         // And usages of that property may be replaced with relevant registry key
         @Volatile
         @get:TestOnly
-        var forceUsingUltraLightClasses = false
+        var forceUsingOldLightClasses = false
     }
 
     private val tooComplex: Boolean by lazyPub { support.isTooComplexForUltraLightGeneration(classOrObject) }

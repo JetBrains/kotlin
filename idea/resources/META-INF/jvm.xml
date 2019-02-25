@@ -159,7 +159,7 @@
 
       <registryKey key="kotlin.use.ultra.light.classes"
                    description="Whether to use an experimental implementation of Kotlin-as-Java classes"
-                   defaultValue="false"
+                   defaultValue="true"
                    restartRequired="false"/>
 
       <registryKey key="kotlin.uast.multiresolve.enabled"

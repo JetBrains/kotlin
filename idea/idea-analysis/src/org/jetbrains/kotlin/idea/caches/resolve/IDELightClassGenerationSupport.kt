@@ -65,7 +65,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         if (element.shouldNotBeVisibleAsLightClass() ||
             element is KtObjectDeclaration && element.isObjectLiteral() ||
             element.isLocal ||
-            element is KtEnumEntry
+            element is KtEnumEntry ||
+            element.containingKtFile.isScript()
         ) {
             return null
         }

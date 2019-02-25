@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext
 import org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.Tracker.Level.*
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
+import org.jetbrains.kotlin.idea.perf.forceUsingOldLightClassesForTest
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -44,6 +45,7 @@ import kotlin.test.assertTrue
 
 abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(testDataPath: String) {
+        forceUsingOldLightClassesForTest()
         val extraFilePath = when {
             testDataPath.endsWith(".kt") -> testDataPath.replace(".kt", ".extra.kt")
             testDataPath.endsWith(".kts") -> testDataPath.replace(".kts", ".extra.kts")

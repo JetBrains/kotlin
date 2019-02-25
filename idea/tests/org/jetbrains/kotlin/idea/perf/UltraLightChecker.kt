@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
 
-fun UsefulTestCase.forceUsingUltraLightClassesForTest() {
-    KtUltraLightClass.forceUsingUltraLightClasses = true
+fun UsefulTestCase.forceUsingOldLightClassesForTest() {
+    KtUltraLightClass.forceUsingOldLightClasses = true
     Disposer.register(testRootDisposable, Disposable {
-        KtUltraLightClass.forceUsingUltraLightClasses = false
+        KtUltraLightClass.forceUsingOldLightClasses = false
     })
 }
 
@@ -37,7 +37,7 @@ object UltraLightChecker {
         SyntaxTraverser.psiTraverser(file).filter(KtClassOrObject::class.java).toList()
 
     fun checkClassEquivalence(ktClass: KtClassOrObject): KtUltraLightClass? {
-        val gold = KtLightClassForSourceDeclaration.create(ktClass)
+        val gold = KtLightClassForSourceDeclaration.createNoCache(ktClass, forceUsingOldLightClasses = true)
         val ultraLightClass = LightClassGenerationSupport.getInstance(ktClass.project).createUltraLightClass(ktClass) ?: return null
 
         if (gold != null) {

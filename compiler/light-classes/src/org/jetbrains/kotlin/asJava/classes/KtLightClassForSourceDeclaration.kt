@@ -70,7 +70,10 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 import javax.swing.Icon
 
-abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtClassOrObject) : KtLazyLightClass(classOrObject.manager),
+abstract class KtLightClassForSourceDeclaration(
+    protected val classOrObject: KtClassOrObject,
+    private val forceUsingOldLightClasses: Boolean = false
+) : KtLazyLightClass(classOrObject.manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
@@ -303,7 +306,12 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             // inner classes with null names can't be searched for and can't be used from java anyway
             // we can't prohibit creating light classes with null names either since they can contain members
             .filter { it.name != null }
-            .mapNotNullTo(result) { create(it) }
+            .mapNotNullTo(result) {
+                if (!forceUsingOldLightClasses)
+                    create(it)
+                else
+                    createNoCache(it, forceUsingOldLightClasses = true)
+            }
 
         if (classOrObject.hasInterfaceDefaultImpls) {
             result.add(KtLightClassForInterfaceDefaultImpls(classOrObject))
@@ -334,10 +342,10 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
             CachedValuesManager.getCachedValue(classOrObject) {
                 CachedValueProvider.Result
-                    .create(createNoCache(classOrObject), OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                    .create(createNoCache(classOrObject, KtUltraLightClass.forceUsingOldLightClasses), OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
             }
 
-        fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
+        fun createNoCache(classOrObject: KtClassOrObject, forceUsingOldLightClasses: Boolean): KtLightClassForSourceDeclaration? {
             val containingFile = classOrObject.containingFile
             if (containingFile is KtCodeFragment) {
                 // Avoid building light classes for code fragments
@@ -348,7 +356,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                 return null
             }
 
-            if (KtUltraLightClass.forceUsingUltraLightClasses || Registry.`is`("kotlin.use.ultra.light.classes", false)) {
+            if (!forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)) {
                 LightClassGenerationSupport.getInstance(classOrObject.project).createUltraLightClass(classOrObject)?.let { return it }
             }
 
@@ -360,7 +368,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                     KtLightClassForLocalDeclaration(classOrObject)
 
                 else ->
-                    KtLightClassImpl(classOrObject)
+                    KtLightClassImpl(classOrObject, forceUsingOldLightClasses)
             }
         }
 

@@ -12,6 +12,7 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
@@ -71,6 +72,21 @@ internal abstract class KtUltraLightMethod(
     }
 
     override fun getHierarchicalMethodSignature() = PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this)
+
+    override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean): List<MethodSignatureBackedByPsiMethod> =
+        PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
+
+    override fun findDeepestSuperMethod() = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
+
+    override fun findDeepestSuperMethods(): Array<out PsiMethod> = PsiSuperMethodImplUtil.findDeepestSuperMethods(this)
+
+    override fun findSuperMethods(): Array<out PsiMethod> = PsiSuperMethodImplUtil.findSuperMethods(this)
+
+    override fun findSuperMethods(checkAccess: Boolean): Array<out PsiMethod> =
+        PsiSuperMethodImplUtil.findSuperMethods(this, checkAccess)
+
+    override fun findSuperMethods(parentClass: PsiClass?): Array<out PsiMethod> =
+        PsiSuperMethodImplUtil.findSuperMethods(this, parentClass)
 
     override fun getThrowsList(): PsiReferenceList = _throwsList
 

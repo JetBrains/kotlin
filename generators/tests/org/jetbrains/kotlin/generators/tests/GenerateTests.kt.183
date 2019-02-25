@@ -197,7 +197,7 @@ fun main(args: Array<String>) {
             model("kotlinAndJavaChecker/javaWithKotlin")
         }
 
-        testClass<AbstractJavaAgainstKotlinSourceCheckerWithUltraLightTest> {
+        testClass<AbstractJavaAgainstKotlinSourceCheckerWithoutUltraLightTest> {
             model("kotlinAndJavaChecker/javaAgainstKotlin")
             model("kotlinAndJavaChecker/javaWithKotlin")
         }
