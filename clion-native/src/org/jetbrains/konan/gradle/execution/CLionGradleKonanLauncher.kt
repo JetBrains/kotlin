@@ -71,13 +71,13 @@ class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment
         val buildAndRunConfigurations = buildAndRunConfigurations
         val environment = getRunEnvironment(buildAndRunConfigurations)
         val context = ConfigurationExtensionContext()
-        val cl = createCommandLine(state, buildAndRunConfigurations, environment, usePty)
+        val cl = createCommandLine(buildAndRunConfigurations, environment, usePty)
         val runnerSettings = myEnvironment.runnerSettings
         val runner = myEnvironment.runner
         val runnerId = runner.runnerId
 
         myExtensionsManager.patchCommandLine(myConfiguration, runnerSettings, environment, cl, runnerId, context)
-        state.consoleBuilder = createConsoleBuilder(state, environment, projectBaseDir)
+        state.consoleBuilder = createConsoleBuilder(environment, projectBaseDir)
         myExtensionsManager.patchCommandLineState(myConfiguration, runnerSettings, environment, projectBaseDir, state, runnerId, context)
         val handler = createProcessHandler(environment, cl, usePty)
         CidrLauncher.configProcessHandler(handler, false, true, project)
@@ -116,9 +116,10 @@ class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment
         return processHandler
     }
 
-    protected fun createConsoleBuilder(state: CommandLineState,
-                                       environment: CidrToolEnvironment,
-                                       projectBaseDir: File?): TextConsoleBuilder {
+    private fun createConsoleBuilder(
+            environment: CidrToolEnvironment,
+            projectBaseDir: File?
+    ): TextConsoleBuilder {
         return CidrConsoleBuilder(myConfiguration.project, environment, projectBaseDir)
     }
 
@@ -136,11 +137,11 @@ class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment
         val runner = myEnvironment.runner
         val runnerId = runner.runnerId
 
-        val cl = createCommandLine(state, buildAndRunConfigurations, environment, false)
+        val cl = createCommandLine(buildAndRunConfigurations, environment, false)
         environment.convertPathVariableToEnv(cl)
         myExtensionsManager.patchCommandLine(myConfiguration, runnerSettings, environment, cl, runnerId, context)
         val projectBaseDir = projectBaseDir
-        state.consoleBuilder = createConsoleBuilder(state, environment, projectBaseDir)
+        state.consoleBuilder = createConsoleBuilder(environment, projectBaseDir)
         myExtensionsManager.patchCommandLineState(myConfiguration, runnerSettings, environment, projectBaseDir, state, runnerId, context)
         val backendFilterProvider = CidrDebugConsoleFilterProvider(environment, projectBaseDir)
         val parameters = getDebugParameters(environment, cl)
@@ -175,10 +176,11 @@ class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment
     }
 
     @Throws(ExecutionException::class)
-    protected fun createCommandLine(state: CommandLineState,
-                                    buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations,
-                                    environment: CPPEnvironment,
-                                    usePty: Boolean): GeneralCommandLine {
+    private fun createCommandLine(
+            buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations,
+            environment: CPPEnvironment,
+            usePty: Boolean
+    ): GeneralCommandLine {
         val runFile = buildAndRunConfigurations.runFile
         CPPLog.LOG.assertTrue(runFile != null)
         if (!runFile!!.exists()) throw ExecutionException("File not found: $runFile")
@@ -204,7 +206,9 @@ class CLionGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment
     }
 
     @Throws(ExecutionException::class)
-    fun getRunEnvironment(buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations): CPPEnvironment {
+    private fun getRunEnvironment(
+            @Suppress("UNUSED_PARAMETER") buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations
+    ): CPPEnvironment {
         val environmentProblems = EnvironmentProblems()
         val environment = CPPToolchains.createCPPEnvironment(project, projectBaseDir, null, environmentProblems, false, null)
         if (environment == null) {

@@ -16,11 +16,9 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.util.ProgramParametersConfigurator
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.CidrBundle
 import com.jetbrains.cidr.execution.*
@@ -29,7 +27,6 @@ import com.jetbrains.cidr.execution.debugger.CidrLocalDebugProcess
 import com.jetbrains.cidr.execution.testing.CidrLauncher
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
-import com.jetbrains.cidr.toolchains.EnvironmentProblems
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
 import java.io.File
 
@@ -67,16 +64,16 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
     val usePty = usePty()
     val buildAndRunConfigurations = buildAndRunConfigurations
     val environment = getRunEnvironment(buildAndRunConfigurations)
-    val context = ConfigurationExtensionContext()
-    val cl = createCommandLine(state, buildAndRunConfigurations, environment, usePty)
-    val runnerSettings = myEnvironment.runnerSettings
-    val runner = myEnvironment.runner
-    val runnerId = runner.runnerId
+//    val context = ConfigurationExtensionContext()
+    val cl = createCommandLine(buildAndRunConfigurations, environment, usePty)
+//    val runnerSettings = myEnvironment.runnerSettings
+//    val runner = myEnvironment.runner
+//    val runnerId = runner.runnerId
 
 //    myExtensionsManager.patchCommandLine(myConfiguration, runnerSettings, environment, cl, runnerId, context)
 //    state.consoleBuilder = createConsoleBuilder(state, environment, projectBaseDir)
 //    myExtensionsManager.patchCommandLineState(myConfiguration, runnerSettings, environment, projectBaseDir, state, runnerId, context)
-    val handler = createProcessHandler(environment, cl, usePty)
+//    val handler = createProcessHandler(environment, cl, usePty)
 //    CidrLauncher.configProcessHandler(handler, false, true, project)
 //    myExtensionsManager.attachExtensionsToProcess(myConfiguration,
 //                                                  handler,
@@ -84,7 +81,8 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
 //                                                  runnerSettings,
 //                                                  runnerId,
 //                                                  context)
-    return handler
+//    return handler
+    return createProcessHandler(environment, cl, usePty)
   }
 
   @Throws(ExecutionException::class)
@@ -113,9 +111,10 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
     return processHandler
   }
 
-  protected fun createConsoleBuilder(state: CommandLineState,
-                                     environment: CidrToolEnvironment,
-                                     projectBaseDir: File?): TextConsoleBuilder {
+  private fun createConsoleBuilder(
+          environment: CidrToolEnvironment,
+          projectBaseDir: File?
+  ): TextConsoleBuilder {
     return CidrConsoleBuilder(myConfiguration.project, environment, projectBaseDir)
   }
 
@@ -128,16 +127,16 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
   public override fun createDebugProcess(state: CommandLineState, session: XDebugSession): CidrDebugProcess {
     val buildAndRunConfigurations = buildAndRunConfigurations
     val environment = getRunEnvironment(buildAndRunConfigurations)
-    val context = ConfigurationExtensionContext()
-    val runnerSettings = myEnvironment.runnerSettings
-    val runner = myEnvironment.runner
-    val runnerId = runner.runnerId
+//    val context = ConfigurationExtensionContext()
+//    val runnerSettings = myEnvironment.runnerSettings
+//    val runner = myEnvironment.runner
+//    val runnerId = runner.runnerId
 
-    val cl = createCommandLine(state, buildAndRunConfigurations, environment, false)
+    val cl = createCommandLine(buildAndRunConfigurations, environment, false)
 //    environment.convertPathVariableToEnv(cl)
 //    myExtensionsManager.patchCommandLine(myConfiguration, runnerSettings, environment, cl, runnerId, context)
     val projectBaseDir = projectBaseDir
-    state.consoleBuilder = createConsoleBuilder(state, environment, projectBaseDir)
+    state.consoleBuilder = createConsoleBuilder(environment, projectBaseDir)
 //    myExtensionsManager.patchCommandLineState(myConfiguration, runnerSettings, environment, projectBaseDir, state, runnerId, context)
     val backendFilterProvider = CidrDebugConsoleFilterProvider(environment, projectBaseDir)
     val parameters = getDebugParameters(environment, cl)
@@ -153,10 +152,13 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
   }
 
   @Throws(ExecutionException::class)
-  private fun getDebugParameters(environment: CidrToolEnvironment,
-                                 cl: GeneralCommandLine): RunParameters {
-    val installer = TrivialInstaller(cl)
-
+  @Suppress("UNUSED_PARAMETER")
+  private fun getDebugParameters(
+          environment: CidrToolEnvironment,
+          cl: GeneralCommandLine
+  ): RunParameters {
+//    val installer = TrivialInstaller(cl)
+//
 //    for (each in Extensions.getExtensions(CidrCustomDebuggerProvider.EP_NAME)) {
 //      val config = ContainerUtil.getFirstItem(each.debuggerConfigurations)
 //      if (config != null) return CLionRunParameters(config, installer)
@@ -169,14 +171,15 @@ class AppCodeGradleKonanLauncher(protected val myEnvironment: ExecutionEnvironme
 //    }
 
 //    return AppCodeRunParameters(environment.toolchain.createDriverConfiguration(project), installer)
-      return null!!
+      TODO("not implemented")
   }
 
   @Throws(ExecutionException::class)
-  protected fun createCommandLine(state: CommandLineState,
-                                  buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations,
-                                  environment: CidrToolEnvironment,
-                                  usePty: Boolean): GeneralCommandLine {
+  private fun createCommandLine(
+          buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations,
+          environment: CidrToolEnvironment,
+          usePty: Boolean
+  ): GeneralCommandLine {
     val runFile = buildAndRunConfigurations.runFile
     OCLog.LOG.assertTrue(runFile != null)
     if (!runFile!!.exists()) throw ExecutionException(CidrBundle.message("run.fileNotFound", runFile))
