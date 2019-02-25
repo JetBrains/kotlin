@@ -416,7 +416,7 @@ internal class IrModuleSerializer(
         callable.setter?.let { proto.setter = serializeIrSymbol(it) }
         callable.origin?.let { proto.origin = serializeIrStatementOrigin(it) }
         val property = callable.getter!!.owner.correspondingProperty!!
-        descriptorReferenceSerializer.serializeDescriptorReference(property)?.let { proto.setDescriptor(it) }
+        descriptorReferenceSerializer.serializeDescriptorReference(property)?.let { proto.setDescriptorReference(it) }
         return proto.build()
     }
 
@@ -953,7 +953,7 @@ internal class IrModuleSerializer(
             .setIsDelegated(property.isDelegated)
             .setIsExternal(property.isExternal)
 
-        descriptorReferenceSerializer.serializeDescriptorReference(property)?.let { proto.setDescriptor(it) }
+        descriptorReferenceSerializer.serializeDescriptorReference(property)?.let { proto.setDescriptorReference(it) }
 
         val backingField = property.backingField
         val getter = property.getter

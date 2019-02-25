@@ -140,27 +140,5 @@ class DescriptorReferenceDeserializer(
             }
         } ?:
         error("Could not find serialized descriptor for index: ${index} ${packageFqName},${classFqName},${name}")
-//
-//        members.forEach { member ->
-//            if (isDefaultConstructor && member is ClassConstructorDescriptor) return member
-//
-//            val realMembers =
-//                if (isFakeOverride && member is CallableMemberDescriptor && member.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
-//                    member.resolveFakeOverrideMaybeAbstract().map { it.original }
-//                else
-//                    setOf(member)
-//
-//            val memberIndices = realMembers.map { it.getUniqId()?.index ?: checkerDesc(it) }.filterNotNull()
-//
-//            if (memberIndices.contains(protoIndex)) {
-//                return when {
-//                    member is PropertyDescriptor && isSetter -> member.setter!!
-//                    member is PropertyDescriptor && isGetter -> member.getter!!
-//                    else -> member
-//                }
-//            }
-//        }
-//
-//        error("Could not find serialized descriptor for index: $index $packageFqName,$classFqName,$name")
     }
 }

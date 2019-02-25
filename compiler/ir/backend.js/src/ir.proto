@@ -251,7 +251,7 @@ message IrPropertyReference {
   optional IrSymbol setter = 3;
   optional IrStatementOrigin origin = 4;
   required MemberAccessCommon member_access = 5;
-  optional DescriptorReference descriptor = 6; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+  optional DescriptorReference descriptor_reference = 6; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
 }
 
 message IrComposite {
@@ -550,7 +550,7 @@ message IrField {
 }
 
 message IrProperty {
-  optional DescriptorReference descriptor = 1; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+  optional DescriptorReference descriptor_reference = 1; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
   required String name = 2;
   required Visibility visibility = 3;
   required ModalityKind modality = 4;
