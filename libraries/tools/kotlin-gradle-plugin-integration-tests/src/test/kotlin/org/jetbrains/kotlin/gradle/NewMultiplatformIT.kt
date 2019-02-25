@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
 import org.junit.Test
+import java.lang.StringBuilder
 import java.util.jar.JarFile
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
@@ -31,6 +32,13 @@ class NewMultiplatformIT : BaseGradleIT() {
         HostManager.hostIsMingw -> "mingw64"
         HostManager.hostIsLinux -> "linux64"
         HostManager.hostIsMac -> "macos64"
+        else -> error("Unknown host")
+    }
+
+    val supportedNativeTargets = when {
+        HostManager.hostIsMingw -> listOf("linux64", "mingw64", "wasm32")
+        HostManager.hostIsLinux -> listOf("linux64", "mingw64", "wasm32")
+        HostManager.hostIsMac -> listOf("linux64", "macos64", "wasm32")
         else -> error("Unknown host")
     }
 
@@ -615,19 +623,21 @@ class NewMultiplatformIT : BaseGradleIT() {
             projectDir.resolve("repo")
         }
 
+        val dependencyBuilder = StringBuilder()
+        dependencyBuilder.append("dependencies {\n")
+        dependencyBuilder.append("    allJvmImplementation 'com.example:sample-lib-jvm6:1.0'\n")
+        dependencyBuilder.append("    nodeJsMainImplementation 'com.example:sample-lib-nodejs:1.0'\n")
+
+        for (target in supportedNativeTargets) {
+            dependencyBuilder.append("    ${target}MainImplementation 'com.example:sample-lib-$target:1.0'\n")
+        }
+        dependencyBuilder.append("}")
+
         with(Project("sample-app", gradleVersion, "new-mpp-lib-and-app")) {
             setupWorkingDir()
             gradleBuildScript().modify {
-                it.replace("implementation 'com.example:sample-lib:1.0'", "implementation 'com.example:sample-lib-metadata:1.0'") + "\n" + """
-                    repositories { maven { url '${repoDir.toURI()}' } }
-
-                    dependencies {
-                        allJvmImplementation 'com.example:sample-lib-jvm6:1.0'
-                        nodeJsMainImplementation 'com.example:sample-lib-nodejs:1.0'
-                        wasm32MainImplementation 'com.example:sample-lib-wasm32:1.0'
-                        ${nativeHostTargetName}MainImplementation 'com.example:sample-lib-${nativeHostTargetName.toLowerCase()}:1.0'
-                    }
-                """.trimIndent()
+                it.replace("implementation 'com.example:sample-lib:1.0'", "implementation 'com.example:sample-lib-metadata:1.0'") +
+                "\nrepositories { maven { url '${repoDir.toURI()}' } }\n\n" + dependencyBuilder.toString()
             }
 
             build("assemble") {
@@ -1092,9 +1102,13 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val host = nativeHostTargetName
+
+            val libraryCinteropTask = ":projectLibrary:cinteropStdio${host.capitalize()}"
+            val libraryCompileTask = ":projectLibrary:compileKotlin${host.capitalize()}"
+
             build(":projectLibrary:build") {
                 assertSuccessful()
-                assertTasksExecuted(":projectLibrary:cinteropStdio${host.capitalize()}")
+                assertTasksExecuted(libraryCinteropTask)
                 assertTrue(output.contains("Project test"), "No test output found")
                 assertFileExists("projectLibrary/build/classes/kotlin/$host/main/projectLibrary-cinterop-stdio.klib")
             }
@@ -1116,18 +1130,12 @@ class NewMultiplatformIT : BaseGradleIT() {
             // Check that changing the compiler version in properties causes interop reprocessing and source recompilation.
             build(":projectLibrary:build") {
                 assertSuccessful()
-                assertTasksUpToDate(
-                    ":projectLibrary:cinteropStdio${host.capitalize()}",
-                    ":projectLibrary:compileKotlin${host.capitalize()}"
-                )
+                assertTasksUpToDate(libraryCinteropTask, libraryCompileTask)
             }
 
-            build(":projectLibrary:build", "-Porg.jetbrains.kotlin.native.version=0.9.2") {
+            build(libraryCinteropTask, libraryCompileTask, "-Porg.jetbrains.kotlin.native.version=1.1.0") {
                 assertSuccessful()
-                assertTasksExecuted(
-                    ":projectLibrary:cinteropStdio${host.capitalize()}",
-                    ":projectLibrary:compileKotlin${host.capitalize()}"
-                )
+                assertTasksExecuted(libraryCinteropTask, libraryCompileTask)
             }
         }
     }
