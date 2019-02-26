@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripts
+package org.jetbrains.kotlin.scripting.compiler.plugin
 
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptDefinitionsSource
-import org.jetbrains.kotlin.scripting.legacy.CliScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import org.junit.Test
@@ -24,7 +24,13 @@ class ScriptProviderTest : KtUsefulTestCase() {
         val shadedDef = FakeScriptDefinition(".x.kts")
         val provider = TestCliScriptDefinitionProvider(standardDef).apply {
             setScriptDefinitions(listOf(shadedDef, standardDef))
-            setScriptDefinitionsSources(listOf(TestScriptDefinitionSource(genDefCounter, ".y.kts", ".x.kts")))
+            setScriptDefinitionsSources(listOf(
+                TestScriptDefinitionSource(
+                    genDefCounter,
+                    ".y.kts",
+                    ".x.kts"
+                )
+            ))
         }
 
         Assert.assertEquals(0, genDefCounter.get())
@@ -68,7 +74,11 @@ private open class FakeScriptDefinition(val suffix: String = ".kts") : KotlinScr
 private class TestScriptDefinitionSource(val counter: AtomicInteger, val defGens: Iterable<() -> FakeScriptDefinition>) :
     ScriptDefinitionsSource
 {
-    constructor(counter: AtomicInteger, vararg suffixes: String) : this(counter, suffixes.map { { FakeScriptDefinition(it) } })
+    constructor(counter: AtomicInteger, vararg suffixes: String) : this(counter, suffixes.map { {
+        FakeScriptDefinition(
+            it
+        )
+    } })
 
     override val definitions: Sequence<KotlinScriptDefinition> = sequence {
         for (gen in defGens) {

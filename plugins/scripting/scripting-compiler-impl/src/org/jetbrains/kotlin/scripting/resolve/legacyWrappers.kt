@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.scripting.resolve
 
-import org.jetbrains.kotlin.script.DependencyResolverWrapper
 import java.io.File
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptDependenciesResolver

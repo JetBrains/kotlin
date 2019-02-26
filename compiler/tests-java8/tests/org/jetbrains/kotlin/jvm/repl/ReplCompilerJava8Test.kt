@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import org.jetbrains.kotlin.scripting.repl.GenericReplCompiler
 import org.jetbrains.kotlin.scripting.repl.KOTLIN_REPL_JVM_TARGET_PROPERTY
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -114,7 +114,8 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {
         val collector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
-        val replCompiler = GenericReplCompiler(testRootDisposable, StandardScriptDefinition, configuration, collector)
+        val replCompiler = GenericReplCompiler(testRootDisposable,
+                                               StandardScriptDefinition, configuration, collector)
         val state = replCompiler.createState()
 
         return replCompiler.compile(state, ReplCodeLine(0, 0, script))

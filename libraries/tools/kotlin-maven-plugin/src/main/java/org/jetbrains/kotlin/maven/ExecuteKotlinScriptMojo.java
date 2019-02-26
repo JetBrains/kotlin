@@ -48,9 +48,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtScript;
-import org.jetbrains.kotlin.script.ReflectionUtilKt;
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar;
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationExtensionKt;
+import org.jetbrains.kotlin.scripting.configuration.ConfigurationKt;
+import org.jetbrains.kotlin.utils.ParametersMapKt;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -187,7 +187,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath(), false));
             configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
 
-            ScriptingCompilerConfigurationExtensionKt.configureScriptDefinitions(
+            ConfigurationKt.configureScriptDefinitions(
                     scriptTemplates, configuration, this.getClass().getClassLoader(), messageCollector, new HashMap<>()
             );
 
@@ -206,7 +206,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             try {
                 Class<?> klass = classLoader.loadClass(nameForScript.asString());
                 ExecuteKotlinScriptMojo.INSTANCE = this;
-                if (ReflectionUtilKt.tryConstructClassFromStringArgs(klass, scriptArguments) == null)
+                if (ParametersMapKt.tryConstructClassFromStringArgs(klass, scriptArguments) == null)
                     throw new ScriptExecutionException(scriptFile, "unable to construct script");
             } catch (ClassNotFoundException e) {
                 throw new ScriptExecutionException(scriptFile, "internal error", e);

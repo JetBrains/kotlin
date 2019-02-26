@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.scripting.definitions
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.ScriptDefinitionsSource
+import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.io.IOException
 import java.net.URLClassLoader
 import java.util.jar.JarFile
-import kotlin.coroutines.experimental.buildSequence
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
@@ -46,7 +43,7 @@ fun discoverScriptTemplatesInClasspath(
     baseClassLoader: ClassLoader,
     scriptResolverEnv: Map<String, Any?>,
     messageCollector: MessageCollector
-): Sequence<KotlinScriptDefinition> = buildSequence {
+): Sequence<KotlinScriptDefinition> = sequence {
     // TODO: try to find a way to reduce classpath (and classloader) to minimal one needed to load script definition and its dependencies
     val loader = LazyClasspathWithClassLoader(baseClassLoader) { classpath }
 
@@ -136,7 +133,7 @@ fun loadScriptTemplatesFromClasspath(
     messageCollector: MessageCollector
 ): Sequence<KotlinScriptDefinition> =
     if (scriptTemplates.isEmpty()) emptySequence()
-    else buildSequence {
+    else sequence {
         // trying the direct classloading from baseClassloader first, since this is the most performant variant
         val (initialLoadedDefinitions, initialNotFoundTemplates) = scriptTemplates.partitionMapNotNull {
             loadScriptDefinition(

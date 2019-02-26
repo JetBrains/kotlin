@@ -15,11 +15,12 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.configuration.configureScriptDefinitions
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
-import org.jetbrains.kotlin.scripting.definitions.loadScriptTemplatesFromClasspath
-import org.jetbrains.kotlin.scripting.legacy.CliScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import java.io.File
 
 class ScriptingCompilerConfigurationExtension(val project: MockProject) : CompilerConfigurationExtension {
@@ -39,7 +40,7 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
             }
             val scriptResolverEnv = configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
 
-            val explicitScriptDefinitions = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+            val explicitScriptDefinitions = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSES)
 
             if (explicitScriptDefinitions.isNotEmpty()) {
                 configureScriptDefinitions(
@@ -52,13 +53,16 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
             }
             // If not disabled explicitly, we should always support at least the standard script definition
             if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
-                !configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).contains(StandardScriptDefinition)
+                !configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS).contains(StandardScriptDefinition)
             ) {
-                configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+                configuration.add(
+                    ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+                    StandardScriptDefinition
+                )
             }
 
             configuration.add(
-                JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES,
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES,
                 ScriptDefinitionsFromClasspathDiscoverySource(
                     configuration.jvmClasspathRoots,
                     configuration.get(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION) ?: emptyMap(),
@@ -69,15 +73,18 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
 
         // If not disabled explicitly, we should always support at least the standard script definition
         if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
-            StandardScriptDefinition !in configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
+            StandardScriptDefinition !in configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
         ) {
-            configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+            configuration.add(
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+                StandardScriptDefinition
+            )
         }
 
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
         if (scriptDefinitionProvider != null) {
-            scriptDefinitionProvider.setScriptDefinitionsSources(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
-            scriptDefinitionProvider.setScriptDefinitions(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
+            scriptDefinitionProvider.setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
+            scriptDefinitionProvider.setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
 
             // Register new file extensions
             val fileTypeRegistry = FileTypeRegistry.getInstance() as CoreFileTypeRegistry
@@ -90,19 +97,5 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
         }
 
     }
-}
-
-fun configureScriptDefinitions(
-    scriptTemplates: List<String>,
-    configuration: CompilerConfiguration,
-    baseClassloader: ClassLoader,
-    messageCollector: MessageCollector,
-    scriptResolverEnv: Map<String, Any?>
-) {
-    // TODO: consider using escaping to allow kotlin escaped names in class names
-    val templatesFromClasspath = loadScriptTemplatesFromClasspath(
-        scriptTemplates, configuration.jvmClasspathRoots, emptyList(), baseClassloader, scriptResolverEnv, messageCollector
-    )
-    configuration.addAll(JVMConfigurationKeys.SCRIPT_DEFINITIONS, templatesFromClasspath.toList())
 }
 

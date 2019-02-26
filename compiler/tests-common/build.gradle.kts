@@ -33,6 +33,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common-jvm6"))
     testCompileOnly(project(":kotlin-reflect-api"))
+    testCompile(project(":kotlin-scripting-compiler-impl"))
     testCompile(commonDep("junit:junit"))
     testCompile(androidDxJar()) { isTransitive = false }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }

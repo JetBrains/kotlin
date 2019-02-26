@@ -23,7 +23,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotifications
-import org.jetbrains.kotlin.script.ScriptReportSink
+import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import kotlin.script.experimental.dependencies.ScriptReport
 
 class IdeScriptReportSink(val project: Project) : ScriptReportSink {

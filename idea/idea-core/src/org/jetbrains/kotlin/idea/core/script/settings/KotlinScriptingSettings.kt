@@ -14,7 +14,7 @@ import com.intellij.util.addOptionTag
 import com.intellij.util.attribute
 import com.intellij.util.getAttributeBooleanValue
 import org.jdom.Element
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 
 @State(
     name = "KotlinScriptingSettings",

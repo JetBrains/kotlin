@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
-import org.jetbrains.kotlin.script.ScriptPriorities
+import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 
 class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
     private val topDownAnalysisContext: TopDownAnalysisContext

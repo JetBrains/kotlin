@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.repl.messages.ConsoleDiagnosticMessageHolder
 import kotlin.concurrent.write
 
@@ -38,7 +39,7 @@ open class GenericReplChecker(
 
     internal val environment = run {
         compilerConfiguration.apply {
-            add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
+            add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 

@@ -3,12 +3,12 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.legacy
+package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptDefinitionsSource
-import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.LazyScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
+import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import kotlin.concurrent.write
 
 open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {

@@ -16,10 +16,10 @@ import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache.Companion.MAX_SCRIPTS_CACHED
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptContentLoader
-import org.jetbrains.kotlin.script.ScriptReportSink
-import org.jetbrains.kotlin.script.adjustByDefinition
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.ScriptContentLoader
+import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
+import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
 import kotlin.script.experimental.dependencies.DependenciesResolver
 
 abstract class ScriptDependenciesLoader(protected val project: Project) {

@@ -1,20 +1,9 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.script
+package org.jetbrains.kotlin.utils
 
 import kotlin.reflect.*
 import kotlin.reflect.full.isSubclassOf
@@ -41,13 +30,30 @@ fun tryConstructClassFromStringArgs(clazz: Class<*>, args: List<String>): Any? {
 }
 
 fun tryCreateCallableMapping(callable: KCallable<*>, args: List<Any?>): Map<KParameter, Any?>? =
-        tryCreateCallableMapping(callable, args.map { NamedArgument(null, it) }.iterator(), AnyArgsConverter())
+    tryCreateCallableMapping(
+        callable,
+        args.map { NamedArgument(null, it) }.iterator(),
+        AnyArgsConverter()
+    )
 
 fun tryCreateCallableMappingFromStringArgs(callable: KCallable<*>, args: List<String>): Map<KParameter, Any?>? =
-        tryCreateCallableMapping(callable, args.map { NamedArgument(null, it) }.iterator(), StringArgsConverter())
+    tryCreateCallableMapping(
+        callable,
+        args.map { NamedArgument(null, it) }.iterator(),
+        StringArgsConverter()
+    )
 
 fun tryCreateCallableMappingFromNamedArgs(callable: KCallable<*>, args: List<Pair<String?, Any?>>): Map<KParameter, Any?>? =
-        tryCreateCallableMapping(callable, args.map { NamedArgument(it.first, it.second) }.iterator(), AnyArgsConverter())
+    tryCreateCallableMapping(
+        callable,
+        args.map {
+            NamedArgument(
+                it.first,
+                it.second
+            )
+        }.iterator(),
+        AnyArgsConverter()
+    )
 
 // ------------------------------------------------
 
@@ -75,8 +81,10 @@ private fun <T> tryCreateCallableMapping(callable: KCallable<*>, args: Iterator<
         if (unboundParams.isEmpty()) return null // failed to match: no param left for the arg
         val arg = argIt.next()
         when (state) {
-            ArgsTraversalState.UNNAMED -> if (arg.name != null) state = ArgsTraversalState.NAMED
-            ArgsTraversalState.NAMED -> if (arg.name == null) state = ArgsTraversalState.TAIL
+            ArgsTraversalState.UNNAMED -> if (arg.name != null) state =
+                ArgsTraversalState.NAMED
+            ArgsTraversalState.NAMED -> if (arg.name == null) state =
+                ArgsTraversalState.TAIL
             ArgsTraversalState.TAIL -> if (arg.name != null) throw IllegalArgumentException("Illegal mix of named and unnamed arguments")
         }
         // TODO: check the logic of named/unnamed/tail(vararg or lambda) arguments matching

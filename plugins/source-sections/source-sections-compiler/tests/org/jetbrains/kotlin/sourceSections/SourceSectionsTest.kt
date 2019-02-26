@@ -27,19 +27,19 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import java.io.*
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
@@ -72,7 +72,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
                 CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
                 PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
         )
-        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+        configuration.add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
         if (withSourceSectionsPlugin) {
             configuration.addAll(SourceSectionsConfigurationKeys.SECTIONS_OPTION, TEST_ALLOWED_SECTIONS)
             configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, SourceSectionsComponentRegistrar())

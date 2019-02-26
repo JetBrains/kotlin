@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.script;
+package org.jetbrains.kotlin.scripting.resolve
 
-import com.intellij.openapi.util.Key;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtScript;
+import com.intellij.openapi.vfs.VirtualFile
+import kotlin.script.experimental.dependencies.ScriptReport
 
-public class ScriptPriorities {
-
-    public static final Key<Integer> PRIORITY_KEY = Key.create(KtScript.class.getName() + ".priority");
-
-    public static int getScriptPriority(@NotNull KtScript script) {
-        Integer priority = script.getUserData(PRIORITY_KEY);
-        return priority == null ? 0 : priority;
-    }
+interface ScriptReportSink {
+    fun attachReports(scriptFile: VirtualFile, reports: List<ScriptReport>)
 }

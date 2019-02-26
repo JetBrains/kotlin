@@ -25,14 +25,15 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import org.junit.Assert
 import java.io.File
 import java.net.URLClassLoader
@@ -86,11 +87,11 @@ class ScriptTest : KtUsefulTestCase() {
     }
 
     private fun compileScript(
-            scriptPath: String,
-            scriptDefinition: KotlinScriptDefinition,
-            runIsolated: Boolean = true,
-            suppressOutput: Boolean = false,
-            saveClassesDir: File? = null
+        scriptPath: String,
+        scriptDefinition: KotlinScriptDefinition,
+        runIsolated: Boolean = true,
+        suppressOutput: Boolean = false,
+        saveClassesDir: File? = null
     ): Class<*>? {
         val messageCollector =
                 if (suppressOutput) MessageCollector.NONE
@@ -101,7 +102,7 @@ class ScriptTest : KtUsefulTestCase() {
             val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.addKotlinSourceRoot("compiler/testData/script/$scriptPath")
-            configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
+            configuration.add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
             if (saveClassesDir != null) {
                 configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)

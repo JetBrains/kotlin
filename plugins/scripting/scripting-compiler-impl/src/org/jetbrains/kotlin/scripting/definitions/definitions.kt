@@ -13,8 +13,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 
 fun PsiFile.scriptDefinition(): KotlinScriptDefinition? {
     // Do not use psiFile.script, see comments in findScriptDefinition

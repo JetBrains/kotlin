@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettingsLi
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import java.io.File
 
 class ScriptTemplatesFromCompilerSettingsProvider(

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_PATH
 import org.jetbrains.kotlin.scripting.definitions.discoverScriptTemplatesInClasspath
 import org.jetbrains.kotlin.scripting.definitions.loadScriptTemplatesFromClasspath
@@ -166,7 +167,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
             addJvmClasspathRoots(runtimeClasspath)
             addJvmClasspathRoots(scriptingClasspath)
             addJvmClasspathRoot(defsOut)
-            addAll(JVMConfigurationKeys.SCRIPT_DEFINITIONS, lazyDefs)
+            addAll(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, lazyDefs)
         }
 
         val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(scriptsCompileEnv)

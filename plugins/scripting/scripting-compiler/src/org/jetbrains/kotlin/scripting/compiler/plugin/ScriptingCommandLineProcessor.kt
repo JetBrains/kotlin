@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
-import java.io.File
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.scripting.KOTLIN_SCRIPTING_PLUGIN_ID
+import org.jetbrains.kotlin.scripting.configuration.KOTLIN_SCRIPTING_PLUGIN_ID
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import java.io.File
 
 object ScriptingConfigurationKeys {
     val DISABLE_SCRIPTING_PLUGIN_OPTION: CompilerConfigurationKey<Boolean> =
@@ -63,7 +64,6 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             "Script resolver environment in key-value pairs (the value could be quoted and escaped)",
             required = false, allowMultipleOccurrences = true
         )
-
     }
 
     override val pluginId = KOTLIN_SCRIPTING_PLUGIN_ID
@@ -87,9 +87,9 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
         }
 
         SCRIPT_DEFINITIONS_OPTION, LEGACY_SCRIPT_TEMPLATES_OPTION -> {
-            val currentDefs = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS).toMutableList()
+            val currentDefs = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSES).toMutableList()
             currentDefs.addAll(value.split(','))
-            configuration.put(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, currentDefs)
+            configuration.put(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSES, currentDefs)
         }
         SCRIPT_DEFINITIONS_CLASSPATH_OPTION -> {
             val currentCP = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSPATH).toMutableList()

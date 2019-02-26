@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import java.io.File
 
 class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
@@ -42,7 +43,7 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
         val scriptFile = File(sourcePath)
         if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
             val extensionHint =
-                if (configuration.get(JVMConfigurationKeys.SCRIPT_DEFINITIONS) == listOf(StandardScriptDefinition)) " (.kts)"
+                if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS) == listOf(StandardScriptDefinition)) " (.kts)"
                 else ""
             messageCollector.report(ERROR, "Specify path to the script file$extensionHint as the first argument")
             return COMPILATION_ERROR

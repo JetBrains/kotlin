@@ -42,10 +42,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
-import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
-import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.dependencies.ScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 import kotlin.reflect.KClass
@@ -101,7 +102,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
             val sourcesWithRefinementsState = SourcesWithRefinedConfigurations(script)
 
             kotlinCompilerConfiguration.add(
-                JVMConfigurationKeys.SCRIPT_DEFINITIONS,
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 makeScriptDefinition(initialScriptCompilationConfiguration, script, sourcesWithRefinementsState)
             )
 

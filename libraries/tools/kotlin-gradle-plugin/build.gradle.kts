@@ -44,7 +44,7 @@ dependencies {
     compileOnly(project(":kotlin-compiler-runner"))
     compileOnly(project(":kotlin-annotation-processing"))
     compileOnly(project(":kotlin-annotation-processing-gradle"))
-    compileOnly(project(":kotlin-scripting-compiler"))
+    compileOnly(project(":kotlin-scripting-compiler-impl"))
 
     compile("com.google.code.gson:gson:2.8.5")
 
@@ -62,6 +62,7 @@ dependencies {
     runtime(projectRuntimeJar(":kotlin-android-extensions"))
     runtime(projectRuntimeJar(":kotlin-compiler-runner"))
     runtime(projectRuntimeJar(":kotlin-scripting-compiler-embeddable"))
+    runtime(projectRuntimeJar(":kotlin-scripting-compiler-impl-embeddable"))
     runtime(project(":kotlin-reflect"))
 
     jarContents(compileOnly(intellijDep()) {
