@@ -48,6 +48,7 @@ enum class UnsignedType {
     val asSigned: PrimitiveType = PrimitiveType.valueOf(name.substring(1))
 
     val byteSize = (1 shl ordinal)
+    val bitSize = byteSize * 8
     val mask = "0x${List(byteSize) { "FF" }.chunked(2).joinToString("_") { it.joinToString("") }}"
 }
 
