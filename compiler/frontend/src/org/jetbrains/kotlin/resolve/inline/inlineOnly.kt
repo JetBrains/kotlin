@@ -21,12 +21,9 @@ fun MemberDescriptor.isEffectivelyInlineOnly(): Boolean =
     isInlineOnlyOrReifiable() || (this is FunctionDescriptor && isSuspend && isInline &&
             (valueParameters.any { it.isCrossinline } || visibility == Visibilities.PRIVATE))
 
-fun MemberDescriptor.isInlineOnly(): Boolean {
-    if (this !is FunctionDescriptor ||
-        !(hasInlineOnlyAnnotation() || DescriptorUtils.getDirectMember(this).hasInlineOnlyAnnotation())) return false
-    assert(isInline) { "Function is not inline: $this" }
-    return true
-}
+fun MemberDescriptor.isInlineOnly(): Boolean =
+    this is FunctionDescriptor && isInline &&
+            (hasInlineOnlyAnnotation() || DescriptorUtils.getDirectMember(this).hasInlineOnlyAnnotation())
 
 private fun CallableMemberDescriptor.isReifiable() = typeParameters.any { it.isReified }
 
