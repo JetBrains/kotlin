@@ -18,6 +18,7 @@ enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = tru
     Ranges(packageName = "kotlin.ranges"),
     URanges(packageName = "kotlin.ranges"),
     Comparisons(packageName = "kotlin.comparisons"),
+    UComparisons(packageName = "kotlin.comparisons"),
     Strings(packageName = "kotlin.text"),
     Misc(),
     ;
