@@ -1618,4 +1618,6 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
             addParameter(parameterInfo)
         }
     }
+
+    fun testMoveLambdaParameterToLast() = doTest { swapParameters(0, 1) }
 }
