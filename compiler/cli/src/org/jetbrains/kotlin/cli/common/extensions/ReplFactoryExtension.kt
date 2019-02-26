@@ -6,22 +6,22 @@
 package org.jetbrains.kotlin.cli.common.extensions
 
 import com.intellij.core.JavaCoreProjectEnvironment
-import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.repl.ReplCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import java.io.File
 
-interface ScriptEvaluationExtension {
-    companion object : ProjectExtensionDescriptor<ScriptEvaluationExtension>(
-        "org.jetbrains.kotlin.scriptEvaluationExtension",
-        ScriptEvaluationExtension::class.java
+interface ReplFactoryExtension {
+    companion object : ProjectExtensionDescriptor<ReplFactoryExtension>(
+        "org.jetbrains.kotlin.replFactoryExtension",
+        ReplFactoryExtension::class.java
     )
 
-    fun isAccepted(arguments: CommonCompilerArguments): Boolean
-
-    fun eval(
-        arguments: CommonCompilerArguments,
+    fun makeReplCompiler(
+        templateClassName: String,
+        templateClasspath: List<File>,
+        baseClassLoader: ClassLoader?,
         configuration: CompilerConfiguration,
         projectEnvironment: JavaCoreProjectEnvironment
-    ): ExitCode
+    ): ReplCompiler
 }

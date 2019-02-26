@@ -1,35 +1,25 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl.configuration
+package org.jetbrains.kotlin.scripting.repl.configuration
 
-import org.jetbrains.kotlin.cli.jvm.repl.IdeReplExceptionReporter
-import org.jetbrains.kotlin.cli.jvm.repl.ReplExceptionReporter
-import org.jetbrains.kotlin.cli.jvm.repl.messages.IdeDiagnosticMessageHolder
-import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader
-import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader
-import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplSystemInWrapper
-import org.jetbrains.kotlin.cli.jvm.repl.writer.IdeSystemOutWrapperReplWriter
-import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
+import org.jetbrains.kotlin.scripting.repl.IdeReplExceptionReporter
+import org.jetbrains.kotlin.scripting.repl.ReplExceptionReporter
+import org.jetbrains.kotlin.scripting.repl.messages.IdeDiagnosticMessageHolder
+import org.jetbrains.kotlin.scripting.repl.reader.IdeReplCommandReader
+import org.jetbrains.kotlin.scripting.repl.reader.ReplCommandReader
+import org.jetbrains.kotlin.scripting.repl.reader.ReplSystemInWrapper
+import org.jetbrains.kotlin.scripting.repl.writer.IdeSystemOutWrapperReplWriter
+import org.jetbrains.kotlin.scripting.repl.writer.ReplWriter
 
 class IdeReplConfiguration : ReplConfiguration {
     override val allowIncompleteLines: Boolean
         get() = false
 
-    override val executionInterceptor: SnippetExecutionInterceptor = object : SnippetExecutionInterceptor {
+    override val executionInterceptor: SnippetExecutionInterceptor = object :
+        SnippetExecutionInterceptor {
         override fun <T> execute(block: () -> T): T {
             try {
                 sinWrapper.isReplScriptExecuting = true

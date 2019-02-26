@@ -608,7 +608,7 @@ class CompileServiceImpl(
             )
             val messageCollector = KeepFirstErrorMessageCollector(compilerMessagesStream)
             val repl = KotlinJvmReplService(
-                disposable, port, templateClasspath, templateClassName,
+                disposable, port, compilerId, templateClasspath, templateClassName,
                 messageCollector, operationsTracer
             )
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
@@ -661,7 +661,7 @@ class CompileServiceImpl(
             val disposable = Disposer.newDisposable()
             val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
             val repl = KotlinJvmReplService(
-                disposable, port, templateClasspath, templateClassName,
+                disposable, port, compilerId, templateClasspath, templateClassName,
                 messageCollector, null
             )
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))

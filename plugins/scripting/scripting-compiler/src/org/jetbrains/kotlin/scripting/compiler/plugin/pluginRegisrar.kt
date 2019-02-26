@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
+import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
@@ -23,11 +26,21 @@ import org.jetbrains.kotlin.scripting.legacy.CliScriptReportSink
 import org.jetbrains.kotlin.scripting.shared.extensions.ScriptExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.shared.extensions.ScriptingResolveExtension
 
+private fun <T> ProjectExtensionDescriptor<T>.registerExtensionIfRequired(project: MockProject, extension: T) {
+    try {
+        registerExtension(project, extension)
+    } catch (ex: IllegalArgumentException) {
+        // ignore
+    }
+}
+
 class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project))
         CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
-        ScriptEvaluationExtension.registerExtension(project, JvmCliScriptEvaluationExtension())
+        ScriptEvaluationExtension.registerExtensionIfRequired(project, JvmCliScriptEvaluationExtension())
+        ShellExtension.registerExtensionIfRequired(project, JvmCliReplShellExtension())
+        ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
 
         val scriptDefinitionProvider = CliScriptDefinitionProvider()
         project.registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)

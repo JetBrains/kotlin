@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
-interface ScriptEvaluationExtension {
-    companion object : ProjectExtensionDescriptor<ScriptEvaluationExtension>(
-        "org.jetbrains.kotlin.scriptEvaluationExtension",
-        ScriptEvaluationExtension::class.java
+interface ShellExtension {
+    companion object : ProjectExtensionDescriptor<ShellExtension>(
+        "org.jetbrains.kotlin.shellExtension",
+        ShellExtension::class.java
     )
 
     fun isAccepted(arguments: CommonCompilerArguments): Boolean
 
-    fun eval(
+    fun run(
         arguments: CommonCompilerArguments,
         configuration: CompilerConfiguration,
         projectEnvironment: JavaCoreProjectEnvironment

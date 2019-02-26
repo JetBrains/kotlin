@@ -9,9 +9,6 @@ import java.io.File
 import java.io.IOError
 import java.lang.Character.isJavaIdentifierPart
 import java.lang.Character.isJavaIdentifierStart
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
-import java.lang.UnsupportedOperationException
 import java.net.URLClassLoader
 import java.nio.file.FileSystemNotFoundException
 import java.nio.file.Paths
@@ -44,6 +41,10 @@ object ServiceLoaderLite {
             }
         }
 
+        return loadImplementations(service, files, classLoader)
+    }
+
+    fun <Service> loadImplementations(service: Class<out Service>, files: List<File>, classLoader: ClassLoader): MutableList<Service> {
         val implementations = mutableListOf<Service>()
 
         for (className in findImplementations(service, files)) {

@@ -1,22 +1,11 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("UNUSED_PARAMETER")
 
-package org.jetbrains.kotlin.cli.jvm.repl
+package org.jetbrains.kotlin.scripting.repl
 
 import org.jetbrains.kotlin.cli.common.repl.CompiledReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ILineId
@@ -85,7 +74,8 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         data class Successful(override val scriptDescriptor: ClassDescriptorWithResolutionScopes, override val diagnostics: Diagnostics) :
             ReplLineAnalysisResult
 
-        data class WithErrors(override val diagnostics: Diagnostics) : ReplLineAnalysisResult {
+        data class WithErrors(override val diagnostics: Diagnostics) :
+            ReplLineAnalysisResult {
             override val scriptDescriptor: ClassDescriptorWithResolutionScopes? get() = null
         }
     }
@@ -133,7 +123,10 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
             try {
                 rootPackageProvider.addDelegateProvider(provider)
             } catch (e: UninitializedPropertyAccessException) {
-                rootPackageProvider = AdaptablePackageMemberDeclarationProvider(provider)
+                rootPackageProvider =
+                    AdaptablePackageMemberDeclarationProvider(
+                        provider
+                    )
             }
         }
 
@@ -155,7 +148,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
 
         class AdaptablePackageMemberDeclarationProvider(
             private var delegateProvider: PackageMemberDeclarationProvider
-        ) : DelegatePackageMemberDeclarationProvider(delegateProvider) {
+        ) : org.jetbrains.kotlin.scripting.repl.DelegatePackageMemberDeclarationProvider(delegateProvider) {
             fun addDelegateProvider(provider: PackageMemberDeclarationProvider) {
                 delegateProvider = CombinedPackageMemberDeclarationProvider(listOf(provider, delegateProvider))
 
@@ -182,7 +175,10 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
 
         fun submitLine(ktFile: KtFile, codeLine: ReplCodeLine) {
-            val line = LineInfo.SubmittedLine(ktFile, successfulLines.lastValue())
+            val line = LineInfo.SubmittedLine(
+                ktFile,
+                successfulLines.lastValue()
+            )
             submittedLines[ktFile] = line
             ktFile.fileScopesCustomizer = object : FileScopesCustomizer {
                 override fun createFileScopes(fileScopeFactory: FileScopeFactory): FileScopes {
@@ -192,13 +188,20 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
 
         fun lineSuccess(ktFile: KtFile, codeLine: ReplCodeLine, scriptDescriptor: ClassDescriptorWithResolutionScopes) {
-            val successfulLine = LineInfo.SuccessfulLine(ktFile, successfulLines.lastValue(), scriptDescriptor)
+            val successfulLine = LineInfo.SuccessfulLine(
+                ktFile,
+                successfulLines.lastValue(),
+                scriptDescriptor
+            )
             submittedLines[ktFile] = successfulLine
             successfulLines.add(CompiledReplCodeLine(ktFile.name, codeLine), successfulLine)
         }
 
         fun lineFailure(ktFile: KtFile, codeLine: ReplCodeLine) {
-            submittedLines[ktFile] = LineInfo.FailedLine(ktFile, successfulLines.lastValue())
+            submittedLines[ktFile] = LineInfo.FailedLine(
+                ktFile,
+                successfulLines.lastValue()
+            )
         }
 
         private fun lineInfo(ktFile: KtFile) = submittedLines[ktFile]

@@ -11,7 +11,6 @@ dependencies {
     compile(project(":kotlin-build-common"))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
-    compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 }

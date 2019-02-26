@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl.messages
+package org.jetbrains.kotlin.scripting.repl.messages
 
 import org.jetbrains.kotlin.cli.common.messages.DiagnosticMessageReporter
 

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
+import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -98,13 +98,17 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             if (arguments.script) {
                 val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
                 if (scriptingEvaluator == null) {
-                    messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin found")
+                    messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")
                     return COMPILATION_ERROR
                 }
                 return scriptingEvaluator.eval(arguments, configuration, projectEnvironment)
             } else {
-                ReplFromTerminal.run(rootDisposable, configuration)
-                return ExitCode.OK
+                val shell = ShellExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
+                if (shell == null) {
+                    messageCollector.report(ERROR, "Unable to run REPL, no scripting plugin loaded")
+                    return COMPILATION_ERROR
+                }
+                return shell.run(arguments, configuration, projectEnvironment)
             }
         }
 
