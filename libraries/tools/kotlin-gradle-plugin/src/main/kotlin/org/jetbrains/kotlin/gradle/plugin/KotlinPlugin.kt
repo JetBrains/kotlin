@@ -727,44 +727,48 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         kotlinOptions.noJdk = true
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
-        project.afterEvaluate { project ->
-        forEachVariant(project) { variant ->
-            val variantName = getVariantName(variant)
-            val compilation = kotlinAndroidTarget.compilations.create(variantName)
-            setUpDependencyResolution(variant, compilation)
-        }
+        val androidPluginIds = listOf(
+            "android", "com.android.application", "android-library", "com.android.library",
+            "com.android.test", "com.android.feature", "com.android.dynamic-feature", "com.android.instantapp"
+        )
 
-            val androidPluginIds = listOf(
-                "android", "com.android.application", "android-library", "com.android.library",
-                "com.android.test", "com.android.feature", "com.android.dynamic-feature", "com.android.instantapp"
-            )
-            val plugin = androidPluginIds.asSequence()
+        val plugin by lazy {
+            androidPluginIds.asSequence()
                 .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
                 .firstOrNull()
                 ?: throw InvalidPluginException("'kotlin-android' expects one of the Android Gradle " +
                                                         "plugins to be applied to the project:\n\t" +
                                                         androidPluginIds.joinToString("\n\t") { "* $it" })
+        }
 
-            checkAndroidAnnotationProcessorDependencyUsage(project)
+        forEachVariant(project) { variant ->
+            val variantName = getVariantName(variant)
 
-            forEachVariant(project) {
-                processVariant(
-                    it, kotlinAndroidTarget, project, ext, plugin, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider
-                )
+            // Create the compilation and configure it first, then add to the compilations container. As this code is executed
+            // in afterEvaluate, a user's build script might have already attached item handlers to the compilations container, and those
+            // handlers might break when fired on a compilation that is not yet properly configured (e.g. KT-29964):
+            kotlinAndroidTarget.compilationFactory.create(variantName).let { compilation ->
+                setUpDependencyResolution(variant, compilation)
+
+                processVariant(variant, compilation, project, ext, plugin, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider)
+
+                @Suppress("UNCHECKED_CAST")
+                (kotlinAndroidTarget.compilations as NamedDomainObjectCollection<in KotlinJvmAndroidCompilation>).add(compilation)
             }
 
             val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinConfigurationTools.kotlinPluginVersion)
+            val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
+            applySubplugins(project, compilation, variant, subpluginEnvironment)
+        }
 
-            forEachVariant(project) { variant ->
-                val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
-                applySubplugins(project, compilation, variant, subpluginEnvironment)
-            }
+        project.whenEvaluated {
+            checkAndroidAnnotationProcessorDependencyUsage(project)
         }
     }
 
     private fun processVariant(
         variantData: V,
-        target: KotlinAndroidTarget,
+        compilation: KotlinJvmAndroidCompilation,
         project: Project,
         androidExt: BaseExtension,
         androidPlugin: BasePlugin,
@@ -782,7 +786,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             return
         }
 
-        val compilation = target.compilations.getByName(variantDataName)
         val defaultSourceSet = project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName)
 
         val kotlinTaskName = compilation.compileKotlinTaskName

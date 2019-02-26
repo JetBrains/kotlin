@@ -21,6 +21,8 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
 
+            assertContains("KT-29964 OK") // Output from lib/build.gradle
+
             assertTasksExecuted(
                 ":lib:compileDebugKotlinAndroidLib",
                 ":lib:compileReleaseKotlinAndroidLib",
