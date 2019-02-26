@@ -80,7 +80,8 @@ class DeserializationContext(
 ) {
     val typeDeserializer: TypeDeserializer = TypeDeserializer(
         this, parentTypeDeserializer, typeParameters,
-        "Deserializer for ${containingDeclaration.name}"
+        "Deserializer for \"${containingDeclaration.name}\"",
+        containerSource?.presentableString ?: "[container not found]"
     )
 
     val memberDeserializer: MemberDeserializer = MemberDeserializer(this)
