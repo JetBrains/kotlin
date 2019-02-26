@@ -1,0 +1,7 @@
+UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
+UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
+    UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
+    UBinaryExpression (operator = +) -> USimpleNameReferenceExpression (identifier = varWithType) -> LightVariableBuilder:varWithType: varWithType
+    UBinaryExpression (operator = +) -> USimpleNameReferenceExpression (identifier = +) -> null: null
+    UBinaryExpression (operator = +) -> USimpleNameReferenceExpression (identifier = varWithoutType) -> LightVariableBuilder:varWithoutType: varWithoutType
+    UReturnExpression -> USimpleNameReferenceExpression (identifier = result) -> LightVariableBuilder:result: result

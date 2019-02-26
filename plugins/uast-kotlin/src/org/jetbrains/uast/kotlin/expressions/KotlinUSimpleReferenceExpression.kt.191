@@ -20,6 +20,7 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
@@ -43,8 +45,12 @@ open class KotlinUSimpleReferenceExpression(
         override val psi: KtSimpleNameExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
-
-    private val resolvedDeclaration by lz { psi.resolveCallToDeclaration(this) }
+    private val resolvedDeclaration by lz {
+        (psi.parents.dropWhile { it is KtTypeElement }.firstOrNull() as? KtTypeReference)
+            ?.toPsiType(this, true)
+            ?.let { return@lz PsiTypesUtil.getPsiClass(it) }
+        psi.resolveCallToDeclaration(this)
+    }
 
     override val identifier get() = psi.getReferencedName()
 
