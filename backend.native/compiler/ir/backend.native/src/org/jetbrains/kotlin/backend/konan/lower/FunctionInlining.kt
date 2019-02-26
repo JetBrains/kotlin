@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
-import org.jetbrains.kotlin.backend.konan.ir.KonanIrReturnableBlockImpl
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.file
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.isInlineParameter
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
@@ -118,7 +118,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             }
         }
 
-        private fun inlineFunction(callSite: IrCall, callee: IrFunction): KonanIrReturnableBlockImpl {
+        private fun inlineFunction(callSite: IrCall, callee: IrFunction): IrReturnableBlock {
             val copiedCallee = copyIrElement.copy(callee) as IrFunction
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
@@ -161,14 +161,14 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             val isCoroutineIntrinsicCall = callSite.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(
                     context.config.configuration.languageVersionSettings)
 
-            return KonanIrReturnableBlockImpl(
+            return IrReturnableBlockImpl(
                     startOffset = startOffset,
                     endOffset = endOffset,
                     type = callSite.type,
                     symbol = irReturnableBlockSymbol,
                     origin = if (isCoroutineIntrinsicCall) CoroutineIntrinsicLambdaOrigin else null,
                     statements = statements,
-                    sourceFile = sourceFile
+                    sourceFileSymbol = sourceFile.symbol
             ).apply {
                 transformChildrenVoid(object : IrElementTransformerVoid() {
                     override fun visitReturn(expression: IrReturn): IrExpression {

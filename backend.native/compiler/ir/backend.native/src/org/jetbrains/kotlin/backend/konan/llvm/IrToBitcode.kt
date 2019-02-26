@@ -1575,7 +1575,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     val dummyFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("no source file"))
 
     private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlock) :
-            FileScope((returnableBlock as? KonanIrReturnableBlockImpl)?.sourceFile ?: dummyFile) {
+            FileScope(returnableBlock.sourceFileSymbol?.owner ?: dummyFile) {
 
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null

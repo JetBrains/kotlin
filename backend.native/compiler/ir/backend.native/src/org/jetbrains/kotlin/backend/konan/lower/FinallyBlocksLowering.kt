@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ir.KonanIrReturnableBlockImpl
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.file
 import org.jetbrains.kotlin.backend.konan.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.descriptors.Modality
@@ -318,7 +317,7 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
 
     private inline fun IrBuilderWithScope.irReturnableBlock(symbol: IrReturnableBlockSymbol,
                                                             type: IrType, body: IrBlockBuilder.() -> Unit) =
-            KonanIrReturnableBlockImpl(startOffset, endOffset, type, symbol, null,
+            IrReturnableBlockImpl(startOffset, endOffset, type, symbol, null,
                     IrBlockBuilder(context, scope, startOffset, endOffset, null, type)
                             .block(body).statements)
 }
