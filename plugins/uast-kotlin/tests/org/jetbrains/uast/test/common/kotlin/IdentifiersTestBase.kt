@@ -6,9 +6,7 @@
 package org.jetbrains.uast.test.common.kotlin
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.kotlin.assertEqualsToFile
 import org.jetbrains.uast.visitor.AbstractUastVisitor
@@ -19,26 +17,15 @@ import kotlin.test.fail
 interface IdentifiersTestBase {
     fun getIdentifiersFile(testName: String): File
 
-    private fun UFile.asIdentifiersWithParents(): String {
-        val builder = StringBuilder()
-        var level = 0
-        (this.psi as KtFile).accept(object : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement) {
-                val uIdentifier = element.toUElementOfType<UIdentifier>()
-                if (uIdentifier != null) {
-                    builder.append("    ".repeat(level))
-                    builder.append(uIdentifier.sourcePsiElement!!.text)
-                    builder.append(" -> ")
-                    builder.append(uIdentifier.uastParent?.asLogString())
-                    builder.appendln()
-                }
-                if (element is KtBlockExpression) level++
-                element.acceptChildren(this)
-                if (element is KtBlockExpression) level--
+    private fun UFile.asIdentifiersWithParents() = object : IndentedPrintingVisitor(KtBlockExpression::class) {
+        override fun render(element: PsiElement): CharSequence? = element.toUElementOfType<UIdentifier>()?.let { uIdentifier ->
+            StringBuilder().apply {
+                append(uIdentifier.sourcePsiElement!!.text)
+                append(" -> ")
+                append(uIdentifier.uastParent?.asLogString())
             }
-        })
-        return builder.toString()
-    }
+        }
+    }.visitUFileAndGetResult(this)
 
     private fun UFile.testIdentifiersParents() {
         accept(object : AbstractUastVisitor() {
