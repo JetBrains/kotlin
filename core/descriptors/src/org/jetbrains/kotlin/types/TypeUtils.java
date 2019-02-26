@@ -385,19 +385,29 @@ public class TypeUtils {
             @Nullable KotlinType type,
             @NotNull Function1<UnwrappedType, Boolean> isSpecialType
     ) {
+        return contains(type, isSpecialType, new HashSet<KotlinType>());
+    }
+
+    private static boolean contains(
+            @Nullable KotlinType type,
+            @NotNull Function1<UnwrappedType, Boolean> isSpecialType,
+            HashSet<KotlinType> visited
+    ) {
         if (type == null) return false;
+        if (visited.contains(type)) return false;
+        visited.add(type);
 
         UnwrappedType unwrappedType = type.unwrap();
         if (isSpecialType.invoke(unwrappedType)) return true;
 
         FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
         if (flexibleType != null
-            && (contains(flexibleType.getLowerBound(), isSpecialType) || contains(flexibleType.getUpperBound(), isSpecialType))) {
+            && (contains(flexibleType.getLowerBound(), isSpecialType, visited) || contains(flexibleType.getUpperBound(), isSpecialType, visited))) {
             return true;
         }
 
         if (unwrappedType instanceof DefinitelyNotNullType &&
-            contains(((DefinitelyNotNullType) unwrappedType).getOriginal(), isSpecialType)) {
+            contains(((DefinitelyNotNullType) unwrappedType).getOriginal(), isSpecialType, visited)) {
             return true;
         }
 
@@ -405,13 +415,13 @@ public class TypeUtils {
         if (typeConstructor instanceof IntersectionTypeConstructor) {
             IntersectionTypeConstructor intersectionTypeConstructor = (IntersectionTypeConstructor) typeConstructor;
             for (KotlinType supertype : intersectionTypeConstructor.getSupertypes()) {
-                if (contains(supertype, isSpecialType)) return true;
+                if (contains(supertype, isSpecialType, visited)) return true;
             }
             return false;
         }
 
         for (TypeProjection projection : type.getArguments()) {
-            if (!projection.isStarProjection() && contains(projection.getType(), isSpecialType)) return true;
+            if (!projection.isStarProjection() && contains(projection.getType(), isSpecialType, visited)) return true;
         }
         return false;
     }
