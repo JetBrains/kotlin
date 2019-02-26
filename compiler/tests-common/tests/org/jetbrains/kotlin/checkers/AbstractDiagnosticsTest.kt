@@ -166,13 +166,13 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val actualText = StringBuilder()
         for (testFile in files) {
             val module = testFile.module
-            val isCommonModule = modules[module]!!.getMultiTargetPlatform() == MultiTargetPlatform.Common
+            val isCommonModule = modules[module]!!.platform == Platform.Common
             val implementingModules =
                 if (!isCommonModule) emptyList()
                 else modules.entries.filter { (testModule) -> module in testModule?.getDependencies().orEmpty() }
             val implementingModulesBindings = implementingModules.mapNotNull { (testModule, moduleDescriptor) ->
-                val platform = moduleDescriptor.getCapability(MultiTargetPlatform.CAPABILITY)
-                if (platform is MultiTargetPlatform.Specific) platform to moduleBindings[testModule]!!
+                val platform = moduleDescriptor.platform
+                if (platform is Platform.Specific) platform to moduleBindings[testModule]!!
                 else null
             }
             val moduleDescriptor = modules[module]!!
@@ -354,12 +354,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val moduleDescriptor = moduleContext.module as ModuleDescriptorImpl
 
-        val platform = moduleDescriptor.getMultiTargetPlatform()
-        if (platform == MultiTargetPlatform.Common) {
+        val platform = moduleDescriptor.platform
+        if (platform == Platform.Common) {
             return CommonResolverForModuleFactory.analyzeFiles(
                 files, moduleDescriptor.name, true, languageVersionSettings,
                 mapOf(
-                    MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common,
                     MODULE_FILES to files
                 )
             ) { _ ->
@@ -414,7 +413,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         // E.g. "<!JVM:ACTUAL_WITHOUT_EXPECT!>...<!>
         val result = ArrayList<KtFile>(0)
         for (dependency in dependencies) {
-            if (dependency.getCapability(MultiTargetPlatform.CAPABILITY) == MultiTargetPlatform.Common) {
+            if (dependency.platform == Platform.Common) {
                 val files = dependency.getCapability(MODULE_FILES)
                         ?: error("MODULE_FILES should have been set for the common module: $dependency")
                 result.addAll(files)
@@ -585,7 +584,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val nameSuffix = moduleName.substringAfterLast("-", "")
         val platform =
             if (nameSuffix.isEmpty()) null
-            else if (nameSuffix == "common") MultiTargetPlatform.Common else MultiTargetPlatform.Specific(nameSuffix.toUpperCase())
+            else if (nameSuffix == "common") Platform.Common else Platform.Specific(nameSuffix.toUpperCase())
         return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JvmBuiltIns(storageManager), platform)
     }
 

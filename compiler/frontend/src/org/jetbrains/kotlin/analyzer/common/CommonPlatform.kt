@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings
 object CommonPlatform : TargetPlatform("Default") {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {}
 
-    override val multiTargetPlatform: MultiTargetPlatform
-        get() = MultiTargetPlatform.Common
+    override val platform: Platform
+        get() = Platform.Common
 
     override val platformConfigurator: PlatformConfigurator = CommonPlatformConfigurator
 

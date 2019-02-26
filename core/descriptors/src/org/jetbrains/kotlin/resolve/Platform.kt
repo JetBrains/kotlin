@@ -17,31 +17,22 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-sealed class MultiTargetPlatform : Comparable<MultiTargetPlatform> {
-    object Common : MultiTargetPlatform() {
-        override fun compareTo(other: MultiTargetPlatform): Int =
+sealed class Platform : Comparable<Platform> {
+    object Common : Platform() {
+        override fun compareTo(other: Platform): Int =
                 if (other is Common) 0 else -1
     }
 
-    data class Specific(val platform: String) : MultiTargetPlatform() {
-        override fun compareTo(other: MultiTargetPlatform): Int =
+    data class Specific(val platform: String) : Platform() {
+        override fun compareTo(other: Platform): Int =
                 when (other) {
                     is Common -> 1
                     is Specific -> platform.compareTo(other.platform)
                 }
     }
-
-    companion object {
-        @JvmField
-        val CAPABILITY = ModuleDescriptor.Capability<MultiTargetPlatform>("MULTI_TARGET_PLATFORM")
-    }
 }
 
-fun ModuleDescriptor.getMultiTargetPlatform(): MultiTargetPlatform? =
-        module.getCapability(MultiTargetPlatform.CAPABILITY)
-
-fun MemberDescriptor.getMultiTargetPlatform(): String? =
-        (module.getMultiTargetPlatform() as? MultiTargetPlatform.Specific)?.platform
+val MemberDescriptor.platform
+    get() = module.platform

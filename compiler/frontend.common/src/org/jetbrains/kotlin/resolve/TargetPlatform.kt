@@ -60,7 +60,7 @@ abstract class TargetPlatform(val platformName: String) {
 
     open val excludedImports: List<FqName> get() = emptyList()
 
-    abstract val multiTargetPlatform: MultiTargetPlatform
+    abstract val platform: Platform
 
     // This function is used in "cat.helm.clean:0.1.1-SNAPSHOT": https://plugins.jetbrains.com/plugin/index?xmlId=cat.helm.clean
     @Suppress("DeprecatedCallableAddReplaceWith", "unused")

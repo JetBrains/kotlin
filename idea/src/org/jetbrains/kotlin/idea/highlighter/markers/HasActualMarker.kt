@@ -25,21 +25,20 @@ import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.Platform
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
-private fun ModuleDescriptor?.getMultiTargetPlatformName(): String? {
+private fun ModuleDescriptor?.getPlatformName(): String? {
     if (this == null) return null
     val moduleInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo
     if (moduleInfo != null && moduleInfo.module.isAndroidModule()) {
         return "Android"
     }
-    val platform = getMultiTargetPlatform() ?: return null
+    val platform = platform ?: return null
     return when (platform) {
-        is MultiTargetPlatform.Specific ->
+        is Platform.Specific ->
             platform.platform
-        MultiTargetPlatform.Common ->
+        Platform.Common ->
             "common"
     }
 }
@@ -50,7 +49,7 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
 
     return actualDeclarations.asSequence()
         .mapNotNull { it.toDescriptor()?.module }
-        .groupBy { it.getMultiTargetPlatformName() }
+        .groupBy { it.getPlatformName() }
         .filter { (platform, _) -> platform != null }
         .entries
         .joinToString(prefix = "Has actuals in ") { (platform, modules) ->

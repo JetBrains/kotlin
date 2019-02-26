@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.Platform
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -48,7 +48,7 @@ object CheckerTestUtil {
 
     fun getDiagnosticsIncludingSyntaxErrors(
         bindingContext: BindingContext,
-        implementingModulesBindings: List<Pair<MultiTargetPlatform, BindingContext>>,
+        implementingModulesBindings: List<Pair<Platform, BindingContext>>,
         root: PsiElement,
         markDynamicCalls: Boolean,
         dynamicCallDescriptors: MutableList<DeclarationDescriptor>,
@@ -73,7 +73,7 @@ object CheckerTestUtil {
         val sortedBindings = implementingModulesBindings.sortedBy { it.first }
 
         for ((platform, second) in sortedBindings) {
-            assert(platform is MultiTargetPlatform.Specific) { "Implementing module must have a specific platform: $platform" }
+            assert(platform is Platform.Specific) { "Implementing module must have a specific platform: $platform" }
 
             result.addAll(
                 getDiagnosticsIncludingSyntaxErrors(
@@ -81,7 +81,7 @@ object CheckerTestUtil {
                     root,
                     markDynamicCalls,
                     dynamicCallDescriptors,
-                    (platform as MultiTargetPlatform.Specific).platform,
+                    (platform as Platform.Specific).platform,
                     withNewInference,
                     languageVersionSettings,
                     dataFlowValueFactory,

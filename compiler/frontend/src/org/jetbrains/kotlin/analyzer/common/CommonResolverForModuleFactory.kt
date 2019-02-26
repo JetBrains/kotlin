@@ -68,7 +68,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
 
     fun analyzeFiles(
         files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = mapOf(MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common),
+        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
         metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
     ): AnalysisResult {
         val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
@@ -86,7 +86,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
             ProjectContext(project),
             listOf(moduleInfo),
             modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
-            modulePlatforms = { MultiTargetPlatform.Common },
+            modulePlatforms = { Platform.Common },
             moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
                 override fun getLanguageVersionSettings(
                     moduleInfo: ModuleInfo,

@@ -19,11 +19,10 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.classOrObjectVisitor
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.Platform
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker.Companion.allStrongIncompatibilities
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
 class OptionalExpectationInspection : AbstractKotlinInspection() {
@@ -49,7 +48,7 @@ class OptionalExpectationInspection : AbstractKotlinInspection() {
                                 expectedOnes != null && ExpectedActualResolver.Compatibility.Compatible in expectedOnes.keys
                             })
                 ) continue
-                val platform = (actualModuleDescriptor.getMultiTargetPlatform() as? MultiTargetPlatform.Specific) ?: continue
+                val platform = (actualModuleDescriptor.platform as? Platform.Specific) ?: continue
                 val displayedName = actualModuleDescriptor.getCapability(ModuleInfo.Capability)?.displayedName ?: ""
                 val actualModule = (actualModuleDescriptor.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module ?: continue
                 holder.registerProblem(

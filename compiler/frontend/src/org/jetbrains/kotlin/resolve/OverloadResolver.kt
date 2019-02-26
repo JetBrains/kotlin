@@ -290,7 +290,7 @@ class OverloadResolver(
         if (member1 !is MemberDescriptor || member2 !is MemberDescriptor) return false
 
         return member1.isActual && member2.isActual &&
-                member1.getMultiTargetPlatform() != member2.getMultiTargetPlatform()
+                member1.platform != member2.platform
     }
 
     private fun reportRedeclarations(redeclarations: Collection<DeclarationDescriptorNonRoot>) {
