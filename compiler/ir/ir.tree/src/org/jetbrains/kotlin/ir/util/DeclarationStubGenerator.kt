@@ -90,7 +90,7 @@ class DeclarationStubGenerator(
         )
     }
 
-    fun generateFieldStub(descriptor: PropertyDescriptor, bindingContext: BindingContext? = null): IrField {
+    fun generateFieldStub(descriptor: PropertyDescriptor): IrField {
         val referenced = symbolTable.referenceField(descriptor)
         if (referenced.isBound) {
             return referenced.owner

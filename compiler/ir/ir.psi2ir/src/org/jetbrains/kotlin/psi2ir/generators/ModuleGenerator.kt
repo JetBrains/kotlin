@@ -45,7 +45,7 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
     fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment, deserializer: IrDeserializer? = null) {
         ExternalDependenciesGenerator(
             irModule.descriptor, context.symbolTable, context.irBuiltIns, context.extensions.externalDeclarationOrigin, deserializer
-        ).generateUnboundSymbolsAsDependencies(irModule, context.bindingContext)
+        ).generateUnboundSymbolsAsDependencies()
     }
 
     private fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {

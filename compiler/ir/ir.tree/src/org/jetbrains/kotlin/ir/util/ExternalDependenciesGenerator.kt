@@ -19,58 +19,49 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.resolve.BindingContext
 
 class ExternalDependenciesGenerator(
     moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
     val irBuiltIns: IrBuiltIns,
     externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)? = null,
-    val deserializer: IrDeserializer? = null
+    private val deserializer: IrDeserializer? = null
 ) {
     private val stubGenerator = DeclarationStubGenerator(
         moduleDescriptor, symbolTable, irBuiltIns.languageVersionSettings, externalDeclarationOrigin, deserializer
     )
 
-    fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment, bindingContext: BindingContext? = null) {
-        DependencyGenerationTask(irModule, bindingContext).run()
-    }
-
-    private inner class DependencyGenerationTask(val irModule: IrModuleFragment, val bindingContext: BindingContext?) {
-
-        fun run() {
-            stubGenerator.unboundSymbolGeneration = true
-            ArrayList(symbolTable.unboundClasses).forEach {
-                stubGenerator.generateClassStub(it.descriptor)
-            }
-            ArrayList(symbolTable.unboundConstructors).forEach {
-                stubGenerator.generateConstructorStub(it.descriptor)
-            }
-            ArrayList(symbolTable.unboundEnumEntries).forEach {
-                stubGenerator.generateEnumEntryStub(it.descriptor)
-            }
-            ArrayList(symbolTable.unboundFields).forEach {
-                stubGenerator.generateFieldStub(it.descriptor, bindingContext)
-            }
-            ArrayList(symbolTable.unboundSimpleFunctions).forEach {
-                stubGenerator.generateFunctionStub(it.descriptor)
-            }
-            ArrayList(symbolTable.unboundTypeParameters).forEach {
-                stubGenerator.generateOrGetTypeParameterStub(it.descriptor)
-            }
-
-            deserializer?.declareForwardDeclarations()
-
-            if (deserializer != null) return
-
-            assert(symbolTable.unboundClasses.isEmpty())
-            assert(symbolTable.unboundConstructors.isEmpty())
-            assert(symbolTable.unboundEnumEntries.isEmpty())
-            assert(symbolTable.unboundFields.isEmpty())
-            assert(symbolTable.unboundSimpleFunctions.isEmpty())
-            assert(symbolTable.unboundTypeParameters.isEmpty())
+    fun generateUnboundSymbolsAsDependencies() {
+        stubGenerator.unboundSymbolGeneration = true
+        ArrayList(symbolTable.unboundClasses).forEach {
+            stubGenerator.generateClassStub(it.descriptor)
         }
+        ArrayList(symbolTable.unboundConstructors).forEach {
+            stubGenerator.generateConstructorStub(it.descriptor)
+        }
+        ArrayList(symbolTable.unboundEnumEntries).forEach {
+            stubGenerator.generateEnumEntryStub(it.descriptor)
+        }
+        ArrayList(symbolTable.unboundFields).forEach {
+            stubGenerator.generateFieldStub(it.descriptor)
+        }
+        ArrayList(symbolTable.unboundSimpleFunctions).forEach {
+            stubGenerator.generateFunctionStub(it.descriptor)
+        }
+        ArrayList(symbolTable.unboundTypeParameters).forEach {
+            stubGenerator.generateOrGetTypeParameterStub(it.descriptor)
+        }
+
+        deserializer?.declareForwardDeclarations()
+
+        if (deserializer != null) return
+
+        assert(symbolTable.unboundClasses.isEmpty())
+        assert(symbolTable.unboundConstructors.isEmpty())
+        assert(symbolTable.unboundEnumEntries.isEmpty())
+        assert(symbolTable.unboundFields.isEmpty())
+        assert(symbolTable.unboundSimpleFunctions.isEmpty())
+        assert(symbolTable.unboundTypeParameters.isEmpty())
     }
 }

@@ -172,7 +172,7 @@ fun compile(
 
     val context = if (compileMode.generateKlib) {
         deserializedModuleFragments.forEach {
-            ExternalDependenciesGenerator(it.descriptor, symbolTable, irBuiltIns).generateUnboundSymbolsAsDependencies(it)
+            ExternalDependenciesGenerator(it.descriptor, symbolTable, irBuiltIns).generateUnboundSymbolsAsDependencies()
         }
         deserializedModuleFragments.forEach { it.patchDeclarationParents() }
         serializeModuleIntoKlib(
@@ -216,7 +216,7 @@ fun compile(
                 context.symbolTable,
                 context.irBuiltIns,
                 deserializer = deserializer
-            ).generateUnboundSymbolsAsDependencies(it)
+            ).generateUnboundSymbolsAsDependencies()
         }
 
         // TODO: check the order
@@ -229,9 +229,8 @@ fun compile(
             moduleDescriptor = context.module,
             symbolTable = context.symbolTable,
             irBuiltIns = context.irBuiltIns
-        ).generateUnboundSymbolsAsDependencies(moduleFragment)
+        ).generateUnboundSymbolsAsDependencies()
         moduleFragment.patchDeclarationParents()
-
 
         jsPhases.invokeToplevel(context.phaseConfig, context, moduleFragment)
 
