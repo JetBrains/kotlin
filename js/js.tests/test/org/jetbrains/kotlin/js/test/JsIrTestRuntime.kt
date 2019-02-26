@@ -121,6 +121,7 @@ val reducedRuntimeSources = fullRuntimeSources - listOfKtFilesFrom(
     "libraries/stdlib/unsigned",
     "libraries/stdlib/common/src/generated/_Arrays.kt",
     "libraries/stdlib/common/src/generated/_Collections.kt",
+    "libraries/stdlib/common/src/generated/_Comparisons.kt",
     "libraries/stdlib/common/src/generated/_Maps.kt",
     "libraries/stdlib/common/src/generated/_Sequences.kt",
     "libraries/stdlib/common/src/generated/_Sets.kt",
@@ -128,9 +129,11 @@ val reducedRuntimeSources = fullRuntimeSources - listOfKtFilesFrom(
     "libraries/stdlib/common/src/generated/_UArrays.kt",
     "libraries/stdlib/common/src/generated/_URanges.kt",
     "libraries/stdlib/common/src/generated/_UCollections.kt",
+    "libraries/stdlib/common/src/generated/_UComparisons.kt",
     "libraries/stdlib/common/src/generated/_USequences.kt",
     "libraries/stdlib/common/src/kotlin/SequencesH.kt",
     "libraries/stdlib/common/src/kotlin/TextH.kt",
+    "libraries/stdlib/common/src/kotlin/UMath.kt",
     "libraries/stdlib/common/src/kotlin/collections/",
     "libraries/stdlib/common/src/kotlin/ioH.kt",
     "libraries/stdlib/js/irRuntime/collectionsHacks.kt",
@@ -158,8 +161,7 @@ val reducedRuntimeSources = fullRuntimeSources - listOfKtFilesFrom(
     "libraries/stdlib/src/kotlin/random/URandom.kt",
     "libraries/stdlib/src/kotlin/text/",
     "libraries/stdlib/src/kotlin/util/KotlinVersion.kt",
-    "libraries/stdlib/src/kotlin/util/Tuples.kt",
-    "libraries/stdlib/common/src/generated/_Comparisons.kt"
+    "libraries/stdlib/src/kotlin/util/Tuples.kt"
 ) + listOfKtFilesFrom(
     "libraries/stdlib/js/irRuntime/smallRuntimeMissingDeclarations.kt"
 )

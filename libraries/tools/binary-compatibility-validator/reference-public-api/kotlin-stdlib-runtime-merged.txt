@@ -2521,6 +2521,17 @@ public final class kotlin/comparisons/ComparisonsKt {
 	public static final fun thenDescending (Ljava/util/Comparator;Ljava/util/Comparator;)Ljava/util/Comparator;
 }
 
+public final class kotlin/comparisons/UComparisonsKt {
+	public static final fun maxOf-5PvTz6A (SS)S
+	public static final fun maxOf-J1ME1BU (II)I
+	public static final fun maxOf-Kr8caGY (BB)B
+	public static final fun maxOf-eb3DHEI (JJ)J
+	public static final fun minOf-5PvTz6A (SS)S
+	public static final fun minOf-J1ME1BU (II)I
+	public static final fun minOf-Kr8caGY (BB)B
+	public static final fun minOf-eb3DHEI (JJ)J
+}
+
 public final class kotlin/concurrent/ThreadsKt {
 	public static final fun thread (ZZLjava/lang/ClassLoader;Ljava/lang/String;ILkotlin/jvm/functions/Function0;)Ljava/lang/Thread;
 	public static synthetic fun thread$default (ZZLjava/lang/ClassLoader;Ljava/lang/String;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)Ljava/lang/Thread;
