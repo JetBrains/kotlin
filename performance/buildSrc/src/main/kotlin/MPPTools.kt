@@ -104,8 +104,8 @@ fun createJsonReport(projectProperties: Map<String, Any>): String {
     val benchDesc = getValue("benchmarks")
     val benchmarksArray = JsonTreeParser.parse(benchDesc)
     val benchmarks = BenchmarksReport.parseBenchmarksArray(benchmarksArray)
-            .union(listOf<BenchmarkResult>(projectProperties["compileTime"] as BenchmarkResult,
-                                            projectProperties["codeSize"] as BenchmarkResult)).toList()
+            .union(projectProperties["compileTime"] as List<BenchmarkResult>).union(
+                    listOf(projectProperties["codeSize"] as BenchmarkResult)).toList()
     val report = BenchmarksReport(env, benchmarks, kotlin)
     return report.toJson()
 }
@@ -175,6 +175,19 @@ fun getJvmCompileTime(programName: String): BenchmarkResult =
 fun getNativeCompileTime(programName: String): BenchmarkResult =
         TaskTimerListener.getBenchmarkResult(programName, listOf("compileKotlinNative", "linkMainReleaseExecutableNative"))
 
+fun getCompileBenchmarkTime(programName: String, tasksNames: Iterable<String>, repeats: Int, exitCodes: Map<String, Int>) =
+    (1..repeats).map { number ->
+        var time = 0.0
+        var status = BenchmarkResult.Status.PASSED
+        tasksNames.forEach {
+            time += TaskTimerListener.getTime("$it$number")
+            status = if (exitCodes["$it$number"] != 0) BenchmarkResult.Status.FAILED else status
+        }
+
+        BenchmarkResult("$programName.compileTime", status, time, time, number, 0)
+    }.toList()
+
+
 // Class time tracker for all tasks.
 class TaskTimerListener: TaskExecutionListener {
     companion object {
@@ -189,6 +202,7 @@ class TaskTimerListener: TaskExecutionListener {
                                     time, time, 1, 0)
         }
 
+        fun getTime(taskName: String) = tasksTimes[taskName] ?: 0.0
     }
 
     private var startTime = System.currentTimeMillis()

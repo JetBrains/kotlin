@@ -42,24 +42,27 @@ defaultTasks 'konanRun'
 
 // Produce and send slack report.
 task slackReport(type: RegressionsReporter) {
-    // Create folder for report (root Kotlin project settings make create report in separate folder).
-    def reportDirectory = new File(outputReport).parentFile
-    mkdir reportDirectory
-    def targetsResults = new File(new File("${rootBuildDirectory}"), "targetsResults").toString()
-    mkdir targetsResults
-    currentBenchmarksReportFile = "${buildDir.absolutePath}/${nativeJson}"
-    analyzer = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
-            "${rootBuildDirectory}/${analyzerToolDirectory}")
-    htmlReport = outputReport
-    defaultBranch = project.findProperty('kotlin.native.default.branch') ?: "master"
-    def target = System.getProperty("os.name")
-    summaryFile = "${targetsResults}/${target}.txt"
+    def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
+    if (teamcityConfig) {
+        // Create folder for report (root Kotlin project settings make create report in separate folder).
+        def reportDirectory = new File(outputReport).parentFile
+        mkdir reportDirectory
+        def targetsResults = new File(new File("${rootBuildDirectory}"), "targetsResults").toString()
+        mkdir targetsResults
+        currentBenchmarksReportFile = "${buildDir.absolutePath}/${nativeJson}"
+        analyzer = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
+                "${rootBuildDirectory}/${analyzerToolDirectory}")
+        htmlReport = outputReport
+        defaultBranch = project.findProperty('kotlin.native.default.branch') ?: "master"
+        def target = System.getProperty("os.name")
+        summaryFile = "${targetsResults}/${target}.txt"
+    }
 }
 
 task slackSummary(type: RegressionsSummaryReporter) {
-    targetsResultFiles = ["Linux": "${rootBuildDirectory}/targetsResults/Linux.txt",
-                          "MacOSX": "${rootBuildDirectory}/targetsResults/Mac OS X.txt",
-                          "Windows": "${rootBuildDirectory}/targetsResults/Windows 10.txt"]
+    targetsResultFiles = ['Linux': "${rootBuildDirectory}/targetsResults/Linux.txt".toString(),
+                          'MacOSX': "${rootBuildDirectory}/targetsResults/Mac OS X.txt".toString(),
+                          'Windows': "${rootBuildDirectory}/targetsResults/Windows 10.txt".toString()]
 }
 
 private def uploadBenchmarkResultToBintray(String fileName) {

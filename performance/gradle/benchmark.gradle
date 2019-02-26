@@ -96,7 +96,7 @@ task konanJsonReport {
                                                   'compilerVersion': "${konanVersion}".toString(),
                                                   'flags': kotlin.targets.native.compilations.main.extraOpts.collect{ "\"$it\"" },
                                                   'benchmarks': benchContents,
-                                                  'compileTime': nativeCompileTime,
+                                                  'compileTime': [nativeCompileTime],
                                                   'codeSize': MPPTools.getCodeSizeBenchmark(project.ext.applicationName, nativeExecutable) ]
         def output = MPPTools.createJsonReport(properties)
         new File("${buildDir.absolutePath}/${nativeJson}").write(output)
@@ -111,7 +111,7 @@ task jvmJsonReport {
         def properties = getCommonProperties() + ['type': 'jvm',
                                                   'compilerVersion': "${buildKotlinVersion}".toString(),
                                                   'benchmarks': benchContents,
-                                                  'compileTime': jvmCompileTime,
+                                                  'compileTime': [jvmCompileTime],
                                                   'codeSize': MPPTools.getCodeSizeBenchmark(project.ext.applicationName, "${jarPath}") ]
         def output = MPPTools.createJsonReport(properties)
         new File("${buildDir.absolutePath}/${jvmJson}").write(output)

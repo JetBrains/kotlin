@@ -555,6 +555,8 @@ class HTMLRender: Render() {
     private fun TableBlock.renderBenchmarksDetails(fullSet: Map<String, SummaryBenchmark>,
                                                    bucket: Map<String, ScoreChange>? = null, rowStyle: String? = null) {
         if (bucket != null) {
+            // Find max ratio.
+            val maxRatio = bucket.values.map { it.second.mean }.max()!!
             // There are changes in performance.
             // Output changed benchmarks.
             for ((name, change) in bucket) {
@@ -571,9 +573,7 @@ class HTMLRender: Render() {
                         +"${change.first.toString() + " %"}"
                     }
                     td {
-                        val scaledRatio = if (change.first.mean < 0)
-                                            (1 - change.second.mean) / (-1 + bucket.values.first().second.mean)
-                                            else (change.second.mean / bucket.values.first().second.mean)
+                        val scaledRatio = change.second.mean / maxRatio
                         attributes["bgcolor"] = ColoredCell(scaledRatio).backgroundStyle
                         +"${change.second}"
                     }
