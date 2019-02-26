@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionUVariable
 import java.lang.ref.WeakReference
 import java.text.StringCharacterIterator
 
@@ -250,19 +251,19 @@ internal fun KtClassOrObject.toPsiType(): PsiType {
 
 internal fun PsiElement.getMaybeLightElement(context: UElement): PsiElement? {
     return when (this) {
-        is KtVariableDeclaration -> {
+        is KtDeclaration -> {
             val lightElement = toLightElements().firstOrNull()
             if (lightElement != null) return lightElement
 
             val languagePlugin = context.getLanguagePlugin()
             val uElement = languagePlugin.convertElementWithParent(this, null)
             when (uElement) {
-                is UDeclaration -> uElement.psi
-                is UDeclarationsExpression -> uElement.declarations.firstOrNull()?.psi
+                is UDeclaration -> uElement.javaPsi
+                is UDeclarationsExpression -> uElement.declarations.firstOrNull()?.javaPsi
+                is ULambdaExpression -> (uElement.uastParent as? KotlinLocalFunctionUVariable)?.javaPsi
                 else -> null
             }
         }
-        is KtDeclaration -> toLightElements().firstOrNull()
         is KtElement -> null
         else -> this
     }
