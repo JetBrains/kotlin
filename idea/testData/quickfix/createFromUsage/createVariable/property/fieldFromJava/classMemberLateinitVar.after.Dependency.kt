@@ -1,4 +1,4 @@
 class K {
-    lateinit var foo: String
 
+    lateinit var foo: String
 }

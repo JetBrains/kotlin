@@ -1096,6 +1096,15 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
             (container as KtClass).createPrimaryConstructorIfAbsent().replaced(declaration) as D
         }
 
+        declaration is KtProperty && container !is KtBlockExpression -> {
+            val sibling = actualContainer.getChildOfType<KtProperty>() ?: when (actualContainer) {
+                is KtClassBody -> actualContainer.declarations.firstOrNull() ?: actualContainer.rBrace
+                is KtFile -> actualContainer.declarations.first()
+                else -> null
+            }
+            sibling?.let { actualContainer.addBefore(declaration, it) as D } ?: fileToEdit.add(declaration) as D
+        }
+
         actualContainer.isAncestor(anchor, true) -> {
             val insertToBlock = container is KtBlockExpression
             if (insertToBlock) {
@@ -1107,11 +1116,7 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
                     }
                 }
             }
-            addNextToOriginalElementContainer(
-                insertToBlock
-                        || (declaration is KtProperty && actualContainer !is KtFile)
-                        || declaration is KtTypeAlias
-            )
+            addNextToOriginalElementContainer(insertToBlock || declaration is KtTypeAlias)
         }
 
         container is KtFile -> container.add(declaration) as D
