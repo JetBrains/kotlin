@@ -386,15 +386,15 @@ actual class HashMap<K, V> private constructor(
 
     private fun contentEquals(other: Map<*, *>): Boolean = _size == other.size && containsAllEntries(other.entries)
 
-    internal fun containsAllEntries(m: Collection<Map.Entry<*, *>>): Boolean {
+    internal fun containsAllEntries(m: Collection<*>): Boolean {
         val it = m.iterator()
         while (it.hasNext()) {
             val entry = it.next()
             try {
                 @Suppress("UNCHECKED_CAST") // todo: get rid of unchecked cast here somehow
-                if (!containsEntry(entry as Map.Entry<K, V>))
+                if (entry == null || !containsEntry(entry as Map.Entry<K, V>))
                     return false
-            } catch(e: ClassCastException) {
+            } catch (e: ClassCastException) {
                 return false
             }
         }
@@ -676,9 +676,7 @@ internal class HashMapEntrySet<K, V> internal constructor(
     override fun retainAll(elements: Collection<MutableMap.MutableEntry<K, V>>): Boolean = backing.retainAllEntries(elements)
 
     override fun equals(other: Any?): Boolean =
-            other === this ||
-                    other is Set<*> &&
-                            contentEquals(other)
+            other === this || other is Set<*> && contentEquals(other)
 
     override fun hashCode(): Int {
         var result = 0
