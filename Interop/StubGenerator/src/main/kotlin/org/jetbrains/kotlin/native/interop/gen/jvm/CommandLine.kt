@@ -53,8 +53,10 @@ fun getCInteropArguments(): List<OptionDescriptor> {
     val options = listOf(
             OptionDescriptor(ArgType.String(), "target", description = "native target to compile to", defaultValue = "host"),
             OptionDescriptor(ArgType.String(), "def", description = "the library definition file"),
-            OptionDescriptor(ArgType.String(), "header", "h", "header file to produce kotlin bindings for",
-                    isMultiple = true, delimiter = ",", deprecatedWarning = "Short form -h of option -header is deprecated"),
+            OptionDescriptor(ArgType.String(), "header", description = "header file to produce kotlin bindings for",
+                    isMultiple = true, delimiter = ","),
+            OptionDescriptor(ArgType.String(), "h", description = "header file to produce kotlin bindings for",
+                    isMultiple = true, delimiter = ",", deprecatedWarning = "Option -h is deprecated. Please use -header."),
             OptionDescriptor(ArgType.String(), HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX, "hfasp",
                     "header file to produce kotlin bindings for", isMultiple = true, delimiter = ","),
             OptionDescriptor(ArgType.String(), "compilerOpts", "copt",

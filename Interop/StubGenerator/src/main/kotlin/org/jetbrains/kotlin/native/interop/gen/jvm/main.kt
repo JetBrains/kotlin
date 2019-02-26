@@ -298,7 +298,7 @@ internal fun buildNativeLibrary(
         arguments: ArgParser,
         imports: ImportsImpl
 ): NativeLibrary {
-    val additionalHeaders = arguments.getValuesAsArray("header")
+    val additionalHeaders = arguments.getValuesAsArray("header") + arguments.getValuesAsArray("h")
     val additionalCompilerOpts = arguments.getValuesAsArray("compilerOpts")
 
     val headerFiles = def.config.headers + additionalHeaders
