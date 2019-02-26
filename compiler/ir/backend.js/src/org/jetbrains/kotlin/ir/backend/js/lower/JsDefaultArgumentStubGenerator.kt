@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true) {
+class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, false) {
 
     override fun needSpecialDispatch(irFunction: IrSimpleFunction) = irFunction.isOverridableOrOverrides
 

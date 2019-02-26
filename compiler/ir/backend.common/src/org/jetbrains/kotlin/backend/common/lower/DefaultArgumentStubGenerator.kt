@@ -42,7 +42,8 @@ val jvmDefaultArgumentStubPhase = makeIrFilePhase(
 
 open class DefaultArgumentStubGenerator(
     open val context: CommonBackendContext,
-    private val skipInlineMethods: Boolean = true
+    private val skipInlineMethods: Boolean = true,
+    private val skipExternalMethods: Boolean = false
 ) : DeclarationContainerLoweringPass {
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
@@ -57,7 +58,7 @@ open class DefaultArgumentStubGenerator(
     private val symbols get() = context.ir.symbols
 
     private fun lower(irFunction: IrFunction): List<IrFunction> {
-        if (!irFunction.needsDefaultArgumentsLowering(skipInlineMethods))
+        if (!irFunction.needsDefaultArgumentsLowering(skipInlineMethods, skipExternalMethods))
             return listOf(irFunction)
 
         val bodies = irFunction.valueParameters.mapNotNull { it.defaultValue }
@@ -67,13 +68,13 @@ open class DefaultArgumentStubGenerator(
 
         if (bodies.isEmpty()) {
             // Fake override
-            val newIrFunction = irFunction.generateDefaultsFunction(context, IrDeclarationOrigin.FAKE_OVERRIDE, skipInlineMethods)
+            val newIrFunction = irFunction.generateDefaultsFunction(context, IrDeclarationOrigin.FAKE_OVERRIDE, skipInlineMethods, skipExternalMethods)
 
             return listOf(irFunction, newIrFunction)
         }
 
         val newIrFunction =
-            irFunction.generateDefaultsFunction(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, skipInlineMethods)
+            irFunction.generateDefaultsFunction(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, skipInlineMethods, skipExternalMethods)
 
         log { "$irFunction -> $newIrFunction" }
         val builder = context.createIrBuilder(newIrFunction.symbol)
@@ -209,7 +210,8 @@ val DEFAULT_DISPATCH_CALL = object : IrStatementOriginImpl("DEFAULT_DISPATCH_CAL
 
 open class DefaultParameterInjector(
     val context: CommonBackendContext,
-    private val skipInline: Boolean = true
+    private val skipInline: Boolean = true,
+    private val skipExternalMethods: Boolean = false
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -219,7 +221,7 @@ open class DefaultParameterInjector(
 
                 val declaration = expression.symbol.owner as IrFunction
 
-                if (!declaration.needsDefaultArgumentsLowering(skipInline))
+                if (!declaration.needsDefaultArgumentsLowering(skipInline, skipExternalMethods))
                     return expression
 
                 val argumentsCount = argumentCount(expression)
@@ -250,7 +252,7 @@ open class DefaultParameterInjector(
                 super.visitCall(expression)
                 val functionDeclaration = expression.symbol.owner
 
-                if (!functionDeclaration.needsDefaultArgumentsLowering(skipInline))
+                if (!functionDeclaration.needsDefaultArgumentsLowering(skipInline, skipExternalMethods))
                     return expression
 
                 val argumentsCount = argumentCount(expression)
@@ -293,7 +295,7 @@ open class DefaultParameterInjector(
             }
 
             private fun IrFunction.findSuperMethodWithDefaultArguments(): IrFunction? {
-                if (!needsDefaultArgumentsLowering(skipInline)) return null
+                if (!needsDefaultArgumentsLowering(skipInline, skipExternalMethods)) return null
 
                 if (this !is IrSimpleFunction) return this
 
@@ -309,7 +311,7 @@ open class DefaultParameterInjector(
 
                 val keyFunction = declaration.findSuperMethodWithDefaultArguments()!!
                 val realFunction =
-                    keyFunction.generateDefaultsFunction(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, skipInline)
+                    keyFunction.generateDefaultsFunction(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, skipInline, skipExternalMethods)
 
                 log { "$declaration -> $realFunction" }
                 val maskValues = Array((declaration.valueParameters.size + 31) / 32) { 0 }
@@ -389,20 +391,21 @@ class DefaultParameterCleaner constructor(val context: CommonBackendContext) : F
 }
 
 // TODO this implementation is exponential
-private fun IrFunction.needsDefaultArgumentsLowering(skipInlineMethods: Boolean): Boolean {
+private fun IrFunction.needsDefaultArgumentsLowering(skipInlineMethods: Boolean, skipExternalMethods: Boolean): Boolean {
     if (isInline && skipInlineMethods) return false
-    if (isEffectivelyExternal()) return false
+    if (skipExternalMethods && isEffectivelyExternal()) return false
     if (valueParameters.any { it.defaultValue != null }) return true
 
     if (this !is IrSimpleFunction) return false
 
-    return overriddenSymbols.any { it.owner.needsDefaultArgumentsLowering(skipInlineMethods) }
+    return overriddenSymbols.any { it.owner.needsDefaultArgumentsLowering(skipInlineMethods, skipExternalMethods) }
 }
 
 private fun IrFunction.generateDefaultsFunctionImpl(
     context: CommonBackendContext,
     origin: IrDeclarationOrigin,
-    skipInlineMethods: Boolean
+    skipInlineMethods: Boolean,
+    skipExternalMethods: Boolean
 ): IrFunction {
     val newFunction = buildFunctionDeclaration(this, origin)
 
@@ -440,13 +443,13 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     if (origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
         for (baseFunSymbol in (this as IrSimpleFunction).overriddenSymbols) {
             val baseFun = baseFunSymbol.owner
-            if (baseFun.needsDefaultArgumentsLowering(skipInlineMethods)) {
+            if (baseFun.needsDefaultArgumentsLowering(skipInlineMethods, skipExternalMethods)) {
                 val baseOrigin = if (baseFun.valueParameters.any { it.defaultValue != null }) {
                     IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
                 } else {
                     IrDeclarationOrigin.FAKE_OVERRIDE
                 }
-                val defaultsBaseFun = baseFun.generateDefaultsFunction(context, baseOrigin, skipInlineMethods)
+                val defaultsBaseFun = baseFun.generateDefaultsFunction(context, baseOrigin, skipInlineMethods, skipExternalMethods)
                 (newFunction as IrSimpleFunction).overriddenSymbols.add((defaultsBaseFun as IrSimpleFunction).symbol)
             }
         }
@@ -504,10 +507,11 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
 private fun IrFunction.generateDefaultsFunction(
     context: CommonBackendContext,
     origin: IrDeclarationOrigin,
-    skipInlineMethods: Boolean
+    skipInlineMethods: Boolean,
+    skipExternalMethods: Boolean
 ): IrFunction =
     context.ir.defaultParameterDeclarationsCache.getOrPut(this) {
-        generateDefaultsFunctionImpl(context, origin, skipInlineMethods)
+        generateDefaultsFunctionImpl(context, origin, skipInlineMethods, skipExternalMethods)
     }
 
 private fun IrFunction.valueParameter(index: Int, name: Name, type: IrType): IrValueParameter {
