@@ -304,7 +304,7 @@ public inline fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Th
 // "peek" onto value/exception and pipe
 
 /**
- * Performs the given [action] on encapsulated value if this instance represents [success][Result.isSuccess].
+ * Performs the given [action] on encapsulated exception if this instance represents [failure][Result.isFailure].
  * Returns the original `Result` unchanged.
  */
 @InlineOnly
@@ -318,7 +318,7 @@ public inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit
 }
 
 /**
- * Performs the given [action] on encapsulated exception if this instance represents [failure][Result.isFailure].
+ * Performs the given [action] on encapsulated value if this instance represents [success][Result.isSuccess].
  * Returns the original `Result` unchanged.
  */
 @InlineOnly
