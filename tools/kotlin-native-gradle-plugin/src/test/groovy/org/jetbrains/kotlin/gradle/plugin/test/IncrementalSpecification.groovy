@@ -108,7 +108,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "enableAssertions"    | "true"
         "enableDebug"         | "true"
         "artifactName"        | "'foo'"
-        "extraOpts"           | "'--time'"
+        "extraOpts"           | "'-Xtime'"
         "noDefaultLibs"       | "true"
     }
 
