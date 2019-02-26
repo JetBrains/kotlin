@@ -1,8 +1,8 @@
 // "Create abstract property 'foo'" "true"
 abstract class A {
-    fun bar(b: Boolean) {}
-
     abstract val foo: Boolean<caret>
+
+    fun bar(b: Boolean) {}
 
     fun test() {
         bar(foo)

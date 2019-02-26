@@ -3,8 +3,8 @@
 
 class A<T>(val n: T) {
     companion object {
-        val foo: Int
 
+        val foo: Int
     }
 }
 
