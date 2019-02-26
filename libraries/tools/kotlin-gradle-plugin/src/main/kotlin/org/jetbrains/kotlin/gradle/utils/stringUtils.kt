@@ -20,3 +20,10 @@ internal fun dashSeparatedName(vararg nameParts: String?): String {
     val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
     return nonEmptyParts.joinToString(separator = "-")
 }
+
+private val invalidTaskNameCharacters = "[/\\\\:<>\"?*|]".toRegex()
+
+/**
+ * Replaces characters which are not allowed in Gradle task names (/, \, :, <, >, ", ?, *, |) with '_'
+ */
+internal fun String.asValidTaskName() = replace(invalidTaskNameCharacters, "_")
