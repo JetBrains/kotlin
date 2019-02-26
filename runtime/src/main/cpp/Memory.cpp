@@ -1282,8 +1282,9 @@ OBJ_GETTER(AllocInstance, const TypeInfo* type_info) {
   RETURN_OBJ(ObjectContainer(type_info).GetPlace());
 }
 
-OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, uint32_t elements) {
+OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, int32_t elements) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
+  if (elements < 0) ThrowIllegalArgumentException();
   if (isArenaSlot(OBJ_RESULT)) {
     auto arena = initedArena(asArenaSlot(OBJ_RESULT));
     auto result = arena->PlaceArray(type_info, elements)->obj();

@@ -2062,12 +2062,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val thisValue = if (constructedClass.isArray) {
                 assert(args.isNotEmpty() && args[0].type == int32Type)
                 functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), args[0],
-                        resultLifetime(callee))
+                        resultLifetime(callee), currentCodeContext.exceptionHandler)
             } else if (constructedClass == context.ir.symbols.string.owner) {
                 // TODO: consider returning the empty string literal instead.
                 assert(args.isEmpty())
                 functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), count = kImmZero,
-                        lifetime = resultLifetime(callee))
+                        lifetime = resultLifetime(callee), exceptionHandler = currentCodeContext.exceptionHandler)
             } else if (constructedClass.isObjCClass()) {
                 assert(constructedClass.isKotlinObjCClass()) // Calls to other ObjC class constructors must be lowered.
                 val symbols = context.ir.symbols

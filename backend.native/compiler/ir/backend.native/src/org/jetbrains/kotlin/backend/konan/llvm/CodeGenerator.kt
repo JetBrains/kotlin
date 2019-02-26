@@ -402,17 +402,17 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
     }
 
-    fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime): LLVMValueRef {
-        return call(context.llvm.allocInstanceFunction, listOf(typeInfo), lifetime)
-    }
+    fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime): LLVMValueRef =
+            call(context.llvm.allocInstanceFunction, listOf(typeInfo), lifetime)
 
     fun allocInstance(irClass: IrClass, lifetime: Lifetime): LLVMValueRef =
             allocInstance(codegen.typeInfoForAllocation(irClass), lifetime)
 
-    fun allocArray(
-            typeInfo: LLVMValueRef, count: LLVMValueRef, lifetime: Lifetime): LLVMValueRef {
-        return call(context.llvm.allocArrayFunction, listOf(typeInfo, count), lifetime)
-    }
+    fun allocArray(typeInfo: LLVMValueRef,
+                   count: LLVMValueRef,
+                   lifetime: Lifetime,
+                   exceptionHandler: ExceptionHandler): LLVMValueRef =
+            call(context.llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler)
 
     fun unreachable(): LLVMValueRef? {
         val res = LLVMBuildUnreachable(builder)

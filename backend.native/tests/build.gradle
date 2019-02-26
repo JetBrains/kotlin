@@ -1593,6 +1593,12 @@ task array3(type: RunKonanTest) {
     source = "runtime/collections/array3.kt"
 }
 
+task array4(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
+    goldValue = "OK\n"
+    source = "runtime/collections/array4.kt"
+}
+
 task typed_array0(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "runtime/collections/typed_array0.kt"
