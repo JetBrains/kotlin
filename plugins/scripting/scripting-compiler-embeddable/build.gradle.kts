@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.pill.PillExtension.Variant
 
 plugins { java }
 
@@ -9,8 +8,8 @@ val packedJars by configurations.creating
 dependencies {
     packedJars(project(":kotlin-scripting-impl")) { isTransitive = false }
     packedJars(project(":kotlin-scripting-compiler")) { isTransitive = false }
-    packedJars(project(":kotlin-scripting-common")) { isTransitive = false }
-    packedJars(project(":kotlin-scripting-jvm")) { isTransitive = false }
+    runtime(project(":kotlin-scripting-compiler-impl-embeddable"))
+    runtime(kotlinStdlib())
 }
 
 publish()

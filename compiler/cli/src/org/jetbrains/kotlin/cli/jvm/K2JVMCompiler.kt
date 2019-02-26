@@ -212,14 +212,16 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             // try to find and enable it implicitly
             if (!explicitOrLoadedScriptingPlugin) {
                 val libPath = PathUtil.kotlinPathsForCompiler.libPath.takeIf { it.exists() && it.isDirectory } ?: File(".")
-                with(PathUtil) {
-                    val jars = arrayOf(
-                        KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_IMPL_JAR,
-                        KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
-                    ).mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
-                    if (jars.size == 4) {
-                        pluginClasspaths = jars + pluginClasspaths
-                    }
+                val (jars, missingJars) =
+                    PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.mapNotNull { File(libPath, it) }.partition { it.exists() }
+                if (missingJars.isEmpty()) {
+                    pluginClasspaths = jars.map { it.canonicalPath } + pluginClasspaths
+                } else {
+                    val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                    messageCollector.report(
+                        LOGGING,
+                        "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"
+                    )
                 }
             }
             if (arguments.scriptTemplates?.isNotEmpty() == true) {

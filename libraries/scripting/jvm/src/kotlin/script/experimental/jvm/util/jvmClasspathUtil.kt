@@ -25,6 +25,8 @@ internal const val TROVE4J_JAR = "trove4j.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_JAR = "kotlin-scripting-compiler.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_EMBEDDABLE_JAR = "kotlin-scripting-compiler-embeddable.jar"
 internal const val KOTLIN_SCRIPTING_IMPL_JAR = "kotlin-scripting-impl.jar"
+internal const val KOTLIN_SCRIPTING_COMPILER_IMPL_JAR = "kotlin-scripting-compiler-impl.jar"
+internal const val KOTLIN_SCRIPTING_COMPILER_IMPL_EMBEDDABLE_JAR = "kotlin-scripting-compiler-impl-embeddable.jar"
 internal const val KOTLIN_SCRIPTING_COMMON_JAR = "kotlin-scripting-common.jar"
 internal const val KOTLIN_SCRIPTING_JVM_JAR = "kotlin-scripting-jvm.jar"
 
@@ -205,6 +207,8 @@ object KotlinJars {
             KOTLIN_SCRIPTING_COMPILER_JAR,
             KOTLIN_SCRIPTING_IMPL_JAR,
             KOTLIN_SCRIPTING_COMPILER_EMBEDDABLE_JAR,
+            KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
+            KOTLIN_SCRIPTING_COMPILER_IMPL_EMBEDDABLE_JAR,
             KOTLIN_SCRIPTING_COMMON_JAR,
             KOTLIN_SCRIPTING_JVM_JAR
         ) else emptyList()
