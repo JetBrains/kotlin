@@ -90,7 +90,9 @@ tasks {
         for ((name, value) in propertiesToExpand) {
             inputs.property(name, value)
         }
-        expand("projectVersion" to project.version)
+        filesMatching("project.properties") {
+            expand("projectVersion" to project.version)
+        }
     }
 
     named<Jar>("jar") {
