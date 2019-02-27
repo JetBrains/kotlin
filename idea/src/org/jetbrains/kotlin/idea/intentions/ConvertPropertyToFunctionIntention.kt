@@ -25,7 +25,6 @@ import com.intellij.psi.*
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -51,11 +50,12 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import java.util.*
 
-class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Convert property to function"), LowPriorityAction {
+class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Convert property to function"),
+    LowPriorityAction {
     private inner class Converter(
-            project: Project,
-            descriptor: CallableDescriptor
-    ): CallableRefactoring<CallableDescriptor>(project, descriptor, text) {
+        project: Project,
+        descriptor: CallableDescriptor
+    ) : CallableRefactoring<CallableDescriptor>(project, descriptor, text) {
         private val newName: String = JvmAbi.getterName(callableDescriptor.name.asString())
 
         private fun convertProperty(originalProperty: KtProperty, psiFactory: KtPsiFactory) {
@@ -69,14 +69,14 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
             if (property.initializer == null) {
                 if (getter != null) {
                     val dropGetterTo = (getter.equalsToken ?: getter.bodyExpression)
-                            ?.siblings(forward = false, withItself = false)
-                            ?.firstOrNull { it !is PsiWhiteSpace }
+                        ?.siblings(forward = false, withItself = false)
+                        ?.firstOrNull { it !is PsiWhiteSpace }
                     getter.deleteChildRange(getter.firstChild, dropGetterTo)
 
                     val dropPropertyFrom = getter
-                            .siblings(forward = false, withItself = false)
-                            .first { it !is PsiWhiteSpace }
-                            .nextSibling
+                        .siblings(forward = false, withItself = false)
+                        .first { it !is PsiWhiteSpace }
+                        .nextSibling
                     property.deleteChildRange(dropPropertyFrom, getter.prevSibling)
                 }
             }
@@ -97,9 +97,9 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
 
             project.runSynchronouslyWithProgress("Looking for usages and conflicts...", true) {
                 runReadAction {
-                    val progressStep = 1.0/callables.size
+                    val progressStep = 1.0 / callables.size
                     for ((i, callable) in callables.withIndex()) {
-                        ProgressManager.getInstance().progressIndicatorNullable!!.fraction = (i + 1)*progressStep
+                        ProgressManager.getInstance().progressIndicatorNullable!!.fraction = (i + 1) * progressStep
 
                         if (callable !is PsiNamedElement) continue
 
@@ -110,17 +110,10 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
 
                         if (callable is KtProperty) {
                             callableDescriptor.getContainingScope()
-                                    ?.findFunction(callableDescriptor.name, NoLookupLocation.FROM_IDE) { it.valueParameters.isEmpty() }
-                                    ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-                                    ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
-                        }
-                        else if (callable is PsiMethod) {
-                            callable.containingClass
-                                    ?.findMethodsByName(propertyName, true)
-                                    // as is necessary here: see KT-10386
-                                    ?.firstOrNull { it.parameterList.parametersCount == 0 && !callables.contains(it.namedUnwrappedElement as PsiElement?) }
-                                    ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
-                        }
+                                ?.findFunction(callableDescriptor.name, NoLookupLocation.FROM_IDE) { it.valueParameters.isEmpty() }
+                                ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
+                                ?.let { reportDeclarationConflict(conflicts, it) { s -> "$s already exists" } }
+                        } else if (callable is PsiMethod) callable.checkDeclarationConflict(propertyName, conflicts, callables)
 
                         val usages = ReferencesSearch.search(callable)
                         for (usage in usages) {
@@ -128,18 +121,17 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                                 if (usage is KtSimpleNameReference) {
                                     val expression = usage.expression
                                     if (expression.getCall(expression.analyze(BodyResolveMode.PARTIAL)) != null
-                                        && expression.getStrictParentOfType<KtCallableReferenceExpression>() == null) {
+                                        && expression.getStrictParentOfType<KtCallableReferenceExpression>() == null
+                                    ) {
                                         kotlinRefsToReplaceWithCall.add(expression)
-                                    }
-                                    else if (nameChanged) {
+                                    } else if (nameChanged) {
                                         refsToRename.add(usage)
                                     }
-                                }
-                                else {
+                                } else {
                                     val refElement = usage.element
                                     conflicts.putValue(
-                                            refElement,
-                                            "Unrecognized reference will be skipped: " + StringUtil.htmlEmphasize(refElement.text)
+                                        refElement,
+                                        "Unrecognized reference will be skipped: " + StringUtil.htmlEmphasize(refElement.text)
                                     )
                                 }
                                 continue
@@ -157,8 +149,8 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                             }
 
                             conflicts.putValue(
-                                    refElement,
-                                    "Can't replace foreign reference with call expression: " + StringUtil.htmlEmphasize(refElement.text)
+                                refElement,
+                                "Can't replace foreign reference with call expression: " + StringUtil.htmlEmphasize(refElement.text)
                             )
                         }
                     }
