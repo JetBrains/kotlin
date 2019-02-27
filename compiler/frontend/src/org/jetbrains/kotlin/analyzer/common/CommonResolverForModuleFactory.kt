@@ -172,9 +172,8 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
                 ?: error("No MetadataFinderFactory in project")
         useInstance(metadataFinderFactory.create(moduleContentScope))
 
+
+
         targetEnvironment.configure(this)
     }
-
-    override val targetPlatform: TargetPlatform
-        get() = CommonPlatform
 }

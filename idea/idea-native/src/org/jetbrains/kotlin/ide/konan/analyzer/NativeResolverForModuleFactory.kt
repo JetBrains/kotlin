@@ -49,7 +49,7 @@ object NativeResolverForModuleFactory : ResolverForModuleFactory() {
             moduleContext,
             declarationProviderFactory,
             CodeAnalyzerInitializer.getInstance(moduleContext.project).createTrace(),
-            targetPlatform,
+            KonanPlatform,
             TargetPlatformVersion.NoVersion,
             targetEnvironment,
             languageVersionSettings
