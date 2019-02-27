@@ -50,7 +50,7 @@ val runBenchmark by tasks.registering(JavaExec::class) {
 publishing {
     publications {
         create("default", MavenPublication::class) {
-            from(kotlin.target.components.single())
+            from(components.getByName("kotlin"))
             artifact(tasks.getByName("kotlinSourcesJar"))
         }
     }

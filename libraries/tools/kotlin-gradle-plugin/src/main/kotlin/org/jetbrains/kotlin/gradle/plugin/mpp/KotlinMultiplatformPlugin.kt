@@ -84,7 +84,7 @@ class KotlinMultiplatformPlugin(
         )
         configurePublishingWithMavenPublish(project)
 
-        targetsContainer.all { applyUserDefinedAttributes(it) }
+        targetsContainer.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
 
         // propagate compiler plugin options to the source set language settings
         setupCompilerPluginOptions(project)
@@ -242,7 +242,7 @@ class KotlinMultiplatformPlugin(
  * 1. Output configurations of each target need the corresponding compilation's attributes (and, indirectly, the target's attributes)
  * 2. Resolvable configurations of each compilation need the compilation's attributes
  */
-internal fun applyUserDefinedAttributes(target: KotlinTarget) {
+internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
     val project = target.project
 
     project.whenEvaluated {
@@ -257,7 +257,7 @@ internal fun applyUserDefinedAttributes(target: KotlinTarget) {
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
         // based on the target's components:
         val outputConfigurationsWithCompilations =
-            target.components.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
+            target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
                 kotlinVariant.usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usageContext ->
                     project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
                         configuration to usageContext.compilation

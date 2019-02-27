@@ -13,13 +13,13 @@ repositories {
 }
 
 kotlin.sourceSets {
-    main {
+    getByName("main") {
         dependencies {
             api("org.jetbrains.kotlinx:kotlinx-html-js:0.6.10")
             implementation(kotlin("stdlib-js"))
         }
     }
-    test {
+    getByName("test") {
         dependencies {
             implementation(kotlin("test-js"))
         }
@@ -37,7 +37,7 @@ kotlin.target.compilations.create("benchmark") {
 publishing {
     publications {
         create("default", MavenPublication::class.java) {
-            from(kotlin.target.components.single())
+            from(components.getByName("kotlin"))
             artifact(tasks.getByName("kotlinSourcesJar"))
         }
     }
