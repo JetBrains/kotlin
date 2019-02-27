@@ -59,7 +59,7 @@ object TeamCityConnector: Connector() {
         val fileName = fileDescription.substringAfterLast(':')
         if (fileDescription == fileLocation ||
                 fileDescription == buildLocator || fileName == fileDescription) {
-            error("To get file from bintray, please, specify, build number from TeamCity and target" +
+            error("To get file from TeamCity, please, specify, build locator and filename on TeamCity" +
                     " in format teamcity:build_locator:filename")
         }
         val accessFileUrl = "$teamCityUrl/app/rest/builds/$buildLocator/artifacts/content/$fileName"
