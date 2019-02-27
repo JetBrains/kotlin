@@ -23,9 +23,6 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService.Companion.createDeclarationProviderFactory
 
 object NativeResolverForModuleFactory : ResolverForModuleFactory() {
-    override val targetPlatform: TargetPlatform
-        get() = KonanPlatform
-
     override fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
