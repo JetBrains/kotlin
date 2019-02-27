@@ -39,7 +39,6 @@ class KotlinMetadataDeserializerForDecompiler(
         private val proto: ProtoBuf.PackageFragment,
         private val nameResolver: NameResolver,
         private val metadataVersion: BinaryVersion,
-        override val targetPlatform: TargetPlatform,
         serializerProtocol: SerializerExtensionProtocol,
         flexibleTypeDeserializer: FlexibleTypeDeserializer
 ) : DeserializerForDecompilerBase(packageFqName) {

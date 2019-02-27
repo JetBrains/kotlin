@@ -86,7 +86,6 @@ abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
             is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
             is FileWithMetadata.Compatible -> decompiledText(
                 file,
-                targetPlatform,
                 serializerProtocol,
                 flexibleTypeDeserializer,
                 renderer
@@ -116,7 +115,7 @@ sealed class FileWithMetadata {
 
 //todo: this function is extracted for KotlinNativeMetadataStubBuilder, that's the difference from Big Kotlin.
 fun decompiledText(
-    file: FileWithMetadata.Compatible, targetPlatform: TargetPlatform,
+    file: FileWithMetadata.Compatible,
     serializerProtocol: SerializerExtensionProtocol,
     flexibleTypeDeserializer: FlexibleTypeDeserializer,
     renderer: DescriptorRenderer
@@ -124,7 +123,7 @@ fun decompiledText(
     val packageFqName = file.packageFqName
     val resolver = KotlinNativeMetadataDeserializerForDecompiler(
         packageFqName, file.proto, file.nameResolver,
-        targetPlatform, serializerProtocol, flexibleTypeDeserializer
+        serializerProtocol, flexibleTypeDeserializer
     )
     val declarations = arrayListOf<DeclarationDescriptor>()
     declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))

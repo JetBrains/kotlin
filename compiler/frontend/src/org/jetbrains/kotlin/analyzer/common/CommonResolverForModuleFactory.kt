@@ -151,8 +151,8 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         targetEnvironment: TargetEnvironment,
         metadataPartProvider: MetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings
-    ): StorageComponentContainer = createContainer("ResolveCommonCode", targetPlatform) {
-        configureModule(moduleContext, targetPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
+    ): StorageComponentContainer = createContainer("ResolveCommonCode", CommonPlatform) {
+        configureModule(moduleContext, CommonPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
 
         useInstance(moduleContentScope)
         useInstance(LookupTracker.DO_NOTHING)
@@ -171,9 +171,8 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
                 ?: error("No MetadataFinderFactory in project")
         useInstance(metadataFinderFactory.create(moduleContentScope))
 
+
+
         targetEnvironment.configure(this)
     }
-
-    override val targetPlatform: TargetPlatform
-        get() = CommonPlatform
 }
