@@ -28,7 +28,7 @@ FileReader(propertiesFile).use {
     }
 }
 
-val prepareDepsPath: Path = propertiesFile.toPath().resolve("../buildSrc/prepare-deps").toRealPath()
+val prepareDepsPath: Path = propertiesFile.parentFile.toPath().resolve("buildSrc/prepare-deps").toRealPath()
 
 fun externalDepsDir(depsProjectName: String, suffix: String): File =
         prepareDepsPath.resolve(depsProjectName).resolve("build/external-deps").resolve(suffix).toFile()
