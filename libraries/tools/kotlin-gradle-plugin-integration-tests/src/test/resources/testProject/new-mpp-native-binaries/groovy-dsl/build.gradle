@@ -20,15 +20,10 @@ kotlin {
         commonMain {
             dependencies {
                 api "org.jetbrains.kotlin:kotlin-stdlib-common"
-            }
-        }
-
-        iosMain {
-            dependencies {
                 api(project(":exported"))
             }
         }
-
+        
         commonTest {
             dependencies {
                 api "org.jetbrains.kotlin:kotlin-test-annotations-common"

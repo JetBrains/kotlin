@@ -1,5 +1,8 @@
 package foo
 
+import com.example.exported
+
 fun main() {
-    println("foo.main")
+    val exp = exported()
+    println("foo.main: exp = $exp")
 }
