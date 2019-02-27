@@ -27,7 +27,6 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -59,13 +58,14 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
-class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunction>(KtNamedFunction::class.java, "Convert function to property"), LowPriorityAction {
+class ConvertFunctionToPropertyIntention :
+    SelfTargetingIntention<KtNamedFunction>(KtNamedFunction::class.java, "Convert function to property"), LowPriorityAction {
     private var KtNamedFunction.typeFqNameToAdd: String? by UserDataProperty(Key.create("TYPE_FQ_NAME_TO_ADD"))
 
     private inner class Converter(
-            project: Project,
-            private val editor: Editor?,
-            descriptor: FunctionDescriptor
+        project: Project,
+        private val editor: Editor?,
+        descriptor: FunctionDescriptor
     ) : CallableRefactoring<FunctionDescriptor>(project, descriptor, text) {
         private val elementsToShorten = ArrayList<KtElement>()
 
@@ -86,8 +86,7 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
 
                 if (originalFunction.equalsToken != null) {
                     getterExpression(originalFunction.bodyExpression!!.text, breakLine = originalFunction.typeReference != null)
-                }
-                else {
+                } else {
                     originalFunction.bodyBlockExpression?.let { body ->
                         transform {
                             append("\nget() ")
@@ -121,26 +120,20 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
                         val functionDescriptor = callable.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) as FunctionDescriptor
                         val type = functionDescriptor.returnType
                         val typeToInsert = when {
-                                               type == null || type.isError -> null
-                                               type.constructor.isDenotable -> type
-                                               else -> type.supertypes().firstOrNull { it.constructor.isDenotable }
-                                           } ?: functionDescriptor.builtIns.nullableAnyType
+                            type == null || type.isError -> null
+                            type.constructor.isDenotable -> type
+                            else -> type.supertypes().firstOrNull { it.constructor.isDenotable }
+                        } ?: functionDescriptor.builtIns.nullableAnyType
                         callable.typeFqNameToAdd = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToInsert)
                     }
 
                     callableDescriptor.getContainingScope()
-                            ?.findVariable(callableDescriptor.name, NoLookupLocation.FROM_IDE)
-                            ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-                            ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
+                        ?.findVariable(callableDescriptor.name, NoLookupLocation.FROM_IDE)
+                        ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
+                        ?.let { reportDeclarationConflict(conflicts, it) { s -> "$s already exists" } }
                 }
 
-                if (callable is PsiMethod) {
-                    callable.containingClass
-                            ?.findMethodsByName(getterName, true)
-                            // as is necessary here: see KT-10386
-                            ?.firstOrNull { it.parameterList.parametersCount == 0 && !callables.contains(it.namedUnwrappedElement as PsiElement?) }
-                            ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
-                }
+                if (callable is PsiMethod) callable.checkDeclarationConflict(getterName, conflicts, callables)
 
                 val usages = ReferencesSearch.search(callable)
                 for (usage in usages) {
@@ -150,26 +143,24 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
                         if (callElement != null && expression.getStrictParentOfType<KtCallableReferenceExpression>() == null) {
                             if (callElement.typeArguments.isNotEmpty()) {
                                 conflicts.putValue(
-                                        callElement,
-                                        "Type arguments will be lost after conversion: ${StringUtil.htmlEmphasize(callElement.text)}"
+                                    callElement,
+                                    "Type arguments will be lost after conversion: ${StringUtil.htmlEmphasize(callElement.text)}"
                                 )
                             }
 
                             if (callElement.valueArguments.isNotEmpty()) {
                                 conflicts.putValue(
-                                        callElement,
-                                        "Call with arguments will be skipped: ${StringUtil.htmlEmphasize(callElement.text)}"
+                                    callElement,
+                                    "Call with arguments will be skipped: ${StringUtil.htmlEmphasize(callElement.text)}"
                                 )
                                 continue
                             }
 
                             kotlinCalls.add(callElement)
-                        }
-                        else {
+                        } else {
                             kotlinRefsToRename.add(usage)
                         }
-                    }
-                    else {
+                    } else {
                         foreignRefs.add(usage)
                     }
                 }

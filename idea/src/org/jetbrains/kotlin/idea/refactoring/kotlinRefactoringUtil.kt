@@ -28,7 +28,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.ui.popup.*
+import com.intellij.openapi.ui.popup.JBPopup
+import com.intellij.openapi.ui.popup.JBPopupAdapter
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -82,7 +85,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.*
@@ -95,21 +97,25 @@ import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
 
-val CHECK_SUPER_METHODS_YES_NO_DIALOG = "CHECK_SUPER_METHODS_YES_NO_DIALOG"
+const val CHECK_SUPER_METHODS_YES_NO_DIALOG = "CHECK_SUPER_METHODS_YES_NO_DIALOG"
 
 @JvmOverloads
-fun getOrCreateKotlinFile(fileName: String,
-                          targetDir: PsiDirectory,
-                          packageName: String? = targetDir.getPackage()?.qualifiedName): KtFile? =
-        (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir, packageName)) as? KtFile
+fun getOrCreateKotlinFile(
+    fileName: String,
+    targetDir: PsiDirectory,
+    packageName: String? = targetDir.getPackage()?.qualifiedName
+): KtFile? =
+    (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir, packageName)) as? KtFile
 
-fun createKotlinFile(fileName: String,
-                     targetDir: PsiDirectory,
-                     packageName: String? = targetDir.getPackage()?.qualifiedName): KtFile {
+fun createKotlinFile(
+    fileName: String,
+    targetDir: PsiDirectory,
+    packageName: String? = targetDir.getPackage()?.qualifiedName
+): KtFile {
     targetDir.checkCreateFile(fileName)
     val packageFqName = packageName?.let(::FqName) ?: FqName.ROOT
     val file = PsiFileFactory.getInstance(targetDir.project).createFileFromText(
-            fileName, KotlinFileType.INSTANCE, if (!packageFqName.isRoot) "package ${packageFqName.quoteSegmentsIfNeeded()} \n\n" else ""
+        fileName, KotlinFileType.INSTANCE, if (!packageFqName.isRoot) "package ${packageFqName.quoteSegmentsIfNeeded()} \n\n" else ""
     )
 
     return targetDir.add(file) as KtFile
@@ -127,24 +133,25 @@ fun VirtualFile.toPsiFile(project: Project): PsiFile? = PsiManager.getInstance(p
 
 fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? = PsiManager.getInstance(project).findDirectory(this)
 
-fun VirtualFile.toPsiFileOrDirectory(project: Project): PsiFileSystemItem? = if (isDirectory) toPsiDirectory(project) else toPsiFile(project)
+fun VirtualFile.toPsiFileOrDirectory(project: Project): PsiFileSystemItem? =
+    if (isDirectory) toPsiDirectory(project) else toPsiFile(project)
 
 fun PsiElement.getUsageContext(): PsiElement {
     return when (this) {
         is KtElement -> PsiTreeUtil.getParentOfType(
-                this,
-                KtPropertyAccessor::class.java,
-                KtProperty::class.java,
-                KtNamedFunction::class.java,
-                KtConstructor::class.java,
-                KtClassOrObject::class.java
+            this,
+            KtPropertyAccessor::class.java,
+            KtProperty::class.java,
+            KtNamedFunction::class.java,
+            KtConstructor::class.java,
+            KtClassOrObject::class.java
         ) ?: containingFile
         else -> ConflictsUtil.getContainer(this)
     }
 }
 
 fun PsiElement.isInJavaSourceRoot(): Boolean =
-        !JavaProjectRootsUtil.isOutsideJavaSourceRoot(containingFile)
+    !JavaProjectRootsUtil.isOutsideJavaSourceRoot(containingFile)
 
 fun KtFile.createTempCopy(text: String? = null): KtFile {
     val tmpFile = KtPsiFactory(this).createAnalyzableFile(name, text ?: this.text ?: "", this)
@@ -171,8 +178,8 @@ fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<KtElemen
         if (!objectOrNonInnerNestedClassFound) {
             val bodyParent = (element as? KtClassBody)?.parent
             objectOrNonInnerNestedClassFound =
-                    (bodyParent is KtObjectDeclaration && !bodyParent.isObjectLiteral())
-                    || (bodyParent is KtClass && !bodyParent.isInner())
+                (bodyParent is KtObjectDeclaration && !bodyParent.isObjectLiteral())
+                        || (bodyParent is KtClass && !bodyParent.isInner())
         }
     }
 
@@ -182,13 +189,13 @@ fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<KtElemen
 fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boolean = false): List<KtElement> {
     fun getEnclosingDeclaration(element: PsiElement, strict: Boolean): PsiElement? {
         return (if (strict) element.parents else element.parentsWithSelf)
-                .filter {
-                    (it is KtDeclarationWithBody && it !is KtFunctionLiteral && !(it is KtNamedFunction && it.name == null))
-                    || it is KtAnonymousInitializer
-                    || it is KtClassBody
-                    || it is KtFile
-                }
-                .firstOrNull()
+            .filter {
+                (it is KtDeclarationWithBody && it !is KtFunctionLiteral && !(it is KtNamedFunction && it.name == null))
+                        || it is KtAnonymousInitializer
+                        || it is KtClassBody
+                        || it is KtFile
+            }
+            .firstOrNull()
     }
 
     if (includeAll) return getAllExtractionContainers(strict)
@@ -212,9 +219,10 @@ fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boole
 }
 
 fun Project.checkConflictsInteractively(
-        conflicts: MultiMap<PsiElement, String>,
-        onShowConflicts: () -> Unit = {},
-        onAccept: () -> Unit) {
+    conflicts: MultiMap<PsiElement, String>,
+    onShowConflicts: () -> Unit = {},
+    onAccept: () -> Unit
+) {
     if (!conflicts.isEmpty) {
         if (ApplicationManager.getApplication()!!.isUnitTestMode) throw ConflictsInTestsException(conflicts.values())
 
@@ -232,21 +240,22 @@ fun Project.checkConflictsInteractively(
 }
 
 fun reportDeclarationConflict(
-        conflicts: MultiMap<PsiElement, String>,
-        declaration: PsiElement,
-        message: (renderedDeclaration: String) -> String
+    conflicts: MultiMap<PsiElement, String>,
+    declaration: PsiElement,
+    message: (renderedDeclaration: String) -> String
 ) {
     conflicts.putValue(declaration, message(RefactoringUIUtil.getDescription(declaration, true).capitalize()))
 }
 
 fun <T, E : PsiElement> getPsiElementPopup(
-        editor: Editor,
-        elements: List<T>,
-        renderer: PsiElementListCellRenderer<E>,
-        title: String?,
-        highlightSelection: Boolean,
-        toPsi: (T) -> E,
-        processor: (T) -> Boolean): JBPopup {
+    editor: Editor,
+    elements: List<T>,
+    renderer: PsiElementListCellRenderer<E>,
+    title: String?,
+    highlightSelection: Boolean,
+    toPsi: (T) -> E,
+    processor: (T) -> Boolean
+): JBPopup {
     val highlighter = if (highlightSelection) SelectionAwareScopeHighlighter(editor) else null
 
     val list = JBList(elements.map(toPsi))
@@ -283,13 +292,13 @@ class SelectionAwareScopeHighlighter(val editor: Editor) {
 
     private fun addHighlighter(r: TextRange, attr: TextAttributes) {
         highlighters.add(
-                editor.markupModel.addRangeHighlighter(
-                        r.startOffset,
-                        r.endOffset,
-                        UnwrapHandler.HIGHLIGHTER_LEVEL,
-                        attr,
-                        HighlighterTargetArea.EXACT_RANGE
-                )
+            editor.markupModel.addRangeHighlighter(
+                r.startOffset,
+                r.endOffset,
+                UnwrapHandler.HIGHLIGHTER_LEVEL,
+                attr,
+                HighlighterTargetArea.EXACT_RANGE
+            )
         )
     }
 
@@ -359,84 +368,85 @@ class SeparateFileWrapper(manager: PsiManager) : LightElement(manager, KotlinLan
 }
 
 fun <T> chooseContainerElement(
-        containers: List<T>,
-        editor: Editor,
-        title: String,
-        highlightSelection: Boolean,
-        toPsi: (T) -> PsiElement,
-        onSelect: (T) -> Unit) {
+    containers: List<T>,
+    editor: Editor,
+    title: String,
+    highlightSelection: Boolean,
+    toPsi: (T) -> PsiElement,
+    onSelect: (T) -> Unit
+) {
     return getPsiElementPopup(
-            editor,
-            containers,
-            object : PsiElementListCellRenderer<PsiElement>() {
-                private fun PsiElement.renderName(): String {
-                    if (this is KtPropertyAccessor) {
-                        return property.renderName() + if (isGetter) ".get" else ".set"
-                    }
-                    if (this is KtObjectDeclaration && this.isCompanion()) {
-                        return "Companion object of ${getStrictParentOfType<KtClassOrObject>()?.renderName() ?: "<anonymous>"}"
-                    }
-                    return (this as? PsiNamedElement)?.name ?: "<anonymous>"
+        editor,
+        containers,
+        object : PsiElementListCellRenderer<PsiElement>() {
+            private fun PsiElement.renderName(): String {
+                if (this is KtPropertyAccessor) {
+                    return property.renderName() + if (isGetter) ".get" else ".set"
                 }
-
-                private fun PsiElement.renderDeclaration(): String? {
-                    if (this is KtFunctionLiteral || isFunctionalExpression()) return renderText()
-
-                    val descriptor = when {
-                                         this is KtFile -> name
-                                         this is KtElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
-                                         this is PsiMember -> getJavaMemberDescriptor()
-                                         else -> null
-                                     } ?: return null
-                    val name = renderName()
-                    val params = (descriptor as? FunctionDescriptor)?.valueParameters
-                                         ?.map { DescriptorRenderer.Companion.SHORT_NAMES_IN_TYPES.renderType(it.type) }
-                                         ?.joinToString(", ", "(", ")") ?: ""
-                    return "$name$params"
+                if (this is KtObjectDeclaration && this.isCompanion()) {
+                    return "Companion object of ${getStrictParentOfType<KtClassOrObject>()?.renderName() ?: "<anonymous>"}"
                 }
-
-                private fun PsiElement.renderText(): String {
-                    if (this is SeparateFileWrapper) return "Extract to separate file"
-                    return StringUtil.shortenTextWithEllipsis(text!!.collapseSpaces(), 53, 0)
-                }
-
-                private fun PsiElement.getRepresentativeElement(): PsiElement {
-                    return when (this) {
-                        is KtBlockExpression -> (parent as? KtDeclarationWithBody) ?: this
-                        is KtClassBody -> parent as KtClassOrObject
-                        else -> this
-                    }
-                }
-
-                override fun getElementText(element: PsiElement): String? {
-                    val representativeElement = element.getRepresentativeElement()
-                    return representativeElement.renderDeclaration() ?: representativeElement.renderText()
-                }
-
-                override fun getContainerText(element: PsiElement, name: String?): String? = null
-
-                override fun getIconFlags(): Int = 0
-
-                override fun getIcon(element: PsiElement): Icon? =
-                        super.getIcon(element.getRepresentativeElement())
-            },
-            title,
-            highlightSelection,
-            toPsi,
-            {
-                onSelect(it)
-                true
+                return (this as? PsiNamedElement)?.name ?: "<anonymous>"
             }
+
+            private fun PsiElement.renderDeclaration(): String? {
+                if (this is KtFunctionLiteral || isFunctionalExpression()) return renderText()
+
+                val descriptor = when {
+                    this is KtFile -> name
+                    this is KtElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+                    this is PsiMember -> getJavaMemberDescriptor()
+                    else -> null
+                } ?: return null
+                val name = renderName()
+                val params = (descriptor as? FunctionDescriptor)?.valueParameters
+                    ?.map { DescriptorRenderer.Companion.SHORT_NAMES_IN_TYPES.renderType(it.type) }
+                    ?.joinToString(", ", "(", ")") ?: ""
+                return "$name$params"
+            }
+
+            private fun PsiElement.renderText(): String {
+                if (this is SeparateFileWrapper) return "Extract to separate file"
+                return StringUtil.shortenTextWithEllipsis(text!!.collapseSpaces(), 53, 0)
+            }
+
+            private fun PsiElement.getRepresentativeElement(): PsiElement {
+                return when (this) {
+                    is KtBlockExpression -> (parent as? KtDeclarationWithBody) ?: this
+                    is KtClassBody -> parent as KtClassOrObject
+                    else -> this
+                }
+            }
+
+            override fun getElementText(element: PsiElement): String? {
+                val representativeElement = element.getRepresentativeElement()
+                return representativeElement.renderDeclaration() ?: representativeElement.renderText()
+            }
+
+            override fun getContainerText(element: PsiElement, name: String?): String? = null
+
+            override fun getIconFlags(): Int = 0
+
+            override fun getIcon(element: PsiElement): Icon? =
+                super.getIcon(element.getRepresentativeElement())
+        },
+        title,
+        highlightSelection,
+        toPsi,
+        {
+            onSelect(it)
+            true
+        }
     ).showInBestPositionFor(editor)
 }
 
 fun <T> chooseContainerElementIfNecessary(
-        containers: List<T>,
-        editor: Editor,
-        title: String,
-        highlightSelection: Boolean,
-        toPsi: (T) -> PsiElement,
-        onSelect: (T) -> Unit
+    containers: List<T>,
+    editor: Editor,
+    title: String,
+    highlightSelection: Boolean,
+    toPsi: (T) -> PsiElement,
+    onSelect: (T) -> Unit
 ) {
     when {
         containers.isEmpty() -> return
@@ -454,8 +464,8 @@ fun PsiElement.canRefactor(): Boolean {
         this is PsiPackage ->
             directories.any { it.canRefactor() }
         this is KtElement ||
-        this is PsiMember && language == JavaLanguage.INSTANCE ||
-        this is PsiDirectory ->
+                this is PsiMember && language == JavaLanguage.INSTANCE ||
+                this is PsiDirectory ->
             ProjectRootsUtil.isInProjectSource(this, includeScriptsOutsideSourceRoots = true)
         else ->
             false
@@ -480,9 +490,9 @@ private fun copyModifierListItems(from: PsiModifierList, to: PsiModifierList, wi
 }
 
 private fun <T> copyTypeParameters(
-        from: T,
-        to: T,
-        inserter: (T, PsiTypeParameterList) -> Unit
+    from: T,
+    to: T,
+    inserter: (T, PsiTypeParameterList) -> Unit
 ) where T : PsiTypeParameterListOwner, T : PsiNameIdentifierOwner {
     val factory = PsiElementFactory.SERVICE.getInstance((from as PsiElement).project)
     val templateTypeParams = from.typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
@@ -493,17 +503,17 @@ private fun <T> copyTypeParameters(
             factory.createTypeParameter(it.name, it.extendsList.referencedTypes)
         }
         ChangeSignatureUtil.synchronizeList(
-                targetTypeParamList,
-                newTypeParams,
-                { it!!.typeParameters.toList() },
-                BooleanArray(newTypeParams.size)
+            targetTypeParamList,
+            newTypeParams,
+            { it!!.typeParameters.toList() },
+            BooleanArray(newTypeParams.size)
         )
     }
 }
 
 fun createJavaMethod(function: KtFunction, targetClass: PsiClass): PsiMethod {
     val template = LightClassUtil.getLightClassMethod(function)
-                   ?: throw AssertionError("Can't generate light method: ${function.getElementTextWithContext()}")
+        ?: throw AssertionError("Can't generate light method: ${function.getElementTextWithContext()}")
     return createJavaMethod(template, targetClass)
 }
 
@@ -511,8 +521,7 @@ fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMethod {
     val factory = PsiElementFactory.SERVICE.getInstance(template.project)
     val methodToAdd = if (template.isConstructor) {
         factory.createConstructor(template.name)
-    }
-    else {
+    } else {
         factory.createMethod(template.name, template.returnType)
     }
     val method = targetClass.add(methodToAdd) as PsiMethod
@@ -533,16 +542,15 @@ fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMethod {
         param
     }
     ChangeSignatureUtil.synchronizeList(
-            targetParamList,
-            newParams,
-            { it.parameters.toList() },
-            BooleanArray(newParams.size)
+        targetParamList,
+        newParams,
+        { it.parameters.toList() },
+        BooleanArray(newParams.size)
     )
 
     if (template.modifierList.hasModifierProperty(PsiModifier.ABSTRACT) || targetClass.isInterface) {
         method.body!!.delete()
-    }
-    else if (!template.isConstructor) {
+    } else if (!template.isConstructor) {
         CreateFromUsageUtils.setupMethodBody(method)
     }
 
@@ -552,7 +560,7 @@ fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMethod {
 fun createJavaField(property: KtNamedDeclaration, targetClass: PsiClass): PsiField {
     val accessorLightMethods = property.getAccessorLightMethods()
     val template = accessorLightMethods.getter
-                   ?: throw AssertionError("Can't generate light method: ${property.getElementTextWithContext()}")
+        ?: throw AssertionError("Can't generate light method: ${property.getElementTextWithContext()}")
 
     val factory = PsiElementFactory.SERVICE.getInstance(template.project)
     val field = targetClass.add(factory.createField(property.name!!, template.returnType!!)) as PsiField
@@ -597,21 +605,20 @@ fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boo
     // Turning interface to class
     if (!javaClass.isInterface && template.isInterface) {
         val implementsList = factory.createReferenceListWithRole(
-                template.extendsList?.referenceElements ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
-                PsiReferenceList.Role.IMPLEMENTS_LIST
+            template.extendsList?.referenceElements ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
+            PsiReferenceList.Role.IMPLEMENTS_LIST
         )
         implementsList?.let { javaClass.implementsList?.replace(it) }
-    }
-    else {
+    } else {
         val extendsList = factory.createReferenceListWithRole(
-                template.extendsList?.referenceElements ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
-                PsiReferenceList.Role.EXTENDS_LIST
+            template.extendsList?.referenceElements ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
+            PsiReferenceList.Role.EXTENDS_LIST
         )
         extendsList?.let { javaClass.extendsList?.replace(it) }
 
         val implementsList = factory.createReferenceListWithRole(
-                template.implementsList?.referenceElements ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
-                PsiReferenceList.Role.IMPLEMENTS_LIST
+            template.implementsList?.referenceElements ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
+            PsiReferenceList.Role.IMPLEMENTS_LIST
         )
         implementsList?.let { javaClass.implementsList?.replace(it) }
     }
@@ -619,9 +626,9 @@ fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boo
     for (method in template.methods) {
         val hasParams = method.parameterList.parametersCount > 0
         val needSuperCall = !template.isEnum &&
-                            (template.superClass?.constructors ?: PsiMethod.EMPTY_ARRAY).all {
-                                it.parameterList.parametersCount > 0
-                            }
+                (template.superClass?.constructors ?: PsiMethod.EMPTY_ARRAY).all {
+                    it.parameterList.parametersCount > 0
+                }
         if (method.isConstructor && !(hasParams || needSuperCall)) continue
         with(createJavaMethod(method, javaClass)) {
             if (isConstructor && needSuperCall) {
@@ -636,9 +643,11 @@ fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boo
 fun PsiElement.j2kText(): String? {
     if (language != JavaLanguage.INSTANCE) return null
 
-    val j2kConverter = JavaToKotlinConverter(project,
-                                             ConverterSettings.Companion.defaultSettings,
-                                             IdeaJavaToKotlinServices)
+    val j2kConverter = JavaToKotlinConverter(
+        project,
+        ConverterSettings.Companion.defaultSettings,
+        IdeaJavaToKotlinServices
+    )
     return j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
 }
 
@@ -669,52 +678,52 @@ internal abstract class CompositeRefactoringRunner(
     fun run() {
         val connection = project.messageBus.connect()
         connection.subscribe(
-                RefactoringEventListener.REFACTORING_EVENT_TOPIC,
-                object : RefactoringEventListener {
-                    override fun undoRefactoring(refactoringId: String) {
+            RefactoringEventListener.REFACTORING_EVENT_TOPIC,
+            object : RefactoringEventListener {
+                override fun undoRefactoring(refactoringId: String) {
 
-                    }
+                }
 
-                    override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {
+                override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {
 
-                    }
+                }
 
-                    override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {
+                override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {
 
-                    }
+                }
 
-                    override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) {
-                        if (refactoringId == this@CompositeRefactoringRunner.refactoringId) {
-                            onRefactoringDone()
-                        }
+                override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) {
+                    if (refactoringId == this@CompositeRefactoringRunner.refactoringId) {
+                        onRefactoringDone()
                     }
                 }
+            }
         )
         connection.subscribe(
-                KotlinRefactoringEventListener.EVENT_TOPIC,
-                object : KotlinRefactoringEventListener {
-                    override fun onRefactoringExit(refactoringId: String) {
-                        if (refactoringId == this@CompositeRefactoringRunner.refactoringId) {
-                            try {
-                                onExit()
-                            } finally {
-                                connection.disconnect()
-                            }
+            KotlinRefactoringEventListener.EVENT_TOPIC,
+            object : KotlinRefactoringEventListener {
+                override fun onRefactoringExit(refactoringId: String) {
+                    if (refactoringId == this@CompositeRefactoringRunner.refactoringId) {
+                        try {
+                            onExit()
+                        } finally {
+                            connection.disconnect()
                         }
                     }
                 }
+            }
         )
         runRefactoring()
     }
 }
 
-@Throws(ConfigurationException::class) fun KtElement?.validateElement(errorMessage: String) {
+@Throws(ConfigurationException::class)
+fun KtElement?.validateElement(errorMessage: String) {
     if (this == null) throw ConfigurationException(errorMessage)
 
     try {
         AnalyzingUtils.checkForSyntacticErrors(this)
-    }
-    catch(e: Exception) {
+    } catch (e: Exception) {
         throw ConfigurationException(errorMessage)
     }
 }
@@ -743,7 +752,7 @@ fun PsiNamedElement.isInterfaceClass(): Boolean = when (this) {
 
 fun KtNamedDeclaration.isAbstract(): Boolean {
     if (hasModifier(KtTokens.ABSTRACT_KEYWORD)) return true
-    if (!(containingClassOrObject?.isInterfaceClass() ?: false)) return false
+    if (containingClassOrObject?.isInterfaceClass() != true) return false
     return when (this) {
         is KtProperty -> initializer == null && delegate == null && accessors.isEmpty()
         is KtNamedFunction -> !hasBody()
@@ -754,10 +763,10 @@ fun KtNamedDeclaration.isAbstract(): Boolean {
 fun KtNamedDeclaration.isConstructorDeclaredProperty() = this is KtParameter && ownerFunction is KtPrimaryConstructor && hasValOrVar()
 
 fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
-        originalList: ListType,
-        newList: ListType,
-        @Suppress("UNCHECKED_CAST") listReplacer: ListType.(ListType) -> ListType = { replace(it) as ListType },
-        itemsFun: ListType.() -> List<KtElement>
+    originalList: ListType,
+    newList: ListType,
+    @Suppress("UNCHECKED_CAST") listReplacer: ListType.(ListType) -> ListType = { replace(it) as ListType },
+    itemsFun: ListType.() -> List<KtElement>
 ): ListType {
     originalList.children.takeWhile { it is PsiErrorElement }.forEach { it.delete() }
 
@@ -767,7 +776,7 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
     val newCount = newParameters.size
 
     val commonCount = Math.min(oldCount, newCount)
-    for (i in 0..commonCount - 1) {
+    for (i in 0 until commonCount) {
         oldParameters[i] = oldParameters[i].replace(newParameters[i]) as KtElement
     }
 
@@ -777,10 +786,10 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
 
     if (oldCount > commonCount) {
         originalList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, lastOriginalParameter)
-    }
-    else if (newCount > commonCount) {
+    } else if (newCount > commonCount) {
         val psiBeforeLastParameter = lastOriginalParameter.prevSibling
-        val withMultiline = (psiBeforeLastParameter is PsiWhiteSpace || psiBeforeLastParameter is PsiComment) && psiBeforeLastParameter.textContains('\n')
+        val withMultiline =
+            (psiBeforeLastParameter is PsiWhiteSpace || psiBeforeLastParameter is PsiComment) && psiBeforeLastParameter.textContains('\n')
         val extraSpace = if (withMultiline) KtPsiFactory(originalList).createNewLine() else null
         originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling, newParameters.last(), lastOriginalParameter)
         if (extraSpace != null) {
@@ -850,7 +859,7 @@ internal fun DeclarationDescriptor.getThisLabelName(): String {
     if (this is AnonymousFunctionDescriptor) {
         val function = source.getPsi() as? KtFunction
         val argument = function?.parent as? KtValueArgument
-                ?: (function?.parent as? KtLambdaExpression)?.parent as? KtValueArgument
+            ?: (function?.parent as? KtLambdaExpression)?.parent as? KtValueArgument
         val callElement = argument?.getStrictParentOfType<KtCallElement>()
         val callee = callElement?.calleeExpression as? KtSimpleNameExpression
         if (callee != null) return callee.text
@@ -874,9 +883,9 @@ val PsiElement.isInsideInjectedFragment: Boolean
     get() = containingFile.isInjectedFragment
 
 fun checkSuperMethods(
-        declaration: KtDeclaration,
-        ignore: Collection<PsiElement>?,
-        actionString: String
+    declaration: KtDeclaration,
+    ignore: Collection<PsiElement>?,
+    actionString: String
 ): List<PsiElement> {
     fun getClassDescriptions(overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>): List<String> {
         return overriddenElementsToDescriptor.entries.map { entry ->
@@ -885,7 +894,7 @@ fun checkSuperMethods(
                 is KtNamedFunction, is KtProperty, is KtParameter -> formatClassDescriptor(descriptor.containingDeclaration)
                 is PsiMethod -> {
                     val psiClass = element.containingClass ?: error("Invalid element: ${element.getText()}")
-                    formatPsiClass(psiClass, true, false)
+                    formatPsiClass(psiClass, markAsJava = true, inCode = false)
                 }
                 else -> error("Unexpected element: ${element.getElementTextWithContext()}")
             }
@@ -894,21 +903,22 @@ fun checkSuperMethods(
     }
 
     fun askUserForMethodsToSearch(
-            declarationDescriptor: CallableDescriptor,
-            overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>
+        declarationDescriptor: CallableDescriptor,
+        overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>
     ): List<PsiElement> {
         val superClassDescriptions = getClassDescriptions(overriddenElementsToDescriptor)
 
         val message = KotlinBundle.message(
-                "x.overrides.y.in.class.list",
-                DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
-                "\n${superClassDescriptions.joinToString(separator = "")}",
-                actionString
+            "x.overrides.y.in.class.list",
+            DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
+            "\n${superClassDescriptions.joinToString(separator = "")}",
+            actionString
         )
 
         val exitCode = showYesNoCancelDialog(
-                CHECK_SUPER_METHODS_YES_NO_DIALOG,
-                declaration.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon(), Messages.YES)
+            CHECK_SUPER_METHODS_YES_NO_DIALOG,
+            declaration.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon(), Messages.YES
+        )
         return when (exitCode) {
             Messages.YES -> overriddenElementsToDescriptor.keys.toList()
             Messages.NO -> listOf(declaration)
@@ -939,11 +949,11 @@ fun checkSuperMethods(
 }
 
 fun checkSuperMethodsWithPopup(
-        declaration: KtNamedDeclaration,
-        deepestSuperMethods: List<PsiElement>,
-        actionString: String,
-        editor: Editor,
-        action: (List<PsiElement>) -> Unit
+    declaration: KtNamedDeclaration,
+    deepestSuperMethods: List<PsiElement>,
+    actionString: String,
+    editor: Editor,
+    action: (List<PsiElement>) -> Unit
 ) {
     if (deepestSuperMethods.isEmpty()) return action(listOf(declaration))
 
@@ -974,7 +984,7 @@ fun checkSuperMethodsWithPopup(
     }
 
     val renameBase = actionString + " base $superKind" + (if (deepestSuperMethods.size > 1) "s" else "")
-    val renameCurrent = actionString + " only current $kind"
+    val renameCurrent = "$actionString only current $kind"
     val title = buildString {
         append(declaration.name)
         append(if (isAbstract) " implements " else " overrides ")
@@ -984,18 +994,18 @@ fun checkSuperMethodsWithPopup(
     }
     val list = JBList<String>(renameBase, renameCurrent)
     JBPopupFactory.getInstance()
-            .createListPopupBuilder(list)
-            .setTitle(title)
-            .setMovable(false)
-            .setResizable(false)
-            .setRequestFocus(true)
-            .setItemChoosenCallback {
-                val value = list.selectedValue ?: return@setItemChoosenCallback
-                val chosenElements = if (value == renameBase) deepestSuperMethods + declaration else listOf(declaration)
-                action(chosenElements)
-            }
-            .createPopup()
-            .showInBestPositionFor(editor)
+        .createListPopupBuilder(list)
+        .setTitle(title)
+        .setMovable(false)
+        .setResizable(false)
+        .setRequestFocus(true)
+        .setItemChoosenCallback {
+            val value = list.selectedValue ?: return@setItemChoosenCallback
+            val chosenElements = if (value == renameBase) deepestSuperMethods + declaration else listOf(declaration)
+            action(chosenElements)
+        }
+        .createPopup()
+        .showInBestPositionFor(editor)
 }
 
 fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
@@ -1016,4 +1026,12 @@ internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationD
 
 fun DialogWrapper.showWithTransaction() {
     TransactionGuard.submitTransaction(disposable, Runnable { show() })
+}
+
+fun PsiMethod.checkDeclarationConflict(name: String, conflicts: MultiMap<PsiElement, String>, callables: List<PsiElement>) {
+    containingClass
+        ?.findMethodsByName(name, true)
+        // as is necessary here: see KT-10386
+        ?.firstOrNull { it.parameterList.parametersCount == 0 && !callables.contains(it.namedUnwrappedElement as PsiElement?) }
+        ?.let { reportDeclarationConflict(conflicts, it) { s -> "$s already exists" } }
 }
