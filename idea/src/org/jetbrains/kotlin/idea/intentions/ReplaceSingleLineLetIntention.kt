@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceSingleLineLetInspection : IntentionBasedInspection<KtCallExpression>(
@@ -178,7 +180,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
             receiver is KtNameReferenceExpression &&
                     receiver.getReferencedName() == parameterName &&
                     !nameUsed(parameterName, except = receiver)
-        }
+        } && callExpression?.resolveToCall() !is VariableAsFunctionResolvedCall
 
     private fun KtDotQualifiedExpression.hasLambdaExpression() = selectorExpression?.anyDescendantOfType<KtLambdaExpression>() ?: false
 
