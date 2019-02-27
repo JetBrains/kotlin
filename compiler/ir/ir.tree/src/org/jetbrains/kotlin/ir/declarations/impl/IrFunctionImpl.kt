@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -59,7 +61,13 @@ class IrFunctionImpl(
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
 
-    override var correspondingProperty: IrProperty? = null
+    override var correspondingProperty: IrProperty?
+        get() = correspondingPropertySymbol?.owner
+        set(value) {
+            correspondingPropertySymbol = value?.symbol
+        }
+
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
     constructor(

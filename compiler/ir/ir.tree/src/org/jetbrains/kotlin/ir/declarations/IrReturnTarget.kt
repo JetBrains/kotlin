@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 
 interface IrReturnTarget : IrSymbolOwner {

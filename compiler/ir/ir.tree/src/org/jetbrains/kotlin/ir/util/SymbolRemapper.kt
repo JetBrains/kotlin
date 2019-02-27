@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 interface SymbolRemapper {
     fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol
     fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
+    fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol
     fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol
     fun getDeclaredFile(symbol: IrFileSymbol): IrFileSymbol
     fun getDeclaredConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
@@ -37,6 +38,7 @@ interface SymbolRemapper {
     fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
     fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol
     fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol
+    fun getReferencedProperty(symbol: IrPropertySymbol): IrPropertySymbol
     fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
     fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
     fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol

@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -82,7 +85,13 @@ class IrLazyFunction(
         }
     }
 
-    override var correspondingProperty: IrProperty? = null
+    override var correspondingProperty: IrProperty?
+        get() = correspondingPropertySymbol?.owner
+        set(value) {
+            correspondingPropertySymbol = value?.symbol
+        }
+
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     init {
         symbol.bind(this)

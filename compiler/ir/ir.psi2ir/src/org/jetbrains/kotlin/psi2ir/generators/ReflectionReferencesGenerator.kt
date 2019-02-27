@@ -48,7 +48,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         } else {
             val typeConstructorDeclaration = lhs.type.constructor.declarationDescriptor
             val typeClass = typeConstructorDeclaration
-                    ?: throw AssertionError("Unexpected type constructor for ${lhs.type}: $typeConstructorDeclaration")
+                ?: throw AssertionError("Unexpected type constructor for ${lhs.type}: $typeConstructorDeclaration")
             IrClassReferenceImpl(
                 ktClassLiteral.startOffsetSkippingComments, ktClassLiteral.endOffset, resultType,
                 context.symbolTable.referenceClassifier(typeClass), lhs.type.toIrType()
@@ -139,17 +139,16 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val getterDescriptor = propertyDescriptor.getter
         val setterDescriptor = if (mutable) propertyDescriptor.setter else null
 
-        val fieldSymbol = if (getterDescriptor == null) context.symbolTable.referenceField(propertyDescriptor) else null
-        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
-        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
-
         return IrPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            propertyDescriptor, propertyDescriptor.typeParametersCount,
-            fieldSymbol, getterSymbol, setterSymbol,
+            context.symbolTable.referenceProperty(propertyDescriptor.original),
+            propertyDescriptor.typeParametersCount,
+            getterDescriptor?.run { context.symbolTable.referenceField(propertyDescriptor) },
+            getterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) },
+            setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) },
             origin
         ).apply {
-            putTypeArguments(typeArguments) { it.toIrType()}
+            putTypeArguments(typeArguments) { it.toIrType() }
         }
     }
 

@@ -80,7 +80,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
                         IrPropertyReferenceImpl(
                             expression.startOffset, expression.endOffset,
                             expression.type,
-                            expression.descriptor,
+                            expression.symbol, // TODO remap property symbol based on remapped getter/setter?
                             expression.typeArgumentsCount,
                             expression.field,
                             memberMap[expression.getter]?.symbol ?: expression.getter,

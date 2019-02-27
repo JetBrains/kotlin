@@ -203,9 +203,10 @@ open class DeepCopyIrTreeWithSymbols(
     }
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
-        IrPropertyImpl(declaration.startOffset, declaration.endOffset,
+        IrPropertyImpl(
+            declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
-            declaration.descriptor,
+            symbolRemapper.getDeclaredProperty(declaration.symbol),
             declaration.name,
             declaration.visibility,
             declaration.modality,
@@ -567,7 +568,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrPropertyReferenceImpl(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
-            expression.descriptor,
+            symbolRemapper.getReferencedProperty(expression.symbol),
             expression.typeArgumentsCount,
             expression.field?.let { symbolRemapper.getReferencedField(it) },
             expression.getter?.let { symbolRemapper.getReferencedSimpleFunction(it) },

@@ -36,6 +36,7 @@ open class DeepCopySymbolRemapper(
     private val fields = hashMapOf<IrFieldSymbol, IrFieldSymbol>()
     private val files = hashMapOf<IrFileSymbol, IrFileSymbol>()
     private val functions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+    private val properties = hashMapOf<IrPropertySymbol, IrPropertySymbol>()
     private val returnableBlocks = hashMapOf<IrReturnableBlockSymbol, IrReturnableBlockSymbol>()
     private val typeParameters = hashMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
     private val valueParameters = hashMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
@@ -103,6 +104,13 @@ open class DeepCopySymbolRemapper(
         declaration.acceptChildrenVoid(this)
     }
 
+    override fun visitProperty(declaration: IrProperty) {
+        remapSymbol(properties, declaration) {
+            IrPropertySymbolImpl(descriptorsRemapper.remapDeclaredProperty(it.descriptor))
+        }
+        declaration.acceptChildrenVoid(this)
+    }
+
     override fun visitTypeParameter(declaration: IrTypeParameter) {
         remapSymbol(typeParameters, declaration) {
             IrTypeParameterSymbolImpl(descriptorsRemapper.remapDeclaredTypeParameter(it.descriptor))
@@ -143,6 +151,7 @@ open class DeepCopySymbolRemapper(
 
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = classes.getDeclared(symbol)
     override fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getDeclared(symbol)
+    override fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getDeclared(symbol)
     override fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getDeclared(symbol)
     override fun getDeclaredFile(symbol: IrFileSymbol): IrFileSymbol = files.getDeclared(symbol)
     override fun getDeclaredConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getDeclared(symbol)
@@ -161,6 +170,7 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getReferenced(symbol)
     override fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getReferenced(symbol)
     override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getReferenced(symbol)
+    override fun getReferencedProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getReferenced(symbol)
     override fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol =
         when (symbol) {
             is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)

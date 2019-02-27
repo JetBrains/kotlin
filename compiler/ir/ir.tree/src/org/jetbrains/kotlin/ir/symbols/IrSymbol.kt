@@ -73,3 +73,5 @@ interface IrConstructorSymbol : IrFunctionSymbol, IrBindableSymbol<ClassConstruc
 interface IrSimpleFunctionSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrSimpleFunction>
 
 interface IrReturnableBlockSymbol : IrReturnTargetSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock>
+
+interface IrPropertySymbol : IrBindableSymbol<PropertyDescriptor, IrProperty>

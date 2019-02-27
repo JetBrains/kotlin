@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -25,7 +26,7 @@ class IrLazyProperty(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
-    override val descriptor: PropertyDescriptor,
+    override val symbol: IrPropertySymbol,
     override val name: Name,
     override val visibility: Visibility,
     override val modality: Modality,
@@ -45,22 +46,30 @@ class IrLazyProperty(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
+        symbol: IrPropertySymbol,
         stubGenerator: DeclarationStubGenerator,
         typeTranslator: TypeTranslator,
         bindingContext: BindingContext?
     ) : this(
-        startOffset, endOffset, origin, descriptor,
-        descriptor.name, descriptor.visibility, descriptor.modality,
-        isVar = descriptor.isVar,
-        isConst = descriptor.isConst,
-        isLateinit = descriptor.isLateInit,
-        isDelegated = descriptor.isDelegated,
-        isExternal = descriptor.isEffectivelyExternal(),
+        startOffset, endOffset, origin,
+        symbol,
+        symbol.descriptor.name, symbol.descriptor.visibility, symbol.descriptor.modality,
+        isVar = symbol.descriptor.isVar,
+        isConst = symbol.descriptor.isConst,
+        isLateinit = symbol.descriptor.isLateInit,
+        isDelegated = symbol.descriptor.isDelegated,
+        isExternal = symbol.descriptor.isEffectivelyExternal(),
         stubGenerator = stubGenerator,
         typeTranslator = typeTranslator,
         bindingContext = bindingContext
     )
+
+    init {
+        symbol.bind(this)
+    }
+
+    override val descriptor: PropertyDescriptor
+        get() = symbol.descriptor
 
     override var backingField: IrField? by lazyVar {
         if (descriptor.hasBackingField(bindingContext)) {

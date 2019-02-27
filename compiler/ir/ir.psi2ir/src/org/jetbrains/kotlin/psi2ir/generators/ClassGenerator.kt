@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
@@ -204,13 +203,13 @@ class ClassGenerator(
         irDelegate: IrField,
         delegatedDescriptor: PropertyDescriptor,
         overriddenDescriptor: PropertyDescriptor
-    ): IrPropertyImpl {
+    ): IrProperty {
         val startOffset = irDelegate.startOffset
         val endOffset = irDelegate.endOffset
 
-        val irProperty = IrPropertyImpl(
+        val irProperty = context.symbolTable.declareProperty(
             startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER,
-            false, delegatedDescriptor
+            delegatedDescriptor
         )
 
         irProperty.getter = generateDelegatedFunction(irDelegate, delegatedDescriptor.getter!!, overriddenDescriptor.getter!!)

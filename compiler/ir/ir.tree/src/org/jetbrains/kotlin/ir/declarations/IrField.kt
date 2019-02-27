@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrField : IrSymbolDeclaration<IrFieldSymbol>, IrOverridableDeclaration<IrFieldSymbol>,
@@ -20,7 +21,9 @@ interface IrField : IrSymbolDeclaration<IrFieldSymbol>, IrOverridableDeclaration
     val isStatic: Boolean
 
     var initializer: IrExpressionBody?
+
     var correspondingProperty: IrProperty?
+    var correspondingPropertySymbol: IrPropertySymbol?
 
     override val metadata: MetadataSource.Property?
 }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -77,7 +78,15 @@ class IrFieldImpl(
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
     override var initializer: IrExpressionBody? = null
-    override var correspondingProperty: IrProperty? = null
+
+    override var correspondingProperty: IrProperty?
+        get() = correspondingPropertySymbol?.owner
+        set(value) {
+            correspondingPropertySymbol = value?.symbol
+        }
+
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
+
     override val overriddenSymbols: MutableList<IrFieldSymbol> = mutableListOf()
 
     override var metadata: MetadataSource.Property? = null

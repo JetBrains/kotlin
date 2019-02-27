@@ -292,6 +292,7 @@ private class IrUnboundSymbolReplacer(
     override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
         expression.replaceTypeArguments()
 
+        val property = expression.symbol.replaceOrSame(SymbolTable::referenceProperty)
         val field = expression.field?.replaceOrSame(SymbolTable::referenceField)
         val getter = expression.getter?.replace(SymbolTable::referenceSimpleFunction) ?: expression.getter
         val setter = expression.setter?.replace(SymbolTable::referenceSimpleFunction) ?: expression.setter
@@ -302,12 +303,15 @@ private class IrUnboundSymbolReplacer(
 
         expression.transformChildrenVoid(this)
         return with(expression) {
-            IrPropertyReferenceImpl(startOffset, endOffset, type, descriptor, 0,
-                    field,
-                    getter,
-                    setter,
-                    origin).also {
-
+            IrPropertyReferenceImpl(
+                startOffset, endOffset, type,
+                property,
+                0,
+                field,
+                getter,
+                setter,
+                origin
+            ).also {
                 it.copyArgumentsFrom(this)
                 it.copyTypeArgumentsFrom(this)
             }
