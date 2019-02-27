@@ -90,7 +90,6 @@ open class KotlinAndroidTarget(
         checkPublishLibraryVariantsExist()
 
         KotlinAndroidPlugin.androidTargetHandler(project.getKotlinPluginVersion()!!, this).doCreateComponents()
-            .also { project.components.addAll(it) }
     }
 
     // Capture the type parameter T for `AbstractAndroidProjectHandler`

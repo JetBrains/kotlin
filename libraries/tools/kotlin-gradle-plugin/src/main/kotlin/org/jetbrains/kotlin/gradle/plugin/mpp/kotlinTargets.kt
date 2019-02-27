@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
+internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
+
 abstract class AbstractKotlinTarget(
     final override val project: Project
 ) : KotlinTarget {
@@ -60,7 +62,10 @@ abstract class AbstractKotlinTarget(
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
         val usageContexts = createUsageContexts(mainCompilation)
 
-        val componentName = mainCompilation.target.name
+        val componentName =
+            if (project.kotlinExtension is KotlinMultiplatformExtension)
+                targetName
+            else PRIMARY_SINGLE_COMPONENT_NAME
 
         val result = if (isGradleVersionAtLeast(4, 7)) {
             createKotlinVariant(componentName, mainCompilation, usageContexts)
@@ -72,7 +77,7 @@ abstract class AbstractKotlinTarget(
             sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
         )
 
-        setOf(result).also { project.components.addAll(it) }
+        setOf(result)
     }
 
     override val components: Set<SoftwareComponent> by lazy {

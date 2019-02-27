@@ -360,7 +360,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertSuccessful()
 
             assertTasksExecuted(
-                ":compileKotlin", ":compileTestKotlin", ":compileBenchmarkKotlin",
+                ":compileKotlinJs", ":compileTestKotlinJs", ":compileBenchmarkKotlinJs",
                 ":runDceKotlin", ":runDceBenchmarkKotlin"
             )
 
