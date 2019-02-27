@@ -66,7 +66,7 @@ internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 // since in the current implementation types from one module are leaking into other modules' resolution
 // meaning that we can't just change those setting on a per module basis
 data class PlatformAnalysisSettings(
-    val platform: TargetPlatform, val sdk: Sdk?,
+    val sdk: Sdk?,
     val isAdditionalBuiltInFeaturesSupported: Boolean,
     // Effectively unused as a property. Needed only to distinguish different modes when being put in a map
     val isReleaseCoroutines: Boolean
@@ -99,7 +99,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val sdk = dependenciesModuleInfo.sdk
         val platform = JvmPlatform // TODO: Js scripts?
         val settings = PlatformAnalysisSettings(
-            platform, sdk, true,
+            sdk, true,
             LanguageFeature.ReleaseCoroutines.defaultState == LanguageFeature.State.ENABLED
         )
 
@@ -163,7 +163,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
         private val modulesContext = librariesContext.contextWithNewLockAndCompositeExceptionTracker()
         val facadeForModules = ProjectResolutionFacade(
-            "facadeForModules", "$resolverForModulesName for platform ${settings.platform}",
+            "facadeForModules", "$resolverForModulesName",
             project, modulesContext, settings,
             reuseDataFrom = facadeForLibraries,
             moduleFilter = { !it.isLibraryClasses() },
@@ -176,7 +176,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun IdeaModuleInfo.platformSettings(targetPlatform: TargetPlatform) = PlatformAnalysisSettings(
-        targetPlatform, sdk,
+        sdk,
         supportsAdditionalBuiltInsMembers(),
         isReleaseCoroutines()
     )
