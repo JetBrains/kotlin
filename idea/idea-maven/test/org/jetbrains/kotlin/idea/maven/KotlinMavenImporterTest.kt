@@ -843,10 +843,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project")).sdk!!.sdkType is KotlinSdkType)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testJsCustomOutputPaths() {
@@ -1315,10 +1315,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project")).sdk!!.sdkType is KotlinSdkType)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testJsDetectionByGoalWithJsStdlib() {
@@ -1372,10 +1372,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project")).sdk!!.sdkType is KotlinSdkType)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testJsDetectionByGoalWithCommonStdlib() {
@@ -1429,10 +1429,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project")).sdk!!.sdkType is KotlinSdkType)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testJsAndCommonStdlibKinds() {
@@ -1494,10 +1494,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         assertEquals(JSLibraryKind, libraries.single { it.name?.contains("kotlin-stdlib-js") == true }.kind)
         assertEquals(CommonLibraryKind, libraries.single { it.name?.contains("kotlin-stdlib-common") == true }.kind)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testCommonDetectionByGoalWithJvmStdlib() {
@@ -1545,10 +1545,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project")).sdk!!.sdkType is KotlinSdkType)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testCommonDetectionByGoalWithJsStdlib() {
@@ -1596,10 +1596,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project")).sdk!!.sdkType is KotlinSdkType)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testCommonDetectionByGoalWithCommonStdlib() {
@@ -1651,10 +1651,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project")).sdk!!.sdkType is KotlinSdkType)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testJvmDetectionByConflictingGoalsAndJvmStdlib() {
@@ -1706,10 +1706,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertEquals(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_6), facetSettings.platform)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testJsDetectionByConflictingGoalsAndJsStdlib() {
@@ -1761,10 +1761,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertTrue(facetSettings.platform.isJavaScript)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testCommonDetectionByConflictingGoalsAndCommonStdlib() {
@@ -1816,10 +1816,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertTrue(facetSettings.platform.isCommon)
 
-        assertContentFolders("project", KotlinSourceRootType.Source, "src/main/kotlin")
-        assertContentFolders("project", KotlinSourceRootType.TestSource, "src/test/java")
-        assertContentFolders("project", KotlinResourceRootType.Resource, "src/main/resources")
-        assertContentFolders("project", KotlinResourceRootType.TestResource, "src/test/resources")
+        assertContentFolders("project", SourceKotlinRootType, "src/main/kotlin")
+        assertContentFolders("project", TestSourceKotlinRootType, "src/test/java")
+        assertContentFolders("project", ResourceKotlinRootType, "src/main/resources")
+        assertContentFolders("project", TestResourceKotlinRootType, "src/test/resources")
     }
 
     fun testNoPluginsInAdditionalArgs() {

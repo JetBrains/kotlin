@@ -10,31 +10,30 @@ import org.jetbrains.jps.model.JpsElement
 import org.jetbrains.jps.model.java.JavaResourceRootProperties
 import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.config.KotlinResourceRootType
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.*
 
 sealed class KotlinModuleSourceRootEditHandler<Data : JpsElement>(
     rootType: JpsModuleSourceRootType<Data>,
     private val delegate: ModuleSourceRootEditHandler<Data>
 ) : ModuleSourceRootEditHandler<Data>(rootType) {
     class Source : KotlinModuleSourceRootEditHandler<JavaSourceRootProperties>(
-            KotlinSourceRootType.Source,
-            JavaModuleSourceRootEditHandler()
+        SourceKotlinRootType,
+        JavaModuleSourceRootEditHandler()
     )
 
     class TestSource : KotlinModuleSourceRootEditHandler<JavaSourceRootProperties>(
-            KotlinSourceRootType.TestSource,
-            JavaTestSourceRootEditHandler()
+        TestSourceKotlinRootType,
+        JavaTestSourceRootEditHandler()
     )
 
     class Resource : KotlinModuleSourceRootEditHandler<JavaResourceRootProperties>(
-            KotlinResourceRootType.Resource,
-            JavaResourceRootEditHandler()
+        ResourceKotlinRootType,
+        JavaResourceRootEditHandler()
     )
 
     class TestResource : KotlinModuleSourceRootEditHandler<JavaResourceRootProperties>(
-            KotlinResourceRootType.TestResource,
-            JavaTestResourceRootEditHandler()
+        TestResourceKotlinRootType,
+        JavaTestResourceRootEditHandler()
     )
 
     override fun getUnmarkRootButtonText() = delegate.unmarkRootButtonText
