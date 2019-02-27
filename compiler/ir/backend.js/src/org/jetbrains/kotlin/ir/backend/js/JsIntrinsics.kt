@@ -28,6 +28,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     private val externalPackageFragmentSymbol = IrExternalPackageFragmentSymbolImpl(context.internalPackageFragmentDescriptor)
     private val externalPackageFragment = IrExternalPackageFragmentImpl(externalPackageFragmentSymbol)
 
+    // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
+
     // Equality operations:
 
     val jsEqeq = binOpBool("jsEqeq")
