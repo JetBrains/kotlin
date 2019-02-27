@@ -12,16 +12,15 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 
 sealed class KotlinSourceRootType() : JpsElementTypeBase<JavaSourceRootProperties>(), JpsModuleSourceRootType<JavaSourceRootProperties> {
-    object Source : KotlinSourceRootType()
-
-    object TestSource : KotlinSourceRootType() {
-        override fun isForTests() = true
-    }
 
     override fun createDefaultProperties() = JpsJavaExtensionService.getInstance().createSourceRootProperties("")
 
-    companion object {
-        val ALL_SOURCES = setOf(Source, TestSource)
-    }
 }
 
+object SourceKotlinRootType : KotlinSourceRootType()
+
+object TestSourceKotlinRootType : KotlinSourceRootType() {
+    override fun isForTests() = true
+}
+
+val ALL_KOTLIN_SOURCE_ROOT_TYPES = setOf(SourceKotlinRootType, TestSourceKotlinRootType)

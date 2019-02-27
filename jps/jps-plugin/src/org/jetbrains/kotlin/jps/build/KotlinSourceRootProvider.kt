@@ -16,8 +16,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.config.KotlinResourceRootType
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.jps.model.expectedByModules
 import org.jetbrains.kotlin.jps.model.isTestModule
 import org.jetbrains.kotlin.jps.model.sourceSetModules
@@ -39,7 +38,7 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
         // `ModuleBuildTarget.computeAllTargets`. `ModuleBuildTarget` is required for incremental compilation.
         // We cannot define our own `ModuleBuildTarget` since it is final and `ModuleBuildTarget` supports only `JavaSourceRootDescriptor`.
         // So the only one way to support `KotlinSourceRootType` is to add a fake `JavaSourceRootDescriptor` for each source root with that type.
-        val kotlinSourceRootType = if (target.isTests) KotlinSourceRootType.TestSource else KotlinSourceRootType.Source
+        val kotlinSourceRootType = if (target.isTests) TestSourceKotlinRootType else SourceKotlinRootType
         module.getSourceRoots(kotlinSourceRootType).forEach {
             result.add(
                 JavaSourceRootDescriptor(
@@ -95,8 +94,8 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
 
 private val JpsModuleSourceRootType<*>.isTestsRootType
     get() = when (this) {
-        is KotlinSourceRootType -> this == KotlinSourceRootType.TestSource
-        is KotlinResourceRootType -> this == KotlinResourceRootType.TestResource
+        is KotlinSourceRootType -> this == TestSourceKotlinRootType
+        is KotlinResourceRootType -> this == TestResourceKotlinRootType
         // for compatibility:
         is JavaSourceRootType -> this == JavaSourceRootType.TEST_SOURCE
         is JavaResourceRootType -> this == JavaResourceRootType.TEST_RESOURCE

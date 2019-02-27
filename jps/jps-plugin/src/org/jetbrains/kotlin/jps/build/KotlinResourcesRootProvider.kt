@@ -12,7 +12,8 @@ import org.jetbrains.jps.builders.java.ResourcesTargetType
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ResourcesTarget
 import org.jetbrains.jps.model.java.JavaResourceRootProperties
-import org.jetbrains.kotlin.config.KotlinResourceRootType
+import org.jetbrains.kotlin.config.ResourceKotlinRootType
+import org.jetbrains.kotlin.config.TestResourceKotlinRootType
 
 class KotlinResourcesRootProvider : AdditionalRootsProviderService<ResourceRootDescriptor>(ResourcesTargetType.ALL_TYPES) {
     override fun getAdditionalRoots(
@@ -26,7 +27,7 @@ class KotlinResourcesRootProvider : AdditionalRootsProviderService<ResourceRootD
 
         // Add source roots with type KotlinResourceRootType.
         // See the note in KotlinSourceRootProvider
-        val kotlinResourceRootType = if (target.isTests) KotlinResourceRootType.TestResource else KotlinResourceRootType.Resource
+        val kotlinResourceRootType = if (target.isTests) TestResourceKotlinRootType else ResourceKotlinRootType
         module.getSourceRoots(kotlinResourceRootType).forEach {
             result.add(
                 ResourceRootDescriptor(
