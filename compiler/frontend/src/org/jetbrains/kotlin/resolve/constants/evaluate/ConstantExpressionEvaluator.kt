@@ -674,20 +674,9 @@ private class ConstantExpressionEvaluatorVisitor(
         ConstantExpressionEvaluator.getConstant(expression, trace.bindingContext)?.isPure ?: false
 
     private fun evaluateUnaryAndCheck(receiver: OperationArgument, name: String, callExpression: KtExpression): Any? {
-        val functions = unaryOperations[UnaryOperationKey(receiver.ctcType, name)] ?: return null
-
-        val (function, check) = functions
-        val result = function(receiver.value)
-        if (check == emptyUnaryFun) {
-            return result
-        }
-        assert(isIntegerType(receiver.value)) { "Only integer constants should be checked for overflow" }
-        assert(name == "minus" || name == "unaryMinus") { "Only negation should be checked for overflow" }
-
-        if (receiver.value == result && !isZero(receiver.value)) {
+        return evaluateUnaryAndCheck(name, receiver.ctcType, receiver.value) {
             trace.report(Errors.INTEGER_OVERFLOW.on(callExpression.getStrictParentOfType<KtExpression>() ?: callExpression))
         }
-        return result
     }
 
     private fun evaluateBinaryAndCheck(
@@ -696,48 +685,13 @@ private class ConstantExpressionEvaluatorVisitor(
         name: String,
         callExpression: KtExpression
     ): Any? {
-        val functions = getBinaryOperation(receiver, parameter, name) ?: return null
-
-        val (function, checker) = functions
-        val actualResult = try {
-            function(receiver.value, parameter.value)
-        } catch (e: Exception) {
-            null
-        }
-        if (checker == emptyBinaryFun) {
-            return actualResult
-        }
-        assert(isIntegerType(receiver.value) && isIntegerType(parameter.value)) { "Only integer constants should be checked for overflow" }
-
-        fun toBigInteger(value: Any?) = BigInteger.valueOf((value as Number).toLong())
-
-        val refinedChecker = if (name == OperatorNameConventions.MOD.asString()) {
-            getBinaryOperation(receiver, parameter, OperatorNameConventions.REM.asString())?.second ?: return null
-        } else {
-            checker
-        }
-
-        val resultInBigIntegers = refinedChecker(toBigInteger(receiver.value), toBigInteger(parameter.value))
-
-        if (toBigInteger(actualResult) != resultInBigIntegers) {
+        return evaluateBinaryAndCheck(name, receiver.ctcType, receiver.value, parameter.ctcType, parameter.value) {
             trace.report(Errors.INTEGER_OVERFLOW.on(callExpression.getStrictParentOfType<KtExpression>() ?: callExpression))
         }
-        return actualResult
     }
-
-    private fun getBinaryOperation(receiver: OperationArgument, parameter: OperationArgument, name: String) =
-        binaryOperations[BinaryOperationKey(receiver.ctcType, parameter.ctcType, name)]
 
     private fun isDivisionByZero(name: String, parameter: Any?): Boolean {
         return name in DIVISION_OPERATION_NAMES && isZero(parameter)
-    }
-
-    private fun isZero(value: Any?): Boolean {
-        return when {
-            isIntegerType(value) -> (value as Number).toLong() == 0L
-            value is Float || value is Double -> (value as Number).toDouble() == 0.0
-            else -> false
-        }
     }
 
     override fun visitUnaryExpression(expression: KtUnaryExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
@@ -1167,4 +1121,97 @@ fun CompileTimeConstant<*>.isStandaloneOnlyConstant(): Boolean {
         is TypedCompileTimeConstant -> this.constantValue.isStandaloneOnlyConstant()
         else -> return false
     }
+}
+
+private fun isZero(value: Any?): Boolean {
+    return when {
+        isIntegerType(value) -> (value as Number).toLong() == 0L
+        value is Float || value is Double -> (value as Number).toDouble() == 0.0
+        else -> false
+    }
+}
+
+private fun typeStrToCompileTimeType(str: String) = when (str) {
+    BYTE.name -> BYTE
+    SHORT.name -> SHORT
+    INT.name -> INT
+    LONG.name -> LONG
+    DOUBLE.name -> DOUBLE
+    FLOAT.name -> FLOAT
+    CHAR.name -> CHAR
+    BOOLEAN.name -> BOOLEAN
+    STRING.name -> STRING
+    ANY.name -> ANY
+    else -> throw IllegalArgumentException("Unsupported type: $str")
+}
+
+fun evaluateUnary(name: String, typeStr: String, value: Any, tracer: () -> Unit = {}): Any? {
+    return evaluateUnaryAndCheck(name, typeStrToCompileTimeType(typeStr), value)
+}
+
+private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType<*>, value: Any, tracer: () -> Unit = {}): Any? {
+    val functions = unaryOperations[UnaryOperationKey(type, name)] ?: return null
+
+    val (function, check) = functions
+    val result = function(value)
+    if (check == emptyUnaryFun) {
+        return result
+    }
+    assert(isIntegerType(value)) { "Only integer constants should be checked for overflow" }
+    assert(name == "minus" || name == "unaryMinus") { "Only negation should be checked for overflow" }
+
+    if (value == result && !isZero(value)) {
+        tracer()
+    }
+    return result
+}
+
+fun evaluateBinary(
+    name: String,
+    receiverTypeStr: String,
+    receiverValue: Any,
+    parameterTypeStr: String,
+    parameterValue: Any
+): Any? {
+    val receiverType = typeStrToCompileTimeType(receiverTypeStr)
+    val parameterType = typeStrToCompileTimeType(parameterTypeStr)
+
+    return evaluateBinaryAndCheck(name, receiverType, receiverValue, parameterType, parameterValue)
+}
+
+private fun evaluateBinaryAndCheck(
+    name: String,
+    receiverType: CompileTimeType<*>,
+    receiverValue: Any,
+    parameterType: CompileTimeType<*>,
+    parameterValue: Any,
+    tracer: () -> Unit = {}
+): Any? {
+    val functions = binaryOperations[BinaryOperationKey(receiverType, parameterType, name)] ?: return null
+
+    val (function, checker) = functions
+    val actualResult = try {
+        function(receiverValue, parameterValue)
+    } catch (e: Exception) {
+        null
+    }
+    if (checker == emptyBinaryFun) {
+        return actualResult
+    }
+    assert(isIntegerType(receiverValue) && isIntegerType(parameterValue)) { "Only integer constants should be checked for overflow" }
+
+    fun toBigInteger(value: Any?) = BigInteger.valueOf((value as Number).toLong())
+
+    val refinedChecker = if (name == OperatorNameConventions.MOD.asString()) {
+        binaryOperations[BinaryOperationKey(receiverType, parameterType, OperatorNameConventions.REM.asString())]?.second ?: return null
+    } else {
+        checker
+    }
+
+    val resultInBigIntegers = refinedChecker(toBigInteger(receiverValue), toBigInteger(parameterValue))
+
+    if (toBigInteger(actualResult) != resultInBigIntegers) {
+        tracer()
+    }
+    return actualResult
 }
