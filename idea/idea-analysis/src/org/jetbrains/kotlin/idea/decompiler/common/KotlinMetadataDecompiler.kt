@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
@@ -42,7 +41,6 @@ import java.io.IOException
 
 abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
         private val fileType: FileType,
-        private val targetPlatform: TargetPlatform,
         private val serializerProtocol: SerializerExtensionProtocol,
         private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
         private val expectedBinaryVersion: V,
@@ -102,7 +100,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
                 val packageFqName = file.packageFqName
                 val resolver = KotlinMetadataDeserializerForDecompiler(
                         packageFqName, file.proto, file.nameResolver, file.version,
-                        targetPlatform, serializerProtocol, flexibleTypeDeserializer
+                        serializerProtocol, flexibleTypeDeserializer
                 )
                 val declarations = arrayListOf<DeclarationDescriptor>()
                 declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))

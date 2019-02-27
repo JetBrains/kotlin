@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
@@ -31,7 +30,6 @@ import java.io.IOException
 
 abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
     private val fileType: FileType,
-    private val targetPlatform: TargetPlatform,
     private val serializerProtocol: SerializerExtensionProtocol,
     private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     private val expectedBinaryVersion: V,
@@ -86,7 +84,6 @@ abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
             is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
             is FileWithMetadata.Compatible -> decompiledText(
                 file,
-                targetPlatform,
                 serializerProtocol,
                 flexibleTypeDeserializer,
                 renderer
@@ -116,7 +113,7 @@ sealed class FileWithMetadata {
 
 //todo: this function is extracted for KotlinNativeMetadataStubBuilder, that's the difference from Big Kotlin.
 fun decompiledText(
-    file: FileWithMetadata.Compatible, targetPlatform: TargetPlatform,
+    file: FileWithMetadata.Compatible,
     serializerProtocol: SerializerExtensionProtocol,
     flexibleTypeDeserializer: FlexibleTypeDeserializer,
     renderer: DescriptorRenderer
@@ -124,7 +121,7 @@ fun decompiledText(
     val packageFqName = file.packageFqName
     val resolver = KotlinNativeMetadataDeserializerForDecompiler(
         packageFqName, file.proto, file.nameResolver,
-        targetPlatform, serializerProtocol, flexibleTypeDeserializer
+        serializerProtocol, flexibleTypeDeserializer
     )
     val declarations = arrayListOf<DeclarationDescriptor>()
     declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
