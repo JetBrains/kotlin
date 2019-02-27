@@ -69,5 +69,4 @@ if (isStandaloneBuild) {
     rootProject.extra["ideaPluginForCidrRepo"] = rootProject.extra["versions.ideaPluginForCidr.repo"]
 
     rootProject.extra["ideaPluginForCidrDir"] = externalDepsDir("idea-plugin", "ideaPlugin-$ideaPluginForCidrBuildNumber-$ideaPluginForCidrIde")
-    rootProject.extra["kotlinForCidrVersion"] = ideaPluginForCidrVersion.substringBefore('-')
 }

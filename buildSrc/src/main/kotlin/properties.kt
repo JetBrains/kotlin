@@ -12,14 +12,14 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
-// Note: "appcodePluginVersion" has different format and semantics from "pluginVersion" used in IJ and AS plugins.
-val Project.appcodePluginVersion: String
-    get() = findProperty("appcodePluginVersion")?.toString() ?: "beta-1"
+// Note: "appcodePluginNumber" property can be used to override the default plugin number (1)
+val Project.appcodePluginNumber: Int
+    get() = findProperty("appcodePluginNumber")?.toString()?.toInt() ?: 1
 
 val Project.appcodePluginVersionFull: String
     get() {
         val appcodeVersion: String by rootProject.extra
-        return cidrPluginVersionFull("AppCode", appcodeVersion, appcodePluginVersion)
+        return cidrPluginVersionFull("AppCode", appcodeVersion, appcodePluginNumber)
     }
 
 // Note: "appcodePluginZipPath" property can be used to override the standard location of packed plugin artifacts
@@ -27,14 +27,14 @@ val Project.appcodePluginZipPath: File
     get() = propertyAsPath("appcodePluginZipPath")
         ?: defaultCidrPluginZipPath(appcodePluginVersionFull)
 
-// Note: "clionPluginVersion" has different format and semantics from "pluginVersion" used in IJ and AS plugins.
-val Project.clionPluginVersion: String
-    get() = findProperty("clionPluginVersion")?.toString() ?: "beta-1"
+// Note: "clionPluginNumber" property can be used to override the default plugin number (1)
+val Project.clionPluginNumber: Int
+    get() = findProperty("clionPluginNumber")?.toString()?.toInt() ?: 1
 
 val Project.clionPluginVersionFull: String
     get() {
         val clionVersion: String by rootProject.extra
-        return cidrPluginVersionFull("CLion", clionVersion, clionPluginVersion)
+        return cidrPluginVersionFull("CLion", clionVersion, clionPluginNumber)
     }
 
 // Note: "clionPluginZipPath" property can be used to override the standard location of packed plugin artifacts
@@ -42,17 +42,17 @@ val Project.clionPluginZipPath: File
     get() = propertyAsPath("clionPluginZipPath")
         ?: defaultCidrPluginZipPath(clionPluginVersionFull)
 
-private fun Project.cidrPluginVersionFull(productName: String, productVersion: String, cidrPluginVersion: String): String {
-    val kotlinVersion = if (isStandaloneBuild) {
-        val kotlinForCidrVersion: String by rootProject.extra
-        kotlinForCidrVersion
+private fun Project.cidrPluginVersionFull(productName: String, productVersion: String, cidrPluginNumber: Int): String {
+    val cidrPluginVersion = if (isStandaloneBuild) {
+        val ideaPluginForCidrBuildNumber: String by rootProject.extra
+        ideaPluginForCidrBuildNumber
     } else {
         // take it from Big Kotlin
-        val kotlinVersion: String by rootProject.extra
-        kotlinVersion
+        val buildNumber: String by rootProject.extra
+        buildNumber
     }
 
-    return "$kotlinVersion-$productName-$cidrPluginVersion-$productVersion"
+    return "$cidrPluginVersion-$productName-$productVersion-$cidrPluginNumber"
 }
 
 private fun Project.propertyAsPath(propertyName: String): File? =
