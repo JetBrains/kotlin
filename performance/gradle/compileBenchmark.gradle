@@ -4,11 +4,17 @@ MPPTools.addTimeListener(project)
 
 
 task konanRun {
-    mkdir buildDir.absolutePath
+    dependsOn "configureBuild"
     (1..project.ext.repeatNumber).each { number ->
         project.ext.buildSteps.keySet().each {
             dependsOn "$it$number"
         }
+    }
+}
+
+task configureBuild {
+    doLast {
+        mkdir "${buildDir.absolutePath}"
     }
 }
 
