@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.LHSArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -141,6 +142,14 @@ private fun preprocessCallableReference(
 
     val notCallableTypeConstructor =
         csBuilder.getProperSuperTypeConstructors(expectedType).firstOrNull { !ReflectionTypes.isPossibleExpectedCallableType(it) }
+
+    argument.lhsResult.safeAs<LHSResult.Type>()?.let {
+        val lhsType = it.unboundDetailedReceiver.stableType
+        if (ReflectionTypes.isNumberedTypeWithOneOrMoreNumber(expectedType)) {
+            val lhsTypeVariable = expectedType.arguments.first().type.unwrap()
+            csBuilder.addSubtypeConstraint(lhsType, lhsTypeVariable, LHSArgumentConstraintPosition(it.qualifier))
+        }
+    }
     if (notCallableTypeConstructor != null) {
         diagnosticsHolder.addDiagnostic(NotCallableExpectedType(argument, expectedType, notCallableTypeConstructor))
     }
