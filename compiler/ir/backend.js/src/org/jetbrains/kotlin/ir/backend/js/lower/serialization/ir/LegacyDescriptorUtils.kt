@@ -5,44 +5,18 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.descriptors.propertyIfAccessor
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
-import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal val DeclarationDescriptor.isExpectMember: Boolean
     get() = this is MemberDescriptor && this.isExpect
 
 internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
     get() = this is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(this)
-
-fun <T> AnnotationDescriptor.getArgumentValueOrNull(name: String): T? {
-    val constantValue = this.allValueArguments.entries.atMostOne {
-        it.key.asString() == name
-    }?.value
-    return constantValue?.value as T?
-}
-
-private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
-
-fun getAnnotationValue(annotation: AnnotationDescriptor): String? {
-    return annotation.allValueArguments.values.ifNotEmpty {
-        val stringValue = single() as? StringValue
-        stringValue?.value
-    }
-}
-
-fun CallableMemberDescriptor.externalSymbolOrThrow(): String? {
-    this.annotations.findAnnotation(symbolNameAnnotation)?.let {
-        return getAnnotationValue(it)!!
-    }
-
-    throw Error("external function ${this} must have @TypedIntrinsic, @SymbolName or @ObjCMethod annotation")
-}
 
 tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
     return if (this is PackageFragmentDescriptor) this

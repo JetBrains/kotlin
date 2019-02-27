@@ -22,11 +22,15 @@ data class UniqId (
 // isLocal=true in UniqId is good while we dealing with a single current module.
 // To disambiguate module local declarations of different modules we use UniqIdKey.
 // It has moduleDescriptor specified for isLocal=true uniqIds.
+
+// TODO: make sure UniqId is really uniq for any global declaration
+
 data class UniqIdKey private constructor(val uniqId: UniqId, val moduleDescriptor: ModuleDescriptor?) {
     constructor(moduleDescriptor: ModuleDescriptor?, uniqId: UniqId)
             : this(uniqId, if (uniqId.isLocal) moduleDescriptor!! else null)
 }
 
+// TODO: think about this
 internal val IrDeclaration.uniqIdIndex: Long
     get() = this.uniqSymbolName().hashCode().toLong()
 

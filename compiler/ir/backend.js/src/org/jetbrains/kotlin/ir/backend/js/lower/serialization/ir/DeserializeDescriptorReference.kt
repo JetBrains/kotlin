@@ -13,12 +13,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
-class DescriptorReferenceDeserializer(
-    val currentModule: ModuleDescriptor, val resolvedForwardDeclarations: MutableMap<UniqIdKey, UniqIdKey>,
-    val checkerDesc: (DeclarationDescriptor) -> Long?,
-    val checkerID: (Long) -> Boolean,
-    val descriptorResolver: (FqName) -> DeclarationDescriptor
+abstract class DescriptorReferenceDeserializer(
+    val currentModule: ModuleDescriptor,
+    val resolvedForwardDeclarations: MutableMap<UniqIdKey, UniqIdKey>
 ) {
+
+
+    protected abstract fun resolveSpecialDescriptor(fqn: FqName): DeclarationDescriptor
+    protected abstract fun checkIfSpecialDescriptorId(id: Long): Boolean
+    protected abstract fun getDescriptorIdOrNull(descriptor: DeclarationDescriptor): Long?
 
     private val cache = mutableMapOf<String, Collection<DeclarationDescriptor>>()
 
@@ -40,7 +43,7 @@ class DescriptorReferenceDeserializer(
     private val membersCache = mutableMapOf<ClassName, ClassMembers>()
 
 
-    private fun computeUniqIdIndex(descriptor: DeclarationDescriptor) = descriptor.getUniqId()?.index ?: checkerDesc(descriptor)
+    private fun computeUniqIdIndex(descriptor: DeclarationDescriptor) = descriptor.getUniqId()?.index ?: getDescriptorIdOrNull(descriptor)
 
     private fun getMembers(packageFqNameString: String, classFqNameString: String,
                            members: Collection<DeclarationDescriptor>): ClassMembers =
@@ -119,8 +122,8 @@ class DescriptorReferenceDeserializer(
                 .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).single()
         }
 
-        if (protoIndex?.let { checkerID(it) } == true) {
-            return descriptorResolver(packageFqName.child(Name.identifier(name)))
+        if (protoIndex?.let { checkIfSpecialDescriptorId(it) } == true) {
+            return resolveSpecialDescriptor(packageFqName.child(Name.identifier(name)))
         }
 
         val membersWithIndices = getMembers(packageFqNameString, classFqNameString, members)

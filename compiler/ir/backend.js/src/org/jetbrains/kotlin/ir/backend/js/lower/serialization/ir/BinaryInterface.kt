@@ -211,31 +211,6 @@ private fun Name.mangleIfInternal(moduleDescriptor: ModuleDescriptor, visibility
         "$this\$$moduleName"
     }
 
-internal val IrFunction.symbolName: String
-    get() {
-        if (!this.isExported()) {
-            throw AssertionError(this.descriptor.toString())
-        }
-
-        if (isExternal) {
-            this.descriptor.externalSymbolOrThrow()?.let {
-                return it
-            }
-        }
-
-//        this.descriptor.annotations.findAnnotation(exportForCppRuntimeAnnotation)?.let {
-//            val name = getAnnotationValue(it) ?: this.name.asString()
-//            return name // no wrapping currently required
-//        }
-
-        val parent = this.parent
-
-        val containingDeclarationPart = parent.fqNameSafe.let {
-            if (it.isRoot) "" else "$it."
-        }
-        return "kfun:$containingDeclarationPart$functionName"
-    }
-
 internal val IrField.symbolName: String
     get() {
         val containingDeclarationPart = parent.fqNameSafe.let {

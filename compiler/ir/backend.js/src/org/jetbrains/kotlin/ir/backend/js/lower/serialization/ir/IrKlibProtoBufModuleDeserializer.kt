@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataSerializerProtocol
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -31,36 +30,43 @@ class IrKlibProtoBufModuleDeserializer(
     logger: LoggingContext,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    val forwardModuleDescriptor: ModuleDescriptor?)
+    private val forwardModuleDescriptor: ModuleDescriptor?)
         : IrModuleDeserializer(logger, builtIns, symbolTable) {
 
-    val deserializedSymbols = mutableMapOf<UniqIdKey, IrSymbol>()
+    private val deserializedSymbols = mutableMapOf<UniqIdKey, IrSymbol>()
     val knownBuiltInsDescriptors = mutableMapOf<DeclarationDescriptor, UniqId>()
-    val reachableTopLevels = mutableSetOf<UniqIdKey>()
-    val deserializedTopLevels = mutableSetOf<UniqIdKey>()
-    val forwardDeclarations = mutableSetOf<IrSymbol>()
+    private val reachableTopLevels = mutableSetOf<UniqIdKey>()
+    private val deserializedTopLevels = mutableSetOf<UniqIdKey>()
+    private val forwardDeclarations = mutableSetOf<IrSymbol>()
 
-    var deserializedModuleDescriptor: ModuleDescriptor? = null
-    var deserializedModuleProtoSymbolTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.IrSymbolTable>()
-    var deserializedModuleProtoStringTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.StringTable>()
-    var deserializedModuleProtoTypeTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.IrTypeTable>()
+    private var deserializedModuleDescriptor: ModuleDescriptor? = null
+    private var deserializedModuleProtoSymbolTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.IrSymbolTable>()
+    private var deserializedModuleProtoStringTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.StringTable>()
+    private var deserializedModuleProtoTypeTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.IrTypeTable>()
 
     val resolvedForwardDeclarations = mutableMapOf<UniqIdKey, UniqIdKey>()
-    val descriptorReferenceDeserializer = DescriptorReferenceDeserializer(currentModule, resolvedForwardDeclarations, {
-                    knownBuiltInsDescriptors[it]?.index ?: if (isBuiltInFunction(it)) FUNCTION_INDEX_START + builtInFunctionId(it) else null
-        }, { (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_CLASS_OFFSET) <= it && it < (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_GAP) }, {
-            builtIns.builtIns.getBuiltInClassByFqName(it)
-        })
 
-    val descriptorToDirectoryMap = mutableMapOf<ModuleDescriptor, File>()
+    private val descriptorReferenceDeserializer = object : DescriptorReferenceDeserializer(currentModule, resolvedForwardDeclarations) {
+        override fun resolveSpecialDescriptor(fqn: FqName) = builtIns.builtIns.getBuiltInClassByFqName(fqn)
 
-//    val moduleRoot = libraryDir
+        override fun checkIfSpecialDescriptorId(id: Long) =
+            (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_CLASS_OFFSET) <= id && id < (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_GAP)
+
+        override fun getDescriptorIdOrNull(descriptor: DeclarationDescriptor) =
+            knownBuiltInsDescriptors[descriptor]?.index ?: if (isBuiltInFunction(descriptor))
+                FUNCTION_INDEX_START + builtInFunctionId(descriptor)
+            else null
+
+    }
+
+    private val descriptorToDirectoryMap = mutableMapOf<ModuleDescriptor, File>()
+
     private fun irDirectory(m: ModuleDescriptor): File = descriptorToDirectoryMap[m]!!
-
 
     private val FUNCTION_INDEX_START: Long
 
     init {
+        // TODO: think about order
         var currentIndex = 0x1_0000_0000L
         builtIns.knownBuiltins.forEach {
             require(it is IrFunction)

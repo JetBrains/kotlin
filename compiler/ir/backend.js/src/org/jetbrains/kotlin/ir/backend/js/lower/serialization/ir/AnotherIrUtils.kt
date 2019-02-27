@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.FqName
@@ -29,10 +28,6 @@ internal val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymous
 internal val IrDeclaration.isLocal get() = DescriptorUtils.isLocal(this.descriptor)
 
 internal val IrDeclaration.module get() = this.descriptor.module
-
-@Deprecated("Do not call this method in the compiler front-end.")
-internal val IrField.isDelegate
-    get() = @Suppress("DEPRECATION") this.descriptor.isDelegated
 
 internal const val SYNTHETIC_OFFSET = -2
 

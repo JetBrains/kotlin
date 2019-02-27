@@ -133,8 +133,8 @@ fun compile(
         ?: JsKlibMetadataVersion.INSTANCE
     val lookupTracker = LookupTracker.DO_NOTHING
     val languageSettings = configuration.languageVersionSettings
-    val storageManeger = LockBasedStorageManager("JsDepencencies")
-    val dfsHandler: MetadataDFSHandler = DependencyMetadataLoader(lookupTracker, metadataVersion, languageSettings, storageManeger)
+    val storageManager = LockBasedStorageManager("JsDependencies")
+    val dfsHandler: MetadataDFSHandler = DependencyMetadataLoader(lookupTracker, metadataVersion, languageSettings, storageManager)
     val sortedDeps = DFS.dfs(dependencies, CompiledModule::dependencies, dfsHandler)
     val builtInModule = sortedDeps.firstOrNull()?.moduleDescriptor // null in case compiling builtInModule itself
 
@@ -219,6 +219,7 @@ fun compile(
             ).generateUnboundSymbolsAsDependencies(it)
         }
 
+        // TODO: check the order
         val irFiles = deserializedModuleFragments.flatMap { it.files } + moduleFragment.files
 
         moduleFragment.files.clear()
