@@ -182,12 +182,12 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
                 val moduleContent = modulesContent(module)
-                val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
 
                 val languageVersionSettings =
                     moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project, isReleaseCoroutines)
                 val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module, projectContext.project)
 
+                val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
                 resolverForModuleFactory.createResolverForModule(
                     descriptor as ModuleDescriptorImpl,
                     projectContext.withModule(descriptor),
@@ -404,12 +404,6 @@ interface LanguageSettingsProvider {
         project: Project,
         isReleaseCoroutines: Boolean? = null
     ): LanguageVersionSettings
-
-    @Deprecated("Use `getLanguageVersionSettings` method with default parameter instead", level = DeprecationLevel.HIDDEN)
-    fun getLanguageVersionSettings(
-        moduleInfo: ModuleInfo,
-        project: Project
-    ) = getLanguageVersionSettings(moduleInfo, project, null)
 
     fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion
 
