@@ -84,7 +84,4 @@ object JsResolverForModuleFactory : ResolverForModuleFactory() {
 
         return ResolverForModule(packageFragmentProvider, container)
     }
-
-    override val targetPlatform: TargetPlatform
-        get() = JsPlatform
 }
