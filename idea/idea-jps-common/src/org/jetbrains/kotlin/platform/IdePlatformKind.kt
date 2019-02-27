@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.platform
 
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.config.isJps
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind

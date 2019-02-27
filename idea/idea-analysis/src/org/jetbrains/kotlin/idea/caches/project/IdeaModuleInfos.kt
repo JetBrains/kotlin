@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -326,6 +327,9 @@ data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
     override fun contentScope(): GlobalSearchScope = SdkScope(project, sdk)
 
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
+
+    override val platform: TargetPlatform
+        get() = JvmPlatform
 }
 
 object NotUnderContentRootModuleInfo : IdeaModuleInfo {

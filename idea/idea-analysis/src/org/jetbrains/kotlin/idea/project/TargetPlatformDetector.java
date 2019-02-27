@@ -22,13 +22,20 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform;
+import org.jetbrains.kotlin.analyzer.common.CompositeTargetPlatform;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider;
 import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform;
+
+import java.util.ArrayList;
 
 public class TargetPlatformDetector {
     public static final TargetPlatformDetector INSTANCE = new TargetPlatformDetector();
@@ -68,7 +75,13 @@ public class TargetPlatformDetector {
 
     @NotNull
     public static TargetPlatform getPlatform(@NotNull Module module) {
-        return ProjectStructureUtil.getCachedPlatformForModule(module);
+        // TODO: hack
+        TargetPlatform declaredPlatform = ProjectStructureUtil.getCachedPlatformForModule(module);
+        if (declaredPlatform instanceof CommonPlatform) {
+            return new CompositeTargetPlatform(CollectionsKt.listOf(JvmPlatform.INSTANCE, JsPlatform.INSTANCE, KonanPlatform.INSTANCE));
+        } else {
+            return declaredPlatform;
+        }
     }
 
 }

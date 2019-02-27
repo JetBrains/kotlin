@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.DynamicTypesAllowed
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 object CommonPlatform : TargetPlatform("Default") {
@@ -41,3 +42,56 @@ private object CommonPlatformConfigurator : PlatformConfiguratorBase(
     }
 }
 
+open class CompositeTargetPlatform(val platforms: List<TargetPlatform>) : TargetPlatform("Default") {
+    override val platformConfigurator: PlatformConfigurator =
+        CompositePlatformConigurator(platforms.map { it.platformConfigurator as PlatformConfiguratorBase })
+
+    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
+        // TODO
+        return
+    }
+
+    override val platform: Platform
+        // TODO
+        get() = Platform.Common
+
+    override fun equals(other: Any?): Boolean = this.javaClass == other?.javaClass
+
+    override fun hashCode(): Int = this.javaClass.hashCode()
+}
+
+
+class CompositePlatformConigurator(private val configurators: List<PlatformConfiguratorBase>) : PlatformConfiguratorBase(
+    dynamicTypesSettings = configurators.map { it.dynamicTypesSettings }.merge(),
+    additionalDeclarationCheckers = configurators.flatMap { it.additionalDeclarationCheckers },
+    additionalCallCheckers = configurators.flatMap { it.additionalCallCheckers },
+    additionalTypeCheckers = configurators.flatMap { it.additionalTypeCheckers },
+    additionalClassifierUsageCheckers = configurators.flatMap { it.additionalClassifierUsageCheckers },
+    additionalAnnotationCheckers = configurators.flatMap { it.additionalAnnotationCheckers },
+    identifierChecker = configurators.map { it.identifierChecker }.merge(),
+    overloadFilter = configurators.map { it.overloadFilter }.merge(),
+    platformToKotlinClassMap = configurators.map { it.platformToKotlinClassMap }.merge(),
+    delegationFilter = configurators.map { it.delegationFilter }.merge(),
+    overridesBackwardCompatibilityHelper = configurators.map { it.overridesBackwardCompatibilityHelper }.merge(),
+    declarationReturnTypeSanitizer = configurators.map { it.declarationReturnTypeSanitizer }.merge()
+) {
+    override fun configureModuleComponents(container: StorageComponentContainer) {
+        configurators.forEach { it.configureModuleComponents(container) }
+    }
+
+    override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
+        configurators.forEach { it.configureModuleDependentCheckers(container) }
+    }
+}
+
+
+// TODO: hacks below
+private fun List<DynamicTypesSettings>.merge(): DynamicTypesSettings =
+    if (any { it.dynamicTypesAllowed }) DynamicTypesAllowed() else DynamicTypesSettings()
+
+private fun List<OverloadFilter>.merge(): OverloadFilter = first()
+private fun List<IdentifierChecker>.merge(): IdentifierChecker = first()
+private fun List<PlatformToKotlinClassMap>.merge(): PlatformToKotlinClassMap = first()
+private fun List<DelegationFilter>.merge(): DelegationFilter = first()
+private fun List<OverridesBackwardCompatibilityHelper>.merge(): OverridesBackwardCompatibilityHelper = first()
+private fun List<DeclarationReturnTypeSanitizer>.merge(): DeclarationReturnTypeSanitizer = first()

@@ -56,18 +56,18 @@ private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>()
 
 
 abstract class PlatformConfiguratorBase(
-    private val dynamicTypesSettings: DynamicTypesSettings,
-    additionalDeclarationCheckers: List<DeclarationChecker>,
-    additionalCallCheckers: List<CallChecker>,
-    additionalTypeCheckers: List<AdditionalTypeChecker>,
-    additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
-    additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
-    private val identifierChecker: IdentifierChecker,
-    private val overloadFilter: OverloadFilter,
-    private val platformToKotlinClassMap: PlatformToKotlinClassMap,
-    private val delegationFilter: DelegationFilter,
-    private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper,
-    private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer
+    val dynamicTypesSettings: DynamicTypesSettings,
+    val additionalDeclarationCheckers: List<DeclarationChecker>,
+    val additionalCallCheckers: List<CallChecker>,
+    val additionalTypeCheckers: List<AdditionalTypeChecker>,
+    val additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
+    val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
+    val identifierChecker: IdentifierChecker,
+    val overloadFilter: OverloadFilter,
+    val platformToKotlinClassMap: PlatformToKotlinClassMap,
+    val delegationFilter: DelegationFilter,
+    val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper,
+    val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer
 ) : PlatformConfigurator {
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
     private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers

@@ -52,7 +52,8 @@ class MethodBinding(val method: Method, private val argumentDescriptors: List<Va
 fun computeArguments(argumentDescriptors: List<ValueDescriptor>): List<Any> = argumentDescriptors.map { it.getValue() }
 
 fun Class<*>.bindToConstructor(context: ValueResolveContext): ConstructorBinding {
-    val constructorInfo = getInfo().constructorInfo ?: error("No constructor for $this: ${getInfo()}")
+    val constructorInfo = getInfo().constructorInfo
+        ?: error("No constructor for $this: ${getInfo()}")
     val candidate = constructorInfo.constructor
     return ConstructorBinding(candidate, candidate.bindArguments(constructorInfo.parameters, context))
 }

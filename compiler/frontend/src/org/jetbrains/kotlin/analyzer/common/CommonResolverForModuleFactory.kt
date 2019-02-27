@@ -133,7 +133,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
             moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
-            languageVersionSettings
+            languageVersionSettings, moduleInfo.platform!!, targetPlatformVersion
         )
 
         val packageFragmentProviders = listOf(
@@ -151,9 +151,11 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         moduleContentScope: GlobalSearchScope,
         targetEnvironment: TargetEnvironment,
         metadataPartProvider: MetadataPartProvider,
-        languageVersionSettings: LanguageVersionSettings
-    ): StorageComponentContainer = createContainer("ResolveCommonCode", targetPlatform) {
-        configureModule(moduleContext, targetPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
+        languageVersionSettings: LanguageVersionSettings,
+        platform: TargetPlatform,
+        targetPlatformVersion: TargetPlatformVersion
+    ): StorageComponentContainer = createContainer("ResolveCommonCode", platform) {
+        configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
         useInstance(moduleContentScope)
         useInstance(LookupTracker.DO_NOTHING)
@@ -171,6 +173,8 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
                 ?: error("No MetadataFinderFactory in project")
         useInstance(metadataFinderFactory.create(moduleContentScope))
+
+
 
         targetEnvironment.configure(this)
     }

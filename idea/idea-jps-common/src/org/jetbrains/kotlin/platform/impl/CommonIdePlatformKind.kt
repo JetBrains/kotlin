@@ -6,12 +6,16 @@
 @file:JvmName("CommonIdePlatformUtil")
 package org.jetbrains.kotlin.platform.impl
 
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
+import org.jetbrains.kotlin.analyzer.common.CompositeTargetPlatform
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
 object CommonIdePlatformKind : IdePlatformKind<CommonIdePlatformKind>() {
 
@@ -20,7 +24,7 @@ object CommonIdePlatformKind : IdePlatformKind<CommonIdePlatformKind>() {
         else null
     }
 
-    override val compilerPlatform get() = CommonPlatform
+    override val compilerPlatform get() = CompositeTargetPlatform(listOf(JvmPlatform, JsPlatform, KonanPlatform))
 
     override val platforms get() = listOf(Platform)
     override val defaultPlatform get() = Platform
