@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.fir.java
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirCallableMember
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -45,11 +47,13 @@ class JavaSymbolProvider(
             val firClass = classSymbol.fir as FirModifiableClass
             val callableSymbols = mutableListOf<ConeCallableSymbol>()
             for (declaration in firClass.declarations) {
-                if (declaration is FirNamedFunction) {
-                    val methodId = CallableId(callableId.packageName, callableId.className, declaration.name)
-                    if (methodId == callableId) {
-                        val symbol = declaration.symbol as ConeCallableSymbol
-                        callableSymbols += symbol
+                when (declaration) {
+                    is FirCallableMember -> {
+                        val declarationId = CallableId(callableId.packageName, callableId.className, declaration.name)
+                        if (declarationId == callableId) {
+                            val symbol = declaration.symbol as ConeCallableSymbol
+                            callableSymbols += symbol
+                        }
                     }
                 }
             }
@@ -80,9 +84,24 @@ class JavaSymbolProvider(
                     for (supertype in javaClass.supertypes) {
                         superTypeRefs += supertype.toFirResolvedTypeRef(session)
                     }
-                    // TODO: fields
-                    // TODO: may be we can process methods later.
+                    // TODO: may be we can process fields & methods later.
                     // However, they should be built up to override resolve stage
+                    for (javaField in javaClass.fields) {
+                        if (javaField.isStatic) continue // TODO: statics
+                        val fieldName = javaField.name
+                        val fieldId = CallableId(classId.packageFqName, classId.relativeClassName, fieldName)
+                        val fieldSymbol = FirFieldSymbol(fieldId)
+                        val returnType = javaField.type
+                        val firJavaField = FirJavaField(
+                            session, fieldSymbol, fieldName,
+                            javaField.visibility, javaField.modality,
+                            returnTypeRef = returnType.toFirJavaTypeRef(session),
+                            isVar = !javaField.isFinal
+                        ).apply {
+                            addAnnotationsFrom(javaField)
+                        }
+                        declarations += firJavaField
+                    }
                     for (javaMethod in javaClass.methods) {
                         if (javaMethod.isStatic) continue // TODO: statics
                         val methodName = javaMethod.name

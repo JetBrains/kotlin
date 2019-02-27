@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancementSignatureParts
@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
@@ -48,6 +50,16 @@ class JavaClassEnhancementScope(
 
     private val enhancements = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol>()
 
+    override fun processPropertiesByName(name: Name, processor: (ConePropertySymbol) -> ProcessorAction): ProcessorAction {
+        useSiteScope.processPropertiesByName(name) process@{ original ->
+
+            val field = enhancements.getOrPut(original) { enhance(original, name) }
+            processor(field as ConePropertySymbol)
+        }
+
+        return super.processPropertiesByName(name, processor)
+    }
+
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
         useSiteScope.processFunctionsByName(name) process@{ original ->
 
@@ -59,19 +71,40 @@ class JavaClassEnhancementScope(
     }
 
     private fun enhance(
+        original: ConePropertySymbol,
+        name: Name
+    ): FirPropertySymbol {
+        val firField = (original as FirBasedSymbol<*>).fir as? FirJavaField ?: error("Can't make enhancement for $original")
+
+        val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firField.annotations)
+        val newReturnTypeRef = enhanceReturnType(firField, memberContext, null)
+
+        val symbol = FirPropertySymbol(original.callableId)
+        with(firField) {
+            FirMemberPropertyImpl(
+                session, null, symbol, name,
+                visibility, modality, isExpect, isActual, isOverride,
+                isConst = false, isLateInit = false,
+                receiverTypeRef = null,
+                returnTypeRef = newReturnTypeRef,
+                isVar = isVar, initializer = null,
+                getter = FirDefaultPropertyGetter(session, null, newReturnTypeRef, visibility),
+                setter = FirDefaultPropertySetter(session, null, newReturnTypeRef, visibility),
+                delegate = null
+            ).apply {
+                annotations += firField.annotations
+            }
+        }
+        return symbol
+    }
+
+    private fun enhance(
         original: ConeFunctionSymbol,
         name: Name
     ): FirFunctionSymbol {
-        val firMethod = (original as FirBasedSymbol<*>).fir as? FirJavaMethod ?: error("Can't fake override for $original")
+        val firMethod = (original as FirBasedSymbol<*>).fir as? FirJavaMethod ?: error("Can't make enhancement for $original")
 
-        val memberContext = context.copyWithNewDefaultTypeQualifiers(
-            typeQualifierResolver, jsr305State, firMethod.annotations
-        )
-        // TODO: When loading method as an override for a property, all annotations are stick to its getter
-//            if (this is FirProperty && getter !is FirDefaultPropertyAccessor)
-//                getter
-//            else
-//                this
+        val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firMethod.annotations)
 
         val predefinedEnhancementInfo =
             SignatureBuildingComponents.signature(owner.symbol.classId, firMethod.computeJvmDescriptor()).let { signature ->
@@ -94,7 +127,6 @@ class JavaClassEnhancementScope(
                 firMethod, memberContext, predefinedEnhancementInfo, valueParameter as FirJavaValueParameter, index
             )
         }
-
 
         val symbol = FirFunctionSymbol(original.callableId)
         with(firMethod) {
@@ -177,19 +209,17 @@ class JavaClassEnhancementScope(
     }
 
     private fun enhanceReturnType(
-        ownerFunction: FirJavaMethod,
+        owner: FirCallableMember,
         memberContext: FirJavaEnhancementContext,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
     ): FirResolvedTypeRef {
-        val signatureParts = ownerFunction.parts(
+        val signatureParts = owner.parts(
             typeQualifierResolver,
-            typeContainer = ownerFunction, isCovariant = true,
+            typeContainer = owner, isCovariant = true,
             containerContext = memberContext,
             containerApplicabilityType =
-            if (false) // TODO: this.safeAs<FirProperty>()?.isJavaField == true
-                AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
-            else
-                AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
+            if (owner is FirJavaField) AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
+            else AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
         ) { it.returnTypeRef }.enhance(jsr305State, predefinedEnhancementInfo?.returnTypeInfo)
         return signatureParts.type
     }

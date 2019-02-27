@@ -64,6 +64,10 @@ abstract class FirVisitor<out R, in D> {
         return visitDeclaration(errorDeclaration, data)
     }
 
+    open fun visitField(field: FirField, data: D): R {
+        return visitDeclaration(field, data)
+    }
+
     open fun visitNamedDeclaration(namedDeclaration: FirNamedDeclaration, data: D): R {
         return visitDeclaration(namedDeclaration, data)
     }

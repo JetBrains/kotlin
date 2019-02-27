@@ -1,2 +1,10 @@
 public open class PropertySimpleType : R|java/lang/Object| {
+    public open property fieldOne(var): R|ft<java/lang/String, java/lang/String?>|!
+        public get(): R|ft<java/lang/String, java/lang/String?>|!
+        public set(value: R|ft<java/lang/String, java/lang/String?>|!): kotlin/Unit
+
+    public open property fieldTwo(var): R|ft<java/lang/String, java/lang/String?>|!
+        public get(): R|ft<java/lang/String, java/lang/String?>|!
+        public set(value: R|ft<java/lang/String, java/lang/String?>|!): kotlin/Unit
+
 }

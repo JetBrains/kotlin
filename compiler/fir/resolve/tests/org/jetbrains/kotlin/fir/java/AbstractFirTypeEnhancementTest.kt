@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.resolve.FirScopeProvider
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -187,6 +189,15 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                             when (declaration) {
                                 is FirJavaMethod -> enhancementScope.processFunctionsByName(declaration.name) { symbol ->
                                     val enhanced = (symbol as? FirFunctionSymbol)?.fir
+                                    if (enhanced != null && enhanced !in renderedDeclarations) {
+                                        enhanced.accept(renderer, null)
+                                        renderer.newLine()
+                                        renderedDeclarations += enhanced
+                                    }
+                                    ProcessorAction.NEXT
+                                }
+                                is FirJavaField -> enhancementScope.processPropertiesByName(declaration.name) { symbol ->
+                                    val enhanced = (symbol as? FirPropertySymbol)?.fir
                                     if (enhanced != null && enhanced !in renderedDeclarations) {
                                         enhanced.accept(renderer, null)
                                         renderer.newLine()

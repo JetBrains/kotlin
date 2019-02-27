@@ -1,4 +1,8 @@
 public open class PrivateMembers : R|java/lang/Object| {
+    private open property field(var): R|kotlin/Int|
+        private get(): R|kotlin/Int|
+        private set(value: R|kotlin/Int|): kotlin/Unit
+
     private open operator function method(): R|kotlin/Unit|
 
 }

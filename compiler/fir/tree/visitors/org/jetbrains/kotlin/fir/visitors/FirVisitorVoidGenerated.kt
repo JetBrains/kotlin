@@ -64,6 +64,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitDeclaration(errorDeclaration, null)
     }
 
+    open fun visitField(field: FirField) {
+        visitDeclaration(field, null)
+    }
+
     open fun visitNamedDeclaration(namedDeclaration: FirNamedDeclaration) {
         visitDeclaration(namedDeclaration, null)
     }
@@ -494,6 +498,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitExpression(expression: FirExpression, data: Nothing?) {
         visitExpression(expression)
+    }
+
+    final override fun visitField(field: FirField, data: Nothing?) {
+        visitField(field)
     }
 
     final override fun visitFile(file: FirFile, data: Nothing?) {
