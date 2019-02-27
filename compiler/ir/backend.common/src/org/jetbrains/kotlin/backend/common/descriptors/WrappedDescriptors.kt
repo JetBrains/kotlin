@@ -49,9 +49,11 @@ abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Anno
             "Expected call to constructor of annotation class but was: ${this.dump()}"
         }
         return AnnotationDescriptorImpl(
-                symbol.owner.parentAsClass.defaultType.toKotlinType(),
-                symbol.owner.valueParameters.associate { it.name to getValueArgument(it.index)!!.toConstantValue() },
-                /*TODO*/ SourceElement.NO_SOURCE
+            symbol.owner.parentAsClass.defaultType.toKotlinType(),
+            symbol.owner.valueParameters.map { it.name to getValueArgument(it.index) }
+                .filter { it.second != null }
+                .associate { it.first to it.second!!.toConstantValue() },
+            /*TODO*/ SourceElement.NO_SOURCE
         )
     }
 
