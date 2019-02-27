@@ -29,6 +29,11 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/postfix"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("arg.kt")
+    public void testArg() throws Exception {
+        runTest("idea/testData/codeInsight/postfix/arg.kt");
+    }
+
     @TestMetadata("assert.kt")
     public void testAssert() throws Exception {
         runTest("idea/testData/codeInsight/postfix/assert.kt");
