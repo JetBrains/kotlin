@@ -32,6 +32,14 @@ repositories {
     }
 }
 
+def getHostName() {
+    def target = System.getProperty("os.name")
+    if (target == 'Linux') return 'linux'
+    if (target.startsWith('Windows')) return 'windows'
+    if (target.startsWith('Mac')) return 'macos'
+    return 'unknown'
+}
+
 kotlin {
     sourceSets {
         commonMain {
@@ -122,6 +130,17 @@ kotlin {
         }
 
         configure([windows, linux, macos]) {
+            def isCurrentHost = (name == getHostName())
+            compilations.all {
+                cinterops.all {
+                    project.tasks[interopProcessingTaskName].enabled = isCurrentHost
+                }
+                compileKotlinTask.enabled = isCurrentHost
+            }
+            binaries.all {
+                linkTask.enabled = isCurrentHost
+            }
+
             binaries {
                 executable('benchmarksAnalyzer', [RELEASE]) {
                     if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
