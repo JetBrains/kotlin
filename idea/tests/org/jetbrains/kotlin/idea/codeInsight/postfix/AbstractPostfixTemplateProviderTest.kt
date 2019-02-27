@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.postfix
 
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -24,16 +25,23 @@ abstract class AbstractPostfixTemplateProviderTest : KotlinLightCodeInsightFixtu
     }
 
     protected fun doTest(fileName: String) {
+        val fileText = File(fileName).readText()
 
         myFixture.configureByFile(fileName)
-        myFixture.type("\t")
+        val template = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TEMPLATE:")
+        if (template != null) {
+            TemplateManagerImpl.setTemplateTesting(project, testRootDisposable)
+            myFixture.type(template.replace("\\t", "\t"))
+        } else {
+            myFixture.type('\t')
+        }
 
         val previouslySuggestedExpressions = KtPostfixTemplateProvider.previouslySuggestedExpressions
-        if (previouslySuggestedExpressions.size > 1 && !InTextDirectivesUtils.isDirectiveDefined(File(fileName).readText(), "ALLOW_MULTIPLE_EXPRESSIONS")) {
+        if (previouslySuggestedExpressions.size > 1 && !InTextDirectivesUtils.isDirectiveDefined(fileText, "ALLOW_MULTIPLE_EXPRESSIONS")) {
             fail("Only one expression should be suggested, but $previouslySuggestedExpressions were found")
         }
 
-        myFixture.checkResultByFile(fileName + ".after")
+        myFixture.checkResultByFile("$fileName.after")
     }
 
     override fun tearDown() {
