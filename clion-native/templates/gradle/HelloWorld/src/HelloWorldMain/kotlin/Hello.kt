@@ -1,4 +1,4 @@
-//IDE main file
+//OPEN-IN-EDITOR
 package sample.helloworld
 
 fun hello(): String = "Hello, Kotlin/Native!"

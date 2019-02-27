@@ -13,7 +13,6 @@ import com.intellij.platform.ProjectGeneratorPeer
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.components.JBList
-import com.intellij.ui.components.Label
 import com.intellij.ui.layout.*
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.ui.UIUtil
@@ -34,8 +33,8 @@ class KonanGradleProjectGenerator : WebProjectTemplate<Any>() {
         return KotlinIcons.NATIVE
     }
 
-    private var template: KonanTemplate? = null
-    private var loadedTemplate: KonanTemplate.Loaded? = null
+    private var template: KonanProjectTemplate? = null
+    private var loadedTemplate: KonanProjectTemplate.Loaded? = null
 
     override fun getName(): String = "Kotlin/Native Application"
 
@@ -70,7 +69,7 @@ class KonanGradleProjectGenerator : WebProjectTemplate<Any>() {
         val readme = ReadmePanel()
         val modalityState = ApplicationManager.getApplication().currentModalityState
         ApplicationManager.getApplication().executeOnPooledThread {
-            val templates = KonanTemplate.listAll()
+            val templates = KonanProjectTemplate.listAll()
             ApplicationManager.getApplication().invokeLater({
                 templateList.setTemplates(templates)
                 templateList.onTemplateSelected { selectedTemplate ->
@@ -113,7 +112,7 @@ private class ReadmePanel {
 }
 
 private class TemplateListPanel {
-    private lateinit var templates: List<KonanTemplate>
+    private lateinit var templates: List<KonanProjectTemplate>
     private val templateListModel = DefaultListModel<String>()
     private val templateList = JBList<String>(templateListModel).apply {
         selectionMode = ListSelectionModel.SINGLE_SELECTION
@@ -125,13 +124,13 @@ private class TemplateListPanel {
             ScrollPaneFactory.createScrollPane(templateList), { it }
     )
 
-    fun setTemplates(templates: List<KonanTemplate>) {
+    fun setTemplates(templates: List<KonanProjectTemplate>) {
         this.templates = templates
         templates.forEach { templateListModel.addElement(it.name) }
         listWithFilter.revalidate()
     }
 
-    fun onTemplateSelected(callback: (KonanTemplate?) -> Unit) {
+    fun onTemplateSelected(callback: (KonanProjectTemplate?) -> Unit) {
         templateList.addListSelectionListener {
             callback(templates.getOrNull(templateList.selectedIndex))
         }
