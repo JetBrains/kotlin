@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.types.SimpleType
 abstract class DeserializerForDecompilerBase(val directoryPackageFqName: FqName) : ResolverForDecompiler {
     protected abstract val deserializationComponents: DeserializationComponents
 
-    protected abstract val targetPlatform: TargetPlatform
     protected abstract val builtIns: KotlinBuiltIns
 
     protected val storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS

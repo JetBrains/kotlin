@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.ByteArrayInputStream
 
 class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler<JsMetadataVersion>(
-        KotlinJavaScriptMetaFileType, JsPlatform, JsSerializerProtocol, DynamicTypeDeserializer,
+        KotlinJavaScriptMetaFileType, JsSerializerProtocol, DynamicTypeDeserializer,
         JsMetadataVersion.INSTANCE, JsMetadataVersion.INVALID_VERSION, KotlinStubVersions.JS_STUB_VERSION
 ) {
     override fun readFile(bytes: ByteArray, file: VirtualFile): FileWithMetadata? {

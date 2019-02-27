@@ -120,7 +120,4 @@ object JvmResolverForModuleFactory : ResolverForModuleFactory() {
 
         return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
     }
-
-    override val targetPlatform: TargetPlatform
-        get() = JvmPlatform
 }
