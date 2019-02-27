@@ -66,7 +66,17 @@ kotlin {
     }
 
     targets {
-        fromPreset(presets.android, 'androidLib')
+        fromPreset(presets.android, 'androidLib') {
+            attributes {
+                attribute(Attribute.of("com.example.target", String), "androidLib")
+            }
+            compilations.all {
+                attributes {
+                    attribute(Attribute.of("com.example.compilation", String), compilationName)
+                }
+            }
+        }
+
         fromPreset(presets.jvm, 'jvmLib')
         fromPreset(presets.js, 'jsLib')
     }

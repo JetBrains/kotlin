@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.api.BaseVariant
 import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
 import org.gradle.api.*
@@ -748,6 +749,8 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             // in afterEvaluate, a user's build script might have already attached item handlers to the compilations container, and those
             // handlers might break when fired on a compilation that is not yet properly configured (e.g. KT-29964):
             kotlinAndroidTarget.compilationFactory.create(variantName).let { compilation ->
+                compilation.androidVariant = variant as BaseVariant
+
                 setUpDependencyResolution(variant, compilation)
 
                 processVariant(variant, compilation, project, ext, plugin, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider)

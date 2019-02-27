@@ -196,7 +196,71 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
                 }
             }
         }
+    }
 
+    @Test
+    fun testCustomAttributesInAndroidTargets() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("4.7"))) {
+        // Test the fix for KT-27714
+
+        setupWorkingDir()
+
+        // Enable publishing for all Android variants:
+        gradleBuildScript("lib").appendText("\nkotlin.android('androidLib') { publishAllLibraryVariants() }")
+
+        val groupDir = "lib/build/repo/com/example/"
+
+        build("publish") {
+            assertSuccessful()
+
+            // Also check that custom user-specified attributes are written in all Android modules metadata:
+            assertFileContains(
+                groupDir + "lib-androidlib/1.0/lib-androidlib-1.0.module",
+                "\"com.example.target\": \"androidLib\"",
+                "\"com.example.compilation\": \"release\""
+            )
+            assertFileContains(
+                groupDir + "lib-androidlib-debug/1.0/lib-androidlib-debug-1.0.module",
+                "\"com.example.target\": \"androidLib\"",
+                "\"com.example.compilation\": \"debug\""
+            )
+
+            projectDir.resolve(groupDir).deleteRecursively()
+        }
+
+        // Check that the consumer side uses custom attributes specified in the target and compilations:
+        run {
+            val appBuildScriptBackup = gradleBuildScript("app").readText()
+
+            gradleBuildScript("app").appendText(
+                "\n" + """
+                    kotlin.targets.androidApp.attributes.attribute(
+                        Attribute.of("com.example.target", String),
+                        "notAndroidLib"
+                    )
+                """.trimIndent()
+            )
+
+            build(":app:compileDebugKotlinAndroidApp") {
+                assertFailed() // dependency resolution should fail
+                assertContains("Required com.example.target 'notAndroidLib'")
+            }
+
+            gradleBuildScript("app").writeText(
+                appBuildScriptBackup + "\n" + """
+                    kotlin.targets.androidApp.compilations.all {
+                        attributes.attribute(
+                            Attribute.of("com.example.compilation", String),
+                            "notDebug"
+                        )
+                    }
+                """.trimIndent()
+            )
+
+            build(":app:compileDebugKotlinAndroidApp") {
+                assertFailed()
+                assertContains("Required com.example.compilation 'notDebug'")
+            }
+        }
     }
 
     @Test

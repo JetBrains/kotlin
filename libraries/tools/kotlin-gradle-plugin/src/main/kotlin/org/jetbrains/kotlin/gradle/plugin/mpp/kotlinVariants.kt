@@ -106,10 +106,15 @@ class KotlinVariantWithMetadataDependency(
     }
 
     private fun metadataDependency(): ModuleDependency {
-        val metadataPublication = (metadataTarget.kotlinComponents.single() as KotlinTargetComponentWithPublication).publicationDelegate!!
-        val metadataGroupId = metadataPublication.groupId
-        val metadataArtifactId = metadataPublication.artifactId
-        val metadataVersion = metadataPublication.version
+        val metadataComponent = metadataTarget.kotlinComponents.single() as KotlinTargetComponentWithPublication
+        val project = metadataTarget.project
+
+        // The metadata component may not be published, e.g. if the whole project is not published:
+        val metadataPublication: MavenPublication? = metadataComponent.publicationDelegate
+
+        val metadataGroupId = metadataPublication?.groupId ?: project.group
+        val metadataArtifactId = metadataPublication?.artifactId ?: metadataComponent.defaultArtifactId
+        val metadataVersion = metadataPublication?.version ?: project.version
         return target.project.dependencies.module("$metadataGroupId:$metadataArtifactId:$metadataVersion") as ModuleDependency
     }
 
