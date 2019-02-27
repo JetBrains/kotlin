@@ -15174,6 +15174,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/replaceSingleLineLetIntention/functionCallOnSafeCall.kt");
         }
 
+        @TestMetadata("functionInVariableCall.kt")
+        public void testFunctionInVariableCall() throws Exception {
+            runTest("idea/testData/intentions/replaceSingleLineLetIntention/functionInVariableCall.kt");
+        }
+
+        @TestMetadata("functionInVariableInvokeCall.kt")
+        public void testFunctionInVariableInvokeCall() throws Exception {
+            runTest("idea/testData/intentions/replaceSingleLineLetIntention/functionInVariableInvokeCall.kt");
+        }
+
         @TestMetadata("in.kt")
         public void testIn() throws Exception {
             runTest("idea/testData/intentions/replaceSingleLineLetIntention/in.kt");
