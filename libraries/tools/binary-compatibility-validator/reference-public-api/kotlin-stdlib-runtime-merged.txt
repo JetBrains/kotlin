@@ -37,6 +37,9 @@ public final class kotlin/Experimental$Level : java/lang/Enum {
 public abstract interface annotation class kotlin/ExperimentalMultiplatform : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/ExperimentalStdlibApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExperimentalUnsignedTypes : java/lang/annotation/Annotation {
 }
 
