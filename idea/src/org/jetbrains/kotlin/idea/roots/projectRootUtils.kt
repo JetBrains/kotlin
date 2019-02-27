@@ -20,8 +20,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.config.KotlinResourceRootType
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 
 private fun JpsModuleSourceRoot.getOrCreateProperties() =
@@ -31,10 +30,10 @@ fun JpsModuleSourceRoot.getMigratedSourceRootTypeWithProperties(): Pair<JpsModul
     val currentRootType = rootType
     @Suppress("UNCHECKED_CAST")
     val newSourceRootType: JpsModuleSourceRootType<JpsElement> = when (currentRootType) {
-        JavaSourceRootType.SOURCE -> KotlinSourceRootType.Source
-        JavaSourceRootType.TEST_SOURCE -> KotlinSourceRootType.TestSource
-        JavaResourceRootType.RESOURCE -> KotlinResourceRootType.Resource
-        JavaResourceRootType.TEST_RESOURCE -> KotlinResourceRootType.TestResource
+        JavaSourceRootType.SOURCE -> SourceKotlinRootType
+        JavaSourceRootType.TEST_SOURCE -> TestSourceKotlinRootType
+        JavaResourceRootType.RESOURCE -> ResourceKotlinRootType
+        JavaResourceRootType.TEST_RESOURCE -> TestResourceKotlinRootType
         else -> return null
     } as JpsModuleSourceRootType<JpsElement>
     return newSourceRootType to getOrCreateProperties()
@@ -57,7 +56,7 @@ fun getKotlinAwareDestinationSourceRoots(project: Project): List<VirtualFile> {
 }
 
 private val KOTLIN_AWARE_SOURCE_ROOT_TYPES: Set<JpsModuleSourceRootType<JavaSourceRootProperties>> =
-    JavaModuleSourceRootTypes.SOURCES + KotlinSourceRootType.ALL_SOURCES
+    JavaModuleSourceRootTypes.SOURCES + ALL_KOTLIN_SOURCE_ROOT_TYPES
 
 private fun Module.collectKotlinAwareDestinationSourceRoots(): List<VirtualFile> {
     return rootManager

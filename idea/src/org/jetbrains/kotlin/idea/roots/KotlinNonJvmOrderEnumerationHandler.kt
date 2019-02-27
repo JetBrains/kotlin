@@ -10,8 +10,8 @@ import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderEnumerationHandler
 import com.intellij.openapi.roots.OrderRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.config.KotlinResourceRootType
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.TestResourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 
 object KotlinNonJvmOrderEnumerationHandler : OrderEnumerationHandler() {
     class Factory : OrderEnumerationHandler.Factory() {
@@ -20,7 +20,7 @@ object KotlinNonJvmOrderEnumerationHandler : OrderEnumerationHandler() {
     }
 
     private val kotlinTestSourceRootTypes: Set<JpsModuleSourceRootType<*>> =
-        setOf(KotlinSourceRootType.TestSource, KotlinResourceRootType.TestResource)
+        setOf(TestSourceKotlinRootType, TestResourceKotlinRootType)
 
     override fun addCustomModuleRoots(
         type: OrderRootType,

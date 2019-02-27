@@ -30,7 +30,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
@@ -181,7 +181,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
         val contentEntry = getContentRoots(myProject.allModules().single().name).single()
         val sourceFolder =
             contentEntry.getSourceFolders(JavaSourceRootType.SOURCE).singleOrNull() ?:
-            contentEntry.getSourceFolders(KotlinSourceRootType.Source).singleOrNull()
+            contentEntry.getSourceFolders(SourceKotlinRootType).singleOrNull()
         ApplicationManager.getApplication().runWriteAction {
             val javaFile = sourceFolder?.file?.toPsiDirectory(myProject)?.createFile("Test.java") ?: throw IllegalStateException()
             javaFile.viewProvider.document!!.setText("class Test {}\n")
