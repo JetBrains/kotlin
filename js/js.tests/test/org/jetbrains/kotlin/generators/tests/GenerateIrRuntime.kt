@@ -40,8 +40,8 @@ fun buildConfiguration(environment: KotlinCoreEnvironment): CompilerConfiguratio
     return runtimeConfiguration
 }
 
-private val resultJs = "js/js.translator/testData/out/klibs/result.js"
-private val runtimeKlibPath = "js/js.translator/testData/out/klibs/runtime/"
+private val fullRuntimeKlibPath = "js/js.translator/testData/out/klibs/runtimeFull/"
+private val defaultRuntimeKlibPath = "js/js.translator/testData/out/klibs/runtimeDefault/"
 
 fun main() {
 
@@ -56,15 +56,21 @@ fun main() {
         return psiManager.findFile(file) as KtFile
     }
 
-    val result = compile(
-        environment.project,
-        (JsIrTestRuntime.FULL.sources).map(::createPsiFile),
-        buildConfiguration(environment),
-        emptyList(),
-        CompilationMode.KLIB_WITH_JS,
-        emptyList(),
-        runtimeKlibPath
-    )
 
-    result.generatedCode?.let { File(resultJs).writeText(it) }
+    fun buildKlib(sources: List<String>, outputPath: String) {
+        val result = compile(
+            environment.project,
+            sources.map(::createPsiFile),
+            buildConfiguration(environment),
+            emptyList(),
+            CompilationMode.KLIB_WITH_JS,
+            emptyList(),
+            outputPath
+        )
+
+        result.generatedCode?.let { File(outputPath, "result.js").writeText(it) }
+    }
+
+    buildKlib(JsIrTestRuntime.FULL.sources, fullRuntimeKlibPath)
+    buildKlib(JsIrTestRuntime.DEFAULT.sources, defaultRuntimeKlibPath)
 }

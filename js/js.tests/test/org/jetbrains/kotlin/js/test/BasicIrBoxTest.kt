@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.test
 
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.CompilationMode
 import org.jetbrains.kotlin.ir.backend.js.CompiledModule
 import org.jetbrains.kotlin.ir.backend.js.compile
@@ -17,13 +16,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-private var runtimeResults = mutableMapOf<JsIrTestRuntime, CompiledModule>()
-
-private val runtimeKlibPath = "js/js.translator/testData/out/klibs/runtime/"
+private val fullRuntimeKlibPath = "js/js.translator/testData/out/klibs/runtimeFull/"
+private val defaultRuntimeKlibPath = "js/js.translator/testData/out/klibs/runtimeDefault/"
 
 private val JS_IR_RUNTIME_MODULE_NAME = "JS_IR_RUNTIME"
 
-private val runtimeKlib = CompiledModule(JS_IR_RUNTIME_MODULE_NAME, null, null, runtimeKlibPath, emptyList(), true)
+private val fullRuntimeKlib = CompiledModule(JS_IR_RUNTIME_MODULE_NAME, null, null, fullRuntimeKlibPath, emptyList(), true)
+private val defaultRuntimeKlib = CompiledModule(JS_IR_RUNTIME_MODULE_NAME, null, null, defaultRuntimeKlibPath, emptyList(), true)
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -53,6 +52,9 @@ abstract class BasicIrBoxTest(
         super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
     }
 
+    private val runtimes = mapOf(JsIrTestRuntime.DEFAULT to defaultRuntimeKlib,
+                                 JsIrTestRuntime.FULL to fullRuntimeKlib)
+
     override fun translateFiles(
         units: List<TranslationUnit>,
         outputFile: File,
@@ -73,17 +75,19 @@ abstract class BasicIrBoxTest(
             .filterNot { it.virtualFilePath.contains(BasicBoxTest.COMMON_FILES_DIR_PATH) }
 
 //        config.configuration.put(CommonConfigurationKeys.EXCLUDED_ELEMENTS_FROM_DUMPING, setOf("<JS_IR_RUNTIME>"))
-        config.configuration.put(
-            CommonConfigurationKeys.PHASES_TO_VALIDATE_AFTER,
-            setOf(
-                "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
-                "InnerClassConstructorCallsLowering",
-                "InlineClassLowering", "ConstLowering"
-            )
-        )
+//        config.configuration.put(
+//            CommonConfigurationKeys.PHASES_TO_VALIDATE_AFTER,
+//            setOf(
+//                "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
+//                "InnerClassConstructorCallsLowering",
+//                "InlineClassLowering", "ConstLowering"
+//            )
+//        )
+
+        val runtimeKlib = runtimes[runtime]
 
         val dependencyNames = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
-        val dependencies = listOf(runtimeKlib) + dependencyNames.mapNotNull {
+        val dependencies = listOfNotNull(runtimeKlib) + dependencyNames.mapNotNull {
             compilationCache[it]
         }
 
@@ -103,7 +107,7 @@ abstract class BasicIrBoxTest(
             listOf(FqName((testPackage?.let { "$it." } ?: "") + testFunction)),
             if (isMainModule) CompilationMode.JS_AGAINST_KLIB else CompilationMode.KLIB,
             dependencies,
-            klibPath = actualOutputFile
+            actualOutputFile
         )
 
         compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
