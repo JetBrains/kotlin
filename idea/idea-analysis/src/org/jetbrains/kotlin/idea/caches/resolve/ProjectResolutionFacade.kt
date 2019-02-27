@@ -139,7 +139,7 @@ internal class ProjectResolutionFacade(
             modulesContentFactory,
             moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
             resolverForModuleFactoryByPlatform = { modulePlatform ->
-                val platform = modulePlatform ?: settings.platform
+                val platform = modulePlatform ?: TODO()
                 platform.idePlatformKind.resolution.resolverForModuleFactory
             },
             platformParameters = { platform ->
@@ -213,7 +213,9 @@ internal class ProjectResolutionFacade(
 
     private companion object {
         private fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
-            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
+//            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
+//             TODO: what we do about built-ins?
+            return DefaultBuiltInPlatforms.jvmPlatform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
         }
     }
 }
