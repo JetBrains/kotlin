@@ -66,7 +66,7 @@ internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 // since in the current implementation types from one module are leaking into other modules' resolution
 // meaning that we can't just change those setting on a per module basis
 data class PlatformAnalysisSettings(
-    val platform: TargetPlatform, val sdk: Sdk?,
+    val sdk: Sdk?,
     val isAdditionalBuiltInFeaturesSupported: Boolean,
     // Effectively unused as a property. Needed only to distinguish different modes when being put in a map
     val isReleaseCoroutines: Boolean
@@ -100,7 +100,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val platform = /* Fallback to Common platform in CIDR (Java is not supported there) */
             DefaultIdeTargetPlatformKindProvider.defaultPlatform // TODO: Js scripts?
         val settings = PlatformAnalysisSettings(
-            platform, sdk, true,
+            sdk, true,
             LanguageFeature.ReleaseCoroutines.defaultState == LanguageFeature.State.ENABLED
         )
 
@@ -164,7 +164,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
         private val modulesContext = librariesContext.contextWithNewLockAndCompositeExceptionTracker(resolverForModulesName)
         val facadeForModules = ProjectResolutionFacade(
-            "facadeForModules", "$resolverForModulesName for platform ${settings.platform}",
+            "facadeForModules", "$resolverForModulesName",
             project, modulesContext, settings,
             reuseDataFrom = facadeForLibraries,
             moduleFilter = { !it.isLibraryClasses() },
@@ -176,8 +176,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         )
     }
 
-    private fun IdeaModuleInfo.platformSettings(targetPlatform: TargetPlatform) = PlatformAnalysisSettings(
-        targetPlatform, sdk,
+    private fun IdeaModuleInfo.platformSettings() = PlatformAnalysisSettings(
+        sdk,
         supportsAdditionalBuiltInsMembers(),
         isReleaseCoroutines()
     )
@@ -210,7 +210,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         // we assume that all files come from the same module
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
         val specialModuleInfo = files.map(KtFile::getModuleInfo).toSet().single()
-        val settings = specialModuleInfo.platformSettings(specialModuleInfo.platform ?: targetPlatform)
+        val settings = specialModuleInfo.platformSettings()
 
         // File copies are created during completion and receive correct modification events through POM.
         // Dummy files created e.g. by J2K do not receive events.
@@ -431,10 +431,10 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         }
 
         val platform = TargetPlatformDetector.getPlatform(file)
-        return getResolutionFacadeByModuleInfo(moduleInfo, platform).createdFor(emptyList(), moduleInfo, platform)
+        return getResolutionFacadeByModuleInfo(moduleInfo).createdFor(emptyList(), moduleInfo, platform)
     }
 
-    override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade? {
+    override fun getResolutionFacadeByFile(file: PsiFile): ResolutionFacade? {
         if (!ProjectRootsUtil.isInProjectOrLibraryContent(file)) {
             return null
         }
@@ -442,11 +442,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         assert(file !is PsiCodeFragment)
 
         val moduleInfo = file.getModuleInfo()
-        return getResolutionFacadeByModuleInfo(moduleInfo, platform)
+        return getResolutionFacadeByModuleInfo(moduleInfo)
     }
 
-    private fun getResolutionFacadeByModuleInfo(moduleInfo: IdeaModuleInfo, platform: TargetPlatform): ResolutionFacade {
-        val settings = moduleInfo.platformSettings(platform)
+    private fun getResolutionFacadeByModuleInfo(moduleInfo: IdeaModuleInfo): ResolutionFacade {
+        val settings = moduleInfo.platformSettings()
         val projectFacade = when (moduleInfo) {
             is ScriptDependenciesInfo.ForProject,
             is ScriptDependenciesSourceInfo.ForProject -> facadeForScriptDependenciesForProject
@@ -456,8 +456,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
     }
 
-    override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo, platform: TargetPlatform): ResolutionFacade? =
-        (moduleInfo as? IdeaModuleInfo)?.let { getResolutionFacadeByModuleInfo(it, platform) }
+    override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo): ResolutionFacade? =
+        (moduleInfo as? IdeaModuleInfo)?.let { getResolutionFacadeByModuleInfo(it) }
 
     private fun Collection<KtFile>.filterNotInProjectSource(moduleInfo: IdeaModuleInfo): Set<KtFile> {
         return mapNotNull {

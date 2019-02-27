@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
@@ -153,8 +152,7 @@ fun PsiElement.hasJavaResolutionFacade(): Boolean = this.originalElement.contain
 
 fun PsiElement.javaResolutionFacade() =
     KotlinCacheService.getInstance(project).getResolutionFacadeByFile(
-        this.originalElement.containingFile ?: reportCouldNotCreateJavaFacade(),
-        JvmPlatforms.unspecifiedJvmPlatform
+        this.originalElement.containingFile ?: reportCouldNotCreateJavaFacade()
     )
 
 private fun PsiElement.reportCouldNotCreateJavaFacade(): Nothing =

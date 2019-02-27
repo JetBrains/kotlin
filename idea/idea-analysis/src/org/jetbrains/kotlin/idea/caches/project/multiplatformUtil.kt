@@ -112,4 +112,4 @@ val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
     }
 
 private fun ModuleSourceInfo.toDescriptor() = KotlinCacheService.getInstance(module.project)
-    .getResolutionFacadeByModuleInfo(this, platform)?.moduleDescriptor
+    .getResolutionFacadeByModuleInfo(this)?.moduleDescriptor
