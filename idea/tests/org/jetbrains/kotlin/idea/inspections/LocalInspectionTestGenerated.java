@@ -5932,6 +5932,249 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/removeRedundantQualifierName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveRedundantQualifierName extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRemoveRedundantQualifierName() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/removeRedundantQualifierName"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("companionCollision.kt")
+        public void testCompanionCollision() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionCollision.kt");
+        }
+
+        @TestMetadata("companionOnClass.kt")
+        public void testCompanionOnClass() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionOnClass.kt");
+        }
+
+        @TestMetadata("companionOnVariable.kt")
+        public void testCompanionOnVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionOnVariable.kt");
+        }
+
+        @TestMetadata("companionType.kt")
+        public void testCompanionType() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionType.kt");
+        }
+
+        @TestMetadata("companionType2.kt")
+        public void testCompanionType2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionType2.kt");
+        }
+
+        @TestMetadata("companionType3.kt")
+        public void testCompanionType3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionType3.kt");
+        }
+
+        @TestMetadata("companionType4.kt")
+        public void testCompanionType4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionType4.kt");
+        }
+
+        @TestMetadata("companionType5.kt")
+        public void testCompanionType5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionType5.kt");
+        }
+
+        @TestMetadata("companionWithOuterName.kt")
+        public void testCompanionWithOuterName() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionWithOuterName.kt");
+        }
+
+        @TestMetadata("expression.kt")
+        public void testExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/expression.kt");
+        }
+
+        @TestMetadata("expression2.kt")
+        public void testExpression2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/expression2.kt");
+        }
+
+        @TestMetadata("expression3.kt")
+        public void testExpression3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/expression3.kt");
+        }
+
+        @TestMetadata("expression4.kt")
+        public void testExpression4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/expression4.kt");
+        }
+
+        @TestMetadata("expression5.kt")
+        public void testExpression5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/expression5.kt");
+        }
+
+        @TestMetadata("expressionWithParameter.kt")
+        public void testExpressionWithParameter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/expressionWithParameter.kt");
+        }
+
+        @TestMetadata("innerClass.kt")
+        public void testInnerClass() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClass.kt");
+        }
+
+        @TestMetadata("innerClass2.kt")
+        public void testInnerClass2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClass2.kt");
+        }
+
+        @TestMetadata("innerClass3.kt")
+        public void testInnerClass3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClass3.kt");
+        }
+
+        @TestMetadata("innerClass4.kt")
+        public void testInnerClass4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClass4.kt");
+        }
+
+        @TestMetadata("innerClass5.kt")
+        public void testInnerClass5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClass5.kt");
+        }
+
+        @TestMetadata("innerClassWithImport.kt")
+        public void testInnerClassWithImport() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClassWithImport.kt");
+        }
+
+        @TestMetadata("innerClassWithImport2.kt")
+        public void testInnerClassWithImport2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClassWithImport2.kt");
+        }
+
+        @TestMetadata("localFun.kt")
+        public void testLocalFun() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/localFun.kt");
+        }
+
+        @TestMetadata("localFun2.kt")
+        public void testLocalFun2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/localFun2.kt");
+        }
+
+        @TestMetadata("notApplicableCollisionTopLevelClass.kt")
+        public void testNotApplicableCollisionTopLevelClass() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableCollisionTopLevelClass.kt");
+        }
+
+        @TestMetadata("notApplicableCompanion.kt")
+        public void testNotApplicableCompanion() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableCompanion.kt");
+        }
+
+        @TestMetadata("notApplicableCompanionOtherName.kt")
+        public void testNotApplicableCompanionOtherName() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableCompanionOtherName.kt");
+        }
+
+        @TestMetadata("notApplicableCompanionType.kt")
+        public void testNotApplicableCompanionType() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableCompanionType.kt");
+        }
+
+        @TestMetadata("notApplicableCompanionType2.kt")
+        public void testNotApplicableCompanionType2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableCompanionType2.kt");
+        }
+
+        @TestMetadata("notApplicableExpression.kt")
+        public void testNotApplicableExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableExpression.kt");
+        }
+
+        @TestMetadata("notApplicableExpression2.kt")
+        public void testNotApplicableExpression2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableExpression2.kt");
+        }
+
+        @TestMetadata("notApplicableExpression3.kt")
+        public void testNotApplicableExpression3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableExpression3.kt");
+        }
+
+        @TestMetadata("notApplicableLocalFun.kt")
+        public void testNotApplicableLocalFun() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableLocalFun.kt");
+        }
+
+        @TestMetadata("notApplicableLocalVariable.kt")
+        public void testNotApplicableLocalVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableLocalVariable.kt");
+        }
+
+        @TestMetadata("notApplicableLocalVariable2.kt")
+        public void testNotApplicableLocalVariable2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableLocalVariable2.kt");
+        }
+
+        @TestMetadata("notApplicableOuterClass.kt")
+        public void testNotApplicableOuterClass() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableOuterClass.kt");
+        }
+
+        @TestMetadata("notApplicableThis.kt")
+        public void testNotApplicableThis() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableThis.kt");
+        }
+
+        @TestMetadata("notApplicableTypeWithRuntime.kt")
+        public void testNotApplicableTypeWithRuntime() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableTypeWithRuntime.kt");
+        }
+
+        @TestMetadata("notApplicableTypeWithRuntime2.kt")
+        public void testNotApplicableTypeWithRuntime2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableTypeWithRuntime2.kt");
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/secondaryConstructor.kt");
+        }
+
+        @TestMetadata("superClass.kt")
+        public void testSuperClass() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/superClass.kt");
+        }
+
+        @TestMetadata("superClass2.kt")
+        public void testSuperClass2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/superClass2.kt");
+        }
+
+        @TestMetadata("type.kt")
+        public void testType() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/type.kt");
+        }
+
+        @TestMetadata("type2.kt")
+        public void testType2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/type2.kt");
+        }
+
+        @TestMetadata("typeWithAlias.kt")
+        public void testTypeWithAlias() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/typeWithAlias.kt");
+        }
+
+        @TestMetadata("typeWithRuntime.kt")
+        public void testTypeWithRuntime() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/typeWithRuntime.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

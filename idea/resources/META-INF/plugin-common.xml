@@ -2699,6 +2699,14 @@
                      level="WARNING"
                      language="kotlin"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveRedundantQualifierNameInspection"
+                     displayName="Remove redundant qualifier name"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"/>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSetterInspection"
                      displayName="Redundant property setter"
                      groupPath="Kotlin"

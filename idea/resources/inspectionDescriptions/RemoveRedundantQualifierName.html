@@ -1,0 +1,13 @@
+<html>
+<body>
+This inspection reports redundant qualifier name in references. For example:
+<pre>
+<b>package</b> my.simple.name
+<b>class</b> Foo
+
+<b>fun</b> test() {
+    <b>val</b> s = my.simple.name.Foo() // redundant qualifier name
+}
+</pre>
+</body>
+</html>
