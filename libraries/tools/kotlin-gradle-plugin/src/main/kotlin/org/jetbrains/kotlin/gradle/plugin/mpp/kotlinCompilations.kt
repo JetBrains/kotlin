@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.*
 import java.util.concurrent.Callable
-import kotlin.collections.HashSet
 
 internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: String? = null): String {
     val compilationNamePart = compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }

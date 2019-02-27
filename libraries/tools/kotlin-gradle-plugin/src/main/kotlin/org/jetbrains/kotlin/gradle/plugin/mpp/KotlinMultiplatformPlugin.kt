@@ -78,14 +78,14 @@ class KotlinMultiplatformPlugin(
         configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
         configureSourceSets(project)
 
-        setUpConfigurationAttributes(project)
-
         // set up metadata publishing
         targetsFromPreset.fromPreset(
             KotlinMetadataTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion),
             METADATA_TARGET_NAME
         )
         configurePublishingWithMavenPublish(project)
+
+        setUpConfigurationAttributes(project)
 
         // propagate compiler plugin options to the source set language settings
         setupCompilerPluginOptions(project)
@@ -226,40 +226,49 @@ class KotlinMultiplatformPlugin(
         }
     }
 
+    /**
+     * The attributes attached to the targets and compilations need to be propagated to the relevant Gradle configurations:
+     * 1. Output configurations of each target need the corresponding compilation's attributes (and, indirectly, the target's attributes)
+     * 2. Resolvable configurations of each compilation need the compilation's attributes
+     */
     private fun setUpConfigurationAttributes(project: Project) {
         val targets = project.multiplatformExtension.targets
 
         project.afterEvaluate {
             targets.all { target ->
-                val mainCompilationAttributes = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.attributes
-                    ?: return@all
+                fun copyAttributes(from: AttributeContainer, to: AttributeContainer) {
+                    fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
+                        to.attribute(key, from.getAttribute(key)!!)
+                    }
 
-                fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-                    to.attribute(key, from.getAttribute(key)!!)
+                    from.keySet().forEach { key -> copyAttribute(key, from, to) }
                 }
 
-                listOf(
-                    target.apiElementsConfigurationName,
-                    target.runtimeElementsConfigurationName,
-                    target.defaultConfigurationName
-                )
-                    .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
-                    .forEach { configuration ->
-                        mainCompilationAttributes.keySet().forEach { key ->
-                            copyAttribute(key, mainCompilationAttributes, configuration.attributes)
+                // To copy the attributes to the output configurations, find those output configurations and their producing compilations
+                // based on the target's components:
+                val outputConfigurationsWithCompilations =
+                    target.components.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
+                        kotlinVariant.usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usageContext ->
+                            project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
+                                configuration to usageContext.compilation
+                            }
                         }
-                    }
+                    } + listOfNotNull(
+                        target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
+                            project.configurations.findByName(target.defaultConfigurationName)?.to(mainCompilation)
+                        }
+                    )
+
+                outputConfigurationsWithCompilations.forEach { (configuration, compilation) ->
+                    copyAttributes(compilation.attributes, configuration.attributes)
+                }
 
                 target.compilations.all { compilation ->
                     val compilationAttributes = compilation.attributes
 
                     compilation.relatedConfigurationNames
                         .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
-                        .forEach { configuration ->
-                            compilationAttributes.keySet().forEach { key ->
-                                copyAttribute(key, compilationAttributes, configuration.attributes)
-                            }
-                        }
+                        .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
                 }
             }
         }
