@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.backend.common.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
@@ -41,13 +41,20 @@ abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Anno
 
     private val annotationsFromOwner by lazy {
         val ownerAnnotations = (owner as? IrAnnotationContainer)?.annotations ?: return@lazy Annotations.EMPTY
-        Annotations.create(ownerAnnotations.map { call ->
-            AnnotationDescriptorImpl(
-                call.symbol.owner.parentAsClass.defaultType.toKotlinType(),
-                call.symbol.owner.valueParameters.associate { it.name to call.getValueArgument(it.index)!!.toConstantValue() },
-                /*TODO*/ SourceElement.NO_SOURCE
-            )
-        })
+        Annotations.create(ownerAnnotations.map { it.toAnnotationDescriptor() })
+    }
+
+    private fun IrCall.toAnnotationDescriptor(): AnnotationDescriptor {
+        assert(symbol.owner is IrConstructor && symbol.owner.parentAsClass.isAnnotationClass) {
+            "Expected call to constructor of annotation class but was: ${this.dump()}"
+        }
+        return AnnotationDescriptorImpl(
+            symbol.owner.parentAsClass.defaultType.toKotlinType(),
+            symbol.owner.valueParameters.map { it.name to getValueArgument(it.index) }
+                .filter { it.second != null }
+                .associate { it.first to it.second!!.toConstantValue() },
+            /*TODO*/ SourceElement.NO_SOURCE
+        )
     }
 
     private fun IrElement.toConstantValue(): ConstantValue<*> {
@@ -77,7 +84,9 @@ abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Anno
 
             this is IrClassReference -> KClassValue(classType.classifierOrFail.descriptor.classId!!, /*TODO*/0)
 
-            else -> error("$this is not expected")
+            this is IrCall -> AnnotationValue(this.toAnnotationDescriptor())
+
+            else -> error("$this is not expected: ${this.dump()}")
         }
     }
 
