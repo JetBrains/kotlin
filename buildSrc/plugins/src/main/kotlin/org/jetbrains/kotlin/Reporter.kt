@@ -68,7 +68,7 @@ open class Reporter : DefaultTask() {
     @TaskAction
     fun report() {
 
-        val reportJson = loadReport("$reportHome/external/report.json")
+        val reportJson = loadReport("$reportHome/external/results.json")
 
         val report: String =
             "${reportJson.statistics.report}\n ${reportEpilogue()}"
