@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.openapi.roots.*
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.KotlinResourceRootType
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
@@ -65,8 +63,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
                 moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                sourceFolder("app/src/commonMain/kotlin", KotlinSourceRootType.Source)
-                sourceFolder("app/src/commonMain/resources", KotlinResourceRootType.Resource)
+                sourceFolder("app/src/commonMain/kotlin", SourceKotlinRootType)
+                sourceFolder("app/src/commonMain/resources", ResourceKotlinRootType)
                 inheritProjectOutput()
             }
             module("app_commonTest") {
@@ -74,8 +72,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
                 moduleDependency("lib_commonMain", DependencyScope.TEST)
                 moduleDependency("app_commonMain", DependencyScope.TEST)
-                sourceFolder("app/src/commonTest/kotlin", KotlinSourceRootType.TestSource)
-                sourceFolder("app/src/commonTest/resources", KotlinResourceRootType.TestResource)
+                sourceFolder("app/src/commonTest/kotlin", TestSourceKotlinRootType)
+                sourceFolder("app/src/commonTest/resources", TestResourceKotlinRootType)
                 inheritProjectOutput()
             }
             module("app_jsMain") {
@@ -85,8 +83,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("lib_jsMain", DependencyScope.COMPILE)
                 moduleDependency("lib_commonMain", DependencyScope.COMPILE)
                 moduleDependency("app_commonMain", DependencyScope.COMPILE)
-                sourceFolder("app/src/jsMain/kotlin", KotlinSourceRootType.Source)
-                sourceFolder("app/src/jsMain/resources", KotlinResourceRootType.Resource)
+                sourceFolder("app/src/jsMain/kotlin", SourceKotlinRootType)
+                sourceFolder("app/src/jsMain/resources", ResourceKotlinRootType)
                 outputPath("app/build/classes/kotlin/js/main", true)
             }
             module("app_jsTest") {
@@ -98,8 +96,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("app_commonMain", DependencyScope.TEST)
                 moduleDependency("app_commonTest", DependencyScope.TEST)
                 moduleDependency("app_jsMain", DependencyScope.TEST)
-                sourceFolder("app/src/jsTest/kotlin", KotlinSourceRootType.TestSource)
-                sourceFolder("app/src/jsTest/resources", KotlinResourceRootType.TestResource)
+                sourceFolder("app/src/jsTest/kotlin", TestSourceKotlinRootType)
+                sourceFolder("app/src/jsTest/resources", TestResourceKotlinRootType)
                 outputPath("app/build/classes/kotlin/js/test", false)
             }
             module("app_jvmMain") {
@@ -157,16 +155,16 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("lib_commonMain") {
                 platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
-                sourceFolder("lib/src/commonMain/kotlin", KotlinSourceRootType.Source)
-                sourceFolder("lib/src/commonMain/resources", KotlinResourceRootType.Resource)
+                sourceFolder("lib/src/commonMain/kotlin", SourceKotlinRootType)
+                sourceFolder("lib/src/commonMain/resources", ResourceKotlinRootType)
                 inheritProjectOutput()
             }
             module("lib_commonTest") {
                 platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
                 moduleDependency("lib_commonMain", DependencyScope.TEST)
-                sourceFolder("lib/src/commonTest/kotlin", KotlinSourceRootType.TestSource)
-                sourceFolder("lib/src/commonTest/resources", KotlinResourceRootType.TestResource)
+                sourceFolder("lib/src/commonTest/kotlin", TestSourceKotlinRootType)
+                sourceFolder("lib/src/commonTest/resources", TestResourceKotlinRootType)
                 inheritProjectOutput()
             }
             module("lib_jsMain") {
@@ -174,8 +172,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:${kotlinVersion()}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
                 moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                sourceFolder("lib/src/jsMain/kotlin", KotlinSourceRootType.Source)
-                sourceFolder("lib/src/jsMain/resources", KotlinResourceRootType.Resource)
+                sourceFolder("lib/src/jsMain/kotlin", SourceKotlinRootType)
+                sourceFolder("lib/src/jsMain/resources", ResourceKotlinRootType)
                 outputPath("lib/build/classes/kotlin/js/main", true)
             }
             module("lib_jsTest") {
@@ -185,8 +183,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("lib_commonMain", DependencyScope.TEST)
                 moduleDependency("lib_commonTest", DependencyScope.TEST)
                 moduleDependency("lib_jsMain", DependencyScope.TEST)
-                sourceFolder("lib/src/jsTest/kotlin", KotlinSourceRootType.TestSource)
-                sourceFolder("lib/src/jsTest/resources", KotlinResourceRootType.TestResource)
+                sourceFolder("lib/src/jsTest/kotlin", TestSourceKotlinRootType)
+                sourceFolder("lib/src/jsTest/resources", TestResourceKotlinRootType)
                 outputPath("lib/build/classes/kotlin/js/test", false)
             }
             module("lib_jvmMain") {
@@ -305,14 +303,14 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("shared")
             module("shared_commonMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
-                sourceFolder("shared/src/commonMain/kotlin", KotlinSourceRootType.Source)
-                sourceFolder("shared/src/commonMain/resources", KotlinResourceRootType.Resource)
+                sourceFolder("shared/src/commonMain/kotlin", SourceKotlinRootType)
+                sourceFolder("shared/src/commonMain/resources", ResourceKotlinRootType)
             }
             module("shared_commonTest") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
                 moduleDependency("shared_commonMain", DependencyScope.TEST)
-                sourceFolder("shared/src/commonTest/kotlin", KotlinSourceRootType.TestSource)
-                sourceFolder("shared/src/commonTest/resources", KotlinResourceRootType.TestResource)
+                sourceFolder("shared/src/commonTest/kotlin", TestSourceKotlinRootType)
+                sourceFolder("shared/src/commonTest/resources", TestResourceKotlinRootType)
             }
             module("shared_androidMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
@@ -340,8 +338,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 libraryDependency("Kotlin/Native $nativeVersion - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
                 moduleDependency("shared_commonMain", DependencyScope.COMPILE)
-                sourceFolder("shared/src/iOSMain/kotlin", KotlinSourceRootType.Source)
-                sourceFolder("shared/src/iOSMain/resources", KotlinResourceRootType.Resource)
+                sourceFolder("shared/src/iOSMain/kotlin", SourceKotlinRootType)
+                sourceFolder("shared/src/iOSMain/resources", ResourceKotlinRootType)
             }
             module("shared_iOSTest") {
                 libraryDependency("Kotlin/Native $nativeVersion - stdlib", DependencyScope.PROVIDED)
@@ -349,8 +347,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("shared_iOSMain", DependencyScope.TEST)
                 moduleDependency("shared_commonMain", DependencyScope.TEST)
                 moduleDependency("shared_commonTest", DependencyScope.TEST)
-                sourceFolder("shared/src/iOSTest/kotlin", KotlinSourceRootType.TestSource)
-                sourceFolder("shared/src/iOSTest/resources", KotlinResourceRootType.TestResource)
+                sourceFolder("shared/src/iOSTest/kotlin", TestSourceKotlinRootType)
+                sourceFolder("shared/src/iOSTest/resources", TestResourceKotlinRootType)
             }
         }
     }

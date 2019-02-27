@@ -13,12 +13,13 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 
 sealed class KotlinResourceRootType() : JpsElementTypeBase<JavaResourceRootProperties>(),
     JpsModuleSourceRootType<JavaResourceRootProperties> {
-    object Resource : KotlinResourceRootType()
-
-    object TestResource : KotlinResourceRootType() {
-        override fun isForTests() = true
-    }
 
     override fun createDefaultProperties() =
         JpsJavaExtensionService.getInstance().createResourceRootProperties("", false)
+}
+
+object ResourceKotlinRootType : KotlinResourceRootType()
+
+object TestResourceKotlinRootType : KotlinResourceRootType() {
+    override fun isForTests() = true
 }
