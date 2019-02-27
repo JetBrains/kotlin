@@ -12,12 +12,9 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.ide.konan.createFileStub
-import org.jetbrains.kotlin.ide.konan.decompiler.FileWithMetadata
-import org.jetbrains.kotlin.ide.konan.decompiler.decompiledText
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.createIncompatibleAbiVersionFileStub
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 
@@ -42,7 +39,6 @@ open class KotlinNativeMetadataStubBuilder(
                 val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
                 val ktFileText = decompiledText(
                     file,
-                    KonanPlatform,
                     serializerProtocol,
                     NullFlexibleTypeDeserializer,
                     renderer

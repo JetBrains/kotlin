@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
@@ -27,7 +26,6 @@ class KotlinNativeMetadataDeserializerForDecompiler(
     packageFqName: FqName,
     private val proto: KonanProtoBuf.LinkDataPackageFragment,
     private val nameResolver: NameResolver,
-    override val targetPlatform: TargetPlatform,
     serializerProtocol: SerializerExtensionProtocol,
     flexibleTypeDeserializer: FlexibleTypeDeserializer
 ) : DeserializerForDecompilerBase(packageFqName) {

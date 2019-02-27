@@ -55,7 +55,6 @@ class DeserializerForClassfileDecompiler(
         packageDirectory: VirtualFile,
         directoryPackageFqName: FqName
 ) : DeserializerForDecompilerBase(directoryPackageFqName) {
-    override val targetPlatform: TargetPlatform get() = JvmPlatform
     override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
 
     private val classFinder = DirectoryBasedClassFinder(packageDirectory, directoryPackageFqName)

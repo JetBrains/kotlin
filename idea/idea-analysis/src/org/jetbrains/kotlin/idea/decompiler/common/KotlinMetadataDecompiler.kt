@@ -102,7 +102,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
                 val packageFqName = file.packageFqName
                 val resolver = KotlinMetadataDeserializerForDecompiler(
                         packageFqName, file.proto, file.nameResolver, file.version,
-                        targetPlatform, serializerProtocol, flexibleTypeDeserializer
+                        serializerProtocol, flexibleTypeDeserializer
                 )
                 val declarations = arrayListOf<DeclarationDescriptor>()
                 declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
