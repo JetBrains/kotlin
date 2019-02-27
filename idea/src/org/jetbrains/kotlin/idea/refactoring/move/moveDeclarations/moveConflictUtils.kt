@@ -71,9 +71,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
@@ -599,9 +597,11 @@ class MoveConflictChecker(
             fun descrText(d: DeclarationDescriptor) = d.findPsi()?.text ?: "unknown"
             when (currentScopeDeclaration) {
                 is PackageFragmentDescriptor -> {
-                    val packageDescriptor = currentScopeDeclaration
-                        .containingDeclaration
-                        .getPackage(currentScopeDeclaration.fqName)
+                    fun getPackage(decl: PackageFragmentDescriptor) = decl.containingDeclaration.getPackage(decl.fqName)
+                    val packageDescriptor = getPackage(currentScopeDeclaration)
+                    if ((declaration.containingDeclaration)?.fqNameOrNull() == currentScopeDeclaration.fqNameOrNull()) {
+                        return
+                    }
                     packageDescriptor
                         .memberScope
                         .getContributedDescriptors { it == declaration.name }
@@ -609,11 +609,15 @@ class MoveConflictChecker(
                         .forEach { report(descrText(it), packageDescriptor.fqName.asString()) }
                     return
                 }
-                is ClassDescriptor -> currentScopeDeclaration
-                    .unsubstitutedMemberScope
-                    .getContributedDescriptors { it == declaration.name }
-                    .filter { equivalent(it, declaration) }
-                    .forEach { report(descrText(it), descrText(currentScopeDeclaration)) }
+                is ClassDescriptor -> {
+                    if ((declaration.containingDeclaration)?.fqNameOrNull() != currentScopeDeclaration.fqNameOrNull()) {
+                        currentScopeDeclaration
+                            .unsubstitutedMemberScope
+                            .getContributedDescriptors { it == declaration.name }
+                            .filter { equivalent(it, declaration) }
+                            .forEach { report(descrText(it), descrText(currentScopeDeclaration)) }
+                    }
+                }
 
             }
             currentScopeDeclaration.containingDeclaration?.let { walkDeclarations(it, declaration, report) }
