@@ -43,12 +43,11 @@ class JsGenerationContext {
         this.currentFunction = func
     }
 
-    fun getNameForDeclaration(declaration: IrDeclaration): JsName = when (declaration) {
-        is IrSymbolOwner -> getNameForSymbol(declaration.symbol)
-        // Properties don't have symbols. Handling them separately:
-        is IrProperty -> currentScope.declareName(declaration.getJsName() ?: declaration.name.identifier)
-        else -> error("Unsupported")
-    }
+    fun getNameForDeclaration(declaration: IrDeclaration): JsName =
+        if (declaration is IrSymbolOwner)
+            getNameForSymbol(declaration.symbol)
+        else
+            error("Unsupported")
 
     fun getNameForSymbol(symbol: IrSymbol): JsName = staticContext.getNameForSymbol(symbol, this)
     fun getNameForType(type: IrType): JsName = staticContext.getNameForType(type, this)

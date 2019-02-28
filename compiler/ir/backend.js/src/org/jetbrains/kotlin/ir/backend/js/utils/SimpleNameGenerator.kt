@@ -47,6 +47,10 @@ class SimpleNameGenerator : NameGenerator {
 
         val declarationName = declaration.getJsNameOrKotlinName().asString()
 
+        if (declaration is IrProperty) {
+            return context.currentScope.declareName(declaration.getJsNameOrKotlinName().asString())
+        }
+
         if (declaration is IrSimpleFunction && declaration.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION) {
             return nameDeclarator(declarationName)
         }
