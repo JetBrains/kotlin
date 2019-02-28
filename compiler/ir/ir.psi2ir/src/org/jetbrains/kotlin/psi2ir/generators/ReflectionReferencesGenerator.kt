@@ -136,16 +136,17 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         origin: IrStatementOrigin?,
         mutable: Boolean
     ): IrPropertyReference {
-        val getterDescriptor = propertyDescriptor.getter
-        val setterDescriptor = if (mutable) propertyDescriptor.setter else null
+        val originalProperty = propertyDescriptor.original
+        val originalGetter = originalProperty.getter?.original
+        val originalSetter = if (mutable) originalProperty.setter?.original else null
 
         return IrPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
             context.symbolTable.referenceProperty(propertyDescriptor.original),
             propertyDescriptor.typeParametersCount,
-            getterDescriptor?.run { context.symbolTable.referenceField(propertyDescriptor) },
-            getterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) },
-            setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) },
+            originalGetter?.run { context.symbolTable.referenceField(originalProperty) },
+            originalGetter?.let { context.symbolTable.referenceSimpleFunction(it) },
+            originalSetter?.let { context.symbolTable.referenceSimpleFunction(it) },
             origin
         ).apply {
             putTypeArguments(typeArguments) { it.toIrType() }

@@ -1,0 +1,195 @@
+FILE fqName:<root> fileName:/genericPropertyRef.kt
+  CLASS CLASS name:Value modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Value<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (value:T, text:kotlin.String?) returnType:Value<T> flags:primary
+      VALUE_PARAMETER name:value index:0 type:T flags:
+        EXPRESSION_BODY
+          TYPE_OP type=T origin=CAST typeOperand=T
+            typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+            CONST Null type=kotlin.Nothing? value=null
+      VALUE_PARAMETER name:text index:1 type:kotlin.String? flags:
+        EXPRESSION_BODY
+          CONST Null type=kotlin.Nothing? value=null
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Value'
+    PROPERTY name:value visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:value type:T visibility:public flags:
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter value: T = ...' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Value<T>) returnType:T flags:
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:var
+        $this: VALUE_PARAMETER name:<this> type:Value<T> flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): T'
+            GET_FIELD 'value: T' type=T origin=null
+              receiver: GET_VAR 'this@Value: Value<T>' type=Value<T> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:Value<T>, <set-?>:T) returnType:kotlin.Unit flags:
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:var
+        $this: VALUE_PARAMETER name:<this> type:Value<T> flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:T flags:
+        BLOCK_BODY
+          SET_FIELD 'value: T' type=kotlin.Unit origin=null
+            receiver: GET_VAR 'this@Value: Value<T>' type=Value<T> origin=null
+            value: GET_VAR 'value-parameter <set-?>: T' type=T origin=null
+    PROPERTY name:text visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:public flags:
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter text: String? = ...' type=kotlin.String? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-text> visibility:public modality:FINAL <> ($this:Value<T>) returnType:kotlin.String? flags:
+        correspondingProperty: PROPERTY name:text visibility:public modality:FINAL flags:var
+        $this: VALUE_PARAMETER name:<this> type:Value<T> flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-text>(): String?'
+            GET_FIELD 'text: String?' type=kotlin.String? origin=null
+              receiver: GET_VAR 'this@Value: Value<T>' type=Value<T> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-text> visibility:public modality:FINAL <> ($this:Value<T>, <set-?>:kotlin.String?) returnType:kotlin.Unit flags:
+        correspondingProperty: PROPERTY name:text visibility:public modality:FINAL flags:var
+        $this: VALUE_PARAMETER name:<this> type:Value<T> flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String? flags:
+        BLOCK_BODY
+          SET_FIELD 'text: String?' type=kotlin.Unit origin=null
+            receiver: GET_VAR 'this@Value: Value<T>' type=Value<T> origin=null
+            value: GET_VAR 'value-parameter <set-?>: String?' type=kotlin.String? origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  PROPERTY name:additionalText visibility:public modality:FINAL flags:delegated,val
+    FIELD DELEGATE name:additionalText$delegate type:DVal visibility:private flags:final,static
+      EXPRESSION_BODY
+        CALL 'constructor DVal(Any)' type=DVal origin=null
+          kmember: PROPERTY_REFERENCE 'text: String?' field='text: String?' getter='<get-text>(): String?' setter='<set-text>(String?): Unit' type=kotlin.reflect.KMutableProperty1<Value<T>, kotlin.String?> origin=null
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <T> ($receiver:Value<T>) returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL flags:delegated,val
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      $receiver: VALUE_PARAMETER name:<this> type:Value<T> flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-additionalText>() on Value<T>: Int'
+          CALL 'getValue(Any?, Any): Int' type=kotlin.Int origin=null
+            $this: GET_FIELD '`additionalText$delegate`: DVal' type=DVal origin=null
+            t: GET_VAR 'this@additionalText: Value<T>' type=Value<T> origin=null
+            p: PROPERTY_REFERENCE 'additionalText: Int on Value<T>' field='additionalText: Int on Value<T>' getter='<get-additionalText>() on Value<T>: Int' setter=null type=kotlin.reflect.KProperty1<Value<T>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              <T>: <none>
+  PROPERTY name:additionalValue visibility:public modality:FINAL flags:delegated,val
+    FIELD DELEGATE name:additionalValue$delegate type:DVal visibility:private flags:final,static
+      EXPRESSION_BODY
+        CALL 'constructor DVal(Any)' type=DVal origin=null
+          kmember: PROPERTY_REFERENCE 'value: T' field='value: T' getter='<get-value>(): T' setter='<set-value>(T): Unit' type=kotlin.reflect.KMutableProperty1<Value<T>, T> origin=null
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalValue> visibility:public modality:FINAL <T> ($receiver:Value<T>) returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:additionalValue visibility:public modality:FINAL flags:delegated,val
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      $receiver: VALUE_PARAMETER name:<this> type:Value<T> flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-additionalValue>() on Value<T>: Int'
+          CALL 'getValue(Any?, Any): Int' type=kotlin.Int origin=null
+            $this: GET_FIELD '`additionalValue$delegate`: DVal' type=DVal origin=null
+            t: GET_VAR 'this@additionalValue: Value<T>' type=Value<T> origin=null
+            p: PROPERTY_REFERENCE 'additionalValue: Int on Value<T>' field='additionalValue: Int on Value<T>' getter='<get-additionalValue>() on Value<T>: Int' setter=null type=kotlin.reflect.KProperty1<Value<T>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              <T>: <none>
+  CLASS CLASS name:DVal modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:DVal flags:
+    CONSTRUCTOR visibility:public <> (kmember:kotlin.Any) returnType:DVal flags:primary
+      VALUE_PARAMETER name:kmember index:0 type:kotlin.Any flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='DVal'
+    PROPERTY name:kmember visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:kmember type:kotlin.Any visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter kmember: Any' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kmember> visibility:public modality:FINAL <> ($this:DVal) returnType:kotlin.Any flags:
+        correspondingProperty: PROPERTY name:kmember visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:DVal flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-kmember>(): Any'
+            GET_FIELD 'kmember: Any' type=kotlin.Any origin=null
+              receiver: GET_VAR 'this@DVal: DVal' type=DVal origin=null
+    FUN name:getValue visibility:public modality:FINAL <> ($this:DVal, t:kotlin.Any?, p:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:DVal flags:
+      VALUE_PARAMETER name:t index:0 type:kotlin.Any? flags:
+      VALUE_PARAMETER name:p index:1 type:kotlin.Any flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='getValue(Any?, Any): Int'
+          CONST Int type=kotlin.Int value=42
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  PROPERTY name:recivier visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:public flags:static
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value="fail"
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-recivier> visibility:public modality:FINAL <> () returnType:kotlin.Any? flags:
+      correspondingProperty: PROPERTY name:recivier visibility:public modality:FINAL flags:var
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-recivier>(): Any?'
+          GET_FIELD 'recivier: Any?' type=kotlin.Any? origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-recivier> visibility:public modality:FINAL <> (<set-?>:kotlin.Any?) returnType:kotlin.Unit flags:
+      correspondingProperty: PROPERTY name:recivier visibility:public modality:FINAL flags:var
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any? flags:
+      BLOCK_BODY
+        SET_FIELD 'recivier: Any?' type=kotlin.Unit origin=null
+          value: GET_VAR 'value-parameter <set-?>: Any?' type=kotlin.Any? origin=null
+  PROPERTY name:value2 visibility:public modality:FINAL flags:var
+    FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:public flags:static
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value="fail2"
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> () returnType:kotlin.Any? flags:
+      correspondingProperty: PROPERTY name:value2 visibility:public modality:FINAL flags:var
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-value2>(): Any?'
+          GET_FIELD 'value2: Any?' type=kotlin.Any? origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value2> visibility:public modality:FINAL <> (<set-?>:kotlin.Any?) returnType:kotlin.Unit flags:
+      correspondingProperty: PROPERTY name:value2 visibility:public modality:FINAL flags:var
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any? flags:
+      BLOCK_BODY
+        SET_FIELD 'value2: Any?' type=kotlin.Unit origin=null
+          value: GET_VAR 'value-parameter <set-?>: Any?' type=kotlin.Any? origin=null
+  PROPERTY name:bar visibility:public modality:FINAL flags:var
+    FUN name:<get-bar> visibility:public modality:FINAL <T> ($receiver:T) returnType:T flags:
+      correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL flags:var
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-bar>() on T: T'
+          GET_VAR 'this@bar: T' type=T origin=null
+    FUN name:<set-bar> visibility:public modality:FINAL <T> ($receiver:T, value:T) returnType:kotlin.Unit flags:
+      correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL flags:var
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
+      VALUE_PARAMETER name:value index:0 type:T flags:
+      BLOCK_BODY
+        CALL '<set-recivier>(Any?): Unit' type=kotlin.Unit origin=EQ
+          <set-?>: GET_VAR 'this@bar: T' type=T origin=null
+        CALL '<set-value2>(Any?): Unit' type=kotlin.Unit origin=EQ
+          <set-?>: GET_VAR 'value-parameter value: T' type=T origin=null
+  PROPERTY name:barRef visibility:public modality:FINAL flags:val
+    FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:public flags:final,static
+      EXPRESSION_BODY
+        PROPERTY_REFERENCE 'bar: T on T' field='bar: T on T' getter='<get-bar>() on T: T' setter='<set-bar>(T) on T: Unit' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
+          <T>: kotlin.String?
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barRef> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> flags:
+      correspondingProperty: PROPERTY name:barRef visibility:public modality:FINAL flags:val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-barRef>(): KMutableProperty1<String?, String?>'
+          GET_FIELD 'barRef: KMutableProperty1<String?, String?>' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
