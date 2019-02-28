@@ -1,3 +1,4 @@
+@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Named

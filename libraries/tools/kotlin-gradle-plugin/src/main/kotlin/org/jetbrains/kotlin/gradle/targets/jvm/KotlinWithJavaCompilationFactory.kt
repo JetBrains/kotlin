@@ -3,13 +3,11 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-
+@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 
 class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions>(
     val project: Project,
