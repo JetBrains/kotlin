@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.reporter
 
-import com.intellij.diagnostic.ITNReporter
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent
 import com.intellij.openapi.diagnostic.SubmittedReportInfo
@@ -26,11 +25,12 @@ import org.jetbrains.kotlin.idea.KotlinPluginUpdater
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
 import java.awt.Component
+import javax.swing.Icon
 
 /**
  * We need to wrap ITNReporter for force showing or errors from kotlin plugin even from released version of IDEA.
  */
-class KotlinReportSubmitter : ITNReporter() {
+class KotlinReportSubmitter : ITNReporterCompat() {
     private var hasUpdate = false
     private var hasLatestVersion = false
 
@@ -39,16 +39,21 @@ class KotlinReportSubmitter : ITNReporter() {
         return notificationEnabled && (!hasUpdate || ApplicationManager.getApplication().isInternal)
     }
 
-    override fun submit(events: Array<IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component, consumer: Consumer<SubmittedReportInfo>): Boolean {
+    override fun submitCompat(
+        events: Array<IdeaLoggingEvent>,
+        additionalInfo: String?,
+        parentComponent: Component?,
+        consumer: Consumer<SubmittedReportInfo>
+    ): Boolean {
         if (hasUpdate) {
             if (ApplicationManager.getApplication().isInternal) {
-                return super.submit(events, additionalInfo, parentComponent, consumer)
+                return super.submitCompat(events, additionalInfo, parentComponent, consumer)
             }
             return true
         }
 
         if (hasLatestVersion) {
-            return super.submit(events, additionalInfo, parentComponent, consumer)
+            return super.submitCompat(events, additionalInfo, parentComponent, consumer)
         }
 
         KotlinPluginUpdater.getInstance().runUpdateCheck { status ->
@@ -56,25 +61,35 @@ class KotlinReportSubmitter : ITNReporter() {
                 hasUpdate = true
 
                 if (ApplicationManager.getApplication().isInternal) {
-                    super.submit(events, additionalInfo, parentComponent, consumer)
+                    super.submitCompat(events, additionalInfo, parentComponent, consumer)
                 }
 
-                val rc = Messages.showDialog(parentComponent,
-                                             "You're running Kotlin plugin version ${KotlinPluginUtil.getPluginVersion()}, " +
-                                             "while the latest version is ${status.pluginDescriptor.version}",
-                                             "Update Kotlin Plugin",
-                                             arrayOf("Update", "Ignore"),
-                                             0, Messages.getInformationIcon())
+                val rc = showDialog(
+                    parentComponent,
+                    "You're running Kotlin plugin version ${KotlinPluginUtil.getPluginVersion()}, " +
+                            "while the latest version is ${status.pluginDescriptor.version}",
+                    "Update Kotlin Plugin",
+                    arrayOf("Update", "Ignore"),
+                    0, Messages.getInformationIcon()
+                )
+
                 if (rc == 0) {
                     KotlinPluginUpdater.getInstance().installPluginUpdate(status)
                 }
-            }
-            else {
+            } else {
                 hasLatestVersion = true
-                super.submit(events, additionalInfo, parentComponent, consumer)
+                super.submitCompat(events, additionalInfo, parentComponent, consumer)
             }
             false
         }
         return true
+    }
+
+    fun showDialog(parent: Component?, message: String, title: String, options: Array<String>, defaultOptionIndex: Int, icon: Icon?): Int {
+        return if (parent != null) {
+            Messages.showDialog(parent, message, title, options, defaultOptionIndex, icon)
+        } else {
+            Messages.showDialog(message, title, options, defaultOptionIndex, icon)
+        }
     }
 }
