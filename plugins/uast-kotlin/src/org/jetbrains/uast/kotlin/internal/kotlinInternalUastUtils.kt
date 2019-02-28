@@ -177,6 +177,9 @@ internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, conte
     }
 
     (constructor.declarationDescriptor as? TypeParameterDescriptor)?.let { typeParameter ->
+        (typeParameter.containingDeclaration.toSource()?.getMaybeLightElement() as? PsiTypeParameterListOwner)
+            ?.typeParameterList?.typeParameters?.getOrNull(typeParameter.index)
+            ?.let { return PsiTypesUtil.getClassType(it) }
         return CommonSupertypes.commonSupertype(typeParameter.upperBounds).toPsiType(lightDeclaration, context, boxed)
     }
 
@@ -249,15 +252,13 @@ internal fun KtClassOrObject.toPsiType(): PsiType {
     return PsiTypesUtil.getClassType(lightClass)
 }
 
-internal fun PsiElement.getMaybeLightElement(context: UElement): PsiElement? {
+internal fun PsiElement.getMaybeLightElement(context: UElement? = null /* TODO: remove */): PsiElement? {
     return when (this) {
         is KtDeclaration -> {
             val lightElement = toLightElements().firstOrNull()
             if (lightElement != null) return lightElement
 
-            val languagePlugin = context.getLanguagePlugin()
-            val uElement = languagePlugin.convertElementWithParent(this, null)
-            when (uElement) {
+            when (val uElement = this.toUElement()) {
                 is UDeclaration -> uElement.javaPsi
                 is UDeclarationsExpression -> uElement.declarations.firstOrNull()?.javaPsi
                 is ULambdaExpression -> (uElement.uastParent as? KotlinLocalFunctionUVariable)?.javaPsi
