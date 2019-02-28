@@ -172,7 +172,7 @@ internal fun FirAbstractAnnotatedElement.addAnnotationsFrom(javaAnnotationOwner:
     }
 }
 
-private fun JavaType.toConeProjection(session: FirSession, boundTypeParameter: FirTypeParameter?): ConeKotlinTypeProjection {
+internal fun JavaType.toConeProjection(session: FirSession, boundTypeParameter: FirTypeParameter?): ConeKotlinTypeProjection {
     return when (this) {
         is JavaWildcardType -> {
             val bound = this.bound

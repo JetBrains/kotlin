@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirCallableMember
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.resolvedFqName
 import org.jetbrains.kotlin.fir.java.createTypeParameterSymbol
-import org.jetbrains.kotlin.fir.java.toConeKotlinTypeWithNullability
+import org.jetbrains.kotlin.fir.java.toConeProjection
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -121,29 +123,24 @@ private fun JavaClassifierType.enhanceInflexibleType(
     }
 
     val effectiveQualifiers = qualifiers(index)
-    val (enhancedSymbol, mutabilityChanged) = originalSymbol.enhanceMutability(effectiveQualifiers, position)
+    val enhancedSymbol = originalSymbol.enhanceMutability(effectiveQualifiers, position)
 
     var globalArgIndex = index + 1
-    var wereChanges = mutabilityChanged
     val enhancedArguments = arguments.mapIndexed { localArgIndex, arg ->
         if (arg is JavaWildcardType) {
             globalArgIndex++
-            ConeStarProjection
-            // TODO: (?) TypeUtils.makeStarProjection(enhancedClassifier.typeConstructor.parameters[localArgIndex])
+            arg.toConeProjection(
+                session,
+                ((originalSymbol as? FirBasedSymbol<*>)?.fir as? FirCallableMember)?.typeParameters?.getOrNull(localArgIndex)
+            )
         } else {
             val argEnhancedTypeRef = arg.enhancePossiblyFlexible(session, annotations, qualifiers, globalArgIndex)
-            wereChanges = wereChanges || argEnhancedTypeRef !== arg
             globalArgIndex += arg.subtreeSize()
             argEnhancedTypeRef.type.type.toTypeProjection(Variance.INVARIANT)
         }
     }
 
-    val (enhancedNullability, _, nullabilityChanged) = getEnhancedNullability(effectiveQualifiers, position)
-    wereChanges = wereChanges || nullabilityChanged
-
-    if (!wereChanges) return toConeKotlinTypeWithNullability(
-        session, isNullable = position == TypeComponentPosition.FLEXIBLE_UPPER
-    )
+    val enhancedNullability = getEnhancedNullability(effectiveQualifiers, position)
 
     val enhancedType = enhancedSymbol.constructType(enhancedArguments.toTypedArray(), enhancedNullability)
 
@@ -158,49 +155,39 @@ private fun JavaClassifierType.enhanceInflexibleType(
 private fun getEnhancedNullability(
     qualifiers: JavaTypeQualifiers,
     position: TypeComponentPosition
-): EnhanceDetailsResult<Boolean> {
-    if (!position.shouldEnhance()) return false.noChange()
+): Boolean {
+    if (!position.shouldEnhance()) return position == TypeComponentPosition.FLEXIBLE_UPPER
 
     return when (qualifiers.nullability) {
-        NullabilityQualifier.NULLABLE -> true.enhancedNullability()
-        NullabilityQualifier.NOT_NULL -> false.enhancedNullability()
-        else -> false.noChange()
+        NullabilityQualifier.NULLABLE -> true
+        NullabilityQualifier.NOT_NULL -> false
+        else -> position == TypeComponentPosition.FLEXIBLE_UPPER
     }
 }
-
-private data class EnhanceDetailsResult<out T>(
-    val result: T,
-    val mutabilityChanged: Boolean = false,
-    val nullabilityChanged: Boolean = false
-)
-
-private fun <T> T.noChange() = EnhanceDetailsResult(this)
-private fun <T> T.enhancedNullability() = EnhanceDetailsResult(this, nullabilityChanged = true)
-private fun <T> T.enhancedMutability() = EnhanceDetailsResult(this, mutabilityChanged = true)
 
 private fun ConeClassifierSymbol.enhanceMutability(
     qualifiers: JavaTypeQualifiers,
     position: TypeComponentPosition
-): EnhanceDetailsResult<ConeClassifierSymbol> {
-    if (!position.shouldEnhance()) return this.noChange()
-    if (this !is FirClassSymbol) return this.noChange() // mutability is not applicable for type parameters
+): ConeClassifierSymbol {
+    if (!position.shouldEnhance()) return this
+    if (this !is FirClassSymbol) return this // mutability is not applicable for type parameters
 
     when (qualifiers.mutability) {
         MutabilityQualifier.READ_ONLY -> {
             val readOnlyId = classId.mutableToReadOnly()
             if (position == TypeComponentPosition.FLEXIBLE_LOWER && readOnlyId != null) {
-                return FirClassSymbol(readOnlyId).enhancedMutability()
+                return FirClassSymbol(readOnlyId)
             }
         }
         MutabilityQualifier.MUTABLE -> {
             val mutableId = classId.readOnlyToMutable()
             if (position == TypeComponentPosition.FLEXIBLE_UPPER && mutableId != null) {
-                return FirClassSymbol(mutableId).enhancedMutability()
+                return FirClassSymbol(mutableId)
             }
         }
     }
 
-    return this.noChange()
+    return this
 }
 
 
