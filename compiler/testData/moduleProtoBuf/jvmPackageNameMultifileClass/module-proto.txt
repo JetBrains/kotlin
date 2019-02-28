@@ -1,0 +1,8 @@
+k1
+  j1/K1__K1_AKt (j1/K1)
+  j1/K1__K1_BKt (j1/K1)
+  j1/K1__K1_CKt (j1/K1)
+k2
+  k2/K2__K2_CKt (k2/K2)
+  j2/K2__K2_AKt (j2/K2)
+  j3/K2__K2_BKt (j3/K2)

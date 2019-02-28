@@ -188,6 +188,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameInRootPackage.kt");
     }
 
+    @TestMetadata("jvmPackageNameMultifileClass.kt")
+    public void testJvmPackageNameMultifileClass() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameMultifileClass.kt");
+    }
+
     @TestMetadata("jvmPackageNameWithJvmName.kt")
     public void testJvmPackageNameWithJvmName() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameWithJvmName.kt");

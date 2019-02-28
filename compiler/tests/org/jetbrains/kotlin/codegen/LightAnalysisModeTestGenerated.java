@@ -14655,6 +14655,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/jvmPackageName/metadataField.kt");
         }
 
+        @TestMetadata("multifileClass.kt")
+        public void testMultifileClass() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmPackageName/multifileClass.kt");
+        }
+
         @TestMetadata("rootPackage.kt")
         public void testRootPackage() throws Exception {
             runTest("compiler/testData/codegen/box/jvmPackageName/rootPackage.kt");

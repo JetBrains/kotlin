@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClassPart
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
@@ -49,7 +50,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -66,7 +66,7 @@ class MultifileClassCodegenImpl(
 ) : MultifileClassCodegen {
     private val facadeClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(facadeFqName)
 
-    private val packageFragment = getOnlyPackageFragment(facadeFqName.parent(), files, state.module)
+    private val packageFragment = getOnlyPackageFragment(files, state.module)
 
     private val compiledPackageFragment = getCompiledPackageFragment(facadeFqName, state)
 
@@ -329,6 +329,20 @@ class MultifileClassCodegenImpl(
                 arv.visit(null, internalName)
             }
             arv.visitEnd()
+
+            val kotlinPackageFqName =
+                packageFragment?.fqName ?: compiledPackageFragment?.fqName
+                ?: error("Either source package or compiled package should not be null: $facadeClassType ($files)")
+
+            if (files.any { it.packageFqName != kotlinPackageFqName })
+                throw UnsupportedOperationException(
+                    "Multi-file parts of a facade with JvmPackageName should all lie in the same Kotlin package:\n  " +
+                            files.joinToString("\n  ") { file -> "$file: package ${file.packageFqName}" }
+                )
+
+            if (kotlinPackageFqName != JvmClassName.byInternalName(facadeClassType.internalName).packageFqName) {
+                av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, kotlinPackageFqName.asString())
+            }
         }
     }
 
@@ -350,21 +364,10 @@ class MultifileClassCodegenImpl(
         private val J_L_OBJECT = AsmTypes.OBJECT_TYPE.internalName
         private const val FACADE_CLASS_ATTRIBUTES = Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_SUPER
 
-        private fun getOnlyPackageFragment(
-            packageFqName: FqName,
-            files: Collection<KtFile>,
-            moduleDescriptor: ModuleDescriptor
-        ): PackageFragmentDescriptor? {
-            val fragments = SmartList<PackageFragmentDescriptor>()
-            for (file in files) {
-                val fragment = moduleDescriptor.findPackageFragmentForFile(file)
+        private fun getOnlyPackageFragment(files: Collection<KtFile>, moduleDescriptor: ModuleDescriptor): PackageFragmentDescriptor? {
+            val fragments = files.mapTo(linkedSetOf()) { file ->
+                moduleDescriptor.findPackageFragmentForFile(file)
                     ?: throw AssertionError("package fragment is null for " + file + "\n" + file.text)
-
-                assert(packageFqName == fragment.fqName) { "expected package fq name: " + packageFqName + ", actual: " + fragment.fqName }
-
-                if (!fragments.contains(fragment)) {
-                    fragments.add(fragment)
-                }
             }
             if (fragments.size > 1) {
                 throw IllegalStateException("More than one package fragment, files: $files | fragments: $fragments")
