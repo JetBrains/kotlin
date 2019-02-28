@@ -30,6 +30,7 @@ val remoteRunTests by task<Test> {
         "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Contracts*",
         "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Annotations*",
         "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Local_variables\$Type_parameters*",
+        "checkers.DiagnosticsTestSpecGenerated\$Linked\$Type_inference*",
         "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked\$Annotations\$Type_annotations*",
         "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked\$Objects\$Inheritance*"
     )
