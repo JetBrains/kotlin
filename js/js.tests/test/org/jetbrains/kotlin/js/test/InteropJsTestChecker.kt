@@ -41,8 +41,7 @@ fun InteropEngine.runTestFunction(
         script += ".$testPackageName"
     }
 
-    val testPackage = eval<Any>(script)
-    return callMethod(testPackage, testFunctionName)
+    return callMethod(eval(script), testFunctionName)
 }
 
 
