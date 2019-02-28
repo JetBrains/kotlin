@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.READ_ONLY_PROPERTY
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
@@ -64,6 +61,7 @@ class ConvertFunctionToPropertyIntention :
 
     private inner class Converter(
         project: Project,
+        private val file: KtFile,
         private val editor: Editor?,
         descriptor: FunctionDescriptor
     ) : CallableRefactoring<FunctionDescriptor>(project, descriptor, text) {
@@ -74,7 +72,7 @@ class ConvertFunctionToPropertyIntention :
             (SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(name) ?: name).asString()
         }
 
-        private fun convertFunction(originalFunction: KtNamedFunction, psiFactory: KtPsiFactory) {
+        private fun convertFunction(originalFunction: KtNamedFunction, psiFactory: KtPsiFactory, moveCaret: Boolean) {
             val propertyString = KtPsiFactory.CallableBuilder(READ_ONLY_PROPERTY).apply {
                 // make sure to capture all comments and line breaks
                 modifier(originalFunction.text.substring(0, originalFunction.funKeyword!!.getStartOffsetIn(originalFunction)))
@@ -97,14 +95,14 @@ class ConvertFunctionToPropertyIntention :
             }.asString()
 
             val replaced = originalFunction.replaced(psiFactory.createDeclaration<KtProperty>(propertyString))
-
-            editor?.caretModel?.moveToOffset(replaced.nameIdentifier!!.endOffset)
+            if (editor != null && moveCaret) editor.caretModel.moveToOffset(replaced.nameIdentifier!!.endOffset)
         }
 
         override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
             val conflicts = MultiMap<PsiElement, String>()
             val getterName = JvmAbi.getterName(callableDescriptor.name.asString())
             val callables = getAffectedCallables(project, descriptorsForChange)
+            val mainElement = findMainElement(callables)
             val kotlinCalls = ArrayList<KtCallElement>()
             val kotlinRefsToRename = ArrayList<PsiReference>()
             val foreignRefs = ArrayList<PsiReference>()
@@ -177,7 +175,7 @@ class ConvertFunctionToPropertyIntention :
                     foreignRefs.forEach { it.handleElementRename(newGetterName) }
                     callables.forEach {
                         when (it) {
-                            is KtNamedFunction -> convertFunction(it, psiFactory)
+                            is KtNamedFunction -> convertFunction(it, psiFactory, moveCaret = it == mainElement)
                             is PsiMethod -> it.name = newGetterName
                         }
                     }
@@ -185,6 +183,12 @@ class ConvertFunctionToPropertyIntention :
                     ShortenReferences.DEFAULT.process(elementsToShorten)
                 }
             }
+        }
+
+        private fun findMainElement(callables: List<PsiElement>): PsiElement? {
+            if (editor == null) return null
+            val offset = editor.caretModel.offset
+            return callables.find { file == it.containingFile && offset in it.textRange }
         }
     }
 
@@ -208,6 +212,6 @@ class ConvertFunctionToPropertyIntention :
 
     override fun applyTo(element: KtNamedFunction, editor: Editor?) {
         val descriptor = element.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) as FunctionDescriptor
-        Converter(element.project, editor, descriptor).run()
+        Converter(element.project, element.containingKtFile, editor, descriptor).run()
     }
 }
