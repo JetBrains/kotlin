@@ -161,7 +161,7 @@ class IrBuiltIns(
     val stringType by lazy { string.toIrType() }
     val stringClass by lazy { builtIns.string.toIrSymbol() }
 
-    val collectionClass by lazy { builtIns.collection.toIrSymbol() }
+    val collectionClass = builtIns.collection.toIrSymbol()
 
     val arrayType by lazy { builtIns.array.toIrType(symbolTable = symbolTable) }
     val arrayClass by lazy { builtIns.array.toIrSymbol() }

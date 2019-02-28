@@ -118,7 +118,7 @@ class SimpleNameGenerator : NameGenerator {
                 if (declaration.kind == ClassKind.OBJECT || declaration.name.isSpecial || declaration.visibility == Visibilities.LOCAL) {
                     val parent = declaration.parent
                     when (parent) {
-                        is IrDeclaration -> nameBuilder.append(getNameForDeclaration(parent, context))
+                        is IrDeclarationWithName -> nameBuilder.append(getNameForDeclaration(parent, context))
                         is IrPackageFragment -> nameBuilder.append(parent.fqName.asString())
                     }
                 }

@@ -266,18 +266,12 @@ class JsIrBackendContext(
         primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
     }
 
-    val primitiveClassProperties by lazy { primitiveClassesObject.declarations.filterIsInstance<IrProperty>() }
     val primitiveClassFunctionClass by lazy {
-        primitiveClassesObject.declarations
+        primitiveClassesObject.owner.declarations
             .filterIsInstance<IrSimpleFunction>()
             .find { it.name == Name.identifier("functionClass") }!!
     }
 
-    val throwableClass by lazy {
-        symbolTable.referenceClass(
-            getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
-        )
-    }
     val throwableConstructors by lazy { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
     val defaultThrowableCtor by lazy { throwableConstructors.single { it.owner.valueParameters.size == 0 } }
 

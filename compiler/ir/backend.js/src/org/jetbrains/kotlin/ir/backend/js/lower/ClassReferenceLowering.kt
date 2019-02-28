@@ -29,20 +29,9 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
 
     private val primitiveClassProperties = context.primitiveClassProperties
 
-    private val booleanClass by lazy {
-        primitiveClassProperties.singleOrNull { it.name == Name.identifier("booleanClass") }?.getter
-            ?: primitiveClassesObject.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.special("<get-booleanClass>") }
-    }
-    private val intClass by lazy {
-        primitiveClassProperties.singleOrNull { it.name == Name.identifier("intClass") }?.getter
-            ?: primitiveClassesObject.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.special("<get-intClass>") }
-    }
-    private val doubleClass by lazy {
-        primitiveClassProperties.singleOrNull { it.name == Name.identifier("doubleClass") }?.getter
-            ?: primitiveClassesObject.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.special("<get-doubleClass>") }
-    }
     private fun primitiveClassProperty(name: String) =
-        primitiveClassProperties.single { it.name == Name.identifier(name) }
+        primitiveClassProperties.singleOrNull { it.name == Name.identifier(name) }?.getter
+            ?: primitiveClassesObject.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.special("<get-$name>") }
 
     private val finalPrimitiveClasses by lazy {
         mapOf(
@@ -64,7 +53,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
             IrType::isFloatArray to "floatArrayClass",
             IrType::isDoubleArray to "doubleArrayClass"
         ).mapValues {
-            primitiveClassProperty(it.value).getter!!
+            primitiveClassProperty(it.value)
         }
     }
 
@@ -74,7 +63,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
             IrType::isNumber to "numberClass",
             IrType::isNothing to "nothingClass"
         ).mapValues {
-            primitiveClassProperty(it.value).getter!!
+            primitiveClassProperty(it.value)
         }
     }
 
@@ -93,14 +82,6 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
             dispatchReceiver = JsIrBuilder.buildGetObjectValue(primitiveClassesObject.owner.defaultType, primitiveClassesObject)
         }
 
-    private fun callGetKClass(returnType: IrType, typeArgument: IrType) = when {
-        typeArgument.isBoolean() -> getPrimitiveClass(booleanClass, returnType)
-        typeArgument.isByte() -> getPrimitiveClass(intClass, returnType)
-        typeArgument.isShort() -> getPrimitiveClass(intClass, returnType)
-        typeArgument.isInt() -> getPrimitiveClass(intClass, returnType)
-        typeArgument.isFloat() -> getPrimitiveClass(doubleClass, returnType)
-        typeArgument.isDouble() -> getPrimitiveClass(doubleClass, returnType)
-        else -> JsIrBuilder.buildCall(intrinsics.jsGetKClass, returnType, listOf(typeArgument)).apply {
     private fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
         for ((typePredicate, v) in finalPrimitiveClasses) {
             if (typePredicate(typeArgument))
