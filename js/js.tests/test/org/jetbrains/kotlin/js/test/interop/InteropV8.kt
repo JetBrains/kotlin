@@ -14,6 +14,22 @@ import java.io.File
 class InteropV8 : InteropEngine {
     private val myRuntime: V8 = V8.createV8Runtime("global")
 
+    private fun createParams(vararg p: Any?): V8Array {
+        val params = V8Array(myRuntime)
+
+        p.forEach {when {
+            it == null -> params.pushNull()
+            it is Int -> params.push(it)
+            it is Double -> params.push(it)
+            it is String -> params.push(it)
+            it is Boolean -> params.push(it)
+            it is V8Object -> params.push(it)
+            else -> throw Exception("can not cast ${it}")
+        }}
+
+        return params
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun <T> eval(script: String): T {
         return myRuntime.executeScript(script) as T
