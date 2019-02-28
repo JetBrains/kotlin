@@ -59,21 +59,20 @@ abstract class AbstractKotlinTarget(
     internal open val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
         val usageContexts = createUsageContexts(mainCompilation)
-        setOf(
-            if (isGradleVersionAtLeast(4, 7)) {
-                val componentName = mainCompilation.target.name
-                createKotlinVariant(componentName, mainCompilation, usageContexts).apply {
-                    sourcesArtifacts = setOf(
-                        sourcesJarArtifact(
-                            mainCompilation, componentName,
-                            dashSeparatedName(target.name.toLowerCase(), componentName.toLowerCase())
-                        )
-                    )
-                }
-            } else {
-                KotlinVariant(mainCompilation, usageContexts)
-            }
+
+        val componentName = mainCompilation.target.name
+
+        val result = if (isGradleVersionAtLeast(4, 7)) {
+            createKotlinVariant(componentName, mainCompilation, usageContexts)
+        } else {
+            KotlinVariant(mainCompilation, usageContexts)
+        }
+
+        result.sourcesArtifacts = setOf(
+            sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
         )
+
+        setOf(result).also { project.components.addAll(it) }
     }
 
     override val components: Set<SoftwareComponent> by lazy {
@@ -160,24 +159,24 @@ abstract class AbstractKotlinTarget(
         compilation: KotlinCompilation<*>,
         usageContexts: Set<DefaultKotlinUsageContext>
     ): KotlinVariant {
+        val kotlinExtension = project.kotlinExtension
 
-        val kotlinExtension = project.kotlinExtension as? KotlinMultiplatformExtension
-            ?: return KotlinVariantWithCoordinates(compilation, usageContexts)
+        val result =
+            if (kotlinExtension !is KotlinMultiplatformExtension || targetName == KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
+                KotlinVariantWithCoordinates(compilation, usageContexts)
+            else {
+                val metadataTarget =
+                    kotlinExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as AbstractKotlinTarget
 
-        if (targetName == KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
-            return KotlinVariantWithCoordinates(compilation, usageContexts)
-
-        val separateMetadataTarget =
-            kotlinExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as AbstractKotlinTarget
-
-        val result = if (kotlinExtension.isGradleMetadataAvailable) {
-            KotlinVariantWithMetadataVariant(compilation, usageContexts, separateMetadataTarget)
-        } else {
-            // we should only add the Kotlin metadata dependency if we publish no Gradle metadata related to Kotlin MPP;
-            // with metadata, such a dependency would get invalid, since a platform module should only depend on modules for that
-            // same platform, not Kotlin metadata modules
-            KotlinVariantWithMetadataDependency(compilation, usageContexts, separateMetadataTarget)
-        }
+                if (kotlinExtension.isGradleMetadataAvailable) {
+                    KotlinVariantWithMetadataVariant(compilation, usageContexts, metadataTarget)
+                } else {
+                    // we should only add the Kotlin metadata dependency if we publish no Gradle metadata related to Kotlin MPP;
+                    // with metadata, such a dependency would get invalid, since a platform module should only depend on modules for that
+                    // same platform, not Kotlin metadata modules
+                    KotlinVariantWithMetadataDependency(compilation, usageContexts, metadataTarget)
+                }
+            }
 
         result.componentName = componentName
         return result
