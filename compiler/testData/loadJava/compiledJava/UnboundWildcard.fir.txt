@@ -1,6 +1,6 @@
 public final class UnboundWildcard : R|java/lang/Object| {
-    public final operator function foo(): R|ft<test/UnboundWildcard.MyClass<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:?>, test/UnboundWildcard.MyClass<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:?>?>|!
+    public final operator function foo(): R|ft<test/UnboundWildcard.MyClass<*>, test/UnboundWildcard.MyClass<*>?>|!
 
-    public final operator function collection(): R|ft<java/util/Collection<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:?>, java/util/Collection<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:?>?>|!
+    public final operator function collection(): R|ft<java/util/Collection<*>, java/util/Collection<*>?>|!
 
 }

@@ -1,4 +1,4 @@
 public open class MethodWithTypeParameters : R|java/lang/Object| {
-    public open operator function foo(a: R|ft<A, A?>|!, b: R|ft<java/util/List<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends B>, java/util/List<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends B>?>|!, list: R|ft<java/util/List<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? super String>, java/util/List<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? super String>?>|!): R|kotlin/Unit|
+    public open operator function foo(a: R|ft<A, A?>|!, b: R|ft<java/util/List<out B>, java/util/List<out B>?>|!, list: R|ft<java/util/List<in java/lang/String>, java/util/List<in java/lang/String>?>|!): R|kotlin/Unit|
 
 }

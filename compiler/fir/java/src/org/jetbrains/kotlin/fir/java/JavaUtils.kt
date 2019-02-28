@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
@@ -31,7 +33,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.Variance.*
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -123,7 +125,13 @@ internal fun JavaType.toConeKotlinTypeWithNullability(session: FirSession, isNul
 internal fun JavaClassifierType.toConeKotlinTypeWithNullability(session: FirSession, isNullable: Boolean): ConeLookupTagBasedType {
     return when (val classifier = classifier) {
         is JavaClass -> {
-            classifier.classId!!.toConeKotlinType(typeArguments.map { it.toConeProjection(session) }.toTypedArray(), isNullable)
+            val classId = classifier.classId!!
+            val symbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(classId) as? FirClassSymbol
+            symbol?.constructType(
+                typeArguments.mapIndexed { index, argument ->
+                    argument.toConeProjection(session, symbol.fir.typeParameters.getOrNull(index))
+                }.toTypedArray(), isNullable
+            ) ?: ConeClassErrorType("Symbol not found, for `$classId`")
         }
         is JavaTypeParameter -> {
             // TODO: it's unclear how to identify type parameter by the symbol
@@ -137,7 +145,7 @@ internal fun JavaClassifierType.toConeKotlinTypeWithNullability(session: FirSess
 
 internal fun createTypeParameterSymbol(session: FirSession, name: Name): FirTypeParameterSymbol {
     val firSymbol = FirTypeParameterSymbol()
-    FirTypeParameterImpl(session, null, firSymbol, name, variance = Variance.INVARIANT, isReified = false)
+    FirTypeParameterImpl(session, null, firSymbol, name, variance = INVARIANT, isReified = false)
     return firSymbol
 }
 
@@ -164,11 +172,26 @@ internal fun FirAbstractAnnotatedElement.addAnnotationsFrom(javaAnnotationOwner:
     }
 }
 
-private fun JavaType.toConeProjection(session: FirSession): ConeKotlinTypeProjection {
-    if (this is JavaClassifierType) {
-        return toConeKotlinTypeWithNullability(session, isNullable = false)
+private fun JavaType.toConeProjection(session: FirSession, boundTypeParameter: FirTypeParameter?): ConeKotlinTypeProjection {
+    return when (this) {
+        is JavaWildcardType -> {
+            val bound = this.bound
+            val argumentVariance = if (isExtends) OUT_VARIANCE else IN_VARIANCE
+            val parameterVariance = boundTypeParameter?.variance ?: INVARIANT
+            if (bound == null || parameterVariance != INVARIANT && parameterVariance != argumentVariance) {
+                ConeStarProjection
+            } else {
+                val boundType = bound.toConeKotlinTypeWithNullability(session, isNullable = false)
+                if (argumentVariance == OUT_VARIANCE) {
+                    ConeKotlinTypeProjectionOut(boundType)
+                } else {
+                    ConeKotlinTypeProjectionIn(boundType)
+                }
+            }
+        }
+        is JavaClassifierType -> toConeKotlinTypeWithNullability(session, isNullable = false)
+        else -> ConeClassErrorType("Unexpected type argument: $this")
     }
-    return ConeClassErrorType("Unexpected type argument: $this")
 }
 
 private fun JavaAnnotationArgument.toFirExpression(session: FirSession): FirExpression {

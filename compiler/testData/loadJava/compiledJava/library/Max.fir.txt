@@ -1,4 +1,4 @@
 public open class Max : R|java/lang/Object| {
-    public open operator function max(coll: R|ft<java/util/Collection<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends T>, java/util/Collection<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends T>?>|!): R|ft<T, T?>|!
+    public open operator function max(coll: R|ft<java/util/Collection<out T>, java/util/Collection<out T>?>|!): R|ft<T, T?>|!
 
 }

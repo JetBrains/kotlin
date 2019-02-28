@@ -1,6 +1,6 @@
 public abstract interface RemoveRedundantProjectionKind : R|java/lang/Object| {
-    public abstract operator function f(collection: R|ft<java/util/Collection<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends CharSequence>, java/util/Collection<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends CharSequence>?>|!): R|kotlin/Unit|
+    public abstract operator function f(collection: R|ft<java/util/Collection<out java/lang/CharSequence>, java/util/Collection<out java/lang/CharSequence>?>|!): R|kotlin/Unit|
 
-    public abstract operator function f(comparator: R|ft<java/lang/Comparable<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? super CharSequence>, java/lang/Comparable<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? super CharSequence>?>|!): R|kotlin/Unit|
+    public abstract operator function f(comparator: R|ft<java/lang/Comparable<in java/lang/CharSequence>, java/lang/Comparable<in java/lang/CharSequence>?>|!): R|kotlin/Unit|
 
 }
