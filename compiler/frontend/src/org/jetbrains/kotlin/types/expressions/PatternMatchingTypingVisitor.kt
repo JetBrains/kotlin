@@ -684,9 +684,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             return
         }
 
-        if (TypeIntersector.isIncompatibleEnums(type, subjectType)) {
-            context.trace.report(INCOMPATIBLE_ENUM_COMPARISON.on(reportErrorOn, subjectType, type))
-        }
+        checkEnumsForCompatibility(context, reportErrorOn, type, subjectType)
 
         // check if the pattern is essentially a 'null' expression
         if (KotlinBuiltIns.isNullableNothing(type) && !TypeUtils.isNullableType(subjectType)) {

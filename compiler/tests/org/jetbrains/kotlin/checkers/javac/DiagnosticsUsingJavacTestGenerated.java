@@ -6928,6 +6928,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/enum/incompatibleEnums.kt");
             }
 
+            @TestMetadata("incompatibleEnums_1_4.kt")
+            public void testIncompatibleEnums_1_4() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/incompatibleEnums_1_4.kt");
+            }
+
             @TestMetadata("inheritFromEnumEntry.kt")
             public void testInheritFromEnumEntry() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/inheritFromEnumEntry.kt");
