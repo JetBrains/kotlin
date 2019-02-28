@@ -286,19 +286,21 @@ private fun writeVersionRequirement(
 
     override fun visit(kind: KmVersionRequirementVersionKind, level: KmVersionRequirementLevel, errorCode: Int?, message: String?) {
         t = ProtoBuf.VersionRequirement.newBuilder().apply {
-            if (kind != defaultInstanceForType.versionKind) {
-                this.versionKind = when (kind) {
-                    KmVersionRequirementVersionKind.LANGUAGE_VERSION -> ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION
-                    KmVersionRequirementVersionKind.COMPILER_VERSION -> ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION
-                    KmVersionRequirementVersionKind.API_VERSION -> ProtoBuf.VersionRequirement.VersionKind.API_VERSION
-                }
+            val versionKind = when (kind) {
+                KmVersionRequirementVersionKind.LANGUAGE_VERSION -> ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION
+                KmVersionRequirementVersionKind.COMPILER_VERSION -> ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION
+                KmVersionRequirementVersionKind.API_VERSION -> ProtoBuf.VersionRequirement.VersionKind.API_VERSION
             }
-            if (level != defaultInstanceForType.level) {
-                this.level = when (level) {
-                    KmVersionRequirementLevel.WARNING -> ProtoBuf.VersionRequirement.Level.WARNING
-                    KmVersionRequirementLevel.ERROR -> ProtoBuf.VersionRequirement.Level.ERROR
-                    KmVersionRequirementLevel.HIDDEN -> ProtoBuf.VersionRequirement.Level.HIDDEN
-                }
+            if (versionKind != defaultInstanceForType.versionKind) {
+                this.versionKind = versionKind
+            }
+            val requirementLevel = when (level) {
+                KmVersionRequirementLevel.WARNING -> ProtoBuf.VersionRequirement.Level.WARNING
+                KmVersionRequirementLevel.ERROR -> ProtoBuf.VersionRequirement.Level.ERROR
+                KmVersionRequirementLevel.HIDDEN -> ProtoBuf.VersionRequirement.Level.HIDDEN
+            }
+            if (requirementLevel != defaultInstanceForType.level) {
+                this.level = requirementLevel
             }
             if (errorCode != null) {
                 this.errorCode = errorCode
