@@ -196,13 +196,13 @@
           <element id="directory" name="jps">
             <element id="artifact" artifact-name="kotlin-jps-plugin.jar" />
           </element>
-          <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.30-dev-1419/285fde038cb28087a51aee95919d428a2511b443/kotlin-stdlib-jdk8-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-jdk8.jar" />
-          <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.30-dev-1419/72c0c2470715b0aa18d5624c4fa9db0345b6c09f/kotlin-stdlib-jdk7-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-jdk7.jar" />
-          <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.30-dev-1419/c4bca00118a72c8d59fbe3d2c6621e0d79f12095/kotlin-stdlib-1.3.30-dev-1419.jar"  output-file-name="kotlin-stdlib.jar" />
+          <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.30-dev-1945/a3bd59a6a1a46590da6af97c48935342031619df/kotlin-stdlib-jdk8-1.3.30-dev-1945.jar" output-file-name="kotlin-stdlib-jdk8.jar" />
+          <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.30-dev-1945/ed140be9ff355822aafea93dba58bc2621ae6ad0/kotlin-stdlib-jdk7-1.3.30-dev-1945.jar" output-file-name="kotlin-stdlib-jdk7.jar" />
+          <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.30-dev-1945/561b4a9c9bc7c799658e0b7b898b2861585a5cbf/kotlin-stdlib-1.3.30-dev-1945.jar"  output-file-name="kotlin-stdlib.jar" />
           <element id="artifact" artifact-name="kotlin-reflect.jar" />
           <element id="artifact" artifact-name="kotlin-compiler-client-embeddable.jar" />
           <element id="artifact" artifact-name="kotlin-plugin.jar" />
-          <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.30-dev-1419/1edc4fbedf02e815e3d277c47640c9c79b5df72e/kotlin-stdlib-common-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-common.jar" />
+          <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.30-dev-1945/547b60cf86ed0355a2312093d200f503ce9803f3/kotlin-stdlib-common-1.3.30-dev-1945.jar" output-file-name="kotlin-stdlib-common.jar" />
           <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar" />
           <element id="artifact" artifact-name="kotlin-daemon-client.jar" />
         </element>

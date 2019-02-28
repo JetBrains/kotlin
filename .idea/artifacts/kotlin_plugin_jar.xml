@@ -5,7 +5,7 @@
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/prepare/idea-plugin/build/tmp/shadowJar/MANIFEST.MF" />
       </element>
-      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.30-dev-1419/d204f62db9ed29f42e939e0e62c4ee933863e05b/builtins-1.3.30-dev-1419.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.30-dev-1945/f5c03880d3dc304ef5dacc511310e12dac983ba6/builtins-1.3.30-dev-1945.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/protobuf-relocated/2.6.1/9a9536949348fae596f4878243dffd0ed351993d/protobuf-relocated-2.6.1.jar" path-in-jar="/" />
       <element id="module-output" name="kotlin.plugins.annotation-based-compiler-plugins-ide-support.main" />
       <element id="module-output" name="kotlin.compiler.backend-common.main" />
