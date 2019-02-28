@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 class MultifileClassPartCodegen(
-        v: ClassBuilder,
-        file: KtFile,
-        private val packageFragment: PackageFragmentDescriptor,
-        private val superClassInternalName: String,
-        private val shouldGeneratePartHierarchy: Boolean,
-        partContext: MultifileClassPartContext,
-        state: GenerationState
+    v: ClassBuilder,
+    file: KtFile,
+    private val packageFragment: PackageFragmentDescriptor,
+    private val superClassInternalName: String,
+    private val shouldGeneratePartHierarchy: Boolean,
+    partContext: MultifileClassPartContext,
+    state: GenerationState
 ) : MemberCodegen<KtFile>(state, null, partContext, file, v) {
     private val partType = partContext.filePartType
     private val facadeClassType = partContext.multifileClassType
