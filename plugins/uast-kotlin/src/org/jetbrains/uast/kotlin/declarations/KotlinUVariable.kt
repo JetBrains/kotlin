@@ -107,6 +107,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
                     // receiver param in extension function
                     (it as? KtUserType)?.referenceExpression?.getIdentifier() ?: it
                 } ?: sourcePsi
+                is KtNameReferenceExpression -> sourcePsi.getReferencedNameElement()
                 is KtBinaryExpression, is KtCallExpression -> null // e.g. `foo("Lorem ipsum") ?: foo("dolor sit amet")`
                 is KtDestructuringDeclaration -> sourcePsi.valOrVarKeyword
                 else -> sourcePsi
