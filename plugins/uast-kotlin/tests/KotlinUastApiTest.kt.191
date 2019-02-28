@@ -432,7 +432,6 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
     @Test
     fun testResolvedDeserializedMethod() = doTest("Resolve") { _, file ->
-        val barMethod = file.findElementByTextFromPsi<UElement>("bar").getParentOfType<UMethod>()!!
 
         fun UElement.assertResolveCall(callText: String, methodName: String = callText.substringBefore("(")) {
             this.findElementByTextFromPsi<UCallExpression>(callText).let {
@@ -440,14 +439,27 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 assertEquals(methodName, resolve.name)
             }
         }
-        barMethod.assertResolveCall("foo()")
-        barMethod.assertResolveCall("inlineFoo()")
-        barMethod.assertResolveCall("forEach { println(it) }", "forEach")
-        barMethod.assertResolveCall("joinToString()")
-        barMethod.assertResolveCall("last()")
-        barMethod.assertResolveCall("setValue(\"123\")")
-        barMethod.assertResolveCall("contains(2 as Int)", "longRangeContains")
-        barMethod.assertResolveCall("IntRange(1, 2)")
+
+        file.findElementByTextFromPsi<UElement>("bar").getParentOfType<UMethod>()!!.let { barMethod ->
+            barMethod.assertResolveCall("foo()")
+            barMethod.assertResolveCall("inlineFoo()")
+            barMethod.assertResolveCall("forEach { println(it) }", "forEach")
+            barMethod.assertResolveCall("joinToString()")
+            barMethod.assertResolveCall("last()")
+            barMethod.assertResolveCall("setValue(\"123\")")
+            barMethod.assertResolveCall("contains(2 as Int)", "longRangeContains")
+            barMethod.assertResolveCall("IntRange(1, 2)")
+        }
+
+        file.findElementByTextFromPsi<UElement>("barT").getParentOfType<UMethod>()!!.let { barMethod ->
+            barMethod.assertResolveCall("foo()")
+        }
+
+        file.findElementByTextFromPsi<UElement>("listT").getParentOfType<UMethod>()!!.let { barMethod ->
+            barMethod.assertResolveCall("isEmpty()")
+            barMethod.assertResolveCall("foo()")
+        }
+
     }
 
     @Test

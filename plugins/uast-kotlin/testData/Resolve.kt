@@ -1,4 +1,4 @@
-class A {
+open class A {
     fun foo() {}
     inline fun inlineFoo() {
 
@@ -16,4 +16,15 @@ fun bar() {
     val intRange = 0L..3L
     intRange.contains(2 as Int) // extension-fun with @JvmName("longRangeContains")
     IntRange(1, 2) // constructor from stdlib
+}
+
+fun <T : A> barT(t: T) {
+    t.foo()
+}
+
+fun <T : List<A>> barTL(listT: T) {
+    listT.isEmpty()
+    for (a in listT) {
+        a.foo()
+    }
 }
