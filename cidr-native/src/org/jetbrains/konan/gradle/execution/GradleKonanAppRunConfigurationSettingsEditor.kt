@@ -15,14 +15,19 @@ import javax.swing.JPanel
 /**
  * @author Vladislav.Soroka
  */
-class GradleKonanAppRunConfigurationSettingsEditor(project: Project,
-                                                   configHelper: GradleKonanBuildConfigurationHelper) : CidrRunConfigurationSettingsEditor<GradleKonanConfiguration, GradleKonanBuildTarget, GradleKonanAppRunConfiguration, GradleKonanBuildConfigurationHelper>(project, configHelper) {
+class GradleKonanAppRunConfigurationSettingsEditor(
+        project: Project,
+        configHelper: GradleKonanBuildConfigurationHelper
+) : CidrRunConfigurationSettingsEditor<GradleKonanConfiguration, GradleKonanBuildTarget, GradleKonanAppRunConfiguration, GradleKonanBuildConfigurationHelper>(
+        project,
+        configHelper
+) {
 
     private var myExecutableEditor: CidrRunConfigurationExecutableEditor<GradleKonanConfiguration, GradleKonanBuildTarget, GradleKonanAppRunConfiguration, GradleKonanBuildConfigurationHelper>? = null
 
     override fun createAdditionalControls(panel: JPanel, g: GridBag) {
         super.createAdditionalControls(panel, g)
-        myExecutableEditor = CidrRunConfigurationExecutableEditor(myProject, myConfigHelper, hasTargetsInSeveralProjects())
+        myExecutableEditor = CidrRunConfigurationExecutableEditor(myProject, myConfigHelper, false)
         myExecutableEditor!!.createAdditionalControls(panel, g)
     }
 
