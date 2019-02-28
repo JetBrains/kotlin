@@ -1,5 +1,5 @@
 public abstract interface TwoSuperclassesInconsistentGenericTypes : R|java/lang/Object| {
-    public abstract operator function foo(): R|ft<java/util/List<ft<java/lang/String, java/lang/String?>>, java/util/List<ft<java/lang/String, java/lang/String?>>>|
+    public abstract operator function foo(): R|ft<kotlin/collections/MutableList<ft<java/lang/String, java/lang/String?>>, kotlin/collections/List<ft<java/lang/String, java/lang/String?>>>|
 
     public abstract operator function dummy(): R|kotlin/Unit|
 

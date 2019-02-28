@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -78,6 +79,24 @@ private fun JavaType.subtreeSize(): Int {
     return 1 + typeArguments.sumBy { it.subtreeSize() }
 }
 
+private val KOTLIN_COLLECTIONS = FqName("kotlin.collections")
+
+private val KOTLIN_COLLECTIONS_PREFIX_LENGTH = KOTLIN_COLLECTIONS.asString().length + 1
+
+private fun ClassId.readOnlyToMutable(): ClassId? {
+    val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(asSingleFqName().toUnsafe())
+    return mutableFqName?.let {
+        ClassId(KOTLIN_COLLECTIONS, FqName(it.asString().substring(KOTLIN_COLLECTIONS_PREFIX_LENGTH)), false)
+    }
+}
+
+private fun ClassId.mutableToReadOnly(): ClassId? {
+    val readOnlyFqName = JavaToKotlinClassMap.mutableToReadOnly(asSingleFqName().toUnsafe())
+    return readOnlyFqName?.let {
+        ClassId(KOTLIN_COLLECTIONS, FqName(it.asString().substring(KOTLIN_COLLECTIONS_PREFIX_LENGTH)), false)
+    }
+}
+
 private fun JavaClassifierType.enhanceInflexibleType(
     session: FirSession,
     annotations: List<FirAnnotationCall>,
@@ -87,7 +106,16 @@ private fun JavaClassifierType.enhanceInflexibleType(
     index: Int
 ): ConeLookupTagBasedType {
     val originalSymbol = when (val classifier = classifier) {
-        is JavaClass -> session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(classifier.classId!!)!!
+        is JavaClass -> {
+            val classId = classifier.classId!!
+            var mappedId = JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName())
+            if (mappedId != null) {
+                if (position == TypeComponentPosition.FLEXIBLE_LOWER) {
+                    mappedId = mappedId.readOnlyToMutable() ?: mappedId
+                }
+            }
+            session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(mappedId ?: classId)!!
+        }
         is JavaTypeParameter -> createTypeParameterSymbol(session, classifier.name)
         else -> return toNotNullConeKotlinType(session)
     }
@@ -156,23 +184,18 @@ private fun ConeClassifierSymbol.enhanceMutability(
 ): EnhanceDetailsResult<ConeClassifierSymbol> {
     if (!position.shouldEnhance()) return this.noChange()
     if (this !is FirClassSymbol) return this.noChange() // mutability is not applicable for type parameters
-    val fqNameUnsafe = classId.asSingleFqName().toUnsafe()
 
     when (qualifiers.mutability) {
         MutabilityQualifier.READ_ONLY -> {
-            val readOnlyFqName = JavaToKotlinClassMap.mutableToReadOnly(fqNameUnsafe)
-            if (position == TypeComponentPosition.FLEXIBLE_LOWER && readOnlyFqName != null) {
-                return FirClassSymbol(ClassId(classId.packageFqName, readOnlyFqName, false)).apply {
-                    bind(fir)
-                }.enhancedMutability()
+            val readOnlyId = classId.mutableToReadOnly()
+            if (position == TypeComponentPosition.FLEXIBLE_LOWER && readOnlyId != null) {
+                return FirClassSymbol(readOnlyId).enhancedMutability()
             }
         }
         MutabilityQualifier.MUTABLE -> {
-            val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(fqNameUnsafe)
-            if (position == TypeComponentPosition.FLEXIBLE_UPPER && mutableFqName != null) {
-                return FirClassSymbol(ClassId(classId.packageFqName, mutableFqName, false)).apply {
-                    bind(fir)
-                }.enhancedMutability()
+            val mutableId = classId.readOnlyToMutable()
+            if (position == TypeComponentPosition.FLEXIBLE_UPPER && mutableId != null) {
+                return FirClassSymbol(mutableId).enhancedMutability()
             }
         }
     }
