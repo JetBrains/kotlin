@@ -9,4 +9,27 @@ FILE: access.kt
             return@@@abc R|/Foo.x|
         }
 
+        public final function cba(): R|kotlin/Int| {
+            return@@@cba R|/Foo.abc|()
+        }
+
+    }
+    public final class Bar {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final property x(val): R|kotlin/String| = String()
+            public get(): <implicit>
+
+        public final function abc R|Foo|.(): R|kotlin/Int| {
+            return@@@abc R|/Foo.x|
+        }
+
+    }
+    public final function ext R|Foo|.(): R|kotlin/Int| {
+        return@@@ext R|/Foo.x|
+    }
+    public final function bar(): R|kotlin/Unit| {
+    }
+    public final function buz(): R|kotlin/Unit| {
+        R|/bar|()
     }

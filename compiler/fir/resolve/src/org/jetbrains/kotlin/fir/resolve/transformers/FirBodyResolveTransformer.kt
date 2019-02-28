@@ -36,6 +36,13 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
         return (element.transformChildren(this, data) as E).compose()
     }
 
+    override fun transformFile(file: FirFile, data: Any?): CompositeTransformResult<FirFile> {
+        return withScopeCleanup {
+            scopes += FirTopLevelDeclaredMemberScope(file, session)
+            super.transformFile(file, data)
+        }
+    }
+
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Any?): CompositeTransformResult<FirTypeRef> {
         if (data == null)
             return implicitTypeRef.compose()
@@ -102,6 +109,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
     }
 
     val scopes = mutableListOf<FirScope>()
+    val localScopes = mutableListOf<FirScope>()
 
     enum class CandidateApplicability {
         HIDDEN,
@@ -112,8 +120,8 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
     inner class ApplicabilityChecker {
 
-        var groupCounter = 0
-        val groupNumbers = mutableListOf<Int>()
+        private var groupCounter = 0
+        private val groupNumbers = mutableListOf<Int>()
         val candidates = mutableListOf<ConeCallableSymbol>()
 
 
@@ -122,6 +130,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
         var expectedType: FirTypeRef? = null
         var explicitReceiverType: FirTypeRef? = null
+        var parameterCount = 0
 
         fun newDataSet() {
             groupNumbers.clear()
@@ -144,10 +153,17 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
 
         private fun getApplicability(symbol: ConeCallableSymbol): CandidateApplicability {
-            val declaration = (symbol as? FirBasedSymbol<FirCallableMember>)?.fir
+            val declaration = (symbol as? FirBasedSymbol<*>)?.fir
                 ?: return CandidateApplicability.HIDDEN
+            declaration as FirDeclaration
 
-            if (!isSubtypeOf(declaration.receiverTypeRef, explicitReceiverType)) return CandidateApplicability.PARAMETER_MAPPING_ERROR
+            if (declaration is FirFunction) {
+                if (declaration.valueParameters.size != parameterCount) return CandidateApplicability.PARAMETER_MAPPING_ERROR
+            }
+            if (declaration is FirCallableMember) {
+                if ((declaration.receiverTypeRef == null) != (explicitReceiverType == null)) return CandidateApplicability.PARAMETER_MAPPING_ERROR
+            }
+
             return CandidateApplicability.RESOLVED
         }
 
@@ -168,22 +184,29 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
         }
     }
 
-    override fun transformQualifiedAccessExpression(
-        qualifiedAccessExpression: FirQualifiedAccessExpression,
-        data: Any?
-    ): CompositeTransformResult<FirStatement> {
-        qualifiedAccessExpression.explicitReceiver?.visitNoTransform(this, null)
-        val callee = qualifiedAccessExpression.calleeReference as? FirNamedReference ?: return qualifiedAccessExpression.compose()
+
+    private fun <T : FirQualifiedAccess> resolveQualifiedAccess(
+        qualifiedAccess: T,
+        expectedType: FirTypeRef?,
+        configure: ApplicabilityChecker.() -> Unit
+    ): T {
+        qualifiedAccess.explicitReceiver?.visitNoTransform(this, null)
+        val callee = qualifiedAccess.calleeReference as? FirNamedReference ?: return qualifiedAccess
 
         with(ApplicabilityChecker()) {
-            expectedType = data as FirTypeRef?
-            explicitReceiverType = qualifiedAccessExpression.explicitReceiver?.resultType
+            this.expectedType = expectedType
+            explicitReceiverType = qualifiedAccess.explicitReceiver?.resultType
+            configure()
             newDataSet()
 
-            for (scope in scopes.asReversed()) {
+            for (scope in (scopes + localScopes).asReversed()) {
                 newGroup()
                 val name = callee.name
                 scope.processPropertiesByName(name) {
+                    consumeCandidate(symbol = it)
+                    ProcessorAction.NEXT
+                }
+                scope.processFunctionsByName(name) {
                     consumeCandidate(symbol = it)
                     ProcessorAction.NEXT
                 }
@@ -193,22 +216,42 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             }
 
             val result = candidates
-            qualifiedAccessExpression.transformCalleeReference(this@FirBodyResolveTransformer, result)
-
-            bindingContext[qualifiedAccessExpression] =
-                when (val newCallee = qualifiedAccessExpression.calleeReference) {
-                    is FirErrorNamedReference ->
-                        FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, newCallee.errorReason)
-                    is FirResolvedCallableReference ->
-                        (newCallee.callableSymbol as FirBasedSymbol<FirCallableMember>).fir.returnTypeRef
-                    else -> error("WTF!")
-                }
+            return qualifiedAccess.transformCalleeReference(this@FirBodyResolveTransformer, result) as T
         }
-        return qualifiedAccessExpression.compose()
+    }
+
+    private fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
+        bindingContext[access] =
+            when (val newCallee = access.calleeReference) {
+                is FirErrorNamedReference ->
+                    FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
+                is FirResolvedCallableReference ->
+                    (newCallee.callableSymbol as FirBasedSymbol<FirCallableMember>).fir.returnTypeRef
+                else -> return
+            }
+    }
+
+    override fun transformQualifiedAccessExpression(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        data: Any?
+    ): CompositeTransformResult<FirStatement> {
+        val result = resolveQualifiedAccess(qualifiedAccessExpression, data as FirTypeRef?) {
+
+        }
+        storeTypeFromCallee(result)
+        return result.compose()
+    }
+
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): CompositeTransformResult<FirStatement> {
+        val result = resolveQualifiedAccess(functionCall, data as FirTypeRef?) {
+            parameterCount = functionCall.arguments.size
+        }
+        storeTypeFromCallee(result)
+        return result.compose()
     }
 
     override fun transformNamedReference(namedReference: FirNamedReference, data: Any?): CompositeTransformResult<FirNamedReference> {
-        if (namedReference is FirResolvedCallableReference) return namedReference.compose()
+        if (namedReference is FirErrorNamedReference || namedReference is FirResolvedCallableReference) return namedReference.compose()
         val name = namedReference.name
         val referents = data as? List<ConeCallableSymbol> ?: return namedReference.compose()
         return when (referents.size) {
@@ -224,55 +267,6 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             ).compose()
         }
     }
-
-//
-//    override fun transformAssignment(assignment: FirAssignment, data: Any?): CompositeTransformResult<FirStatement> {
-//        return withNewSettings {
-//            lookupProperties = true
-//            lookupFunctions = false
-//            super.transformAssignment(assignment, data)
-//        }
-//    }
-
-//
-//    override fun transformNamedReference(namedReference: FirNamedReference, data: Any?): CompositeTransformResult<FirNamedReference> {
-//        if (namedReference is FirResolvedCallableReference) return namedReference.compose()
-//        val name = namedReference.name
-//        val referents = mutableListOf<ConeCallableSymbol>()
-//        fun collect(it: ConeCallableSymbol): ProcessorAction {
-//            referents.add(it)
-//            return ProcessorAction.NEXT
-//        }
-//
-//        if (lookupFunctions)
-//            towerScope.processFunctionsByName(name, ::collect)
-//        if (lookupProperties)
-//            towerScope.processPropertiesByName(name, ::collect)
-//
-//        return when (referents.size) {
-//            0 -> FirErrorNamedReference(
-//                namedReference.session, namedReference.psi, "Unresolved name: $name"
-//            ).compose()
-//            1 -> FirResolvedCallableReferenceImpl(
-//                namedReference.session, namedReference.psi,
-//                name, referents.single()
-//            ).compose()
-//            else -> FirErrorNamedReference(
-//                namedReference.session, namedReference.psi, "Ambiguity: $name, ${referents.map { it.callableId }}"
-//            ).compose()
-//        }
-//
-//    }
-//
-//    override fun transformQualifiedAccessExpression(
-//        qualifiedAccessExpression: FirQualifiedAccessExpression,
-//        data: Any?
-//    ): CompositeTransformResult<FirStatement> {
-//
-//
-//
-//        return super.transformQualifiedAccessExpression(qualifiedAccessExpression, data)
-//    }
 
 
     override fun transformBlock(block: FirBlock, data: Any?): CompositeTransformResult<FirStatement> {
