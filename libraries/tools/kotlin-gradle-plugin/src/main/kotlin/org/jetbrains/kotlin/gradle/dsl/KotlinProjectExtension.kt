@@ -20,6 +20,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import kotlin.reflect.KClass
 
@@ -52,12 +54,33 @@ open class KotlinProjectExtension {
         }
 }
 
-open class KotlinSingleJavaTargetExtension : KotlinProjectExtension() {
-    // TODO define subtypes with proper type arguments for each of the option types once the new model is available in old projects
-    internal lateinit var target: KotlinWithJavaTarget<*>
+abstract class KotlinSingleTargetExtension : KotlinProjectExtension() {
+    abstract val target: KotlinTarget
 }
 
-open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension()
+abstract class KotlinSingleJavaTargetExtension : KotlinSingleTargetExtension() {
+    override abstract val target: KotlinWithJavaTarget<*>
+}
+
+open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension() {
+    override lateinit var target: KotlinWithJavaTarget<KotlinJvmOptions>
+        internal set
+}
+
+open class Kotlin2JsProjectExtension : KotlinSingleJavaTargetExtension() {
+    override lateinit var target: KotlinWithJavaTarget<KotlinJsOptions>
+        internal set
+}
+
+open class KotlinCommonProjectExtension : KotlinSingleJavaTargetExtension() {
+    override lateinit var target: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>
+        internal set
+}
+
+open class KotlinAndroidProjectExtension : KotlinSingleTargetExtension() {
+    override lateinit var target: KotlinAndroidTarget
+        internal set
+}
 
 open class ExperimentalExtension {
     var coroutines: Coroutines? = null
