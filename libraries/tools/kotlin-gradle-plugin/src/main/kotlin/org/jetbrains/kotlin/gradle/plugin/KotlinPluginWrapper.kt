@@ -113,8 +113,8 @@ open class KotlinCommonPluginWrapper @Inject constructor(
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinCommonPlugin(kotlinPluginVersion, registry)
 
-    override val projectExtensionClass: KClass<out KotlinSingleJavaTargetExtension>
-        get() = KotlinSingleJavaTargetExtension::class
+    override val projectExtensionClass: KClass<out KotlinCommonProjectExtension>
+        get() = KotlinCommonProjectExtension::class
 }
 
 open class KotlinAndroidPluginWrapper @Inject constructor(
@@ -123,6 +123,9 @@ open class KotlinAndroidPluginWrapper @Inject constructor(
 ) : KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinAndroidPlugin(kotlinPluginVersion, registry)
+
+    override val projectExtensionClass: KClass<out KotlinAndroidProjectExtension>
+        get() = KotlinAndroidProjectExtension::class
 }
 
 open class Kotlin2JsPluginWrapper @Inject constructor(
@@ -132,8 +135,8 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         Kotlin2JsPlugin(kotlinPluginVersion, registry)
 
-    override val projectExtensionClass: KClass<out KotlinSingleJavaTargetExtension>
-        get() = KotlinSingleJavaTargetExtension::class
+    override val projectExtensionClass: KClass<out Kotlin2JsProjectExtension>
+        get() = Kotlin2JsProjectExtension::class
 }
 
 open class KotlinMultiplatformPluginWrapper @Inject constructor(

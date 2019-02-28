@@ -562,10 +562,10 @@ internal open class KotlinPlugin(
         Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinCommonOptions>(project, KotlinPlatformType.jvm, targetName).apply {
+        val target = KotlinWithJavaTarget<KotlinJvmOptions>(project, KotlinPlatformType.jvm, targetName).apply {
             disambiguationClassifier = null // don't add anything to the task names
         }
-        (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
+        (project.kotlinExtension as KotlinJvmProjectExtension).target = target
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 
@@ -590,8 +590,8 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinCommonOptions>(project, KotlinPlatformType.common, targetName)
-        (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
+        val target = KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>(project, KotlinPlatformType.common, targetName)
+        (project.kotlinExtension as KotlinCommonProjectExtension).target = target
 
         super.apply(project)
     }
@@ -616,9 +616,9 @@ internal open class Kotlin2JsPlugin(
         )
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinCommonOptions>(project, KotlinPlatformType.js, targetName)
+        val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, targetName)
 
-        (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
+        (project.kotlinExtension as Kotlin2JsProjectExtension).target = target
         super.apply(project)
     }
 }
@@ -632,6 +632,8 @@ internal open class KotlinAndroidPlugin(
         checkGradleCompatibility()
 
         val androidTarget = KotlinAndroidTarget("", project)
+        (project.kotlinExtension as KotlinAndroidProjectExtension).target = androidTarget
+
         applyToTarget(kotlinPluginVersion, androidTarget)
         registry.register(KotlinModelBuilder(kotlinPluginVersion, androidTarget))
     }
