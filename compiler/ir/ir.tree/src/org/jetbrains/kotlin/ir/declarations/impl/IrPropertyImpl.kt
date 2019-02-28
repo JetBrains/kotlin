@@ -44,7 +44,7 @@ class IrPropertyImpl(
 ) : IrDeclarationBase(startOffset, endOffset, origin),
     IrProperty {
 
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -69,7 +69,7 @@ class IrPropertyImpl(
         isExternal = isExternal
     )
 
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -86,7 +86,7 @@ class IrPropertyImpl(
         isExternal = descriptor.isEffectivelyExternal()
     )
 
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -94,7 +94,7 @@ class IrPropertyImpl(
         descriptor: PropertyDescriptor
     ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
 
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -106,7 +106,7 @@ class IrPropertyImpl(
         this.backingField = backingField
     }
 
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.ERROR)
+    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,
         endOffset: Int,

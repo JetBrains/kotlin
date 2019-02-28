@@ -61,6 +61,7 @@ class IrFunctionImpl(
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
 
+    @Suppress("OverridingDeprecatedMember")
     override var correspondingProperty: IrProperty?
         get() = correspondingPropertySymbol?.owner
         set(value) {

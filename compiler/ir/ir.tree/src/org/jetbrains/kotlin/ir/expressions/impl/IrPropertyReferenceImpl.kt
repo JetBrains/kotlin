@@ -40,7 +40,7 @@ class IrPropertyReferenceImpl(
     IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArgumentsCount, origin),
     IrPropertyReference {
 
-    @Deprecated(message = "Don't use descriptor-based API for IrPropertyReference", level = DeprecationLevel.ERROR)
+    @Deprecated(message = "Don't use descriptor-based API for IrPropertyReference", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,
         endOffset: Int,

@@ -85,6 +85,7 @@ class IrLazyFunction(
         }
     }
 
+    @Suppress("OverridingDeprecatedMember")
     override var correspondingProperty: IrProperty?
         get() = correspondingPropertySymbol?.owner
         set(value) {

@@ -79,6 +79,7 @@ class IrFieldImpl(
 
     override var initializer: IrExpressionBody? = null
 
+    @Suppress("OverridingDeprecatedMember")
     override var correspondingProperty: IrProperty?
         get() = correspondingPropertySymbol?.owner
         set(value) {
