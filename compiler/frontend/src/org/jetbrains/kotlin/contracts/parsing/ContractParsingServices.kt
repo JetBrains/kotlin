@@ -119,8 +119,6 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
 
         if (functionDescriptor?.isOperator == true) collector.contractNotAllowed("Contracts are not allowed for operator functions")
 
-        if (functionDescriptor?.isSuspend == true) collector.contractNotAllowed("Contracts are not allowed for suspend functions")
-
         if (functionDescriptor?.isOverridable == true) collector.contractNotAllowed("Contracts are not allowed for open functions")
     }
 

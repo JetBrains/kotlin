@@ -24,7 +24,7 @@ open class Class {
     }
     
     suspend fun suspendMember(x: Boolean) {
-        <!CONTRACT_NOT_ALLOWED, CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 }
 
@@ -39,7 +39,7 @@ inline fun inlineTopLevel(x: Boolean) {
 }
 
 suspend fun suspendTopLevel(x: Boolean) {
-    <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
+    contract { returns() implies (x) }
 }
 
 // Top-level operator
@@ -73,7 +73,7 @@ fun test() {
     }
 
     suspend fun suspendlocalDeclaration(x: Boolean) {
-        <!CONTRACT_NOT_ALLOWED, CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 
     val localAnonymousFunction = fun (x: Boolean) {

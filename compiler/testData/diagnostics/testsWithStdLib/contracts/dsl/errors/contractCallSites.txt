@@ -7,6 +7,8 @@ public inline fun inlineTopLevel(/*0*/ x: kotlin.Boolean): kotlin.Unit
     Returns(WILDCARD) -> x
 
 public suspend fun suspendTopLevel(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> x
+
 public fun test(): kotlin.Unit
 public fun topLevel(/*0*/ x: kotlin.Boolean): kotlin.Unit
     Returns(WILDCARD) -> x

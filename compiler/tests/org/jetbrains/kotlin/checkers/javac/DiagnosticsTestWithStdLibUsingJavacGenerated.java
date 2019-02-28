@@ -1174,14 +1174,14 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/callInContractDescription.kt");
                 }
 
+                @TestMetadata("contractCallSites.kt")
+                public void testContractCallSites() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/contractCallSites.kt");
+                }
+
                 @TestMetadata("emptyContract.kt")
                 public void testEmptyContract() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/emptyContract.kt");
-                }
-
-                @TestMetadata("illegalCallSites.kt")
-                public void testIllegalCallSites() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/illegalCallSites.kt");
                 }
 
                 @TestMetadata("illegalConstructionInContractBlock.kt")
