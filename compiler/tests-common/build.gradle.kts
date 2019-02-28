@@ -27,6 +27,7 @@ dependencies {
     testCompile(project(":compiler:serialization"))
     testCompile(project(":kotlin-preloader"))
     testCompile(project(":compiler:daemon-common"))
+    testCompile(project(":compiler:daemon-common-new"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.frontend"))
     testCompile(project(":js:js.translator"))

@@ -34,6 +34,10 @@ dependencies {
     nativePlatformVariants.forEach {
         embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
     }
+    runtime(project(":kotlin-reflect"))
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
+        isTransitive = false
+    }
 }
 
 sourceSets {

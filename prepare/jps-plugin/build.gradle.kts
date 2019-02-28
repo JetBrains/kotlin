@@ -11,6 +11,7 @@ val projectsToShadow = listOf(
     ":compiler:cli-common",
     ":kotlin-compiler-runner",
     ":compiler:daemon-common",
+    ":compiler:daemon-common-new",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":idea:idea-jps-common",

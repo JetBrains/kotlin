@@ -20,8 +20,10 @@ include ":kotlin-build-common",
         ":compiler",
         ":compiler:util",
         ":compiler:daemon-common",
+        ":compiler:daemon-common-new",
         ":compiler:daemon",
         ":kotlin-daemon-client",
+        ":kotlin-daemon-client-new",
         ":kotlin-preloader",
         ":kotlin-runner",
         ":compiler:container",
@@ -293,7 +295,9 @@ project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" 
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':compiler:daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
+project(':compiler:daemon-common-new').projectDir = "$rootDir/compiler/daemon/daemon-common-new" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
+project(':kotlin-daemon-client-new').projectDir = "$rootDir/compiler/daemon/daemon-client-new" as File
 project(':kotlin-compiler-runner').projectDir = "$rootDir/compiler/compiler-runner" as File
 project(':kotlin-ant').projectDir = "$rootDir/ant" as File
 project(':compiler:ir.tree').projectDir = "$rootDir/compiler/ir/ir.tree" as File

@@ -30,6 +30,8 @@ fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
 
 val antLauncherJar by configurations.creating
 
+val ktorExcludesForDaemon : List<Pair<String, String>> by rootProject.extra
+
 dependencies {
     testRuntime(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
 
@@ -50,8 +52,14 @@ dependencies {
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testCompile(project(":kotlin-scripting-compiler-impl"))
     testCompile(project(":kotlin-script-util"))
-    testCompileOnly(projectRuntimeJar(":kotlin-daemon-client"))
+    testCompileOnly(projectRuntimeJar(":kotlin-daemon-client-new"))
     testCompileOnly(project(":kotlin-reflect-api"))
+    testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
+    testCompile(commonDep("io.ktor", "ktor-network")) {
+        ktorExcludesForDaemon.forEach { (group, module) ->
+            exclude(group = group, module = module)
+        }
+    }
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
@@ -59,7 +67,18 @@ dependencies {
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all", rootProject = rootProject) }
 
     testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":kotlin-daemon-client"))
+    testRuntime(project(":kotlin-daemon-client-new"))
+    testRuntime(project(":compiler:daemon")) // +
+    testRuntime(project(":compiler:daemon-common-new")) // +
+    testRuntime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
+        isTransitive = false
+    }
+    testRuntime(commonDep("io.ktor", "ktor-network")) {
+        ktorExcludesForDaemon.forEach { (group, module) ->
+            exclude(group = group, module = module)
+        }
+
+    }
     testRuntime(androidDxJar())
     testRuntime(files(toolsJar()))
 

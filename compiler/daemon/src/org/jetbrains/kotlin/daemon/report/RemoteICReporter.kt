@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.daemon.report
 
 import org.jetbrains.kotlin.incremental.ICReporter
 
-internal interface RemoteICReporter : ICReporter {
+interface RemoteICReporter : ICReporter {
     fun flush()
 }
