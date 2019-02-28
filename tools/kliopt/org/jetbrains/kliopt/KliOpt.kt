@@ -128,6 +128,9 @@ class ArgParser(optionsList: List<OptionDescriptor>, argsList: List<ArgDescripto
     ).toList()
     private val arguments = argsList
     private lateinit var parsedValues: MutableMap<String, ParsedArg?>
+    private lateinit var valuesOrigin: MutableMap<String, ValueOrigin?>
+
+    enum class ValueOrigin { SET_BY_USER, SET_DEFAULT_VALUE, UNSET }
 
     inner class ParsedArg(val descriptor: Descriptor, val values: List<String>) {
         init {
@@ -166,6 +169,9 @@ class ArgParser(optionsList: List<OptionDescriptor>, argsList: List<ArgDescripto
         error("$message\n${makeUsage()}")
     }
 
+    // Get origin of option value.
+    fun getOrigin(name: String) = valuesOrigin[name] ?: printError("No option/argument $name in list of avaliable options")
+
     private fun saveAsArg(argDescriptors: Map<String, ArgDescriptor>, arg: String, processedValues: Map<String, MutableList<String>>): Boolean {
         // Find uninitialized arguments.
         val nullArgs = argDescriptors.keys.filter { processedValues.getValue(it).isEmpty() }
@@ -203,6 +209,7 @@ class ArgParser(optionsList: List<OptionDescriptor>, argsList: List<ArgDescripto
         val descriptorsKeys = optDescriptors.keys.union(argDescriptors.keys).toList()
         val processedValues = descriptorsKeys.map { it to mutableListOf<String>() }.toMap().toMutableMap()
         parsedValues = descriptorsKeys.map { it to null }.toMap().toMutableMap()
+        valuesOrigin = descriptorsKeys.map { it to ValueOrigin.UNSET }.toMap().toMutableMap()
         while (index < args.size) {
             val arg = args[index]
             if (arg.startsWith('-')) {
@@ -246,6 +253,7 @@ class ArgParser(optionsList: List<OptionDescriptor>, argsList: List<ArgDescripto
             if (value.isEmpty()) {
                 descriptor.defaultValue?. let {
                     parsedValues[key] = ParsedArg(descriptor, listOf(descriptor.defaultValue))
+                    valuesOrigin[key] = ValueOrigin.SET_DEFAULT_VALUE
                 } ?: run {
                     if (descriptor.isRequired) {
                         printError("Please, provide value for ${descriptor.textDescription}. It should be always set")
@@ -255,6 +263,7 @@ class ArgParser(optionsList: List<OptionDescriptor>, argsList: List<ArgDescripto
                 }
             } else {
                 parsedValues[key] = ParsedArg(descriptor, value)
+                valuesOrigin[key] = ValueOrigin.SET_BY_USER
             }
         }
         return true

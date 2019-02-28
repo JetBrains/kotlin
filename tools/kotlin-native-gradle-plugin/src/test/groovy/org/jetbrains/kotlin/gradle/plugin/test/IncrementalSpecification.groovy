@@ -208,7 +208,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "linkerOpts"             | "'--help'"
         "includeDirs"            | "'src'"
         "includeDirs.allHeaders" | "'src'"
-        "extraOpts"              | "'-shims'"
+        "extraOpts"              | "'-verbose'"
         "noDefaultLibs"          | "true"
     }
 

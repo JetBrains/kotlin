@@ -254,10 +254,6 @@ class NamedNativeInteropConfig implements Named {
                     args '-header', it
                 }
 
-                if (project.hasProperty('shims') && project.ext.shims) {
-                    args '-shims'
-                }
-
             }
         }
     }

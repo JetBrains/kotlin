@@ -445,7 +445,7 @@ components.main {
             includeDirs "include/directory" "another/directory"
 
             // Pass additional command line options to the cinterop tool.
-            extraOpts '-shims', 'true'
+            extraOpts '-verbose'
 
             // Additional configuration for Linux.
             target('linux') {

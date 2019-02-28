@@ -30,7 +30,6 @@ class StubGenerator(
         val nativeIndex: NativeIndex,
         val configuration: InteropConfiguration,
         val libName: String,
-        val dumpShims: Boolean,
         val verbose: Boolean = false,
         val platform: KotlinPlatform = KotlinPlatform.JVM,
         val imports: Imports

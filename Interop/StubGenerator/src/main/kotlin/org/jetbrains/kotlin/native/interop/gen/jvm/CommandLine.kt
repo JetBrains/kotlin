@@ -63,7 +63,6 @@ fun getCInteropArguments(): List<OptionDescriptor> {
                     "additional compiler options", isMultiple = true, delimiter = " "),
             OptionDescriptor(ArgType.String(), "linkerOpts", "lopt",
                     "additional linker options", isMultiple = true, delimiter = " "),
-            OptionDescriptor(ArgType.Boolean(), "shims", description = "wrap bindings by a tracing layer", defaultValue = "false"),
             OptionDescriptor(ArgType.String(), "linker", description = "use specified linker")
     )
     return (options + getCommonInteropArguments())
