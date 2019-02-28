@@ -2,6 +2,6 @@ FILE: simple.kt
     public final function foo(): R|kotlin/Int| {
         return@@@foo Int(1)
     }
-    public final function bar(): <implicit> {
+    public final function bar(): R|kotlin/Int| {
         return@@@bar R|/foo|()
     }

@@ -24,6 +24,18 @@ FILE: access.kt
             return@@@abc R|/Foo.x|
         }
 
+        public final function bar(): R|Bar| {
+            return@@@bar this#
+        }
+
+        public final operator function plus R|kotlin/String|.(bar: R|Bar|): R|kotlin/String| {
+            return@@@plus String()
+        }
+
+        public final function check R|Foo|.(): R|kotlin/String| {
+            return@@@check R|/Bar.plus|(R|/Foo.abc|(), R|/Bar.bar|())
+        }
+
     }
     public final function ext R|Foo|.(): R|kotlin/Int| {
         return@@@ext R|/Foo.x|

@@ -11,6 +11,14 @@ class Bar {
     val x = ""
 
     fun Foo.abc() = x
+
+    fun bar(): Bar = this
+
+    operator fun String.plus(bar: Bar): String {
+        return ""
+    }
+
+    fun Foo.check() = abc() + bar()
 }
 
 fun Foo.ext() = x
