@@ -1149,7 +1149,7 @@ compileTestKotlin {
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-eap-44")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40")
                 }
             }
 

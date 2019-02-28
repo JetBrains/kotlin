@@ -86,7 +86,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         super.tearDown()
     }
 
-    private fun assertKotlinSdk(vararg moduleNames: String) {
+    private fun assertSameKotlinSdks(vararg moduleNames: String) {
         val sdks = moduleNames.map { getModule(it).sdk!! }
         val refSdk = sdks.firstOrNull() ?: return
         Assert.assertTrue(refSdk.sdkType is KotlinSdkType)
@@ -629,7 +629,7 @@ compileTestKotlin {
         assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
         assertTrue(stdlib.getFiles(OrderRootType.CLASSES).isNotEmpty())
 
-        assertKotlinSdk("project_main", "project_test")
+        assertSameKotlinSdks("project_main", "project_test")
 
         Assert.assertEquals(
                 listOf("file:///src/main/java" to SourceKotlinRootType,
@@ -1339,7 +1339,7 @@ compileTestKotlin {
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-eap-44")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40")
                 }
             }
 
@@ -2040,7 +2040,7 @@ compileTestKotlin {
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0-rc-39")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40")
                 }
             }
 
@@ -2054,7 +2054,7 @@ compileTestKotlin {
             }
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.0-rc-39"
+                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.40"
             }
 
             compileKotlinCommon{
@@ -2103,7 +2103,7 @@ compileTestKotlin {
         val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
         assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
 
-        assertKotlinSdk("project_main", "project_test")
+        assertSameKotlinSdks("project_main", "project_test")
 
         Assert.assertEquals(
                 listOf("file:///src/main/kotlin" to SourceKotlinRootType,
