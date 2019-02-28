@@ -29,6 +29,7 @@ import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.searches.IndexPatternSearch;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter;
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTodoSearcher;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -81,6 +82,8 @@ public class PluginStartupComponent implements ApplicationComponent {
         ServiceManager.getService(IndexPatternSearch.class).registerExecutor(new KotlinTodoSearcher());
 
         KotlinPluginCompatibilityVerifier.checkCompatibility();
+
+        KotlinReportSubmitter.Companion.setupReportingFromRelease();
 
         //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also ConfigureKotlinInTempDirTest)
         //KotlinSdkType.Companion.setUpIfNeeded();
