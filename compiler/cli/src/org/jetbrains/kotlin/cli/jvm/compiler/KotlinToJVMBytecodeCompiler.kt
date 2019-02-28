@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -101,7 +98,7 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    internal fun compileModules(environment: KotlinCoreEnvironment, buildFile: File, chunk: List<Module>): Boolean {
+    internal fun compileModules(environment: KotlinCoreEnvironment, buildFile: File?, chunk: List<Module>): Boolean {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
@@ -131,22 +128,37 @@ object KotlinToJVMBytecodeCompiler {
 
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            val (moduleSourceDirs, moduleSourceFiles) =
-                    getAbsolutePaths(buildFile, module.getSourceFiles())
+
+            val ktFiles = if (chunk.size > 1) {
+                // filter out source files from other modules
+                assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
+                val (moduleSourceDirs, moduleSourceFiles) =
+                    getBuildFilePaths(buildFile, module.getSourceFiles())
                         .mapNotNull(localFileSystem::findFileByPath)
                         .partition(VirtualFile::isDirectory)
 
-            val ktFiles = environment.getSourceFiles().filter { file ->
-                val virtualFile = file.virtualFile
-                virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
-                    VfsUtilCore.isAncestor(dir, virtualFile, true)
+                environment.getSourceFiles().filter { file ->
+                    val virtualFile = file.virtualFile
+                    virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
+                        VfsUtilCore.isAncestor(dir, virtualFile, true)
+                    }
                 }
+            } else {
+                environment.getSourceFiles()
             }
 
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 
             val moduleConfiguration = projectConfiguration.copy().apply {
-                put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
+                if (buildFile != null) {
+                    fun checkKeyIsNull(key: CompilerConfigurationKey<*>, name: String) {
+                        assert(get(key) == null) { "$name should be null, when buildFile is used" }
+                    }
+
+                    checkKeyIsNull(JVMConfigurationKeys.OUTPUT_DIRECTORY, "OUTPUT_DIRECTORY")
+                    checkKeyIsNull(JVMConfigurationKeys.OUTPUT_JAR, "OUTPUT_JAR")
+                    put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
+                }
             }
 
             outputs[module] = generate(environment, moduleConfiguration, result, ktFiles, module)
@@ -180,11 +192,11 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File) {
+    internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File? = null) {
         for (module in chunk) {
-            val commonSources = getAbsolutePaths(buildFile, module.getCommonSourceFiles()).toSet()
+            val commonSources = getBuildFilePaths(buildFile, module.getCommonSourceFiles()).toSet()
 
-            for (path in getAbsolutePaths(buildFile, module.getSourceFiles())) {
+            for (path in getBuildFilePaths(buildFile, module.getSourceFiles())) {
                 configuration.addKotlinSourceRoot(path, isCommon = path in commonSources)
             }
         }
@@ -226,8 +238,9 @@ object KotlinToJVMBytecodeCompiler {
         configuration.addAll(JVMConfigurationKeys.MODULES, chunk)
     }
 
-    private fun getAbsolutePaths(buildFile: File, sourceFilePaths: List<String>): List<String> =
-        sourceFilePaths.map { path ->
+    private fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<String> =
+        if (buildFile == null) sourceFilePaths
+        else sourceFilePaths.map { path ->
             (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
         }
 
