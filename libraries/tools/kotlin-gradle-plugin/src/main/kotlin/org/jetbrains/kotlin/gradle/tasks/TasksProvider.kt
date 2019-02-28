@@ -39,7 +39,7 @@ internal fun <T : Task> registerTask(project: Project, name: String, type: Class
     }
 }
 
-internal open class KotlinTasksProvider(val targetName: String) {
+internal open class KotlinTasksProvider(targetDisambiguationClassifier: String) {
     open fun registerKotlinJVMTask(
         project: Project,
         name: String,
@@ -109,7 +109,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     }
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-        RegexTaskToFriendTaskMapper.Default(targetName)
+        RegexTaskToFriendTaskMapper.Default(targetDisambiguationClassifier)
 
     private inline fun <reified Task, reified WorkersTask : Task> taskOrWorkersTask(properties: PropertiesProvider): Class<out Task> =
         if (properties.parallelTasksInProject != true) Task::class.java else WorkersTask::class.java

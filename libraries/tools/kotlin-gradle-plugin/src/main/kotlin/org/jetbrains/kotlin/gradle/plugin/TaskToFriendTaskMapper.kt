@@ -33,17 +33,17 @@ internal abstract class TaskToFriendTaskMapper {
 sealed internal class RegexTaskToFriendTaskMapper(
     private val prefix: String,
     suffix: String,
-    private val targetName: String,
+    private val targetDisambiguationClasssifier: String,
     private val postfixReplacement: String
 ) : TaskToFriendTaskMapper() {
     class Default(targetName: String) : RegexTaskToFriendTaskMapper("compile", "TestKotlin", targetName, "Kotlin")
     class Android(targetName: String) : RegexTaskToFriendTaskMapper("compile", "(Unit|Android)TestKotlin", targetName, "Kotlin")
 
-    private val regex = "$prefix(.*)$suffix${targetName.capitalize()}".toRegex()
+    private val regex = "$prefix(.*)$suffix${targetDisambiguationClasssifier.capitalize()}".toRegex()
 
     override fun getFriendByName(name: String): String? {
         val match = regex.matchEntire(name) ?: return null
         val variant = match.groups[1]?.value ?: ""
-        return prefix + variant + postfixReplacement + targetName.capitalize()
+        return prefix + variant + postfixReplacement + targetDisambiguationClasssifier.capitalize()
     }
 }

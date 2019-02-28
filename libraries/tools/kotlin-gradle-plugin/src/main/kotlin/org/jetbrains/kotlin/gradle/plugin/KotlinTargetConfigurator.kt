@@ -359,7 +359,7 @@ open class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>
         val testCompilation = target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME) as? KotlinCompilationToRunnableFiles<*>
             ?: return // Otherwise, there is no runtime classpath
 
-        target.project.tasks.create(lowerCamelCaseName(target.targetName, testTaskNameSuffix), Test::class.java).apply {
+        target.project.tasks.create(lowerCamelCaseName(target.disambiguationClassifier, testTaskNameSuffix), Test::class.java).apply {
             project.afterEvaluate {
                 // use afterEvaluate to override the JavaPlugin defaults for Test tasks
                 conventionMapping.map("testClassesDirs") { testCompilation.output.classesDirs }
