@@ -31,7 +31,7 @@
 // EXIST:  annotation class
 // EXIST:  annotation class TopScope
 // EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual
