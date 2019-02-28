@@ -61,7 +61,7 @@ public actual annotation class JvmMultifileClass
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 @SinceKotlin("1.2")
-internal annotation class JvmPackageName(val name: String)
+internal actual annotation class JvmPackageName(actual val name: String)
 
 /**
  * Sets `ACC_SYNTHETIC` flag on the annotated target in the Java bytecode.
