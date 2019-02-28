@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirAbstractQualifiedAccess(
@@ -23,5 +24,10 @@ abstract class FirAbstractQualifiedAccess(
         calleeReference = calleeReference.transformSingle(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
         return super<FirAbstractStatement>.transformChildren(transformer, data)
+    }
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        calleeReference = calleeReference.transformSingle(transformer, data)
+        return this
     }
 }

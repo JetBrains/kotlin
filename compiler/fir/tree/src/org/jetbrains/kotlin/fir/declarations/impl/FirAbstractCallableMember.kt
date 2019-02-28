@@ -23,6 +23,10 @@ abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCall
     final override var receiverTypeRef: FirTypeRef?
     final override var returnTypeRef: FirTypeRef
 
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+    }
+
     constructor(
         session: FirSession,
         psi: PsiElement?,

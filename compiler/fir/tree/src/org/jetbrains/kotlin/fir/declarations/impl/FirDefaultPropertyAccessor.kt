@@ -32,6 +32,12 @@ abstract class FirDefaultPropertyAccessor(
 
     final override val annotations: List<FirAnnotationCall>
         get() = emptyList()
+
+    abstract override var returnTypeRef: FirTypeRef
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+    }
 }
 
 class FirDefaultPropertyGetter(

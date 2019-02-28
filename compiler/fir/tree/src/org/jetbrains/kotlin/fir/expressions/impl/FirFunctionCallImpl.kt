@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
@@ -28,5 +29,10 @@ class FirFunctionCallImpl(
         calleeReference = calleeReference.transformSingle(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
         return super<FirAbstractCall>.transformChildren(transformer, data)
+    }
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        calleeReference = calleeReference.transformSingle(transformer, data)
+        return this
     }
 }

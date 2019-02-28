@@ -1,0 +1,12 @@
+FILE: access.kt
+    public final class Foo {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final property x(val): R|kotlin/Int| = Int(1)
+            public get(): <implicit>
+
+        public final function abc(): R|kotlin/Int| {
+            return@@@abc R|/Foo.x|
+        }
+
+    }

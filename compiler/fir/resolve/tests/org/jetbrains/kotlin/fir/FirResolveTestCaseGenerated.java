@@ -142,6 +142,34 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/resolve/expresssions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Expresssions extends AbstractFirResolveTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("access.kt")
+        public void testAccess() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/access.kt");
+        }
+
+        public void testAllFilesPresentInExpresssions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/simple.kt");
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/when.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolve/fromBuilder")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

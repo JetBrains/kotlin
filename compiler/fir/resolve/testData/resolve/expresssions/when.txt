@@ -1,0 +1,12 @@
+FILE: when.kt
+    public final function foo(): R|kotlin/Int| {
+        return@@@foo when () {
+            Boolean(true) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }
