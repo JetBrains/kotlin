@@ -991,12 +991,13 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
             }
 
-            // Check manual disabling bitcode embedding and custom command line args.
+            // Check manual disabling bitcode embedding, custom command line args and building a static framework.
             build("linkCustomReleaseFrameworkIos") {
                 assertSuccessful()
                 checkFrameworkCompilationCommandLine {
                     assertTrue(it.contains("-linker-options -L."))
                     assertTrue(it.contains("-Xtime"))
+                    assertTrue(it.contains("-Xstatic-framework"))
                     assertFalse(it.contains("-Xembed-bitcode-marker"))
                     assertFalse(it.contains("-Xembed-bitcode"))
                 }

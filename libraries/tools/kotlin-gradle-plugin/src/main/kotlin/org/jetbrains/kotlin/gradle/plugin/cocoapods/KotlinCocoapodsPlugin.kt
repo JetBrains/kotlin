@@ -102,8 +102,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
     private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension) {
         kotlinExtension.supportedTargets().all { target ->
             target.binaries.framework {
-                // TODO: Add in the framework DSL.
-                this.freeCompilerArgs.add("-Xstatic-framework")
+                isStatic = true
             }
         }
     }

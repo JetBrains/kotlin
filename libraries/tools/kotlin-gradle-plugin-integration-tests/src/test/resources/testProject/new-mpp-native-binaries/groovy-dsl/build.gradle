@@ -78,6 +78,7 @@ kotlin {
                     embedBitcode = 'DISABLE'
                     linkerOpts = ['-L.']
                     freeCompilerArgs = ["-Xtime"]
+                    isStatic = true
                 }
             }
         }

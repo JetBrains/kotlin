@@ -70,6 +70,7 @@ kotlin {
                 embedBitcode("disable")
                 linkerOpts = mutableListOf("-L.")
                 freeCompilerArgs = mutableListOf("-Xtime")
+                isStatic = true
             }
         }
     }
