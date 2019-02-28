@@ -41,6 +41,6 @@ class B {
 // EXIST:  annotation class
 // EXIST:  annotation class AfterClasses_LangLevel11
 // EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // NOTHING_ELSE

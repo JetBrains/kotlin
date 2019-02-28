@@ -32,7 +32,7 @@ package Test
 // EXIST:  annotation class
 // EXIST:  annotation class InTopScopeAfterPackage
 // EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual

@@ -45,7 +45,7 @@ var a : Int
 // EXIST:  annotation class
 // EXIST:  annotation class GlobalPropertyAccessors
 // EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual

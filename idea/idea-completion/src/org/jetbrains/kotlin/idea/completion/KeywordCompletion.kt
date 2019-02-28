@@ -63,7 +63,8 @@ object KeywordCompletion {
             ANNOTATION_KEYWORD to CLASS_KEYWORD,
             SEALED_KEYWORD to CLASS_KEYWORD,
             LATEINIT_KEYWORD to VAR_KEYWORD,
-            CONST_KEYWORD to VAL_KEYWORD
+            CONST_KEYWORD to VAL_KEYWORD,
+            SUSPEND_KEYWORD to FUN_KEYWORD
     )
 
     private val KEYWORD_CONSTRUCTS = mapOf<KtKeywordToken, String>(
@@ -99,7 +100,10 @@ object KeywordCompletion {
         for (keywordToken in ALL_KEYWORDS) {
             var keyword = keywordToken.value
 
-            val nextKeyword = COMPOUND_KEYWORDS[keywordToken]
+            val nextKeyword = when {
+                keywordToken == SUSPEND_KEYWORD && ((position.containingFile as? KtFile)?.isScript() == true) -> null
+                else -> COMPOUND_KEYWORDS[keywordToken]
+            }
             var applicableAsCompound = false
             if (nextKeyword != null) {
                 fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
