@@ -121,6 +121,8 @@
           <Problem reference="com.intellij.openapi.diagnostic.LoggerKt#debugOrInfoIfTestMode" reason="Absent in 182." />
           <Problem reference="com.intellij.psi.search.PsiSearchHelper#getInstance" reason="Absent in 181. Use psiSearchHelperInstance() instead." />
           <Problem reference="com.intellij.psi.search.PsiSearchHelper.SERVICE" reason="Deprecated since 182. Use psiSearchHelperInstance() instead." />
+          <Problem reference="org.jetbrains.kotlin.idea.reporter.ITNReporterCompat#submit" reason="parentComponent is nullable in AS" />
+          <Problem reference="com.intellij.diagnostic.ITNReporter#submit" reason="parentComponent is nullable in AS" />
         </list>
       </option>
     </inspection_tool>
