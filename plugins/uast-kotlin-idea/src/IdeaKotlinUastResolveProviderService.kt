@@ -16,7 +16,12 @@
 
 package org.jetbrains.uast.kotlin.internal
 
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -50,6 +55,8 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
     }
 
     override fun isJvmElement(psiElement: PsiElement): Boolean {
+        if (allModulesSupportJvm(psiElement.project)) return true
+
         val containingFile = psiElement.containingFile
         if (containingFile is KtFile) {
             return TargetPlatformDetector.getPlatform(containingFile) is JvmPlatform
@@ -69,4 +76,16 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
         val call = ktElement.getCall(bindingContext) ?: return emptySequence()
         return call.resolveCandidates(bindingContext, resolutionFacade).map { it.candidateDescriptor }.asSequence()
     }
+
+    private fun allModulesSupportJvm(project: Project): Boolean =
+        CachedValuesManager.getManager(project)
+            .getCachedValue(project, {
+                Result.create(
+                    ModuleManager.getInstance(project).modules.all { module ->
+                        TargetPlatformDetector.getPlatform(module) is JvmPlatform
+                    },
+                    ProjectRootModificationTracker.getInstance(project)
+                )
+            })
+
 }
