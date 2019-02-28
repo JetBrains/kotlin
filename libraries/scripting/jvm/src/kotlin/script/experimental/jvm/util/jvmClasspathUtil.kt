@@ -99,6 +99,8 @@ private fun allRelatedClassLoaders(clsLoader: ClassLoader, visited: MutableSet<C
     return try {
         val field = clsLoader.javaClass.getDeclaredField("myParents") // com.intellij.ide.plugins.cl.PluginClassLoader
         field.isAccessible = true
+
+        @Suppress("UNCHECKED_CAST")
         val arrayOfClassLoaders = field.get(clsLoader) as Array<ClassLoader>
         sequenceOf(clsLoader) + arrayOfClassLoaders.asSequence().flatMap { allRelatedClassLoaders(it, visited) }
     } catch (e: Throwable) {

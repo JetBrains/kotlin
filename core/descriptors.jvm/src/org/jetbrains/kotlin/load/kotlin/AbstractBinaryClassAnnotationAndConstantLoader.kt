@@ -38,11 +38,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
-        storageManager: StorageManager,
-        private val kotlinClassFinder: KotlinClassFinder
+    storageManager: StorageManager,
+    private val kotlinClassFinder: KotlinClassFinder
 ) : AnnotationAndConstantLoader<A, C> {
-    private val storage = storageManager.createMemoizedFunction<KotlinJvmBinaryClass, Storage<A, C>> {
-        kotlinClass ->
+    private val storage = storageManager.createMemoizedFunction<KotlinJvmBinaryClass, Storage<A, C>> { kotlinClass ->
         loadAnnotationsAndInitializers(kotlinClass)
     }
 
@@ -51,17 +50,17 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     protected abstract fun transformToUnsignedConstant(constant: C): C?
 
     protected abstract fun loadAnnotation(
-            annotationClassId: ClassId,
-            source: SourceElement,
-            result: MutableList<A>
+        annotationClassId: ClassId,
+        source: SourceElement,
+        result: MutableList<A>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor?
 
     protected abstract fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): A
 
     private fun loadAnnotationIfNotSpecial(
-            annotationClassId: ClassId,
-            source: SourceElement,
-            result: MutableList<A>
+        annotationClassId: ClassId,
+        source: SourceElement,
+        result: MutableList<A>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
         if (annotationClassId in SPECIAL_ANNOTATIONS) return null
 
@@ -69,7 +68,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     }
 
     private fun ProtoContainer.Class.toBinaryClass(): KotlinJvmBinaryClass? =
-            (source as? KotlinJvmBinarySourceElement)?.binaryClass
+        (source as? KotlinJvmBinarySourceElement)?.binaryClass
 
     protected open fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? = null
 
@@ -138,8 +137,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
 
     override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<A> {
         val signature = MemberSignature.fromFieldNameAndDesc(
-                container.nameResolver.getString(proto.name),
-                ClassMapperLite.mapClass((container as ProtoContainer.Class).classId.asString())
+            container.nameResolver.getString(proto.name),
+            ClassMapperLite.mapClass((container as ProtoContainer.Class).classId.asString())
         )
         return findClassAndLoadMemberAnnotations(container, signature)
     }
@@ -169,11 +168,11 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     }
 
     override fun loadValueParameterAnnotations(
-            container: ProtoContainer,
-            callableProto: MessageLite,
-            kind: AnnotatedCallableKind,
-            parameterIndex: Int,
-            proto: ProtoBuf.ValueParameter
+        container: ProtoContainer,
+        callableProto: MessageLite,
+        kind: AnnotatedCallableKind,
+        parameterIndex: Int,
+        proto: ProtoBuf.ValueParameter
     ): List<A> {
         val methodSignature = getCallableSignature(callableProto, container.nameResolver, container.typeTable, kind)
         if (methodSignature != null) {
@@ -199,9 +198,9 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     }
 
     override fun loadExtensionReceiverParameterAnnotations(
-            container: ProtoContainer,
-            proto: MessageLite,
-            kind: AnnotatedCallableKind
+        container: ProtoContainer,
+        proto: MessageLite,
+        kind: AnnotatedCallableKind
     ): List<A> {
         val methodSignature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind)
         if (methodSignature != null) {
@@ -243,7 +242,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     }
 
     private fun findClassWithAnnotationsAndInitializers(
-            container: ProtoContainer, specialCase: KotlinJvmBinaryClass?
+        container: ProtoContainer, specialCase: KotlinJvmBinaryClass?
     ): KotlinJvmBinaryClass? {
         return when {
             specialCase != null -> specialCase
@@ -265,10 +264,10 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
             checkNotNull(isConst) { "isConst should not be null for property (container=$container)" }
             if (container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.INTERFACE) {
                 return kotlinClassFinder.findKotlinClass(
-                        container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
+                    container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
                 )
             }
-            if (isConst!! && container is ProtoContainer.Package) {
+            if (isConst && container is ProtoContainer.Package) {
                 // Const properties in multifile classes are generated into the facade class
                 val facadeClassName = (container.source as? JvmPackagePartSource)?.facadeClassName
                 if (facadeClassName != null) {
@@ -293,7 +292,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
             val jvmPackagePartSource = container.source as JvmPackagePartSource
 
             return jvmPackagePartSource.knownJvmBinaryClass
-                   ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId)
+                ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId)
         }
         return null
     }
@@ -319,10 +318,11 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
                 return MemberAnnotationVisitor(signature)
             }
 
-            inner class AnnotationVisitorForMethod(signature: MemberSignature) : MemberAnnotationVisitor(signature), KotlinJvmBinaryClass.MethodAnnotationVisitor {
+            inner class AnnotationVisitorForMethod(signature: MemberSignature) : MemberAnnotationVisitor(signature),
+                KotlinJvmBinaryClass.MethodAnnotationVisitor {
 
                 override fun visitParameterAnnotation(
-                        index: Int, classId: ClassId, source: SourceElement
+                    index: Int, classId: ClassId, source: SourceElement
                 ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
                     val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(signature, index)
                     var result = memberAnnotations[paramSignature]
@@ -353,12 +353,12 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     }
 
     private fun getPropertySignature(
-            proto: ProtoBuf.Property,
-            nameResolver: NameResolver,
-            typeTable: TypeTable,
-            field: Boolean = false,
-            synthetic: Boolean = false,
-            requireHasFieldFlagForField: Boolean = true
+        proto: ProtoBuf.Property,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        field: Boolean = false,
+        synthetic: Boolean = false,
+        requireHasFieldFlagForField: Boolean = true
     ): MemberSignature? {
         val signature = proto.getExtensionOrNull(propertySignature) ?: return null
 
@@ -366,8 +366,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
             val fieldSignature =
                 JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable, requireHasFieldFlagForField) ?: return null
             return MemberSignature.fromJvmMemberSignature(fieldSignature)
-        }
-        else if (synthetic && signature.hasSyntheticMethod()) {
+        } else if (synthetic && signature.hasSyntheticMethod()) {
             return MemberSignature.fromMethod(nameResolver, signature.syntheticMethod)
         }
 
@@ -375,15 +374,17 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     }
 
     private fun getCallableSignature(
-            proto: MessageLite,
-            nameResolver: NameResolver,
-            typeTable: TypeTable,
-            kind: AnnotatedCallableKind,
-            requireHasFieldFlagForField: Boolean = false
+        proto: MessageLite,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        kind: AnnotatedCallableKind,
+        requireHasFieldFlagForField: Boolean = false
     ): MemberSignature? {
         return when {
             proto is ProtoBuf.Constructor -> {
-                MemberSignature.fromJvmMemberSignature(JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver, typeTable) ?: return null)
+                MemberSignature.fromJvmMemberSignature(
+                    JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver, typeTable) ?: return null
+                )
             }
             proto is ProtoBuf.Function -> {
                 MemberSignature.fromJvmMemberSignature(JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable) ?: return null)
@@ -405,18 +406,18 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     }
 
     private class Storage<out A, out C>(
-            val memberAnnotations: Map<MemberSignature, List<A>>,
-            val propertyConstants: Map<MemberSignature, C>
+        val memberAnnotations: Map<MemberSignature, List<A>>,
+        val propertyConstants: Map<MemberSignature, C>
     )
 
     private companion object {
         val SPECIAL_ANNOTATIONS = listOf(
-                JvmAnnotationNames.METADATA_FQ_NAME,
-                JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,
-                JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
-                FqName("java.lang.annotation.Target"),
-                FqName("java.lang.annotation.Retention"),
-                FqName("java.lang.annotation.Documented")
+            JvmAnnotationNames.METADATA_FQ_NAME,
+            JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,
+            JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
+            FqName("java.lang.annotation.Target"),
+            FqName("java.lang.annotation.Retention"),
+            FqName("java.lang.annotation.Documented")
         ).map(ClassId::topLevel).toSet()
     }
 }

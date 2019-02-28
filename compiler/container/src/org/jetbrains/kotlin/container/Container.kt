@@ -38,7 +38,10 @@ object DynamicComponentDescriptor : ValueDescriptor {
     override fun toString(): String = "Dynamic"
 }
 
-class StorageComponentContainer(private val id: String, parent: StorageComponentContainer? = null) : ComponentContainer, ComponentProvider, Closeable {
+class StorageComponentContainer(
+    private val id: String,
+    parent: StorageComponentContainer? = null
+) : ComponentContainer, ComponentProvider, Closeable {
     val unknownContext: ComponentResolveContext by lazy {
         val parentContext = parent?.let { ComponentResolveContext(it, DynamicComponentDescriptor) }
         ComponentResolveContext(this, DynamicComponentDescriptor, parentContext)
@@ -102,7 +105,10 @@ class StorageComponentContainer(private val id: String, parent: StorageComponent
     override fun <T> create(request: Class<T>): T {
         val constructorBinding = request.bindToConstructor(unknownContext)
         val args = constructorBinding.argumentDescriptors.map { it.getValue() }.toTypedArray()
-        return runWithUnwrappingInvocationException { constructorBinding.constructor.newInstance(*args) as T }
+        return runWithUnwrappingInvocationException {
+            @Suppress("UNCHECKED_CAST")
+            constructorBinding.constructor.newInstance(*args) as T
+        }
     }
 
     override fun toString() = "Container $id"
