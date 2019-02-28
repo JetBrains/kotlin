@@ -371,6 +371,10 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
         }
 
     @get:Input
+    val isStaticFramework: Boolean
+        get() = binary.let { it is Framework && it.isStatic }
+
+    @get:Input
     val embedBitcode: Framework.BitcodeEmbeddingMode
         get() = (binary as? Framework)?.embedBitcode ?: Framework.BitcodeEmbeddingMode.DISABLE
 
@@ -392,6 +396,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
             exportLibraries.files.filterExternalKlibs(project).forEach {
                 add("-Xexport-library=${it.absolutePath}")
             }
+            addKey("-Xstatic-framework", isStaticFramework)
             addAll(freeCompilerArgs)
         }
     }

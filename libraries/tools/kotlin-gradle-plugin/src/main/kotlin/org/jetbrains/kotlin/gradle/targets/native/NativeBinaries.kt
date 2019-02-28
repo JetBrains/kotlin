@@ -234,6 +234,11 @@ class Framework(
      */
     fun embedBitcode(mode: String) = embedBitcode(BitcodeEmbeddingMode.valueOf(mode.toUpperCase()))
 
+    /**
+     * Specifies if the framework is linked as a static library (false by default).
+     */
+    var isStatic = false
+
     enum class BitcodeEmbeddingMode {
         /** Don't embed LLVM IR bitcode. */
         DISABLE,
