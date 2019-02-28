@@ -38,7 +38,7 @@ fun InteropEngine.runTestFunction(
     }
 
     if (testPackageName !== null) {
-        script += "[$testPackageName]"
+        script += ".$testPackageName"
     }
 
     val testPackage = eval<Any>(script)
