@@ -3,7 +3,10 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION") // Uses old Native binaries API
+@file:Suppress(
+    "DEPRECATION", // Uses old Native binaries API
+    "PackageDirectoryMismatch" // Old package for compatibility
+)
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
