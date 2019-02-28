@@ -24,17 +24,23 @@ internal const val PLATFORM_DEPS_JAR_NAME = "kotlinNative-platformDeps.jar"
 // Prepare Kotlin plugin main JAR file.
 fun Project.pluginJar(
         originalPluginJar: Configuration,
-        pluginXmlPrepareTask: Task,
+        patchedFilesTasks: List<Task>,
         projectsToShadow: List<String>
 ): Jar {
     val jarTask = tasks.findByName("jar") as Jar? ?: task<Jar>("jar")
 
     return jarTask.apply {
+        // First, include patched files.
+        for (t in patchedFilesTasks) {
+            dependsOn(t)
+            from(t)
+        }
+
+        // Only then include contents of original JAR file.
+        // Note: If there is a file with the same path inside of JAR file as in the output of one of
+        // `patchedFilesTasks`, then the file from JAR will be ignored (due to DuplicatesStrategy.EXCLUDE).
         dependsOn(originalPluginJar)
         from(zipTree(originalPluginJar.singleFile)) { exclude(PLUGIN_XML_PATH) }
-
-        dependsOn(pluginXmlPrepareTask)
-        from(pluginXmlPrepareTask)
 
         for (p in projectsToShadow) {
             dependsOn("$p:classes")

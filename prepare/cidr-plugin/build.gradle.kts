@@ -14,6 +14,11 @@ dependencies {
 }
 
 val prepareKotlinPluginXml: Task by prepareKotlinPluginXml(originalPluginJar)
+val patchFileTemplates: Task by patchFileTemplates(originalPluginJar)
 
-// Pack Jar file with patched KotlinPlugin.xml plus shadowed project classes.
-pluginJar(originalPluginJar, prepareKotlinPluginXml, projectsToShadow)
+// Pack Jar file with patched files (KotlinPlugin.xml, file templates) plus shadowed project classes.
+pluginJar(
+        originalPluginJar,
+        listOf(prepareKotlinPluginXml, patchFileTemplates),
+        projectsToShadow
+)

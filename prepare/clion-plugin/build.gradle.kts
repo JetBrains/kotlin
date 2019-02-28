@@ -25,7 +25,7 @@ val preparePluginXml: Task by preparePluginXml(
         clionPluginVersionFull
 )
 
-val pluginJar: Task = pluginJar(cidrPlugin, preparePluginXml, projectsToShadow)
+val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml), projectsToShadow)
 
 val platformDepsJar: Task by platformDepsJar("CLion", clionPlatformDepsDir)
 

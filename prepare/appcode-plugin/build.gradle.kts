@@ -25,7 +25,7 @@ val preparePluginXml: Task by preparePluginXml(
         appcodePluginVersionFull
 )
 
-val pluginJar: Task = pluginJar(cidrPlugin, preparePluginXml, projectsToShadow)
+val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml), projectsToShadow)
 
 val platformDepsJar: Task by platformDepsJar("AppCode", appcodePlatformDepsDir)
 
