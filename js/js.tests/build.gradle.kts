@@ -42,6 +42,8 @@ dependencies {
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
 
+    testCompile("com.eclipsesource.j2v8:j2v8_macosx_x86_64:4.6.0")
+
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(files(toolsJar()))
 }

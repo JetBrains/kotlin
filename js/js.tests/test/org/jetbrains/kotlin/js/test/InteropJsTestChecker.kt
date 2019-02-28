@@ -5,65 +5,54 @@
 
 package org.jetbrains.kotlin.js.test
 
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory
-import jdk.nashorn.api.scripting.ScriptObjectMirror
-import jdk.nashorn.internal.runtime.ScriptRuntime
+import org.jetbrains.kotlin.js.test.interop.GlobalRuntimeContext
+import org.jetbrains.kotlin.js.test.interop.InteropEngine
+import org.jetbrains.kotlin.js.test.interop.InteropNashorn
 import org.junit.Assert
-import javax.script.Invocable
-import javax.script.ScriptEngine
 
-fun createScriptEngine(): ScriptEngine =
-    // TODO use "-strict"
-    NashornScriptEngineFactory().getScriptEngine("--language=es5", "--no-java", "--no-syntax-extensions")
-
-fun ScriptEngine.overrideAsserter() {
-    eval("this['kotlin-test'].kotlin.test.overrideAsserter_wbnzx$(this['kotlin-test'].kotlin.test.DefaultAsserter);")
+fun createScriptEngine(): InteropEngine {
+    return InteropNashorn()
 }
 
-fun ScriptEngine.runTestFunction(
+fun InteropEngine.overrideAsserter() {
+    evalVoid("this['kotlin-test'].kotlin.test.overrideAsserter_wbnzx$(this['kotlin-test'].kotlin.test.DefaultAsserter);")
+}
+
+fun InteropEngine.runTestFunction(
     testModuleName: String?,
     testPackageName: String?,
     testFunctionName: String,
     withModuleSystem: Boolean
-): Any? {
-    val testModule =
-        when {
-            withModuleSystem ->
-                eval(BasicBoxTest.KOTLIN_TEST_INTERNAL + ".require('" + testModuleName!! + "')")
-            testModuleName === null ->
-                eval("this")
-            else ->
-                get(testModuleName)
-        }
-    testModule as ScriptObjectMirror
+): String? {
+    var script = when {
+        withModuleSystem -> BasicBoxTest.KOTLIN_TEST_INTERNAL + ".require('" + testModuleName!! + "')"
+        testModuleName === null -> "this"
+        else -> testModuleName
+    }
 
-    val testPackage =
-        when {
-            testPackageName === null ->
-                testModule
-            testPackageName.contains(".") ->
-                testPackageName.split(".").fold(testModule) { p, part -> p[part] as ScriptObjectMirror }
-            else ->
-                testModule[testPackageName]!!
-        }
+    if (testPackageName !== null) {
+        script += "[$testPackageName]"
+    }
 
-    return (this as Invocable).invokeMethod(testPackage, testFunctionName)
+    val testPackage = eval<Any>(script)
+    return callMethod(testPackage, testFunctionName)
 }
 
-fun ScriptEngine.loadFile(path: String) {
-    eval("load('${path.replace('\\', '/')}');")
-}
 
-fun ScriptEngine.runAndRestoreContext(
-    globalObject: ScriptObjectMirror = eval("this") as ScriptObjectMirror,
+fun InteropEngine.runAndRestoreContext(
+    globalObject: GlobalRuntimeContext = evalAsMap("this"),
     originalState: Map<String, Any?> = globalObject.toMap(),
-    f: ScriptEngine.() -> Any?
+    f: InteropEngine.() -> Any?
 ): Any? {
     return try {
         this.f()
     } finally {
         for (key in globalObject.keys) {
-            globalObject[key] = originalState[key] ?: ScriptRuntime.UNDEFINED
+            if (originalState[key] == null) {
+                globalObject.remove(key)
+            } else {
+                globalObject[key] = originalState[key]
+            }
         }
     }
 }
@@ -72,14 +61,14 @@ abstract class AbstractNashornJsTestChecker {
 
     private var engineUsageCnt = 0
 
-    private var engineCache: ScriptEngine? = null
-    private var globalObject: ScriptObjectMirror? = null
+    private var engineCache: InteropEngine? = null
+    private var globalObject: GlobalRuntimeContext? = null
     private var originalState: Map<String, Any?>? = null
 
     protected val engine
         get() = engineCache ?: createScriptEngineForTest().also {
             engineCache = it
-            globalObject = it.eval("this") as ScriptObjectMirror
+            globalObject = it.evalAsMap("this")
             originalState = globalObject?.toMap()
         }
 
@@ -113,7 +102,7 @@ abstract class AbstractNashornJsTestChecker {
 
     private fun run(
         files: List<String>,
-        f: ScriptEngine.() -> Any?
+        f: InteropEngine.() -> Any?
     ): Any? {
         // Recreate the engine once in a while
         if (engineUsageCnt++ > 100) {
@@ -129,7 +118,7 @@ abstract class AbstractNashornJsTestChecker {
         }
     }
 
-    protected abstract fun createScriptEngineForTest(): ScriptEngine
+    protected abstract fun createScriptEngineForTest(): InteropEngine
 }
 
 object NashornJsTestChecker : AbstractNashornJsTestChecker() {
@@ -137,16 +126,16 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
     private const val GET_KOTLIN_OUTPUT = "kotlin.kotlin.io.output.buffer;"
 
     override fun beforeRun() {
-        engine.eval(SETUP_KOTLIN_OUTPUT)
+        engine.evalVoid(SETUP_KOTLIN_OUTPUT)
     }
 
     fun checkStdout(files: List<String>, expectedResult: String) {
         run(files)
-        val actualResult = engine.eval(GET_KOTLIN_OUTPUT)
+        val actualResult = engine.eval<String>(GET_KOTLIN_OUTPUT)
         Assert.assertEquals(expectedResult, actualResult)
     }
 
-    override fun createScriptEngineForTest(): ScriptEngine {
+    override fun createScriptEngineForTest(): InteropEngine {
         val engine = createScriptEngine()
 
         listOf(
@@ -162,7 +151,7 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
 }
 
 class NashornIrJsTestChecker(private val runtime: JsIrTestRuntime) : AbstractNashornJsTestChecker() {
-    override fun createScriptEngineForTest(): ScriptEngine {
+    override fun createScriptEngineForTest(): InteropEngine {
         val engine = createScriptEngine()
 
         listOf(
