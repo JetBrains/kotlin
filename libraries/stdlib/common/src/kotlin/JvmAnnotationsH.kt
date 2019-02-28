@@ -140,3 +140,11 @@ public expect annotation class Strictfp()
 @MustBeDocumented
 @OptionalExpectation
 public expect annotation class Synchronized()
+
+
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.2")
+@OptionalExpectation
+internal expect annotation class JvmPackageName(val name: String)

@@ -21,6 +21,11 @@ internal annotation class JvmName(public val name: String)
 @MustBeDocumented
 internal annotation class JvmMultifileClass
 
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+internal annotation class JvmPackageName(val name: String)
+
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
