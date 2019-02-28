@@ -1,8 +1,8 @@
 function createA() {
     function ADerived() {
     }
-    ADerived.prototype = Object.create(JS_TESTS.foo.A.prototype);
-    ADerived.prototype.foo_za3lpa$ = function(n) {
+    ADerived.prototype = Object.create(JS_TESTS.A.prototype);
+    ADerived.prototype.foo = function(n) {
         return 24;
     };
     return new ADerived();
@@ -11,9 +11,9 @@ function createA() {
 function createB() {
     function BDerived() {
     }
-    BDerived.prototype = Object.create(JS_TESTS.foo.B.prototype);
-    BDerived.prototype.bar_za3lpa$ = function(n) {
-        return this.foo_za3lpa$(n);
+    BDerived.prototype = Object.create(JS_TESTS.B.prototype);
+    BDerived.prototype.bar = function(n) {
+        return this.foo(n);
     };
     return new BDerived();
 }
