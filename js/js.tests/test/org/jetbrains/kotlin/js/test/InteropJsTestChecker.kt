@@ -8,10 +8,17 @@ package org.jetbrains.kotlin.js.test
 import org.jetbrains.kotlin.js.test.interop.GlobalRuntimeContext
 import org.jetbrains.kotlin.js.test.interop.InteropEngine
 import org.jetbrains.kotlin.js.test.interop.InteropNashorn
+import org.jetbrains.kotlin.js.test.interop.InteropV8
 import org.junit.Assert
 
+private val USE_J2V8_INTEROP_FOR_JS_TESTS = java.lang.Boolean.getBoolean("org.jetbrains.kotlin.use.j2v8.interop.for.js.tests")
+
 fun createScriptEngine(): InteropEngine {
-    return InteropNashorn()
+    return if (USE_J2V8_INTEROP_FOR_JS_TESTS) {
+        InteropV8()
+    } else {
+        InteropNashorn()
+    }
 }
 
 fun InteropEngine.overrideAsserter() {

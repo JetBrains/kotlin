@@ -107,9 +107,6 @@ public class KotlinTestUtils {
     private static final boolean DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND =
             Boolean.getBoolean("org.jetbrains.kotlin.dont.ignore.tests.working.on.compatible.backend");
 
-    private static final boolean USE_J2V8_INTEROP_FOR_JS_TESTS =
-            Boolean.getBoolean("org.jetbrains.kotlin.use.j2v8.interop.for.js.tests");
-
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
