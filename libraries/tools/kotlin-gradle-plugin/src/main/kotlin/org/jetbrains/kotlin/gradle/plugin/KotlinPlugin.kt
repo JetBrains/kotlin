@@ -354,6 +354,8 @@ internal abstract class AbstractKotlinPlugin(
             { compilation -> buildSourceSetProcessor(project, compilation, kotlinPluginVersion) }
         )
 
+        applyUserDefinedAttributes(target)
+
         rewriteMppDependenciesInPom(target)
 
         configureProjectGlobalSettings(project, kotlinPluginVersion)
@@ -644,6 +646,9 @@ internal open class KotlinAndroidPlugin(
         (project.kotlinExtension as KotlinAndroidProjectExtension).target = androidTarget
 
         applyToTarget(kotlinPluginVersion, androidTarget)
+
+        applyUserDefinedAttributes(androidTarget)
+
         registry.register(KotlinModelBuilder(kotlinPluginVersion, androidTarget))
 
         project.whenEvaluated { project.components.addAll(androidTarget.components) }

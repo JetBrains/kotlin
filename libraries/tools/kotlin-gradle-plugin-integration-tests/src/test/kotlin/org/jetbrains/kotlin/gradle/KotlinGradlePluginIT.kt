@@ -921,4 +921,46 @@ class KotlinGradleIT : BaseGradleIT() {
             assertFileExists(moduleDir + "new-model-1.0-sources.jar")
         }
     }
+
+    @Test
+    fun testUserDefinedAttributesInSinglePlatformProject() =
+        with(Project("multiprojectWithDependency", GradleVersionRequired.AtLeast("4.7"))) {
+            setupWorkingDir()
+            gradleBuildScript("projA").appendText(
+                "\n" + """
+                def targetAttribute = Attribute.of("com.example.target", String)
+                def compilationAttribute = Attribute.of("com.example.compilation", String)
+                kotlin.target.attributes.attribute(targetAttribute, "foo")
+                kotlin.target.compilations["main"].attributes.attribute(compilationAttribute, "foo")
+                """.trimIndent()
+            )
+            gradleBuildScript("projB").appendText(
+                "\n" + """
+                def targetAttribute = Attribute.of("com.example.target", String)
+                def compilationAttribute = Attribute.of("com.example.compilation", String)
+                kotlin.target.attributes.attribute(targetAttribute, "foo")
+                kotlin.target.compilations["main"].attributes.attribute(compilationAttribute, "foo")
+                """.trimIndent()
+            )
+            build(":projB:compileKotlin") {
+                assertSuccessful()
+            }
+            // Break dependency resolution by providing incompatible custom attributes in the target:
+            gradleBuildScript("projB").appendText("\nkotlin.target.attributes.attribute(targetAttribute, \"bar\")")
+            build(":projB:compileKotlin") {
+                assertFailed()
+                assertContains("Required com.example.target 'bar'")
+            }
+            // And using the compilation attributes (fix the target attributes first):
+            gradleBuildScript("projB").appendText(
+                "\n" + """
+                kotlin.target.attributes.attribute(targetAttribute, "foo")
+                kotlin.target.compilations["main"].attributes.attribute(compilationAttribute, "bar")
+                """.trimIndent()
+            )
+            build(":projB:compileKotlin") {
+                assertFailed()
+                assertContains("Required com.example.compilation 'bar'")
+            }
+        }
 }

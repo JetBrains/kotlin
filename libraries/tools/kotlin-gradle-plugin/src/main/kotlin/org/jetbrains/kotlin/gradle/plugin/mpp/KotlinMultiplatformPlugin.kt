@@ -23,7 +23,10 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.configureOrCreate
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
@@ -85,7 +88,7 @@ class KotlinMultiplatformPlugin(
         )
         configurePublishingWithMavenPublish(project)
 
-        setUpConfigurationAttributes(project)
+        targetsContainer.all { applyUserDefinedAttributes(it) }
 
         // propagate compiler plugin options to the source set language settings
         setupCompilerPluginOptions(project)
@@ -226,54 +229,6 @@ class KotlinMultiplatformPlugin(
         }
     }
 
-    /**
-     * The attributes attached to the targets and compilations need to be propagated to the relevant Gradle configurations:
-     * 1. Output configurations of each target need the corresponding compilation's attributes (and, indirectly, the target's attributes)
-     * 2. Resolvable configurations of each compilation need the compilation's attributes
-     */
-    private fun setUpConfigurationAttributes(project: Project) {
-        val targets = project.multiplatformExtension.targets
-
-        project.afterEvaluate {
-            targets.all { target ->
-                fun copyAttributes(from: AttributeContainer, to: AttributeContainer) {
-                    fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-                        to.attribute(key, from.getAttribute(key)!!)
-                    }
-
-                    from.keySet().forEach { key -> copyAttribute(key, from, to) }
-                }
-
-                // To copy the attributes to the output configurations, find those output configurations and their producing compilations
-                // based on the target's components:
-                val outputConfigurationsWithCompilations =
-                    target.components.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
-                        kotlinVariant.usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usageContext ->
-                            project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
-                                configuration to usageContext.compilation
-                            }
-                        }
-                    } + listOfNotNull(
-                        target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                            project.configurations.findByName(target.defaultConfigurationName)?.to(mainCompilation)
-                        }
-                    )
-
-                outputConfigurationsWithCompilations.forEach { (configuration, compilation) ->
-                    copyAttributes(compilation.attributes, configuration.attributes)
-                }
-
-                target.compilations.all { compilation ->
-                    val compilationAttributes = compilation.attributes
-
-                    compilation.relatedConfigurationNames
-                        .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
-                        .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
-                }
-            }
-        }
-    }
-
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
 
@@ -283,6 +238,52 @@ class KotlinMultiplatformPlugin(
                     "Future Gradle versions may fail to resolve dependencies on these publications. " +
                     "You can disable Gradle metadata usage during publishing and dependencies resolution by removing " +
                     "`enableFeaturePreview('GRADLE_METADATA')` from the settings.gradle file."
+    }
+}
+
+/**
+ * The attributes attached to the targets and compilations need to be propagated to the relevant Gradle configurations:
+ * 1. Output configurations of each target need the corresponding compilation's attributes (and, indirectly, the target's attributes)
+ * 2. Resolvable configurations of each compilation need the compilation's attributes
+ */
+internal fun applyUserDefinedAttributes(target: KotlinTarget) {
+    val project = target.project
+
+    project.whenEvaluated {
+        fun copyAttributes(from: AttributeContainer, to: AttributeContainer) {
+            fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
+                to.attribute(key, from.getAttribute(key)!!)
+            }
+
+            from.keySet().forEach { key -> copyAttribute(key, from, to) }
+        }
+
+        // To copy the attributes to the output configurations, find those output configurations and their producing compilations
+        // based on the target's components:
+        val outputConfigurationsWithCompilations =
+            target.components.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
+                kotlinVariant.usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usageContext ->
+                    project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
+                        configuration to usageContext.compilation
+                    }
+                }
+            } + listOfNotNull(
+                target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
+                    project.configurations.findByName(target.defaultConfigurationName)?.to(mainCompilation)
+                }
+            )
+
+        outputConfigurationsWithCompilations.forEach { (configuration, compilation) ->
+            copyAttributes(compilation.attributes, configuration.attributes)
+        }
+
+        target.compilations.all { compilation ->
+            val compilationAttributes = compilation.attributes
+
+            compilation.relatedConfigurationNames
+                .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
+                .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
+        }
     }
 }
 
