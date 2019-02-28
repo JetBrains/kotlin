@@ -358,6 +358,8 @@ internal abstract class AbstractKotlinPlugin(
 
         configureProjectGlobalSettings(project, kotlinPluginVersion)
         registry.register(KotlinModelBuilder(kotlinPluginVersion, null))
+
+        project.components.addAll(target.components)
     }
 
     private fun rewriteMppDependenciesInPom(target: AbstractKotlinTarget) {
@@ -643,6 +645,8 @@ internal open class KotlinAndroidPlugin(
 
         applyToTarget(kotlinPluginVersion, androidTarget)
         registry.register(KotlinModelBuilder(kotlinPluginVersion, androidTarget))
+
+        project.whenEvaluated { project.components.addAll(androidTarget.components) }
     }
 
     companion object {
