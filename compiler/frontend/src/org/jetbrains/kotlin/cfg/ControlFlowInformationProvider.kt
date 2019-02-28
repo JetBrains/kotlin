@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -736,7 +737,9 @@ class ControlFlowInformationProvider private constructor(
                             return
                         }
                         !languageVersionSettings.supportsFeature(LanguageFeature.WarningOnMainUnusedParameter) -> {
-                            trace.record(UNUSED_MAIN_PARAMETER, element)
+                            if (owner.containingClassOrObject == null) {
+                                trace.record(UNUSED_MAIN_PARAMETER, element)
+                            }
                             return
                         }
                     }

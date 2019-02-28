@@ -8136,6 +8136,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unusedMainParameter/legacy.kt");
         }
 
+        @TestMetadata("object.kt")
+        public void testObject() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedMainParameter/object.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedMainParameter/simple.kt");
