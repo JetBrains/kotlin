@@ -9,13 +9,16 @@ import jdk.nashorn.internal.runtime.ScriptRuntime
 
 
 class NashornGlobalContext(private val myState: GlobalRuntimeContext) : InteropGlobalContext {
-    override fun updateState(state: Map<String, Any?>) {
+
+    override fun updateState(state: InteropGlobalContext) {
+        val mapState = (state as NashornGlobalContext).toMap()
         for (key in myState.keys) {
-            myState[key] = state[key] ?: ScriptRuntime.UNDEFINED
+            myState[key] = mapState[key] ?: ScriptRuntime.UNDEFINED
         }
     }
 
-    override fun toMap(): Map<String, Any?> {
+    private fun toMap(): Map<String, Any?> {
         return myState.toMap()
     }
+
 }

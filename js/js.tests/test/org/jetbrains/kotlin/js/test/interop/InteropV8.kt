@@ -8,29 +8,10 @@ package org.jetbrains.kotlin.js.test.interop
 import com.eclipsesource.v8.V8
 import com.eclipsesource.v8.V8Array
 import com.eclipsesource.v8.V8Object
-import com.eclipsesource.v8.utils.V8ObjectUtils
 import java.io.File
 
 class InteropV8 : InteropEngine {
     private val myRuntime: V8 = V8.createV8Runtime("global")
-
-    private fun createParams(vararg p: Any?): V8Array {
-        val params = V8Array(myRuntime)
-
-        p.forEach {
-            when {
-                it == null -> params.pushNull()
-                it is Int -> params.push(it)
-                it is Double -> params.push(it)
-                it is String -> params.push(it)
-                it is Boolean -> params.push(it)
-                it is V8Object -> params.push(it)
-                else -> throw Exception("can not cast ${it}")
-            }
-        }
-
-        return params
-    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> eval(script: String): T {
@@ -42,9 +23,7 @@ class InteropV8 : InteropEngine {
     }
 
     override fun getGlobalContext(): InteropGlobalContext {
-        val v8result = eval<V8Object>("this")
-//        return V8ObjectUtils.toMap(v8result) as GlobalRuntimeContext
-        return V8GlobalContext()
+        return V8GlobalContext(eval<V8Object>("this"))
     }
 
     @Suppress("UNCHECKED_CAST")
