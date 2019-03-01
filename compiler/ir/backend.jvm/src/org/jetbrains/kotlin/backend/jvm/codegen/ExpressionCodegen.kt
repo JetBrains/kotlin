@@ -39,9 +39,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isNullConst
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
@@ -694,31 +692,52 @@ class ExpressionCodegen(
     }
 
     private fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: KotlinType, otherBranches: List<IrBranch>): StackValue {
+        // True or false conditions known at compile time need not be generated.
+        val shouldGenerateCondition = !branch.condition.isFalseConst() && !branch.condition.isTrueConst()
+        // Body of an always-false-condition need not be generated.
+        val shouldGenerateBody = !branch.condition.isFalseConst()
+        // Don't generate the tail if it doesn't exist or isn't reachable.
+        val shouldGenerateTail = !otherBranches.isEmpty() && !branch.condition.isTrueConst()
+
         val elseLabel = Label()
-        val thenBranch = branch.result
-        //TODO don't generate condition for else branch - java verifier fails with empty stack
-        val elseBranch = branch is IrElseBranch
-        if (!elseBranch) {
+        val endLabel = Label()
+
+        if (shouldGenerateCondition) {
             genConditionWithOptimizationsIfPossible(branch, data, elseLabel)
+        } else {
+            // Even when a condition isn't generated, a linenumber and nop is still required so that a debugger can break on the line of the
+            // condition, except for the explicit "else".
+            if (branch !is IrElseBranch) {
+                branch.condition.markLineNumber(startOffset = true)
+                mv.nop()
+            }
         }
 
-        val end = Label()
-
-        val result = thenBranch.run {
-            val stackValue = gen(this, data)
-            coerceNotToUnit(stackValue.type, stackValue.kotlinType, type)
+        val resultFromBody = if (shouldGenerateBody) {
+            val thenBranch = branch.result
+            val result = thenBranch.run {
+                val stackValue = gen(this, data)
+                coerceNotToUnit(stackValue.type, stackValue.kotlinType, type)
+            }
+            mv.goTo(endLabel)
+            mv.mark(elseLabel)
+            result
+        } else {
+            none()
         }
 
-        mv.goTo(end)
-        mv.mark(elseLabel)
-
-        if (!otherBranches.isEmpty()) {
+        val resultFromTail = if (shouldGenerateTail) {
             val nextBranch = otherBranches.first()
             genIfWithBranches(nextBranch, data, type, otherBranches.drop(1))
+        } else {
+            none()
         }
 
-        mv.mark(end)
-        return result
+        // endLabel is only used to jump from end-of-then-body to the end of the whole if cascade.
+        if (shouldGenerateBody)
+            mv.mark(endLabel)
+
+        return if (shouldGenerateBody) resultFromBody else resultFromTail
     }
 
     private fun genConditionWithOptimizationsIfPossible(branch: IrBranch, data: BlockInfo, elseLabel: Label) {

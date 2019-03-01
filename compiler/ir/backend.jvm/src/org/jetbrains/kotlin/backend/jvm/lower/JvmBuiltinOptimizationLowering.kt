@@ -109,10 +109,11 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
             }
 
             override fun visitWhen(expression: IrWhen): IrExpression {
+                val isCompilerGenerated = expression.origin == null
                 expression.transformChildrenVoid(this)
                 // Remove all branches with constant false condition.
                 expression.branches.removeIf() {
-                    it.condition.isFalseConst()
+                    it.condition.isFalseConst() && isCompilerGenerated
                 }
                 // If the only condition that is left has a constant true condition remove the
                 // when in favor of the result. If there are no conditions left, remove the when
@@ -120,7 +121,7 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                 return if (expression.branches.size == 0) {
                     IrBlockImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
                 } else {
-                    expression.branches.first().takeIf { it.condition.isTrueConst() }?.result ?: expression
+                    expression.branches.first().takeIf { it.condition.isTrueConst() && isCompilerGenerated }?.result ?: expression
                 }
             }
 

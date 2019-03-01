@@ -1106,6 +1106,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/controlStructures"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("ifConsts.kt")
+        public void testIfConsts() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/controlStructures/ifConsts.kt");
+        }
+
         @TestMetadata("kt17110.kt")
         public void testKt17110() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/controlStructures/kt17110.kt");
@@ -2640,9 +2645,34 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("ifConsts.kt")
+        public void testIfConsts() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/ifConsts.kt");
+        }
+
         @TestMetadata("ifElse.kt")
         public void testIfElse() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/lineNumbers/ifElse.kt");
+        }
+
+        @TestMetadata("ifFalse.kt")
+        public void testIfFalse() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/ifFalse.kt");
+        }
+
+        @TestMetadata("ifFalseElse.kt")
+        public void testIfFalseElse() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/ifFalseElse.kt");
+        }
+
+        @TestMetadata("ifTrue.kt")
+        public void testIfTrue() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/ifTrue.kt");
+        }
+
+        @TestMetadata("ifTrueElse.kt")
+        public void testIfTrueElse() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/ifTrueElse.kt");
         }
 
         @TestMetadata("singleThen.kt")
