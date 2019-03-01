@@ -11526,6 +11526,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/surroundWithNullCheck/argumentNullable.kt");
         }
 
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            runTest("idea/testData/quickfix/surroundWithNullCheck/assignment.kt");
+        }
+
         @TestMetadata("chainedUnsafeCall.kt")
         public void testChainedUnsafeCall() throws Exception {
             runTest("idea/testData/quickfix/surroundWithNullCheck/chainedUnsafeCall.kt");

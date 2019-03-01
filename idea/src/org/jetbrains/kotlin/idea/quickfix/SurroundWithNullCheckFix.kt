@@ -104,17 +104,22 @@ class SurroundWithNullCheckFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val typeMismatch = Errors.TYPE_MISMATCH.cast(diagnostic)
             val nullableExpression = typeMismatch.psiElement as? KtReferenceExpression ?: return null
-            val argument = nullableExpression.parent as? KtValueArgument ?: return null
-            val call = argument.getParentOfType<KtCallExpression>(true) ?: return null
-
-            val rootCall = call.getLastParentOfTypeInRow<KtQualifiedExpression>() ?: call
-            if (rootCall.parent !is KtBlockExpression) return null
-
+            val parent = nullableExpression.parent
+            val root = when (parent) {
+                is KtValueArgument -> {
+                    val call = parent.getParentOfType<KtCallExpression>(true) ?: return null
+                    call.getLastParentOfTypeInRow<KtQualifiedExpression>() ?: call
+                }
+                is KtBinaryExpression -> {
+                    if (parent.right != nullableExpression) return null
+                    parent
+                }
+                else -> return null
+            }
+            if (root.parent !is KtBlockExpression) return null
             if (!isNullabilityMismatch(expected = typeMismatch.a, actual = typeMismatch.b)) return null
-
             if (!nullableExpression.isStableSimpleExpression()) return null
-
-            return SurroundWithNullCheckFix(rootCall, nullableExpression)
+            return SurroundWithNullCheckFix(root, nullableExpression)
         }
     }
 }
