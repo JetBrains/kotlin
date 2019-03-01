@@ -1,7 +1,6 @@
 import com.moowork.gradle.node.NodeExtension
-import com.moowork.gradle.node.exec.ExecRunner
-import com.moowork.gradle.node.npm.NpmExecRunner
 import com.moowork.gradle.node.npm.NpmTask
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
     kotlin("jvm")
@@ -41,7 +40,7 @@ dependencies {
     testRuntime(project(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
-
+    
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(files(toolsJar()))
 }
@@ -65,7 +64,7 @@ projectTest {
     }
 
     val prefixForPpropertiesToForward = "fd."
-    for((key, value) in properties) {
+    for ((key, value) in properties) {
         if (key.startsWith(prefixForPpropertiesToForward)) {
             systemProperty(key.substring(prefixForPpropertiesToForward.length), value)
         }

@@ -671,7 +671,7 @@ abstract class BasicBoxTest(
         val result = engineForMinifier.runAndRestoreContext {
             runList.forEach(this::loadFile)
             overrideAsserter()
-            eval(NashornJsTestChecker.SETUP_KOTLIN_OUTPUT)
+            eval<String>(NashornJsTestChecker.SETUP_KOTLIN_OUTPUT)
             runTestFunction(testModuleName, testPackage, testFunction, withModuleSystem)
         }
         TestCase.assertEquals(expectedResult, result)
