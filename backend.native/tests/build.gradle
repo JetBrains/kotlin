@@ -271,9 +271,9 @@ task slackReport(type:Reporter) {
 }
 
 task slackReportNightly(type:NightlyReporter) {
-    externalMacosReport = "external_macos_results.json"
-    externalLinuxReport = "external_linux_results.json"
-    externalWindowsReport = "external_windows_results.json"
+    externalMacosReport = "external_macos_results/reports.json"
+    externalLinuxReport = "external_linux_results/reports.json"
+    externalWindowsReport = "external_windows_results/reports.json"
 }
 
 task sum (type:RunKonanTest) {
