@@ -1,8 +1,9 @@
 def dist = findProperty('org.jetbrains.kotlin.native.home') ?: 'dist'
+def toolExtension = System.getProperty("os.name").startsWith('Windows') ? ".bat" : ""
 project.ext {
     applicationName = 'HelloWorld'
     repeatNumber = 10
-    buildSteps = ["runKonanc": ["${project.getProjectDir()}/$dist/bin/konanc", "${project.getProjectDir()}/src/main/kotlin/main.kt", "-o",
+    buildSteps = ["runKonanc": ["${project.getProjectDir()}/$dist/bin/konanc$toolExtension", "${project.getProjectDir()}/src/main/kotlin/main.kt", "-o",
                                 "${buildDir.absolutePath}/program${MPPTools.getNativeProgramExtension()}"]]
 }
 apply from: rootProject.file("${rootProject.rootDir}/gradle/compileBenchmark.gradle")

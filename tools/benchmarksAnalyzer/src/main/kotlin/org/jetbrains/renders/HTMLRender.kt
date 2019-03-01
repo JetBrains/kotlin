@@ -554,7 +554,7 @@ class HTMLRender: Render() {
 
     private fun TableBlock.renderBenchmarksDetails(fullSet: Map<String, SummaryBenchmark>,
                                                    bucket: Map<String, ScoreChange>? = null, rowStyle: String? = null) {
-        if (bucket != null) {
+        if (bucket != null && !bucket.isEmpty()) {
             // Find max ratio.
             val maxRatio = bucket.values.map { it.second.mean }.max()!!
             // There are changes in performance.
@@ -568,12 +568,13 @@ class HTMLRender: Render() {
                     td { +"${fullSet.getValue(name).first}" }
                     td { +"${fullSet.getValue(name).second}" }
                     td {
-                        attributes["bgcolor"] = ColoredCell(change.first.mean / abs(bucket.values.first().first.mean))
+                        attributes["bgcolor"] = ColoredCell(if (bucket.values.first().first.mean == 0.0) null
+                            else change.first.mean / abs(bucket.values.first().first.mean))
                                 .backgroundStyle
                         +"${change.first.toString() + " %"}"
                     }
                     td {
-                        val scaledRatio = change.second.mean / maxRatio
+                        val scaledRatio = if (maxRatio == 0.0) null else change.second.mean / maxRatio
                         attributes["bgcolor"] = ColoredCell(scaledRatio).backgroundStyle
                         +"${change.second}"
                     }
@@ -649,18 +650,19 @@ class HTMLRender: Render() {
             }
     }
 
-    class ColoredCell(val scaledValue: Double, val reverse: Boolean = false) {
+    class ColoredCell(val scaledValue: Double?, val reverse: Boolean = false) {
         val value: Double
         val neutralColor = Color(1.0,1.0 , 1.0)
         val negativeColor = Color(0.0, 1.0, 0.0)
         val positiveColor = Color(1.0, 0.0, 0.0)
 
         init {
-            value = if (abs(scaledValue) <= 1.0) scaledValue else error ("Value should be scaled in range [-1.0; 1.0]")
+            value = scaledValue?.let { if (abs(scaledValue) <= 1.0) scaledValue else error ("Value should be scaled in range [-1.0; 1.0]") }
+                    ?: 0.0
         }
 
         val backgroundStyle: String
-            get() = getColor().toString()
+            get() = scaledValue?.let { getColor().toString() } ?: ""
 
         fun getColor(): Color {
             val currentValue = clamp(value, -1.0, 1.0)

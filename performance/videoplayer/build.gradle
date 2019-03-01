@@ -1,4 +1,5 @@
 def dist = findProperty('org.jetbrains.kotlin.native.home') ?: 'dist'
+def toolExtension = System.getProperty("os.name").startsWith('Windows') ? ".bat" : ""
 
 def linkerOpts = []
 if (MPPTools.isMacos()) {
@@ -34,15 +35,15 @@ if (MPPTools.isMacos()) {
 
 project.ext {
     applicationName = 'Videoplayer'
-    repeatNumber = 2
-    buildSteps = ["runCinteropFfmpeg": ["$dist/bin/cinterop", "-o", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
-                                "-def", "$dist/../samples/videoplayer/src/nativeInterop/cinterop/ffmpeg.def"] + filterDirsFfmpeg + includeDirsFfmpeg,
-                  "runCinteropSdl": ["$dist/bin/cinterop", "-o", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
-                                     "-def", "$dist/../samples/videoplayer/src/nativeInterop/cinterop/sdl.def"] + includeDirsSdl,
-                  "runKonanProgram": ["$dist/bin/konanc", "-ea", "-p", "program", "-o", "${buildDir.absolutePath}/program${MPPTools.getNativeProgramExtension()}",
-                       "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
-                       "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
-                       "-Xmulti-platform", "$dist/../samples/videoplayer/src/videoPlayerMain/kotlin",
-                       "-entry", "sample.videoplayer.main"] + linkerOpts]
+    repeatNumber = 10
+    buildSteps = ["runCinteropFfmpeg": ["${project.getProjectDir()}/$dist/bin/cinterop$toolExtension", "-o", "${project.getProjectDir()}/$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
+                                        "-def", "${project.getProjectDir()}/$dist/../samples/videoplayer/src/nativeInterop/cinterop/ffmpeg.def"] + filterDirsFfmpeg + includeDirsFfmpeg,
+                  "runCinteropSdl": ["${project.getProjectDir()}/$dist/bin/cinterop$toolExtension", "-o", "${project.getProjectDir()}/$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
+                                     "-def", "${project.getProjectDir()}/$dist/../samples/videoplayer/src/nativeInterop/cinterop/sdl.def"] + includeDirsSdl,
+                  "runKonanProgram": ["${project.getProjectDir()}/$dist/bin/konanc$toolExtension", "-ea", "-p", "program", "-o", "${buildDir.absolutePath}/program${MPPTools.getNativeProgramExtension()}",
+                                      "-l", "${project.getProjectDir()}/$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
+                                      "-l", "${project.getProjectDir()}/$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
+                                      "-Xmulti-platform", "${project.getProjectDir()}/$dist/../samples/videoplayer/src/videoPlayerMain/kotlin",
+                                      "-entry", "sample.videoplayer.main"] + linkerOpts]
 }
 apply from: rootProject.file("${rootProject.rootDir}/gradle/compileBenchmark.gradle")
