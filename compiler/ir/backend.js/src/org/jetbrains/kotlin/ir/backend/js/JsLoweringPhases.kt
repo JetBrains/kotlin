@@ -244,7 +244,7 @@ private val varargLoweringPhase = makeJsModulePhase(
 )
 
 private val propertiesLoweringPhase = makeJsModulePhase(
-    { context -> PropertiesLowering(context, null) },
+    { context -> PropertiesLowering(context) },
     name = "PropertiesLowering",
     description = "Move fields and accessors out from its property"
 )

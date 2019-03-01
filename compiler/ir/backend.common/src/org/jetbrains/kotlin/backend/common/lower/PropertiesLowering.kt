@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -20,36 +19,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-fun makePropertiesPhase(originOfSyntheticMethodForAnnotations: IrDeclarationOrigin?) = makeIrFilePhase(
-    { context -> PropertiesLowering(context, originOfSyntheticMethodForAnnotations) },
-    name = "Properties",
-    description = "Move fields and accessors for properties to their classes",
-    stickyPostconditions = setOf(::checkNoProperties)
-)
-
-fun checkNoProperties(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitProperty(declaration: IrProperty) {
-            error("No properties should remain at this stage")
-        }
-    })
-}
-
 class PropertiesLowering(
     private val context: BackendContext,
-    private val originOfSyntheticMethodForAnnotations: IrDeclarationOrigin?
+    private val originOfSyntheticMethodForAnnotations: IrDeclarationOrigin? = null,
+    private val computeSyntheticMethodName: ((Name) -> String)? = null
 ) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
@@ -78,20 +56,22 @@ class PropertiesLowering(
                 addIfNotNull(declaration.getter)
                 addIfNotNull(declaration.setter)
 
-                if (declaration.annotations.isNotEmpty() && originOfSyntheticMethodForAnnotations != null) {
-                    add(createSyntheticMethodForAnnotations(declaration, originOfSyntheticMethodForAnnotations))
+                if (declaration.annotations.isNotEmpty() && originOfSyntheticMethodForAnnotations != null
+                    && computeSyntheticMethodName != null
+                ) {
+                    val methodName = computeSyntheticMethodName.invoke(declaration.name) // Workaround KT-4113
+                    add(createSyntheticMethodForAnnotations(declaration, originOfSyntheticMethodForAnnotations, methodName))
                 }
             }
         else
             null
 
-    private fun createSyntheticMethodForAnnotations(declaration: IrProperty, origin: IrDeclarationOrigin): IrFunctionImpl {
+    private fun createSyntheticMethodForAnnotations(declaration: IrProperty, origin: IrDeclarationOrigin, name: String): IrFunctionImpl {
         val descriptor = WrappedSimpleFunctionDescriptor(declaration.descriptor.annotations)
         val symbol = IrSimpleFunctionSymbolImpl(descriptor)
         // TODO: ACC_DEPRECATED
         return IrFunctionImpl(
-            -1, -1, origin,
-            symbol, Name.identifier(JvmAbi.getSyntheticMethodNameForAnnotatedProperty(declaration.name)),
+            -1, -1, origin, symbol, Name.identifier(name),
             Visibilities.PUBLIC, Modality.OPEN, context.irBuiltIns.unitType,
             isInline = false, isExternal = false, isTailrec = false, isSuspend = false
         ).apply {
@@ -105,6 +85,20 @@ class PropertiesLowering(
             // annotations.addAll(declaration.annotations)
 
             metadata = declaration.metadata
+        }
+    }
+
+    companion object {
+        fun checkNoProperties(irFile: IrFile) {
+            irFile.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitProperty(declaration: IrProperty) {
+                    error("No properties should remain at this stage")
+                }
+            })
         }
     }
 }

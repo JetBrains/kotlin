@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.load.java.JvmAbi
 
 private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     lower = object : SameTypeCompilerPhase<CommonBackendContext, IrFile> {
@@ -34,6 +35,17 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     name = "PatchParents$number",
     description = "Patch parent references in IrFile, pass $number",
     nlevels = 0
+)
+
+private val propertiesPhase = makeIrFilePhase(
+    { context ->
+        PropertiesLowering(context, JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS) { propertyName ->
+            JvmAbi.getSyntheticMethodNameForAnnotatedProperty(propertyName)
+        }
+    },
+    name = "Properties",
+    description = "Move fields and accessors for properties to their classes",
+    stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
 internal val jvmPhases = namedIrFilePhase(
@@ -48,7 +60,7 @@ internal val jvmPhases = namedIrFilePhase(
             moveCompanionObjectFieldsPhase then
             constPhase then
             propertiesToFieldsPhase then
-            makePropertiesPhase(JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS) then
+            propertiesPhase then
             renameFieldsPhase then
             annotationPhase then
 
