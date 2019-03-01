@@ -38,6 +38,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
+import com.intellij.psi.impl.file.PsiPackageBase
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.presentation.java.SymbolPresentationUtil
 import com.intellij.psi.util.PsiTreeUtil
@@ -406,9 +407,13 @@ fun <T> chooseContainerElement(
                 return "$name$params"
             }
 
-            private fun PsiElement.renderText(): String {
-                if (this is SeparateFileWrapper) return "Extract to separate file"
-                return StringUtil.shortenTextWithEllipsis(text!!.collapseSpaces(), 53, 0)
+            private fun PsiElement.renderText(): String = when (this) {
+                is SeparateFileWrapper -> "Extract to separate file"
+                is PsiPackageBase -> qualifiedName
+                else -> {
+                    val text = text ?: "<invalid text>"
+                    StringUtil.shortenTextWithEllipsis(text.collapseSpaces(), 53, 0)
+                }
             }
 
             private fun PsiElement.getRepresentativeElement(): PsiElement = when (this) {
