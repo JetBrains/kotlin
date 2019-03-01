@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.js.test.interop
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import javax.script.Invocable
 
-class InteropNashorn : InteropEngine {
+class ScriptEngineNashorn : ScriptEngine {
     // TODO use "-strict"
     private val myEngine = NashornScriptEngineFactory().getScriptEngine("--language=es5", "--no-java", "--no-syntax-extensions")
 
@@ -21,8 +21,8 @@ class InteropNashorn : InteropEngine {
         myEngine.eval(script)
     }
 
-    override fun evalAsMap(script: String): GlobalRuntimeContext {
-        return eval(script)
+    override fun getGlobalContext(): GlobalRuntimeContext {
+        return eval("this")
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -5,27 +5,21 @@
 
 package org.jetbrains.kotlin.js.test
 
+import jdk.nashorn.internal.runtime.ScriptRuntime
 import org.jetbrains.kotlin.js.test.interop.GlobalRuntimeContext
-import org.jetbrains.kotlin.js.test.interop.InteropEngine
-import org.jetbrains.kotlin.js.test.interop.InteropNashorn
-import org.jetbrains.kotlin.js.test.interop.InteropV8
+import org.jetbrains.kotlin.js.test.interop.ScriptEngine
+import org.jetbrains.kotlin.js.test.interop.ScriptEngineNashorn
 import org.junit.Assert
 
-private val USE_J2V8_INTEROP_FOR_JS_TESTS = java.lang.Boolean.getBoolean("org.jetbrains.kotlin.use.j2v8.interop.for.js.tests")
-
-fun createScriptEngine(): InteropEngine {
-    return if (USE_J2V8_INTEROP_FOR_JS_TESTS) {
-        InteropV8()
-    } else {
-        InteropNashorn()
-    }
+fun createScriptEngine(): ScriptEngine {
+    return ScriptEngineNashorn()
 }
 
-fun InteropEngine.overrideAsserter() {
+fun ScriptEngine.overrideAsserter() {
     evalVoid("this['kotlin-test'].kotlin.test.overrideAsserter_wbnzx$(this['kotlin-test'].kotlin.test.DefaultAsserter);")
 }
 
-fun InteropEngine.runTestFunction(
+fun ScriptEngine.runTestFunction(
     testModuleName: String?,
     testPackageName: String?,
     testFunctionName: String,
@@ -46,20 +40,16 @@ fun InteropEngine.runTestFunction(
 }
 
 
-fun InteropEngine.runAndRestoreContext(
-    globalObject: GlobalRuntimeContext = evalAsMap("this"),
+fun ScriptEngine.runAndRestoreContext(
+    globalObject: GlobalRuntimeContext = getGlobalContext(),
     originalState: Map<String, Any?> = globalObject.toMap(),
-    f: InteropEngine.() -> Any?
+    f: ScriptEngine.() -> Any?
 ): Any? {
     return try {
         this.f()
     } finally {
         for (key in globalObject.keys) {
-            if (originalState[key] == null) {
-                globalObject.remove(key)
-            } else {
-                globalObject[key] = originalState[key]
-            }
+            globalObject[key] = originalState[key] ?: ScriptRuntime.UNDEFINED
         }
     }
 }
@@ -68,14 +58,14 @@ abstract class AbstractNashornJsTestChecker {
 
     private var engineUsageCnt = 0
 
-    private var engineCache: InteropEngine? = null
+    private var engineCache: ScriptEngine? = null
     private var globalObject: GlobalRuntimeContext? = null
     private var originalState: Map<String, Any?>? = null
 
     protected val engine
         get() = engineCache ?: createScriptEngineForTest().also {
             engineCache = it
-            globalObject = it.evalAsMap("this")
+            globalObject = it.getGlobalContext()
             originalState = globalObject?.toMap()
         }
 
@@ -109,7 +99,7 @@ abstract class AbstractNashornJsTestChecker {
 
     private fun run(
         files: List<String>,
-        f: InteropEngine.() -> Any?
+        f: ScriptEngine.() -> Any?
     ): Any? {
         // Recreate the engine once in a while
         if (engineUsageCnt++ > 100) {
@@ -125,7 +115,7 @@ abstract class AbstractNashornJsTestChecker {
         }
     }
 
-    protected abstract fun createScriptEngineForTest(): InteropEngine
+    protected abstract fun createScriptEngineForTest(): ScriptEngine
 }
 
 object NashornJsTestChecker : AbstractNashornJsTestChecker() {
@@ -142,7 +132,7 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
         Assert.assertEquals(expectedResult, actualResult)
     }
 
-    override fun createScriptEngineForTest(): InteropEngine {
+    override fun createScriptEngineForTest(): ScriptEngine {
         val engine = createScriptEngine()
 
         listOf(
@@ -158,7 +148,7 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
 }
 
 class NashornIrJsTestChecker(private val runtime: JsIrTestRuntime) : AbstractNashornJsTestChecker() {
-    override fun createScriptEngineForTest(): InteropEngine {
+    override fun createScriptEngineForTest(): ScriptEngine {
         val engine = createScriptEngine()
 
         listOf(

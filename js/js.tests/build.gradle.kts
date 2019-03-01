@@ -40,14 +40,7 @@ dependencies {
     testRuntime(project(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
-
-    when {
-        OperatingSystem.current().isWindows() -> testCompile("com.eclipsesource.j2v8:j2v8_win32_x86:4.6.0")
-        OperatingSystem.current().isLinux() -> testCompile("com.eclipsesource.j2v8:j2v8_linux_x86_64:4.8.0")
-        OperatingSystem.current().isMacOsX() -> testCompile("com.eclipsesource.j2v8:j2v8_macosx_x86_64:4.6.0")
-        else -> logger.error("unsupported platform - can not compile com.eclipsesource.j2v8 dependency")
-    }
-
+    
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(files(toolsJar()))
 }
