@@ -199,6 +199,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/convertPropertyGetterToInitializer/");
     }
 
+    @TestMetadata("createClassFromUsageImport")
+    public void testCreateClassFromUsageImport() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/createClassFromUsageImport/");
+    }
+
+    @TestMetadata("createClassFromUsageRef")
+    public void testCreateClassFromUsageRef() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/createClassFromUsageRef/");
+    }
+
     @TestMetadata("createFunInExpectClass")
     public void testCreateFunInExpectClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/createFunInExpectClass/");

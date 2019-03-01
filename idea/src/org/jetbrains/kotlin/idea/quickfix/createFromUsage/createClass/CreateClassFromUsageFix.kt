@@ -122,14 +122,15 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
                     }
                 }
             }
-            if (classInfo.kind != ClassKind.ENUM_ENTRY) {
+
+            if (classInfo.kind != ClassKind.ENUM_ENTRY && parents.find { it is PsiPackage } == null) {
                 parents += SeparateFileWrapper(PsiManager.getInstance(project))
             }
         }
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
             val targetParent = applicableParents.firstOrNull { element ->
-                element.allChildren.any { it is PsiComment && it.text == "// TARGET_PARENT:" }
+                if (element is PsiPackage) false else element.allChildren.any { it is PsiComment && it.text == "// TARGET_PARENT:" }
             } ?: classInfo.applicableParents.last()
             return doInvoke(targetParent, editor, file)
         }
