@@ -35,7 +35,8 @@ class GeneratorContext(
     val moduleDescriptor: ModuleDescriptor,
     val bindingContext: BindingContext,
     val languageVersionSettings: LanguageVersionSettings,
-    val symbolTable: SymbolTable = SymbolTable()
+    val symbolTable: SymbolTable,
+    val extensions: GeneratorExtensions
 ) : IrGeneratorContext() {
 
     val constantValueGenerator: ConstantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)

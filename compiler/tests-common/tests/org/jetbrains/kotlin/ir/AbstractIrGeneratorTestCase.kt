@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -122,22 +124,27 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
                     moduleDescriptors = emptyList(),
                     friendModuleDescriptors = emptyList()
                 ),
-                psi2ir, ktFilesToAnalyze
+                psi2ir, ktFilesToAnalyze, GeneratorExtensions()
             )
 
         fun generateIrModuleWithJvmResolve(
             ktFilesToAnalyze: List<KtFile>, environment: KotlinCoreEnvironment, psi2ir: Psi2IrTranslator
         ): IrModuleFragment =
-            generateIrModule(JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze)
+            generateIrModule(JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze, JvmGeneratorExtensions)
 
         private fun generateIrModule(
-            analysisResult: AnalysisResult, psi2ir: Psi2IrTranslator, ktFilesToAnalyze: List<KtFile>
+            analysisResult: AnalysisResult,
+            psi2ir: Psi2IrTranslator,
+            ktFilesToAnalyze: List<KtFile>,
+            generatorExtensions: GeneratorExtensions
         ): IrModuleFragment {
             if (!psi2ir.configuration.ignoreErrors) {
                 analysisResult.throwIfError()
                 AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
             }
-            return psi2ir.generateModule(analysisResult.moduleDescriptor, ktFilesToAnalyze, analysisResult.bindingContext)
+            return psi2ir.generateModule(
+                analysisResult.moduleDescriptor, ktFilesToAnalyze, analysisResult.bindingContext, generatorExtensions
+            )
         }
     }
 }

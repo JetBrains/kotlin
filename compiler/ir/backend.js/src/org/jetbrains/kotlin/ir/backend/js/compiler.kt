@@ -172,7 +172,7 @@ fun compile(
 
     val context = if (compileMode.generateKlib) {
         deserializedModuleFragments.forEach {
-            ExternalDependenciesGenerator(it.descriptor, symbolTable, irBuiltIns, null).generateUnboundSymbolsAsDependencies(it)
+            ExternalDependenciesGenerator(it.descriptor, symbolTable, irBuiltIns).generateUnboundSymbolsAsDependencies(it)
         }
         deserializedModuleFragments.forEach { it.patchDeclarationParents() }
         serializeModuleIntoKlib(
@@ -215,7 +215,7 @@ fun compile(
                 it.descriptor,
                 context.symbolTable,
                 context.irBuiltIns,
-                deserializer
+                deserializer = deserializer
             ).generateUnboundSymbolsAsDependencies(it)
         }
 

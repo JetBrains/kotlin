@@ -56,7 +56,6 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         val stubGenerator = DeclarationStubGenerator(
             irModule.descriptor,
             SymbolTable(), // TODO
-            IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
             myEnvironment.configuration.languageVersionSettings
         )
 

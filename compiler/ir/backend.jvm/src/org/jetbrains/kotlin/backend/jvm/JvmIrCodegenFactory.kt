@@ -31,7 +31,7 @@ object JvmIrCodegenFactory : CodegenFactory {
         assert(!files.any { it == null })
 
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings)
-        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext)
+        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = JvmGeneratorExtensions)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files as Collection<KtFile>)
         JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext)
     }

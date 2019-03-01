@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 object JvmBackendFacade {
-
     fun doGenerateFiles(files: Collection<KtFile>, state: GenerationState, errorHandler: CompilationErrorHandler) {
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings)
-        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext)
+        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = JvmGeneratorExtensions)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
 
         doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext)
@@ -36,7 +35,8 @@ object JvmBackendFacade {
         ExternalDependenciesGenerator(
             irModuleFragment.descriptor,
             psi2irContext.symbolTable,
-            psi2irContext.irBuiltIns
+            psi2irContext.irBuiltIns,
+            JvmGeneratorExtensions.externalDeclarationOrigin
         ).generateUnboundSymbolsAsDependencies(irModuleFragment)
 
         val jvmBackend = JvmBackend(jvmBackendContext)

@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/Derived.kt
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL flags:var
       FIELD FAKE_OVERRIDE name:value type:kotlin.String? visibility:public flags:
         overridden:
-          FIELD IR_EXTERNAL_DECLARATION_STUB name:value type:kotlin.String? visibility:public flags:
+          FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.String? visibility:public flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
@@ -37,4 +37,3 @@ FILE fqName:<root> fileName:/Derived.kt
       overridden:
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-
