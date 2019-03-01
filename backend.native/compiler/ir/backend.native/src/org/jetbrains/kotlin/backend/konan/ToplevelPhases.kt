@@ -80,7 +80,8 @@ internal val psiToIrPhase = konanUnitPhase(
                     konanLibrary.irHeader?.let { header ->
                         // TODO: consider skip deserializing explicitly exported declarations for libraries.
                         // Now it's not valid because of all dependencies that must be computed.
-                        val deserializationStrategy = DeserializationStrategy.EXPLICITLY_EXPORTED
+                        val deserializationStrategy = if (getExportedDependencies().contains(dependency))
+                            DeserializationStrategy.ALL else DeserializationStrategy.EXPLICITLY_EXPORTED
                         modules[konanLibrary.libraryName] = deserializer.deserializeIrModuleHeader(dependency, header, deserializationStrategy)
                     }
                 }

@@ -579,8 +579,9 @@ internal class CAdapterGenerator(
     }
 
     override fun visitPackageViewDescriptor(descriptor: PackageViewDescriptor, ignored: Void?): Boolean {
-        if (descriptor.module != context.moduleDescriptor) return true
-        val fragments = descriptor.module.getPackage(FqName.ROOT).fragments.filter { it.module == context.moduleDescriptor }
+        if (descriptor.module !in moduleDescriptors) return true
+        val fragments = descriptor.module.getPackage(FqName.ROOT).fragments.filter {
+            it.module in moduleDescriptors }
         visitChildren(fragments)
         return true
     }
@@ -605,15 +606,10 @@ internal class CAdapterGenerator(
 
     private val seenPackageFragments = mutableSetOf<PackageFragmentDescriptor>()
     private var currentPackageFragments: List<PackageFragmentDescriptor> = emptyList()
+    private val packageScopes = mutableMapOf<String, ExportedElementScope>()
 
     override fun visitModuleDeclaration(descriptor: ModuleDescriptor, ignored: Void?): Boolean {
-        currentPackageFragments = descriptor.getPackageFragments().sortedWith(
-                Comparator { o1, o2 ->
-                    o1.fqName.toString().compareTo(o2.fqName.toString())
-                })
-        seenPackageFragments.clear()
-        descriptor.getPackage(FqName.ROOT).accept(this, null)
-        return true
+        TODO("Shall not be called directly")
     }
 
     override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, ignored: Void?): Boolean {
@@ -624,8 +620,11 @@ internal class CAdapterGenerator(
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, ignored: Void?): Boolean {
         val fqName = descriptor.fqName
         val name = if (fqName.isRoot) "root" else translateName(fqName.shortName().asString())
-        val packageScope = ExportedElementScope(ScopeKind.PACKAGE, name)
-        scopes.last().scopes += packageScope
+        val packageScope = packageScopes.getOrPut(name) {
+            val scope = ExportedElementScope(ScopeKind.PACKAGE, name)
+            scopes.last().scopes += scope
+            scope
+        }
         scopes.push(packageScope)
         visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getMemberScope()))
         for (currentPackageFragment in currentPackageFragments) {
@@ -639,9 +638,21 @@ internal class CAdapterGenerator(
         return true
     }
 
+
+    private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
+
     fun generateBindings() {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
-        context.moduleDescriptor.accept(this, null)
+        moduleDescriptors += context.moduleDescriptor
+        moduleDescriptors += context.getExportedDependencies()
+
+        currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet().sortedWith(
+                Comparator { o1, o2 ->
+                    o1.fqName.toString().compareTo(o2.fqName.toString())
+                })
+
+        context.moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
+
         // TODO: add few predefined types.
         listOf<KotlinType>(
                 // context.builtIns.anyType,

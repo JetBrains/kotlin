@@ -283,8 +283,10 @@ private fun selectExportedLibraries(
 ): List<String> {
     val exportedLibraries = arguments.exportedLibraries?.toList().orEmpty()
 
-    return if (exportedLibraries.isNotEmpty() && outputKind != CompilerOutputKind.FRAMEWORK) {
-        configuration.report(STRONG_WARNING, "-Xexport-library is only supported when producing frameworks, " +
+    return if (exportedLibraries.isNotEmpty() && outputKind != CompilerOutputKind.FRAMEWORK &&
+            outputKind != CompilerOutputKind.STATIC && outputKind != CompilerOutputKind.DYNAMIC) {
+        configuration.report(STRONG_WARNING,
+                "-Xexport-library is only supported when producing frameworks or native libraries, " +
                 "but the compiler is producing ${outputKind.name.toLowerCase()}")
 
         emptyList()
