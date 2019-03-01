@@ -7268,6 +7268,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceRangeStartEndInclusiveWithFirstLast extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceRangeStartEndInclusiveWithFirstLast() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("customRange.kt")
+        public void testCustomRange() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast/customRange.kt");
+        }
+
+        @TestMetadata("endInclusiveCharRange.kt")
+        public void testEndInclusiveCharRange() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast/endInclusiveCharRange.kt");
+        }
+
+        @TestMetadata("endInclusiveIntRange.kt")
+        public void testEndInclusiveIntRange() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast/endInclusiveIntRange.kt");
+        }
+
+        @TestMetadata("endInclusiveLongRange.kt")
+        public void testEndInclusiveLongRange() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast/endInclusiveLongRange.kt");
+        }
+
+        @TestMetadata("startCharRange.kt")
+        public void testStartCharRange() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast/startCharRange.kt");
+        }
+
+        @TestMetadata("startIntRange.kt")
+        public void testStartIntRange() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast/startIntRange.kt");
+        }
+
+        @TestMetadata("startLongRange.kt")
+        public void testStartLongRange() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast/startLongRange.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/replaceRangeToWithUntil")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
