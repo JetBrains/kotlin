@@ -25,7 +25,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.mobileshared"
 
-    override fun getPresentableName() = "Kotlin (Mobile Shared Library)"
+    override fun getPresentableName() = "Mobile Shared Library"
 
     override fun getDescription() =
         "Multiplatform Gradle projects allow sharing the same Kotlin code between two mobile platforms (JVM/Android, Native)."

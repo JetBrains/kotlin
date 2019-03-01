@@ -29,7 +29,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.mobile"
 
-    override fun getPresentableName() = "Kotlin (Mobile Android/iOS)"
+    override fun getPresentableName() = "Mobile Android/iOS"
 
     override fun getDescription() =
         "Multiplatform Gradle projects allow reusing the same Kotlin code between Android and iOS mobile platforms."

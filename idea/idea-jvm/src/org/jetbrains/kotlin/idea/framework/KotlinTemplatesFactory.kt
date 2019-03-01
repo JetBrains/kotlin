@@ -41,11 +41,11 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
         val result = mutableListOf<ProjectTemplate>(
                 BuilderBasedTemplate(KotlinModuleBuilder(JvmPlatform,
                                                          "Kotlin/JVM",
-                                                         "Kotlin module for JVM target",
+                                                         "Kotlin project with JVM target based on IntelliJ IDEA build system",
                                                          KotlinIcons.SMALL_LOGO)),
 
                 BuilderBasedTemplate(KotlinModuleBuilder(JsPlatform, "Kotlin/JS",
-                                                         "Kotlin module for JavaScript target",
+                                                         "Kotlin project with JavaScript target based on IntelliJ IDEA build system",
                                                          KotlinIcons.JS)
                 )
         )

@@ -29,7 +29,7 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.shared"
 
-    override fun getPresentableName() = "Kotlin (Multiplatform Library)"
+    override fun getPresentableName() = "Gradle-based Multiplatform Library"
 
     override fun getDescription() =
         "Multiplatform Gradle projects allow sharing the same Kotlin code between all three main platforms (JVM, JS, Native)."

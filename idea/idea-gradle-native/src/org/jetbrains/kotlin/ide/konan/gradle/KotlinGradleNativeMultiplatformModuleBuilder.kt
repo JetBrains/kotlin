@@ -25,7 +25,7 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override fun getPresentableName() = "Kotlin/Native"
 
-    override fun getDescription() = "Kotlin module for native binaries"
+    override fun getDescription() = "Gradle-based Kotlin project for native binaries"
 
     override val notImportedCommonSourceSets = true
 
