@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo.custom
 
-import com.intellij.openapi.editor.*
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.EditorLinePainter
+import com.intellij.openapi.editor.LineExtensionInfo
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -14,6 +17,10 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class ReturnHintLinePainter : EditorLinePainter() {
+    companion object {
+        val SPACE_LINE_EXTENSION_INFO = LineExtensionInfo(" ", TextAttributes())
+    }
+
     override fun getLineExtensions(project: Project, file: VirtualFile, lineNumber: Int): List<LineExtensionInfo>? {
         val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
         if (psiFile.language != KotlinLanguage.INSTANCE) {
@@ -23,8 +30,11 @@ class ReturnHintLinePainter : EditorLinePainter() {
         val hint = getLineHint(project, file, lineNumber)
             ?: return null
 
-        val hintLineInfo = LineExtensionInfo(" $hint", TextAttributes())
-        return listOf(hintLineInfo)
+        val textAttributes =
+            EditorColorsManager.getInstance().globalScheme.getAttributes(DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT)
+        val hintLineInfo = LineExtensionInfo(hint, textAttributes)
+
+        return listOf(SPACE_LINE_EXTENSION_INFO, hintLineInfo)
     }
 
     private fun getLineHint(project: Project, file: VirtualFile, lineNumber: Int): String? {
