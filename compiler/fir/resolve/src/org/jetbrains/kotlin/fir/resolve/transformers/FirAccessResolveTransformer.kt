@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -39,8 +38,7 @@ class FirAccessResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(rev
     }
 
     private fun ConeClassLikeType.buildSubstitutionScope(
-        useSiteSession: FirSession,
-        unsubstituted: FirScope,
+        useSiteScope: FirClassUseSiteScope,
         regularClass: FirRegularClass
     ): FirClassSubstitutionScope? {
         if (this.typeArguments.isEmpty()) return null
@@ -50,7 +48,7 @@ class FirAccessResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(rev
             typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
         }.filter { (_, type) -> type != null }.toMap() as Map<ConeTypeParameterSymbol, ConeKotlinType>
 
-        return FirClassSubstitutionScope(useSiteSession, unsubstituted, substitution, true)
+        return FirClassSubstitutionScope(useSiteScope, substitution)
     }
 
     private fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession = session): FirClassUseSiteScope {
@@ -61,13 +59,13 @@ class FirAccessResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(rev
                 if (useSiteSuperType is ConeClassErrorType) return@mapNotNullTo null
                 val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
                 if (symbol is FirClassSymbol) {
-                    val scope = symbol.fir.buildUseSiteScope(useSiteSession)
-                    useSiteSuperType.buildSubstitutionScope(useSiteSession, scope, symbol.fir) ?: scope
+                    val useSiteScope = symbol.fir.buildUseSiteScope(useSiteSession)
+                    useSiteSuperType.buildSubstitutionScope(useSiteScope, symbol.fir) ?: useSiteScope
                 } else {
                     null
                 }
             }
-        return FirClassUseSiteScope(useSiteSession, superTypeScope, declaredScope, true)
+        return FirClassUseSiteScope(useSiteSession, superTypeScope, declaredScope)
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {

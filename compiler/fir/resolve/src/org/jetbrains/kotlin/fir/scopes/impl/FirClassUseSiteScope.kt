@@ -30,9 +30,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 class FirClassUseSiteScope(
     session: FirSession,
     private val superTypesScope: FirScope,
-    private val declaredMemberScope: FirClassDeclaredMemberScope,
-    lookupInFir: Boolean
-) : FirAbstractProviderBasedScope(session, lookupInFir) {
+    private val declaredMemberScope: FirScope
+) : FirAbstractProviderBasedScope(session, lookupInFir = true) {
     //base symbol as key
     val overrides = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol?>()
 

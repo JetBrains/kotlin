@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
@@ -21,13 +20,11 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
 
 class FirClassSubstitutionScope(
-    session: FirSession,
-    private val unsubstituted: FirScope,
-    private val substitution: Map<ConeTypeParameterSymbol, ConeKotlinType>,
-    lookupInFir: Boolean
-) : FirAbstractProviderBasedScope(session, lookupInFir) {
+    private val useSiteScope: FirClassUseSiteScope,
+    private val substitution: Map<ConeTypeParameterSymbol, ConeKotlinType>
+) : FirScope {
 
-    val fakeOverrides = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol>()
+    private val fakeOverrides = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol>()
 
     private fun wrapProjection(old: ConeKotlinTypeProjection, newType: ConeKotlinType): ConeKotlinTypeProjection {
         return when (old) {
@@ -83,7 +80,7 @@ class FirClassSubstitutionScope(
 
 
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
-        unsubstituted.processFunctionsByName(name) process@{ original ->
+        useSiteScope.processFunctionsByName(name) process@{ original ->
 
             val function = fakeOverrides.getOrPut(original) { createFakeOverride(original, name) }
             processor(function as ConeFunctionSymbol)
@@ -94,7 +91,7 @@ class FirClassSubstitutionScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (ConePropertySymbol) -> ProcessorAction): ProcessorAction {
-        return unsubstituted.processPropertiesByName(name, processor)
+        return useSiteScope.processPropertiesByName(name, processor)
     }
 
     private fun createFakeOverride(
