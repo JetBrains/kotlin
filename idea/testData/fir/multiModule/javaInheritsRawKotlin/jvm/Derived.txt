@@ -1,0 +1,5 @@
+FILE: Derived.kt
+    public final class Derived : R|Some| {
+        public constructor(): super<R|Some|>()
+
+    }

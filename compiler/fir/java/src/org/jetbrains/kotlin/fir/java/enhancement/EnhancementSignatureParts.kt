@@ -95,8 +95,8 @@ internal class EnhancementSignatureParts(
 
             if (type is FirJavaTypeRef) {
                 for (arg in type.type.typeArguments()) {
-                    if (arg is JavaWildcardType) {
-                        // TODO: wildcards
+                    if (arg is JavaWildcardType || arg == null) {
+                        // TODO: wildcards / raw types
                     } else {
                         add(arg.toFirJavaTypeRef(context.session))
                     }

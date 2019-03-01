@@ -68,7 +68,7 @@ internal fun FirTypeRef.toNotNullConeKotlinType(): ConeKotlinType =
         else -> ConeKotlinErrorType("Unexpected type reference in JavaClassUseSiteScope: ${this::class.java}")
     }
 
-internal fun JavaType.toNotNullConeKotlinType(session: FirSession): ConeLookupTagBasedType {
+internal fun JavaType?.toNotNullConeKotlinType(session: FirSession): ConeLookupTagBasedType {
     return toConeKotlinTypeWithNullability(session, isNullable = false)
 }
 
@@ -85,7 +85,7 @@ internal fun JavaClassifierType.toFirResolvedTypeRef(session: FirSession): FirRe
     )
 }
 
-internal fun JavaType.toConeKotlinTypeWithNullability(session: FirSession, isNullable: Boolean): ConeLookupTagBasedType {
+internal fun JavaType?.toConeKotlinTypeWithNullability(session: FirSession, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
         is JavaClassifierType -> {
             toConeKotlinTypeWithNullability(session, isNullable)
@@ -115,6 +115,10 @@ internal fun JavaType.toConeKotlinTypeWithNullability(session: FirSession, isNul
             }
         }
         is JavaWildcardType -> bound?.toNotNullConeKotlinType(session) ?: run {
+            val classId = ClassId(FqName("kotlin"), FqName("Any"), false)
+            classId.toConeKotlinType(emptyArray(), isNullable)
+        }
+        null -> {
             val classId = ClassId(FqName("kotlin"), FqName("Any"), false)
             classId.toConeKotlinType(emptyArray(), isNullable)
         }
@@ -172,8 +176,9 @@ internal fun FirAbstractAnnotatedElement.addAnnotationsFrom(javaAnnotationOwner:
     }
 }
 
-internal fun JavaType.toConeProjection(session: FirSession, boundTypeParameter: FirTypeParameter?): ConeKotlinTypeProjection {
+internal fun JavaType?.toConeProjection(session: FirSession, boundTypeParameter: FirTypeParameter?): ConeKotlinTypeProjection {
     return when (this) {
+        null -> ConeStarProjection
         is JavaWildcardType -> {
             val bound = this.bound
             val argumentVariance = if (isExtends) OUT_VARIANCE else IN_VARIANCE

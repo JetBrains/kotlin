@@ -46,14 +46,14 @@ internal fun FirJavaTypeRef.enhance(
 // Example: for `A<B, C<D, E>>`, indices go as follows: `0 - A<...>, 1 - B, 2 - C<D, E>, 3 - D, 4 - E`,
 // which corresponds to the left-to-right breadth-first walk of the tree representation of the type.
 // For flexible types, both bounds are indexed in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`.
-private fun JavaType.enhancePossiblyFlexible(
+private fun JavaType?.enhancePossiblyFlexible(
     session: FirSession,
     annotations: List<FirAnnotationCall>,
     qualifiers: (Int) -> JavaTypeQualifiers,
     index: Int
 ): FirResolvedTypeRef {
     val type = this
-    val arguments = typeArguments()
+    val arguments = this?.typeArguments().orEmpty()
     return when (type) {
         is JavaClassifierType -> {
             val lowerResult = type.enhanceInflexibleType(
@@ -76,9 +76,9 @@ private fun JavaType.enhancePossiblyFlexible(
     }
 }
 
-private fun JavaType.subtreeSize(): Int {
+private fun JavaType?.subtreeSize(): Int {
     if (this !is JavaClassifierType) return 1
-    return 1 + typeArguments.sumBy { it.subtreeSize() }
+    return 1 + typeArguments.sumBy { it?.subtreeSize() ?: 0 }
 }
 
 private val KOTLIN_COLLECTIONS = FqName("kotlin.collections")
@@ -102,7 +102,7 @@ private fun ClassId.mutableToReadOnly(): ClassId? {
 private fun JavaClassifierType.enhanceInflexibleType(
     session: FirSession,
     annotations: List<FirAnnotationCall>,
-    arguments: List<JavaType>,
+    arguments: List<JavaType?>,
     position: TypeComponentPosition,
     qualifiers: (Int) -> JavaTypeQualifiers,
     index: Int
@@ -199,7 +199,7 @@ internal data class TypeAndDefaultQualifiers(
 internal fun FirTypeRef.typeArguments(): List<FirTypeProjection> =
     (this as? FirUserTypeRef)?.qualifier?.lastOrNull()?.typeArguments.orEmpty()
 
-internal fun JavaType.typeArguments(): List<JavaType> = (this as? JavaClassifierType)?.typeArguments.orEmpty()
+internal fun JavaType.typeArguments(): List<JavaType?> = (this as? JavaClassifierType)?.typeArguments.orEmpty()
 
 fun FirValueParameter.getDefaultValueFromAnnotation(): AnnotationDefaultValue? {
     annotations.find { it.resolvedFqName == JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME }

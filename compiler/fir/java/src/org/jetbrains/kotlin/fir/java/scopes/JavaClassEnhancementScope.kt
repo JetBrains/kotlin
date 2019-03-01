@@ -102,7 +102,7 @@ class JavaClassEnhancementScope(
         original: ConeFunctionSymbol,
         name: Name
     ): FirFunctionSymbol {
-        val firMethod = (original as FirBasedSymbol<*>).fir as? FirJavaMethod ?: error("Can't make enhancement for $original")
+        val firMethod = (original as FirFunctionSymbol).fir as? FirJavaMethod ?: return original
 
         val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firMethod.annotations)
 
