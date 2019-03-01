@@ -1,3 +1,25 @@
+# v1.2.0 (Mar 2019)
+  * Exception backtraces in debug mode on macOS and iOS targets contains symbolic information
+  * Support for 32-bit Windows targets (target mingw_x86)
+  * Support for cross-compilation to Linux (x86-64 and arm32) from macOS and Windows hosts
+  * Static Apple frameworks can be produced
+  * Support Gradle 5.1
+  * Fix alignment-related issues on ARM32 and MIPS platforms
+  * Write unhandled exceptions stacktrace on device to iOS crash log
+  * Fix undefined behavior in some arithmetic operations
+  * Interop:
+    * Get rid of libffi dependency
+    * Support returning struct from C callbacks
+    * Support passing Kotlin strings to C interop functions accepting UTF-32 arguments
+    * Fix bool conversion
+    * Support variable length arrays
+    * Provide Kotlin access to C compiler intrinsics via platform.builtins package
+    * Support clang modules
+  * IDE
+    * Kotlin/Native plugin is supported in CLion 2018.3 and AppCode/CLion 2019.1
+    * Basic highlighting support for .def files
+    * Navigation to source files from exception backtrace
+
 ## v1.1.0 (Dec 2018)
   * Performance optimizations:
     * runtime: optimization of queue of finalization
