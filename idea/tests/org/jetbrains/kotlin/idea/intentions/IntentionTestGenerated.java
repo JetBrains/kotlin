@@ -10074,6 +10074,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testVariable() throws Exception {
             runTest("idea/testData/intentions/introduceImportAlias/variable.kt");
         }
+
+        @TestMetadata("withReceiver.kt")
+        public void testWithReceiver() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/withReceiver.kt");
+        }
+
+        @TestMetadata("withReceiver2.kt")
+        public void testWithReceiver2() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/withReceiver2.kt");
+        }
+
+        @TestMetadata("withReceiver3.kt")
+        public void testWithReceiver3() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/withReceiver3.kt");
+        }
+
+        @TestMetadata("withReceiver4.kt")
+        public void testWithReceiver4() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/withReceiver4.kt");
+        }
     }
 
     @TestMetadata("idea/testData/intentions/introduceVariable")
