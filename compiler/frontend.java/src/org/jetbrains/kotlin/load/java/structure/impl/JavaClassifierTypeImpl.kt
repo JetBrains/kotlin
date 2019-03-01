@@ -14,97 +14,67 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.structure.impl;
+package org.jetbrains.kotlin.load.java.structure.impl
 
-import com.intellij.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
-import org.jetbrains.kotlin.load.java.structure.JavaType;
+import com.intellij.psi.*
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.JavaType
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList
 
-public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implements JavaClassifierType {
-    private static class ResolutionResult {
-        private final JavaClassifierImpl<?> classifier;
-        private final PsiSubstitutor substitutor;
-        private final boolean isRaw;
+class JavaClassifierTypeImpl(psiClassType: PsiClassType) : JavaTypeImpl<PsiClassType>(psiClassType), JavaClassifierType {
 
-        private ResolutionResult(@Nullable JavaClassifierImpl<?> classifier, @NotNull PsiSubstitutor substitutor, boolean isRaw) {
-            this.classifier = classifier;
-            this.substitutor = substitutor;
-            this.isRaw = isRaw;
-        }
-    }
+    private var resolutionResult: ResolutionResult? = null
 
-    private ResolutionResult resolutionResult;
+    override val classifier: JavaClassifierImpl<*>?
+        get() = resolve().classifier
 
-    public JavaClassifierTypeImpl(@NotNull PsiClassType psiClassType) {
-        super(psiClassType);
-    }
+    val substitutor: PsiSubstitutor
+        get() = resolve().substitutor
 
-    @Override
-    @Nullable
-    public JavaClassifierImpl<?> getClassifier() {
-        resolve();
-        return resolutionResult.classifier;
-    }
+    override val classifierQualifiedName: String
+        get() = psi.canonicalText.convertCanonicalNameToQName()
 
-    @NotNull
-    public PsiSubstitutor getSubstitutor() {
-        resolve();
-        return resolutionResult.substitutor;
-    }
+    override val presentableText: String
+        get() = psi.presentableText
 
-    private void resolve() {
-        if (resolutionResult == null) {
-            PsiClassType.ClassResolveResult result = getPsi().resolveGenerics();
-            PsiClass psiClass = result.getElement();
-            PsiSubstitutor substitutor = result.getSubstitutor();
-            resolutionResult = new ResolutionResult(
-                    psiClass == null ? null : JavaClassifierImpl.create(psiClass), substitutor, PsiClassType.isRaw(result)
-            );
-        }
-    }
+    override val isRaw: Boolean
+        get() = resolve().isRaw
 
-    @Override
-    @NotNull
-    public String getClassifierQualifiedName() {
-        return ClassNamesUtilKt.convertCanonicalNameToQName(getPsi().getCanonicalText());
-    }
+    override// parameters including ones from outer class
+    val typeArguments: List<JavaType?>
+        get() {
+            val classifier = classifier as? JavaClassImpl ?: return emptyList()
+            val parameters = getTypeParameters(classifier.psi)
 
-    @Override
-    @NotNull
-    public String getPresentableText() {
-        return getPsi().getPresentableText();
-    }
+            val substitutor = substitutor
 
-    @Override
-    public boolean isRaw() {
-        resolve();
-        return resolutionResult.isRaw;
-    }
+            val result = ArrayList<JavaType?>(parameters.size)
+            for (typeParameter in parameters) {
+                val substitutedType = substitutor.substitute(typeParameter)
+                result.add(substitutedType?.let { JavaTypeImpl.create(it) })
+            }
 
-    @Override
-    @NotNull
-    public List<JavaType> getTypeArguments() {
-        JavaClassifierImpl<?> classifier = getClassifier();
-        if (!(classifier instanceof JavaClassImpl)) return Collections.emptyList();
-
-        // parameters including ones from outer class
-        List<PsiTypeParameter> parameters = getTypeParameters(classifier.getPsi());
-
-        PsiSubstitutor substitutor = getSubstitutor();
-
-        List<JavaType> result = new ArrayList<>(parameters.size());
-        for (PsiTypeParameter typeParameter : parameters) {
-            PsiType substitutedType = substitutor.substitute(typeParameter);
-            result.add(substitutedType == null ? null : JavaTypeImpl.create(substitutedType));
+            return result
         }
 
-        return result;
+    private class ResolutionResult(
+        val classifier: JavaClassifierImpl<*>?,
+        val substitutor: PsiSubstitutor,
+        val isRaw: Boolean
+    )
+
+    private fun resolve(): ResolutionResult {
+        return resolutionResult ?: run {
+            val result = psi.resolveGenerics()
+            val psiClass = result.element
+            val substitutor = result.substitutor
+            ResolutionResult(
+                psiClass?.let { JavaClassifierImpl.create(it) }, substitutor, PsiClassType.isRaw(result)
+            ).apply {
+                resolutionResult = this
+            }
+        }
     }
 
     // Copy-pasted from PsiUtil.typeParametersIterable
@@ -116,23 +86,20 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
     //
     // PsiUtil.typeParametersIterable returns H3, H2, H1
     // But we would like to have H2, H3, H1 as such order is consistent with our type representation
-    @NotNull
-    private static List<PsiTypeParameter> getTypeParameters(@NotNull PsiClass owner) {
-        List<PsiTypeParameter> result = null;
+    private fun getTypeParameters(owner: PsiClass): List<PsiTypeParameter> {
+        var result: List<PsiTypeParameter>? = null
 
-        PsiTypeParameterListOwner currentOwner = owner;
+        var currentOwner: PsiTypeParameterListOwner? = owner
         while (currentOwner != null) {
-            PsiTypeParameter[] typeParameters = currentOwner.getTypeParameters();
-            if (typeParameters.length > 0) {
-                if (result == null) result = new ArrayList<>(typeParameters.length);
-                Collections.addAll(result, typeParameters);
+            val typeParameters = currentOwner.typeParameters
+            if (typeParameters.isNotEmpty()) {
+                result = result?.let { it + typeParameters } ?: typeParameters.toList()
             }
 
-            if (currentOwner.hasModifierProperty(PsiModifier.STATIC)) break;
-            currentOwner = currentOwner.getContainingClass();
+            if (currentOwner.hasModifierProperty(PsiModifier.STATIC)) break
+            currentOwner = currentOwner.containingClass
         }
 
-        if (result == null) return Collections.emptyList();
-        return result;
+        return result ?: emptyList()
     }
 }
