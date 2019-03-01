@@ -1820,6 +1820,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceManualRangeWithIndicesCallsInspection"
+                     displayName="Convert manual ranges to indices or iteration over collection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisInspection"
                      displayName="If-Then foldable to '?:'"
                      groupPath="Kotlin"

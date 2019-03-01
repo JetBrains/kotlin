@@ -7757,6 +7757,49 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceManualRangeWithIndicesCallsInspection extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceManualRangeWithIndicesCallsInspection() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("forNotTarget.kt")
+        public void testForNotTarget() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/forNotTarget.kt");
+        }
+
+        @TestMetadata("indexInLvalue.kt")
+        public void testIndexInLvalue() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/indexInLvalue.kt");
+        }
+
+        @TestMetadata("notUsedAsIndex.kt")
+        public void testNotUsedAsIndex() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/notUsedAsIndex.kt");
+        }
+
+        @TestMetadata("simpleExpression.kt")
+        public void testSimpleExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/simpleExpression.kt");
+        }
+
+        @TestMetadata("simpleExpressionUntil.kt")
+        public void testSimpleExpressionUntil() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/simpleExpressionUntil.kt");
+        }
+
+        @TestMetadata("simpleFor.kt")
+        public void testSimpleFor() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/simpleFor.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

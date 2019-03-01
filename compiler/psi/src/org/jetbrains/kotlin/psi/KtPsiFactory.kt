@@ -357,6 +357,10 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return createClass("class A($text)").primaryConstructorParameters.first()
     }
 
+    fun createLoopParameter(text: String): KtParameter {
+        return (createExpression("for ($text in list) {}") as KtForExpression).loopParameter!!
+    }
+
     fun createParameterList(text: String): KtParameterList {
         return createFunction("fun foo$text{}").valueParameterList!!
     }
