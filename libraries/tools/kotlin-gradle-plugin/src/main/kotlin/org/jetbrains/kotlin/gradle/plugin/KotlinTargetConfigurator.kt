@@ -52,7 +52,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         cleanTask.delete(kotlinCompilation.output.allOutputs)
     }
 
-    protected fun configureCompilations(platformTarget: KotlinTargetType) {
+    protected open fun configureCompilations(platformTarget: KotlinTargetType) {
         val project = platformTarget.project
         val main = platformTarget.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
@@ -301,13 +301,26 @@ internal val KotlinCompilation<*>.deprecatedCompileConfigurationName: String
 internal val KotlinCompilationToRunnableFiles<*>.deprecatedRuntimeConfigurationName: String
     get() = disambiguateName("runtime")
 
-open class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>>(
+abstract class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>>(
     createDefaultSourceSets: Boolean,
-    createTestCompilation: Boolean
+    createTestCompilation: Boolean,
+    val kotlinPluginVersion: String
 ) : AbstractKotlinTargetConfigurator<KotlinOnlyTarget<KotlinCompilationType>>(
     createDefaultSourceSets,
     createTestCompilation
 ) {
+    internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinSourceSetProcessor<*>
+
+    override fun configureCompilations(platformTarget: KotlinOnlyTarget<KotlinCompilationType>) {
+        super.configureCompilations(platformTarget)
+
+        platformTarget.compilations.all { compilation ->
+            buildCompilationProcessor(compilation).run()
+            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+                sourcesJarTask(compilation, platformTarget.targetName, platformTarget.targetName.toLowerCase())
+            }
+        }
+    }
 
     override fun configureArchivesAndComponent(target: KotlinOnlyTarget<KotlinCompilationType>) {
         val project = target.project

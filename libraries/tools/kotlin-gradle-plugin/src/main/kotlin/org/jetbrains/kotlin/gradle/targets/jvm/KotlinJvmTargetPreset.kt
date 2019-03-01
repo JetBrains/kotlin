@@ -10,6 +10,8 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 class KotlinJvmTargetPreset(
@@ -24,13 +26,10 @@ class KotlinJvmTargetPreset(
     override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJvmCompilation>): KotlinCompilationFactory<KotlinJvmCompilation> =
         KotlinJvmCompilationFactory(forTarget)
 
+    override fun createKotlinTargetConfigurator() = KotlinJvmTargetConfigurator(kotlinPluginVersion)
+
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm
-
-    override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> {
-        val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
-        return Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
-    }
 
     companion object {
         const val PRESET_NAME = "jvm"

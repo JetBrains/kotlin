@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
+import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 class KotlinMetadataTargetPreset(
@@ -30,17 +31,12 @@ class KotlinMetadataTargetPreset(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.common
 
-    override fun buildCompilationProcessor(compilation: KotlinCommonCompilation): KotlinSourceSetProcessor<*> {
-        val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
-        return KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, kotlinPluginVersion)
-    }
-
     companion object {
         const val PRESET_NAME = "metadata"
     }
 
     override fun createKotlinTargetConfigurator(): KotlinTargetConfigurator<KotlinCommonCompilation> =
-        KotlinTargetConfigurator(createDefaultSourceSets = false, createTestCompilation = false)
+        KotlinMetadataTargetConfigurator(kotlinPluginVersion)
 
     override fun createTarget(name: String): KotlinOnlyTarget<KotlinCommonCompilation> =
         super.createTarget(name).apply {
