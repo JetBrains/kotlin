@@ -295,9 +295,8 @@ public class ExpressionTypingServices {
             }
             blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, annotationChecker, scope);
 
-            expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope, isFirstStatement);
-
             if (isFirstStatement) {
+                expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope);
                 isFirstStatement = false;
             }
         }

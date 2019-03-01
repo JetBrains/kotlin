@@ -48,6 +48,6 @@ fun case_5(): Boolean? {
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Boolean): Boolean? {
-    contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_MISMATCH!>contract { returns(null) implies (!value_1) }<!> }
+    contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_MISMATCH!><!CONTRACT_NOT_ALLOWED, CONTRACT_NOT_ALLOWED!>contract<!> { returns(null) implies (!value_1) }<!> }
     return null
 }
