@@ -16,6 +16,8 @@ interface FirCallableMember :
     FirTypedDeclaration, FirSymbolOwner<FirCallableMember> {
     val isOverride: Boolean get() = status.isOverride
 
+    val isStatic: Boolean get() = status.isStatic
+
     val receiverTypeRef: FirTypeRef?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

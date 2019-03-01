@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMember
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
-import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -91,7 +89,6 @@ class JavaSymbolProvider(
                     // TODO: may be we can process fields & methods later.
                     // However, they should be built up to override resolve stage
                     for (javaField in javaClass.fields) {
-                        if (javaField.isStatic) continue // TODO: statics
                         val fieldName = javaField.name
                         val fieldId = CallableId(classId.packageFqName, classId.relativeClassName, fieldName)
                         val fieldSymbol = FirFieldSymbol(fieldId)
@@ -100,14 +97,14 @@ class JavaSymbolProvider(
                             session, fieldSymbol, fieldName,
                             javaField.visibility, javaField.modality,
                             returnTypeRef = returnType.toFirJavaTypeRef(session),
-                            isVar = !javaField.isFinal
+                            isVar = !javaField.isFinal,
+                            isStatic = javaField.isStatic
                         ).apply {
                             addAnnotationsFrom(javaField)
                         }
                         declarations += firJavaField
                     }
                     for (javaMethod in javaClass.methods) {
-                        if (javaMethod.isStatic) continue // TODO: statics
                         val methodName = javaMethod.name
                         val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
                         val methodSymbol = FirFunctionSymbol(methodId)
@@ -115,7 +112,8 @@ class JavaSymbolProvider(
                         val firJavaMethod = FirJavaMethod(
                             session, methodSymbol, methodName,
                             javaMethod.visibility, javaMethod.modality,
-                            returnTypeRef = returnType.toFirJavaTypeRef(session)
+                            returnTypeRef = returnType.toFirJavaTypeRef(session),
+                            isStatic = javaMethod.isStatic
                         ).apply {
                             for (typeParameter in javaMethod.typeParameters) {
                                 typeParameters += createTypeParameterSymbol(session, typeParameter.name).fir

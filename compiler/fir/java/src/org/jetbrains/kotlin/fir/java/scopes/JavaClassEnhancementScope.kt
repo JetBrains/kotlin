@@ -94,6 +94,7 @@ class JavaClassEnhancementScope(
                 delegate = null
             ).apply {
                 annotations += firField.annotations
+                status.isStatic = firField.isStatic
             }
         }
         return symbol

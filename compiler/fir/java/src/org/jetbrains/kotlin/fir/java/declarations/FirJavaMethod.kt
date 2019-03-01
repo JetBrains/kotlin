@@ -20,7 +20,8 @@ class FirJavaMethod(
     name: Name,
     visibility: Visibility,
     modality: Modality?,
-    returnTypeRef: FirJavaTypeRef
+    returnTypeRef: FirJavaTypeRef,
+    isStatic: Boolean
 ) : FirMemberFunctionImpl(
     session, null, symbol, name,
     visibility, modality,
@@ -29,4 +30,8 @@ class FirJavaMethod(
     isOperator = true, // All Java methods with name that allows to use it in operator form are considered operators
     isInfix = false, isInline = false, isTailRec = false, isExternal = false, isSuspend = false,
     receiverTypeRef = null, returnTypeRef = returnTypeRef
-)
+) {
+    init {
+        status.isStatic = isStatic
+    }
+}

@@ -148,8 +148,13 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         if (memberDeclaration.isActual) {
             print("actual ")
         }
-        if (memberDeclaration is FirCallableMember && memberDeclaration.isOverride) {
-            print("override ")
+        if (memberDeclaration is FirCallableMember) {
+            if (memberDeclaration.isOverride) {
+                print("override ")
+            }
+            if (memberDeclaration.isStatic) {
+                print("static ")
+            }
         }
         if (memberDeclaration is FirRegularClass) {
             if (memberDeclaration.isInner) {

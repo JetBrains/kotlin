@@ -22,7 +22,8 @@ class FirJavaField(
     visibility: Visibility,
     modality: Modality?,
     returnTypeRef: FirJavaTypeRef,
-    override val isVar: Boolean
+    override val isVar: Boolean,
+    isStatic: Boolean
 ) : FirAbstractCallableMember(
     session, psi = null, symbol = symbol, name = name,
     visibility = visibility, modality = modality,
@@ -34,4 +35,8 @@ class FirJavaField(
 
     override val initializer: FirExpression?
         get() = null
+
+    init {
+        status.isStatic = isStatic
+    }
 }
