@@ -5,7 +5,7 @@ where possible options include:
   -include-runtime           Include Kotlin runtime in to resulting .jar
   -java-parameters           Generate metadata for Java 1.8 reflection on method parameters
   -jdk-home <path>           Path to JDK home directory to include into classpath, if differs from default JAVA_HOME
-  -jvm-target <version>      Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6
+  -jvm-target <version>      Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11 or 12), default is 1.6
   -module-name <name>        Name of the generated .kotlin_module file
   -no-jdk                    Don't include Java runtime into classpath
   -no-reflect                Don't include kotlin-reflect.jar into classpath

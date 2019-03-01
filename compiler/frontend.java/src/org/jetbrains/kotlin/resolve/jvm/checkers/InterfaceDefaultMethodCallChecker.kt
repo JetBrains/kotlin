@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker {
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val supportDefaults = jvmTarget == JvmTarget.JVM_1_8
+        val supportDefaults = jvmTarget >= JvmTarget.JVM_1_8
 
         val descriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
         if (descriptor is JavaPropertyDescriptor) return
