@@ -1,5 +1,4 @@
 // EXPECTED_REACHABLE_NODES: 1233
-// LANGUAGE_VERSION: 1.2
 import kotlin.reflect.KClass
 
 fun box(): String {
