@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
@@ -102,7 +103,9 @@ class JavaClassEnhancementScope(
         original: ConeFunctionSymbol,
         name: Name
     ): FirFunctionSymbol {
-        val firMethod = (original as FirFunctionSymbol).fir as? FirJavaMethod ?: return original
+        val firMethod = (original as FirFunctionSymbol).fir as? FirFunction
+
+        if (firMethod !is FirJavaMethod && firMethod !is FirJavaConstructor || firMethod !is FirCallableMember) return original
 
         val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firMethod.annotations)
 
@@ -117,8 +120,14 @@ class JavaClassEnhancementScope(
             }
         }
 
-        val newReceiverTypeRef = if (firMethod.receiverTypeRef != null) enhanceReceiverType(firMethod, memberContext) else null
-        val newReturnTypeRef = enhanceReturnType(firMethod, memberContext, predefinedEnhancementInfo)
+        val newReceiverTypeRef = if (firMethod is FirJavaMethod && firMethod.receiverTypeRef != null) {
+            enhanceReceiverType(firMethod, memberContext)
+        } else null
+        val newReturnTypeRef = if (firMethod is FirJavaConstructor) {
+            firMethod.returnTypeRef
+        } else {
+            enhanceReturnType(firMethod, memberContext, predefinedEnhancementInfo)
+        }
 
         val newValueParameterTypeRefs = mutableListOf<FirResolvedTypeRef>()
 
@@ -134,7 +143,7 @@ class JavaClassEnhancementScope(
                 session, null, symbol, name,
                 newReceiverTypeRef, newReturnTypeRef
             ).apply {
-                status = firMethod.status
+                status = firMethod.status as FirDeclarationStatusImpl
                 annotations += firMethod.annotations
                 valueParameters += firMethod.valueParameters.zip(newValueParameterTypeRefs) { valueParameter, newTypeRef ->
                     with(valueParameter) {
@@ -152,8 +161,12 @@ class JavaClassEnhancementScope(
         return symbol
     }
 
-    private fun FirJavaMethod.computeJvmDescriptor(): String = buildString {
-        append(name.asString()) // TODO: Java constructors
+    private fun FirFunction.computeJvmDescriptor(): String = buildString {
+        if (this@computeJvmDescriptor is FirJavaMethod) {
+            append(name.asString())
+        } else {
+            append("<init>")
+        }
 
         append("(")
         for (parameter in valueParameters) {
@@ -161,7 +174,7 @@ class JavaClassEnhancementScope(
         }
         append(")")
 
-        if ((returnTypeRef as FirJavaTypeRef).isVoid()) {
+        if (this@computeJvmDescriptor !is FirJavaMethod || (returnTypeRef as FirJavaTypeRef).isVoid()) {
             append("V")
         } else {
             // TODO: appendErasedType(returnTypeRef)
@@ -189,7 +202,7 @@ class JavaClassEnhancementScope(
     }
 
     private fun enhanceValueParameterType(
-        ownerFunction: FirJavaMethod,
+        ownerFunction: FirCallableMember,
         memberContext: FirJavaEnhancementContext,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
         ownerParameter: FirJavaValueParameter,

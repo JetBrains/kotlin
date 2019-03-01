@@ -9,4 +9,6 @@ public open class JFrame : R|awt/Frame| {
         protected/*protected and package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
         protected/*protected and package*/ set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
 
+    public final function JFrame(): R|test/JFrame|
+
 }

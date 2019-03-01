@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
@@ -173,6 +175,16 @@ internal fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotat
 internal fun FirAbstractAnnotatedElement.addAnnotationsFrom(javaAnnotationOwner: JavaAnnotationOwner) {
     for (annotation in javaAnnotationOwner.annotations) {
         annotations += annotation.toFirAnnotationCall(session)
+    }
+}
+
+internal fun JavaValueParameter.toFirValueParameters(session: FirSession): FirValueParameter {
+    return FirJavaValueParameter(
+        session, name ?: Name.special("<anonymous Java parameter>"),
+        returnTypeRef = type.toFirJavaTypeRef(session),
+        isVararg = isVararg
+    ).apply {
+        addAnnotationsFrom(this@toFirValueParameters)
     }
 }
 

@@ -9,24 +9,24 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMember
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirCall
+import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 
 class JavaSymbolProvider(
@@ -44,17 +44,21 @@ class JavaSymbolProvider(
             val classId = callableId.classId ?: return@lookupCacheOrCalculate emptyList()
             val classSymbol = getClassLikeSymbolByFqName(classId) as? FirClassSymbol
                 ?: return@lookupCacheOrCalculate emptyList()
-            val firClass = classSymbol.fir as FirModifiableClass
+            val firClass = classSymbol.fir
             val callableSymbols = mutableListOf<ConeCallableSymbol>()
             for (declaration in firClass.declarations) {
-                when (declaration) {
-                    is FirCallableMember -> {
-                        val declarationId = CallableId(callableId.packageName, callableId.className, declaration.name)
-                        if (declarationId == callableId) {
-                            val symbol = declaration.symbol as ConeCallableSymbol
-                            callableSymbols += symbol
-                        }
+                val declarationId = when (declaration) {
+                    is FirConstructor -> {
+                        CallableId(callableId.packageName, callableId.className, firClass.name)
                     }
+                    is FirCallableMember -> {
+                        CallableId(callableId.packageName, callableId.className, declaration.name)
+                    }
+                    else -> null
+                }
+                if (declarationId == callableId) {
+                    val symbol = (declaration as FirCallableMember).symbol as ConeCallableSymbol
+                    callableSymbols += symbol
                 }
             }
             callableSymbols
@@ -118,17 +122,31 @@ class JavaSymbolProvider(
                             }
                             addAnnotationsFrom(javaMethod)
                             for (valueParameter in javaMethod.valueParameters) {
-                                val parameterType = valueParameter.type
-                                valueParameters += FirJavaValueParameter(
-                                    session, valueParameter.name ?: Name.special("<anonymous Java parameter>"),
-                                    returnTypeRef = parameterType.toFirJavaTypeRef(session),
-                                    isVararg = valueParameter.isVararg
-                                ).apply {
-                                    addAnnotationsFrom(valueParameter)
-                                }
+                                valueParameters += valueParameter.toFirValueParameters(session)
                             }
                         }
                         declarations += firJavaMethod
+                    }
+                    for (javaConstructor in javaClass.constructors) {
+                        val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
+                        val constructorSymbol = FirFunctionSymbol(constructorId)
+                        val firJavaConstructor = FirJavaConstructor(
+                            session, constructorSymbol, javaConstructor.visibility,
+                            FirResolvedTypeRefImpl(
+                                session, null,
+                                firSymbol.constructType(emptyArray(), false),
+                                false, emptyList()
+                            )
+                        ).apply {
+                            for (typeParameter in javaConstructor.typeParameters) {
+                                typeParameters += createTypeParameterSymbol(session, typeParameter.name).fir
+                            }
+                            addAnnotationsFrom(javaConstructor)
+                            for (valueParameter in javaConstructor.valueParameters) {
+                                valueParameters += valueParameter.toFirValueParameters(session)
+                            }
+                        }
+                        declarations += firJavaConstructor
                     }
                 }
             }

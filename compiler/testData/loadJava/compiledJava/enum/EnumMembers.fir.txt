@@ -4,4 +4,6 @@ public final enum class EnumMembers : R|java/lang/Enum<test/EnumMembers>| {
 
     public open operator function first(): R|kotlin/Boolean|
 
+    private final function EnumMembers(isFirst: R|kotlin/Boolean|): R|test/EnumMembers|
+
 }

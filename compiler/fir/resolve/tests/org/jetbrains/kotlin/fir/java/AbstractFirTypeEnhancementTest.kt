@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
@@ -187,6 +188,15 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                         for (declaration in javaClass.declarations) {
                             if (declaration in renderedDeclarations) continue
                             when (declaration) {
+                                is FirJavaConstructor -> enhancementScope.processFunctionsByName(javaClass.name) { symbol ->
+                                    val enhanced = (symbol as? FirFunctionSymbol)?.fir
+                                    if (enhanced != null && enhanced !in renderedDeclarations) {
+                                        enhanced.accept(renderer, null)
+                                        renderer.newLine()
+                                        renderedDeclarations += enhanced
+                                    }
+                                    ProcessorAction.NEXT
+                                }
                                 is FirJavaMethod -> enhancementScope.processFunctionsByName(declaration.name) { symbol ->
                                     val enhanced = (symbol as? FirFunctionSymbol)?.fir
                                     if (enhanced != null && enhanced !in renderedDeclarations) {
