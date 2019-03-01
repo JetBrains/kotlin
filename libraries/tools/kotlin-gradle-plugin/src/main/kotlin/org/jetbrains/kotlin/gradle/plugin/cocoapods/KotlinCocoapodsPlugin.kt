@@ -37,67 +37,21 @@ internal class CocoapodsBuildDirs(val project: Project) {
         get() = root.resolve("defs")
 }
 
-private enum class State {
-    CONSUME_ESCAPED,
-    CONSUME,
-    SKIP;
-}
-
-/**
- * Splits a string using a whitespace characters as delimiters.
- * Ignores whitespaces in quotes and drops quotes, e.g. a string
- * `foo "bar baz" qux="quux"` will be split into ["foo", "bar baz", "qux=quux"].
- */
-private fun String.splitQuotedArgs(): List<String> {
-    if (isEmpty()) {
-        return emptyList()
-    }
-
-    var state: State = State.SKIP
-    val result = mutableListOf<String>()
-    val token = StringBuilder(length)
-
-    forEachIndexed { index, char ->
-        when (state) {
-            State.CONSUME_ESCAPED -> {
-                when (char) {
-                    '"' -> state = State.CONSUME // Skip `"`
-                    else -> token.append(char)
-                }
-            }
-            State.CONSUME -> {
-                when {
-                    char == '"' -> state = State.CONSUME_ESCAPED // Skip `"`
-                    char.isWhitespace() -> {
-                        state = State.SKIP
-                        result.add(token.toString())
-                        token.setLength(0)
-                    }
-                    else -> token.append(char)
-                }
-            }
-            State.SKIP -> {
-                when {
-                    char == '"' -> state = State.CONSUME_ESCAPED // Skip `"`
-                    !char.isWhitespace() -> {
-                        state = State.CONSUME
-                        token.append(char)
-                    }
-                }
-            }
-        }
-    }
-    if (token.isNotEmpty()) {
-        result.add(token.toString())
-    }
-    return result
-}
-
 open class KotlinCocoapodsPlugin: Plugin<Project> {
 
     private fun KotlinMultiplatformExtension.supportedTargets() = targets
         .withType(KotlinNativeTarget::class.java)
         .matching { it.konanTarget.family == Family.IOS || it.konanTarget.family == Family.OSX }
+
+    /**
+     * Splits a string using a whitespace characters as delimiters.
+     * Ignores whitespaces in quotes and drops quotes, e.g. a string
+     * `foo "bar baz" qux="quux"` will be split into ["foo", "bar baz", "qux=quux"].
+     */
+    private fun String.splitQuotedArgs(): List<String> =
+        Regex("""(?:[^\s"]|(?:"[^"]*"))+""").findAll(this).map {
+            it.value.replace("\"", "")
+        }.toList()
 
     private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension) {
         kotlinExtension.supportedTargets().all { target ->
