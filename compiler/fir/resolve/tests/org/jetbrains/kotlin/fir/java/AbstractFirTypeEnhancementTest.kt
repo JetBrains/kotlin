@@ -236,3 +236,5 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         private const val FOREIGN_ANNOTATIONS_SOURCES_PATH = "third-party/annotations"
     }
 }
+
+abstract class AbstractOwnFirTypeEnhancementTest : AbstractFirTypeEnhancementTest()
