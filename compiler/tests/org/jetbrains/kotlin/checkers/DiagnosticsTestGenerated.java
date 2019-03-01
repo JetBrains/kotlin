@@ -9853,6 +9853,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/nestedLambdas.kt");
                 }
 
+                @TestMetadata("selectFromTwoIncompatibleTypes.kt")
+                public void testSelectFromTwoIncompatibleTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/commonSystem/selectFromTwoIncompatibleTypes.kt");
+                }
+
                 @TestMetadata("theSameFunctionInArgs.kt")
                 public void testTheSameFunctionInArgs() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/theSameFunctionInArgs.kt");
