@@ -207,7 +207,6 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     // SoftMargins.serializeInfo
     private void serializeInto(@NotNull List<Integer> softMargins, @NotNull Element element) {
         if (softMargins.size() > 0) {
-            //noinspection IncompatibleAPI
             XmlSerializer.serializeInto(this, element);
         }
     }

@@ -9,6 +9,6 @@ import com.intellij.codeInspection.reference.RefFile
 import com.intellij.psi.PsiFile
 
 // BUNCH: 182
-@Suppress("IncompatibleAPI")
+@Suppress("IncompatibleAPI", "MissingRecentApi")
 val RefFile.psiFile: PsiFile?
     get() = psiElement

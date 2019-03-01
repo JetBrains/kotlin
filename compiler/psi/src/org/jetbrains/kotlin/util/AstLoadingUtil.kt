@@ -14,7 +14,7 @@ import com.intellij.util.AstLoadingFilter
  *
  * BUNCH: 182
  */
-@Suppress("IncompatibleAPI")
+@Suppress("IncompatibleAPI", "MissingRecentApi")
 object AstLoadingFilter {
     @JvmStatic
     fun <T, E : Throwable> forceAllowTreeLoading(psiFile: PsiFile, computable: ThrowableComputable<out T, E>): T {
