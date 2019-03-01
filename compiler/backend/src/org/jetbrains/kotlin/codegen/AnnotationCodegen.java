@@ -244,6 +244,10 @@ public abstract class AnnotationCodegen {
 
         annotationTargetMaps.put(JvmTarget.JVM_1_6, jvm6);
         annotationTargetMaps.put(JvmTarget.JVM_1_8, jvm8);
+        annotationTargetMaps.put(JvmTarget.JVM_9, jvm8);
+        annotationTargetMaps.put(JvmTarget.JVM_10, jvm8);
+        annotationTargetMaps.put(JvmTarget.JVM_11, jvm8);
+        annotationTargetMaps.put(JvmTarget.JVM_12, jvm8);
     }
 
     private void generateTargetAnnotation(
