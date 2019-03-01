@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -44,9 +43,11 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
     fun generateCall(startOffset: Int, endOffset: Int, call: CallBuilder, origin: IrStatementOrigin? = null): IrExpression {
         val descriptor = call.descriptor
 
+        if (context.extensions.samConversion.isSamConstructor(descriptor)) {
+            return generateSamConstructorCall(descriptor, startOffset, endOffset, call)
+        }
+
         return when (descriptor) {
-            is SamConstructorDescriptor ->
-                generateSamConstructorCall(descriptor, startOffset, endOffset, call)
             is PropertyDescriptor ->
                 generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
             is FunctionDescriptor ->
@@ -59,7 +60,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
     }
 
     private fun generateSamConstructorCall(
-        descriptor: SamConstructorDescriptor,
+        descriptor: CallableDescriptor,
         startOffset: Int,
         endOffset: Int,
         call: CallBuilder

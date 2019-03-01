@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -33,10 +34,9 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
@@ -45,13 +45,17 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
-    element.transformChildren(InsertImplicitCasts(context.builtIns, context.irBuiltIns, context.typeTranslator), null)
+    element.transformChildren(
+        InsertImplicitCasts(context.builtIns, context.irBuiltIns, context.typeTranslator, context.extensions.samConversion),
+        null
+    )
 }
 
 open class InsertImplicitCasts(
     private val builtIns: KotlinBuiltIns,
     private val irBuiltIns: IrBuiltIns,
-    private val typeTranslator: TypeTranslator
+    private val typeTranslator: TypeTranslator,
+    private val samConversion: GeneratorExtensions.SamConversion
 ) : IrElementTransformerVoid() {
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
@@ -177,15 +181,10 @@ open class InsertImplicitCasts(
             super.visitTypeOperator(expression)
 
     private fun IrTypeOperatorCall.coerceArgumentToFunctionalType(): IrExpression {
-        val targetClassDescriptor = typeOperandClassifier.descriptor as? JavaClassDescriptor
-            ?: throw AssertionError("Target type of $operator should be a Java class: ${render()}")
+        val targetClassDescriptor = typeOperandClassifier.descriptor as? ClassDescriptor
+            ?: throw AssertionError("Target type of $operator should be a class: ${render()}")
 
-        val singleAbstractMethod = SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(targetClassDescriptor)
-            ?: throw AssertionError("$targetClassDescriptor should have a single abstract method")
-
-        val functionalType = SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(singleAbstractMethod, false)
-
-        argument = argument.cast(functionalType)
+        argument = argument.cast(samConversion.getFunctionTypeForSAMClass(targetClassDescriptor))
 
         return this
     }
