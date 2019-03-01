@@ -45,6 +45,17 @@ fun InteropEngine.runTestFunction(
 }
 
 
+private fun GlobalRuntimeContext.updateState(state: Map<String, Any?>) {
+    for (key in keys) {
+        if (state[key] == null) {
+            remove(key)
+        } else {
+            this[key] = state[key]
+        }
+    }
+}
+
+
 fun InteropEngine.runAndRestoreContext(
     globalObject: GlobalRuntimeContext = getGlobalContext(),
     originalState: Map<String, Any?> = globalObject.toMap(),
@@ -53,13 +64,7 @@ fun InteropEngine.runAndRestoreContext(
     return try {
         this.f()
     } finally {
-        for (key in globalObject.keys) {
-            if (originalState[key] == null) {
-                globalObject.remove(key)
-            } else {
-                globalObject[key] = originalState[key]
-            }
-        }
+        globalObject.updateState(originalState)
     }
 }
 
