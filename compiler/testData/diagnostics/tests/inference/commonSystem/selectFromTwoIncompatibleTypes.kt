@@ -10,16 +10,15 @@ fun <K> select(x: K, y: K): K = x
 fun <V> generic(x: Inv<V>) {}
 
 fun test1(a: Inv<A>, b: Inv<B>) {
-    generic(<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>select(<!TYPE_MISMATCH, TYPE_MISMATCH!>a<!>, b)<!>)
+    generic(select(a, b))
 }
 
 fun test2(a: Inv<*>?, b: Inv<*>) {
-    generic(<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>a ?: b<!>)
-    generic(<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>if (a != null) <!DEBUG_INFO_SMARTCAST!>a<!> else b<!>)
+    generic(a ?: b)
+    generic(if (a != null) <!DEBUG_INFO_SMARTCAST!>a<!> else b)
     generic(a!!)
 }
 
 fun test3(a: Inv<out Any>, b: Inv<out Any>) {
-    generic(<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>select(a, b)<!>)
+    generic(select(a, b))
 }
-

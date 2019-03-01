@@ -19,8 +19,8 @@ fun test(i: Int?) {
 
     foo(<!REDUNDANT_LABEL_WARNING!>l4@<!> <!TYPE_MISMATCH!>""<!>)
     foo((<!TYPE_MISMATCH!>""<!>))
-    foo(checkSubtype<Int>(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>""<!>))
-    foo(<!NI;TYPE_MISMATCH, TYPE_MISMATCH!>checkSubtype<Long>(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>""<!>)<!>)
+    foo(checkSubtype<Int>(<!TYPE_MISMATCH!>""<!>))
+    foo(<!TYPE_MISMATCH!>checkSubtype<Long>(<!TYPE_MISMATCH!>""<!>)<!>)
     
     use(a, b, c, d)
 }

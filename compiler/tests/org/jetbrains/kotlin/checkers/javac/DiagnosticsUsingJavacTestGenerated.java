@@ -9848,9 +9848,19 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/nestedLambdas.kt");
                 }
 
+                @TestMetadata("selectFromCovariantAndContravariantTypes.kt")
+                public void testSelectFromCovariantAndContravariantTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/commonSystem/selectFromCovariantAndContravariantTypes.kt");
+                }
+
                 @TestMetadata("selectFromTwoIncompatibleTypes.kt")
                 public void testSelectFromTwoIncompatibleTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/selectFromTwoIncompatibleTypes.kt");
+                }
+
+                @TestMetadata("selectIntegerValueTypeFromIf.kt")
+                public void testSelectIntegerValueTypeFromIf() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/commonSystem/selectIntegerValueTypeFromIf.kt");
                 }
 
                 @TestMetadata("theSameFunctionInArgs.kt")
