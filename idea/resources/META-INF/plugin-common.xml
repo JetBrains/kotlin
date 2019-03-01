@@ -136,6 +136,9 @@
         <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
                 text="Throw cached PCE"/>
 
+        <action id="KotlinThrowException" class="org.jetbrains.kotlin.idea.actions.internal.KotlinThrowExceptionAction"
+                text="Throw Kotlin Plugin Exception"/>
+
         <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
                 text="Copy Current File As Diagnostic Test"/>
 
