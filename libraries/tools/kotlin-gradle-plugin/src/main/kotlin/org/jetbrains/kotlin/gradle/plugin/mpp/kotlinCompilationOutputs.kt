@@ -29,28 +29,3 @@ class DefaultKotlinCompilationOutput(
 
     override fun call(): FileCollection = allOutputs
 }
-
-class KotlinWithJavaCompilationOutput(
-    internal val compilation: KotlinWithJavaCompilation<*>
-) : KotlinCompilationOutput, Callable<FileCollection> {
-
-    private val javaSourceSetOutput
-        get() = compilation.javaSourceSet.output
-
-    override val resourcesDir: File
-        get() = javaSourceSetOutput.resourcesDir!!
-
-    override var resourcesDirProvider: Any
-        get() = javaSourceSetOutput.resourcesDir!!
-        set(value) {
-            javaSourceSetOutput.setResourcesDir(value)
-        }
-
-    override val classesDirs: ConfigurableFileCollection =
-        javaSourceSetOutput.classesDirs as ConfigurableFileCollection
-
-    override val allOutputs: FileCollection
-        get() = javaSourceSetOutput
-
-    override fun call(): FileCollection = allOutputs
-}
