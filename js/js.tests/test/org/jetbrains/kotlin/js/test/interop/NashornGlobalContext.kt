@@ -5,4 +5,17 @@
 
 package org.jetbrains.kotlin.js.test.interop
 
-class NashornGlobalContext : InteropGlobalContext
+import jdk.nashorn.internal.runtime.ScriptRuntime
+
+
+class NashornGlobalContext(private val myState: GlobalRuntimeContext) : InteropGlobalContext {
+    override fun updateState(state: Map<String, Any?>) {
+        for (key in myState.keys) {
+            myState[key] = state[key] ?: ScriptRuntime.UNDEFINED
+        }
+    }
+
+    override fun toMap(): Map<String, Any?> {
+        return myState.toMap()
+    }
+}

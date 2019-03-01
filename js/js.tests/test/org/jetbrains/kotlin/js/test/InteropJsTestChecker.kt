@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.js.test
 
-import org.jetbrains.kotlin.js.test.interop.GlobalRuntimeContext
-import org.jetbrains.kotlin.js.test.interop.InteropEngine
-import org.jetbrains.kotlin.js.test.interop.InteropNashorn
-import org.jetbrains.kotlin.js.test.interop.InteropV8
+import org.jetbrains.kotlin.js.test.interop.*
 import org.junit.Assert
 
 private val USE_J2V8_INTEROP_FOR_JS_TESTS = java.lang.Boolean.getBoolean("org.jetbrains.kotlin.use.j2v8.interop.for.js.tests")
@@ -57,7 +54,7 @@ private fun GlobalRuntimeContext.updateState(state: Map<String, Any?>) {
 
 
 fun InteropEngine.runAndRestoreContext(
-    globalObject: GlobalRuntimeContext = getGlobalContext(),
+    globalObject: InteropGlobalContext = getGlobalContext(),
     originalState: Map<String, Any?> = globalObject.toMap(),
     f: InteropEngine.() -> Any?
 ): Any? {
@@ -73,7 +70,7 @@ abstract class AbstractNashornJsTestChecker {
     private var engineUsageCnt = 0
 
     private var engineCache: InteropEngine? = null
-    private var globalObject: GlobalRuntimeContext? = null
+    private var globalObject: InteropGlobalContext? = null
     private var originalState: Map<String, Any?>? = null
 
     protected val engine

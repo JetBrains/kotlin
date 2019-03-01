@@ -5,4 +5,12 @@
 
 package org.jetbrains.kotlin.js.test.interop
 
-class V8GlobalContext : InteropGlobalContext
+class V8GlobalContext : InteropGlobalContext {
+    override fun updateState(state: Map<String, Any?>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun toMap(): Map<String, Any?> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}

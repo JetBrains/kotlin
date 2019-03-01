@@ -17,15 +17,17 @@ class InteropV8 : InteropEngine {
     private fun createParams(vararg p: Any?): V8Array {
         val params = V8Array(myRuntime)
 
-        p.forEach {when {
-            it == null -> params.pushNull()
-            it is Int -> params.push(it)
-            it is Double -> params.push(it)
-            it is String -> params.push(it)
-            it is Boolean -> params.push(it)
-            it is V8Object -> params.push(it)
-            else -> throw Exception("can not cast ${it}")
-        }}
+        p.forEach {
+            when {
+                it == null -> params.pushNull()
+                it is Int -> params.push(it)
+                it is Double -> params.push(it)
+                it is String -> params.push(it)
+                it is Boolean -> params.push(it)
+                it is V8Object -> params.push(it)
+                else -> throw Exception("can not cast ${it}")
+            }
+        }
 
         return params
     }
@@ -39,9 +41,10 @@ class InteropV8 : InteropEngine {
         return myRuntime.executeVoidScript(script)
     }
 
-    override fun getGlobalContext(): GlobalRuntimeContext {
+    override fun getGlobalContext(): InteropGlobalContext {
         val v8result = eval<V8Object>("this")
-        return V8ObjectUtils.toMap(v8result) as GlobalRuntimeContext
+//        return V8ObjectUtils.toMap(v8result) as GlobalRuntimeContext
+        return V8GlobalContext()
     }
 
     @Suppress("UNCHECKED_CAST")

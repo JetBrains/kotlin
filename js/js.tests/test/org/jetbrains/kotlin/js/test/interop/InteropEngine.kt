@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.test.interop
 
 interface InteropEngine {
     fun <T> eval(script: String): T
-    fun getGlobalContext(): GlobalRuntimeContext
+    fun getGlobalContext(): InteropGlobalContext
     fun evalVoid(script: String)
     fun <T> callMethod(obj: Any, name: String, vararg args: Any?): T
     fun loadFile(path: String)
