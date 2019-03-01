@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
@@ -23,8 +22,7 @@ class ReplaceCollectionCountWithSizeInspection : AbstractKotlinInspection() {
             if (callExpression.isCount()) {
                 holder.registerProblem(
                     callExpression,
-                    "Replace 'count' with 'size'",
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    "Could be replaced with `size`",
                     ReplaceCollectionCountWithSizeQuickFix()
                 )
             }
@@ -43,6 +41,4 @@ class ReplaceCollectionCountWithSizeQuickFix : LocalQuickFix {
     }
 }
 
-private fun KtCallExpression.isCount(): Boolean {
-    return isCalling(FqName("kotlin.collections.count")) && (this.valueArguments.size == 0)
-}
+private fun KtCallExpression.isCount(): Boolean = valueArguments.isEmpty() && isCalling(FqName("kotlin.collections.count"))

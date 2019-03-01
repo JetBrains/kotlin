@@ -1753,6 +1753,7 @@
                      level="WEAK WARNING"
                      language="kotlin"
     />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceCollectionCountWithSizeInspection"
                      displayName="Collection count can be converted to size"
                      groupPath="Kotlin"
