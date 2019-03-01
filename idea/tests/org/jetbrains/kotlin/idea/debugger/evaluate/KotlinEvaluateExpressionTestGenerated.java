@@ -660,6 +660,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClass.kt");
             }
 
+            @TestMetadata("delegatedPropertyInClassKotlinVariables.kt")
+            public void testDelegatedPropertyInClassKotlinVariables() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClassKotlinVariables.kt");
+            }
+
             @TestMetadata("delegatedPropertyInClassWithToString.kt")
             public void testDelegatedPropertyInClassWithToString() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClassWithToString.kt");
