@@ -46,7 +46,7 @@ fun InteropEngine.runTestFunction(
 
 
 fun InteropEngine.runAndRestoreContext(
-    globalObject: GlobalRuntimeContext = evalAsMap("this"),
+    globalObject: GlobalRuntimeContext = getGlobalContext(),
     originalState: Map<String, Any?> = globalObject.toMap(),
     f: InteropEngine.() -> Any?
 ): Any? {
@@ -74,7 +74,7 @@ abstract class AbstractNashornJsTestChecker {
     protected val engine
         get() = engineCache ?: createScriptEngineForTest().also {
             engineCache = it
-            globalObject = it.evalAsMap("this")
+            globalObject = it.getGlobalContext()
             originalState = globalObject?.toMap()
         }
 

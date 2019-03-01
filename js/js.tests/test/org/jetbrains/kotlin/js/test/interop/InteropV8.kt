@@ -39,8 +39,8 @@ class InteropV8 : InteropEngine {
         return myRuntime.executeVoidScript(script)
     }
 
-    override fun evalAsMap(script: String): GlobalRuntimeContext {
-        val v8result = eval<V8Object>(script)
+    override fun getGlobalContext(): GlobalRuntimeContext {
+        val v8result = eval<V8Object>("this")
         return V8ObjectUtils.toMap(v8result) as GlobalRuntimeContext
     }
 

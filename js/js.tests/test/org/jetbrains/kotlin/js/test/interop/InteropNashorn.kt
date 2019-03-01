@@ -21,8 +21,8 @@ class InteropNashorn : InteropEngine {
         myEngine.eval(script)
     }
 
-    override fun evalAsMap(script: String): GlobalRuntimeContext {
-        return eval(script)
+    override fun getGlobalContext(): GlobalRuntimeContext {
+        return eval("this")
     }
 
     @Suppress("UNCHECKED_CAST")
