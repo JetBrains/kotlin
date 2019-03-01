@@ -1425,11 +1425,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     fieldPtrOfClass(thisPtr, value.symbol.owner), value.descriptor.isVar())
         } else {
             assert(value.receiver == null)
-            if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive) {
-                functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
+            return if (value.symbol.owner.correspondingProperty?.isConst == true) {
+                 evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>)
+            } else {
+                if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive) {
+                    functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
+                }
+                val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
+                functionGenerationContext.loadSlot(ptr, value.descriptor.isVar())
             }
-            val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
-            return functionGenerationContext.loadSlot(ptr, value.descriptor.isVar())
         }
     }
 

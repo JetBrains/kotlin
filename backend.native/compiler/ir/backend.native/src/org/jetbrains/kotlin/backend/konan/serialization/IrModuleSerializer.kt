@@ -1080,7 +1080,7 @@ internal class IrModuleSerializer(
         // Make sure that all top level properties are initialized on library's load.
         file.declarations
                 .filterIsInstance<IrProperty>()
-                .filter { it.backingField?.initializer != null }
+                .filter { it.backingField?.initializer != null && !it.isConst }
                 .forEach { proto.addExplicitlyExportedToCompiler(serializeIrSymbol(it.backingField!!.symbol)) }
 
         file.acceptVoid(object: IrElementVisitorVoid {
