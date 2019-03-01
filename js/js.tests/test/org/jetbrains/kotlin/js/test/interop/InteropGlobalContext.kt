@@ -6,5 +6,7 @@
 package org.jetbrains.kotlin.js.test.interop
 
 interface InteropGlobalContext {
-    fun updateState(state: InteropGlobalContext)
+    fun updateState(state: Map<String, Any?>)
+
+    fun toMap(): Map<String, Any?>
 }

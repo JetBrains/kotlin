@@ -6,28 +6,15 @@
 package org.jetbrains.kotlin.js.test.interop
 
 import com.eclipsesource.v8.V8Object
+import com.eclipsesource.v8.utils.V8ObjectUtils
 
 class V8GlobalContext(val myState: V8Object) : InteropGlobalContext {
 
-    override fun updateState(state: InteropGlobalContext) {
-        val v8State = state as V8GlobalContext
-
-        for (key in myState.keys) {
-            val value = state.myState.get(key)
-            println("CURRENTLY PROCESSING ${key} ${value}")
-            when {
-                value is Boolean -> myState.add(key, value)
-                value is Double -> myState.add(key, value)
-                value is Int -> myState.add(key, value)
-                value is String -> myState.add(key, value)
-                value is V8Object -> myState.add(key, value)
-                value == null -> myState.addUndefined(key)
-                else -> {
-                    println("undefining something which is actually ${value::class.simpleName}")
-                    myState.addUndefined(key)
-                }
-            }
-        }
+    override fun updateState(state: Map<String, Any?>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun toMap(): Map<String, Any?> {
+        return V8ObjectUtils.toMap(myState)
+    }
 }

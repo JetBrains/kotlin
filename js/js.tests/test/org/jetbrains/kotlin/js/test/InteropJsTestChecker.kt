@@ -11,7 +11,7 @@ import org.junit.Assert
 private val USE_J2V8_INTEROP_FOR_JS_TESTS = java.lang.Boolean.getBoolean("org.jetbrains.kotlin.use.j2v8.interop.for.js.tests")
 
 fun createScriptEngine(): InteropEngine {
-    return if (!USE_J2V8_INTEROP_FOR_JS_TESTS) {
+    return if (USE_J2V8_INTEROP_FOR_JS_TESTS) {
         InteropV8()
     } else {
         InteropNashorn()
@@ -41,21 +41,9 @@ fun InteropEngine.runTestFunction(
     return callMethod(eval(script), testFunctionName)
 }
 
-
-private fun GlobalRuntimeContext.updateState(state: Map<String, Any?>) {
-    for (key in keys) {
-        if (state[key] == null) {
-            remove(key)
-        } else {
-            this[key] = state[key]
-        }
-    }
-}
-
-
 fun InteropEngine.runAndRestoreContext(
     globalObject: InteropGlobalContext = getGlobalContext(),
-    originalState: InteropGlobalContext = getGlobalContext(),
+    originalState: Map<String, Any?> = globalObject.toMap(),
     f: InteropEngine.() -> Any?
 ): Any? {
     return try {
@@ -71,13 +59,13 @@ abstract class AbstractNashornJsTestChecker {
 
     private var engineCache: InteropEngine? = null
     private var globalObject: InteropGlobalContext? = null
-    private var originalState: InteropGlobalContext? = null
+    private var originalState: Map<String, Any?>? = null
 
     protected val engine
         get() = engineCache ?: createScriptEngineForTest().also {
             engineCache = it
             globalObject = it.getGlobalContext()
-            originalState = it.getGlobalContext()
+            originalState = globalObject?.toMap()
         }
 
     fun check(
