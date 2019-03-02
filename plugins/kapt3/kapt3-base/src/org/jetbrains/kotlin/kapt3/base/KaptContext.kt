@@ -13,6 +13,7 @@ import com.sun.tools.javac.util.Log
 import com.sun.tools.javac.util.Options
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
+import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaCompiler
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaFileManager
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLog
@@ -29,6 +30,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
     val fileManager: KaptJavaFileManager
     private val javacOptions: Options
     val javaLog: KaptJavaLog
+    val cacheManager: JavaClassCacheManager?
 
     protected open fun preregisterTreeMaker(context: Context) {}
 
@@ -76,8 +78,14 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
                 put("accessInternalAPI", "true")
             }
 
+            val compileClasspath = if (options.changedFiles.isEmpty()) {
+                options.compileClasspath
+            } else {
+                options.compileClasspath + options.compiledSources
+            }
+
             putJavacOption("CLASSPATH", "CLASS_PATH",
-                           options.compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
+                           compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
 
             @Suppress("SpellCheckingInspection")
             putJavacOption("PROCESSORPATH", "PROCESSOR_PATH",
@@ -106,10 +114,15 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
 
         ClassReader.instance(context).saveParameterNames = true
 
+        cacheManager = options.incrementalCache?.let {
+            JavaClassCacheManager(it, options.classpathFqNamesHistory!!)
+        }
+
         javaLog = compiler.log as KaptJavaLog
     }
 
     override fun close() {
+        cacheManager?.close()
         compiler.close()
         fileManager.close()
     }

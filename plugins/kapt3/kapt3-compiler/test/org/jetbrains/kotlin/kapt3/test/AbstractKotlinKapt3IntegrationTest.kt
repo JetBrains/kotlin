@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.LoadedProcessors
+import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
+import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
@@ -171,7 +173,9 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         internal var savedStubs: String? = null
         internal var savedBindings: Map<String, KaptJavaFileObject>? = null
 
-        override fun loadProcessors() = LoadedProcessors(processors, Kapt3ExtensionForTests::class.java.classLoader)
+        override fun loadProcessors() = LoadedProcessors(
+            processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL) },
+            Kapt3ExtensionForTests::class.java.classLoader)
 
         override fun saveStubs(kaptContext: KaptContext, stubs: List<KaptStub>) {
             if (this.savedStubs != null) {

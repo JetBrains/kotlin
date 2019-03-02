@@ -17,6 +17,8 @@ class KaptJavaCompiler(context: Context) : JavaCompiler(context) {
         return if (shouldStop(cs)) JavacList.nil<T>() else list
     }
 
+    fun getTaskListeners() = this.taskListener
+
     companion object {
         internal fun preRegister(context: Context) {
             context.put(compilerKey, Context.Factory<JavaCompiler>(::KaptJavaCompiler))
