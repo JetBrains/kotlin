@@ -197,7 +197,7 @@ abstract class BaseGradleIT {
         val parallelTasksInProject: Boolean? = null
     )
 
-    data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean)
+    data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean, val incrementalKapt: Boolean = false, val includeCompileClasspath: Boolean = true)
 
     open inner class Project(
         val projectName: String,
@@ -619,6 +619,8 @@ abstract class BaseGradleIT {
             options.kaptOptions?.also { kaptOptions ->
                 add("-Pkapt.verbose=${kaptOptions.verbose}")
                 add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
+                add("-Pkapt.incremental.apt=${kaptOptions.incrementalKapt}")
+                add("-Pkapt.include.compile.classpath=${kaptOptions.includeCompileClasspath}")
             }
 
             options.parallelTasksInProject?.let {

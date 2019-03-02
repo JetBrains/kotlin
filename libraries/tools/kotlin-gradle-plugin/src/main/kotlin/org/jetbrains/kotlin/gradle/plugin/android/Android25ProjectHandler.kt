@@ -79,6 +79,7 @@ class Android25ProjectHandler(
                 .map { it.file.absolutePath }
                 .toTypedArray()
         }
+        kotlinTask.javaOutputDir = javaTask.destinationDir
     }
 
     override fun getSourceProviders(variantData: BaseVariant): Iterable<SourceProvider> =

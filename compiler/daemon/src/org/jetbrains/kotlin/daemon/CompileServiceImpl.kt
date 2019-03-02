@@ -41,7 +41,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.report.*
+import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
+import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
+import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
+import org.jetbrains.kotlin.daemon.report.getICReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -580,15 +583,19 @@ class CompileServiceImpl(
             }
         }
 
+        val outputFiles = incrementalCompilationOptions.outputFiles.toMutableList()
+        incrementalCompilationOptions.classpathFqNamesHistory?.let { outputFiles.add(it) }
+
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             javaSourceRoots,
             reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
-            outputFiles = incrementalCompilationOptions.outputFiles,
+            outputFiles = outputFiles,
             usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
-            kotlinSourceFilesExtensions = allKotlinExtensions
+            kotlinSourceFilesExtensions = allKotlinExtensions,
+            classpathFqNamesHistory = incrementalCompilationOptions.classpathFqNamesHistory
         )
         return try {
             compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)

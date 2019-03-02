@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.io.File
+import java.io.ObjectOutputStream
 
 fun makeIncrementally(
         cachesDir: File,
@@ -109,7 +110,8 @@ class IncrementalJvmCompilerRunner(
     buildHistoryFile: File,
     outputFiles: Collection<File>,
     private val modulesApiHistory: ModulesApiHistory,
-    override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+    override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+    private val classpathFqNamesHistory: File? = null
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
@@ -125,6 +127,8 @@ class IncrementalJvmCompilerRunner(
 
     override fun destinationDir(args: K2JVMCompilerArguments): File =
             args.destinationAsFile
+
+    private var dirtyClasspathChanges: Collection<FqName> = emptySet<FqName>()
 
     private val psiFileFactory: PsiFileFactory by lazy {
         val rootDisposable = Disposer.newDisposable()
@@ -163,6 +167,7 @@ class IncrementalJvmCompilerRunner(
             }
             is ChangesEither.Known -> {
                 dirtyFiles.addByDirtySymbols(classpathChanges.lookupSymbols)
+                dirtyClasspathChanges = classpathChanges.fqNames
                 dirtyFiles.addByDirtyClasses(classpathChanges.fqNames)
             }
         }
@@ -250,6 +255,28 @@ class IncrementalJvmCompilerRunner(
             val destinationDir = args.destinationAsFile
             destinationDir.mkdirs()
             args.classpathAsList = listOf(destinationDir) + args.classpathAsList
+        }
+    }
+
+    override fun processChangesAfterBuild(compilationMode: CompilationMode, currentBuildInfo: BuildInfo, dirtyData: DirtyData) {
+        super.processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData)
+
+        classpathFqNamesHistory ?: return
+        classpathFqNamesHistory.mkdirs()
+
+        val historyFiles = classpathFqNamesHistory.listFiles()
+        if (dirtyClasspathChanges.isEmpty() && historyFiles.isNotEmpty()) {
+            // Don't write an empty file. We check there is at least one file so that downstream task can mark what it has processed.
+            return
+        }
+
+        if (historyFiles.size > 10) {
+            historyFiles.minBy { it.lastModified() }!!.delete()
+        }
+        val newHistoryFile = classpathFqNamesHistory.resolve(System.currentTimeMillis().toString())
+        ObjectOutputStream(newHistoryFile.outputStream().buffered()).use {
+            val listOfNames = dirtyClasspathChanges.map { it.toString() }.toList()
+            it.writeObject(listOfNames)
         }
     }
 

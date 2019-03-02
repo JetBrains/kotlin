@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kapt.cli
 
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.kapt.cli.CliToolOption.Format.*
+import java.io.File
 
 class CliToolOption(val name: String, val format: Format) {
     enum class Format {
@@ -68,6 +69,32 @@ enum class KaptCliOption(
     ),
 
     INCREMENTAL_DATA_OUTPUT_DIR_OPTION("incrementalData", "<path>", "Output path for incremental data"),
+
+    CHANGED_FILES(
+        "changedFile",
+        "<path>",
+        "Use only in apt mode. Changed java source file that should be processed when using incremental annotation processing.",
+        true
+    ),
+
+    COMPILED_SOURCES_DIR(
+        "compiledSourcesDir",
+        "<path>",
+        "Use only in apt mode. Compiled sources (.class files) from previous compilation. This is typically a kotlinc or javac output.",
+        true
+    ),
+
+    INCREMENTAL_CACHE(
+        "incrementalCache",
+        "<path>",
+        "Use only in apt mode. Output directory for cache necessary to support incremental annotation processing."
+    ),
+
+    CLASSPATH_FQ_NAMES_HISTORY(
+        "classpathFqNamesHistory",
+        "<path>",
+        "Use only in apt mode. Directory containing history of classpath fq name changes."
+    ),
 
     ANNOTATION_PROCESSOR_CLASSPATH_OPTION(
         "apclasspath",

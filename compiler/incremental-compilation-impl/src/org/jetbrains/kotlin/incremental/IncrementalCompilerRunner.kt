@@ -313,7 +313,7 @@ abstract class IncrementalCompilerRunner<
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
-    private fun processChangesAfterBuild(
+    protected open fun processChangesAfterBuild(
         compilationMode: CompilationMode,
         currentBuildInfo: BuildInfo,
         dirtyData: DirtyData
