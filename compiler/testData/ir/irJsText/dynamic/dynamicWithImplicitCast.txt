@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/dynamicWithImplicitCast.kt
     VALUE_PARAMETER name:d index:0 type:dynamic flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(dynamic): Int'
-        WHEN type=kotlin.Int origin=null
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
               typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence]
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/dynamicWithImplicitCast.kt
     VALUE_PARAMETER name:d index:0 type:dynamic flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(dynamic): Int'
-        WHEN type=kotlin.Int origin=null
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
               typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:public flags: superTypes:[kotlin.Any]

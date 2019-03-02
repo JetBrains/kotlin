@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/kt27933.kt
     BLOCK_BODY
       VAR name:r type:kotlin.String flags:var
         CONST String type=kotlin.String value=""
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/kt27933.kt
             CALL 'plus(Any?): String' type=kotlin.String origin=PLUSEQ
               $this: GET_VAR 'r: String' type=kotlin.String origin=PLUSEQ
               other: CONST String type=kotlin.String value="O"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
             arg0: GET_VAR 'r: String' type=kotlin.String origin=null

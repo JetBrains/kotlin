@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/Derived.kt
       $this: VALUE_PARAMETER name:<this> type:Derived flags:
       VALUE_PARAMETER name:v index:0 type:kotlin.Any flags:
       BLOCK_BODY
-        WHEN type=kotlin.Unit origin=null
+        WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
               typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]

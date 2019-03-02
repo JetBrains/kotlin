@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/whileDoWhile.kt
     BLOCK_BODY
       VAR name:a type:kotlin.Any? flags:val
         CONST Null type=kotlin.Nothing? value=null
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Boolean
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Boolean modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.Boolean>; java.io.Serializable]

@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
   FUN name:testSmartCastInWhenSubject visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Double flags:
     VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
@@ -94,14 +94,14 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='testSmartCastToDifferentTypes(Any, Any): Int'
             CONST Int type=kotlin.Int value=-1
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Float
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
@@ -143,7 +143,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_subject: Any' type=kotlin.Any origin=null
                 arg1: CALL 'foo(Double): Double' type=kotlin.Double origin=null
-                  x: WHEN type=kotlin.Double origin=null
+                  x: WHEN type=kotlin.Double origin=IF
                     BRANCH
                       if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
                         typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(String?): Int'
-        WHEN type=kotlin.Int origin=null
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
     VALUE_PARAMETER name:x index:0 type:T flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(T): Int'
-        WHEN type=kotlin.Int origin=null
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'value-parameter x: T' type=T origin=null
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(Any): Int'
-        WHEN type=kotlin.Int origin=null
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T
               typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?]
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(Any?): Int'
-        WHEN type=kotlin.Int origin=null
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T
               typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence]
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
     VALUE_PARAMETER name:x index:0 type:T flags:
     VALUE_PARAMETER name:fn index:1 type:kotlin.Function1<S, kotlin.Unit> flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ

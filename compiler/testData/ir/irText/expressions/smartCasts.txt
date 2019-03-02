@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/smartCasts.kt
   FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/smartCasts.kt
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/smartCasts.kt
   FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]

@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
   FUN name:test visibility:public modality:FINAL <> (x:I1) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:x index:0 type:I1 flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=I2
             typeOperand: CLASS INTERFACE name:I2 modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]

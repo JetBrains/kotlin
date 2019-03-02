@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/intersectionType2.kt
                 VAR name:nn type:C flags:val
                   CALL 'constructor C()' type=C origin=null
                 VAR name:c type:kotlin.Any flags:val
-                  WHEN type=kotlin.Any origin=null
+                  WHEN type=kotlin.Any origin=IF
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: GET_VAR 'mm: B' type=B origin=null

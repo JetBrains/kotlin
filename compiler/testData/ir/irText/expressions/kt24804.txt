@@ -16,18 +16,18 @@ FILE fqName:<root> fileName:/kt24804.kt
               CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
                 $this: GET_VAR 'z: Int' type=kotlin.Int origin=PLUSEQ
                 other: CONST Int type=kotlin.Int value=1
-            WHEN type=kotlin.Unit origin=null
+            WHEN type=kotlin.Unit origin=IF
               BRANCH
                 if: CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
                   arg0: GET_VAR 'z: Int' type=kotlin.Int origin=null
                   arg1: CONST Int type=kotlin.Int value=100
                 then: RETURN type=kotlin.Nothing from='run(Boolean, Boolean): String'
                   CONST String type=kotlin.String value="NOT_OK"
-            WHEN type=kotlin.Unit origin=null
+            WHEN type=kotlin.Unit origin=IF
               BRANCH
                 if: GET_VAR 'value-parameter x: Boolean' type=kotlin.Boolean origin=null
                 then: CONTINUE label=l2 loop.label=l2
-            WHEN type=kotlin.Unit origin=null
+            WHEN type=kotlin.Unit origin=IF
               BRANCH
                 if: GET_VAR 'value-parameter y: Boolean' type=kotlin.Boolean origin=null
                 then: CONTINUE label=l2 loop.label=l2
