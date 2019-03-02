@@ -160,7 +160,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -170,7 +170,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=1
           then: RETURN type=kotlin.Nothing from='box(): String'
             CONST String type=kotlin.String value="1"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -180,7 +180,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=2
           then: RETURN type=kotlin.Nothing from='box(): String'
             CONST String type=kotlin.String value="2"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -190,7 +190,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=3
           then: RETURN type=kotlin.Nothing from='box(): String'
             CONST String type=kotlin.String value="3"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -202,7 +202,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
       CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=EQ
         $this: GET_OBJECT 'C' type=C
         <set-?>: CONST Int type=kotlin.Int value=5
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -211,7 +211,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=5
           then: RETURN type=kotlin.Nothing from='box(): String'
             CONST String type=kotlin.String value="5"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -221,7 +221,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=6
           then: RETURN type=kotlin.Nothing from='box(): String'
             CONST String type=kotlin.String value="6"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -232,7 +232,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST String type=kotlin.String value="7"
           then: RETURN type=kotlin.Nothing from='box(): String'
             CONST String type=kotlin.String value="7"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -243,7 +243,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST String type=kotlin.String value="8"
           then: RETURN type=kotlin.Nothing from='box(): String'
             CONST String type=kotlin.String value="8"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -254,7 +254,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=9
           then: RETURN type=kotlin.Nothing from='box(): String'
             CONST String type=kotlin.String value="9"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -265,7 +265,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST String type=kotlin.String value="10"
           then: RETURN type=kotlin.Nothing from='box(): String'
             CONST String type=kotlin.String value="10"
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ

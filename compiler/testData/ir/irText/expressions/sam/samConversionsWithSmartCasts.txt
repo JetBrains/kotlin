@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Function0<kotlin.Unit> flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test5x visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]

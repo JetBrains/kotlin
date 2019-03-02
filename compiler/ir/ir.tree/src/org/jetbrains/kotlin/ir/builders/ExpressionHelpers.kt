@@ -117,22 +117,34 @@ fun IrBuilderWithScope.irBranch(condition: IrExpression, result: IrExpression) =
 fun IrBuilderWithScope.irElseBranch(expression: IrExpression) =
     IrElseBranchImpl(startOffset, endOffset, irTrue(), expression)
 
-fun IrBuilderWithScope.irIfThen(type: IrType, condition: IrExpression, thenPart: IrExpression) =
-    IrIfThenElseImpl(startOffset, endOffset, type).apply {
+fun IrBuilderWithScope.irIfThen(type: IrType, condition: IrExpression, thenPart: IrExpression, origin: IrStatementOrigin? = null) =
+    IrIfThenElseImpl(startOffset, endOffset, type, origin).apply {
         branches.add(IrBranchImpl(startOffset, endOffset, condition, thenPart))
     }
 
-fun IrBuilderWithScope.irIfThenElse(type: IrType, condition: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
-    IrIfThenElseImpl(startOffset, endOffset, type).apply {
+fun IrBuilderWithScope.irIfThenElse(
+    type: IrType,
+    condition: IrExpression,
+    thenPart: IrExpression,
+    elsePart: IrExpression,
+    origin: IrStatementOrigin? = null
+) =
+    IrIfThenElseImpl(startOffset, endOffset, type, origin).apply {
         branches.add(IrBranchImpl(startOffset, endOffset, condition, thenPart))
         branches.add(irElseBranch(elsePart))
     }
 
-fun IrBuilderWithScope.irIfThenMaybeElse(type: IrType, condition: IrExpression, thenPart: IrExpression, elsePart: IrExpression?) =
+fun IrBuilderWithScope.irIfThenMaybeElse(
+    type: IrType,
+    condition: IrExpression,
+    thenPart: IrExpression,
+    elsePart: IrExpression?,
+    origin: IrStatementOrigin? = null
+) =
     if (elsePart != null)
-        irIfThenElse(type, condition, thenPart, elsePart)
+        irIfThenElse(type, condition, thenPart, elsePart, origin)
     else
-        irIfThen(type, condition, thenPart)
+        irIfThen(type, condition, thenPart, origin)
 
 fun IrBuilderWithScope.irIfNull(type: IrType, subject: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
     irIfThenElse(type, irEqualsNull(subject), thenPart, elsePart)

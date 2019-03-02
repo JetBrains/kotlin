@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1() on Any: T?'
-        WHEN type=T? origin=null
+        WHEN type=T? origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T
               typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
       $receiver: VALUE_PARAMETER name:<this> type:Foo<T> flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-asT>() on Foo<T>: T?'
-          WHEN type=T? origin=null
+          WHEN type=T? origin=IF
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T
                 typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
