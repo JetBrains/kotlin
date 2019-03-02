@@ -74,6 +74,11 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         super.setSource(sourceRootsContainer.set(sources))
     }
 
+    @Internal
+    override fun getClasspathFqNamesHistoryDir(): File? {
+        return taskBuildDirectory.resolve("classpath-fq-history")
+    }
+
     private fun isSourceRootAllowed(source: File): Boolean =
         !destinationDir.isParentOf(source) &&
                 !stubsDir.isParentOf(source) &&

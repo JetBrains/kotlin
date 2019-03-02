@@ -90,6 +90,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         private val USE_WORKER_API = "kapt.use.worker.api"
         private val INFO_AS_WARNINGS = "kapt.info.as.warnings"
         private val INCLUDE_COMPILE_CLASSPATH = "kapt.include.compile.classpath"
+        private val INCREMENTAL_APT = "kapt.incremental.apt"
 
         const val KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME = "kotlinKaptWorkerDependencies"
 
@@ -117,6 +118,10 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         fun Project.isUseWorkerApi(): Boolean {
             return isWorkerAPISupported() && hasProperty(USE_WORKER_API) && property(USE_WORKER_API) == "true"
+        }
+
+        fun Project.isIncrementalKapt(): Boolean {
+            return hasProperty(INCREMENTAL_APT) && property(INCREMENTAL_APT) == "true"
         }
 
         fun Project.isInfoAsWarnings(): Boolean {
@@ -156,6 +161,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     private fun Kapt3SubpluginContext.getKaptStubsDir() = createAndReturnTemporaryKaptDirectory("stubs")
 
     private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = createAndReturnTemporaryKaptDirectory("incrementalData")
+
+    private fun Kapt3SubpluginContext.getKaptIncrementalAnnotationProcessingCache() = createAndReturnTemporaryKaptDirectory("incApCache")
 
     private fun Kapt3SubpluginContext.createAndReturnTemporaryKaptDirectory(name: String): File {
         val dir = File(project.buildDir, "tmp/kapt3/$name/$sourceSetName")
@@ -227,7 +234,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         )
 
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
-        val kaptTask = context.createKaptKotlinTask(useWorkerApi = project.isUseWorkerApi())
+        val kaptTask = context.createKaptKotlinTask(
+            useWorkerApi = project.isUseWorkerApi(),
+            classpathHistoryDir = kaptGenerateStubsTask.getClasspathFqNamesHistoryDir())
 
         kaptGenerateStubsTask.source(*kaptConfigurations.toTypedArray())
 
@@ -365,7 +374,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
     }
 
-    private fun Kapt3SubpluginContext.createKaptKotlinTask(useWorkerApi: Boolean): KaptTask {
+    private fun Kapt3SubpluginContext.createKaptKotlinTask(useWorkerApi: Boolean, classpathHistoryDir: File? = null): KaptTask {
         val taskClass = if (useWorkerApi) KaptWithoutKotlincTask::class.java else KaptWithKotlincTask::class.java
         val kaptTask = project.tasks.create(getKaptTaskName("kapt"), taskClass)
 
@@ -378,6 +387,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.kotlinSourcesDestinationDir = kotlinSourcesOutputDir
         kaptTask.classesDir = classesOutputDir
         kaptTask.includeCompileClasspath = includeCompileClasspath
+
+        kaptTask.isIncremental = project.isIncrementalKapt()
+        if (kaptTask.isIncremental) {
+            kaptTask.incAptCache = getKaptIncrementalAnnotationProcessingCache()
+            kaptTask.classpathDirtyFqNamesHistoryDir = project.files(classpathHistoryDir)
+        }
 
         kotlinCompilation?.run {
             output.apply {
@@ -403,6 +418,16 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         if (kaptTask is KaptWithKotlincTask) {
+            if (kaptTask.isIncremental) {
+                kaptTask.pluginOptions.addPluginArgument(
+                    getCompilerPluginId(),
+                    SubpluginOption("incrementalCache", kaptTask.incAptCache!!.absolutePath))
+
+                kaptTask.pluginOptions.addPluginArgument(
+                    getCompilerPluginId(),
+                    SubpluginOption("classpathFqNamesHistory", kaptTask.classpathDirtyFqNamesHistoryDir.singleFile!!.absolutePath))
+            }
+
             buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "apt")
         }
 

@@ -9,8 +9,10 @@ import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.clearLocalState
@@ -45,10 +47,9 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     lateinit var javacOptions: Map<String, String>
 
     @TaskAction
-    fun compile() {
+    fun compile(inputs: IncrementalTaskInputs) {
         logger.info("Running kapt annotation processing using the Gradle Worker API")
         checkAnnotationProcessorClasspath()
-        clearLocalState()
 
         val compileClasspath = classpath.files.toMutableList()
         if (project.plugins.none { it is KotlinAndroidPluginWrapper }) {
@@ -65,6 +66,11 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             project.projectDir,
             compileClasspath,
             javaSourceRoots.toList(),
+
+            getChangedFiles(inputs),
+            getCompiledSources(),
+            incAptCache,
+            classpathDirtyFqNamesHistoryDir.singleOrNull(),
 
             destinationDir,
             classesDir,
@@ -155,6 +161,11 @@ private class KaptExecution @Inject constructor(
             compileClasspath,
             javaSourceRoots,
 
+            changedFiles,
+            compiledSources,
+            incAptCache,
+            classpathFqNamesHistory,
+
             sourcesOutputDir,
             classesOutputDir,
             stubsOutputDir,
@@ -185,6 +196,11 @@ private data class KaptOptionsForWorker(
     val projectBaseDir: File,
     val compileClasspath: List<File>,
     val javaSourceRoots: List<File>,
+
+    val changedFiles: List<File>,
+    val compiledSources: List<File>,
+    val incAptCache: File?,
+    val classpathFqNamesHistory: File?,
 
     val sourcesOutputDir: File,
     val classesOutputDir: File,

@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.kapt3.base
 
-import com.sun.tools.javac.comp.CompileStates.*
+import com.sun.source.util.Trees
+import com.sun.tools.javac.comp.CompileStates.CompileState
 import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.processing.AnnotationProcessingError
 import com.sun.tools.javac.processing.JavacFiler
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.base.kapt3.collectJavaSourceFiles
+import org.jetbrains.kotlin.kapt3.base.incremental.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.measureTimeMillisWithResult
@@ -27,10 +30,11 @@ import com.sun.tools.javac.util.List as JavacList
 
 fun KaptContext.doAnnotationProcessing(
     javaSourceFiles: List<File>,
-    processors: List<Processor>,
+    processors: List<IncrementalProcessor>,
     additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
 ) {
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
+
     val wrappedProcessors = processors.map { ProcessorWrapper(it) }
 
     val compilerAfterAP: JavaCompiler
@@ -42,7 +46,18 @@ fun KaptContext.doAnnotationProcessing(
             compiler.initProcessAnnotations(wrappedProcessors)
         }
 
+        if (logger.isVerbose) {
+            logger.info("Processing java sources with annotation processors: ${javaSourceFiles.joinToString()}")
+        }
         val parsedJavaFiles = parseJavaFiles(javaSourceFiles)
+
+        val listener = cacheManager?.let {
+            if (processors.any { it.kind == DeclaredProcType.NON_INCREMENTAL}) return@let null
+
+            val recordTypesListener = MentionedTypesTaskListener(cacheManager.javaCache, Trees.instance(processingEnvironment))
+            compiler.getTaskListeners().add(recordTypesListener)
+            recordTypesListener
+        }
 
         compilerAfterAP = try {
             javaLog.interceptorData.files = parsedJavaFiles.map { it.sourceFile to it }.toMap()
@@ -50,16 +65,22 @@ fun KaptContext.doAnnotationProcessing(
                 CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources)
             )
 
+            listener?.let { compiler.getTaskListeners().remove(it) }
+
+            val l = System.currentTimeMillis()
             if (isJava9OrLater()) {
                 val processAnnotationsMethod = compiler.javaClass.getMethod("processAnnotations", JavacList::class.java)
                 processAnnotationsMethod.invoke(compiler, analyzedFiles)
                 compiler
             } else {
-                compiler.processAnnotations(analyzedFiles)
+                val processAnnotations = compiler.processAnnotations(analyzedFiles)
+                processAnnotations
             }
         } catch (e: AnnotationProcessingError) {
             throw KaptBaseError(KaptBaseError.Kind.EXCEPTION, e.cause ?: e)
         }
+
+        cacheManager?.updateCache(processors)
 
         val log = compilerAfterAP.log
 

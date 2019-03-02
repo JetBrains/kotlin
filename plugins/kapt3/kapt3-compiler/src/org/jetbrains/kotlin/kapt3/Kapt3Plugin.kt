@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
@@ -95,6 +96,11 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             CLASS_OUTPUT_DIR_OPTION -> classesOutputDir = File(value)
             STUBS_OUTPUT_DIR_OPTION -> stubsOutputDir = File(value)
             INCREMENTAL_DATA_OUTPUT_DIR_OPTION -> incrementalDataOutputDir = File(value)
+
+            CHANGED_FILES -> changedFiles.addAll(value.split(File.pathSeparator).map { File(it) })
+            COMPILED_SOURCES_DIR -> compiledSources.addAll(value.split(File.pathSeparator).map { File(it) })
+            INCREMENTAL_CACHE -> incrementalCache = File(value)
+            CLASSPATH_FQ_NAMES_HISTORY -> classpathFqNamesHistory = File(value)
 
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> processingClasspath += File(value)
             ANNOTATION_PROCESSORS_OPTION -> processors.addAll(value.split(',').map { it.trim() }.filter { it.isNotEmpty() })

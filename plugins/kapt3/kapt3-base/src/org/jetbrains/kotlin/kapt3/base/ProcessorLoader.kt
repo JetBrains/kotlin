@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.kapt3.base
 
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
+import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
+import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
+import org.jetbrains.kotlin.kapt3.base.incremental.getIncrementalProcessorsFromClasspath
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.info
 import java.io.Closeable
@@ -17,7 +20,7 @@ import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
 
-class LoadedProcessors(val processors: List<Processor>, val classLoader: ClassLoader)
+class LoadedProcessors(val processors: List<IncrementalProcessor>, val classLoader: ClassLoader)
 
 open class ProcessorLoader(private val options: KaptOptions, private val logger: KaptLogger) : Closeable {
     private var annotationProcessingClassLoader: URLClassLoader? = null
@@ -48,7 +51,21 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
             logger.info { "Annotation processors: " + processors.joinToString { it::class.java.canonicalName } }
         }
 
-        return LoadedProcessors(processors, classLoader)
+        return LoadedProcessors(wrapInIncrementalProcessor(processors, classpath), classLoader)
+    }
+
+    private fun wrapInIncrementalProcessor(processors: List<Processor>, classpath: Iterable<File>): List<IncrementalProcessor> {
+        val processorNames = processors.map {it.javaClass.name}.toSet()
+
+        val processorsInfo: Map<String, DeclaredProcType> = getIncrementalProcessorsFromClasspath(processorNames, classpath)
+
+        val nonIncremental = processorNames.filter { !processorsInfo.containsKey(it) }
+        return if (nonIncremental.isNotEmpty()) {
+            logger.info("Incremental KAPT support is disabled. Processors that are not incremental: ${nonIncremental.joinToString()}.")
+            processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL) }
+        } else {
+            processors.map { IncrementalProcessor(it, processorsInfo.getValue(it.javaClass.name)) }
+        }
     }
 
     open fun doLoadProcessors(classLoader: URLClassLoader): List<Processor> {
