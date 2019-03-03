@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.extensions.*
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
+import java.net.URLClassLoader
 
 private fun <T> ProjectExtensionDescriptor<T>.registerExtensionIfRequired(project: MockProject, extension: T) {
     try {
@@ -35,29 +38,48 @@ private fun <T> ProjectExtensionDescriptor<T>.registerExtensionIfRequired(projec
 
 class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project))
-        CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
-        ScriptEvaluationExtension.registerExtensionIfRequired(project, JvmCliScriptEvaluationExtension())
-        ShellExtension.registerExtensionIfRequired(project, JvmCliReplShellExtension())
-        ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
-
-        val scriptDefinitionProvider = CliScriptDefinitionProvider()
-        project.registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
-        project.registerService(
-            ScriptDependenciesProvider::class.java,
-            CliScriptDependenciesProvider(project)
-        )
-        SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
-        ExtraImportsProviderExtension.registerExtension(project,
-                                                        ScriptExtraImportsProviderExtension()
-        )
-
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        if (messageCollector != null) {
+        withClassloadingProblemsReporting(messageCollector) {
+            CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project))
+            CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
+            ScriptEvaluationExtension.registerExtensionIfRequired(project, JvmCliScriptEvaluationExtension())
+            ShellExtension.registerExtensionIfRequired(project, JvmCliReplShellExtension())
+            ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
+
+            val scriptDefinitionProvider = CliScriptDefinitionProvider()
+            project.registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
             project.registerService(
-                ScriptReportSink::class.java,
-                CliScriptReportSink(messageCollector)
+                ScriptDependenciesProvider::class.java,
+                CliScriptDependenciesProvider(project)
             )
+            SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
+            ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
+
+            if (messageCollector != null) {
+                project.registerService(
+                    ScriptReportSink::class.java,
+                    CliScriptReportSink(messageCollector)
+                )
+            }
+        }
+    }
+}
+
+private inline fun withClassloadingProblemsReporting(messageCollector: MessageCollector?, body: () -> Unit) {
+    try {
+        body()
+        null
+    } catch (e: ClassNotFoundException) {
+        e
+    } catch (e: NoClassDefFoundError) {
+        e
+    }?.also { e ->
+        val classpath = (ScriptingCompilerConfigurationComponentRegistrar::class.java.classLoader as? URLClassLoader)?.urLs?.map { it.path }
+        val msg = "Error registering scripting services: $e\n  current classpath:\n    ${classpath?.joinToString("\n    ")}"
+        if (messageCollector != null) {
+            messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, msg)
+        } else {
+            System.err.println(msg)
         }
     }
 }
