@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SeveralSupertypesWi
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -452,7 +453,7 @@ object NullabilityChecker {
             }
 
     private fun TypeCheckerContext.hasPathByNotMarkedNullableNodes(start: SimpleType, end: TypeConstructor) =
-            anySupertype(start, { !it.isMarkedNullable && it.constructor == end }) {
+            anySupertype(start, { it.isNothing() || (!it.isMarkedNullable && it.constructor == end) }) {
                 if (it.isMarkedNullable) SupertypesPolicy.None else SupertypesPolicy.LowerIfFlexible
             }
 
