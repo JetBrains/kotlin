@@ -22,7 +22,7 @@ dependencies {
     
     compileOnly gradleApi()
 
-    compileOnly("kotlin.build.custom.deps:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
+    compileOnly("kotlin.build:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
         artifact {
             name = 'intellij-core'
             type = 'jar'

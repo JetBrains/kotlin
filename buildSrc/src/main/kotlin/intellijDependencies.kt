@@ -26,7 +26,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
-private fun Project.intellijRepoDir() = File("${project.rootDir.absoluteFile}/buildSrc/prepare-deps/intellij-sdk/build/repo")
+private fun Project.intellijRepoDir() = File("${project.rootDir.absoluteFile}/dependencies/repo")
 
 fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository = ivy {
     val baseDir = project.intellijRepoDir()
@@ -54,7 +54,7 @@ fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository =
     }
 }
 
-fun Project.intellijDep(module: String = "intellij") = "kotlin.build.custom.deps:$module:${rootProject.extra["versions.intellijSdk"]}"
+fun Project.intellijDep(module: String = "intellij") = "kotlin.build:$module:${rootProject.extra["versions.intellijSdk"]}"
 
 fun Project.intellijCoreDep() = intellijDep("intellij-core")
 
@@ -66,7 +66,7 @@ fun Project.intellijCoreDep() = intellijDep("intellij-core")
  * `@NonNull`, `@Nullabe` from `idea/annotations.jar` has `TYPE` target which leads to different types treatment in Kotlin compiler.
  * On the other hand, `idea/annotations.jar` contains org/jetbrains/annotations/Async annations which is required for IDEA debugger.
  *
- * So, we are excluding `annotaions.jar` from all other `kotlin.build.custom.deps` and using this one for runtime only
+ * So, we are excluding `annotaions.jar` from all other `kotlin.build` and using this one for runtime only
  * to avoid accidentally including `annotations.jar` by calling `intellijDep()`.
  */
 fun Project.intellijRuntimeAnnotations() = intellijDep("intellij-runtime-annotations")
@@ -97,7 +97,7 @@ fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = n
 // Workaround. Top-level Kotlin function in a default package can't be called from a non-default package
 object IntellijRootUtils {
     fun getRepositoryRootDir(project: Project): File = with (project.rootProject) {
-        return File(intellijRepoDir(), "kotlin.build.custom.deps/${extra["versions.intellijSdk"]}")
+        return File(intellijRepoDir(), "kotlin.build/${extra["versions.intellijSdk"]}")
     }
 
     fun getIntellijRootDir(project: Project): File = with (project.rootProject) {
@@ -119,7 +119,7 @@ fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
 
 fun Project.intellijUltimateRootDir() =
         if (isIntellijUltimateSdkAvailable())
-            File(intellijRepoDir(), "kotlin.build.custom.deps/${rootProject.extra["versions.intellijSdk"]}/intellijUltimate")
+            File(intellijRepoDir(), "kotlin.build/${rootProject.extra["versions.intellijSdk"]}/intellijUltimate")
         else
             throw GradleException("intellij ultimate SDK is not available")
 

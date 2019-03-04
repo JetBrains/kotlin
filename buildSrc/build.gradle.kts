@@ -73,7 +73,7 @@ else
 
 extra["versions.androidDxSources"] = "5.0.0_r2"
 
-extra["customDepsOrg"] = "kotlin.build.custom.deps"
+extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
     if (cacheRedirectorEnabled) {

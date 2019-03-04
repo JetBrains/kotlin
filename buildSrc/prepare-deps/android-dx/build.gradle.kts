@@ -32,7 +32,7 @@ repositories {
     }
 }
 
-val customDepsRepoDir = File(buildDir, "repo")
+val customDepsRepoDir = File(rootProject.rootDir, "../dependencies/repo")
 val customDepsOrg: String by rootProject.extra
 val dxModuleName = "android-dx"
 val dxRevision = buildToolsVersion
