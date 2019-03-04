@@ -46,7 +46,7 @@ class MakeConstructorParameterPropertyFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        element.addBefore(kotlinValVar.createKeyword(KtPsiFactory(project))!!, element.firstChild)
+        element.addBefore(kotlinValVar.createKeyword(KtPsiFactory(project))!!, element.nameIdentifier)
         element.addModifier(KtTokens.PRIVATE_KEYWORD)
         element.visibilityModifier()?.let { private ->
             editor?.apply {

@@ -7684,6 +7684,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testVar() throws Exception {
             runTest("idea/testData/quickfix/makeConstructorParameterProperty/var.kt");
         }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("idea/testData/quickfix/makeConstructorParameterProperty/vararg.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/makeTypeParameterReified")
