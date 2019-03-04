@@ -98,11 +98,11 @@ abstract class AbstractKotlinTarget(
     private fun createUsageContexts(
         producingCompilation: KotlinCompilation<*>
     ): Set<DefaultKotlinUsageContext> {
-        // Here, `JAVA_API` and `JAVA_RUNTIME_JARS` are used intentionally as Gradle needs this for
+        // Here, the Java Usage values are used intentionally as Gradle needs this for
         // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
         // These Java usages should not be replaced with the custom Kotlin usages.
         return listOfNotNull(
-            JAVA_API to apiElementsConfigurationName,
+            javaApiUsageForMavenScoping() to apiElementsConfigurationName,
             (JAVA_RUNTIME_JARS to runtimeElementsConfigurationName).takeIf { producingCompilation is KotlinCompilationToRunnableFiles }
         ).mapTo(mutableSetOf()) { (usageName, dependenciesConfigurationName) ->
             DefaultKotlinUsageContext(
@@ -153,6 +153,13 @@ abstract class AbstractKotlinTarget(
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
     lowerCamelCaseName(targetName, simpleName)
+
+internal fun javaApiUsageForMavenScoping() =
+    if (isGradleVersionAtLeast(5, 3)) {
+        "java-api-jars"
+    } else {
+        JAVA_API
+    }
 
 open class KotlinOnlyTarget<T : KotlinCompilation<*>>(
     project: Project,

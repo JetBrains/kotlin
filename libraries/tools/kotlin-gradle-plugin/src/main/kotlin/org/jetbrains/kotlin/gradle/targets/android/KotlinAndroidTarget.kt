@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.attributes.Usage.JAVA_API
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
@@ -187,11 +186,11 @@ open class KotlinAndroidTarget(
         val apiElementsConfigurationName = lowerCamelCaseName(variantName, "apiElements")
         val runtimeElementsConfigurationName = lowerCamelCaseName(variantName, "runtimeElements")
 
-        // Here, `JAVA_API` and `JAVA_RUNTIME_JARS` are used intentionally as Gradle needs this for
+        // Here, the Java Usage values are used intentionally as Gradle needs this for
         // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
         // These Java usages should not be replaced with the custom Kotlin usages.
         return listOf(
-            apiElementsConfigurationName to JAVA_API,
+            apiElementsConfigurationName to javaApiUsageForMavenScoping(),
             runtimeElementsConfigurationName to JAVA_RUNTIME_JARS
         ).mapTo(mutableSetOf()) { (dependencyConfigurationName, usageName) ->
             DefaultKotlinUsageContext(

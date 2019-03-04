@@ -37,7 +37,8 @@ object KotlinUsages {
 
     internal fun producerApiUsage(target: KotlinTarget) = target.project.usageByName(
         when (target.platformType) {
-            in jvmPlatformTypes -> JAVA_API
+            in jvmPlatformTypes ->
+                if (isGradleVersionAtLeast(5, 3)) "java-api-jars" else JAVA_API
             else -> KOTLIN_API
         }
     )
@@ -54,9 +55,10 @@ object KotlinUsages {
         // is 'java-runtime-jars'. This rule tells Gradle that Kotlin consumers can consume plain old JARs:
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
             when {
-                consumerValue?.name == KOTLIN_API && producerValue?.name == JAVA_API -> compatible()
-                consumerValue?.name in values &&
-                        producerValue?.name.let { it == JAVA_RUNTIME || it == JAVA_RUNTIME_JARS } -> compatible()
+                consumerValue?.name == KOTLIN_API && producerValue?.name.let { it == JAVA_API || it == "java-api-jars" } ->
+                    compatible()
+                consumerValue?.name in values && producerValue?.name.let { it == JAVA_RUNTIME || it == JAVA_RUNTIME_JARS } ->
+                    compatible()
             }
         }
     }
@@ -73,15 +75,16 @@ object KotlinUsages {
                 chooseCandidateByName(KOTLIN_RUNTIME)
             }
 
+            val javaApiUsages = setOf(JAVA_API, "java-api-jars")
             val javaRuntimeUsages = setOf(JAVA_RUNTIME_JARS, JAVA_RUNTIME)
 
-            if (JAVA_API in candidateNames &&
+            if (javaApiUsages.any { it in candidateNames } &&
                 javaRuntimeUsages.any { it in candidateNames } &&
                 values.none { it in candidateNames }
             ) {
                 when (consumerValue?.name) {
-                    KOTLIN_API, JAVA_API ->
-                        chooseCandidateByName(JAVA_API)
+                    KOTLIN_API, in javaApiUsages ->
+                        chooseCandidateByName(javaApiUsages.first { it in candidateNames })
                     null, KOTLIN_RUNTIME, in javaRuntimeUsages ->
                         chooseCandidateByName(javaRuntimeUsages.first { it in candidateNames })
                 }
