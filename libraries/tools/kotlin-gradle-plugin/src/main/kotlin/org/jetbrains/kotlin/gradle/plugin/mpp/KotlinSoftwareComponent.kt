@@ -16,6 +16,7 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 
 open class KotlinSoftwareComponent(
@@ -153,7 +154,7 @@ internal fun rewriteDependenciesToActualModuleDependencies(
             when (dependency) {
                 is ProjectDependency -> {
                     val dependencyProject = dependency.dependencyProject
-                    val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtension
+                    val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtensionOrNull
                         ?: return@associate dependency to dependency
 
                     val resolved = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
