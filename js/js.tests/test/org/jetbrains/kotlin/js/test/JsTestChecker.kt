@@ -9,6 +9,7 @@ import jdk.nashorn.internal.runtime.ScriptRuntime
 import org.jetbrains.kotlin.js.test.interop.GlobalRuntimeContext
 import org.jetbrains.kotlin.js.test.interop.ScriptEngine
 import org.jetbrains.kotlin.js.test.interop.ScriptEngineNashorn
+import org.jetbrains.kotlin.js.test.interop.ScriptEngineV8
 import org.junit.Assert
 
 fun createScriptEngine(): ScriptEngine {
@@ -36,9 +37,36 @@ fun ScriptEngine.runTestFunction(
     }
 
     val testPackage = eval<Any>(script)
-    return callMethod(testPackage, testFunctionName)
+    return callMethod<String?>(testPackage, testFunctionName).also {
+        releaseObject(testPackage)
+    }
 }
 
+abstract class AbstractJsTestChecker {
+    fun check(
+        files: List<String>,
+        testModuleName: String?,
+        testPackageName: String?,
+        testFunctionName: String,
+        expectedResult: String,
+        withModuleSystem: Boolean
+    ) {
+        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, withModuleSystem)
+        Assert.assertEquals(expectedResult, actualResult)
+    }
+
+    private fun run(
+        files: List<String>,
+        testModuleName: String?,
+        testPackageName: String?,
+        testFunctionName: String,
+        withModuleSystem: Boolean
+    ) = run(files) {
+        runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem)
+    }
+
+    protected abstract fun run(files: List<String>, f: ScriptEngine.() -> Any?): Any?
+}
 
 fun ScriptEngine.runAndRestoreContext(
     globalObject: GlobalRuntimeContext = getGlobalContext(),
@@ -54,7 +82,7 @@ fun ScriptEngine.runAndRestoreContext(
     }
 }
 
-abstract class AbstractNashornJsTestChecker {
+abstract class AbstractNashornJsTestChecker: AbstractJsTestChecker() {
 
     private var engineUsageCnt = 0
 
@@ -69,35 +97,13 @@ abstract class AbstractNashornJsTestChecker {
             originalState = globalObject?.toMap()
         }
 
-    fun check(
-        files: List<String>,
-        testModuleName: String?,
-        testPackageName: String?,
-        testFunctionName: String,
-        expectedResult: String,
-        withModuleSystem: Boolean
-    ) {
-        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, withModuleSystem)
-        Assert.assertEquals(expectedResult, actualResult)
-    }
-
     fun run(files: List<String>) {
         run(files) { null }
     }
 
-    private fun run(
-        files: List<String>,
-        testModuleName: String?,
-        testPackageName: String?,
-        testFunctionName: String,
-        withModuleSystem: Boolean
-    ) = run(files) {
-        runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem)
-    }
-
     protected open fun beforeRun() {}
 
-    private fun run(
+    override fun run(
         files: List<String>,
         f: ScriptEngine.() -> Any?
     ): Any? {
@@ -157,5 +163,19 @@ class NashornIrJsTestChecker : AbstractNashornJsTestChecker() {
         ).forEach(engine::loadFile)
 
         return engine
+    }
+}
+
+object V8IrJsTestChecker : AbstractJsTestChecker() {
+    override fun run(files: List<String>, f: ScriptEngine.() -> Any?): Any? {
+
+        val v8 = ScriptEngineV8()
+
+        return try {
+            files.forEach { v8.loadFile(it) }
+            v8.f()
+        } finally {
+            v8.release()
+        }
     }
 }

@@ -11,4 +11,6 @@ interface ScriptEngine {
     fun evalVoid(script: String)
     fun <T> callMethod(obj: Any, name: String, vararg args: Any?): T
     fun loadFile(path: String)
+    fun release()
+    fun <T> releaseObject(t: T)
 }

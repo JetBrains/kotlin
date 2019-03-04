@@ -33,4 +33,7 @@ class ScriptEngineNashorn : ScriptEngine {
     override fun loadFile(path: String) {
         evalVoid("load('${path.replace('\\', '/')}');")
     }
+
+    override fun release() {}
+    override fun <T> releaseObject(t: T) {}
 }

@@ -131,7 +131,7 @@ abstract class BasicIrBoxTest(
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files
 
-        NashornIrJsTestChecker().check(jsFiles, testModuleName, null, testFunction, expectedResult, withModuleSystem)
+        V8IrJsTestChecker.check(jsFiles, testModuleName, null, testFunction, expectedResult, withModuleSystem)
     }
 }
 
