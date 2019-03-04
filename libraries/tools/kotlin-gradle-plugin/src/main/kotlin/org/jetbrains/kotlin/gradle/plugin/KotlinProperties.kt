@@ -82,6 +82,9 @@ internal class PropertiesProvider(private val project: Project) {
     val keepMppDependenciesIntactInPoms: Boolean?
         get() = booleanProperty("kotlin.mpp.keepMppDependenciesIntactInPoms")
 
+    val ignorePluginLoadedInMultipleProjects: Boolean?
+        get() = booleanProperty("kotlin.pluginLoadedInMultipleProjects.ignore")
+
     /**
      * Enables parallel tasks execution within a project with Workers API.
      * Does not enable using actual worker proccesses

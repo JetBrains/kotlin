@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
+import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
@@ -821,6 +823,72 @@ class KotlinGradleIT : BaseGradleIT() {
         build("jvm-app:build") {
             assertSuccessful()
             assertTasksExecuted(":jvm-app:compileKotlin")
+        }
+    }
+
+    @Test
+    fun testDetectingDifferentClassLoaders() = with(Project("kt-27059-pom-rewriting", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+
+        val originalRootBuildScript = gradleBuildScript().readText()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("publish", "-PmppProjectDependency=true") {
+            assertSuccessful()
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
+        }
+
+        // Specify the plugin versions in the subprojects with different plugin sets – this will make Gradle use separate class loaders
+        gradleBuildScript().modify {
+            originalRootBuildScript.checkedReplace("id \"org.jetbrains.kotlin.multiplatform\"", "//")
+        }
+        gradleBuildScript("mpp-lib").modify {
+            it.checkedReplace(
+                "id \"org.jetbrains.kotlin.multiplatform\"",
+                "id \"org.jetbrains.kotlin.multiplatform\" version \"<pluginMarkerVersion>\""
+            ).let(::transformBuildScriptWithPluginsDsl)
+        }
+        gradleBuildScript("jvm-app").modify {
+            it.checkedReplace(
+                "id \"org.jetbrains.kotlin.jvm\"",
+                "id \"org.jetbrains.kotlin.jvm\" version \"<pluginMarkerVersion>\""
+            ).let(::transformBuildScriptWithPluginsDsl)
+        }
+        gradleBuildScript("js-app").modify {
+            it.checkedReplace(
+                "id \"kotlin2js\"",
+                "id \"kotlin2js\" version \"<pluginMarkerVersion>\""
+            ).let(::transformBuildScriptWithPluginsDsl)
+        }
+
+        // Also include another project via a composite build:
+        transformProjectWithPluginsDsl("allopenPluginsDsl", directoryPrefix = "pluginsDsl").let { other ->
+            val result = other.projectName
+            other.setupWorkingDir()
+            other.projectDir.copyRecursively(projectDir.resolve(result))
+            gradleSettingsScript().appendText("\nincludeBuild(\"${result}\")")
+            gradleBuildScript().appendText(
+                "\ntasks.create(\"publish\").dependsOn(gradle.includedBuild(\"${result}\").task(\":assemble\"))"
+            )
+            result
+        }
+
+        build("publish", "-PmppProjectDependency=true") {
+            assertSuccessful()
+            assertContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+
+            val specificProjectsReported = Regex("$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING((?:'.*'(?:, )?)+)")
+                .find(output)!!.groupValues[1].split(", ").map { it.removeSurrounding("'") }.toSet()
+
+            assertEquals(setOf(":mpp-lib", ":jvm-app", ":js-app"), specificProjectsReported)
+        }
+
+        // Test the flag that turns off the warnings
+        build("publish", "-PmppProjectDependency=true", "-Pkotlin.pluginLoadedInMultipleProjects.ignore=true") {
+            assertSuccessful()
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
         }
     }
 }

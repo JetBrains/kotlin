@@ -67,6 +67,8 @@ abstract class KotlinBasePluginWrapper(
         System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
         val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project.gradle)
 
+        kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
+
         project.createKotlinExtension(projectExtensionClass).apply {
             fun kotlinSourceSetContainer(factory: NamedDomainObjectFactory<KotlinSourceSet>) =
                 project.container(KotlinSourceSet::class.java, factory)
