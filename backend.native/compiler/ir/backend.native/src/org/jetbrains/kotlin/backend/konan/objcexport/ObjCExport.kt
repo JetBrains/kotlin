@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
+import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import org.jetbrains.kotlin.backend.konan.isNativeBinary
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -32,36 +30,33 @@ internal class ObjCExport(val codegen: CodeGenerator) {
 
         if (!context.config.produce.isNativeBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
-        val objCCodeGenerator: ObjCExportCodeGenerator
-        val generatedClasses: Set<ClassDescriptor>
-        val topLevelDeclarations: Map<SourceFile, List<CallableMemberDescriptor>>
+        val produceFramework = context.config.produce == CompilerOutputKind.FRAMEWORK
 
-        if (context.config.produce == CompilerOutputKind.FRAMEWORK) {
-            val headerGenerator = ObjCExportHeaderGeneratorImpl(context)
+        val mapper = ObjCExportMapper()
+        val exportedDependencies = if (produceFramework) context.getExportedDependencies() else emptyList()
+        val moduleDescriptors = listOf(context.moduleDescriptor) + exportedDependencies
+        val namer = ObjCExportNamerImpl(
+                moduleDescriptors.toSet(),
+                context.moduleDescriptor.builtIns,
+                mapper,
+                context.moduleDescriptor.namePrefix,
+                local = false
+        )
+
+        val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
+
+        if (produceFramework) {
+            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer)
             produceFrameworkSpecific(headerGenerator)
 
-            generatedClasses = headerGenerator.generatedClasses
-            topLevelDeclarations = headerGenerator.topLevel
-            objCCodeGenerator = ObjCExportCodeGenerator(codegen, headerGenerator.namer, headerGenerator.mapper)
-        } else {
-            // TODO: refactor ObjCExport* to handle this case on a general basis.
-            val mapper = object : ObjCExportMapper() {
-                override fun getCategoryMembersFor(descriptor: ClassDescriptor): List<CallableMemberDescriptor> =
-                        emptyList()
-
-                override fun isSpecialMapped(descriptor: ClassDescriptor): Boolean =
-                        error("shouldn't reach here")
-
-            }
-
-            val namer = ObjCExportNamerImpl(emptySet(), context.builtIns, mapper, context.moduleDescriptor.namePrefix)
-            objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
-
-            generatedClasses = emptySet()
-            topLevelDeclarations = emptyMap()
+            objCCodeGenerator.generate(
+                    generatedClasses = headerGenerator.generatedClasses,
+                    categoryMembers = headerGenerator.extensions,
+                    topLevel = headerGenerator.topLevel
+            )
         }
 
-        objCCodeGenerator.emitRtti(generatedClasses = generatedClasses, topLevel = topLevelDeclarations)
+        objCCodeGenerator.emitRtti()
     }
 
     private fun produceFrameworkSpecific(headerGenerator: ObjCExportHeaderGenerator) {

@@ -33,7 +33,7 @@ internal fun TypeBridge.makeNothing() = when (this) {
 
 internal class ObjCExportCodeGenerator(
         codegen: CodeGenerator,
-        val namer: ObjCExportNamerImpl,
+        val namer: ObjCExportNamer,
         val mapper: ObjCExportMapper
 ) : ObjCCodeGenerator(codegen) {
 
@@ -155,14 +155,15 @@ internal class ObjCExportCodeGenerator(
         return callFromBridge(conversion.owner.llvmFunction, listOf(value), resultLifetime)
     }
 
-    internal fun emitRtti(
+    private val objCTypeAdapters = mutableListOf<ObjCTypeAdapter>()
+
+    internal fun generate(
             generatedClasses: Collection<ClassDescriptor>,
+            categoryMembers: Map<ClassDescriptor, List<CallableMemberDescriptor>>,
             topLevel: Map<SourceFile, List<CallableMemberDescriptor>>
     ) {
-        val objCTypeAdapters = mutableListOf<ObjCTypeAdapter>()
-
         generatedClasses.forEach {
-            objCTypeAdapters += createTypeAdapter(it)
+            objCTypeAdapters += createTypeAdapter(it, categoryMembers[it].orEmpty())
 
             if (!it.isInterface) {
                 val className = namer.getClassOrProtocolName(it).binaryName
@@ -180,7 +181,9 @@ internal class ObjCExportCodeGenerator(
             val name = namer.getFileClassName(sourceFile).binaryName
             dataGenerator.emitEmptyClass(name, namer.kotlinAnyName.binaryName)
         }
+    }
 
+    internal fun emitRtti() {
         NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
             dataGenerator.exportClass("Kotlin${it.shortClassName}")
         }
@@ -189,7 +192,7 @@ internal class ObjCExportCodeGenerator(
 
         emitSpecialClassesConvertions()
 
-        objCTypeAdapters += createTypeAdapter(context.builtIns.any)
+        objCTypeAdapters += createTypeAdapter(context.builtIns.any, categoryMembers = emptyList())
 
         val placedClassAdapters = mutableMapOf<String, ConstPointer>()
         val placedInterfaceAdapters = mutableMapOf<String, ConstPointer>()
@@ -397,7 +400,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
 private fun ObjCExportCodeGenerator.emitFunctionConverters() {
     val generator = BlockAdapterToFunctionGenerator(this)
 
-    (0 .. mapper.maxFunctionTypeParameterCount).forEach { numberOfParameters ->
+    (0 .. ObjCExportMapper.maxFunctionTypeParameterCount).forEach { numberOfParameters ->
         val converter = generator.run { generateConvertFunctionToBlock(numberOfParameters) }
         setObjCExportTypeInfo(context.builtIns.getFunction(numberOfParameters), constPointer(converter))
     }
@@ -421,7 +424,7 @@ private fun ObjCExportCodeGenerator.emitKotlinFunctionAdaptersToBlock() {
     val ptr = staticData.placeGlobalArray(
             "",
             pointerType(runtime.typeInfoType),
-            (0 .. mapper.maxFunctionTypeParameterCount).map {
+            (0 .. ObjCExportMapper.maxFunctionTypeParameterCount).map {
                 generateKotlinFunctionAdapterToBlock(it)
             }
     ).pointer.getElementPtr(0)
@@ -866,7 +869,8 @@ private fun ObjCExportCodeGenerator.createTypeAdapterForFileClass(
 }
 
 private fun ObjCExportCodeGenerator.createTypeAdapter(
-        descriptor: ClassDescriptor
+        descriptor: ClassDescriptor,
+        categoryMembers: List<CallableMemberDescriptor>
 ): ObjCExportCodeGenerator.ObjCTypeAdapter {
     val adapters = mutableListOf<ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter>()
     val classAdapters = mutableListOf<ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter>()
@@ -883,7 +887,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         }
     }
 
-    val categoryMethods = mapper.getCategoryMembersFor(descriptor).toMethods()
+    val categoryMethods = categoryMembers.toMethods()
 
     val exposedMethods = descriptor.contributedMethods.filter { mapper.shouldBeExposed(it) } + categoryMethods
 

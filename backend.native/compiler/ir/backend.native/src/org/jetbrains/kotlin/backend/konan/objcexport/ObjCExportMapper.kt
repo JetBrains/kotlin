@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
@@ -21,10 +22,19 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal abstract class ObjCExportMapper {
-    abstract fun getCategoryMembersFor(descriptor: ClassDescriptor): List<CallableMemberDescriptor>
-    val maxFunctionTypeParameterCount get() = KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
-    abstract fun isSpecialMapped(descriptor: ClassDescriptor): Boolean
+internal class ObjCExportMapper {
+    companion object {
+        val maxFunctionTypeParameterCount get() = KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
+    }
+
+    val customTypeMappers: Map<ClassId, CustomTypeMapper> get() = CustomTypeMappers.byClassId
+    val hiddenTypes: Set<ClassId> get() = CustomTypeMappers.hiddenTypes
+
+    fun isSpecialMapped(descriptor: ClassDescriptor): Boolean {
+        // TODO: this method duplicates some of the [ObjCExportTranslatorImpl.mapReferenceType] logic.
+        return KotlinBuiltIns.isAny(descriptor) ||
+                descriptor.getAllSuperClassifiers().any { it.classId in customTypeMappers }
+    }
 
     private val methodBridgeCache = mutableMapOf<FunctionDescriptor, MethodBridge>()
 

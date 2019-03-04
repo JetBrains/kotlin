@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -14,10 +15,10 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
-
 
 interface ObjCExportNamer {
     data class ClassOrProtocolName(val swiftName: String, val objCName: String, val binaryName: String = objCName)
@@ -29,32 +30,37 @@ interface ObjCExportNamer {
     fun getPropertyName(property: PropertyDescriptor): String
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySelector(descriptor: ClassDescriptor): String
+
+    fun numberBoxName(classId: ClassId): ClassOrProtocolName
+
+    val kotlinAnyName: ClassOrProtocolName
+    val mutableSetName: ClassOrProtocolName
+    val mutableMapName: ClassOrProtocolName
+    val kotlinNumberName: ClassOrProtocolName
 }
 
 fun createNamer(moduleDescriptor: ModuleDescriptor,
                 topLevelNamePrefix: String = moduleDescriptor.namePrefix): ObjCExportNamer =
         createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix)
 
-fun createNamer(moduleDescriptor: ModuleDescriptor,
-                exportedDependencies: List<ModuleDescriptor>,
-                topLevelNamePrefix: String = moduleDescriptor.namePrefix): ObjCExportNamer {
-    val generator = object : ObjCExportHeaderGenerator(
-            moduleDescriptor,
-            exportedDependencies,
-            moduleDescriptor.builtIns,
-            topLevelNamePrefix
-    ) {
-        override fun reportWarning(text: String) {}
-        override fun reportWarning(method: FunctionDescriptor, text: String) {}
-    }
-    return generator.namer
-}
+fun createNamer(
+        moduleDescriptor: ModuleDescriptor,
+        exportedDependencies: List<ModuleDescriptor>,
+        topLevelNamePrefix: String = moduleDescriptor.namePrefix
+): ObjCExportNamer = ObjCExportNamerImpl(
+        (exportedDependencies + moduleDescriptor).toSet(),
+        moduleDescriptor.builtIns,
+        ObjCExportMapper(),
+        topLevelNamePrefix,
+        local = true
+)
 
 internal class ObjCExportNamerImpl(
-        val moduleDescriptors: Set<ModuleDescriptor>,
+        private val moduleDescriptors: Set<ModuleDescriptor>,
         builtIns: KotlinBuiltIns,
-        val mapper: ObjCExportMapper,
-        private val topLevelNamePrefix: String
+        private val mapper: ObjCExportMapper,
+        private val topLevelNamePrefix: String,
+        private val local: Boolean
 ) : ObjCExportNamer {
 
     private fun String.toUnmangledClassOrProtocolName(): ObjCExportNamer.ClassOrProtocolName =
@@ -66,15 +72,15 @@ internal class ObjCExportNamerImpl(
             binaryName = "Kotlin$this"
     )
 
-    val kotlinAnyName = "KotlinBase".toUnmangledClassOrProtocolName()
+    override val kotlinAnyName = "KotlinBase".toUnmangledClassOrProtocolName()
 
-    val mutableSetName = "MutableSet".toSpecialStandardClassOrProtocolName()
-    val mutableMapName = "MutableDictionary".toSpecialStandardClassOrProtocolName()
+    override val mutableSetName = "MutableSet".toSpecialStandardClassOrProtocolName()
+    override val mutableMapName = "MutableDictionary".toSpecialStandardClassOrProtocolName()
 
-    fun numberBoxName(classId: ClassId): ObjCExportNamer.ClassOrProtocolName =
+    override fun numberBoxName(classId: ClassId): ObjCExportNamer.ClassOrProtocolName =
             classId.shortClassName.asString().toSpecialStandardClassOrProtocolName()
 
-    val kotlinNumberName = "Number".toSpecialStandardClassOrProtocolName()
+    override val kotlinNumberName = "Number".toSpecialStandardClassOrProtocolName()
 
     private val methodSelectors = object : Mapping<FunctionDescriptor, String>() {
 
@@ -204,8 +210,10 @@ internal class ObjCExportNamerImpl(
                 } else {
                     append(descriptor.name.asString().capitalize())
                 }
-            } else {
+            } else if (containingDeclaration is PackageFragmentDescriptor) {
                 appendTopLevelClassBaseName(descriptor)
+            } else {
+                error("unexpected class parent: $containingDeclaration")
             }
         }.mangledBySuffixUnderscores()
     }
@@ -219,8 +227,10 @@ internal class ObjCExportNamerImpl(
                     append(getClassOrProtocolObjCName(containingDeclaration))
                             .append(descriptor.name.asString().capitalize())
 
-                } else {
+                } else if (containingDeclaration is PackageFragmentDescriptor) {
                     append(topLevelNamePrefix).appendTopLevelClassBaseName(descriptor)
+                } else {
+                    error("unexpected class parent: $containingDeclaration")
                 }
             }.mangledBySuffixUnderscores()
         }
@@ -430,21 +440,22 @@ internal class ObjCExportNamerImpl(
             error("name candidates run out")
         }
 
-        fun getIfAssigned(element: T): N? = elementToName[element]
+        private fun getIfAssigned(element: T): N? = elementToName[element]
 
-        fun tryAssign(element: T, name: N): Boolean {
+        private fun tryAssign(element: T, name: N): Boolean {
             if (element in elementToName) error(element)
 
             if (reserved(name)) return false
 
-            val elements = nameToElements.getOrPut(name) { mutableListOf() }
-            if (elements.any { conflict(element, it) }) {
+            if (nameToElements[name].orEmpty().any { conflict(element, it) }) {
                 return false
             }
 
-            elements += element
+            if (!local) {
+                nameToElements.getOrPut(name) { mutableListOf() } += element
 
-            elementToName[element] = name
+                elementToName[element] = name
+            }
 
             return true
         }
