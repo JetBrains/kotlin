@@ -18,23 +18,19 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
+import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.jetbrains.kotlin.compilerRunner.DELETED_SESSION_FILE_PREFIX
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.gradle.report.KotlinBuildReporter
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.report.configureBuildReporter
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
-import java.io.File
 import java.lang.management.ManagementFactory
-import java.text.SimpleDateFormat
-import java.util.*
 
 internal class KotlinGradleBuildServices private constructor(
     private val gradle: Gradle
@@ -137,5 +133,58 @@ internal class KotlinGradleBuildServices private constructor(
 
     private fun getGcCount(): Long =
         ManagementFactory.getGarbageCollectorMXBeans().sumByLong { Math.max(0, it.collectionCount) }
+
+    private var loadedInProjectPath: String? = null
+
+    @Synchronized
+    internal fun detectKotlinPluginLoadedInMultipleProjects(project: Project, kotlinPluginVersion: String) {
+        val projectPath = project.path
+
+        val loadedInProjectsPropertyName = "kotlin.plugin.loaded.in.projects.${kotlinPluginVersion}"
+
+        if (loadedInProjectPath == null) {
+            loadedInProjectPath = projectPath
+
+            val ext = project.rootProject.extensions.getByType(ExtraPropertiesExtension::class.java)
+
+            if (!ext.has(loadedInProjectsPropertyName)) {
+                ext.set(loadedInProjectsPropertyName, projectPath)
+
+                gradle.taskGraph.whenReady {
+                    val loadedInProjects = (ext.get(loadedInProjectsPropertyName) as String).split(";")
+                    if (loadedInProjects.size > 1) {
+                        if (PropertiesProvider(project).ignorePluginLoadedInMultipleProjects != true) {
+                            project.logger.warn(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+                            project.logger.warn(
+                                MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING + loadedInProjects.joinToString(limit = 4) { "'$it'" }
+                            )
+                        }
+                        project.logger.info(
+                            "$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_INFO: " +
+                                    loadedInProjects.joinToString { "'$it'" }
+                        )
+                    }
+                }
+            } else {
+                ext.set(loadedInProjectsPropertyName, (ext.get(loadedInProjectsPropertyName) as String) + ";" + loadedInProjectPath)
+            }
+        }
+    }
 }
 
+const val MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING: String =
+    "\nThe Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may break the build. \n" +
+
+            "This might happen in subprojects that apply the Kotlin plugins with the Gradle 'plugins { ... }' DSL if they specify " +
+            "explicit versions, even if the versions are equal.\n" +
+
+            "Please add the Kotlin plugin to the common parent project or the root project, then remove the versions in the subprojects.\n" +
+
+            "If the parent project does not need the plugin, add 'apply false' to the plugin line.\n" +
+
+            "See: https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl"
+
+const val MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING: String =
+    "The Kotlin plugin was loaded in the following projects: "
+
+const val MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_INFO: String = "The full list of projects that loaded the Kotlin plugin is: "
