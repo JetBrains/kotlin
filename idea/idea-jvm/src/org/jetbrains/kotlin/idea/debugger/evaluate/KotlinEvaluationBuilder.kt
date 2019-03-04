@@ -288,7 +288,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val mainClassType = context.loadClassType(Type.getObjectType(GENERATED_CLASS_NAME), classLoader) as? ClassType
                     ?: error("Can not find class \"$GENERATED_CLASS_NAME\"")
                 val mainMethod = mainClassType.methods().single { it.name() == GENERATED_FUNCTION_NAME }
-                val returnValue = mainClassType.invokeMethod(context.thread, mainMethod, args, context.invokePolicy)
+                val returnValue = context.debugProcess.invokeMethod(context.evaluationContext, mainClassType, mainMethod, args)
                 EvaluatorValueConverter(context).unref(returnValue)
             }
         } catch (e: Throwable) {

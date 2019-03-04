@@ -408,7 +408,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
             .methodsByName("getContext", "()Lkotlin/coroutines/CoroutineContext;").firstOrNull()
             ?: return null
 
-        return continuation.invokeMethod(context.thread, getContextMethod, emptyList(), context.invokePolicy) as? ObjectReference
+        return context.debugProcess.invokeMethod(context.evaluationContext, continuation, getContextMethod, emptyList()) as? ObjectReference
     }
 
     private fun findCapturedVariableInReceiver(variables: List<LocalVariableProxyImpl>, kind: VariableKind): Result? {
@@ -482,7 +482,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
             .methodsByName("getValue", "()Ljava/lang/Object;").firstOrNull()
             ?: return rawValue
 
-        return delegateValue.invokeMethod(context.thread, getValueMethod, emptyList(), context.invokePolicy)
+        return context.debugProcess.invokeMethod(context.evaluationContext, delegateValue, getValueMethod, emptyList())
     }
 
     private fun isCapturedReceiverFieldName(name: String): Boolean {
