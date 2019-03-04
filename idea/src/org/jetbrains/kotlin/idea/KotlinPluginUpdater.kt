@@ -136,7 +136,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     private fun updateCheck(callback: (PluginUpdateStatus) -> Boolean) {
         var updateStatus: PluginUpdateStatus
-        if (KotlinPluginUtil.isSnapshotVersion()) {
+        if (KotlinPluginUtil.isSnapshotVersion() || KotlinPluginUtil.isPatched()) {
             updateStatus = PluginUpdateStatus.LatestVersionInstalled
         } else {
             try {

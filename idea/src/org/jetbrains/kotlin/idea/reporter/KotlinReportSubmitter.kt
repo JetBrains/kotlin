@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.idea.reporter
 
+import com.intellij.diagnostic.ReportMessages
+import com.intellij.ide.DataManager
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent
 import com.intellij.openapi.diagnostic.SubmittedReportInfo
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.idea.KotlinPluginUpdater
@@ -56,6 +61,19 @@ class KotlinReportSubmitter : ITNReporterCompat() {
             return super.submitCompat(events, additionalInfo, parentComponent, consumer)
         }
 
+        val project: Project? = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(parentComponent))
+        if (KotlinPluginUtil.isPatched()) {
+            ReportMessages.GROUP
+                .createNotification(
+                    ReportMessages.ERROR_REPORT,
+                    "Can't report exception from patched plugin",
+                    NotificationType.INFORMATION,
+                    null)
+                .setImportant(false)
+                .notify(project)
+            return true
+        }
+
         KotlinPluginUpdater.getInstance().runUpdateCheck { status ->
             if (status is PluginUpdateStatus.Update) {
                 hasUpdate = true
@@ -82,6 +100,7 @@ class KotlinReportSubmitter : ITNReporterCompat() {
             }
             false
         }
+
         return true
     }
 
