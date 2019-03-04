@@ -25,7 +25,7 @@ fun case_2(value_1: Boolean): Boolean? {
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: String): Boolean {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns(false) implies (value_1 != "") }
+    contract { returns(false) implies (value_1 != <!ERROR_IN_CONTRACT_DESCRIPTION!>""<!>) }
     return !(value_1 != "")
 }
 

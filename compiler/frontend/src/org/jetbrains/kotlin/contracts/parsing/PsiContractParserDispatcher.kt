@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.contracts.parsing.effects.PsiReturnsEffectParser
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.storage.StorageManager
@@ -129,9 +126,10 @@ internal class PsiContractParserDispatcher(
 
     fun parseVariable(expression: KtExpression?): VariableReference? {
         if (expression == null) return null
-        val descriptor = expression.getResolvedCall(callContext.bindingContext)?.resultingDescriptor ?: return null
+        val descriptor = expression.getResolvedCall(callContext.bindingContext)?.resultingDescriptor
         if (descriptor !is ParameterDescriptor) {
-            collector.badDescription("only references to parameters are allowed in contract description", expression)
+            if (expression !is KtConstantExpression)
+                collector.badDescription("only references to parameters are allowed in contract description", expression)
             return null
         }
 
