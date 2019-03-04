@@ -6690,9 +6690,9 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/reflection/primitives.kt");
         }
 
-        @TestMetadata("primitives-12.kt")
-        public void testPrimitives_12() throws Exception {
-            runTest("js/js.translator/testData/box/reflection/primitives-12.kt");
+        @TestMetadata("primitives-11.kt")
+        public void testPrimitives_11() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/primitives-11.kt");
         }
     }
 
