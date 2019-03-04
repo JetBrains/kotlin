@@ -24,19 +24,4 @@ abstract class AbstractFirResolveWithSessionTestCase : KotlinTestWithEnvironment
             .unregisterExtension(JavaElementFinder::class.java)
     }
 
-    open fun createSession(sourceScope: GlobalSearchScope): FirSession {
-        val moduleInfo = FirTestModuleInfo()
-        val provider = FirProjectSessionProvider(project)
-        return FirJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
-            createSessionForDependencies(provider, moduleInfo, sourceScope)
-        }
-    }
-
-    private fun createSessionForDependencies(
-        provider: FirProjectSessionProvider, moduleInfo: FirTestModuleInfo, sourceScope: GlobalSearchScope
-    ) {
-        val dependenciesInfo = FirTestModuleInfo()
-        moduleInfo.dependencies.add(dependenciesInfo)
-        FirLibrarySession(dependenciesInfo, provider, GlobalSearchScope.notScope(sourceScope))
-    }
 }

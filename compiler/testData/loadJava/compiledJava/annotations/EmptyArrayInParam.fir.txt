@@ -1,0 +1,2 @@
+public abstract interface EmptyArrayInParam : R|java/lang/Object| {
+}

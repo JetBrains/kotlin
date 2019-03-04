@@ -1,0 +1,2 @@
+public open class AnnotatedField : R|java/lang/Object| {
+}

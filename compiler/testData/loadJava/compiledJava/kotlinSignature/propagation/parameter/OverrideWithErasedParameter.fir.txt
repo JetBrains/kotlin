@@ -1,0 +1,2 @@
+public abstract interface OverrideWithErasedParameter : R|java/lang/Object| {
+}

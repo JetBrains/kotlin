@@ -64,7 +64,7 @@ class FirResolveTestTotalKotlin : AbstractFirResolveWithSessionTestCase() {
         }
 
         val scope = ProjectScope.getContentScope(project)
-        val session = createSession(scope)
+        val session = createSession(project, scope)
         val builder = RawFirBuilder(session, stubMode = true)
 
         val totalTransformer = FirTotalResolveTransformer()

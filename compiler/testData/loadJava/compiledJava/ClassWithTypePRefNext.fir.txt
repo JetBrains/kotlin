@@ -1,0 +1,2 @@
+<R, P> public open class ClassWithTypePRefNext : R|java/lang/Object| {
+}

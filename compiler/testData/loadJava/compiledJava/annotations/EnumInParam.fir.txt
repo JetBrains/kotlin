@@ -1,0 +1,2 @@
+public abstract interface EnumInParam : R|java/lang/Object| {
+}

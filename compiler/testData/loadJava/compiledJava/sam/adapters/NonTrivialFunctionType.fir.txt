@@ -1,0 +1,10 @@
+public open class NonTrivialFunctionType : R|java/lang/Object| {
+    public open operator function foo(filenameFilter: R|ft<java/io/FilenameFilter, java/io/FilenameFilter?>|!): R|kotlin/Unit|
+
+    public open operator function foo(comparator: R|ft<java/util/Comparator<ft<java/lang/String, java/lang/String?>>, java/util/Comparator<ft<java/lang/String, java/lang/String?>>>|): R|kotlin/Unit|
+
+    public open operator function wildcardUnbound(comparator: R|ft<java/util/Comparator<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:?>, java/util/Comparator<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:?>?>|!): R|kotlin/Unit|
+
+    public open operator function wildcardBound(comparator: R|ft<java/util/Comparator<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? super CharSequence>, java/util/Comparator<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? super CharSequence>?>|!): R|kotlin/Unit|
+
+}

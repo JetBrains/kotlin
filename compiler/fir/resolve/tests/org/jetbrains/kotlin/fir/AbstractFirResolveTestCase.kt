@@ -27,7 +27,7 @@ abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCas
 
         val scope = GlobalSearchScope.filesScope(project, ktFiles.mapNotNull { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-        val session = createSession(scope)
+        val session = createSession(project, scope)
 
         val builder = RawFirBuilder(session, stubMode = false)
 

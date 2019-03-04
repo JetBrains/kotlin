@@ -1,0 +1,2 @@
+public abstract interface TwoSuperclassesReturnSameJavaType : R|java/lang/Object| {
+}

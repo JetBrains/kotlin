@@ -1,0 +1,4 @@
+public open class NestedEnumArgument : R|java/lang/Object| {
+    @R|test/NestedEnumArgument.Anno|(<Strange Java enum value: test/NestedEnumArgument.E.FIRST>#()) public/*package*/ open operator function foo(): R|kotlin/Unit|
+
+}

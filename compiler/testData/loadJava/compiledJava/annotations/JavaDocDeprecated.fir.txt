@@ -1,0 +1,4 @@
+public open class JavaDocDeprecated : R|java/lang/Object| {
+    public open operator function getFoo(text: R|ft<java/lang/String, java/lang/String?>|!): R|ft<java/lang/String, java/lang/String?>|!
+
+}

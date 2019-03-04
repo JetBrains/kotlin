@@ -1,0 +1,2 @@
+public final enum class AnnotatedEnumEntry : R|java/lang/Enum<test/AnnotatedEnumEntry>| {
+}

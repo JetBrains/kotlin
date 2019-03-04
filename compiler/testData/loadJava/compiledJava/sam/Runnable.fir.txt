@@ -1,0 +1,4 @@
+public abstract interface Runnable : R|java/lang/Object| {
+    public abstract operator function run(): R|kotlin/Unit|
+
+}

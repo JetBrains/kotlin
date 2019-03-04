@@ -1,0 +1,2 @@
+<P> public final class ClassWithTypePRefSelfAndClass : R|java/lang/Object| {
+}

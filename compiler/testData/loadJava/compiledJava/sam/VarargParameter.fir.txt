@@ -1,0 +1,4 @@
+public abstract interface VarargParameter : R|java/lang/Object| {
+    public abstract operator function f(vararg strings: R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|): R|kotlin/Unit|
+
+}

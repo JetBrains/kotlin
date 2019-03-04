@@ -1,0 +1,2 @@
+public abstract interface SameProjectionKind : R|java/lang/Object| {
+}

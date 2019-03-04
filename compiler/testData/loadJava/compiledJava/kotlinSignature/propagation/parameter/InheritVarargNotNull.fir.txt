@@ -1,0 +1,2 @@
+public abstract interface InheritVarargNotNull : R|java/lang/Object| {
+}

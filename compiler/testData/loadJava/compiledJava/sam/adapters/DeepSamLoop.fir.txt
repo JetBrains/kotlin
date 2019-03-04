@@ -1,0 +1,2 @@
+public abstract interface DeepSamLoop : R|java/lang/Object| {
+}

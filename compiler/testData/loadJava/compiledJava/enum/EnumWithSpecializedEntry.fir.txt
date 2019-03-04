@@ -1,0 +1,2 @@
+public open enum class EnumWithSpecializedEntry : R|java/lang/Enum<test/EnumWithSpecializedEntry>| {
+}

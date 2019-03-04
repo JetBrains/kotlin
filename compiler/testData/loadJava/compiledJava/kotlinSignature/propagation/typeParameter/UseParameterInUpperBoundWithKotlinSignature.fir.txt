@@ -1,0 +1,2 @@
+public abstract interface UseParameterInUpperBoundWithKotlinSignature : R|java/lang/Object| {
+}

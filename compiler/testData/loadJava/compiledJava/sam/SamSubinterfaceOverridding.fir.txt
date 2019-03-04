@@ -1,0 +1,4 @@
+public abstract interface SamSubinterfaceOverridding : R|java/lang/Runnable| {
+    public abstract operator function run(): R|kotlin/Unit|
+
+}

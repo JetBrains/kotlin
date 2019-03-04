@@ -1,0 +1,2 @@
+public abstract interface SubclassFromGenericAndNot : R|java/lang/Object| {
+}

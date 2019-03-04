@@ -1,0 +1,2 @@
+<T> public abstract interface RawUpperBound : R|java/lang/Object| {
+}

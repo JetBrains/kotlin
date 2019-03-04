@@ -1,0 +1,4 @@
+public open class Frame : R|java/lang/Object| {
+}
+public open class JFrame : R|awt/Frame| {
+}

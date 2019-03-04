@@ -207,7 +207,7 @@ private fun JavaAnnotationArgument.toFirExpression(session: FirSession): FirExpr
                     null
                 }
                 this.calleeReference = calleeReference
-                    ?: FirErrorNamedReference(session, null, "Strange Java enum value: ${this@toFirExpression}")
+                    ?: FirErrorNamedReference(session, null, "Strange Java enum value: $classId.$entryName")
             }
         }
         is JavaClassObjectAnnotationArgument -> FirGetClassCallImpl(session, null).apply {

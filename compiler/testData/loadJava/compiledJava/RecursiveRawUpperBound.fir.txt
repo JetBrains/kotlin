@@ -1,0 +1,2 @@
+<T> public abstract interface RecursiveRawUpperBound : R|java/lang/Object| {
+}

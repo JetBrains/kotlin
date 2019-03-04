@@ -1,0 +1,4 @@
+public open class Basic : R|java/lang/Object| {
+    public open operator function foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|!): R|kotlin/Unit|
+
+}

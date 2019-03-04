@@ -1,0 +1,2 @@
+<T> public open class TypeParameterOfOuterClass : R|java/lang/Object| {
+}

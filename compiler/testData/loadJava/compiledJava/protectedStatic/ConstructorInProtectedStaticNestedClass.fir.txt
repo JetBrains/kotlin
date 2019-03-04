@@ -1,0 +1,2 @@
+public open class ConstructorInProtectedStaticNestedClass : R|java/lang/Object| {
+}

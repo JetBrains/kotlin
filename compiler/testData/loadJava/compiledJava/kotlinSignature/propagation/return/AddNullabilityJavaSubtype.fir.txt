@@ -1,0 +1,2 @@
+public abstract interface AddNullabilityJavaSubtype : R|java/lang/Object| {
+}

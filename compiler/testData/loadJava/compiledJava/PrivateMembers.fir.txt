@@ -1,0 +1,4 @@
+public open class PrivateMembers : R|java/lang/Object| {
+    private open operator function method(): R|kotlin/Unit|
+
+}

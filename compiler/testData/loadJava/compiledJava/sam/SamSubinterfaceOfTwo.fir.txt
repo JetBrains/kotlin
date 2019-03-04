@@ -1,0 +1,2 @@
+public abstract interface SamSubinterfaceOfTwo : R|java/lang/Object| {
+}

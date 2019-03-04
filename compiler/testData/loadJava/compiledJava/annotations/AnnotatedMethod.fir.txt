@@ -1,0 +1,4 @@
+public open class AnnotatedMethod : R|java/lang/Object| {
+    @R|test/AnnotatedMethod.Anno|(Int(42)) public open operator function f(): R|kotlin/Unit|
+
+}

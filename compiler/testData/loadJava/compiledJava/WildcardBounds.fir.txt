@@ -1,0 +1,4 @@
+public open class WildcardBounds : R|java/lang/Object| {
+    public/*package*/ open operator function foo(x: R|ft<test/WildcardBounds.A<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends CharSequence>, test/WildcardBounds.A<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends CharSequence>?>|!, y: R|ft<test/WildcardBounds.A<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? super String>, test/WildcardBounds.A<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? super String>?>|!): R|kotlin/Unit|
+
+}

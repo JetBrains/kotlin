@@ -1,0 +1,4 @@
+public open class WrongTypeParameterBoundStructure1 : R|java/lang/Object| {
+    public open operator function foo(a: R|ft<A, A?>|!, b: R|ft<java/util/List<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends B>, java/util/List<class error: Unexpected type argument: JavaWildcardTypeImpl: PsiType:? extends B>?>|!): R|kotlin/Unit|
+
+}

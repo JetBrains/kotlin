@@ -1,0 +1,2 @@
+public abstract interface TypeParamOfClassSubstituted : R|java/lang/Object| {
+}

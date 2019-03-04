@@ -1,0 +1,2 @@
+public abstract interface InheritReadOnlinessOfArgument : R|java/lang/Object| {
+}
