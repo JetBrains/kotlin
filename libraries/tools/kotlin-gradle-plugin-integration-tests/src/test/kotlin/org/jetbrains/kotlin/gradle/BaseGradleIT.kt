@@ -144,7 +144,14 @@ abstract class BaseGradleIT {
                 .apply {
                     File(BaseGradleIT.resourcesRootFile, "GradleWrapper").copyRecursively(this)
                     val wrapperProperties = File(this, "gradle/wrapper/gradle-wrapper.properties")
-                    wrapperProperties.modify { it.replace("<GRADLE_WRAPPER_VERSION>", version) }
+                    val isGradleVerisonSnapshot = version.endsWith("+0000")
+                    if (!isGradleVerisonSnapshot) {
+                        wrapperProperties.modify { it.replace("<GRADLE_WRAPPER_VERSION>", version) }
+                    } else {
+                        wrapperProperties.modify {
+                            it.replace("distributions/gradle-<GRADLE_WRAPPER_VERSION>", "distributions-snapshots/gradle-$version")
+                        }
+                    }
                 }
 
         private val runnerGradleVersion = System.getProperty("runnerGradleVersion")
