@@ -1275,3 +1275,15 @@ public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n
  * The lines returned do not include terminating line separators.
  */
 public fun CharSequence.lines(): List<String> = lineSequence().toList()
+
+/**
+ * Splits this char sequence to the given [destination]
+ *
+ * @param destination Collection that will receive the splitted char sequence
+ * @param delimiters One or more characters to be used as delimiters.
+ * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
+ * @param limit The maximum number of substrings to return.
+ */
+public fun CharSequence.splitTo(destination: MutableCollection<String>, vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0) {
+    rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).map { substring(it) }.toCollection(destination)
+}

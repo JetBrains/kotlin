@@ -1460,4 +1460,44 @@ ${"    "}
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
     }
+
+    @Test fun testSplitToCollection() {
+        val string = "String used to test splitTo()"
+        val list = mutableListOf<String>()
+        string.splitTo(list, " ")
+        assertEquals(5, list.size)
+    }
+
+    @Test fun testSplitToCollectionWithMoreThanOneDelimiter() {
+        val string = "String us,ed to te,st splitTo()"
+        val list = mutableListOf<String>()
+        string.splitTo(list, " ", ",")
+        assertEquals(7, list.size)
+    }
+
+    @Test fun testSplitToCollectionNotIgnoringCase() {
+        val string = "StringstringString"
+        val list = mutableListOf<String>()
+        string.splitTo(list, "string")
+        assertEquals(2, list.size)
+        assertEquals("String", list[0])
+        assertEquals("String", list[1])
+    }
+
+    @Test fun testSplitToCollectionIgnoringCase() {
+        val string = "IntegerStringInteger"
+        val list = mutableListOf<String>()
+        string.splitTo(list, "sTrInG", ignoreCase = true)
+        assertEquals(2, list.size)
+        assertEquals("Integer", list[0])
+        assertEquals("Integer", list[1])
+    }
+
+    @Test fun testSplitToCollectionLimiting() {
+        val string = "Integer,Integer,Integer,Integer"
+        val list = mutableListOf<String>()
+        string.splitTo(list, ",", limit = 2)
+        assertEquals(2, list.size)
+        assertEquals("Integer,Integer,Integer", list[1])
+    }
 }
