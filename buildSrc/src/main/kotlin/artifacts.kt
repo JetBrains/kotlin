@@ -121,7 +121,7 @@ fun Project.publish(body: Upload.() -> Unit = {}): Upload {
     apply<plugins.PublishedKotlinModule>()
 
     if (artifactsRemovedDiagnosticFlag) {
-        error("`publish()` should be called before removing artifacts typically done in `noDefaultJar()` of `runtimeJar()` calls")
+        error("`publish()` should be called before removing artifacts typically done in `noDefaultJar()` or `runtimeJar()` call")
     }
 
     afterEvaluate {
