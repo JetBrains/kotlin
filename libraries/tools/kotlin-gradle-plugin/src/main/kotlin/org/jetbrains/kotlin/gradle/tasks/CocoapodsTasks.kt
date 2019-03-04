@@ -16,7 +16,7 @@ import java.io.File
  * The task generates a podspec file which allows a user to
  * integrate a Kotlin/Native framework into a Cocoapods project.
  */
-open class PodspecTask: DefaultTask() {
+open class PodspecTask : DefaultTask() {
 
     @OutputFile
     val outputFile: File = project.projectDir.resolve("${project.name}.podspec")
@@ -90,7 +90,7 @@ open class PodspecTask: DefaultTask() {
  * So we create a dummy static framework to allow Cocoapods install our pod correctly
  * and then replace it with the real one during a real build process.
  */
-open class DummyFrameworkTask: DefaultTask() {
+open class DummyFrameworkTask : DefaultTask() {
     @OutputDirectory
     val destinationDir = project.cocoapodsBuildDirs.framework
 
@@ -110,11 +110,30 @@ open class DummyFrameworkTask: DefaultTask() {
         }
     }
 
+    private fun copyTextResource(from: String, to: File, transform: (String) -> String = { it }) {
+        to.parentFile.mkdirs()
+        to.printWriter().use { file ->
+            javaClass.getResourceAsStream(from).reader().forEachLine {
+                file.println(transform(it))
+            }
+        }
+    }
+
     private fun copyFrameworkFile(relativeFrom: String, relativeTo: String = relativeFrom) =
         copyResource(
             "/cocoapods/dummy.framework/$relativeFrom",
             frameworkDir.resolve(relativeTo)
         )
+
+    private fun copyFrameworkTextFile(
+        relativeFrom: String,
+        relativeTo: String = relativeFrom,
+        transform: (String) -> String = { it }
+    ) = copyTextResource(
+        "/cocoapods/dummy.framework/$relativeFrom",
+        frameworkDir.resolve(relativeTo),
+        transform
+    )
 
     @TaskAction
     fun create() {
@@ -127,8 +146,14 @@ open class DummyFrameworkTask: DefaultTask() {
         // Copy files for the dummy framework.
         copyFrameworkFile("Info.plist")
         copyFrameworkFile("dummy", frameworkName)
-        copyFrameworkFile("Modules/module.modulemap")
         copyFrameworkFile("Headers/dummy.h")
+        copyFrameworkTextFile("Modules/module.modulemap") {
+            if (it == "framework module dummy {") {
+                it.replace("dummy", frameworkName)
+            } else {
+                it
+            }
+        }
     }
 }
 
