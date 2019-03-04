@@ -1,0 +1,28 @@
+package
+
+public fun </*0*/ T, /*1*/ K> create(/*0*/ g: (T) -> K): Inv2<T, K>
+public operator fun </*0*/ S1, /*1*/ V1> Inv2<S1, V1>.getValue(/*0*/ o: Sample, /*1*/ desc: kotlin.reflect.KProperty<*>): V1
+public operator fun </*0*/ S2, /*1*/ V2> Inv2<S2, V2>.setValue(/*0*/ o: Sample, /*1*/ desc: kotlin.reflect.KProperty<*>, /*2*/ value: V2): kotlin.Unit
+
+public final class Inv2</*0*/ T, /*1*/ K> {
+    public constructor Inv2</*0*/ T, /*1*/ K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Sample {
+    public constructor Sample()
+    public final var version: Version
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Version {
+    public constructor Version(/*0*/ version: kotlin.Int)
+    public final val version: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

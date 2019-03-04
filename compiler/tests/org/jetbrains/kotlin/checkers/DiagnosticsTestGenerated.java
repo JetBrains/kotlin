@@ -5625,6 +5625,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/inference"), Pattern.compile("^(.*)\\.kts?$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("callableReferenceArgumentInDelegatedExpression.kt")
+                public void testCallableReferenceArgumentInDelegatedExpression() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/callableReferenceArgumentInDelegatedExpression.kt");
+                }
+
                 @TestMetadata("delegateExpressionAsLambda.kt")
                 public void testDelegateExpressionAsLambda() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/delegateExpressionAsLambda.kt");

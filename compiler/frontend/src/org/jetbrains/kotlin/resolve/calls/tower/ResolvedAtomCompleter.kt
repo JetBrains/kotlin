@@ -55,6 +55,10 @@ class ResolvedAtomCompleter(
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
     private fun complete(resolvedAtom: ResolvedAtom) {
+        if (topLevelCallContext.inferenceSession.callCompleted(resolvedAtom)) {
+            return
+        }
+
         when (resolvedAtom) {
             is ResolvedCollectionLiteralAtom -> completeCollectionLiteralCalls(resolvedAtom)
             is ResolvedCallableReferenceAtom -> completeCallableReference(resolvedAtom)
