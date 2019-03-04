@@ -78,7 +78,10 @@ internal fun extractKSerializerArgumentFromImplementation(implementationClass: C
 }
 
 internal val DeclarationDescriptor.serializableWith: KotlinType?
-    get() = annotations.findAnnotationKotlinTypeValue(SerializationAnnotations.serializableAnnotationFqName, module,"with")
+    get() = annotations.serializableWith(module)
+
+internal fun Annotations.serializableWith(module: ModuleDescriptor): KotlinType? =
+    this.findAnnotationKotlinTypeValue(SerializationAnnotations.serializableAnnotationFqName, module,"with")
 
 internal val DeclarationDescriptor.serializerForClass: KotlinType?
     get() = annotations.findAnnotationKotlinTypeValue(SerializationAnnotations.serializerAnnotationFqName, module, "forClass")
