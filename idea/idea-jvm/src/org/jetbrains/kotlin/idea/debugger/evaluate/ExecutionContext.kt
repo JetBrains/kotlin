@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
+import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.sun.jdi.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -13,6 +14,9 @@ import org.jetbrains.org.objectweb.asm.Type
 class ExecutionContext(val evaluationContext: EvaluationContextImpl, val thread: ThreadReference, val invokePolicy: Int) {
     val vm: VirtualMachine
         get() = thread.virtualMachine()
+
+    val debugProcess: DebugProcessImpl
+        get() = evaluationContext.debugProcess
 
     fun loadClassType(asmType: Type, classLoader: ClassLoaderReference? = null): ReferenceType? {
         if (asmType.sort == Type.ARRAY) {
@@ -43,7 +47,8 @@ class ExecutionContext(val evaluationContext: EvaluationContextImpl, val thread:
             return null
         }
 
-        return (classClass.invokeMethod(thread, method, args, invokePolicy) as? ClassObjectReference)?.reflectedType()
+        val result = evaluationContext.debugProcess.invokeMethod(evaluationContext, classClass, method, args)
+        return (result as? ClassObjectReference)?.reflectedType()
     }
 
 }

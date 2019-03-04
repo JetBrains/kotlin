@@ -136,7 +136,9 @@ class EvaluatorValueConverter(private val executionContext: ExecutionContext) {
 
         val methodDesc = AsmType.getMethodDescriptor(boxedType, unboxedType)
         val valueOfMethod = boxedTypeClass.methodsByName("valueOf", methodDesc).first()
-        return boxedTypeClass.invokeMethod(executionContext.thread, valueOfMethod, listOf(value), executionContext.invokePolicy)
+
+        val debugProcess = executionContext.evaluationContext.debugProcess
+        return debugProcess.invokeMethod(executionContext.evaluationContext, boxedTypeClass, valueOfMethod, listOf(value))
     }
 
     private fun unbox(value: Value?): Value? {
@@ -151,7 +153,7 @@ class EvaluatorValueConverter(private val executionContext: ExecutionContext) {
         val unboxingMethodName = UNBOXING_METHOD_NAMES.getValue(boxedType.internalName)
         val methodDesc = AsmType.getMethodDescriptor(unboxedType)
         val valueMethod = boxedTypeClass.methodsByName(unboxingMethodName, methodDesc).first()
-        return value.invokeMethod(executionContext.thread, valueMethod, emptyList(), executionContext.invokePolicy)
+        return executionContext.debugProcess.invokeMethod(executionContext.evaluationContext, value, valueMethod, emptyList())
     }
 
     private fun ref(value: Value?): Value? {
