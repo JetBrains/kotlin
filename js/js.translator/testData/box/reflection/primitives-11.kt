@@ -1,5 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1290
 // LANGUAGE_VERSION: 1.1
+// IGNORE_BACKEND: JS_IR
 import kotlin.reflect.KClass
 
 fun box(): String {
