@@ -1,0 +1,18 @@
+LineBreakpoint created at lambdaFun4.kt:8
+Run Java
+Connected to the target VM
+lambdaFun4.kt:8
+Compile bytecode for this
+Compile bytecode for this@Foo
+ frame    = invoke:8, Foo$foo$1 {lambdaFun4}
+   unknown  = this (anonymous fun) = {lambdaFun4.LambdaFun4Kt$main$1@uniqueID}
+              - Class has no fields
+   local    = this: java.lang.String = abc (sp = null)
+     field    = value: char[] = {char[3]@uniqueID} (sp = String.!EXT!)
+       element  = 0 = 'a' 97
+       element  = 1 = 'b' 98
+       element  = 2 = 'c' 99
+     field    = hash: int = 0 (sp = String.!EXT!)
+Disconnected from the target VM
+
+Process finished with exit code 0
