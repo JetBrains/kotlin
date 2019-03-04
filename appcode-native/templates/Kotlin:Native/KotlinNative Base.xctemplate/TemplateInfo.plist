@@ -42,6 +42,10 @@ fi
     kotlin("xcode-compat") version "0.1"
 }
 
+repositories {
+    mavenCentral()
+}
+
 kotlin {
     xcode {</string>
         <key>End</key>
