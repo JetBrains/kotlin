@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithStarProjections
+import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement

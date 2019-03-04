@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.ir.IrPrivateClassReferenceImpl
 import org.jetbrains.kotlin.backend.konan.ir.IrPrivateFunctionCall
 import org.jetbrains.kotlin.backend.konan.ir.IrPrivateFunctionCallImpl
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.getErasedTypeClass
+import org.jetbrains.kotlin.backend.konan.ir.getErasedTypeClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*

@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.lower.loops
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.isSubtypeOf
+import org.jetbrains.kotlin.backend.konan.ir.isSubtypeOf
 import org.jetbrains.kotlin.backend.konan.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration

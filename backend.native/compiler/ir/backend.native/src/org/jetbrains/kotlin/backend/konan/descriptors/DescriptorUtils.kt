@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*

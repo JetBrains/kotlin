@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.containsNull
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.isSubtypeOf
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.overrides
+import org.jetbrains.kotlin.backend.konan.ir.containsNull
+import org.jetbrains.kotlin.backend.konan.ir.isSubtypeOf
+import org.jetbrains.kotlin.backend.konan.ir.overrides
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.*

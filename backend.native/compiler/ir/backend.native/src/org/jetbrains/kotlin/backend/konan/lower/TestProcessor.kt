@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.lower.SymbolWithIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.fqNameSafe
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithStarProjections
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithoutArguments
+import org.jetbrains.kotlin.backend.konan.ir.fqNameSafe
+import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
+import org.jetbrains.kotlin.backend.konan.ir.typeWithoutArguments
 import org.jetbrains.kotlin.backend.konan.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.*
@@ -39,9 +37,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class TestProcessor (val context: Context) {

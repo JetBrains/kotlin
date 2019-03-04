@@ -9,13 +9,12 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.target
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.llvm.symbolName
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -495,7 +494,7 @@ internal object DataFlowIR {
             if (irClass.module.name == Name.special("<forward declarations>") || irClass.isObjCClass())
                 return Type.Virtual
 
-            if (eraseLocalObjects && irClass.isAnonymousObject && irClass.isLocal)
+            if (eraseLocalObjects && irClass.isAnonymousObject)
                 return mapClassReferenceType(irClass.getSuperClassNotAny() ?: context.irBuiltIns.anyClass.owner)
 
             val isFinal = irClass.isFinal()

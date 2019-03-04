@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.lower.matchers
 
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.fqNameSafe
+import org.jetbrains.kotlin.backend.konan.ir.fqNameSafe
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol

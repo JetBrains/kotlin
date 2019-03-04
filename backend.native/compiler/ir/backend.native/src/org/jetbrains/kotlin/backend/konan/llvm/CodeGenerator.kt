@@ -10,13 +10,13 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
+import org.jetbrains.kotlin.backend.konan.ir.*
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 

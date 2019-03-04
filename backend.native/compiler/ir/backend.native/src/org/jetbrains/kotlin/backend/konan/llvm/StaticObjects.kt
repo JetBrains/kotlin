@@ -7,13 +7,9 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.cValuesOf
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.fqNameSafe
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.llvmSymbolOrigin
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.backend.konan.ir.fqNameSafe
+import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 private fun ConstPointer.add(index: Int): ConstPointer {
     return constPointer(LLVMConstGEP(llvm, cValuesOf(Int32(index).llvm), 1)!!)

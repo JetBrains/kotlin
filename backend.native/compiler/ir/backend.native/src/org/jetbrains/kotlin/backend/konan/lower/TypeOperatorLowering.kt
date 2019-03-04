@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.ir.util.isSimpleTypeWithQuestionMark
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.containsNull
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.isSubtypeOf
+import org.jetbrains.kotlin.backend.konan.ir.containsNull
+import org.jetbrains.kotlin.backend.konan.ir.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction

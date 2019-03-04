@@ -3,13 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kotlin.backend.konan.irasdescriptors
+package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -20,9 +21,6 @@ internal val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymous
 internal val IrDeclaration.isLocal get() = DescriptorUtils.isLocal(this.descriptor)
 
 internal val IrDeclaration.module get() = this.descriptor.module
-
-@Deprecated("Do not call this method in the compiler front-end.")
-internal val IrField.isDelegate get() = @Suppress("DEPRECATION") this.descriptor.isDelegated
 
 internal fun IrFunction.getObjCMethodInfo() = this.descriptor.getObjCMethodInfo()
 internal fun IrFunction.getExternalObjCMethodInfo() = this.descriptor.getExternalObjCMethodInfo()

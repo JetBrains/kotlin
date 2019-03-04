@@ -1,9 +1,8 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.isAccessor
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.isGetter
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.isSetter
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.name
+import org.jetbrains.kotlin.backend.konan.ir.isAccessor
+import org.jetbrains.kotlin.backend.konan.ir.isGetter
+import org.jetbrains.kotlin.backend.konan.ir.isSetter
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*

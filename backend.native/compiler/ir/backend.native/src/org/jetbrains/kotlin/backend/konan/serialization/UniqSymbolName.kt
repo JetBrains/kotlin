@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.fqNameSafe
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.name
+import org.jetbrains.kotlin.backend.konan.ir.fqNameSafe
+import org.jetbrains.kotlin.backend.konan.ir.name
 import org.jetbrains.kotlin.backend.konan.llvm.extensionReceiverNamePart
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.symbolName
