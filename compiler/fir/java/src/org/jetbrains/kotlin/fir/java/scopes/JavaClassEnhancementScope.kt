@@ -47,7 +47,7 @@ class JavaClassEnhancementScope(
     private val typeQualifierResolver = FirAnnotationTypeQualifierResolver(jsr305State)
 
     private val context: FirJavaEnhancementContext =
-        FirJavaEnhancementContext(session) { null }
+        FirJavaEnhancementContext(session) { null }.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, owner.annotations)
 
     private val enhancements = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol>()
 

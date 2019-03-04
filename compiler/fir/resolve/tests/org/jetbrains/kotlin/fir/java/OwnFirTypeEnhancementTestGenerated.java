@@ -55,5 +55,63 @@ public class OwnFirTypeEnhancementTestGenerated extends AbstractOwnFirTypeEnhanc
         public void testStrange() throws Exception {
             runTest("compiler/fir/resolve/testData/enhancement/jsr305/Strange.java");
         }
+
+        @TestMetadata("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeQualifierDefault extends AbstractOwnFirTypeEnhancementTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("FieldsAreNullable.java")
+            public void testFieldsAreNullable() throws Exception {
+                runTest("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault/FieldsAreNullable.java");
+            }
+
+            @TestMetadata("ForceFlexibility.java")
+            public void testForceFlexibility() throws Exception {
+                runTest("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault/ForceFlexibility.java");
+            }
+
+            @TestMetadata("ForceFlexibleOverOverrides.java")
+            public void testForceFlexibleOverOverrides() throws Exception {
+                runTest("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault/ForceFlexibleOverOverrides.java");
+            }
+
+            @TestMetadata("NullabilityFromOverridden.java")
+            public void testNullabilityFromOverridden() throws Exception {
+                runTest("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault/NullabilityFromOverridden.java");
+            }
+
+            @TestMetadata("OverridingDefaultQualifier.java")
+            public void testOverridingDefaultQualifier() throws Exception {
+                runTest("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault/OverridingDefaultQualifier.java");
+            }
+
+            @TestMetadata("ParametersAreNonnullByDefault.java")
+            public void testParametersAreNonnullByDefault() throws Exception {
+                runTest("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault/ParametersAreNonnullByDefault.java");
+            }
+
+            @TestMetadata("ParametersAreNonnullByDefaultPackage.java")
+            public void testParametersAreNonnullByDefaultPackage() throws Exception {
+                runTest("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault/ParametersAreNonnullByDefaultPackage.java");
+            }
+
+            @TestMetadata("SpringNullable.java")
+            public void testSpringNullable() throws Exception {
+                runTest("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault/SpringNullable.java");
+            }
+
+            @TestMetadata("SpringNullablePackage.java")
+            public void testSpringNullablePackage() throws Exception {
+                runTest("compiler/fir/resolve/testData/enhancement/jsr305/typeQualifierDefault/SpringNullablePackage.java");
+            }
+        }
     }
 }
