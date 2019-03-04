@@ -28,7 +28,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(commonDep("junit:junit"))
 
-    testRuntime(intellijPluginDep("junit")) { includeJars("idea-junit", "resources_en") }
+    testRuntime(intellijPluginDep("junit"))
 
     robolectricClasspath(commonDep("org.robolectric", "robolectric"))
     robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")

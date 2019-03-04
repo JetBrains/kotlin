@@ -35,8 +35,8 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
 
     if (Ide.IJ()) {
-        testCompileOnly(intellijDep("jps-build-test"))
-        testCompile(intellijDep("jps-build-test"))
+        testCompileOnly(jpsBuildTest())
+        testCompile(jpsBuildTest())
     }
 }
 

@@ -87,7 +87,7 @@ dependencies {
         }
     }
     fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-1.3.0") }
-    fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
+    fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
 }
 

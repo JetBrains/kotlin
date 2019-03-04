@@ -14,49 +14,57 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused") // usages in build scripts are not tracked properly
+// usages in build scripts are not tracked properly
+@file:Suppress("unused")
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
 private fun Project.intellijRepoDir() = File("${project.rootDir.absoluteFile}/dependencies/repo")
 
+private fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
+    Ide.Kind.AndroidStudio -> "android-studio-ide"
+    Ide.Kind.IntelliJ -> {
+        if (getBooleanProperty("intellijUltimateEnabled") == true) "ideaIU" else "ideaIC"
+    }
+}
+
+private fun Project.ideModuleVersion() = when (IdeVersionConfigurator.currentIde.kind) {
+    Ide.Kind.AndroidStudio -> rootProject.findProperty("versions.androidStudioBuild")
+    Ide.Kind.IntelliJ -> rootProject.findProperty("versions.intellijSdk")
+}
+
 fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository = ivy {
     val baseDir = project.intellijRepoDir()
     setUrl(baseDir)
 
-    if (IdeVersionConfigurator.currentIde.kind == Ide.Kind.IntelliJ) {
-        ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]Ultimate.ivy.xml")
-        ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellijUltimate.plugin.[module].ivy.xml")
-        artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]Ultimate/lib/[artifact](-[classifier]).jar")
-        artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellijUltimate/plugins/[module]/lib/[artifact](-[classifier]).jar")
-    }
+    ivyPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/ivy/[module].ivy.xml")
+    ivyPattern("${baseDir.canonicalPath}/[organisation]/${project.ideModuleName()}/[revision]/ivy/[module].ivy.xml") // bundled plugins
 
-    ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module].ivy.xml")
-    ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellij.plugin.[module].ivy.xml")
-    ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/plugins-[module].ivy.xml")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/lib/[artifact](-[classifier]).jar")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellij/plugins/[module]/lib/[artifact](-[classifier]).jar")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/plugins-[module]/[module]/lib/[artifact](-[classifier]).jar")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact].jar")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact](-[revision])(-[classifier]).jar")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/sources/[artifact]-[revision]-[classifier].[ext]")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/artifacts/lib/[artifact](-[classifier]).[ext]")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/artifacts/[artifact](-[classifier]).[ext]")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/${project.ideModuleName()}/[revision]/artifacts/plugins/[module]/lib/[artifact](-[classifier]).[ext]") // bundled plugins
 
     metadataSources {
         ivyDescriptor()
     }
 }
 
-fun Project.intellijDep(module: String = "intellij") = "kotlin.build:$module:${rootProject.extra["versions.intellijSdk"]}"
+fun Project.intellijDep(module: String? = null) = "kotlin.build:${module ?: ideModuleName()}:${ideModuleVersion()}"
 
-fun Project.intellijCoreDep() = intellijDep("intellij-core")
+fun Project.intellijCoreDep() = "kotlin.build:intellij-core:${rootProject.extra["versions.intellijSdk"]}"
+
+fun Project.jpsStandalone() = "kotlin.build:jps-standalone:${rootProject.extra["versions.intellijSdk"]}"
+
+fun Project.jpsBuildTest() = "kotlin.build:jps-build-test:${rootProject.extra["versions.intellijSdk"]}"
+
+fun Project.nodeJSPlugin() = "kotlin.build:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}"
 
 /**
  * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
@@ -69,11 +77,11 @@ fun Project.intellijCoreDep() = intellijDep("intellij-core")
  * So, we are excluding `annotaions.jar` from all other `kotlin.build` and using this one for runtime only
  * to avoid accidentally including `annotations.jar` by calling `intellijDep()`.
  */
-fun Project.intellijRuntimeAnnotations() = intellijDep("intellij-runtime-annotations")
+fun Project.intellijRuntimeAnnotations() = "kotlin.build:intellij-runtime-annotations:${rootProject.extra["versions.intellijSdk"]}"
 
 fun Project.intellijPluginDep(plugin: String) = intellijDep(plugin)
 
-fun Project.intellijUltimateDep() = intellijDep("intellij")
+fun Project.intellijUltimateDep() = intellijDep("ideaIU")
 
 fun Project.intellijUltimatePluginDep(plugin: String) = intellijDep(plugin)
 
@@ -96,32 +104,39 @@ fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = n
 
 // Workaround. Top-level Kotlin function in a default package can't be called from a non-default package
 object IntellijRootUtils {
-    fun getRepositoryRootDir(project: Project): File = with (project.rootProject) {
-        return File(intellijRepoDir(), "kotlin.build/${extra["versions.intellijSdk"]}")
+    fun getRepositoryRootDir(project: Project): File = with(project.rootProject) {
+        return File(intellijRepoDir(), "kotlin.build")
     }
 
-    fun getIntellijRootDir(project: Project): File = with (project.rootProject) {
-        return File(getRepositoryRootDir(this), "intellij${if (isIntellijCommunityAvailable()) "" else "Ultimate"}")
+    fun getIntellijRootDir(project: Project): File = with(project.rootProject) {
+        return File(
+            getRepositoryRootDir(this),
+            "${ideModuleName()}/${ideModuleVersion()}/artifacts"
+        )
     }
 }
 
 fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project) =
-        includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray(), rootProject = project.rootProject)
+    includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray(), rootProject = project.rootProject)
 
 fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean) =
-        includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter { jarsFilterPredicate(it) }.toTypedArray(), rootProject = project.rootProject)
+    includeJars(
+        *(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter { jarsFilterPredicate(it) }.toTypedArray(),
+        rootProject = project.rootProject
+    )
 
-fun Project.isIntellijCommunityAvailable() = !(rootProject.extra["intellijUltimateEnabled"] as Boolean) || rootProject.extra["intellijSeparateSdks"] as Boolean
+fun Project.isIntellijCommunityAvailable() =
+    !(rootProject.extra["intellijUltimateEnabled"] as Boolean) || rootProject.extra["intellijSeparateSdks"] as Boolean
 
 fun Project.isIntellijUltimateSdkAvailable() = (rootProject.extra["intellijUltimateEnabled"] as Boolean)
 
 fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
 
 fun Project.intellijUltimateRootDir() =
-        if (isIntellijUltimateSdkAvailable())
-            File(intellijRepoDir(), "kotlin.build/${rootProject.extra["versions.intellijSdk"]}/intellijUltimate")
-        else
-            throw GradleException("intellij ultimate SDK is not available")
+    if (isIntellijUltimateSdkAvailable())
+        File(intellijRepoDir(), "kotlin.build/ideaIU/${rootProject.extra["versions.intellijSdk"]}/artifacts")
+    else
+        throw GradleException("intellij ultimate SDK is not available")
 
 fun DependencyHandlerScope.excludeInAndroidStudio(rootProject: Project, block: DependencyHandlerScope.() -> Unit) {
     if (!rootProject.extra.has("versions.androidStudioRelease")) {

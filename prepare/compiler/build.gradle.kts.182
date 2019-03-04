@@ -96,7 +96,7 @@ dependencies {
             fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
         }
     }
-    fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
+    fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
 }
 
 publish()

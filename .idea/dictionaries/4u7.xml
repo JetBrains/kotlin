@@ -6,6 +6,7 @@
       <w>instrumentator</w>
       <w>protobuf</w>
       <w>redirector</w>
+      <w>remapper</w>
     </words>
   </dictionary>
 </component>
