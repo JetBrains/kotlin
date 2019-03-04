@@ -35,6 +35,8 @@ buildscript {
             classpath("org.jetbrains.kotlin.ultimate:buildSrc:1.0")
         }
     }
+
+    project(":prepare:idea-plugin").evaluationDependsOn(":prepare")
 }
 
 plugins {
