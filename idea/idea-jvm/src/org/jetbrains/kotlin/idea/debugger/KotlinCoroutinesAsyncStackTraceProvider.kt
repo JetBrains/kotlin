@@ -64,7 +64,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
     fun getAsyncStackTrace(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
         val location = frameProxy.location()
         val method = location.safeMethod() ?: return null
-        val threadReference = frameProxy.threadProxy().threadReference.takeIf { it.isSuspended } ?: return null
+        val threadReference = frameProxy.threadProxy().threadReference.takeIf { it.isSuspended && it.isAtBreakpoint } ?: return null
         val invokePolicy = suspendContext.getInvokePolicy()
         val debugMetadataKtType = classByName(DEBUG_METADATA_KT, frameProxy, threadReference, invokePolicy) as? ClassType ?: return null
 
