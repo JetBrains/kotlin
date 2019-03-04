@@ -15,7 +15,7 @@ FILE: jvm.kt
 
         public final function test(): R|kotlin/Unit| {
             R|FakeOverride</A.foo: R|kotlin/Unit|>|(String())
-            R|FakeOverride</A.bar: R|T|>|(String())
+            <Ambiguity: bar, [/C.bar, /A.bar]>#(String())
         }
 
     }

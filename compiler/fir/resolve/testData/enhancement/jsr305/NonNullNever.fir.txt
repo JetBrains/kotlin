@@ -1,10 +1,10 @@
-@R|java/lang/annotation/Documented|() @R|javax/annotation/meta/TypeQualifierNickname|() @R|javax/annotation/Nonnull|(<Strange Java enum value: javax/annotation/meta/When.NEVER>#()) @R|java/lang/annotation/Retention|(<Strange Java enum value: java/lang/annotation/RetentionPolicy.RUNTIME>#()) public abstract annotation class MyNullable : R|java/lang/annotation/Annotation| {
+@R|java/lang/annotation/Documented|() @R|javax/annotation/meta/TypeQualifierNickname|() @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) @R|java/lang/annotation/Retention|(R|java/lang/annotation/RetentionPolicy.RUNTIME|()) public abstract annotation class MyNullable : R|java/lang/annotation/Annotation| {
 }
 public open class NonNullNever : R|java/lang/Object| {
-    @R|javax/annotation/Nonnull|(<Strange Java enum value: javax/annotation/meta/When.NEVER>#()) public open property field(var): R|ft<kotlin/String, kotlin/String>|
-        public get(): R|ft<kotlin/String, kotlin/String>|
-        public set(value: R|ft<kotlin/String, kotlin/String>|): kotlin/Unit
+    @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) public open property field(var): R|ft<kotlin/String?, kotlin/String?>|?
+        public get(): R|ft<kotlin/String?, kotlin/String?>|?
+        public set(value: R|ft<kotlin/String?, kotlin/String?>|?): kotlin/Unit
 
-    @R|MyNullable|() public open operator function foo(@R|javax/annotation/Nonnull|(<Strange Java enum value: javax/annotation/meta/When.NEVER>#()) x: R|ft<kotlin/String, kotlin/String>|, @R|MyNullable|() y: R|ft<kotlin/CharSequence, kotlin/CharSequence>|): R|ft<kotlin/String, kotlin/String>|
+    @R|MyNullable|() public open operator function foo(@R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) x: R|ft<kotlin/String?, kotlin/String?>|?, @R|MyNullable|() y: R|ft<kotlin/CharSequence?, kotlin/CharSequence?>|?): R|ft<kotlin/String?, kotlin/String?>|?
 
 }

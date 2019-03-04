@@ -27,8 +27,8 @@ FILE: jvm.kt
         public constructor(): super<R|Wrapper|>()
 
         public final function use(): R|kotlin/Unit| {
-            <Unresolved name: list>#.<Unresolved name: get>#(Int(1))
-            <Unresolved name: list>#.<Unresolved name: set>#(Int(2), Int(3))
+            R|/Wrapper.list|.<Unresolved name: get>#(Int(1))
+            R|/Wrapper.list|.<Unresolved name: set>#(Int(2), Int(3))
         }
 
     }

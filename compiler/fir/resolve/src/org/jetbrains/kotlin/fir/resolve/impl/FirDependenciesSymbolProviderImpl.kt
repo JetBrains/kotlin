@@ -17,16 +17,22 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSymbolProvider() {
-    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
-        // TODO
-        return emptyList()
-    }
-
     private val dependencyProviders by lazy {
         val moduleInfo = session.moduleInfo ?: return@lazy emptyList()
         moduleInfo.dependenciesWithoutSelf().mapNotNull {
             session.sessionProvider?.getSession(it)?.service<FirSymbolProvider>()
         }.toList()
+    }
+
+    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
+        return callableCache.lookupCacheOrCalculate(callableId) {
+            for (provider in dependencyProviders) {
+                provider.getCallableSymbols(callableId).let {
+                    if (it.isNotEmpty()) return@lookupCacheOrCalculate it
+                }
+            }
+            emptyList()
+        }.orEmpty()
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
