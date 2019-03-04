@@ -1,0 +1,9 @@
+LineBreakpoint created at lambdaFun3.kt:7
+Run Java
+Connected to the target VM
+lambdaFun3.kt:7
+Compile bytecode for this
+ frame    = invoke:7, Foo$foo$1 {lambdaFun3}
+Disconnected from the target VM
+
+Process finished with exit code 0

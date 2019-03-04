@@ -16,16 +16,27 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.debugger.DebuggerContext
 import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.engine.JavaValue
+import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.impl.descriptors.data.DescriptorData
+import com.intellij.debugger.impl.descriptors.data.DisplayKey
+import com.intellij.debugger.impl.descriptors.data.SimpleDisplayKey
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.ui.impl.watch.MethodsTracker
 import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
 import com.intellij.debugger.ui.impl.watch.ThisDescriptorImpl
+import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
+import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiExpression
+import com.intellij.util.IncorrectOperationException
 import com.intellij.xdebugger.frame.XValue
 import com.intellij.xdebugger.frame.XValueChildrenList
+import com.sun.jdi.ObjectReference
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.Type
 import com.sun.jdi.Value
@@ -49,9 +60,13 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
             return super.superBuildVariables(evaluationContext, children)
         }
 
-        val nodeManager = evaluationContext.debugProcess.xdebugProcess!!.nodeManager
+        val nodeManager = evaluationContext.debugProcess.xdebugProcess?.nodeManager
 
         fun addItem(variable: LocalVariableProxyImpl) {
+            if (nodeManager == null) {
+                return
+            }
+
             val variableDescriptor = nodeManager.getLocalVariableDescriptor(null, variable)
             children.add(JavaValue.create(null, variableDescriptor, evaluationContext, nodeManager, false))
         }
@@ -59,7 +74,7 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
         val (thisReferences, otherVariables) = visibleVariables
             .partition { it.name() == THIS || it is ThisLocalVariable }
 
-        if (!removeSyntheticThisObject(evaluationContext, children) && thisReferences.isNotEmpty()) {
+        if (!removeSyntheticThisObject(evaluationContext, children, thisReferences) && thisReferences.isNotEmpty()) {
             val thisLabels = thisReferences.asSequence()
                 .filterIsInstance<ThisLocalVariable>()
                 .mapNotNullTo(hashSetOf()) { it.label }
@@ -71,9 +86,12 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
         otherVariables.forEach(::addItem)
     }
 
-    private fun removeSyntheticThisObject(evaluationContext: EvaluationContextImpl, children: XValueChildrenList): Boolean {
+    private fun removeSyntheticThisObject(
+        evaluationContext: EvaluationContextImpl,
+        children: XValueChildrenList,
+        thisReferences: List<LocalVariableProxyImpl>
+    ): Boolean {
         val thisObject = evaluationContext.frameProxy?.thisObject() ?: return false
-
 
         if (thisObject.type().isSubtype(VariableFinder.CONTINUATION_TYPE)) {
             ExistingInstanceThis.find(children)?.remove()
@@ -82,11 +100,55 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
 
         val thisObjectType = thisObject.type()
         if (thisObjectType.isSubtype(Function::class.java.name) && '$' in thisObjectType.signature()) {
-            ExistingInstanceThis.find(children)?.remove()
+            val existingThis = ExistingInstanceThis.find(children)
+            if (existingThis != null) {
+                existingThis.remove()
+                val javaValue = existingThis.value as? JavaValue
+                if (javaValue != null) {
+                    attachCapturedThisFromLambda(evaluationContext, children, javaValue, thisReferences)
+                }
+            }
             return true
         }
 
         return false
+    }
+
+    private fun attachCapturedThisFromLambda(
+        evaluationContext: EvaluationContextImpl,
+        children: XValueChildrenList,
+        javaValue: JavaValue,
+        thisReferences: List<LocalVariableProxyImpl>
+    ) {
+        try {
+            val value = javaValue.descriptor.calcValue(evaluationContext) as? ObjectReference ?: return
+            val thisField = value.referenceType().fieldByName(AsmUtil.CAPTURED_THIS_FIELD) ?: return
+            val thisValue = value.getValue(thisField) as? ObjectReference ?: return
+            val thisType = thisValue.referenceType()
+            val unsafeLabel = generateThisLabelUnsafe(thisType) ?: return
+            val label = checkLabel(unsafeLabel)
+
+            if (label != null) {
+                val thisName = getThisName(label)
+
+                if (thisReferences.any { it.name() == thisName }) {
+                    // Avoid label duplication
+                    return
+                }
+            }
+
+            val thisName = when {
+                thisReferences.isEmpty() -> THIS
+                label != null -> getThisName(label)
+                else -> "$THIS (anonymous fun)"
+            }
+
+            val nodeManager = evaluationContext.debugProcess.xdebugProcess?.nodeManager ?: return
+            val thisDescriptor = nodeManager.getDescriptor(this.descriptor, LabeledThisData(thisName, thisValue))
+            children.add(JavaValue.create(null, thisDescriptor, evaluationContext, nodeManager, false))
+        } catch (e: EvaluateException) {
+            // do nothing
+        }
     }
 
     private fun remapThisObjectForOuterThis(
@@ -112,7 +174,7 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
     private class ExistingInstanceThis(
         private val children: XValueChildrenList,
         private val index: Int,
-        private val value: XValue,
+        val value: XValue,
         private val size: Int
     ) {
         companion object {
@@ -251,10 +313,16 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
     }
 
     private fun generateThisLabel(type: Type?): String? {
-        val referenceType = type as? ReferenceType ?: return null
-        val label = referenceType.name().substringAfterLast('.').substringAfterLast('$')
+        return checkLabel(generateThisLabelUnsafe(type) ?: return null)
+    }
 
-        if (label.isEmpty() || label.any { it.isDigit() }) {
+    private fun generateThisLabelUnsafe(type: Type?): String? {
+        val referenceType = type as? ReferenceType ?: return null
+        return referenceType.name().substringAfterLast('.').substringAfterLast('$')
+    }
+
+    private fun checkLabel(label: String): String? {
+        if (label.isEmpty() || label.all { it.isDigit() }) {
             return null
         }
 
@@ -268,10 +336,6 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
         }
 
         return dropLast(depth * INLINE_FUN_VAR_SUFFIX.length)
-    }
-
-    private fun getThisName(label: String): String {
-        return "$THIS (@$label)"
     }
 
     private fun LocalVariableProxyImpl.clone(name: String, label: String?): LocalVariableProxyImpl {
@@ -298,4 +362,32 @@ private fun LocalVariableProxyImpl.wrapSyntheticInlineVariable(): LocalVariableP
         }
     }
     return LocalVariableProxyImpl(proxyWrapper, variable)
+}
+
+private fun getThisName(label: String): String {
+    return "$THIS (@$label)"
+}
+
+private class LabeledThisData(val name: String, val value: ObjectReference) : DescriptorData<ValueDescriptorImpl>() {
+    override fun createDescriptorImpl(project: Project): ValueDescriptorImpl {
+        return object : ValueDescriptorImpl(project, value) {
+            override fun getName() = this@LabeledThisData.name
+            override fun calcValue(evaluationContext: EvaluationContextImpl?) = value
+            override fun canSetValue() = false
+
+            override fun getDescriptorEvaluation(context: DebuggerContext?): PsiExpression {
+                // TODO change to labeled this
+                val elementFactory = JavaPsiFacade.getElementFactory(myProject)
+                try {
+                    return elementFactory.createExpressionFromText("this", null)
+                } catch (e: IncorrectOperationException) {
+                    throw EvaluateException(e.message, e)
+                }
+            }
+        }
+    }
+
+    override fun getDisplayKey(): DisplayKey<ValueDescriptorImpl> = SimpleDisplayKey(this)
+    override fun equals(other: Any?) = other is LabeledThisData && other.name == name
+    override fun hashCode() = name.hashCode()
 }
