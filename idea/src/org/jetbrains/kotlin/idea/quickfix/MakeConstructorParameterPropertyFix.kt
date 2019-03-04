@@ -30,14 +30,13 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.*
 
 class MakeConstructorParameterPropertyFix(
-        element: KtParameter, private val kotlinValVar: KotlinValVar, className: String?
+    element: KtParameter, private val kotlinValVar: KotlinValVar, className: String?
 ) : KotlinQuickFixAction<KtParameter>(element) {
     override fun getFamilyName() = "Make constructor parameter a property"
 
     private val suffix = if (className != null) " in class '$className'" else ""
 
-    override fun getText() =
-            "Make constructor parameter a property$suffix"
+    override fun getText() = "Make constructor parameter a property$suffix"
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
@@ -74,6 +73,6 @@ class MakeConstructorParameterPropertyFix(
 
 fun KtNameReferenceExpression.getPrimaryConstructorParameterWithSameName(): KtParameter? {
     return nonStaticOuterClasses()
-            .mapNotNull { it.primaryConstructor?.valueParameters?.firstOrNull { it.name == getReferencedName() } }
-            .firstOrNull()
+        .mapNotNull { it.primaryConstructor?.valueParameters?.firstOrNull { it.name == getReferencedName() } }
+        .firstOrNull()
 }
