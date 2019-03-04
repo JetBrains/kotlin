@@ -94,7 +94,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
     ) {
         val dummyFrameworkTask = project.tasks.create("generateDummyFramework", DummyFrameworkTask::class.java)
 
-        project.tasks.create("generatePodspec", PodspecTask::class.java) {
+        project.tasks.create("podspec", PodspecTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Generates a podspec file for Cocoapods import"
             it.settings = cocoapodsExtension
