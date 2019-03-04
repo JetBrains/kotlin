@@ -220,7 +220,7 @@ fun detectPlatformKindByPlugin(moduleNode: DataNode<ModuleData>): IdePlatformKin
 )
 fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
     return when (moduleNode.platformPluginId) {
-        "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.DEFAULT]
         "kotlin-platform-js" -> TargetPlatformKind.JavaScript
         "kotlin-platform-common" -> TargetPlatformKind.Common
         else -> null

@@ -208,16 +208,12 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
         reportingState.currentArguments = baseArguments
 
         return org.jetbrains.kotlin.config.CompilerConfiguration().apply {
-
-            // default value differs from the argument'ss default (see #KT-29405 and #KT-29319)
-            put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
-
             put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             setupCommonArguments(baseArguments)
 
             setupJvmSpecificArguments(baseArguments)
 
-            // default value differs from the argument'ss default (see #KT-29405 and #KT-29319)
+            // Default value differs from the argument's default (see #KT-29405 and #KT-29319)
             put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
 
             val jdkHomeFromConfigurations = scriptCompilationConfiguration.getNoDefault(ScriptCompilationConfiguration.jvm.jdkHome)
