@@ -14,12 +14,12 @@
 
   <depends>com.intellij.modules.appcode</depends>
 
-  <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
-    <gradleLauncherProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeGradleKonanLauncherProvider"/>
-  </extensions>
+<!--  <extensions defaultExtensionNs="org.jetbrains.kotlin.native">-->
+<!--    <gradleLauncherProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeGradleKonanLauncherProvider"/>-->
+<!--  </extensions>-->
 
   <extensions defaultExtensionNs="com.intellij">
-    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>
+<!--    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>-->
 
     <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
   </extensions>

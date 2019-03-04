@@ -36,15 +36,6 @@
     <applicationService
         serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
         serviceImplementation="org.jetbrains.konan.support.NativeOnlyDefaultTargetPlatformKindProvider"/>
-    <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"/>
-
-    <configurationType implementation="org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType"/>
-    <runConfigurationProducer implementation="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer"/>
-    <executionTargetProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanExecutionTargetProvider"/>
-    <runLineMarkerContributor language="ObjectiveC"
-                              implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
-
-    <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanBuildBeforeRunTaskProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">
