@@ -9,7 +9,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Sync
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -143,12 +143,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
 
     override fun apply(project: Project): Unit = with(project) {
         pluginManager.withPlugin("kotlin-multiplatform") {
-            val kotlinExtension = project.kotlinExtension as? KotlinMultiplatformExtension
-            if (kotlinExtension == null) {
-                logger.info("Cannot apply cocoapods plugin: Cannot cast ${project.kotlinExtension} to KotlinMultiplatformExtension")
-                return@withPlugin
-            }
-
+            val kotlinExtension = project.multiplatformExtension
             val cocoapodsExtension = CocoapodsExtension(this)
 
             kotlinExtension.addExtension(EXTENSION_NAME, cocoapodsExtension)

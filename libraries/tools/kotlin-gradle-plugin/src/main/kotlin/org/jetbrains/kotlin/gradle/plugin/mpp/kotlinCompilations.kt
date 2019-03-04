@@ -207,7 +207,7 @@ private object CompilationSourceSetUtil {
         projectSourceSetsInMultipleCompilationsCache.computeIfAbsent(project) { _ ->
             check(project.state.executed) { "Should only be computed after the project is evaluated" }
 
-            val compilations = (project.kotlinExtension as? KotlinMultiplatformExtension)?.targets?.flatMap { it.compilations }
+            val compilations = project.multiplatformExtensionOrNull?.targets?.flatMap { it.compilations }
                 ?: return@computeIfAbsent null
 
             val sources = compilations

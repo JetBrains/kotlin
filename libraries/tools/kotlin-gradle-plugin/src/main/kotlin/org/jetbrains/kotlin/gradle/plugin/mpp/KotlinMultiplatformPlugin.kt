@@ -23,9 +23,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.configureOrCreate
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
@@ -33,10 +31,6 @@ import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
-
-internal val Project.multiplatformExtension
-    get(): KotlinMultiplatformExtension? =
-        project.extensions.findByName("kotlin") as? KotlinMultiplatformExtension
 
 class KotlinMultiplatformPlugin(
     private val fileResolver: FileResolver,
@@ -102,7 +96,7 @@ class KotlinMultiplatformPlugin(
     private fun setupCompilerPluginOptions(project: Project) {
         // common source sets use the compiler options from the metadata compilation:
         val metadataCompilation =
-            project.multiplatformExtension!!.targets
+            project.multiplatformExtension.targets
                 .getByName(METADATA_TARGET_NAME)
                 .compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
@@ -137,7 +131,7 @@ class KotlinMultiplatformPlugin(
     }
 
     fun setupDefaultPresets(project: Project) {
-        with((project.kotlinExtension as KotlinMultiplatformExtension).presets) {
+        with(project.multiplatformExtension.presets) {
             add(KotlinJvmTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion))
             add(KotlinJsTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
@@ -150,15 +144,15 @@ class KotlinMultiplatformPlugin(
 
     private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") { _ ->
 
-        if (project.multiplatformExtension!!.run { isGradleMetadataAvailable && isGradleMetadataExperimental }) {
+        if (project.multiplatformExtension.run { isGradleMetadataAvailable && isGradleMetadataExperimental }) {
             SingleWarningPerBuild.show(
                 project,
                 GRADLE_METADATA_WARNING
             )
         }
 
-        val targets = project.multiplatformExtension!!.targets
-        val kotlinSoftwareComponent = project.multiplatformExtension!!.rootSoftwareComponent
+        val targets = project.multiplatformExtension.targets
+        val kotlinSoftwareComponent = project.multiplatformExtension.rootSoftwareComponent
 
         project.extensions.configure(PublishingExtension::class.java) { publishing ->
 
@@ -171,7 +165,7 @@ class KotlinMultiplatformPlugin(
 
             // Publish the root publication only if Gradle metadata publishing is enabled:
             project.tasks.withType(AbstractPublishToMaven::class.java).all { publishTask ->
-                publishTask.onlyIf { publishTask.publication != rootPublication || project.multiplatformExtension!!.isGradleMetadataAvailable }
+                publishTask.onlyIf { publishTask.publication != rootPublication || project.multiplatformExtension.isGradleMetadataAvailable }
             }
 
             // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
@@ -216,7 +210,7 @@ class KotlinMultiplatformPlugin(
             }
     }
 
-    private fun configureSourceSets(project: Project) = with(project.kotlinExtension as KotlinMultiplatformExtension) {
+    private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
@@ -232,7 +226,7 @@ class KotlinMultiplatformPlugin(
     }
 
     private fun setUpConfigurationAttributes(project: Project) {
-        val targets = (project.kotlinExtension as KotlinMultiplatformExtension).targets
+        val targets = project.multiplatformExtension.targets
 
         project.afterEvaluate {
             targets.all { target ->
@@ -306,7 +300,7 @@ internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: St
 
 internal fun compilationsBySourceSet(project: Project): Map<KotlinSourceSet, Set<KotlinCompilation<*>>> =
     HashMap<KotlinSourceSet, MutableSet<KotlinCompilation<*>>>().also { result ->
-        for (target in project.multiplatformExtension!!.targets) {
+        for (target in project.multiplatformExtension.targets) {
             for (compilation in target.compilations) {
                 for (sourceSet in compilation.allKotlinSourceSets) {
                     result.getOrPut(sourceSet) { mutableSetOf() }.add(compilation)

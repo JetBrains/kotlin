@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -30,7 +30,7 @@ import java.io.File
 
 class KotlinJsDcePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val kotlinExtension = project.multiplatformExtension ?: run {
+        val kotlinExtension = project.multiplatformExtensionOrNull ?: run {
             project.pluginManager.apply(Kotlin2JsPluginWrapper::class.java)
             project.kotlinExtension as KotlinSingleJavaTargetExtension
         }

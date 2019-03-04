@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 
@@ -115,7 +116,7 @@ private fun associateDependenciesWithActualModuleDependencies(
             when (dependency) {
                 is ProjectDependency -> {
                     val dependencyProject = dependency.dependencyProject
-                    val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtension
+                    val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtensionOrNull
                         ?: return@associate dependency to dependency
 
                     val resolved = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
