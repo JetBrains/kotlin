@@ -30,11 +30,9 @@ private fun Project.intellijRepoDir() = File("${project.rootDir.absoluteFile}/bu
 
 fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository = ivy {
     val baseDir = project.intellijRepoDir()
-    val intellijEnforceCommunitySdk = project.getBooleanProperty("intellijEnforceCommunitySdk") == true
-
     setUrl(baseDir)
 
-    if (!intellijEnforceCommunitySdk) {
+    if (IdeVersionConfigurator.currentIde.kind == Ide.Kind.IntelliJ) {
         ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]Ultimate.ivy.xml")
         ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellijUltimate.plugin.[module].ivy.xml")
         artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]Ultimate/lib/[artifact](-[classifier]).jar")
