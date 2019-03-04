@@ -122,7 +122,7 @@ private fun Task.useAndroidConfiguration(systemPropertyName: String, configName:
             .also {
                 dependencies.add(
                     configName,
-                    dependencies.project(":custom-dependencies:android-sdk", configuration = configName)
+                    dependencies.project(":dependencies:android-sdk", configuration = configName)
                 )
             }
     }

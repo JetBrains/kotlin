@@ -75,7 +75,7 @@ include ":kotlin-build-common",
         ":core:metadata.jvm",
         ":core:builtins",
         ":core:util.runtime",
-        ":custom-dependencies:android-sdk",
+        ":dependencies:android-sdk",
         ":idea:fir-view",
         ":idea:idea-jvm",
         ":idea:idea-maven",
@@ -354,4 +354,4 @@ project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kot
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
 
 // Uncomment to use locally built protobuf-relocated
-// includeBuild("custom-dependencies/protobuf")
+// includeBuild("dependencies/protobuf")
