@@ -5,6 +5,8 @@
 
 package org.jetbrains.konan.gradle.execution
 
+import com.intellij.openapi.roots.ProjectModelBuildableElement
+import com.intellij.openapi.roots.ProjectModelExternalSource
 import com.jetbrains.cidr.execution.CidrBuildConfiguration
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
@@ -16,7 +18,7 @@ import java.io.Serializable
  */
 class GradleKonanConfiguration(
     val id: String,
-    name: String,
+    private val name: String,
     val profileName: String,
     val productFile: File?,
     val targetType: CompilerOutputKind?,
@@ -24,13 +26,13 @@ class GradleKonanConfiguration(
     artifactCleanTaskPath: String?,
     val projectPath: String,
     val isTests: Boolean
-) : Serializable, CidrBuildConfiguration {
-    private val myName: String = "$name [$profileName]"
-
+) : Serializable, CidrBuildConfiguration, ProjectModelBuildableElement {
     val isExecutable: Boolean
         get() = targetType == CompilerOutputKind.PROGRAM
 
-    override fun getName() = myName
-
     val artifactCleanTaskPath: String? = artifactCleanTaskPath?.takeIf { it.isNotEmpty() }
+
+    override fun getName() = name
+
+    override fun getExternalSource(): ProjectModelExternalSource? = null
 }

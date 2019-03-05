@@ -15,8 +15,9 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.*
-import java.util.regex.Pattern
+import org.gradle.kotlin.dsl.creating
+import org.gradle.kotlin.dsl.task
+import org.gradle.kotlin.dsl.the
 import java.io.File
 
 internal const val PLATFORM_DEPS_JAR_NAME = "kotlinNative-platformDeps.jar"
@@ -69,41 +70,13 @@ private fun Zip.patchJavaXmls() {
     val javaPsiXmlPath = "META-INF/JavaPsiPlugin.xml"
     val javaPluginXmlPath = "META-INF/JavaPlugin.xml"
 
-    patchFiles(
-        mapOf(
+    val fileToMarkers = mapOf(
             javaPsiXmlPath to listOf("implementation=\"org.jetbrains.uast.java.JavaUastLanguagePlugin\""),
             javaPluginXmlPath to listOf(
-                "implementation=\"com.intellij.spi.SPIFileTypeFactory\"",
-                "implementationClass=\"com.intellij.lang.java.JavaDocumentationProvider\""
+                    "implementation=\"com.intellij.spi.SPIFileTypeFactory\"",
+                    "implementationClass=\"com.intellij.lang.java.JavaDocumentationProvider\""
             )
-        )
     )
-}
 
-private fun Zip.patchFiles(fileToMarkers: Map<String, List<String>>) {
-    val notDone = mutableSetOf<Pair<String, String>>()
-    fileToMarkers.forEach { (path, markers) ->
-        for (marker in markers) {
-            notDone += path to marker
-        }
-    }
-
-    eachFile {
-        val markers = fileToMarkers[this.sourcePath] ?: return@eachFile
-        this.filter {
-            var data = it
-            for (marker in markers) {
-                val newData = data.replace(("^(.*" + Pattern.quote(marker) + ".*)$").toRegex(), "<!-- $1 -->")
-                data = newData
-                notDone -= path to marker
-            }
-            data
-        }
-    }
-    doLast {
-        check(notDone.size == 0) {
-            "Filtering failed for: " +
-                    notDone.joinToString(separator = "\n") { (file, marker) -> "file=$file, marker=`$marker`" }
-        }
-    }
+    commentXmlFiles(fileToMarkers)
 }

@@ -26,6 +26,7 @@
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>
+    <projectTaskRunner implementation="org.jetbrains.konan.gradle.execution.GradleKonanProjectTaskRunner"/>
   </extensions>
 
   <actions>

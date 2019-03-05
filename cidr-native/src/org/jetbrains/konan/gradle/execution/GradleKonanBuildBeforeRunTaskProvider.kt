@@ -35,7 +35,7 @@ class GradleKonanBuildBeforeRunTaskProvider : BeforeRunTaskProvider<GradleKotlin
         env: ExecutionEnvironment,
         task: GradleKotlinNativeBuildBeforeRunTask
     ) = if (configuration is GradleKonanAppRunConfiguration)
-        GradleKonanBuild.compileBeforeRun(configuration.project, env, configuration)
+        GradleKonanBuild.buildBeforeRun(configuration.project, env, configuration)
     else false
 }
 

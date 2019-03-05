@@ -6,6 +6,7 @@
 package org.jetbrains.konan.gradle
 
 import com.intellij.execution.ExecutionTargetManager
+import com.intellij.execution.RunManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
@@ -20,7 +21,7 @@ import com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl
 import org.jetbrains.konan.gradle.CachedBuildableElements.KonanBuildableElements
 import org.jetbrains.konan.gradle.CachedBuildableElements.NoKonanBuildableElements
 import org.jetbrains.konan.gradle.KonanProjectDataService.Companion.forEachKonanProject
-import org.jetbrains.konan.gradle.execution.GradleKonanBuildModule
+import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanBuildTarget
 import org.jetbrains.konan.gradle.execution.GradleKonanConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -44,11 +45,16 @@ class GradleKonanWorkspace(val project: Project) : ProjectComponent {
     val buildTargets: List<GradleKonanBuildTarget>
         get() = (cachedBuildableElements.value as? KonanBuildableElements)?.buildTargets ?: emptyList()
 
-    val buildModules: List<GradleKonanBuildModule>
-        get() = (cachedBuildableElements.value as? KonanBuildableElements)?.buildModules ?: emptyList()
-
     val isInitialized: Boolean
         get() = cachedBuildableElements.value is KonanBuildableElements
+
+    val selectedRunConfiguration: GradleKonanAppRunConfiguration?
+        get() = RunManager.getInstance(project).selectedConfiguration?.configuration as? GradleKonanAppRunConfiguration
+
+    val selectedBuildConfiguration: GradleKonanConfiguration?
+        get() = selectedRunConfiguration
+                ?.getBuildAndRunConfigurations(ExecutionTargetManager.getActiveTarget(project))
+                ?.buildConfiguration
 
     override fun projectOpened() {
         // force reloading of the build targets when external data cache is ready
@@ -69,7 +75,6 @@ class GradleKonanWorkspace(val project: Project) : ProjectComponent {
             return
         }
 
-
         reloadsQueue.run(object : Task.Backgroundable(project, LOADING_GRADLE_KONAN_PROJECT) {
             override fun run(indicator: ProgressIndicator) {
                 cachedBuildableElements.drop()
@@ -84,29 +89,16 @@ class GradleKonanWorkspace(val project: Project) : ProjectComponent {
 }
 
 private sealed class CachedBuildableElements {
-
     object NoKonanBuildableElements : CachedBuildableElements()
-
-    class KonanBuildableElements(
-        val buildTargets: List<GradleKonanBuildTarget>,
-        val buildModules: List<GradleKonanBuildModule>
-    ) : CachedBuildableElements()
+    class KonanBuildableElements(val buildTargets: List<GradleKonanBuildTarget>) : CachedBuildableElements()
 }
 
 private fun loadBuildableElements(project: Project): CachedBuildableElements {
 
     val buildTargets = mutableListOf<GradleKonanBuildTarget>()
-    val buildModules = mutableListOf<GradleKonanBuildModule>()
 
     forEachKonanProject(project) { konanModel, moduleNode, rootProjectPath ->
         val moduleData = moduleNode.data
-
-        buildModules += GradleKonanBuildModule(
-            konanModel.toString(),
-            rootProjectPath,
-            konanModel.buildTaskPath,
-            konanModel.cleanTaskPath
-        )
 
         val configurationsMap = MultiMap.createSmart<Triple<String, String, String>, GradleKonanConfiguration>()
         for (konanArtifact in konanModel.artifacts) {
@@ -146,10 +138,7 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
         }
     }
 
-    return if (buildTargets.isNotEmpty() || buildModules.isNotEmpty())
-        KonanBuildableElements(buildTargets, buildModules)
-    else
-        NoKonanBuildableElements
+    return if (buildTargets.isNotEmpty()) KonanBuildableElements(buildTargets) else NoKonanBuildableElements
 }
 
 private fun getConfigurationId(moduleId: String, konanArtifact: KonanModelArtifact) =

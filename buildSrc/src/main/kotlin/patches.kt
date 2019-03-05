@@ -11,23 +11,27 @@ package org.jetbrains.kotlin.ultimate
 import org.apache.tools.ant.filters.LineContains
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.creating
 
 // See KT-30178
-fun Project.patchFileTemplates(originalPluginJar: Configuration) = tasks.creating {
+fun Project.patchFileTemplates(originalPluginJar: Configuration) = tasks.creating(Copy::class) {
     val filteredItems = listOf("#parse(\"File Header.java\")")
 
-    inputs.files(originalPluginJar)
-    outputs.dir("$buildDir/$name")
+    from(zipTree(originalPluginJar.singleFile).matching { include("fileTemplates/**/*.ft") })
+    destinationDir = file("$buildDir/$name")
+    filter(
+         mapOf("negate" to true, "contains" to filteredItems),
+         LineContains::class.java
+    )
+}
 
-    doFirst {
-        copy {
-            from(zipTree(inputs.files.singleFile).matching { include("fileTemplates/**/*.ft") })
-            into(outputs.files.singleFile)
-            filter(
-                    mapOf("negate" to true, "contains" to filteredItems),
-                    LineContains::class.java
-            )
-        }
-    }
+// Disable `KotlinMPPGradleProjectTaskRunner` in CIDR plugins
+fun Project.patchGradleXml(originalPluginJar: Configuration) = tasks.creating(Copy::class) {
+    val gradleXmlPath = "META-INF/gradle.xml"
+    val filteredItems = listOf("implementation=\"org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner\"")
+
+    from(zipTree(originalPluginJar.singleFile).matching { include(gradleXmlPath) })
+    destinationDir = file("$buildDir/$name")
+    commentXmlFiles(mapOf(gradleXmlPath to filteredItems))
 }
