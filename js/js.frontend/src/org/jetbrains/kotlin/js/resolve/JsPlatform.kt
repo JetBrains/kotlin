@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.resolve
 
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName

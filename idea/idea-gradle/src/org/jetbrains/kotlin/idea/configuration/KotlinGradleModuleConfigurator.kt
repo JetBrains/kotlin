@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.facet.FacetManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.psi.PsiFile

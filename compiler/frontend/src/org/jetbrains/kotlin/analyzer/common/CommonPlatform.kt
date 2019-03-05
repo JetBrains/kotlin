@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analyzer.common
 
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.container.StorageComponentContainer

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import javax.swing.Icon
 
 class KotlinModuleBuilder(
-        val targetPlatform: TargetPlatform, val builderName: String, val builderDescription: String, val icon: Icon
+    val targetPlatform: TargetPlatform, val builderName: String, val builderDescription: String, val icon: Icon
 ) : JavaModuleBuilder() {
     private var wizardContext: WizardContext? = null
 

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassifierTypeSettings
 import org.jetbrains.kotlin.storage.LockBasedStorageManager

@@ -57,9 +57,9 @@ class IdeSamWithReceiverComponentContributor(val project: Project) : StorageComp
 
 
     override fun registerModuleComponents(
-            container: StorageComponentContainer,
-            platform: TargetPlatform,
-            moduleDescriptor: ModuleDescriptor
+        container: StorageComponentContainer,
+        platform: TargetPlatform,
+        moduleDescriptor: ModuleDescriptor
     ) {
         if (platform != JvmPlatform) return
 

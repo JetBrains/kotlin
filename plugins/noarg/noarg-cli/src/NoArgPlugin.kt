@@ -89,7 +89,7 @@ class NoArgComponentRegistrar : ComponentRegistrar {
 
 class CliNoArgComponentContainerContributor(val annotations: List<String>) : StorageComponentContainerContributor {
     override fun registerModuleComponents(
-            container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
     ) {
         if (platform != JvmPlatform) return
 

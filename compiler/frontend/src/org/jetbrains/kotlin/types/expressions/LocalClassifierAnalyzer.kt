@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get

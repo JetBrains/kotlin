@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil

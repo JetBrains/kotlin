@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.analyzer.common
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object SourceNavigationHelper {

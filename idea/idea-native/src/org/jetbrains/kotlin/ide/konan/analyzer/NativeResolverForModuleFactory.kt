@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo
 import org.jetbrains.kotlin.ide.konan.createPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformCompilerServices
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession

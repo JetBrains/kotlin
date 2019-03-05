@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
