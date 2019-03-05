@@ -52,6 +52,8 @@ abstract class BasicIrBoxTest(
         super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
     }
 
+    override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker
+
     private val runtimes = mapOf(JsIrTestRuntime.DEFAULT to defaultRuntimeKlib,
                                  JsIrTestRuntime.FULL to fullRuntimeKlib)
 
@@ -141,7 +143,7 @@ abstract class BasicIrBoxTest(
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files
 
-        V8IrJsTestChecker.check(jsFiles, testModuleName, null, testFunction, expectedResult, withModuleSystem)
+        testChecker.check(jsFiles, testModuleName, null, testFunction, expectedResult, withModuleSystem)
     }
 }
 

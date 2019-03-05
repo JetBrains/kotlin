@@ -22,10 +22,32 @@ class ScriptEngineV8 : ScriptEngine {
         (t as? V8Object)?.release()
     }
 
-    override fun getGlobalContext(): GlobalRuntimeContext {
-        val v8result = eval<V8Object>("this")
-        val context = V8ObjectUtils.toMap(v8result) as GlobalRuntimeContext
-        return context.also { v8result.release() }
+    private var savedState: List<String>? = null
+
+    override fun restoreState() {
+        val scriptBuilder = StringBuilder()
+
+        val globalState = getGlobalPropertyNames()
+        val originalState = savedState!!
+        for (key in globalState) {
+            if (key !in originalState) {
+                scriptBuilder.append("this['$key'] = void 0;\n")
+            }
+        }
+        evalVoid(scriptBuilder.toString())
+    }
+
+    private fun getGlobalPropertyNames(): List<String> {
+        val v8Array = eval<V8Array>("Object.getOwnPropertyNames(this)")
+        val javaArray = V8ObjectUtils.toList(v8Array) as List<String>
+        v8Array.release()
+        return javaArray
+    }
+
+    override fun saveState() {
+        if (savedState == null) {
+            savedState = getGlobalPropertyNames()
+        }
     }
 
     private val myRuntime: V8 = V8.createV8Runtime("global", LIBRARY_PATH_BASE)
@@ -58,4 +80,24 @@ class ScriptEngineV8 : ScriptEngine {
     override fun release() {
         myRuntime.release()
     }
+}
+
+class ScriptEngineV8Lazy : ScriptEngine {
+    override fun <T> eval(script: String) = engine.eval<T>(script)
+
+    override fun saveState() = engine.saveState()
+
+    override fun evalVoid(script: String) = engine.evalVoid(script)
+
+    override fun <T> callMethod(obj: Any, name: String, vararg args: Any?) = engine.callMethod<T>(obj, name, args)
+
+    override fun loadFile(path: String) = engine.loadFile(path)
+
+    override fun release() = engine.release()
+
+    override fun <T> releaseObject(t: T) = engine.releaseObject(t)
+
+    override fun restoreState() = engine.restoreState()
+
+    private val engine by lazy { ScriptEngineV8() }
 }

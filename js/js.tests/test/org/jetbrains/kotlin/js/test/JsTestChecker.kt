@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.js.test
 
-import jdk.nashorn.internal.runtime.ScriptRuntime
-import org.jetbrains.kotlin.js.test.interop.GlobalRuntimeContext
 import org.jetbrains.kotlin.js.test.interop.ScriptEngine
 import org.jetbrains.kotlin.js.test.interop.ScriptEngineNashorn
 import org.jetbrains.kotlin.js.test.interop.ScriptEngineV8
@@ -65,48 +63,39 @@ abstract class AbstractJsTestChecker {
         runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem)
     }
 
-    protected abstract fun run(files: List<String>, f: ScriptEngine.() -> Any?): Any?
-}
-
-fun ScriptEngine.runAndRestoreContext(
-    globalObject: GlobalRuntimeContext = getGlobalContext(),
-    originalState: Map<String, Any?> = globalObject.toMap(),
-    f: ScriptEngine.() -> Any?
-): Any? {
-    return try {
-        this.f()
-    } finally {
-        for (key in globalObject.keys) {
-            globalObject[key] = originalState[key] ?: ScriptRuntime.UNDEFINED
-        }
-    }
-}
-
-abstract class AbstractNashornJsTestChecker: AbstractJsTestChecker() {
-
-    private var engineUsageCnt = 0
-
-    private var engineCache: ScriptEngine? = null
-    private var globalObject: GlobalRuntimeContext? = null
-    private var originalState: Map<String, Any?>? = null
-
-    protected val engine
-        get() = engineCache ?: createScriptEngineForTest().also {
-            engineCache = it
-            globalObject = it.getGlobalContext()
-            originalState = globalObject?.toMap()
-        }
 
     fun run(files: List<String>) {
         run(files) { null }
     }
 
+    abstract fun checkStdout(files: List<String>, expectedResult: String)
+
+    protected abstract fun run(files: List<String>, f: ScriptEngine.() -> Any?): Any?
+}
+
+fun ScriptEngine.runAndRestoreContext(f: ScriptEngine.() -> Any?): Any? {
+    return try {
+        saveState()
+        f()
+    } finally {
+        restoreState()
+    }
+}
+
+abstract class AbstractNashornJsTestChecker : AbstractJsTestChecker() {
+
+    private var engineUsageCnt = 0
+
+    private var engineCache: ScriptEngineNashorn? = null
+
+    protected val engine: ScriptEngineNashorn
+        get() = engineCache ?: createScriptEngineForTest().also {
+            engineCache = it
+        }
+
     protected open fun beforeRun() {}
 
-    override fun run(
-        files: List<String>,
-        f: ScriptEngine.() -> Any?
-    ): Any? {
+    override fun run(files: List<String>, f: ScriptEngine.() -> Any?): Any? {
         // Recreate the engine once in a while
         if (engineUsageCnt++ > 100) {
             engineUsageCnt = 0
@@ -115,37 +104,46 @@ abstract class AbstractNashornJsTestChecker: AbstractJsTestChecker() {
 
         beforeRun()
 
-        return engine.runAndRestoreContext(globalObject!!, originalState!!) {
-            files.forEach(engine::loadFile)
-            engine.f()
+        return engine.runAndRestoreContext {
+            files.forEach { loadFile(it) }
+            f()
         }
     }
 
-    protected abstract fun createScriptEngineForTest(): ScriptEngine
-}
-
-object NashornJsTestChecker : AbstractNashornJsTestChecker() {
-    const val SETUP_KOTLIN_OUTPUT = "kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput();"
-    private const val GET_KOTLIN_OUTPUT = "kotlin.kotlin.io.output.buffer;"
-
-    override fun beforeRun() {
-        engine.evalVoid(SETUP_KOTLIN_OUTPUT)
-    }
-
-    fun checkStdout(files: List<String>, expectedResult: String) {
+    override fun checkStdout(files: List<String>, expectedResult: String) {
         run(files)
         val actualResult = engine.eval<String>(GET_KOTLIN_OUTPUT)
         Assert.assertEquals(expectedResult, actualResult)
     }
 
-    override fun createScriptEngineForTest(): ScriptEngine {
-        val engine = createScriptEngine()
+    protected abstract val preloadedScripts: List<String>
 
-        listOf(
-            BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
-            BasicBoxTest.DIST_DIR_JS_PATH + "kotlin.js",
-            BasicBoxTest.DIST_DIR_JS_PATH + "kotlin-test.js"
-        ).forEach(engine::loadFile)
+    protected open fun createScriptEngineForTest(): ScriptEngineNashorn {
+        val engine = ScriptEngineNashorn()
+
+        preloadedScripts.forEach { engine.loadFile(it) }
+
+        return engine
+    }
+}
+
+const val SETUP_KOTLIN_OUTPUT = "kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput();"
+const val GET_KOTLIN_OUTPUT = "kotlin.kotlin.io.output.buffer;"
+
+object NashornJsTestChecker : AbstractNashornJsTestChecker() {
+
+    override fun beforeRun() {
+        engine.evalVoid(SETUP_KOTLIN_OUTPUT)
+    }
+
+    override val preloadedScripts = listOf(
+        BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
+        BasicBoxTest.DIST_DIR_JS_PATH + "kotlin.js",
+        BasicBoxTest.DIST_DIR_JS_PATH + "kotlin-test.js"
+    )
+
+    override fun createScriptEngineForTest(): ScriptEngineNashorn {
+        val engine = super.createScriptEngineForTest()
 
         engine.overrideAsserter()
 
@@ -154,22 +152,61 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
 }
 
 class NashornIrJsTestChecker : AbstractNashornJsTestChecker() {
-    override fun createScriptEngineForTest(): ScriptEngine {
-        val engine = createScriptEngine()
+    override val preloadedScripts = listOf(
+        BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
+        "libraries/stdlib/js/src/js/polyfills.js"
+    )
+}
 
-        listOfNotNull(
-            BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
-            "libraries/stdlib/js/src/js/polyfills.js"
-        ).forEach(engine::loadFile)
+abstract class AbstractV8JsTestChecker : AbstractJsTestChecker() {
+    protected abstract val engine: ScriptEngineV8
 
-        return engine
+    override fun checkStdout(files: List<String>, expectedResult: String) {
+        run(files) {
+            val actualResult = engine.eval<String>(GET_KOTLIN_OUTPUT)
+            Assert.assertEquals(expectedResult, actualResult)
+        }
     }
 }
 
-object V8IrJsTestChecker : AbstractJsTestChecker() {
+object V8JsTestChecker : AbstractV8JsTestChecker() {
+    override val engine get() = tlsEngine.get()
+
+    private val tlsEngine = object : ThreadLocal<ScriptEngineV8>() {
+        override fun initialValue() = createV8Engine()
+        override fun remove() {
+            get().release()
+        }
+    }
+
+    private fun createV8Engine(): ScriptEngineV8 {
+        val v8 = ScriptEngineV8()
+
+        listOf(
+            BasicBoxTest.DIST_DIR_JS_PATH + "kotlin.js",
+            BasicBoxTest.DIST_DIR_JS_PATH + "kotlin-test.js"
+        ).forEach { v8.loadFile(it) }
+
+        v8.overrideAsserter()
+
+        return v8
+    }
+
+    override fun run(files: List<String>, f: ScriptEngine.() -> Any?): Any? {
+        engine.evalVoid(SETUP_KOTLIN_OUTPUT)
+        return engine.runAndRestoreContext {
+            files.forEach { loadFile(it) }
+            f()
+        }
+    }
+}
+
+object V8IrJsTestChecker : AbstractV8JsTestChecker() {
+    override val engine get() = ScriptEngineV8()
+
     override fun run(files: List<String>, f: ScriptEngine.() -> Any?): Any? {
 
-        val v8 = ScriptEngineV8()
+        val v8 = engine
 
         val v = try {
             files.forEach { v8.loadFile(it) }
