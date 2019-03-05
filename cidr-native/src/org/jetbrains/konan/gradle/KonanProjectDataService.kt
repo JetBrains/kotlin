@@ -120,7 +120,7 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
                 val rootProjectPath = projectData.linkedExternalProjectPath
                 val modulesNodes = ExternalSystemApiUtil.findAll(projectStructure, ProjectKeys.MODULE)
                 for (moduleNode in modulesNodes) {
-                    val projectNode = ExternalSystemApiUtil.find<KonanModel>(moduleNode, KonanProjectResolver.KONAN_MODEL_KEY)
+                    val projectNode = ExternalSystemApiUtil.find(moduleNode, KonanProjectResolver.KONAN_MODEL_KEY)
                     if (projectNode != null) {
                         val konanProject = projectNode.data
                         consumer(konanProject, moduleNode, rootProjectPath)
