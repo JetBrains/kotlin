@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
@@ -31,7 +32,7 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                 if (conversion.replacement.startsWith("joinTo")) {
                     // Function parameter in map must have String result type
                     if (!firstResolvedCall.hasLastFunctionalParameterWithResult(context) {
-                            it.isSubtypeOf(JsPlatform.builtIns.charSequence.defaultType)
+                            it.isSubtypeOf(JsPlatformCompilerServices.builtIns.charSequence.defaultType)
                         }
                     ) return@check false
                 }

@@ -29,12 +29,13 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 
 fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
-    return ContainerForTests(createContainer("Tests", JvmPlatform) {
-        configureModule(ModuleContext(module, project), JvmPlatform, JvmTarget.JVM_1_6)
+    return ContainerForTests(createContainer("Tests", JvmPlatformCompilerServices) {
+        configureModule(ModuleContext(module, project), JvmPlatform, JvmTarget.JVM_1_6, JvmPlatformCompilerServices)
         useInstance(LanguageVersionSettingsImpl.DEFAULT)
         useImpl<AnnotationResolverImpl>()
         useImpl<ExpressionTypingServices>()

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.serialization.AbstractVersionRequirementTest
@@ -76,7 +77,7 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
 
     private fun createModule(environment: KotlinCoreEnvironment): MutableModuleContext {
         val config = JsConfig(environment.project, environment.configuration)
-        return ContextForNewModule(ProjectContext(environment.project), Name.special("<test>"), JsPlatform.builtIns, null).apply {
+        return ContextForNewModule(ProjectContext(environment.project), Name.special("<test>"), JsPlatformCompilerServices.builtIns, null).apply {
             setDependencies(listOf(module) + config.moduleDescriptors + module.builtIns.builtInsModule)
         }
     }

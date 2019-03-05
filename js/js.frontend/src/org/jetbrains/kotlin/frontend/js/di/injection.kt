@@ -29,13 +29,11 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
-import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 
 fun createTopDownAnalyzerForJs(
         moduleContext: ModuleContext,
@@ -46,8 +44,8 @@ fun createTopDownAnalyzerForJs(
         expectActualTracker: ExpectActualTracker,
         additionalPackages: List<PackageFragmentProvider>
 ): LazyTopDownAnalyzer {
-    val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatform) {
-        configureModule(moduleContext, JsPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
+    val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatformCompilerServices) {
+        configureModule(moduleContext, JsPlatform, TargetPlatformVersion.NoVersion, JsPlatformCompilerServices, bindingTrace)
 
         useInstance(declarationProviderFactory)
         useImpl<AnnotationResolverImpl>()

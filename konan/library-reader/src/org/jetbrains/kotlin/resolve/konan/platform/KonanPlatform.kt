@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.resolve.konan.platform
 
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.Platform
-import org.jetbrains.kotlin.resolve.PlatformConfigurator
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 object KonanPlatform : TargetPlatform("Native") {
+    override val platform = Platform.Specific(platformName)
+}
 
+object NativePlatformCompilerServices : PlatformDependentCompilerServices() {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
         result.add(ImportPath.fromString("kotlin.native.*"))
     }
 
-    override val platform = Platform.Specific(platformName)
     override val platformConfigurator: PlatformConfigurator = KonanPlatformConfigurator
 }

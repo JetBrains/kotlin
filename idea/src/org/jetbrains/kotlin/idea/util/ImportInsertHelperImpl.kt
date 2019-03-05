@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.util.compilerServices
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.ImportPathComparator
@@ -62,19 +63,19 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
         val languageVersionSettings = contextFile.getResolutionFacade().frontendService<LanguageVersionSettings>()
         val platform = TargetPlatformDetector.getPlatform(contextFile)
-        val allDefaultImports = platform.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
+        val allDefaultImports = platform.compilerServices.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
 
         val scriptExtraImports = contextFile.takeIf { it.isScript() }?.let { ktFile ->
             val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project)?.getScriptDependencies(ktFile.originalFile)
             scriptDependencies?.imports?.map { ImportPath.fromString(it) }
         }.orEmpty()
 
-        return importPath.isImported(allDefaultImports + scriptExtraImports, platform.excludedImports)
+        return importPath.isImported(allDefaultImports + scriptExtraImports, platform.compilerServices.excludedImports)
     }
 
     override fun isImportedWithLowPriorityDefaultImport(importPath: ImportPath, contextFile: KtFile): Boolean {
         val platform = TargetPlatformDetector.getPlatform(contextFile)
-        return importPath.isImported(platform.defaultLowPriorityImports, platform.excludedImports)
+        return importPath.isImported(platform.compilerServices.defaultLowPriorityImports, platform.compilerServices.excludedImports)
     }
 
     override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean {

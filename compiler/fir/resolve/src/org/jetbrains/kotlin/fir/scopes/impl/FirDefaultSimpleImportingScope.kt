@@ -18,7 +18,7 @@ class FirDefaultSimpleImportingScope(session: FirSession) : FirAbstractSimpleImp
 
     override val simpleImports = run {
         val importResolveTransformer = FirImportResolveTransformer(session)
-        session.moduleInfo?.platform?.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT, true)
+        session.moduleInfo?.compilerServices?.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT, true)
             ?.filter { !it.isAllUnder }
             ?.map {
                 FirImportImpl(session, null, it.fqName, isAllUnder = false, aliasName = null)

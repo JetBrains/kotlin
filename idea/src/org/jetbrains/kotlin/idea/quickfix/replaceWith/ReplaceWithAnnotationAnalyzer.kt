@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.caches.resolve.util.compilerServices
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -141,7 +142,7 @@ object ReplaceWithAnnotationAnalyzer {
         languageVersionSettings: LanguageVersionSettings
     ): List<ImportingScope> {
         val allDefaultImports =
-            resolutionFacade.frontendService<TargetPlatform>().getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
+            resolutionFacade.frontendService<TargetPlatform>().compilerServices.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
         val (allUnderImports, aliasImports) = allDefaultImports.partition { it.isAllUnder }
         // this solution doesn't support aliased default imports with a different alias
         // TODO: Create import directives from ImportPath, create ImportResolver, create LazyResolverScope, see FileScopeProviderImpl

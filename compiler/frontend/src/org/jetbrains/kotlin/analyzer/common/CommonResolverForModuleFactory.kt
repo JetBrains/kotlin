@@ -64,6 +64,9 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
 
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
             if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
+
+        override val compilerServices: PlatformDependentCompilerServices
+            get() = CommonPlatformCompilerServices
     }
 
     fun analyzeFiles(
@@ -133,7 +136,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
             moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
-            languageVersionSettings
+            languageVersionSettings, moduleInfo.platform!!, targetPlatformVersion, CommonPlatformCompilerServices
         )
 
         val packageFragmentProviders = listOf(
@@ -151,9 +154,12 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         moduleContentScope: GlobalSearchScope,
         targetEnvironment: TargetEnvironment,
         metadataPartProvider: MetadataPartProvider,
-        languageVersionSettings: LanguageVersionSettings
-    ): StorageComponentContainer = createContainer("ResolveCommonCode", targetPlatform) {
-        configureModule(moduleContext, targetPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
+        languageVersionSettings: LanguageVersionSettings,
+        platform: TargetPlatform,
+        targetPlatformVersion: TargetPlatformVersion,
+        compilerServices: PlatformDependentCompilerServices
+    ): StorageComponentContainer = createContainer("ResolveCommonCode", compilerServices) {
+        configureModule(moduleContext, platform, targetPlatformVersion, compilerServices, bindingTrace)
 
         useInstance(moduleContentScope)
         useInstance(LookupTracker.DO_NOTHING)
@@ -171,8 +177,6 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
                 ?: error("No MetadataFinderFactory in project")
         useInstance(metadataFinderFactory.create(moduleContentScope))
-
-
 
         targetEnvironment.configure(this)
     }

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -63,6 +64,7 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
             NoScopeRecordCliBindingTrace(),
             JvmPlatform,
             JvmTarget.JVM_1_6,
+            JvmPlatformCompilerServices,
             targetEnvironment,
             LanguageVersionSettingsImpl.DEFAULT
         )
